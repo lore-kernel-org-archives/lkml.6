@@ -2,110 +2,147 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C81C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FCEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB7F206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E79E2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:21:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W81J9Q8e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB7F206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VYYIa1iM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E79E2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeLDRVS (ORCPT
+        id S1727266AbeLDRVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 12:21:18 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:45474 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbeLDRVQ (ORCPT
+        Tue, 4 Dec 2018 12:21:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34262 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeLDRVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 12:21:16 -0500
-Received: by mail-vk1-f193.google.com with SMTP id n126so3957148vke.12
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 09:21:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SQYkJflw6ZG3qbcZAPQ+3KILhFUJGYVNsDVNeEvwkfM=;
-        b=W81J9Q8eLfRiVjfZq3obFwjB0W6RsOZLBr8+gBslpOO+O7ihowslvpAw/7NV/nrhuZ
-         RpBVS3/BcMdw0XUXBWLtJZx0BjWyKB0X8F4UpQ5v59/IePVRhWM8AU0hr/P8hLLTEKV5
-         gsT5ZVcF0Udn6/XCxr3GjfwqXXM/Rq7dvFvzA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SQYkJflw6ZG3qbcZAPQ+3KILhFUJGYVNsDVNeEvwkfM=;
-        b=beapShzMEeAvpMOioDcHfNbVV8UsvTD971IhUFL6ncwC7op4rfDFSg2JeKy+Llagqu
-         7Xl0UxlA3a8SI1M37y7EsC9IEHAMnSreFWdeYcH05QB1yY6KejJGZqiCvIKlWf+5Os+J
-         DG5EQ8w7/IPaXr9MIrsTlnbG/t1gWU7L/B4S3/siuPL+sI/kHrfoavka0VOxB2yj39re
-         7NdJ4081kPlduzh/anBDUoCxT23IeNowlv7ql+5nBCq6DAaV9Aq1cad0d/zLso6hUKQu
-         pODRk2KPIhf1CyotyM543+7DEoVNIDA651XJU23l3PfwZBpEB60gRm/M2DUjk5pfFNQm
-         FG6Q==
-X-Gm-Message-State: AA+aEWYMWLOzFKEWRKbOH6kq0b0HE718GVKM4bC4GxO9s9+IRXI2wPm4
-        SD3z5V0jqvnLPRbbIf03RY/+R/sn9Vk=
-X-Google-Smtp-Source: AFSGD/XVPxs+jgtiOzfUXKfSI1vvO2wyaVgsHQf77+Wiyf1Sb/bBuzarA0LGSZyiIg70vb5vhD9NzA==
-X-Received: by 2002:a1f:6b14:: with SMTP id g20mr9096438vkc.47.1543944075211;
-        Tue, 04 Dec 2018 09:21:15 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id l123sm4994536vsd.26.2018.12.04.09.21.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 09:21:15 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id n10so1462332vso.13
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 09:21:14 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr8214331vsv.20.1543943738499;
- Tue, 04 Dec 2018 09:15:38 -0800 (PST)
+        Tue, 4 Dec 2018 12:21:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6ooNVp0bEOpurSzUeQMQi460/AiSx/S32yZc6WkOpKw=; b=VYYIa1iMPn930LCR3yMBTt4JL
+        UogyBjevnf6+cJKsr8hi07gTysHCh5J/uP67d6d5gbxfynFxGy5je6NV0NGqHJEZ392J6P14JgE/o
+        ymqoQc+/D6iMVa/PkIIhwqRLU3gqSL0p0Dxm2cKPJgyPWqoHsH4J8h4afoAexKpPQNZbo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gUEO9-0007uz-LY; Tue, 04 Dec 2018 17:21:37 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2CF4711251E3; Tue,  4 Dec 2018 17:21:37 +0000 (GMT)
+Date:   Tue, 4 Dec 2018 17:21:37 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181204172137.GE6809@sirena.org.uk>
+References: <20181130085908.GA24983@localhost.localdomain>
 MIME-Version: 1.0
-References: <20181201005254.139908-1-mka@chromium.org> <20181201005254.139908-2-mka@chromium.org>
-In-Reply-To: <20181201005254.139908-2-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 4 Dec 2018 09:15:25 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WPXGAb0jYWvFhuTLOWKjsnDDC972pHN_05sTFgkLW9KA@mail.gmail.com>
-Message-ID: <CAD=FV=WPXGAb0jYWvFhuTLOWKjsnDDC972pHN_05sTFgkLW9KA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: msm/dsi: Add ref clock for PHYs
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5xSkJheCpeK0RUEJ"
+Content-Disposition: inline
+In-Reply-To: <20181130085908.GA24983@localhost.localdomain>
+X-Cookie: The sum of the Universe is zero.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Nov 30, 2018 at 4:53 PM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> Allow the PHY drivers to get the ref clock from the DT.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in V3:
-> - added note that the ref clock is only required for new DTS
->   files/entries
->
-> Changes in v2:
-> - add the ref clock for all PHYs, not only the 10nm one
-> - updated commit message
-> ---
->  Documentation/devicetree/bindings/display/msm/dsi.txt | 1 +
->  1 file changed, 1 insertion(+)
+--5xSkJheCpeK0RUEJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+On Fri, Nov 30, 2018 at 10:59:08AM +0200, Matti Vaittinen wrote:
+
+> IRQ handling is implemented so that each sub block has own
+> status/ack/mask registers and then there is one main status
+> register. When any of the sub blocks gets unmasked IRQ,
+> corresponding 'main status register' bit is set in main status
+> register.
+
+This sounds exactly like the wm831x which uses cascaded irqchips for
+this, though not regmap-irq.
+
+> Problem I faced is that I don't know how to create two regmap-irq chips f=
+or
+> the same i2c decvice - because the regmap-irq gets the DT node from regmn=
+ap
+> - and thus both of the irq chips would have same DT node. My assumption is
+> that the DT - xlate functionality for this setup would not be quite corre=
+ct,
+> right? I guess the "main irq" interrupts would be hookable via DT? But
+> the devices are interested in "sub IRQs". So I thought that the correct
+> solution would be to model the interrupts from this PMIC as just one
+> irq-chip. So I wonder if addin this "main IRQ register" support for
+
+I suspect the idiomatic way to handle this in DT is to make DT nodes
+(and devices) for the subfunction interrupt controllers and expose the
+internal structure of the chip to the DT.  This does make some sense as
+the individual interrupt controllers within the chip are clearly
+reusable IP blocks though it means that the chip starts looking a bit
+weird externally so perhaps that's not ideal and your suggestion makes
+sense.
+
+> configuring IRQ pins as level triggered. So I thought we could add
+> support for setting the type to level_low or level_high. This change
+> would require adding 'supported_types' information to all drivers which
+> are currently using regmap-irq for supporting type-setting - but quick
+> grep for drivers allow me to think that it is currently only the=20
+> gpio-max77620 which uses the type setting in-tree.
+
+That seems pluasible but definitely seems like a separate change.
+
+> + * @main_status: Base main status register address. For chips which have
+> + *		 interrupts arranged in separate sub-irq blocks with own IRQ
+> + *		 registers and which have a main IRQ registers indicating
+> + *		 sub-irq blocks with unhandled interrupts. For such chips fill
+> + *		 sub-irq register information in status_base, mask_base and
+> + *		 ack_base.
+> + * @sub_reg_offsets: arrays of mappings from main register bits to sub i=
+rq
+> + *		 registers. First item in array describes the registers
+> + *		 for first main status bit. Second array for second bit etc.
+> + *		 Offset is given as sub register status offset to status_base.
+> + *		 Should contain num_regs arrays. Can be provided for chips with
+> + *		 more complex mapping than 1.st bit to 1.st sub-reg, 2.nd bit to
+> + *		 2.nd sub-reg, ...
+
+This interface feels a little awkward in that we define the sub
+interrupts in this separate array and require them all to be in separate
+single registers which probably won't be true in general (IIRC it wasn't
+how the wm831x worked).  How about instead we have the individual
+interrupts mark which main status bits flag them, then build up a
+mapping in the other direction during init of subregisters to read?
+I've not tried to implement that so there might be annoying difficulties
+during implementation though.
+
+--5xSkJheCpeK0RUEJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwGt6AACgkQJNaLcl1U
+h9BNVgf7BDyuGkBZFqQbkqj7+ekR57dFIlPIJDosT0zmlr+bVGsYFsDwx+XwxK8y
+dK2mwMMcK2v6Vgv4Tvc/JnW7ZAH5bxDtSafCjL4Qd7zFE4b8qFpV7Kl2rKu65ikr
+6cRXRp6Q7riokC1zf/mfN5L6+OStnnWZ8qX5PCVlbLYGcmF3wUvXmYbkraxWt2LI
+toIvgaTjqMT0lX8z/z/jredpz4HT3gfrATw7KV44cXijBzYJ7UnXepGTtmOZ+O8y
+ggzcIQhlPZtAJsFgtyJVX/dArEcM9lk5TOSg/Bl5V3Lg2+9p9WG9wVojROVikY9c
+/LxfcxaMNgPYOwUmGV5IOVFqNQMhmQ==
+=WwsZ
+-----END PGP SIGNATURE-----
+
+--5xSkJheCpeK0RUEJ--
