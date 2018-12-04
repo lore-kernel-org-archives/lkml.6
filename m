@@ -2,97 +2,139 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB3CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFAFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A69920672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A69920672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 96F5E206B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F5E206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeLDQCp (ORCPT
+        id S1726983AbeLDQDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:02:45 -0500
-Received: from foss.arm.com ([217.140.101.70]:35814 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726459AbeLDQCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:02:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 614C5A78;
-        Tue,  4 Dec 2018 08:02:44 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2FD2C3F614;
-        Tue,  4 Dec 2018 08:02:44 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 8C35D1AE0BA0; Tue,  4 Dec 2018 16:03:04 +0000 (GMT)
-Date:   Tue, 4 Dec 2018 16:03:04 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-        David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, ast@kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>, jeyu@kernel.org,
-        netdev@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>, kristen@linux.intel.com,
-        Dave Hansen <dave.hansen@intel.com>, deneen.t.dock@intel.com,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-Message-ID: <20181204160304.GB7195@arm.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <20181128000754.18056-2-rick.p.edgecombe@intel.com>
- <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+        Tue, 4 Dec 2018 11:03:54 -0500
+Received: from ucol19pa09.eemsg.mail.mil ([214.24.24.82]:19877 "EHLO
+        ucol19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeLDQDy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:03:54 -0500
+X-EEMSG-check-008: 799520026|UCOL19PA09_EEMSG_MP7.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
+   d="scan'208";a="799520026"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by ucol19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Dec 2018 16:03:32 +0000
+X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
+   d="scan'208";a="18405045"
+IronPort-PHdr: =?us-ascii?q?9a23=3AfsjxNh8f7Yv0e/9uRHKM819IXTAuvvDOBiVQ1K?=
+ =?us-ascii?q?B+1+sQIJqq85mqBkHD//Il1AaPAd2Lraocw8Pt8InYEVQa5piAtH1QOLdtbD?=
+ =?us-ascii?q?Qizfssogo7HcSeAlf6JvO5JwYzHcBFSUM3tyrjaRsdF8nxfUDdrWOv5jAOBB?=
+ =?us-ascii?q?r/KRB1JuPoEYLOksi7ze+/94HQbglSmDaxfa55IQmrownWqsQYm5ZpJLwryh?=
+ =?us-ascii?q?vOrHtIeuBWyn1tKFmOgRvy5dq+8YB6/ShItP0v68BPUaPhf6QlVrNYFygpM3?=
+ =?us-ascii?q?o05MLwqxbOSxaE62YGXWUXlhpIBBXF7A3/U5zsvCb2qvZx1S+HNsDtU7s6RS?=
+ =?us-ascii?q?qt4LtqSB/wiScIKTg58H3MisdtiK5XuQ+tqwBjz4LRZoyaOuB+fqfAdt0EQ2?=
+ =?us-ascii?q?RPUNtaWyhYDo+ic4cDCuwMNvtaoYbgvVsDtQawCxeiBO3vyTFGiHH50qI43O?=
+ =?us-ascii?q?s9Hg/LxxAgEtAUvXjIsNn4OqUfXOaox6fI1zXDaPZW1C/g5ojUbB8hufGMUq?=
+ =?us-ascii?q?x2ccHM1EcvEhnKjlGUqYP7PzKey+MAs3OG4Op7Tu+vl24mpB1xojio3MssjJ?=
+ =?us-ascii?q?LJiZgPxlDL8iV53p84KNulQ0B4ed6pCIZcui6VOodsQs4uXntktDg1x7EYo5?=
+ =?us-ascii?q?K3YS4Hw4k9yRHFcfyIaY2I7wrmVOaWPDh3mmpoeKm6hxau6UigzfD8VtWs3F?=
+ =?us-ascii?q?ZKsCVFlt7Mu2gR1xPJ8MiHS+Z9/ly71TaT1wHc9uFEIUcumardN5Eh2aI/mo?=
+ =?us-ascii?q?AWsUTCGi/6gET2jKmIeUU44uWk9uvqb7r8qpKcKoN4kB/yP6swlsClHOg0Kg?=
+ =?us-ascii?q?0OUHKa+eS42r3j50r5QLBSg/0tj6bZq4vXJdgbp6GlAw9V1Zwv6xCkDzi8yt?=
+ =?us-ascii?q?gYkn4HLExddBKdk4fpI03OIOz/DfqnnVSsnzBrxvDcMb3lGZjNNGbMn6rhfb?=
+ =?us-ascii?q?ln905Q0hY8zdda55hMELEOPOrzWlPttNzfFhI5Ng20w+XjCNV6zYMTQnmPA6?=
+ =?us-ascii?q?6HP6PIr1CH++MvL/OMZI8IoDz9MeQq5+byjX8lnl8QZa6p3Z4QaHCjGPRpOV?=
+ =?us-ascii?q?mWbmT3j9cbD2gFowo+Q/b2iFGYTTFTYHOyVbom5j4nEIKmEZvDRoe1jbOa0i?=
+ =?us-ascii?q?e7H4NZZmRbBVCXCnroeYSEVOkIaC2POc9ujCcEWaKmS4872hGkrBX6xKZ/Lu?=
+ =?us-ascii?q?rI5i0Ysoru1MNv6O3XlRAz9Dx1D8KG3m6XSWF7g3kIRzg33K9iu0By1lCD0a?=
+ =?us-ascii?q?1gifxCCdNT/+9JUhs9NZPE1+x1Ec3yWgbac9eRUlmmX9GmDSg0TtI2xN8OeV?=
+ =?us-ascii?q?hyF8++gRDE2iqgG6UVmKCTBJwo7qLc2GD8J8J8y3bAyakggEAqQshROm28gK?=
+ =?us-ascii?q?5w6QzTCpXXk0WWiamqb74Q3C3T+2eZy2qBokVYXBR3UaXfUnAVflHWosjh5k?=
+ =?us-ascii?q?PeU7+uDqwqMg9Ayc6EN6tLZcTljUhARPfiP9TeZWyxm3yrCBaWybODcpDqd3?=
+ =?us-ascii?q?8e3CrDEkgElR4c/XKcOQg5HCehrHrUDCZyGlL3f0Ps7e5+pWu/Tk81yQGKck?=
+ =?us-ascii?q?Jg26O7+h4OmPOTVe0T0awAuCo6tTV0E0iy38jMB9qDuQVhZqNcbs054Ftd0m?=
+ =?us-ascii?q?LZrQN9NIS6L69+nl4ebxh3v0T22hVsFIpAlckqrHU3zAt9Mq+YzlxBeC2C3Z?=
+ =?us-ascii?q?zqOb3YNHPy/BaxZK7SwF3e18yW+qgX4vQit1rjpB2pFlYl83h/ztZU3WGT5p?=
+ =?us-ascii?q?HRDAoSSp/xSFg4+AV6p77Afikx/Z/b1XppMfr8jjiX5dM3Ceht5RGxdtMXZL?=
+ =?us-ascii?q?2LEx77F+UACsSuIfBskF+sOFZMGeFR8Kkvd/i0euGL1K/jaONhnzahlkxc8o?=
+ =?us-ascii?q?1n306NsSphHL3mxZEAlsqE0xOHWjG0t1KotsT6iMgQfj0JNnauwijjQohKb+?=
+ =?us-ascii?q?t9ephdWjTmGNG+2tgr382lYHVf7lP2QgpcgMI=3D?=
+X-IPAS-Result: =?us-ascii?q?A2APAAAapQZc/wHyM5BkGQEBAQEBAQEBAQEBAQcBAQEBA?=
+ =?us-ascii?q?QGBVAEBAQEBAQsBgVopgWgng3mUcwEBAQEBAQaBCC2JH5AkOAGEQAKDGyI3B?=
+ =?us-ascii?q?g0BAwEBAQEBAQIBbCiCNiQBgmIBBSMVNAoDEAsOCgICJgICVwYBDAYCAQGCX?=
+ =?us-ascii?q?j+BdQ2lBoEvhUCEcIELixMXeIEHgTiCa4gFglcCiyCEWDeQGgmROwYYgVuIN?=
+ =?us-ascii?q?ocViQaRTSKBVSsIAhgIIQ+DJ4InF447IQMwgQUBAYpiAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 04 Dec 2018 16:03:09 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wB4G34Cr032116;
+        Tue, 4 Dec 2018 11:03:04 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+References: <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+ <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
+ <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
+ <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+ <20181204151549.GA21509@redhat.com> <20181204152248.GB21509@redhat.com>
+ <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
+ <20181204154243.GA16818@redhat.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
+Date:   Tue, 4 Dec 2018 11:05:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181204154243.GA16818@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 05:43:11PM -0800, Nadav Amit wrote:
-> > On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> > 
-> > Since vfree will lazily flush the TLB, but not lazily free the underlying pages,
-> > it often leaves stale TLB entries to freed pages that could get re-used. This is
-> > undesirable for cases where the memory being freed has special permissions such
-> > as executable.
+On 12/4/18 10:42 AM, Vivek Goyal wrote:
+> On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
+>> On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>>
+>>> Having said that, this still create little anomaly when mknod to client
+>>> is not allowed on context label. So a device file, which is on lower
+>>> and client can not open it for read/write on host, it can now be opened
+>>> for read/write because mounter will allow access. So why it is different
+>>> that regular copy up. Well, in regular copy up, we created a copy of
+>>> the original object and allowed writing to that object (cp --preserve=all)
+>>> model. But in case of device file, writes will go to same original
+>>> object. (And not a separate copy).
+>>
+>> That's true.
+>>
+>> In that sense copy up of special file should result in upper having
+>> the same label as of lower, right?
 > 
-> So I am trying to finish my patch-set for preventing transient W+X mappings
-> from taking space, by handling kprobes & ftrace that I missed (thanks again for
-> pointing it out).
+> I guess that might be reasonable (if this behavior is a concern). So even
+> after copy up, client will not be able to read/write a device if it was
+> not allowed on lower.
 > 
-> But all of the sudden, I don’t understand why we have the problem that this
-> (your) patch-set deals with at all. We already change the mappings to make
-> the memory writable before freeing the memory, so why can’t we make it
-> non-executable at the same time? Actually, why do we make the module memory,
-> including its data executable before freeing it???
+> Stephen, what do you think about retaining label of lower for device
+> files during copy up. What about socket/fifo.
 
-Yeah, this is really confusing, but I have a suspicion it's a combination
-of the various different configurations and hysterical raisins. We can't
-rely on module_alloc() allocating from the vmalloc area (see nios2) nor
-can we rely on disable_ro_nx() being available at build time.
+We don't check client task access to the upper inode label, only to the 
+overlay, right?  So the client is still free to access the device 
+through the overlay even if we preserve the lower inode label on the 
+upper inode?  What do we gain?
 
-If we *could* rely on module allocations always using vmalloc(), then
-we could pass in Rick's new flag and drop disable_ro_nx() altogether
-afaict -- who cares about the memory attributes of a mapping that's about
-to disappear anyway?
 
-Is it just nios2 that does something different?
 
-Will
