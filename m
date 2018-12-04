@@ -2,85 +2,114 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5126CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B133BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B062087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B062087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 7B0942087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:22:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0942087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbeLDBUj (ORCPT
+        id S1726062AbeLDBWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:20:39 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:59488 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbeLDBUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:20:39 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id D28E866BEF7BEAAB5153;
-        Tue,  4 Dec 2018 09:20:35 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB41K9I2093766;
-        Tue, 4 Dec 2018 09:20:09 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120409202049-14546822 ;
-          Tue, 4 Dec 2018 09:20:20 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     tglx@linutronix.de, pbonzini@redhat.com, rkrcmar@redhat.com
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH V3]  kvm:x86 :remove unnecessary recalculate_apic_map
-Date:   Tue, 4 Dec 2018 17:42:50 +0800
-Message-Id: <1543916570-55054-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-04 09:20:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-04 09:20:05,
-        Serialize complete at 2018-12-04 09:20:05
-X-MAIL: mse01.zte.com.cn wB41K9I2093766
+        Mon, 3 Dec 2018 20:22:54 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50896 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725943AbeLDBWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:22:53 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E4CCB52A844CC;
+        Tue,  4 Dec 2018 09:22:50 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
+ 09:22:44 +0800
+CC:     <wangbinghui@hisilicon.com>, USB <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>, Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH v1 11/12] usb: gadget: Add configfs attribuite for
+ controling match_existing_only
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-12-chenyu56@huawei.com>
+ <CAHp75VcUQN_PuXDVkeR+jagTsUaOWLtytVt+f_eR+x2iw9B5-A@mail.gmail.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <166134c3-22c5-44ce-56af-073bcaa530ec@huawei.com>
+Date:   Tue, 4 Dec 2018 09:22:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VcUQN_PuXDVkeR+jagTsUaOWLtytVt+f_eR+x2iw9B5-A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the previous code, the variable apic_sw_disabled influences
-recalculate_apic_map. But in "KVM: x86: simplify kvm_apic_map"
-(commit:3b5a5ffa928a3f875b0d5dd284eeb7c322e1688a),
-the access to apic_sw_disabled in recalculate_apic_map has been
-deleted.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- arch/x86/kvm/lapic.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index fbb0e6d..a11fbf9 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -246,10 +246,9 @@ static inline void apic_set_spiv(struct kvm_lapic *apic, u32 val)
- 
- 	if (enabled != apic->sw_enabled) {
- 		apic->sw_enabled = enabled;
--		if (enabled) {
-+		if (enabled)
- 			static_key_slow_dec_deferred(&apic_sw_disabled);
--			recalculate_apic_map(apic->vcpu->kvm);
--		} else
-+		else
- 			static_key_slow_inc(&apic_sw_disabled.key);
- 	}
- }
--- 
-1.8.3.1
+On 2018/12/3 17:25, Andy Shevchenko wrote:
+> On Mon, Dec 3, 2018 at 5:47 AM Yu Chen <chenyu56@huawei.com> wrote:
+>>
+>> Currently the "match_existing_only" of usb_gadget_driver in configfs is
+>> set to one which is not flexible.
+>> Dwc3 udc will be removed when usb core switch to host mode. This causes
+>> failure of writing name of dwc3 udc to configfs's UDC attribuite.
+>> To fix this we need to add a way to change the config of
+>> "match_existing_only".
+>> This patch adds a configfs attribuite for controling match_existing_only
+>> which allow user to config "match_existing_only".
+> 
+>> +static ssize_t gadget_driver_match_existing_only_store(struct config_item *item,
+>> +               const char *page, size_t len)
+>> +{
+> 
+>> +       struct usb_gadget_driver *gadget_driver =
+>> +               &(to_gadget_info(item)->composite.gadget_driver);
+> 
+> It would be easier for reader to see two lines with two variables
+> instead of this.
+
+OK.
+> 
+>> +       bool match_existing_only;
+>> +       int ret;
+>> +
+>> +       ret = kstrtobool(page, &match_existing_only);
+>> +       if (ret)
+>> +               return ret;
+>> +
+> 
+>> +       if (match_existing_only)
+>> +               gadget_driver->match_existing_only = 1;
+>> +       else
+>> +               gadget_driver->match_existing_only = 0;
+> 
+>           gadget_driver->match_existing_only = match_existing_only;
+> But the question rather why is it not direct parameter to kstrtobool?
+> 
+I wrote the code in this way to avoid type conversion.
+
+>> +
+>> +       return len;
+>> +}
+> 
+>> +       struct usb_gadget_driver *gadget_driver =
+>> +               &(to_gadget_info(item)->composite.gadget_driver);
+> 
+> Make it neat.
+> 
+OK.
 
