@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B37EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7321CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0ADC2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A8FC2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G296CnWR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0ADC2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ytHwPkWE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8FC2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbeLDK7k (ORCPT
+        id S1727184AbeLDK7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44556 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbeLDK7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:37 -0500
+        id S1726792AbeLDK7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B2E4214C1;
-        Tue,  4 Dec 2018 10:59:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17542087F;
+        Tue,  4 Dec 2018 10:59:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921176;
-        bh=x3xLj0rsKb2HilwRSrBnRXfgW+hi75NAsU3plwYl3jU=;
+        s=default; t=1543921179;
+        bh=rvDwJBwKE4jaHTdbpyWFnbkKBHR+ghP/r6U2bHMk2kQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G296CnWRNDIOjBKHzaGGuboGvXmC/YqwYgIfJGgXEkqTJR3jBNKXtb771JTxiEuvE
-         viPyVpF4rZFvadsrWC3+YLw+axpUcH8kefJ4dz5uIzAeNxuVrdTmETNr4OzqlaLQHP
-         sKcisyGqX9nYZPU/zCiDofUlO/MSKl5qxMVB1ePE=
+        b=ytHwPkWEjI90BRsTHvBzPrN2UYBaK+NvwxhCA+088cLKYtKmV3b4mKT6nKLJCPf44
+         yyJ5mQCV1FeON3pO4uffgJ6xCsmH+avoCCITm0BKL/pT8c4s7y2f4+nQYJvSy72Zxz
+         OS+QlFaH7Oy5BGsoBsu3kLp4RQ27PwWfMhVwfWuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, stable@kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        stable@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 109/139] arm64: function_graph: Simplify with function_graph_enter()
-Date:   Tue,  4 Dec 2018 11:49:50 +0100
-Message-Id: <20181204103655.059819164@linuxfoundation.org>
+Subject: [PATCH 4.19 110/139] MIPS: function_graph: Simplify with function_graph_enter()
+Date:   Tue,  4 Dec 2018 11:49:51 +0100
+Message-Id: <20181204103655.111327626@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -68,61 +68,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 01e0ab2c4ff12358f15a856fd1a7bbea0670972b upstream.
+commit 8712b27c5723c26400a2b350faf1d6d9fd7ffaad upstream.
 
 The function_graph_enter() function does the work of calling the function
 graph hook function and the management of the shadow stack, simplifying the
 work done in the architecture dependent prepare_ftrace_return().
 
-Have arm64 use the new code, and remove the shadow stack management as well as
+Have MIPS use the new code, and remove the shadow stack management as well as
 having to set up the trace structure.
 
 This is needed to prepare for a fix of a design bug on how the curr_ret_stack
 is used.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
 Cc: stable@kernel.org
 Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Acked-by: Will Deacon <will.deacon@arm.com>
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/ftrace.c |   15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ arch/mips/kernel/ftrace.c |   14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
---- a/arch/arm64/kernel/ftrace.c
-+++ b/arch/arm64/kernel/ftrace.c
-@@ -216,8 +216,6 @@ void prepare_ftrace_return(unsigned long
+--- a/arch/mips/kernel/ftrace.c
++++ b/arch/mips/kernel/ftrace.c
+@@ -322,7 +322,6 @@ void prepare_ftrace_return(unsigned long
+ 			   unsigned long fp)
  {
- 	unsigned long return_hooker = (unsigned long)&return_to_handler;
- 	unsigned long old;
+ 	unsigned long old_parent_ra;
 -	struct ftrace_graph_ent trace;
--	int err;
+ 	unsigned long return_hooker = (unsigned long)
+ 	    &return_to_handler;
+ 	int faulted, insns;
+@@ -369,12 +368,6 @@ void prepare_ftrace_return(unsigned long
+ 	if (unlikely(faulted))
+ 		goto out;
  
- 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
- 		return;
-@@ -229,18 +227,7 @@ void prepare_ftrace_return(unsigned long
+-	if (ftrace_push_return_trace(old_parent_ra, self_ra, &trace.depth, fp,
+-				     NULL) == -EBUSY) {
+-		*parent_ra_addr = old_parent_ra;
+-		return;
+-	}
+-
+ 	/*
+ 	 * Get the recorded ip of the current mcount calling site in the
+ 	 * __mcount_loc section, which will be used to filter the function
+@@ -382,13 +375,10 @@ void prepare_ftrace_return(unsigned long
  	 */
- 	old = *parent;
  
--	trace.func = self_addr;
--	trace.depth = current->curr_ret_stack + 1;
--
+ 	insns = core_kernel_text(self_ra) ? 2 : MCOUNT_OFFSET_INSNS + 1;
+-	trace.func = self_ra - (MCOUNT_INSN_SIZE * insns);
++	self_ra -= (MCOUNT_INSN_SIZE * insns);
+ 
 -	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace))
--		return;
--
--	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
--				       frame_pointer, NULL);
--	if (err == -EBUSY)
--		return;
--	else
-+	if (!function_graph_enter(old, self_addr, frame_pointer, NULL))
- 		*parent = return_hooker;
- }
- 
+-	if (!ftrace_graph_entry(&trace)) {
+-		current->curr_ret_stack--;
++	if (function_graph_enter(old_parent_ra, self_ra, fp, NULL))
+ 		*parent_ra_addr = old_parent_ra;
+-	}
+ 	return;
+ out:
+ 	ftrace_graph_stop();
 
 
