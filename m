@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88748C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A76CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C6B20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:30:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300F82087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="nn4MFFor"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C6B20850
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="XmqQGwMe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300F82087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeLDAax (ORCPT
+        id S1726440AbeLDAbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:30:53 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:33625 "EHLO
+        Mon, 3 Dec 2018 19:31:07 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:57267 "EHLO
         com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeLDA3U (ORCPT
+        with ESMTP id S1726159AbeLDA3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:29:20 -0500
+        Mon, 3 Dec 2018 19:29:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=n8MmIcs1KEYPH9/B8fBr/+CoqQiji97c5pPCLjk5Qu0=; b=nn4MFFormY8N
-        LjcVViY1NmWX5ujOJDCr6WszRFQygDJ/iBR7gbnbcYDFDC+Dc9svOxMC0NS2s5S10Su0Nl3SycmEr
-        73uUhAJWQWpHSaUq9pQDaOt0qL7cTE1v2D7v7cxb58nX9tJSSfd3rkGplBPeYXL0z/cAi1ssGm9gN
-        c1isYQ4N1XVTaQjr7YA65T7cbL+qR3aZXreb0JzOG5uo13u3Fn3l48HWetEw0y/y9d4y8t+DovFtq
-        BAwAPrOgtPzDZzeBDOSaRh0RIhDwTLOowaqeWHOWlzgQIt6K6JDoZxTBAR9/n+bOS6fwalG0e6J+0
-        EMHVLsYFwdGd0iqfR4X9qA==;
+        content-type; bh=zxzgyvBWSfd/ej8OCxb49I5p534IvJcUnFo5ZyXxnDo=; b=XmqQGwMeTH7k
+        bfErBGcAvurYEzHduumAYINxLAPaYMLbon4UreN+8ahqt8DT011npKSo+2UiVAvEWczGZhbDeLj4e
+        lscUHnP4lVUGiD84U4N3eOvrv8M6httGvXj8BmwIolyQ4Scf+TYuKGd477++jj7A85BiFWjPo6ks4
+        jF6jyjfWpejVd2CZjJC5jXeyjMaVNjihCOrHkT8MaAWYdXT9kM99NtEM3mEz4WuTcGtzlwUZcMsa5
+        UQDOhtTKhCh+202GcpACVtzpsuMiAukQoKwrm5rWKjyX95mzns3rqCjcbMJdc8H9h1PA9y+oCqLDj
+        aQNvYVBz4ps9xGM1JX/5XA==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.155])
         by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gTyaN-00087E-7p; Tue, 04 Dec 2018 01:29:11 +0100
+        id 1gTyaF-00084F-3U; Tue, 04 Dec 2018 01:29:04 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 73F71C05CD;
-        Tue,  4 Dec 2018 01:29:08 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 9F7FAC06CF;
+        Tue,  4 Dec 2018 01:28:45 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v2 11/24] locking/lockdep: Remove a superfluous INIT_LIST_HEAD() statement
-Date:   Mon,  3 Dec 2018 16:28:20 -0800
-Message-Id: <20181204002833.55452-12-bvanassche@acm.org>
+Subject: [PATCH v2 01/24] lockdep tests: Display compiler warning and error messages
+Date:   Mon,  3 Dec 2018 16:28:10 -0800
+Message-Id: <20181204002833.55452-2-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181204002833.55452-1-bvanassche@acm.org>
 References: <20181204002833.55452-1-bvanassche@acm.org>
@@ -63,55 +62,82 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.15)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00787528820996)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5lqap14/eYCJGhNwceGMSZB602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: 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
- 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
+ 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
- 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
+ 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
+ QtXP9s02LA==
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initializing a list entry just before it is passed to list_add_tail_rcu()
-is not necessary because list_add_tail_rcu() overwrites the next and prev
-pointers anyway. Hence remove the INIT_LIST_HEAD() statement.
+If compilation of liblockdep fails, display an error message and exit
+immediately. Display compiler warning and error messages that are
+generated while building a test. Only run a test if compilation
+succeeded.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/lib/lockdep/run_tests.sh | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 81388d028ac7..346b5a1fd062 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -792,7 +792,6 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
- 	class->key = key;
- 	class->name = lock->name;
- 	class->subclass = subclass;
--	INIT_LIST_HEAD(&class->lock_entry);
- 	INIT_LIST_HEAD(&class->locks_before);
- 	INIT_LIST_HEAD(&class->locks_after);
- 	class->name_version = count_matching_names(class);
+diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
+index 2e570a188f16..9f31f84e7fac 100755
+--- a/tools/lib/lockdep/run_tests.sh
++++ b/tools/lib/lockdep/run_tests.sh
+@@ -1,13 +1,17 @@
+ #! /bin/bash
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-make &> /dev/null
++if ! make >/dev/null; then
++    echo "Building liblockdep failed."
++    echo "FAILED!"
++    exit 1
++fi
+ 
+ for i in `ls tests/*.c`; do
+ 	testname=$(basename "$i" .c)
+-	gcc -o tests/$testname -pthread $i liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &> /dev/null
+ 	echo -ne "$testname... "
+-	if [ $(timeout 1 ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
++	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
++		[ "$(timeout 1 "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
+ 		echo "PASSED!"
+ 	else
+ 		echo "FAILED!"
+@@ -19,9 +23,9 @@ done
+ 
+ for i in `ls tests/*.c`; do
+ 	testname=$(basename "$i" .c)
+-	gcc -o tests/$testname -pthread -Iinclude $i &> /dev/null
+ 	echo -ne "(PRELOAD) $testname... "
+-	if [ $(timeout 1 ./lockdep ./tests/$testname 2>&1 | wc -l) -gt 0 ]; then
++	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
++		[ "$(timeout 1 ./lockdep "./tests/$testname" 2>&1 | wc -l)" -gt 0 ]; then
+ 		echo "PASSED!"
+ 	else
+ 		echo "FAILED!"
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
