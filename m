@@ -2,159 +2,254 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89596C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A179C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437DA2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:43:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D41A62082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="C/4ECPKF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437DA2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Avc9zmM6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D41A62082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbeLDJnq (ORCPT
+        id S1726027AbeLDJoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:43:46 -0500
-Received: from mail-eopbgr130077.outbound.protection.outlook.com ([40.107.13.77]:63808
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725613AbeLDJnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:43:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tJcPcDqwDUkGyRcV3wwFNmTmbr3/9hRSSujg0R+PCjY=;
- b=C/4ECPKFed9JLUiMzRGba3/B2XzP76ywFPHzsebIjwF4EMZQwkuPWnrLpWoPP6BPCI3ql55fOmOP3xGuwjYf1bwzXkviRhv1JAqm/5Bh6NIR7KB3GXPhY5BhnlhT6t1DGEYnBzfnHfUkurOaa9+Wq0a0lnWRTQIr0cqpYwsDuNw=
-Received: from DB6PR0501MB2694.eurprd05.prod.outlook.com (10.172.225.139) by
- DB6PR0501MB2599.eurprd05.prod.outlook.com (10.168.74.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Tue, 4 Dec 2018 09:42:59 +0000
-Received: from DB6PR0501MB2694.eurprd05.prod.outlook.com
- ([fe80::495c:1921:a6d4:ec83]) by DB6PR0501MB2694.eurprd05.prod.outlook.com
- ([fe80::495c:1921:a6d4:ec83%3]) with mapi id 15.20.1382.023; Tue, 4 Dec 2018
- 09:42:59 +0000
-From:   Leon Romanovsky <leonro@mellanox.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Guy Levi(SW)" <guyle@mellanox.com>,
-        Majd Dibbiny <majd@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHUi2r62QmJLYPrKUempC6bhoGF3qVt0U4AgACDVAA=
-Date:   Tue, 4 Dec 2018 09:42:59 +0000
-Message-ID: <20181204094256.GX6462@mtr-leonro.mtl.com>
-References: <20181204114731.48b18bfc@canb.auug.org.au>
- <20181204015247.GR12288@mellanox.com>
-In-Reply-To: <20181204015247.GR12288@mellanox.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P194CA0057.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:209:84::34) To DB6PR0501MB2694.eurprd05.prod.outlook.com
- (2603:10a6:4:81::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [77.138.135.184]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0501MB2599;6:dUUiL6udAsFDhMG6DX37DKTB3vxlP6JC46FicRL6FAMEXx0tYg3/pS7dUq5kGgq8Ylrt/4Qeb7Xv9W3v+antsd0PmLbszdYXgcehrfAVDFN4nofovAQ3ivfLyDctwA3PT23Cav2iYgE/N2pBoQ6QAbkudkJ7kVEz8cYAuFazEl4Qjj/6bgcoQUd9cfi6O3FclwF3jBP47YY7KFw0DY1+YDtfUaakHaTIoX6Gnup0xCP7uvhMi9rqo54XSuEfiXvtWV4+preufqVKeDk8ouW2JfkrEE/kH+rt8nZzEjDoP6mDboKBpzLBXFCnsKGkdafum5Lhr9czl6g09Jfz8UKW3/ExkZy5A2GZdl2c1d31PQqcI6iyAOddrN+l6XJAy9xmkjxbi+JSvVfo55ytRwQDFcY6oAGw52LJtBesDCYEy+smIYt3j+qViFJKTOnSG4tSq9lAvNw84kRjI7Y9m5hZuQ==;5:uHCnI5lkaoTwwL+o9336j66a6imUMnEYm7hZGCXgedI2LJpShzkz0dBaxAef1i480SQjSyIETDLSNzDR+gWEJf978AyNvbsCpv878AQfvF7+wr+BfPt+wqqrPUx3fw+701oDMDSDt54u5q5WoCnik/nAhEdHv+W1L/jWYz1yR7s=;7:7PzRH5xpGFGtvpyxzhGL6u/wozbGHkj2AuxK5Qeoj/LSHZxre8zccnrEwcQbcJHBDN2Ar4bVgoYvSC9ZE9TLyH+SOq9+7RK1dSEZsGoZfVK4As5h+zdpXDEjpsBbu/rWlCpNO1bByzBeuUi4UBbFpA==
-x-ms-office365-filtering-correlation-id: 05165952-9d39-48e3-19a5-08d659cce050
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(49563074)(7193020);SRVR:DB6PR0501MB2599;
-x-ms-traffictypediagnostic: DB6PR0501MB2599:
-x-microsoft-antispam-prvs: <DB6PR0501MB259938647AD5F2E841CAB68AB0AF0@DB6PR0501MB2599.eurprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231455)(999002)(944501493)(4983020)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB6PR0501MB2599;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0501MB2599;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(136003)(396003)(376002)(53754006)(189003)(199004)(305945005)(33656002)(81166006)(6246003)(81156014)(6636002)(97736004)(386003)(26005)(107886003)(68736007)(6506007)(102836004)(8676002)(4326008)(478600001)(229853002)(25786009)(14454004)(71190400001)(8936002)(7736002)(86362001)(316002)(54906003)(106356001)(71200400001)(186003)(105586002)(5660300001)(2906002)(476003)(6436002)(6486002)(99286004)(99936001)(9686003)(6512007)(14444005)(53936002)(446003)(256004)(486006)(66066001)(1076002)(6116002)(33896004)(3846002)(6862004)(11346002)(52116002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2599;H:DB6PR0501MB2694.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: IfV4o62KC1UZHMfmkboN4RftygqfYkgK1x/ZqTQTeSD9LEVNFsS0hEub5gJSJhpPhfurHT6yBD5SG2bSm/kj2WDk5pSHuA+E5UN++vjNcSNw06ylT+zBSnsTYdQ3GsoY3lIpi9ThumpNt1eI8Us8YnHCsadks1R0wd2bhmxrou1DTsO6WYUmpOYKMnXi3HVdHRmVD7K3N0ucCndmshYFtaUIwm9Xs8/jYMud76OpmpSOAPV4TlVmIKwZFKA4OOjn8mP5oXLK1z4sklgOrALDcDe3lZScDo1982qILpYxgcEhtfeCCjtiVBkpQQiK1Tq7LRtM5GoGKKHq8b4zBaX8eluWicu1sb4RrrdE4co614M=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sBcizk6cgRZY6rnJ"
+        Tue, 4 Dec 2018 04:44:54 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49162 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDJox (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 04:44:53 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181204094451euoutp028a046a955d108d0ec681775e1561dd83~tGA0E5WcP1430614306euoutp02U
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 09:44:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181204094451euoutp028a046a955d108d0ec681775e1561dd83~tGA0E5WcP1430614306euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543916691;
+        bh=f+WU9Gp86xU9qgTi6jNl25QiCGGFXV/6k5uQqb9i5No=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Avc9zmM6GBHcnjpNtUOITggKOu3Fabq2TadSCFmL0ZLrT5zPtFQCnp+RyjA7CpU9L
+         cZSGShd0kx+cQQphHsS0d12yUtgi9o87ybPQSbCBxoZolYlRtwrvA7eucMTgDRLIe4
+         qCKgcZrKUbAm+alLMCnPdrOQZdbjjrSqtjVszIJ8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181204094449eucas1p1e079a735091b9c12c7ea5f1f40ddddb9~tGAynlO_o2232222322eucas1p1B;
+        Tue,  4 Dec 2018 09:44:49 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 61.03.04806.19C460C5; Tue,  4
+        Dec 2018 09:44:49 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181204094448eucas1p2c7e2367dad1909b112b42df4de88fac5~tGAxyHJFc2425624256eucas1p2F;
+        Tue,  4 Dec 2018 09:44:48 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181204094448eusmtrp105a67b802cb088e17d5b94b203168f22~tGAxiTLj41089810898eusmtrp1h;
+        Tue,  4 Dec 2018 09:44:48 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-32-5c064c91ddfe
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2B.1C.04284.09C460C5; Tue,  4
+        Dec 2018 09:44:48 +0000 (GMT)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181204094447eusmtip19cc51854e23421e50f2e2aa7f08d4fbe~tGAwkt-iM2933329333eusmtip1j;
+        Tue,  4 Dec 2018 09:44:47 +0000 (GMT)
+Subject: Re: [PATCH v2 3/5] devfreq: add devfreq_suspend/resume() functions
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <bb7c2fd1-69e2-fdc6-ecb9-83ee22c2601e@partner.samsung.com>
+Date:   Tue, 4 Dec 2018 10:44:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05165952-9d39-48e3-19a5-08d659cce050
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 09:42:59.6134
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2599
+In-Reply-To: <5C061C74.808@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SeVCMYRzHPfuepc3Tin5yzew4yoxo+OMZjMEYXsOMzDCz2MHSOznalX0r
+        woxFlxy5ZR3RhmaLtLatiUTXypbkiojI2eHKPU1pezP67/P9Pd/vPN/fMw9PqU6z/vwaQ6Ro
+        NOjC1awn7Sj/fWfsgXmsdvzzvKHkZm4gyUnJZkhezg+G1H57x5DU0jsM2WnJZknlbj1Jbmym
+        SHX1ZY5U7WjhiPlwoYLYGh8x5H7BSZa07S1FJKX6uoJcLK3nyLnaGgV5uj2DJfW3y7ryrnsM
+        iSss5Uh85meGtNx9Tk/zExxXHYyQdToLCSdMNbSwP/krEizXPigEm3UXKxSdyuKEK+nbhI5y
+        TrA/TKCFfXYrEjIyf3JCm21YiHKJ55RQMXxNtGgcN3WF5+qEX7u4iPbhm5wJrAl9HZSEPHjA
+        E+FTUrsiCXnyKpyB4EGnk5bFNwSVJXZOFm0Iam+UKf5FYt8f6YlcQHD2WiUli1YEX0qaOLer
+        P54LL2MrkfvAF7sQFBUVs25B4TgKOj7buwTPszgI8q0b3AElngVxmc3dYRqPAEdZMuvmAVgD
+        iS8yWdnjAxXHX9Nu9sCj4XBcAeVmCvtB3etUhczDYWfuie5GgJ/x8Ke1k5J7z4SCcisjc39o
+        cto5mYeA69AeWmYJqhKtrMxbIaEiv8czGUqcNYy7M4UDIbtgnDyeDkm5pu4xYG943OojV/CG
+        g45jlDxWQmK8SnYHgH3P3Z5HHAgXso5y+5Ha3Gsxc69lzL2WMf+/9wyirchPjJL0YaI0wSBu
+        DJJ0einKEBa0ar3ehrp+ravD+T0fXW9fWYwwj9ReypQZjFbF6KKlGH0xAp5S+yqfjWK1KmWo
+        LmazaFy/3BgVLkrFaDBPq/2UW/o0LFXhMF2kuE4UI0Tjv1MF7+FvQjMOOdLn+IZ4f9ycaqvr
+        LGyMcnktgwhfTYvpVaRl03kTHnDr3qczrxZpBjYHlCfmVY0c/bau3xDLGzH4kmXiwktpH7Ua
+        e/3t2ertW3+tLXr5RBvvH6O5P31qaN9ow8HFV/mL+V5oSu6RlvkNSw4MjbVV/GgInryg71Pb
+        pPHzmDd708xNalparQseQxkl3V+QAdKVsQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec/ZuagNTtP0zQ9Z6yJFzebUvZaOCspD9iGoqMyooQe1Nmc7
+        W2UFWbaGRm2Ggc3SyiRRS91M7aKVrEytlloK6UxRKNMudLNSRpsr2Lcf/J/fc4GHxkVWIpTO
+        yNRx2kylSkz6Czpdbc4V5k1k8srp2gXo0e2lqK6ohkCNdT8J1Pf9HYFK7S8IlFtWQ6JnZ9TI
+        NDKOI4ejlkLPT05QyFLYjCHrSC+Beu5eItG3s3aAihwtGLppd1KovK8LQ/0nKkjk7Hjs9ju7
+        CWRotlPodNUXAk28HBSsCWEb7jUQbHVJNWCLc7oErNn0FbBl98cw1lqZR7IPLldTrO36cdb1
+        hGLrXxsF7Ln6SsBWVE1S7DfrvM3CJEmcVqPXcfPTNbwuXrxLiiIl0lgkiYyKlUhl8t2rIqPF
+        EYq4VE6VcZDTRij2StKNv/KorOmww21GMgd8nZsP/GjIRMFT7y9g+cCfFjHlAD4dLca9QTA8
+        39JIeTkQTvfmk96icQCnnJ8xTxDIJMLhU8+AJwhiOgEsdHTMtMIZAw7HPl4DXuUPgPcKatw+
+        TZOMBDZVHvDYQmYDNFSNz4wQMItgw2MT6eE5zA74fOwW8NbMhu0XRwUe9mPCYaHh7sx6OBMD
+        S2zD/zgEvhktxbwcBnNvF+NmILL46BYfxeKjWHyUK0BQCYI4Pa9OU/NSCa9U8/rMNEmKRm0F
+        7n9pePLb1gS667a0AoYG4lnConVEsohQHuSz1a0A0rg4SDiwhEwWCVOV2Uc4rWaPVq/i+FYQ
+        7T6uAA+dk6Jxf1+mbo80WipHsVK5TC6LQeIQoWNldpKISVPquP0cl8Vp/3sY7ReaA+hgm1nx
+        dvlCTQ+2+fCPq4OHEM6sjz8rvPFBvU3/9IzJPywhKWG9eHI4Zsm+irjEfnlBW79/2bmByeqA
+        zsWtyavvuHbmWcuPBhiHp0H31hXqsWOqDblreZcpwzRg2rhwPin0G9p+nykL5x++OmIMmdrd
+        bkto1g3Z60/Lgj/hio9iAZ+ulC7DtbzyL+dOnXVFAwAA
+X-CMS-MailID: 20181204094448eucas1p2c7e2367dad1909b112b42df4de88fac5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181203143132eucas1p128c029a7c7461e1127924a08e4a71811
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181203143132eucas1p128c029a7c7461e1127924a08e4a71811
+References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181203143132eucas1p128c029a7c7461e1127924a08e4a71811@eucas1p1.samsung.com>
+        <1543847475-7600-4-git-send-email-l.luba@partner.samsung.com>
+        <5C061C74.808@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---sBcizk6cgRZY6rnJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Chanwoo,
 
-On Tue, Dec 04, 2018 at 01:52:54AM +0000, Jason Gunthorpe wrote:
-> On Tue, Dec 04, 2018 at 11:47:31AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the rdma tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > ERROR: "mlx5_get_send_wqe" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
-> >
-> > Caused by commit
-> >
-> >   34f4c9554d8b ("IB/mlx5: Use fragmented QP's buffer for in-kernel users")
-> >
-> > mlx5_get_send_wqe() is still used in drivers/infiniband/hw/mlx5/cq.c
-> > and declared in drivers/infiniband/hw/mlx5/mlx5_ib.h ...
-> >
-> > I have used the version of the rdma tree from next-20181203 for today.
->
-> Huh. So apparently every compiler that tested this patch (0-day, mine,
-> the submitters) optimized this call away because is_atomic_response()
-> always returns 0: meaning mlx5_get_atomic_laddr is never callable and
-> can be deleted entirely, including the call to mlx5_get_send_wqe.
->
-> Not sure what compiler setup will hit this, but it is clearly wrong
-> code..
->
-> Guy/Leon, please send a fixup.. Maybe just delete all this
-> handle_atomics stuff?
+On 12/4/18 7:19 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 2018년 12월 03일 23:31, Lukasz Luba wrote:
+>> This patch adds implementation for global suspend/resume for
+>> devfreq framework. System suspend will next use these functions.
+>>
+>> The patch is based on earlier work by Tobias Jakobi.
+> 
+> Please remove it from each patch description.
+OK
+> 
+>>
+>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/devfreq/devfreq.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/devfreq.h   |  6 ++++++
+>>   2 files changed, 48 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index 36bed24..7d60423 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -935,6 +935,48 @@ int devfreq_resume_device(struct devfreq *devfreq)
+>>   EXPORT_SYMBOL(devfreq_resume_device);
+>>   
+>>   /**
+>> + * devfreq_suspend() - Suspend devfreq governors and devices
+>> + *
+>> + * Called during system wide Suspend/Hibernate cycles for suspending governors
+>> + * and devices preserving the state for resume. On some platforms the devfreq
+>> + * device must have precise state (frequency) after resume in order to provide
+>> + * fully operating setup.
+>> + */
+>> +void devfreq_suspend(void)
+>> +{
+>> +	struct devfreq *devfreq;
+>> +	int ret;
+>> +
+>> +	mutex_lock(&devfreq_list_lock);
+>> +	list_for_each_entry(devfreq, &devfreq_list, node) {
+>> +		ret = devfreq_suspend_device(devfreq);
+>> +		if (ret)
+>> +			dev_warn(&devfreq->dev, "device suspend failed\n");
+> 
+> When I checked the cpufreq_suspend(), cpufreq_suspend() prints message as 'err' level.
+> I think that dev_err is more proper than dev_warn.
+> 
+> I'm not sure what is more correct log.
+> But, 'devfreq->dev' device has the separate suspend/resume function.
+> So, I think that devfreq_suspend() should print error log containing
+> that it is error by devfreq framework.
+> 
+> "device suspend failed"
+> -> "failed to suspend devfreq device"
+OK, changed in next v3 patch set.
+> 
+>> +	}
+>> +	mutex_unlock(&devfreq_list_lock);
+>> +}
+>> +
+>> +/**
+>> + * devfreq_resume() - Resume devfreq governors and devices
+>> + *
+>> + * Called during system wide Suspend/Hibernate cycle for resuming governors and
+>> + * devices that are suspended with devfreq_suspend().
+>> + */
+>> +void devfreq_resume(void)
+>> +{
+>> +	struct devfreq *devfreq;
+>> +	int ret;
+>> +
+>> +	mutex_lock(&devfreq_list_lock);
+>> +	list_for_each_entry(devfreq, &devfreq_list, node) {
+>> +		ret = devfreq_resume_device(devfreq);
+>> +		if (ret)
+>> +			dev_warn(&devfreq->dev, "device resume failed\n");
+> 
+> ditto.
+> 
+> "device resume failed"
+> -> "failed to resume devfreq device"
+> 
+ACK
 
-I deleted it and will wait for the results of regression prior to send the patch.
-
-Thanks
-
->
-> Thanks,
-> Jason
-
---sBcizk6cgRZY6rnJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcBkwgAAoJEORje4g2clinI8MP/1z+R6a1gfOMZEFjZHPp+P04
-nM2hz+nbi4aZTdwaOayd7pjoRD+NeKC9zEy7dYG93EuUZmi7JShCr5xpl5iDcIgk
-g+yiRjL8RvzXmc1qRhwi4Bs+hezoQOZJhrBVRYwiSBpE2RzawrbpRABSDOgMagzS
-RZk2osl2t+duBXjN7ESxm1sRwpymPh174btocId5yIk7zJH5lFlxCy7jnQYLJwfE
-Rgzu7Sb97PXOtrSGQHOmtnw9TSA3GsFveluHD5qPg/atbnUzR7in7q4/WMDK0ycS
-u3qCSstWLRylBeL4rdaUo8Zn0Wm24PV3zZX8NqyP9GBPa+6LJq5Q+bLVIWkM/1J5
-L/k1pgMLoRlvplw5/GHopE2Q3tg/CaWuVRgs4US1IslKu4lZTgtqzGt33xVsolmW
-xCAaYEhV29Ck/45Fa/TAepIZnUsq+lQ/k14cUXneabuT+zytG1gEoHOxgkqHMj2D
-q6fDGMys0o9MH0tGgwVLwQD4U7It8HVRAb1KllqRMb3ivNvJ7AVB5dcQlabdEoJc
-O1rxwxo4VfEgpjZ77yf4WMiLNA53qKfUF7UI/0q64iOTwgzSjCalKThJwKqzQzgi
-Scx/TfbjzVPsOStApQAZ6dXEpAF3W9psuNwFcBs0YVOB0X9zNCd2HhuoSYDnjIZX
-RyfjrhBR5x9r/kboebJ4
-=14GD
------END PGP SIGNATURE-----
-
---sBcizk6cgRZY6rnJ--
+Regards,
+Lukasz
+> 
+>> +	}
+>> +	mutex_unlock(&devfreq_list_lock);
+>> +}
+>> +
+>> +/**
+>>    * devfreq_add_governor() - Add devfreq governor
+>>    * @governor:	the devfreq governor to be added
+>>    */
+>> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+>> index d985199..fbffa74 100644
+>> --- a/include/linux/devfreq.h
+>> +++ b/include/linux/devfreq.h
+>> @@ -205,6 +205,9 @@ extern void devm_devfreq_remove_device(struct device *dev,
+>>   extern int devfreq_suspend_device(struct devfreq *devfreq);
+>>   extern int devfreq_resume_device(struct devfreq *devfreq);
+>>   
+>> +extern void devfreq_suspend(void);
+>> +extern void devfreq_resume(void);
+>> +
+>>   /**
+>>    * update_devfreq() - Reevaluate the device and configure frequency
+>>    * @devfreq:	the devfreq device
+>> @@ -331,6 +334,9 @@ static inline int devfreq_resume_device(struct devfreq *devfreq)
+>>   	return 0;
+>>   }
+>>   
+>> +static inline void devfreq_suspend(void) {}
+>> +static inline void devfreq_resume(void) {}
+>> +
+>>   static inline struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+>>   					   unsigned long *freq, u32 flags)
+>>   {
+>>
+> 
