@@ -2,51 +2,55 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C372C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F12C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B96214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49DA214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2apNwvWX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B96214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxEiGhjJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49DA214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbeLDLD4 (ORCPT
+        id S1727920AbeLDLEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:03:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50526 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:04:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeLDLDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:53 -0500
+        id S1727907AbeLDLEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:04:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7634214ED;
-        Tue,  4 Dec 2018 11:03:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E82D12146D;
+        Tue,  4 Dec 2018 11:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921431;
-        bh=lsLp/FieneFBnD1MmFhzJ3ZiG3RXYBeOxR2B2O96/2Y=;
+        s=default; t=1543921439;
+        bh=nCKWaKSUIyC2UnHZJWL3ULonfPZK8KWT0gPgj/b9vHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2apNwvWXFQdyTDadaVTAIgkk8gblsXAd0w1DCIyDhJwJF6U/ojSbrlPOV7eaVy6ZK
-         6woWbxBuXj7gLD60vMp5MOO1cT8/ESc1K2y8syBwU2C/JbcllLEn/pSe4hDHErcDHB
-         8sDBkfleQC3Vl6gZ0ltZNchsZFIszEbZ0QBJLDnE=
+        b=nxEiGhjJG5zZSi+OMvVEwbrjukPdqxfT52M2q42pD3QZDA3PDblDoGltqd1w9tpky
+         mrhCD4ZS7HUt2enBhaXa13OVeBT+C6dtqkU+jNUF6qy50KTwjJAJHJMJTIcQkCfY3U
+         tci9bZtqtPoW+KY/joBNxDN6qN6Y+avN55irfiRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 033/146] btrfs: Move leaf and node validation checker to tree-checker.c
-Date:   Tue,  4 Dec 2018 11:48:39 +0100
-Message-Id: <20181204103728.194629698@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bpetkov@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 072/146] x86/bugs: Update when to check for the LS_CFG SSBD mitigation
+Date:   Tue,  4 Dec 2018 11:49:18 +0100
+Message-Id: <20181204103729.734248410@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,708 +69,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 557ea5dd003d371536f6b4e8f7c8209a2b6fd4e3 upstream.
+From: Tom Lendacky thomas.lendacky@amd.com
 
-It's no doubt the comprehensive tree block checker will become larger,
-so moving them into their own files is quite reasonable.
+commit 845d382bb15c6e7dc5026c0ff919c5b13fc7e11b upstream
 
-Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-[ wording adjustments ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If either the X86_FEATURE_AMD_SSBD or X86_FEATURE_VIRT_SSBD features are
+present, then there is no need to perform the check for the LS_CFG SSBD
+mitigation support.
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180702213553.29202.21089.stgit@tlendack-t1.amdoffice.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/Makefile       |   2 +-
- fs/btrfs/disk-io.c      | 285 +-----------------------------------
- fs/btrfs/tree-checker.c | 309 ++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/tree-checker.h |  26 ++++
- 4 files changed, 340 insertions(+), 282 deletions(-)
- create mode 100644 fs/btrfs/tree-checker.c
- create mode 100644 fs/btrfs/tree-checker.h
+ arch/x86/kernel/cpu/amd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/Makefile b/fs/btrfs/Makefile
-index f2cd9dedb037..195229df5ba0 100644
---- a/fs/btrfs/Makefile
-+++ b/fs/btrfs/Makefile
-@@ -10,7 +10,7 @@ btrfs-y += super.o ctree.o extent-tree.o print-tree.o root-tree.o dir-item.o \
- 	   export.o tree-log.o free-space-cache.o zlib.o lzo.o zstd.o \
- 	   compression.o delayed-ref.o relocation.o delayed-inode.o scrub.o \
- 	   reada.o backref.o ulist.o qgroup.o send.o dev-replace.o raid56.o \
--	   uuid-tree.o props.o hash.o free-space-tree.o
-+	   uuid-tree.o props.o hash.o free-space-tree.o tree-checker.o
- 
- btrfs-$(CONFIG_BTRFS_FS_POSIX_ACL) += acl.o
- btrfs-$(CONFIG_BTRFS_FS_CHECK_INTEGRITY) += check-integrity.o
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 53841d773a40..2df5e906db08 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -50,6 +50,7 @@
- #include "sysfs.h"
- #include "qgroup.h"
- #include "compression.h"
-+#include "tree-checker.h"
- 
- #ifdef CONFIG_X86
- #include <asm/cpufeature.h>
-@@ -544,284 +545,6 @@ static int check_tree_block_fsid(struct btrfs_fs_info *fs_info,
- 	return ret;
- }
- 
--#define CORRUPT(reason, eb, root, slot)					\
--	btrfs_crit(root->fs_info,					\
--		   "corrupt %s, %s: block=%llu, root=%llu, slot=%d",	\
--		   btrfs_header_level(eb) == 0 ? "leaf" : "node",	\
--		   reason, btrfs_header_bytenr(eb), root->objectid, slot)
--
--static int check_extent_data_item(struct btrfs_root *root,
--				  struct extent_buffer *leaf,
--				  struct btrfs_key *key, int slot)
--{
--	struct btrfs_file_extent_item *fi;
--	u32 sectorsize = root->fs_info->sectorsize;
--	u32 item_size = btrfs_item_size_nr(leaf, slot);
--
--	if (!IS_ALIGNED(key->offset, sectorsize)) {
--		CORRUPT("unaligned key offset for file extent",
--			leaf, root, slot);
--		return -EUCLEAN;
--	}
--
--	fi = btrfs_item_ptr(leaf, slot, struct btrfs_file_extent_item);
--
--	if (btrfs_file_extent_type(leaf, fi) > BTRFS_FILE_EXTENT_TYPES) {
--		CORRUPT("invalid file extent type", leaf, root, slot);
--		return -EUCLEAN;
--	}
--
--	/*
--	 * Support for new compression/encrption must introduce incompat flag,
--	 * and must be caught in open_ctree().
--	 */
--	if (btrfs_file_extent_compression(leaf, fi) > BTRFS_COMPRESS_TYPES) {
--		CORRUPT("invalid file extent compression", leaf, root, slot);
--		return -EUCLEAN;
--	}
--	if (btrfs_file_extent_encryption(leaf, fi)) {
--		CORRUPT("invalid file extent encryption", leaf, root, slot);
--		return -EUCLEAN;
--	}
--	if (btrfs_file_extent_type(leaf, fi) == BTRFS_FILE_EXTENT_INLINE) {
--		/* Inline extent must have 0 as key offset */
--		if (key->offset) {
--			CORRUPT("inline extent has non-zero key offset",
--				leaf, root, slot);
--			return -EUCLEAN;
--		}
--
--		/* Compressed inline extent has no on-disk size, skip it */
--		if (btrfs_file_extent_compression(leaf, fi) !=
--		    BTRFS_COMPRESS_NONE)
--			return 0;
--
--		/* Uncompressed inline extent size must match item size */
--		if (item_size != BTRFS_FILE_EXTENT_INLINE_DATA_START +
--		    btrfs_file_extent_ram_bytes(leaf, fi)) {
--			CORRUPT("plaintext inline extent has invalid size",
--				leaf, root, slot);
--			return -EUCLEAN;
--		}
--		return 0;
--	}
--
--	/* Regular or preallocated extent has fixed item size */
--	if (item_size != sizeof(*fi)) {
--		CORRUPT(
--		"regluar or preallocated extent data item size is invalid",
--			leaf, root, slot);
--		return -EUCLEAN;
--	}
--	if (!IS_ALIGNED(btrfs_file_extent_ram_bytes(leaf, fi), sectorsize) ||
--	    !IS_ALIGNED(btrfs_file_extent_disk_bytenr(leaf, fi), sectorsize) ||
--	    !IS_ALIGNED(btrfs_file_extent_disk_num_bytes(leaf, fi), sectorsize) ||
--	    !IS_ALIGNED(btrfs_file_extent_offset(leaf, fi), sectorsize) ||
--	    !IS_ALIGNED(btrfs_file_extent_num_bytes(leaf, fi), sectorsize)) {
--		CORRUPT(
--		"regular or preallocated extent data item has unaligned value",
--			leaf, root, slot);
--		return -EUCLEAN;
--	}
--
--	return 0;
--}
--
--static int check_csum_item(struct btrfs_root *root, struct extent_buffer *leaf,
--			   struct btrfs_key *key, int slot)
--{
--	u32 sectorsize = root->fs_info->sectorsize;
--	u32 csumsize = btrfs_super_csum_size(root->fs_info->super_copy);
--
--	if (key->objectid != BTRFS_EXTENT_CSUM_OBJECTID) {
--		CORRUPT("invalid objectid for csum item", leaf, root, slot);
--		return -EUCLEAN;
--	}
--	if (!IS_ALIGNED(key->offset, sectorsize)) {
--		CORRUPT("unaligned key offset for csum item", leaf, root, slot);
--		return -EUCLEAN;
--	}
--	if (!IS_ALIGNED(btrfs_item_size_nr(leaf, slot), csumsize)) {
--		CORRUPT("unaligned csum item size", leaf, root, slot);
--		return -EUCLEAN;
--	}
--	return 0;
--}
--
--/*
-- * Common point to switch the item-specific validation.
-- */
--static int check_leaf_item(struct btrfs_root *root,
--			   struct extent_buffer *leaf,
--			   struct btrfs_key *key, int slot)
--{
--	int ret = 0;
--
--	switch (key->type) {
--	case BTRFS_EXTENT_DATA_KEY:
--		ret = check_extent_data_item(root, leaf, key, slot);
--		break;
--	case BTRFS_EXTENT_CSUM_KEY:
--		ret = check_csum_item(root, leaf, key, slot);
--		break;
--	}
--	return ret;
--}
--
--static noinline int check_leaf(struct btrfs_root *root,
--			       struct extent_buffer *leaf)
--{
--	struct btrfs_fs_info *fs_info = root->fs_info;
--	/* No valid key type is 0, so all key should be larger than this key */
--	struct btrfs_key prev_key = {0, 0, 0};
--	struct btrfs_key key;
--	u32 nritems = btrfs_header_nritems(leaf);
--	int slot;
--
--	/*
--	 * Extent buffers from a relocation tree have a owner field that
--	 * corresponds to the subvolume tree they are based on. So just from an
--	 * extent buffer alone we can not find out what is the id of the
--	 * corresponding subvolume tree, so we can not figure out if the extent
--	 * buffer corresponds to the root of the relocation tree or not. So skip
--	 * this check for relocation trees.
--	 */
--	if (nritems == 0 && !btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_RELOC)) {
--		struct btrfs_root *check_root;
--
--		key.objectid = btrfs_header_owner(leaf);
--		key.type = BTRFS_ROOT_ITEM_KEY;
--		key.offset = (u64)-1;
--
--		check_root = btrfs_get_fs_root(fs_info, &key, false);
--		/*
--		 * The only reason we also check NULL here is that during
--		 * open_ctree() some roots has not yet been set up.
--		 */
--		if (!IS_ERR_OR_NULL(check_root)) {
--			struct extent_buffer *eb;
--
--			eb = btrfs_root_node(check_root);
--			/* if leaf is the root, then it's fine */
--			if (leaf != eb) {
--				CORRUPT("non-root leaf's nritems is 0",
--					leaf, check_root, 0);
--				free_extent_buffer(eb);
--				return -EUCLEAN;
--			}
--			free_extent_buffer(eb);
--		}
--		return 0;
--	}
--
--	if (nritems == 0)
--		return 0;
--
--	/*
--	 * Check the following things to make sure this is a good leaf, and
--	 * leaf users won't need to bother with similar sanity checks:
--	 *
--	 * 1) key order
--	 * 2) item offset and size
--	 *    No overlap, no hole, all inside the leaf.
--	 * 3) item content
--	 *    If possible, do comprehensive sanity check.
--	 *    NOTE: All checks must only rely on the item data itself.
--	 */
--	for (slot = 0; slot < nritems; slot++) {
--		u32 item_end_expected;
--		int ret;
--
--		btrfs_item_key_to_cpu(leaf, &key, slot);
--
--		/* Make sure the keys are in the right order */
--		if (btrfs_comp_cpu_keys(&prev_key, &key) >= 0) {
--			CORRUPT("bad key order", leaf, root, slot);
--			return -EUCLEAN;
--		}
--
--		/*
--		 * Make sure the offset and ends are right, remember that the
--		 * item data starts at the end of the leaf and grows towards the
--		 * front.
--		 */
--		if (slot == 0)
--			item_end_expected = BTRFS_LEAF_DATA_SIZE(fs_info);
--		else
--			item_end_expected = btrfs_item_offset_nr(leaf,
--								 slot - 1);
--		if (btrfs_item_end_nr(leaf, slot) != item_end_expected) {
--			CORRUPT("slot offset bad", leaf, root, slot);
--			return -EUCLEAN;
--		}
--
--		/*
--		 * Check to make sure that we don't point outside of the leaf,
--		 * just in case all the items are consistent to each other, but
--		 * all point outside of the leaf.
--		 */
--		if (btrfs_item_end_nr(leaf, slot) >
--		    BTRFS_LEAF_DATA_SIZE(fs_info)) {
--			CORRUPT("slot end outside of leaf", leaf, root, slot);
--			return -EUCLEAN;
--		}
--
--		/* Also check if the item pointer overlaps with btrfs item. */
--		if (btrfs_item_nr_offset(slot) + sizeof(struct btrfs_item) >
--		    btrfs_item_ptr_offset(leaf, slot)) {
--			CORRUPT("slot overlap with its data", leaf, root, slot);
--			return -EUCLEAN;
--		}
--
--		/* Check if the item size and content meet other criteria */
--		ret = check_leaf_item(root, leaf, &key, slot);
--		if (ret < 0)
--			return ret;
--
--		prev_key.objectid = key.objectid;
--		prev_key.type = key.type;
--		prev_key.offset = key.offset;
--	}
--
--	return 0;
--}
--
--static int check_node(struct btrfs_root *root, struct extent_buffer *node)
--{
--	unsigned long nr = btrfs_header_nritems(node);
--	struct btrfs_key key, next_key;
--	int slot;
--	u64 bytenr;
--	int ret = 0;
--
--	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root->fs_info)) {
--		btrfs_crit(root->fs_info,
--			   "corrupt node: block %llu root %llu nritems %lu",
--			   node->start, root->objectid, nr);
--		return -EIO;
--	}
--
--	for (slot = 0; slot < nr - 1; slot++) {
--		bytenr = btrfs_node_blockptr(node, slot);
--		btrfs_node_key_to_cpu(node, &key, slot);
--		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
--
--		if (!bytenr) {
--			CORRUPT("invalid item slot", node, root, slot);
--			ret = -EIO;
--			goto out;
--		}
--
--		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
--			CORRUPT("bad key order", node, root, slot);
--			ret = -EIO;
--			goto out;
--		}
--	}
--out:
--	return ret;
--}
--
- static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
- 				      u64 phy_offset, struct page *page,
- 				      u64 start, u64 end, int mirror)
-@@ -887,12 +610,12 @@ static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
- 	 * that we don't try and read the other copies of this block, just
- 	 * return -EIO.
- 	 */
--	if (found_level == 0 && check_leaf(root, eb)) {
-+	if (found_level == 0 && btrfs_check_leaf(root, eb)) {
- 		set_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
- 		ret = -EIO;
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -554,7 +554,9 @@ static void bsp_init_amd(struct cpuinfo_
+ 		nodes_per_socket = ((value >> 3) & 7) + 1;
  	}
  
--	if (found_level > 0 && check_node(root, eb))
-+	if (found_level > 0 && btrfs_check_node(root, eb))
- 		ret = -EIO;
+-	if (c->x86 >= 0x15 && c->x86 <= 0x17) {
++	if (!boot_cpu_has(X86_FEATURE_AMD_SSBD) &&
++	    !boot_cpu_has(X86_FEATURE_VIRT_SSBD) &&
++	    c->x86 >= 0x15 && c->x86 <= 0x17) {
+ 		unsigned int bit;
  
- 	if (!ret)
-@@ -4147,7 +3870,7 @@ void btrfs_mark_buffer_dirty(struct extent_buffer *buf)
- 					 buf->len,
- 					 fs_info->dirty_metadata_batch);
- #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
--	if (btrfs_header_level(buf) == 0 && check_leaf(root, buf)) {
-+	if (btrfs_header_level(buf) == 0 && btrfs_check_leaf(root, buf)) {
- 		btrfs_print_leaf(buf);
- 		ASSERT(0);
- 	}
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-new file mode 100644
-index 000000000000..56e25a630103
---- /dev/null
-+++ b/fs/btrfs/tree-checker.c
-@@ -0,0 +1,309 @@
-+/*
-+ * Copyright (C) Qu Wenruo 2017.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public
-+ * License v2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public
-+ * License along with this program.
-+ */
-+
-+/*
-+ * The module is used to catch unexpected/corrupted tree block data.
-+ * Such behavior can be caused either by a fuzzed image or bugs.
-+ *
-+ * The objective is to do leaf/node validation checks when tree block is read
-+ * from disk, and check *every* possible member, so other code won't
-+ * need to checking them again.
-+ *
-+ * Due to the potential and unwanted damage, every checker needs to be
-+ * carefully reviewed otherwise so it does not prevent mount of valid images.
-+ */
-+
-+#include "ctree.h"
-+#include "tree-checker.h"
-+#include "disk-io.h"
-+#include "compression.h"
-+
-+#define CORRUPT(reason, eb, root, slot)					\
-+	btrfs_crit(root->fs_info,					\
-+		   "corrupt %s, %s: block=%llu, root=%llu, slot=%d",	\
-+		   btrfs_header_level(eb) == 0 ? "leaf" : "node",	\
-+		   reason, btrfs_header_bytenr(eb), root->objectid, slot)
-+
-+static int check_extent_data_item(struct btrfs_root *root,
-+				  struct extent_buffer *leaf,
-+				  struct btrfs_key *key, int slot)
-+{
-+	struct btrfs_file_extent_item *fi;
-+	u32 sectorsize = root->fs_info->sectorsize;
-+	u32 item_size = btrfs_item_size_nr(leaf, slot);
-+
-+	if (!IS_ALIGNED(key->offset, sectorsize)) {
-+		CORRUPT("unaligned key offset for file extent",
-+			leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+
-+	fi = btrfs_item_ptr(leaf, slot, struct btrfs_file_extent_item);
-+
-+	if (btrfs_file_extent_type(leaf, fi) > BTRFS_FILE_EXTENT_TYPES) {
-+		CORRUPT("invalid file extent type", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+
-+	/*
-+	 * Support for new compression/encrption must introduce incompat flag,
-+	 * and must be caught in open_ctree().
-+	 */
-+	if (btrfs_file_extent_compression(leaf, fi) > BTRFS_COMPRESS_TYPES) {
-+		CORRUPT("invalid file extent compression", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	if (btrfs_file_extent_encryption(leaf, fi)) {
-+		CORRUPT("invalid file extent encryption", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	if (btrfs_file_extent_type(leaf, fi) == BTRFS_FILE_EXTENT_INLINE) {
-+		/* Inline extent must have 0 as key offset */
-+		if (key->offset) {
-+			CORRUPT("inline extent has non-zero key offset",
-+				leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+
-+		/* Compressed inline extent has no on-disk size, skip it */
-+		if (btrfs_file_extent_compression(leaf, fi) !=
-+		    BTRFS_COMPRESS_NONE)
-+			return 0;
-+
-+		/* Uncompressed inline extent size must match item size */
-+		if (item_size != BTRFS_FILE_EXTENT_INLINE_DATA_START +
-+		    btrfs_file_extent_ram_bytes(leaf, fi)) {
-+			CORRUPT("plaintext inline extent has invalid size",
-+				leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+		return 0;
-+	}
-+
-+	/* Regular or preallocated extent has fixed item size */
-+	if (item_size != sizeof(*fi)) {
-+		CORRUPT(
-+		"regluar or preallocated extent data item size is invalid",
-+			leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	if (!IS_ALIGNED(btrfs_file_extent_ram_bytes(leaf, fi), sectorsize) ||
-+	    !IS_ALIGNED(btrfs_file_extent_disk_bytenr(leaf, fi), sectorsize) ||
-+	    !IS_ALIGNED(btrfs_file_extent_disk_num_bytes(leaf, fi), sectorsize) ||
-+	    !IS_ALIGNED(btrfs_file_extent_offset(leaf, fi), sectorsize) ||
-+	    !IS_ALIGNED(btrfs_file_extent_num_bytes(leaf, fi), sectorsize)) {
-+		CORRUPT(
-+		"regular or preallocated extent data item has unaligned value",
-+			leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+
-+	return 0;
-+}
-+
-+static int check_csum_item(struct btrfs_root *root, struct extent_buffer *leaf,
-+			   struct btrfs_key *key, int slot)
-+{
-+	u32 sectorsize = root->fs_info->sectorsize;
-+	u32 csumsize = btrfs_super_csum_size(root->fs_info->super_copy);
-+
-+	if (key->objectid != BTRFS_EXTENT_CSUM_OBJECTID) {
-+		CORRUPT("invalid objectid for csum item", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	if (!IS_ALIGNED(key->offset, sectorsize)) {
-+		CORRUPT("unaligned key offset for csum item", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	if (!IS_ALIGNED(btrfs_item_size_nr(leaf, slot), csumsize)) {
-+		CORRUPT("unaligned csum item size", leaf, root, slot);
-+		return -EUCLEAN;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Common point to switch the item-specific validation.
-+ */
-+static int check_leaf_item(struct btrfs_root *root,
-+			   struct extent_buffer *leaf,
-+			   struct btrfs_key *key, int slot)
-+{
-+	int ret = 0;
-+
-+	switch (key->type) {
-+	case BTRFS_EXTENT_DATA_KEY:
-+		ret = check_extent_data_item(root, leaf, key, slot);
-+		break;
-+	case BTRFS_EXTENT_CSUM_KEY:
-+		ret = check_csum_item(root, leaf, key, slot);
-+		break;
-+	}
-+	return ret;
-+}
-+
-+int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf)
-+{
-+	struct btrfs_fs_info *fs_info = root->fs_info;
-+	/* No valid key type is 0, so all key should be larger than this key */
-+	struct btrfs_key prev_key = {0, 0, 0};
-+	struct btrfs_key key;
-+	u32 nritems = btrfs_header_nritems(leaf);
-+	int slot;
-+
-+	/*
-+	 * Extent buffers from a relocation tree have a owner field that
-+	 * corresponds to the subvolume tree they are based on. So just from an
-+	 * extent buffer alone we can not find out what is the id of the
-+	 * corresponding subvolume tree, so we can not figure out if the extent
-+	 * buffer corresponds to the root of the relocation tree or not. So
-+	 * skip this check for relocation trees.
-+	 */
-+	if (nritems == 0 && !btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_RELOC)) {
-+		struct btrfs_root *check_root;
-+
-+		key.objectid = btrfs_header_owner(leaf);
-+		key.type = BTRFS_ROOT_ITEM_KEY;
-+		key.offset = (u64)-1;
-+
-+		check_root = btrfs_get_fs_root(fs_info, &key, false);
-+		/*
-+		 * The only reason we also check NULL here is that during
-+		 * open_ctree() some roots has not yet been set up.
-+		 */
-+		if (!IS_ERR_OR_NULL(check_root)) {
-+			struct extent_buffer *eb;
-+
-+			eb = btrfs_root_node(check_root);
-+			/* if leaf is the root, then it's fine */
-+			if (leaf != eb) {
-+				CORRUPT("non-root leaf's nritems is 0",
-+					leaf, check_root, 0);
-+				free_extent_buffer(eb);
-+				return -EUCLEAN;
-+			}
-+			free_extent_buffer(eb);
-+		}
-+		return 0;
-+	}
-+
-+	if (nritems == 0)
-+		return 0;
-+
-+	/*
-+	 * Check the following things to make sure this is a good leaf, and
-+	 * leaf users won't need to bother with similar sanity checks:
-+	 *
-+	 * 1) key ordering
-+	 * 2) item offset and size
-+	 *    No overlap, no hole, all inside the leaf.
-+	 * 3) item content
-+	 *    If possible, do comprehensive sanity check.
-+	 *    NOTE: All checks must only rely on the item data itself.
-+	 */
-+	for (slot = 0; slot < nritems; slot++) {
-+		u32 item_end_expected;
-+		int ret;
-+
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
-+
-+		/* Make sure the keys are in the right order */
-+		if (btrfs_comp_cpu_keys(&prev_key, &key) >= 0) {
-+			CORRUPT("bad key order", leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+
-+		/*
-+		 * Make sure the offset and ends are right, remember that the
-+		 * item data starts at the end of the leaf and grows towards the
-+		 * front.
-+		 */
-+		if (slot == 0)
-+			item_end_expected = BTRFS_LEAF_DATA_SIZE(fs_info);
-+		else
-+			item_end_expected = btrfs_item_offset_nr(leaf,
-+								 slot - 1);
-+		if (btrfs_item_end_nr(leaf, slot) != item_end_expected) {
-+			CORRUPT("slot offset bad", leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+
-+		/*
-+		 * Check to make sure that we don't point outside of the leaf,
-+		 * just in case all the items are consistent to each other, but
-+		 * all point outside of the leaf.
-+		 */
-+		if (btrfs_item_end_nr(leaf, slot) >
-+		    BTRFS_LEAF_DATA_SIZE(fs_info)) {
-+			CORRUPT("slot end outside of leaf", leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+
-+		/* Also check if the item pointer overlaps with btrfs item. */
-+		if (btrfs_item_nr_offset(slot) + sizeof(struct btrfs_item) >
-+		    btrfs_item_ptr_offset(leaf, slot)) {
-+			CORRUPT("slot overlap with its data", leaf, root, slot);
-+			return -EUCLEAN;
-+		}
-+
-+		/* Check if the item size and content meet other criteria */
-+		ret = check_leaf_item(root, leaf, &key, slot);
-+		if (ret < 0)
-+			return ret;
-+
-+		prev_key.objectid = key.objectid;
-+		prev_key.type = key.type;
-+		prev_key.offset = key.offset;
-+	}
-+
-+	return 0;
-+}
-+
-+int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node)
-+{
-+	unsigned long nr = btrfs_header_nritems(node);
-+	struct btrfs_key key, next_key;
-+	int slot;
-+	u64 bytenr;
-+	int ret = 0;
-+
-+	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root->fs_info)) {
-+		btrfs_crit(root->fs_info,
-+			   "corrupt node: block %llu root %llu nritems %lu",
-+			   node->start, root->objectid, nr);
-+		return -EIO;
-+	}
-+
-+	for (slot = 0; slot < nr - 1; slot++) {
-+		bytenr = btrfs_node_blockptr(node, slot);
-+		btrfs_node_key_to_cpu(node, &key, slot);
-+		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
-+
-+		if (!bytenr) {
-+			CORRUPT("invalid item slot", node, root, slot);
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
-+			CORRUPT("bad key order", node, root, slot);
-+			ret = -EIO;
-+			goto out;
-+		}
-+	}
-+out:
-+	return ret;
-+}
-diff --git a/fs/btrfs/tree-checker.h b/fs/btrfs/tree-checker.h
-new file mode 100644
-index 000000000000..96c486e95d70
---- /dev/null
-+++ b/fs/btrfs/tree-checker.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) Qu Wenruo 2017.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public
-+ * License v2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public
-+ * License along with this program.
-+ */
-+
-+#ifndef __BTRFS_TREE_CHECKER__
-+#define __BTRFS_TREE_CHECKER__
-+
-+#include "ctree.h"
-+#include "extent_io.h"
-+
-+int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf);
-+int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node);
-+
-+#endif
--- 
-2.17.1
-
+ 		switch (c->x86) {
 
 
