@@ -2,49 +2,103 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64541C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB62C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C6A20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C6A20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id CE30F20672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE30F20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbeLDOiH (ORCPT
+        id S1726544AbeLDOki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:38:07 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:32438 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeLDOiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:38:06 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 9E92D13F7E2;
-        Tue,  4 Dec 2018 15:37:43 +0100 (CET)
-Subject: Re: [PATCH v2 1/3] clk: qcom: gcc-msm8998: Drop hmss_dvm and lpass_at
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <20181203183330.2073-1-bjorn.andersson@linaro.org>
- <20181203183330.2073-2-bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <2f21e657-76f1-a05b-7861-11d7a5f1ea5d@free.fr>
-Date:   Tue, 4 Dec 2018 15:37:43 +0100
+        Tue, 4 Dec 2018 09:40:38 -0500
+Received: from ucol19pa09.eemsg.mail.mil ([214.24.24.82]:58287 "EHLO
+        ucol19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbeLDOki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:40:38 -0500
+X-EEMSG-check-008: 799472757|UCOL19PA09_EEMSG_MP7.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
+   d="scan'208";a="799472757"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by ucol19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Dec 2018 14:40:36 +0000
+X-IronPort-AV: E=Sophos;i="5.56,314,1539648000"; 
+   d="scan'208";a="18399374"
+IronPort-PHdr: =?us-ascii?q?9a23=3AJwfqFBSU+UKq518HsGjQJ3y+rdpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa67YBWFt8tkgFKBZ4jH8fUM07OQ7/iwHzRYqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9xIRmssQndqtQdjJd/JKo21h?=
+ =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
+ =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
+ =?us-ascii?q?K/5KpwVhTmlDkIOCI48GHPi8x/kqRboA66pxdix4LYeZyZOOZicq/Ye94VS3?=
+ =?us-ascii?q?BBXsJMXCJfBI2yYZYEA+4YMepGs4Xxol0Dpga8CwaxHuPi0iJGiGH43aM60O?=
+ =?us-ascii?q?ovHw/J0wMiEN0Sv3rZt8n1OaUIXOyp0KXFwzfOYvVL0jn98ojIdRUhrOmRU7?=
+ =?us-ascii?q?Jsb8XR0UkvGB3Djl6NtILlOima1uAJs2eF7+trSOWii3U6pAFquTWv2scthZ?=
+ =?us-ascii?q?XJhoIS0FzE8z55z5wvKd23T057f8epHZ1NvC+ZL4t7Wt4uTm5ntSogyrAKpI?=
+ =?us-ascii?q?S3cDYFxZg53RLTdvqKeJWS7B35TuaeOzJ4iWpgeLK4mhm971Ctyvb5VsmoyF?=
+ =?us-ascii?q?ZKqTdFksXUunANyRPT7s+HR+Nh/ki7wzaP1h3T6vpeLUAolavUN54hwrkqmp?=
+ =?us-ascii?q?oVrUvDBTP5lF/zjK+XckUo4umo6+L5bbX6vpKQKoB5hw7kPqkuh8CzG/o0Pw?=
+ =?us-ascii?q?cQU2SB5OiwzLjj8lf4QLVOgP02iK7ZsJXCKMQAu6G5GBRY0poj6hmjDzem18?=
+ =?us-ascii?q?4UnX8cLF1fYh6HgI/pO0/WLPDiEfi/m0iskCtsx/3eJr3uGIjNLnzYnbf5Z7?=
+ =?us-ascii?q?l99kpcxBM2zdBY4JJUEK8OLOjvVU/2sdzSFgU5PBCsw+b7FNV90ZsTVn+BA6?=
+ =?us-ascii?q?CDNKPSql+I6/k1I+aSeYAVuCzyK+Q/6/Hyin85nEcXfbO10psPdHC4AvNmLl?=
+ =?us-ascii?q?2cYXrtgdcBFWAKvhElQezxiVyNTyRTaGivUKI9/D07CJ+mB5/ZRo+xmLyBwD?=
+ =?us-ascii?q?u7HppOa2BYBVCMFnfpeJ+AW/oXciKdPNJukjweWri9UYMuyRautAriwbp9Mu?=
+ =?us-ascii?q?XU4jEYtY7k1NVt4O3TkBYy9SdyD8uHz26CUXp5nnkWSDAr3KBwu1B9xk2f3q?=
+ =?us-ascii?q?h/hvxSDcZT6O9RUgcmKZ7cyPR3BMv8WgLAYNiJTEupQs69DDE/T9I+3dsObF?=
+ =?us-ascii?q?tmG9q8lRDPxS2qA6Ual7aTHpw77rrc32TtJ8Z603vGz7Muj10mQ8pONWymgL?=
+ =?us-ascii?q?Vy+BLVB4HUiUWZkKeqerkG0CHR82eDyHKEvFtEXw5oTaXFQXcfa1PSrdT44E?=
+ =?us-ascii?q?PCUrCvBa0kMgRf086CLLVFatnygFVYS/fsJs7eb3iym2iuHxaIwK2DbI7wd2?=
+ =?us-ascii?q?UaxiXdB1AOkxoP8naeKQg+GiChrnraDDxvE1Lvfkzt/fBjqHO9T080yAeKb0?=
+ =?us-ascii?q?N617eu5B4ViuKTS+kJ0rIHpighsTN0E0i5397MDNqAvQVhdr1GYdwh+FdHyX?=
+ =?us-ascii?q?7ZtwtlM5ykLqBigEMecgtus0PgzBV4F5tPkdY0o3Mu1wdyN62Y301bdz+C3p?=
+ =?us-ascii?q?D/JKfXKm/s8xCrcaLW3Uve0NmO8KcV9Ps4s0njvB2uFkc66HVozd1V03qa5p?=
+ =?us-ascii?q?XXAwsfSozxUkkp+Bhgvb3aYTcy55nS1XJyNam4qDjC28gmBLht9hH1R95CNO?=
+ =?us-ascii?q?uhEwjoHoVOH8GzLMQykkWtKxcDO/pfsqUzOpXiP9eP3uaUNeJ7nHrygXtO5J?=
+ =?us-ascii?q?t9+liB+yp1VqjD2JNTkN+C2Q7SbCvxlFestIjMnIlAYTwDVj6kxTPMGJ9aZq?=
+ =?us-ascii?q?o0e50CT2ipPZvklZ1Fm5fxVisApxaYDFQc1ZrsIEDKYg=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2BZAAD4kAZc/wHyM5BjGgEBAQEBAgEBAQEHAgEBAQGBZ?=
+ =?us-ascii?q?YFbKYFoJ4N5lHMBAQEBAQEGgQgtiR+OPoFmOAGEQAKDTyI4EgEDAQEBAQEBA?=
+ =?us-ascii?q?gFsKII2JAGCYgEFIwQRQRALGAICJgICVwYBDAYCAQGCXj+BdQ2kYnwzhUCEc?=
+ =?us-ascii?q?4ELixMXeIEHgREngmuEagGDGoJXAokcEYZLN1CPSgmROwYYgVuINocViQaRT?=
+ =?us-ascii?q?iGBVSsIAhgIIQ+DJ5B5IQMwgQUBAYpiAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 04 Dec 2018 14:40:35 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wB4EeXvn019258;
+        Tue, 4 Dec 2018 09:40:34 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Paul Moore <paul@paul-moore.com>, Dan Walsh <dwalsh@redhat.com>
+Cc:     miklos@szeredi.hu, vgoyal@redhat.com, omosnace@redhat.com,
+        bfields@fieldses.org, salyzyn@android.com,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com>
+ <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+ <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <f3a911a7-47eb-9922-a4be-25a834250e92@redhat.com>
+ <CAHC9VhRcQdLRZoYi9g-MZzG8xPaNyFFX1nPppo7D93BTFQ6BZg@mail.gmail.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <5b52869e-b979-dcf6-becf-a97b8ed33909@tycho.nsa.gov>
+Date:   Tue, 4 Dec 2018 09:43:15 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181203183330.2073-2-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAHC9VhRcQdLRZoYi9g-MZzG8xPaNyFFX1nPppo7D93BTFQ6BZg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,57 +106,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/12/2018 19:33, Bjorn Andersson wrote:
-
-> Disabling gcc_hmss_dvm_bus_clk and gcc_lpass_at_clk causes the board to
-> lock up, and by that preventing the kernel to boot without
-> clk_ignore_unused.
+On 12/3/18 6:27 PM, Paul Moore wrote:
+> On Thu, Nov 29, 2018 at 5:22 PM Daniel Walsh <dwalsh@redhat.com> wrote:
+>> On 11/29/18 2:47 PM, Miklos Szeredi wrote:
+>>> On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>>>
+>>>> Possibly I misunderstood you, but I don't think we want to copy-up on
+>>>> permission denial, as that would still allow the mounter to read/write
+>>>> special files or execute regular files to which it would normally be
+>>>> denied access, because the copy would inherit the context specified by
+>>>> the mounter in the context mount case.  It still represents an
+>>>> escalation of privilege for the mounter.  In contrast, the copy-up on
+>>>> write behavior does not allow the mounter to do anything it could not do
+>>>> already (i.e. read from the lower, write to the upper).
+>>> Let's get this straight:  when file is copied up, it inherits label
+>>> from context=, not from label of lower file?
+>>
+>> Yes, in the case of context mount, it will get the context mount directory.
+>>
+>> In the case of not context mount, it should maintain the label of  the
+>> lower.
+>>
+>>> Next question: permission to change metadata is tied to permission to
+>>> open?  Is it possible that open is denied, but metadata can be
+>>> changed?
+>>
+>> Yes, SElinux handles open differently then setattr.  Although I am not
+>> sure if any tools handle this.
+>>
+>>> DAC model allows this: metadata change is tied to ownership, not mode
+>>> bits.   And different capability flag.
+>>>
+>>> If the same is true for MAC, then the pre-v4.20-rc1 is already
+>>> susceptible to the privilege escalation you describe, right?
+>>
+>> After talking to Vivek, I am not sure their is a privilege escallation.
 > 
-> gcc_hmss_dvm_bus_clk is marked always-on downstream, but not referenced,
-> and gcc_lpass_at_clk isn't mentioned. So let's remove them until they
-> are needed by some client.
+> More on this below, but this thread doesn't have me convinced, and we
+> are at -rc5 right now.  We need to come to some decision on this soon
+> because we are running out of time before v4.20 is released with this
+> code.
+> 
+>> For device nodes, the mounter has to have the ability to create the
+>> devicenode with the context mount, if he can do this, then he can do it
+>> with or without Overlay.  This might lead to users making mistakes on
+>> security, but the model is sound. And I think this stands even in the
+>> case of the lower is mounted NODEV and the upper is not.  If the mounter
+>> can create a device on the upper with a particular label, then he does
+>> not need the lower.
+> 
+> The problem I have when looking at the current code is that permission
+> is given, regardless of what is requested, for any special_file() on
+> an overlayfs mount.
+> 
+> It also looks like the mounter's creds are used when checking
+> permissions regardless of the file has been copied up or not; I would
+> expect that the mounter's permissions would only used when checking
+> permissions against the lower inode, no?
 
-Hello Bjorn,
+No, that's never been the model as far as I know.  mounter's permissions 
+are checked to the underlying inode, whether upper or lower.  client's 
+permissions are only checked to the overlay inode.  upper and lower are 
+logically backing store - upper for writes and lower for reads from 
+unmodified files.  Now, in theory, upper should always be labeled the 
+same as overlay, so client check against overlay should already imply 
+client access to upper, unless someone has manually relabeled upper 
+outside of the overlay.
 
-What about gcc_gpu_bimc_gfx_clk?
+   I think there is also some
+> weird behavior if the underlying inode only allows the mounter to
+> write (no read) and a write is requested at the overlayfs layer.  I'm
+> sure I'm missing some subtle thing with overlayfs, but why aren't we
+> doing something like the following:
+> 
+>    int ovl_permission(...) {
+> 
+>      if (!realinode) {
+>        ...
+>      }
+> 
+>      err = generic_permission(inode, mask);
+>      if (err)
+>        return err;
+> 
+>      if (upperinode) {
+>        err = inode_permission(upperinode, mask);
+>      } else {
+>        // on the lower inode, always use the mounter's creds
+>        old_cred = ovl_override_creds(...);
+> 
+>        // check to see if we have the right perms first, if
+>        // that fails switch to a read/copy-up check if we
+>        // are doing a write (note: we are not bypassing the
+>        // exec check, the task can change the metadata like
+>        // every other fs)
+>        err = inode_permission(lowerinode, mask);
+>        if (err && (mask & (MAY_EXEC | MAY_APPEND))) {
+>          // PM: my guess is that we also need to add a
+>          // "&& !special_file(lowerinode)" to the conditional
+>          // above because you can't copy-up a dev node in the
+>          // normal sense, but we'll leave that as a discussion
+>          // point for now...
+>          // turn the write into a read (copy-up)
+>          mask &= ~(MAY_WRITE | MAY_APPEND);
+>          mask |= MAY_READ;
+>          err = inode_permission(lowerinode, mask);
+>        }
+> 
+>        // reset the creds
+>        revert_creds(old_cred);
+>      }
+> 
+>      return err;
+>    }
+> 
+>> For sockets, I see the case where a process is listening on the lower
+>> level socket, the mounter mounts the overlay over the directory with the
+>> socket.  Then the mounter changes the attributes of the socket,
+>> performing a copy up.  If the mounter can not talk to the socket and the
+>> other end is still listening, then this could be an issue.  If the
+>> socket is no longer connected to the listener on the lower, then this is
+>> not an issue.
+>>
+>> Similar for a FIFO.
+> 
+> See my comment "// PM: my guess ..." in the pseudo code above.  I
+> think the write->read permission mask conversion really should only
+> apply to normal files where you can do a copy-up.
+> 
+>> With SELinux we are also always checking not only the file access to the
+>> socker, but also checking whether the label of the client is able to
+>> talk to the label of the server daemon.  So we are protected by a
+>> secondary check.
+> 
+> That's making some assumptions on the LSM and the LSM's loaded policy
+> and is not something I would want to rely on.
 
-AFAICT, it doesn't lock the system up, but the kernel warns:
-
-[    2.171148] ------------[ cut here ]------------
-[    2.173740] gcc_gpu_bimc_gfx_clk status stuck at 'on'
-[    2.173996] WARNING: CPU: 3 PID: 1 at drivers/clk/qcom/clk-branch.c:92 clk_branch_toggle+0x190/0x1b0
-[    2.183475] Modules linked in:
-[    2.192554] CPU: 3 PID: 1 Comm: swapper/0 Tainted: G S                4.20.0-rc4 #23
-[    2.195509] Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
-[    2.203389] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[    2.210016] pc : clk_branch_toggle+0x190/0x1b0
-[    2.214781] lr : clk_branch_toggle+0x190/0x1b0
-[    2.219213] sp : ffff00000807bcf0
-[    2.223609] x29: ffff00000807bcf0 x28: 0000000000000008 
-[    2.227041] x27: ffff0000089db070 x26: ffff000008961378 
-[    2.232425] x25: ffff0000088da4b8 x24: 0000000000000000 
-[    2.237721] x23: ffff000009138a08 x22: ffff000008414990 
-[    2.243016] x21: 0000000000000000 x20: 0000000000000000 
-[    2.248312] x19: ffff0000090e9000 x18: ffffffffffffffff 
-[    2.253608] x17: 0000000000000000 x16: 0000000000000000 
-[    2.258902] x15: ffff0000090e9648 x14: ffff000089193187 
-[    2.264197] x13: ffff000009193195 x12: ffff0000090fb000 
-[    2.269493] x11: ffff00000807bcf0 x10: ffff00000807bcf0 
-[    2.274789] x9 : ffff00000807bcf0 x8 : 6e6f27207461206b 
-[    2.280084] x7 : 6375747320737574 x6 : ffff000009192c89 
-[    2.285380] x5 : 0000000000000000 x4 : 0000000000000000 
-[    2.290676] x3 : ffffffffffffffff x2 : 00008000f5251000 
-[    2.295971] x1 : e0dbf26541ede800 x0 : 0000000000000000 
-[    2.301272] Call trace:
-[    2.306491]  clk_branch_toggle+0x190/0x1b0
-[    2.308705]  clk_branch2_disable+0x18/0x20
-[    2.312890]  clk_disable_unused_subtree+0xc4/0xe0
-[    2.316960]  clk_disable_unused+0x3c/0x130
-[    2.321736]  do_one_initcall+0x5c/0x180
-[    2.325745]  kernel_init_freeable+0x198/0x244
-[    2.329469]  kernel_init+0x10/0x110
-[    2.333942]  ret_from_fork+0x10/0x20
-[    2.337257] ---[ end trace 57f62b628c127ef8 ]---
-
-
-Regards.
+If you copy a socket or fifo and try to connect or open the copy, you 
+aren't going to get the same result as if you accessed the original. 
+Copy-up really makes no sense for those AFAICT.
