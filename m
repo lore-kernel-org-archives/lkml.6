@@ -2,105 +2,90 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EADC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3ED2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F3ED2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 827D92081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 827D92081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbeLDCj2 (ORCPT
+        id S1726026AbeLDCkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 21:39:28 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:42408 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDCj2 (ORCPT
+        Mon, 3 Dec 2018 21:40:40 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:32983 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725937AbeLDCkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 21:39:28 -0500
-Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 4 Dec 2018
- 10:39:34 +0800
-Subject: Re: [PATCH v7 2/4] clk: meson: add DT documentation for emmc clock
- controller
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
- <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
- <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <b401f5bc-32e7-1693-0839-87ffa3dd5767@amlogic.com>
-Date:   Tue, 4 Dec 2018 10:39:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Mon, 3 Dec 2018 21:40:39 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TEowhnj_1543891229;
+Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0TEowhnj_1543891229)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 04 Dec 2018 10:40:30 +0800
+Reply-To: xlpang@linux.alibaba.com
+Subject: Re: [PATCH 2/3] mm/vmscan: Enable kswapd to reclaim low-protected
+ memory
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20181203080119.18989-1-xlpang@linux.alibaba.com>
+ <20181203080119.18989-2-xlpang@linux.alibaba.com>
+ <20181203115646.GP31738@dhcp22.suse.cz>
+ <54a3f0a6-6e7d-c620-97f2-ac567c057bc2@linux.alibaba.com>
+ <20181203172007.GG31738@dhcp22.suse.cz>
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+Message-ID: <a77ed2a6-ed9b-4c1b-e2e9-fb9a5108c1f9@linux.alibaba.com>
+Date:   Tue, 4 Dec 2018 10:40:29 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.207]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+In-Reply-To: <20181203172007.GG31738@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On 2018/12/4 AM 1:22, Michal Hocko wrote:
+> On Mon 03-12-18 23:20:31, Xunlei Pang wrote:
+>> On 2018/12/3 下午7:56, Michal Hocko wrote:
+>>> On Mon 03-12-18 16:01:18, Xunlei Pang wrote:
+>>>> There may be cgroup memory overcommitment, it will become
+>>>> even common in the future.
+>>>>
+>>>> Let's enable kswapd to reclaim low-protected memory in case
+>>>> of memory pressure, to mitigate the global direct reclaim
+>>>> pressures which could cause jitters to the response time of
+>>>> lantency-sensitive groups.
+>>>
+>>> Please be more descriptive about the problem you are trying to handle
+>>> here. I haven't actually read the patch but let me emphasise that the
+>>> low limit protection is important isolation tool. And allowing kswapd to
+>>> reclaim protected memcgs is going to break the semantic as it has been
+>>> introduced and designed.
+>>
+>> We have two types of memcgs: online groups(important business)
+>> and offline groups(unimportant business). Online groups are
+>> all configured with MAX low protection, while offline groups
+>> are not at all protected(with default 0 low).
+>>
+>> When offline groups are overcommitted, the global memory pressure
+>> suffers. This will cause the memory allocations from online groups
+>> constantly go to the slow global direct reclaim in order to reclaim
+>> online's page caches, as kswap is not able to reclaim low-protection
+>> memory. low is not hard limit, it's reasonable to be reclaimed by
+>> kswapd if there's no other reclaimable memory.
+> 
+> I am sorry I still do not follow. What role do offline cgroups play.
+> Those are certainly not low mem protected because mem_cgroup_css_offline
+> will reset them to 0.
+> 
 
-On 2018/12/4 6:45, Stephen Boyd wrote:
-> Quoting Jianxin Pan (2018-11-15 04:18:30)
->> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->> new file mode 100644
->> index 0000000..162b949
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->> @@ -0,0 +1,17 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Meson MMC sub clock tree IDs
->> + *
->> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->> + */
->> +
->> +#ifndef __MMC_CLKC_H
->> +#define __MMC_CLKC_H
->> +
->> +#define CLKID_MMC_DIV                          1
-> 
-> Why does the define numbering start with 1 instead of 0?
->
-The Clock ID 0 is used by  CLKID_MMC_MUX.
-CLKID_MMC_MUX is an internal clock which defined in drivers/clk/meson/mmc-clkc.c, and it's the parent of CLKID_MMC_DIV.
- 
->> +#define CLKID_MMC_PHASE_CORE                   2
->> +#define CLKID_MMC_PHASE_TX                     3
->> +#define CLKID_MMC_PHASE_RX                     4
->> +
-> 
-> .
-> 
-
+Oh, I meant "offline groups" to be "offline-business groups", memcgs
+refered to here are all "online state" from kernel's perspective.
