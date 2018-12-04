@@ -7,62 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B04C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C842C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49614214E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F9D214E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HY1JCOFs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49614214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM/v6bM5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F9D214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeLDK6X (ORCPT
+        id S1726945AbeLDK6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbeLDK6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:20 -0500
+        id S1726924AbeLDK6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46BE1214DB;
-        Tue,  4 Dec 2018 10:58:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D96BB20878;
+        Tue,  4 Dec 2018 10:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921099;
-        bh=Lv8h2rowhYwKBV5JuVzF/XbTgptd22+XCxgGiFlIEdE=;
+        s=default; t=1543921102;
+        bh=OuY8gx3es3fgmXkqSPu/SgSdiapNapcFcDXpcCTxOno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HY1JCOFsk5lQCuD0yA5xbqNTSGeHxnmX8ZpKx6zF8PJBwGmrXOocs+WZpawUipkxU
-         k6HLU38N4ogzELKkRoJbeJMN5aEZaROe1WacMpWLZVtu37c95bWzRor4+Op+8tqb0N
-         4I9FGSIGIMKzzqAMsa407iG8qW2N0NiMWVM7x1uU=
+        b=cM/v6bM5PiTl8BWmBFKlvB/IdFGcVRi/8bwBa3TE4csREcQyEzvSK+g1y/MBwhXjN
+         IGWb+nvhoM0XfXBEf5l8R96/ZmgLyYa6mqmiepJpO7c/7VZ04YUEUsO/HeFHr+BMGF
+         UsJ+7CyORaVmI5QRm4v3TCGhZunEdqrxXGVmJgR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 036/139] x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
-Date:   Tue,  4 Dec 2018 11:48:37 +0100
-Message-Id: <20181204103651.471509429@linuxfoundation.org>
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 074/139] btrfs: Always try all copies when reading extent buffers
+Date:   Tue,  4 Dec 2018 11:49:15 +0100
+Message-Id: <20181204103653.138623800@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -81,82 +64,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Chen tim.c.chen@linux.intel.com
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream
+commit f8397d69daef06d358430d3054662fb597e37c00 upstream.
 
-The Spectre V2 printout in cpu_show_common() handles conditionals for the
-various mitigation methods directly in the sprintf() argument list. That's
-hard to read and will become unreadable if more complex decisions need to
-be made for a particular method.
+When a metadata read is served the endio routine btree_readpage_end_io_hook
+is called which eventually runs the tree-checker. If tree-checker fails
+to validate the read eb then it sets EXTENT_BUFFER_CORRUPT flag. This
+leads to btree_read_extent_buffer_pages wrongly assuming that all
+available copies of this extent buffer are wrong and failing prematurely.
+Fix this modify btree_read_extent_buffer_pages to read all copies of
+the data.
 
-Move the conditionals for STIBP and IBPB string selection into helper
-functions, so they can be extended later on.
+This failure was exhibitted in xfstests btrfs/124 which would
+spuriously fail its balance operations. The reason was that when balance
+was run following re-introduction of the missing raid1 disk
+__btrfs_map_block would map the read request to stripe 0, which
+corresponded to devid 2 (the disk which is being removed in the test):
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
+    item 2 key (FIRST_CHUNK_TREE CHUNK_ITEM 3553624064) itemoff 15975 itemsize 112
+	length 1073741824 owner 2 stripe_len 65536 type DATA|RAID1
+	io_align 65536 io_width 65536 sector_size 4096
+	num_stripes 2 sub_stripes 1
+		stripe 0 devid 2 offset 2156920832
+		dev_uuid 8466c350-ed0c-4c3b-b17d-6379b445d5c8
+		stripe 1 devid 1 offset 3553624064
+		dev_uuid 1265d8db-5596-477e-af03-df08eb38d2ca
+
+This caused read requests for a checksum item that to be routed to the
+stale disk which triggered the aforementioned logic involving
+EXTENT_BUFFER_CORRUPT flag. This then triggered cascading failures of
+the balance operation.
+
+Fixes: a826d6dcb32d ("Btrfs: check items for correctness as we search")
+CC: stable@vger.kernel.org # 4.4+
+Suggested-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -842,6 +842,22 @@ static ssize_t l1tf_show_state(char *buf
- }
- #endif
+---
+ fs/btrfs/disk-io.c |   11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -477,9 +477,9 @@ static int btree_read_extent_buffer_page
+ 	int mirror_num = 0;
+ 	int failed_mirror = 0;
  
-+static char *stibp_state(void)
-+{
-+	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
-+		return ", STIBP";
-+	else
-+		return "";
-+}
-+
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
-+		return ", IBPB";
-+	else
-+		return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-@@ -863,9 +879,9 @@ static ssize_t cpu_show_common(struct de
+-	clear_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
+ 	io_tree = &BTRFS_I(fs_info->btree_inode)->io_tree;
+ 	while (1) {
++		clear_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
+ 		ret = read_extent_buffer_pages(io_tree, eb, WAIT_COMPLETE,
+ 					       mirror_num);
+ 		if (!ret) {
+@@ -493,15 +493,6 @@ static int btree_read_extent_buffer_page
+ 				break;
+ 		}
  
- 	case X86_BUG_SPECTRE_V2:
- 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 
+-		/*
+-		 * This buffer's crc is fine, but its contents are corrupted, so
+-		 * there is no reason to read the other copies, they won't be
+-		 * any less wrong.
+-		 */
+-		if (test_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags) ||
+-		    ret == -EUCLEAN)
+-			break;
+-
+ 		num_copies = btrfs_num_copies(fs_info,
+ 					      eb->start, eb->len);
+ 		if (num_copies == 1)
 
 
