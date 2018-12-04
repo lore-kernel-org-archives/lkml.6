@@ -2,119 +2,114 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0110C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A31C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586D22081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60BE020834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:43:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Nf36vW1m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586D22081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iIY1WzCk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BE020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeLDAjG (ORCPT
+        id S1725999AbeLDAnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:39:06 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:55740 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLDAjG (ORCPT
+        Mon, 3 Dec 2018 19:43:49 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45016 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeLDAnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:39:06 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 54AA410C06F2;
-        Mon,  3 Dec 2018 16:39:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1543883946; bh=1rT30HIhQKuw3rjjCx7kfGPGB/h49KpBOl9q42cDGpE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=Nf36vW1mQo8key0R70pyAd3KxxA27eBws40sZc5e7NfJm0IBo/ixcIMc3/5u6kFyF
-         fJJpS0XJ9e/ltbtvm29AxoT5OCm710bU69lk8LVn+N1Qione6HF4rKKPoGhmJDm64Q
-         K0+v4XxtDGAZ35+kbXnZ0RscGYk2CNgM8fVN2h5Bi/bHoeuLo+MoBvhmZuWNH2BX3q
-         99oBDvF+Xju58FD/eZBpBIhR8+MKd/yM6AmDa7njVX1GoGRnvaBAWLfnZXKMybC9rn
-         iw0mmGit9nt9AND8b2GkHeiXJa7E/HEh1CCsUx8SsAueaO10b1IHJyWDHvzUtXmODd
-         iAIiXyQVV7KZw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 44B905B93;
-        Mon,  3 Dec 2018 16:39:06 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 3 Dec 2018 16:39:06 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 4 Dec 2018 01:39:04 +0100
-Received: from [10.0.2.15] (10.225.2.138) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 4 Dec
- 2018 01:39:03 +0100
-Subject: Re: [PATCH] i3c: Rename dw-i3c-master.c into i3c-master-dw.c
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <vitor.soares@synopsys.com>
-CC:     <linux-kernel@vger.kernel.org>
-References: <20181126084514.23663-1-boris.brezillon@bootlin.com>
- <20181203110739.0959d6c0@bbrezillon>
-From:   vitor <vitor.soares@synopsys.com>
-Message-ID: <fd4905e9-a5d9-349c-0dce-be59f0100f31@synopsys.com>
-Date:   Tue, 4 Dec 2018 00:38:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 3 Dec 2018 19:43:49 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so6498339pgr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:43:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=2KQNJO8uFkDQm49FDynLRoSgm5JYnbeN3mqYf/XYMRY=;
+        b=iIY1WzCkG7EL2UBPkpKpeI5ri9n2f/UzUpLsQlRLY3UDMThHLmja1whxyEn4ysQ6DE
+         NJLBXTZfR7Zg/nOYVJ3IULdI95lNagbSPIsXB/ifeNeO7G2U/XsFOKdn1pTb2SStiUTj
+         hgaKcgauhxhy5lvMUB0XLqyI+JfXtfLLCk1jo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=2KQNJO8uFkDQm49FDynLRoSgm5JYnbeN3mqYf/XYMRY=;
+        b=hQOheSwgq7+MdC9scuS1CdS/eSXoUu+96IIC9QVQy7KR+qXNqJCI2UZF8apTb8GRQ8
+         4GTR2P+bY2GEaAqpSbYNagWrV/lLyoK7Jai7Yb93QHtMJgG0PaDVH1Kf7Sc7q7XTEoIK
+         qv8H/UV2B0VOh8fZgmYD5zBiuAIrw0gdPBi8fLQbbzc9PnoAJcXbRceiy/RkH5vq5Fky
+         x9jFTDvtfl9EvcbPlsXPco103TsB/HkurYaPpgcY+FtuNy4mIXDHs4aHpA5yuhJbwaUC
+         PKy7s96j5GIp7i4JmW/AbMJbjXN50augoqltAK6QQTyatH87R4gV3V1sZlqf3rE3Sgkm
+         HDig==
+X-Gm-Message-State: AA+aEWYUj9U3oh1CT5c/0I/dSAKULAuWH0c8Ka+tKA6CyNc+PhHJAjiD
+        jQzd5vWYd+LusnE4Aj8g25Sg8w==
+X-Google-Smtp-Source: AFSGD/W/E9nCmWDZPFBVgs+3o4K5zFb9/NfpH2z1WeK+C/+Mdbm3zKm8ERTWyGJ/Ap3pbqgwS8IKbA==
+X-Received: by 2002:a65:60c2:: with SMTP id r2mr14030930pgv.393.1543884227492;
+        Mon, 03 Dec 2018 16:43:47 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id z62sm21483133pfl.33.2018.12.03.16.43.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 16:43:46 -0800 (PST)
+Date:   Mon, 3 Dec 2018 16:43:45 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] pstore/ram: Avoid NULL deref in ftrace merging failure path
+Message-ID: <20181204004345.GA48115@beast>
 MIME-Version: 1.0
-In-Reply-To: <20181203110739.0959d6c0@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.225.2.138]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Given corruption in the ftrace records, it might be possible to allocate
+tmp_prz without assigning prz to it, but still marking it as needing to
+be freed, which would cause at least a NULL dereference.
+
+smatch warnings:
+fs/pstore/ram.c:340 ramoops_pstore_read() error: we previously assumed 'prz' could be null (see line 255)
+
+https://lists.01.org/pipermail/kbuild-all/2018-December/055528.html
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 2fbea82bbb89 ("pstore: Merge per-CPU ftrace records into one")
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/pstore/ram.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index e6d9560ea455..96f7d32cd184 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -291,6 +291,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+ 					  GFP_KERNEL);
+ 			if (!tmp_prz)
+ 				return -ENOMEM;
++			prz = tmp_prz;
+ 			free_prz = true;
+ 
+ 			while (cxt->ftrace_read_cnt < cxt->max_ftrace_cnt) {
+@@ -309,7 +310,6 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+ 					goto out;
+ 			}
+ 			record->id = 0;
+-			prz = tmp_prz;
+ 		}
+ 	}
+ 
+-- 
+2.17.1
 
 
-On 03/12/18 10:07, Boris Brezillon wrote:
-> Hi Vitor,
->
-> On Mon, 26 Nov 2018 09:45:14 +0100
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->
->> Follow the naming scheme introduced by the Cadence driver to keep things
->> consistent.
->>
->> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->> ---
->>   drivers/i3c/master/Makefile                             | 2 +-
->>   drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} | 0
->>   2 files changed, 1 insertion(+), 1 deletion(-)
->>   rename drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} (100%)
-> Any opinion on this rename. If you disagree with this, then I'd like to
-> know it.
->
-> Regards,
->
-> Boris
->
->> diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
->> index fc53939a0bb1..c5f52733aa10 100644
->> --- a/drivers/i3c/master/Makefile
->> +++ b/drivers/i3c/master/Makefile
->> @@ -1,2 +1,2 @@
->>   obj-$(CONFIG_CDNS_I3C_MASTER)		+= i3c-master-cdns.o
->> -obj-$(CONFIG_DW_I3C_MASTER)		+= dw-i3c-master.o
->> +obj-$(CONFIG_DW_I3C_MASTER)		+= i3c-master-dw.o
->> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/i3c-master-dw.c
->> similarity index 100%
->> rename from drivers/i3c/master/dw-i3c-master.c
->> rename to drivers/i3c/master/i3c-master-dw.c
-
-
-I already reply on initial thread. Please check my answers.
-
-
-Best regards,
-
-Vitor Soares
-
+-- 
+Kees Cook
