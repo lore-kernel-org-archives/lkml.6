@@ -2,55 +2,59 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DC6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02877C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8E52082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA1F92087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeOJz67k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8E52082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="146DKhzV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1F92087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeLDLMJ (ORCPT
+        id S1728453AbeLDLMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:12:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57984 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:12:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbeLDLId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:08:33 -0500
+        id S1727770AbeLDLIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:08:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 378F22146D;
-        Tue,  4 Dec 2018 11:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 610B52082D;
+        Tue,  4 Dec 2018 11:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921712;
-        bh=EPZ3u+u/9by9lg6tqDShXXaXQlxehgo0f/8A39KSmeU=;
+        s=default; t=1543921700;
+        bh=snLAOq7VQpJ4+O0SVCyRqsne3iLAS2S6WoNJKUQwY6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CeOJz67kCv2TRnQmFc+qfLeQJPTDrTk116PC0Bf5Y1F5nUxix5WwcTTdqMupojwKX
-         2h6SMjAWBg2CygZGSVlkS/xqXS/4Ix8aR/aM651WIkY2L544jECEwU6CjjwhyZv1SE
-         sCkfxFmTJ0N6mPtSi167Sxlzr8lX+3TjmXkRmCjg=
+        b=146DKhzVGmlEeaJ6JXgTnCGumgKSundrR3MXDH24IY5C/RqoTp7FVun/OuMEqRKxw
+         0zJ8Ls4HxDT5Y8JHHfCe/giIyO/jeij7dv0ijbJxtUUO+SwoyCoE3oKnFktZsZn1Cw
+         yPvkILRBAIzwKeDYP+BjTeom+Hl3ySI+o1uTVVM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/50] mm/huge_memory: splitting set mapping+index before unfreeze
-Date:   Tue,  4 Dec 2018 11:49:58 +0100
-Message-Id: <20181204103714.652877731@linuxfoundation.org>
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 25/50] perf/x86/intel: Move branch tracing setup to the Intel-specific source file
+Date:   Tue,  4 Dec 2018 11:50:20 +0100
+Message-Id: <20181204103715.788186980@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -69,71 +73,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 173d9d9fd3ddae84c110fea8aedf1f26af6be9ec upstream.
+From: Jiri Olsa <jolsa@kernel.org>
 
-Huge tmpfs stress testing has occasionally hit shmem_undo_range()'s
-VM_BUG_ON_PAGE(page_to_pgoff(page) != index, page).
+commit ed6101bbf6266ee83e620b19faa7c6ad56bb41ab upstream.
 
-Move the setting of mapping and index up before the page_ref_unfreeze()
-in __split_huge_page_tail() to fix this: so that a page cache lookup
-cannot get a reference while the tail's mapping and index are unstable.
+Moving branch tracing setup to Intel core object into separate
+intel_pmu_bts_config function, because it's Intel specific.
 
-In fact, might as well move them up before the smp_wmb(): I don't see an
-actual need for that, but if I'm missing something, this way round is
-safer than the other, and no less efficient.
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20181121101612.16272-1-jolsa@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-You might argue that VM_BUG_ON_PAGE(page_to_pgoff(page) != index, page) is
-misplaced, and should be left until after the trylock_page(); but left as
-is has not crashed since, and gives more stringent assurance.
-
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261516380.2275@eggly.anvils
-Fixes: e9b61f19858a5 ("thp: reintroduce split_huge_page()")
-Requires: 605ca5ede764 ("mm/huge_memory.c: reorder operations in __split_huge_page_tail()")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: <stable@vger.kernel.org>	[4.8+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/huge_memory.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/events/core.c       |   20 --------------------
+ arch/x86/events/intel/core.c |   41 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 40 insertions(+), 21 deletions(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c14aec110e90..5beb62fa3d30 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1894,6 +1894,12 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -437,26 +437,6 @@ int x86_setup_perfctr(struct perf_event
+ 	if (config == -1LL)
+ 		return -EINVAL;
  
-+	/* ->mapping in first tail page is compound_mapcount */
-+	VM_BUG_ON_PAGE(tail > 2 && page_tail->mapping != TAIL_MAPPING,
-+			page_tail);
-+	page_tail->mapping = head->mapping;
-+	page_tail->index = head->index + tail;
-+
- 	/* Page flags must be visible before we make the page non-compound. */
- 	smp_wmb();
- 
-@@ -1914,12 +1920,6 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 	if (page_is_idle(head))
- 		set_page_idle(page_tail);
- 
--	/* ->mapping in first tail page is compound_mapcount */
--	VM_BUG_ON_PAGE(tail > 2 && page_tail->mapping != TAIL_MAPPING,
--			page_tail);
--	page_tail->mapping = head->mapping;
+-	/*
+-	 * Branch tracing:
+-	 */
+-	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
+-	    !attr->freq && hwc->sample_period == 1) {
+-		/* BTS is not supported by this architecture. */
+-		if (!x86_pmu.bts_active)
+-			return -EOPNOTSUPP;
 -
--	page_tail->index = head->index + tail;
- 	page_cpupid_xchg_last(page_tail, page_cpupid_last(head));
- 	lru_add_page_tail(head, page_tail, lruvec, list);
+-		/* BTS is currently only allowed for user-mode. */
+-		if (!attr->exclude_kernel)
+-			return -EOPNOTSUPP;
+-
+-		/* disallow bts if conflicting events are present */
+-		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
+-			return -EBUSY;
+-
+-		event->destroy = hw_perf_lbr_event_destroy;
+-	}
+-
+ 	hwc->config |= config;
+ 
+ 	return 0;
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2822,6 +2822,41 @@ static unsigned long intel_pmu_free_runn
+ 	return flags;
  }
--- 
-2.17.1
-
+ 
++static int intel_pmu_bts_config(struct perf_event *event)
++{
++	struct perf_event_attr *attr = &event->attr;
++	struct hw_perf_event *hwc = &event->hw;
++
++	if (attr->config == PERF_COUNT_HW_BRANCH_INSTRUCTIONS &&
++	    !attr->freq && hwc->sample_period == 1) {
++		/* BTS is not supported by this architecture. */
++		if (!x86_pmu.bts_active)
++			return -EOPNOTSUPP;
++
++		/* BTS is currently only allowed for user-mode. */
++		if (!attr->exclude_kernel)
++			return -EOPNOTSUPP;
++
++		/* disallow bts if conflicting events are present */
++		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
++			return -EBUSY;
++
++		event->destroy = hw_perf_lbr_event_destroy;
++	}
++
++	return 0;
++}
++
++static int core_pmu_hw_config(struct perf_event *event)
++{
++	int ret = x86_pmu_hw_config(event);
++
++	if (ret)
++		return ret;
++
++	return intel_pmu_bts_config(event);
++}
++
+ static int intel_pmu_hw_config(struct perf_event *event)
+ {
+ 	int ret = x86_pmu_hw_config(event);
+@@ -2829,6 +2864,10 @@ static int intel_pmu_hw_config(struct pe
+ 	if (ret)
+ 		return ret;
+ 
++	ret = intel_pmu_bts_config(event);
++	if (ret)
++		return ret;
++
+ 	if (event->attr.precise_ip) {
+ 		if (!event->attr.freq) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+@@ -3265,7 +3304,7 @@ static __initconst const struct x86_pmu
+ 	.enable_all		= core_pmu_enable_all,
+ 	.enable			= core_pmu_enable_event,
+ 	.disable		= x86_pmu_disable_event,
+-	.hw_config		= x86_pmu_hw_config,
++	.hw_config		= core_pmu_hw_config,
+ 	.schedule_events	= x86_schedule_events,
+ 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
+ 	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
 
 
