@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF554C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3CEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C0E2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0B032146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg3Wozk1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C0E2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+DhnlbN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B032146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbeLDLA0 (ORCPT
+        id S1727340AbeLDLA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45660 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727313AbeLDLAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:24 -0500
+        id S1727332AbeLDLA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA262087F;
-        Tue,  4 Dec 2018 11:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 782E02087F;
+        Tue,  4 Dec 2018 11:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921223;
-        bh=ni+OWb1bl6qqyHm6IZMorifIhmCA5+auQvp+PGDj8lE=;
+        s=default; t=1543921226;
+        bh=JtXYVRsKvaBLNG51lcyFZQk1vE9wJfal4lWIRUCv0/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qg3Wozk1lvdF4G3XXhMq85TfVesz5T1/IELYVfLe03RO+5noQbBzksL+Uaqdt9MHR
-         ws/vwieH6PDbIZRP447wntFsUOkafNqJkiAlRXcwf+24o5ealArJCjzGpxdfWkGOW3
-         w72IfAALnkYBCHqrCy4mFyzgZxM/lBw65Kw4gqME=
+        b=u+DhnlbNt5A7f4ywCqSp7PZVWVeLIbaG3bx9M+vvNZmyb8l5m1qZS0pF8Zq2IOEtZ
+         vrOV+F91ObS5nXYRaY7c79Q+e8UT3RxMWuoQ6NDTXrKuT6Yn/htDfTmgq9/9Thmr2J
+         0ydiPED42e9q6LX0Wh4JTqvtquTBnFxDF4zkOA8k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-wireless@vger.kernel.org,
-        youling257 <youling257@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 4.19 129/139] staging: rtl8723bs: Add missing return for cfg80211_rtw_get_station
-Date:   Tue,  4 Dec 2018 11:50:10 +0100
-Message-Id: <20181204103656.051356146@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.19 130/139] USB: usb-storage: Add new IDs to ums-realtek
+Date:   Tue,  4 Dec 2018 11:50:11 +0100
+Message-Id: <20181204103656.099602804@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,39 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 8561fb31a1f9594e2807681f5c0721894e367f19 upstream.
+commit a84a1bcc992f0545a51d2e120b8ca2ef20e2ea97 upstream.
 
-With Androidx86 8.1, wificond returns "failed to get
-nl80211_sta_info_tx_failed" and wificondControl returns "Invalid signal
-poll result from wificond". The fix is to OR sinfo->filled with
-BIT_ULL(NL80211_STA_INFO_TX_FAILED).
+There are two new Realtek card readers require ums-realtek to work
+correctly.
 
-This missing bit is apparently not needed with NetworkManager, but it
-does no harm in that case.
+Add the new IDs to support them.
 
-Reported-and-Tested-by: youling257 <youling257@gmail.com>
-Cc: linux-wireless@vger.kernel.org
-Cc: youling257 <youling257@gmail.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/storage/unusual_realtek.h |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-@@ -1277,7 +1277,7 @@ static int cfg80211_rtw_get_station(stru
+--- a/drivers/usb/storage/unusual_realtek.h
++++ b/drivers/usb/storage/unusual_realtek.h
+@@ -27,4 +27,14 @@ UNUSUAL_DEV(0x0bda, 0x0159, 0x0000, 0x99
+ 		"USB Card Reader",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
  
- 		sinfo->filled |= BIT_ULL(NL80211_STA_INFO_TX_PACKETS);
- 		sinfo->tx_packets = psta->sta_stats.tx_pkts;
--
-+		sinfo->filled |= BIT_ULL(NL80211_STA_INFO_TX_FAILED);
- 	}
- 
- 	/* for Ad-Hoc/AP mode */
++UNUSUAL_DEV(0x0bda, 0x0177, 0x0000, 0x9999,
++		"Realtek",
++		"USB Card Reader",
++		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
++
++UNUSUAL_DEV(0x0bda, 0x0184, 0x0000, 0x9999,
++		"Realtek",
++		"USB Card Reader",
++		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
++
+ #endif  /* defined(CONFIG_USB_STORAGE_REALTEK) || ... */
 
 
