@@ -2,125 +2,139 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BBC8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6011DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FC42081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FC42081C
+	by mail.kernel.org (Postfix) with ESMTP id 2F1C520834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F1C520834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbeLDS5b (ORCPT
+        id S1726203AbeLDS5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:57:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42210 "EHLO mx1.redhat.com"
+        Tue, 4 Dec 2018 13:57:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38108 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726142AbeLDS5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:57:30 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725797AbeLDS5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:57:51 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BFB83A404B;
-        Tue,  4 Dec 2018 18:57:29 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DB99F19C7D;
-        Tue,  4 Dec 2018 18:57:27 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 13:57:26 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-Message-ID: <20181204185725.GE2937@redhat.com>
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <20181203233509.20671-3-jglisse@redhat.com>
- <875zw98bm4.fsf@linux.intel.com>
- <20181204182421.GC2937@redhat.com>
- <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id A262E3082B23;
+        Tue,  4 Dec 2018 18:57:50 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C773560BF1;
+        Tue,  4 Dec 2018 18:57:49 +0000 (UTC)
+Subject: Re: [PATCH v2 16/24] locking/lockdep: Retain the class key and name
+ while freeing a lock class
+To:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com
+Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>
+References: <20181204002833.55452-1-bvanassche@acm.org>
+ <20181204002833.55452-17-bvanassche@acm.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <4eb2d1ad-14ee-0080-7736-aefdf69b4f29@redhat.com>
+Date:   Tue, 4 Dec 2018 13:57:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 04 Dec 2018 18:57:30 +0000 (UTC)
+In-Reply-To: <20181204002833.55452-17-bvanassche@acm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 04 Dec 2018 18:57:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 10:31:17AM -0800, Dan Williams wrote:
-> On Tue, Dec 4, 2018 at 10:24 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> >
-> > On Tue, Dec 04, 2018 at 09:06:59AM -0800, Andi Kleen wrote:
-> > > jglisse@redhat.com writes:
-> > >
-> > > > +
-> > > > +To help with forward compatibility each object as a version value and
-> > > > +it is mandatory for user space to only use target or initiator with
-> > > > +version supported by the user space. For instance if user space only
-> > > > +knows about what version 1 means and sees a target with version 2 then
-> > > > +the user space must ignore that target as if it does not exist.
-> > >
-> > > So once v2 is introduced all applications that only support v1 break.
-> > >
-> > > That seems very un-Linux and will break Linus' "do not break existing
-> > > applications" rule.
-> > >
-> > > The standard approach that if you add something incompatible is to
-> > > add new field, but keep the old ones.
-> >
-> > No that's not how it is suppose to work. So let says it is 2018 and you
-> > have v1 memory (like your regular main DDR memory for instance) then it
-> > will always be expose a v1 memory.
-> >
-> > Fast forward 2020 and you have this new type of memory that is not cache
-> > coherent and you want to expose this to userspace through HMS. What you
-> > do is a kernel patch that introduce the v2 type for target and define a
-> > set of new sysfs file to describe what v2 is. On this new computer you
-> > report your usual main memory as v1 and your new memory as v2.
-> >
-> > So the application that only knew about v1 will keep using any v1 memory
-> > on your new platform but it will not use any of the new memory v2 which
-> > is what you want to happen. You do not have to break existing application
-> > while allowing to add new type of memory.
-> 
-> That sounds needlessly restrictive. Let the kernel arbitrate what
-> memory an application gets, don't design a system where applications
-> are hard coded to a memory type. Applications can hint, or optionally
-> specify an override and the kernel can react accordingly.
+On 12/03/2018 07:28 PM, Bart Van Assche wrote:
+> The next patch in this series uses the class name in code that
+> detects lock class use-after-free. Hence retain the class name for
+> lock classes that are being freed.
+>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  kernel/locking/lockdep.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index ecd92969674c..92bdb187987f 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -4147,10 +4147,8 @@ static void zap_class(struct lock_class *class)
+>  	 * Unhash the class and remove it from the all_lock_classes list:
+>  	 */
+>  	hlist_del_rcu(&class->hash_entry);
+> +	class->hash_entry.pprev = NULL;
+>  	list_del(&class->lock_entry);
+> -page 
+> -	RCU_INIT_POINTER(class->key, NULL);
+> -	RCU_INIT_POINTER(class->name, NULL);
+>  }
+>  
+>  static inline int within(const void *addr, void *start, unsigned long size)
 
-You do not want to randomly use non cache coherent memory inside your
-application :) This is not gonna go well with C++ or atomic :) Yes they
-are legitimate use case where application can decide to give up cache
-coherency temporarily for a range of virtual address. But the application
-needs to understand what it is doing and opt in to do that knowing full
-well that. The version thing allows for scenario like. You do not have
-to define a new version with every new type of memory. If your new memory
-has all the properties of v1 than you expose it as v1 and old application
-on the new platform will use your new memory type being non the wiser.
-
-The version thing is really to exclude user from using something they
-do not want to use without understanding the consequences of doing so.
+Using the name after module unload can be problematic if it points to
+memory space occupied by the unloaded kernel module. The memory page may
+be invalid with the potential of crashing the kernel. You may have to
+duplicate the name if it is really from the module address space.
 
 Cheers,
-Jérôme
+Longman
+
