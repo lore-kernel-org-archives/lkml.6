@@ -2,109 +2,114 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFBBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B497C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB572082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:17:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB572082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E28942082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:19:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E28942082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeLDVRf (ORCPT
+        id S1726134AbeLDVTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:17:35 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43547 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbeLDVRf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:17:35 -0500
-Received: by mail-qk1-f193.google.com with SMTP id r71so10572001qkr.10;
-        Tue, 04 Dec 2018 13:17:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oNLZdxPA/1JMTOenX3BXjqrafMgfKLzwoze6zSjaYjs=;
-        b=FRV6mMBE7By9T7uj2xTjiptYoVShkJiOQ/lDHTFS5jWFhS06tGhOvQ4br3KxvCo0u8
-         scypYY4QigNzk3XcHyxcHgJpm5ip8/EGGg7BRNr6Hotjcua3Vpy7DV+qbWVfOfIpDItu
-         ejwqSWXkHtLaRrCVzDLtsXh4ju1i/zdIfbOK1hoC03vNmNIXkSAVl3dIz+jNJS7TEM65
-         jpnR1WsOXpRSkg5zqvxpQVrvQkLQLCAXFjyOuJprd4nOb/gtldtw81X1aVhPaucPDn20
-         IK6KR0QdTP2iEPkKBNOcNV7G2oQDMJNLda/JGIh2iEq0I3yhyJEP6dz6hSIPSQ8tsqNK
-         fgFA==
-X-Gm-Message-State: AA+aEWYWEqRSFsbHipfMv603hAMTy6NywYmkm5ZNxLH4oxkJoE5VJcM8
-        xDE4h4RyGj5TXSPdZCtQYfWGQ9FcQYZHBV3asgE=
-X-Google-Smtp-Source: AFSGD/WLqefm4/JZ8Oq0jJRXrV707I2FqcC+iotSpp9LY7+wMEyltpzSAqKwkIOad/jvr90tsqLqlJgfrLETvle9J5g=
-X-Received: by 2002:ae9:e102:: with SMTP id g2mr19045176qkm.343.1543958254395;
- Tue, 04 Dec 2018 13:17:34 -0800 (PST)
-MIME-Version: 1.0
-References: <1543465611-17122-1-git-send-email-firoz.khan@linaro.org> <1543465611-17122-5-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1543465611-17122-5-git-send-email-firoz.khan@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 4 Dec 2018 22:17:18 +0100
-Message-ID: <CAK8P3a2SP0eX50NoFKaM2N85mgSejToQkD9ZOE_7V_RT__BCvg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] powerpc: generate uapi header and system call
- table files
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, linuxram@us.ibm.com,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        leitao@debian.org, Boqun Feng <boqun.feng@gmail.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+        Tue, 4 Dec 2018 16:19:23 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:54578 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbeLDVTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:19:23 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gUI65-0000qa-US; Tue, 04 Dec 2018 14:19:14 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+References: <20181203233509.20671-3-jglisse@redhat.com>
+ <875zw98bm4.fsf@linux.intel.com> <20181204182421.GC2937@redhat.com>
+ <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+ <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+ <20181204192221.GG2937@redhat.com>
+ <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
+ <20181204201347.GK2937@redhat.com>
+ <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
+ <20181204205902.GM2937@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
+Date:   Tue, 4 Dec 2018 14:19:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181204205902.GM2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/arch/powerpc/kernel/systbl.S b/arch/powerpc/kernel/systbl.S
-> index 9ff1913..d756348 100644
-> --- a/arch/powerpc/kernel/systbl.S
-> +++ b/arch/powerpc/kernel/systbl.S
 
->  #ifdef CONFIG_PPC64
-> @@ -47,5 +25,17 @@
->  .globl sys_call_table
->  sys_call_table:
->
-> +#if defined CONFIG_PPC64 && defined(CONFIG_COMPAT)
-> +#define __SYSCALL(nr, entry, nargs) .8byte entry
->  #define compat_sys_sigsuspend  sys_sigsuspend
-> -#include <asm/systbl.h>
-> +#include <asm/syscall_table_c32.h>
-> +#undef __SYSCALL
-> +#elif defined CONFIG_PPC64 && !defined(CONFIG_COMPAT)
-> +#define __SYSCALL(nr, entry, nargs) .8byte entry
-> +#include <asm/syscall_table_64.h>
-> +#undef __SYSCALL
 
-This part looks wrong: where the old sys_call_table contained
-both the native and compat calls side by side, the new table
-contains only the compat versions (note that CONFIG_COMPAT is
-always set on PPC64). I think you copy-pasted this incorrectly from
-one of the other architectures that uses a different layout for the
-compat calls.
+On 2018-12-04 1:59 p.m., Jerome Glisse wrote:
+> How to expose harmful memory to userspace then ? How can i expose
+> non cache coherent memory because yes they are application out there
+> that use that today and would like to be able to migrate to and from
+> that memory dynamicly during lifetime of the application as the data
+> set progress through the application processing pipeline.
 
-The way I think this could work best is if you add a preparation
-patch that splits out the 64-bit table into two separate ones
-(and make sure that works). After that, you can add your
-existing patch, rebased to use the two generated tables
-instead of the old-style tables. I'll follow up with an untested
-patch for illustration.
+I'm not arguing against the purpose or use cases. I'm being critical of
+the API choices.
 
-       Arnd
+> Note that i do not expose things like physical address or even splits
+> memory in a node into individual device, in fact in expose less
+> information that the existing NUMA (no zone, phys index, ...). As i do
+> not think those have any value to userspace. What matter to userspace
+> is where is this memory is in my topology so i can look at all the
+> initiators node that are close by. Or the reverse, i have a set of
+> initiators what is the set of closest targets to all those initiators.
+
+No, what matters to applications is getting memory that will work for
+the initiators/resources they need it to work for. The specific topology
+might be of interest to administrators but it is not what applications
+need. And it should be relatively easy to flesh out the existing sysfs
+device tree to provide the topology information administrators need.
+
+> I am talking about the inevitable fact that at some point some system
+> firmware will miss-represent their platform. System firmware writer
+> usualy copy and paste thing with little regards to what have change
+> from one platform to the new. So their will be inevitable workaround
+> and i would rather see those piling up inside a userspace library than
+> inside the kernel.
+
+It's *absolutely* the kernel's responsibility to patch issues caused by
+broken firmware. We have quirks all over the place for this. That's
+never something userspace should be responsible for. Really, this is the
+raison d'etre of the kernel: to provide userspace with a uniform
+execution environment -- if every application had to deal with broken
+firmware it would be a nightmare.
+
+Logan
+
