@@ -2,622 +2,185 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EB2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE6CC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB0220672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:35:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB0220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id B97BF20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:36:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97BF20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeLDSfo (ORCPT
+        id S1726100AbeLDSgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:35:44 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64885 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbeLDSfo (ORCPT
+        Tue, 4 Dec 2018 13:36:05 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35248 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbeLDSgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:35:44 -0500
-Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
- id 998ba5dbbf1aa336; Tue, 4 Dec 2018 19:35:41 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Doug Smythies <dsmythies@telus.net>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [RFC/RFT][PATCH v7] cpuidle: New timer events oriented governor for tickless systems
-Date:   Tue, 04 Dec 2018 19:35:30 +0100
-Message-ID: <2047881.s5VBHReNGT@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 4 Dec 2018 13:36:05 -0500
+Received: by mail-yw1-f67.google.com with SMTP id h32so7397120ywk.2;
+        Tue, 04 Dec 2018 10:36:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PngW+zHDTehzFZdt5/WrhsrAhc9bGD9P26Ud3RbTyIU=;
+        b=DOzQYWjgRqbZPCiwf1z5ekkKqXUmm0MwzbRLjIUPETbpAciRCmIb1XmcxLtU8NycG1
+         6CRNItFn/B7Q3fFsrBRBqZyURFB/TaiZJ20hFfYdTkoQ0vG3OehFdN1eU504Qb29MZmf
+         QolC6zZldlwhiGhxJd15BnQD9iSE+nTvt8w2SNLZFnuE/0jCruBBq9Kh77keWzzjfH6/
+         v4EkEIvZqj8CZxWHJtBu8OL9Dn0FgryX+buaXDHaZIh2WUWKQQzS0QtwtiUlhIN9Z0Cz
+         VxuX3V/ynk49f9HLGeApACqxhEP92AZZUf4sM9G0J2RNHrwiuYz0dv1u+68B0BCZ3x5C
+         +W3g==
+X-Gm-Message-State: AA+aEWZAL4zfudIVRLlW8MQDJkjxB9yPIZtyMyujshOmpN5rYYduCXnM
+        ZMQTpiRrUG/TsROCfdrFyTQ=
+X-Google-Smtp-Source: AFSGD/XDdAObGumK0waRHGW8qcx3/7DgJX2Epx040vaSuA73/YiH9eTtgXEg4nImg1SbXu/PB2xm2A==
+X-Received: by 2002:a81:5404:: with SMTP id i4mr21679468ywb.364.1543948564064;
+        Tue, 04 Dec 2018 10:36:04 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Dec 2018 10:36:03 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH v5 00/14] block: always associate blkg and refcount cleanup
+Date:   Tue,  4 Dec 2018 13:35:46 -0500
+Message-Id: <20181204183600.99746-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi everyone,
 
-The venerable menu governor does some thigns that are quite
-questionable in my view.
+A special case with dm is the flush bio which is statically initialized
+before the block device is opened and associated with a disk. This
+caused blkg association to throw a NPE. 0005 addresses this case by
+moving association to be on the flush path.
 
-First, it includes timer wakeups in the pattern detection data and
-mixes them up with wakeups from other sources which in some cases
-causes it to expect what essentially would be a timer wakeup in a
-time frame in which no timer wakeups are possible (becuase it knows
-the time until the next timer event and that is later than the
-expected wakeup time).
+With v4 moving association to piggyback off of bio_set_dev(), this
+caused a NPE to be thrown by the special case above. I was overly
+cautious with v4 and added the bio_has_queue() check which is now
+removed in v5.
 
-Second, it uses the extra exit latency limit based on the predicted
-idle duration and depending on the number of tasks waiting on I/O,
-even though those tasks may run on a different CPU when they are
-woken up.  Moreover, the time ranges used by it for the sleep length
-correction factors depend on whether or not there are tasks waiting
-on I/O, which again doesn't imply anything in particular, and they
-are not correlated to the list of available idle states in any way
-whatever.
+Also, the addition of bio_set_dev_only() wasn't quite right due to
+writeback and swap sharing the same bio init paths in many places. The
+safer thing to do is double association for those paths and in a follow
+up series split out the bio init paths.
 
-Also, the pattern detection code in menu may end up considering
-values that are too large to matter at all, in which cases running
-it is a waste of time.
+Changes in v5: 
+All:  Fixed minor grammar and syntactic issues.
+0004: Removed bio_has_queue() for being overly cautious.
+0005: New, properly addressed the static flush_bio in md. 
+0006: Removed the rcu lock in blkcg_bio_issue_check() as the bio will
+      own a ref on the blkg so it is unnecessary.
+0011: Consolidated bio_associate_blkg_from_css() (removed __ version).
 
-A major rework of the menu governor would be required to address
-these issues and the performance of at least some workloads (tuned
-specifically to the current behavior of the menu governor) is likely
-to suffer from that.  It is thus better to introduce an entirely new
-governor without them and let everybody use the governor that works
-better with their actual workloads.
+From v4:
+This is respin of v3 [1] with fixes for the errors reported in [2] and
+[3]. v3 was reverted in [4].
 
-The new governor introduced here, the timer events oriented (TEO)
-governor, uses the same basic strategy as menu: it always tries to
-find the deepest idle state that can be used in the given conditions.
-However, it applies a different approach to that problem.
+The issue in [3] was that bio->bi_disk->queue and blkg->q were out
+of sync. So when I changed blk_get_rl() to use blkg->q, the wrong queue
+was returned and elevator from q->elevator->type threw a NPE. Note, with
+v4.21, the old block stack was removed and so this patch was dropped. I
+did backport this to v4.20 and verified this series does not encounter
+the error.
 
-First, it doesn't use "correction factors" for the time till the
-closest timer, but instead it tries to correlate the measured idle
-duration values with the available idle states and use that
-information to pick up the idle state that is most likely to "match"
-the upcoming CPU idle interval.
+The biggest changes in v4 are when association occurs and clearly
+defining the cases where association should happen.
+  1. Association is now done when the device is set to keep blkg->q and
+     bio->bi_disk->queue in sync.
+  2. When a bio is submitted directly to the device, it will not be
+     associated with a blkg. This is because a blkg represents the
+     relationship between a blkcg and a request_queue. Going directly to
+     the device means the request_queue may not exist meaning no blkg
+     will exist.
 
-Second, it doesn't take the number of "I/O waiters" into account at
-all and the pattern detection code in it avoids taking timer wakeups
-into account.  It also only uses idle duration values less than the
-current time till the closest timer (with the tick excluded) for that
-purpose.
+The patch updating blk_get_rl() was dropped (v3 10/12). The patch to
+always associate a blkg from v3 (v3 04/12) was fixed and split into
+patches 0004 and 0005. 0011 is new removing bio_disassociate_task().
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Summarizing the ideas of this series:
+  1. Gracefully handle blkg failure to create by walking up the blkg
+     tree rather than fall through to root.
+  2. Associate a bio with a blkg in core logic rather than per
+     controller logic.
+  3. Rather than have a css and blkg reference, hold just a blkg ref
+     as it also holds a css ref.
+  4. Switch to percpu ref counting for blkg.
 
-I prefer the v7 mostly becuase it is simpler and more straightforward,
-but if the v6 turns out to be better in practice, I'll take that. :-)
+[1] https://lore.kernel.org/lkml/20180911184137.35897-1-dennisszhou@gmail.com/ 
+[2] https://lore.kernel.org/lkml/13987.1539646128@turing-police.cc.vt.edu/
+[3] https://marc.info/?l=linux-cgroups&m=154110436103723
+[4] https://lore.kernel.org/lkml/20181101212410.47569-1-dennis@kernel.org/
 
-v6 -> v7:
- * Actually use idle duration measured by the governor for everything (as
-   it likely is more accurate than the one measured by the core).
- * Fix teo_find_shallower_state() to work if state 0 is disabled (among
-   other cases).
- * Avoid using the most recent values of observed idle duration to refine
-   the state selection unless the majority of them are below the target
-   residency of the candidate idle state selected so far.  [This reduces
-   the likelihood of triggering the refinement computation, so it may also
-   reduce the overhead slightly (on average).]
- * Do not disregard the maximum observed idle duration falling in the
-   interesting range.  [This should cause slightly deeper idle state to be
-   selected through the selection refinement.]
+This patchset contains the following 14 patches:
+  0001-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
+  0002-blkcg-update-blkg_lookup_create-to-do-locking.patch
+  0003-blkcg-convert-blkg_lookup_create-to-find-closest-blk.patch
+  0004-blkcg-introduce-common-blkg-association-logic.patch
+  0005-dm-set-flush-bio-device-on-demand.patch
+  0006-blkcg-associate-blkg-when-associating-a-device.patch
+  0007-blkcg-consolidate-bio_issue_init-to-be-a-part-of-cor.patch
+  0008-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
+  0009-blkcg-associate-writeback-bios-with-a-blkg.patch
+  0010-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
+  0011-blkcg-remove-additional-reference-to-the-css.patch
+  0012-blkcg-remove-bio_disassociate_task.patch
+  0013-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
+  0014-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
 
-v5 -> v6:
- * Avoid applying poll_time_limit to non-polling idle states by mistake.
- * Rename SPIKE to PULSE.
- * Do not run pattern detection upfront.  Instead, use recent idle duration
-   values to refine the state selection after finding a candidate idle state.
- * Do not use the expected idle duration as an extra latency constraint
-   (exit latency is less than the target residency for all of the idle states
-   known to me anyway, so this doesn't change anything in practice).
+This patchset is on top of linu-block#for-4.21/block 154989e45fd8.
 
-v4 -> v5:
- * Avoid using shallow idle states when the tick has been stopped already.
+diffstats below:
 
-v3 -> v4:
- * Make the pattern detection avoid returning too early if the minimum
-   sample is too far from the average.
- * Reformat the changelog (as requested by Peter).
+Dennis Zhou (14):
+  blkcg: fix ref count issue with bio_blkcg() using task_css
+  blkcg: update blkg_lookup_create() to do locking
+  blkcg: convert blkg_lookup_create() to find closest blkg
+  blkcg: introduce common blkg association logic
+  dm: set the static flush bio device on demand
+  blkcg: associate blkg when associating a device
+  blkcg: consolidate bio_issue_init() to be a part of core
+  blkcg: associate a blkg for pages being evicted by swap
+  blkcg: associate writeback bios with a blkg
+  blkcg: remove bio->bi_css and instead use bio->bi_blkg
+  blkcg: remove additional reference to the css
+  blkcg: remove bio_disassociate_task()
+  blkcg: change blkg reference counting to use percpu_ref
+  blkcg: rename blkg_try_get() to blkg_tryget()
 
-v2 -> v3:
- * Simplify the pattern detection code and make it return a value
-	lower than the time to the closest timer if the majority of recent
-	idle intervals are below it regardless of their variance (that should
-	cause it to be slightly more aggressive).
- * Do not count wakeups from state 0 due to the time limit in poll_idle()
-   as non-timer.
+ Documentation/admin-guide/cgroup-v2.rst |   8 +-
+ block/bfq-cgroup.c                      |   4 +-
+ block/bfq-iosched.c                     |   2 +-
+ block/bio.c                             | 156 +++++++++++++++---------
+ block/blk-cgroup.c                      |  95 ++++++++++++---
+ block/blk-iolatency.c                   |  24 +---
+ block/blk-throttle.c                    |  11 --
+ block/bounce.c                          |   3 +-
+ drivers/block/loop.c                    |   5 +-
+ drivers/md/dm.c                         |  12 +-
+ drivers/md/raid0.c                      |   2 +-
+ fs/buffer.c                             |  10 +-
+ fs/ext4/page-io.c                       |   2 +-
+ include/linux/bio.h                     |  29 +++--
+ include/linux/blk-cgroup.h              | 120 ++++++++++++------
+ include/linux/blk_types.h               |   7 +-
+ include/linux/cgroup.h                  |   2 +
+ include/linux/writeback.h               |   5 +-
+ kernel/cgroup/cgroup.c                  |  48 ++++++--
+ kernel/trace/blktrace.c                 |   4 +-
+ mm/page_io.c                            |   2 +-
+ 21 files changed, 361 insertions(+), 190 deletions(-)
 
----
- drivers/cpuidle/Kconfig            |   11 
- drivers/cpuidle/governors/Makefile |    1 
- drivers/cpuidle/governors/teo.c    |  437 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 449 insertions(+)
-
-Index: linux-pm/drivers/cpuidle/governors/teo.c
-===================================================================
---- /dev/null
-+++ linux-pm/drivers/cpuidle/governors/teo.c
-@@ -0,0 +1,437 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Timer events oriented CPU idle governor
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-+ *
-+ * The idea of this governor is based on the observation that on many systems
-+ * timer events are two or more orders of magnitude more frequent than any
-+ * other interrupts, so they are likely to be the most significant source of CPU
-+ * wakeups from idle states.  Moreover, information about what happened in the
-+ * (relatively recent) past can be used to estimate whether or not the deepest
-+ * idle state with target residency within the time to the closest timer is
-+ * likely to be suitable for the upcoming idle time of the CPU and, if not, then
-+ * which of the shallower idle states to choose.
-+ *
-+ * Of course, non-timer wakeup sources are more important in some use cases and
-+ * they can be covered by taking a few most recent idle time intervals of the
-+ * CPU into account.  However, even in that case it is not necessary to consider
-+ * idle duration values greater than the time till the closest timer, as the
-+ * patterns that they may belong to produce average values close enough to
-+ * the time till the closest timer (sleep length) anyway.
-+ *
-+ * Thus this governor estimates whether or not the upcoming idle time of the CPU
-+ * is likely to be significantly shorter than the sleep length and selects an
-+ * idle state for it in accordance with that, as follows:
-+ *
-+ * - Find an idle state on the basis of the sleep length and state statistics
-+ *   collected over time:
-+ *
-+ *   o Find the deepest idle state whose target residency is less than or euqal
-+ *     to the sleep length.
-+ *
-+ *   o Select it if it matched both the sleep length and the observed idle
-+ *     duration in the past more often than it matched the sleep length alone
-+ *     (i.e. the observed idle duration was significantly shorter than the sleep
-+ *     length matched by it).
-+ *
-+ *   o Otherwise, select the shallower state with the greatest matched "early"
-+ *     wakeups metric.
-+ *
-+ * - If the majority of the most recent idle duration values are below the
-+ *   target residency of the idle state selected so far, use those values to
-+ *   compute the new expected idle duration and find an idle state matching it
-+ *   (which has to be shallower than the one selected so far).
-+ */
-+
-+#include <linux/cpuidle.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/sched/clock.h>
-+#include <linux/tick.h>
-+
-+/*
-+ * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
-+ * is used for decreasing metrics on a regular basis.
-+ */
-+#define PULSE		1024
-+#define DECAY_SHIFT	3
-+
-+/*
-+ * Number of the most recent idle duration values to take into consideration for
-+ * the detection of wakeup patterns.
-+ */
-+#define INTERVALS	8
-+
-+/**
-+ * struct teo_idle_state - Idle state data used by the TEO cpuidle governor.
-+ * @early_hits: "Early" CPU wakeups matched by this state.
-+ * @hits: "On time" CPU wakeups matched by this state.
-+ * @misses: CPU wakeups "missed" by this state.
-+ *
-+ * A CPU wakeup is "matched" by a given idle state if the idle duration measured
-+ * after the wakeup is between the target residency of that state and the target
-+ * residnecy of the next one (or if this is the deepest available idle state, it
-+ * "matches" a CPU wakeup when the measured idle duration is at least equal to
-+ * its target residency).
-+ *
-+ * Also, from the TEO governor prespective, a CPU wakeup from idle is "early" if
-+ * it occurs significantly earlier than the closest expected timer event (that
-+ * is, early enough to match an idle state shallower than the one matching the
-+ * time till the closest timer event).  Otherwise, the wakeup is "on time", or
-+ * it is a "hit".
-+ *
-+ * A "miss" occurs when the given state doesn't match the wakeup, but it matches
-+ * the time till the closest timer event used for idle state selection.
-+ */
-+struct teo_idle_state {
-+	unsigned int early_hits;
-+	unsigned int hits;
-+	unsigned int misses;
-+};
-+
-+/**
-+ * struct teo_cpu - CPU data used by the TEO cpuidle governor.
-+ * @time_span_ns: Time between idle state selection and post-wakeup update.
-+ * @sleep_length_ns: Time till the closest timer event (at the selection time).
-+ * @states: Idle states data corresponding to this CPU.
-+ * @last_state: Idle state entered by the CPU last time.
-+ * @interval_idx: Index of the most recent saved idle interval.
-+ * @intervals: Saved idle duration values.
-+ */
-+struct teo_cpu {
-+	u64 time_span_ns;
-+	u64 sleep_length_ns;
-+	struct teo_idle_state states[CPUIDLE_STATE_MAX];
-+	int last_state;
-+	int interval_idx;
-+	unsigned int intervals[INTERVALS];
-+};
-+
-+static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
-+
-+/**
-+ * teo_update - Update CPU data after wakeup.
-+ * @drv: cpuidle driver containing state data.
-+ * @dev: Target CPU.
-+ */
-+static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+	unsigned int sleep_length_us = ktime_to_us(cpu_data->sleep_length_ns);
-+	int i, idx_hit = -1, idx_timer = -1;
-+	unsigned int measured_us;
-+
-+	if (cpu_data->time_span_ns == cpu_data->sleep_length_ns) {
-+		/* One of the safety nets has triggered (most likely). */
-+		measured_us = sleep_length_us;
-+	} else {
-+		measured_us = ktime_to_us(cpu_data->time_span_ns);
-+		i = cpu_data->last_state;
-+		if (measured_us >= 2 * drv->states[i].exit_latency)
-+			measured_us -= drv->states[i].exit_latency;
-+		else
-+			measured_us /= 2;
-+	}
-+
-+	/*
-+	 * Decay the "early hits" metric for all of the states and find the
-+	 * states matching the sleep length and the measured idle duration.
-+	 */
-+	for (i = 0; i < drv->state_count; i++) {
-+		unsigned int early_hits = cpu_data->states[i].early_hits;
-+
-+		cpu_data->states[i].early_hits -= early_hits >> DECAY_SHIFT;
-+
-+		if (drv->states[i].target_residency <= measured_us)
-+			idx_hit = i;
-+
-+		if (drv->states[i].target_residency <= sleep_length_us)
-+			idx_timer = i;
-+	}
-+
-+	/*
-+	 * Update the "hits" and "misses" data for the state matching the sleep
-+	 * length.  If it matches the measured idle duration too, this is a hit,
-+	 * so increase the "hits" metric for it then.  Otherwise, this is a
-+	 * miss, so increase the "misses" metric for it.  In the latter case
-+	 * also increase the "early hits" metric for the state that actually
-+	 * matches the measured idle duration.
-+	 */
-+	if (idx_timer >= 0) {
-+		unsigned int hits = cpu_data->states[idx_timer].hits;
-+		unsigned int misses = cpu_data->states[idx_timer].misses;
-+
-+		hits -= hits >> DECAY_SHIFT;
-+		misses -= misses >> DECAY_SHIFT;
-+
-+		if (idx_timer > idx_hit) {
-+			misses += PULSE;
-+			if (idx_hit >= 0)
-+				cpu_data->states[idx_hit].early_hits += PULSE;
-+		} else {
-+			hits += PULSE;
-+		}
-+
-+		cpu_data->states[idx_timer].misses = misses;
-+		cpu_data->states[idx_timer].hits = hits;
-+	}
-+
-+	/*
-+	 * Save idle duration values corresponding to non-timer wakeups for
-+	 * pattern detection.
-+	 *
-+	 * If the total time span between idle state selection and the "reflect"
-+	 * callback is greater than or equal to the sleep length determined at
-+	 * the idle state selection time, the wakeup is likely to be due to a
-+	 * timer event.
-+	 */
-+	if (cpu_data->time_span_ns >= cpu_data->sleep_length_ns)
-+		measured_us = UINT_MAX;
-+
-+	cpu_data->intervals[cpu_data->interval_idx++] = measured_us;
-+	if (cpu_data->interval_idx > INTERVALS)
-+		cpu_data->interval_idx = 0;
-+}
-+
-+/**
-+ * teo_find_shallower_state - Find shallower idle state matching given duration.
-+ * @drv: cpuidle driver containing state data.
-+ * @dev: Target CPU.
-+ * @state_idx: Index of the capping idle state.
-+ * @duration_us: Idle duration value to match.
-+ */
-+static int teo_find_shallower_state(struct cpuidle_driver *drv,
-+				    struct cpuidle_device *dev, int state_idx,
-+				    unsigned int duration_us)
-+{
-+	int i;
-+
-+	for (i = state_idx - 1; i >= 0; i--) {
-+		if (drv->states[i].disabled || dev->states_usage[i].disable)
-+			continue;
-+
-+		state_idx = i;
-+		if (drv->states[i].target_residency <= duration_us)
-+			break;
-+	}
-+	return state_idx;
-+}
-+
-+/**
-+ * teo_select - Selects the next idle state to enter.
-+ * @drv: cpuidle driver containing state data.
-+ * @dev: Target CPU.
-+ * @stop_tick: Indication on whether or not to stop the scheduler tick.
-+ */
-+static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-+		      bool *stop_tick)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+	int latency_req = cpuidle_governor_latency_req(dev->cpu);
-+	unsigned int duration_us, count;
-+	int max_early_idx, idx, i;
-+	ktime_t delta_tick;
-+
-+	if (cpu_data->last_state >= 0) {
-+		teo_update(drv, dev);
-+		cpu_data->last_state = -1;
-+	}
-+
-+	cpu_data->time_span_ns = local_clock();
-+
-+	cpu_data->sleep_length_ns = tick_nohz_get_sleep_length(&delta_tick);
-+	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
-+
-+	count = 0;
-+	max_early_idx = -1;
-+	idx = -1;
-+
-+	for (i = 0; i < drv->state_count; i++) {
-+		struct cpuidle_state *s = &drv->states[i];
-+		struct cpuidle_state_usage *su = &dev->states_usage[i];
-+
-+		if (s->disabled || su->disable) {
-+			/*
-+			 * If the "early hits" metric of a disabled state is
-+			 * greater than the current maximum, it should be taken
-+			 * into account, because it would be a mistake to select
-+			 * a deeper state with lower "early hits" metric.  The
-+			 * index cannot be changed to point to it, however, so
-+			 * just increase the max count alone and let the index
-+			 * still point to a shallower idle state.
-+			 */
-+			if (max_early_idx >= 0 &&
-+			    count < cpu_data->states[i].early_hits)
-+				count = cpu_data->states[i].early_hits;
-+
-+			continue;
-+		}
-+
-+		if (idx < 0)
-+			idx = i; /* first enabled state */
-+
-+		if (s->target_residency > duration_us) {
-+			/*
-+			 * If the "hits" metric of the state matching the sleep
-+			 * length is greater than its "misses" metric, that is
-+			 * the one to use.
-+			 */
-+			if (cpu_data->states[idx].hits > cpu_data->states[idx].misses)
-+				break;
-+
-+			/*
-+			 * It is more likely that one of the shallower states
-+			 * will match the idle duration measured after wakeup,
-+			 * so take the one with the maximum "early hits" metric,
-+			 * but if that cannot be determined, just use the state
-+			 * selected so far.
-+			 */
-+			if (max_early_idx >= 0) {
-+				idx = max_early_idx;
-+				duration_us = drv->states[idx].target_residency;
-+			}
-+			break;
-+		}
-+		if (s->exit_latency > latency_req) {
-+			/*
-+			 * If we break out of the loop for latency reasons, use
-+			 * the target residency of the selected state as the
-+			 * expected idle duration to avoid stopping the tick
-+			 * as long as that target residency is low enough.
-+			 */
-+			duration_us = drv->states[idx].target_residency;
-+			break;
-+		}
-+
-+		idx = i;
-+
-+		if (count < cpu_data->states[i].early_hits &&
-+		    !(tick_nohz_tick_stopped() &&
-+		      drv->states[i].target_residency < TICK_USEC)) {
-+			count = cpu_data->states[i].early_hits;
-+			max_early_idx = i;
-+		}
-+	}
-+
-+	if (idx < 0) {
-+		idx = 0; /* No states enabled. Must use 0. */
-+	} else if (idx > 0) {
-+		u64 sum = 0;
-+
-+		count = 0;
-+
-+		/*
-+		 * Count and sum the most recent idle duration values less than
-+		 * the target residency of the state selected so far, find the
-+		 * max.
-+		 */
-+		for (i = 0; i < INTERVALS; i++) {
-+			unsigned int val = cpu_data->intervals[i];
-+
-+			if (val >= drv->states[idx].target_residency)
-+				continue;
-+
-+			count++;
-+			sum += val;
-+		}
-+
-+		/*
-+		 * Give up unless the majority of the most recent idle duration
-+		 * values are in the interesting range.
-+		 */
-+		if (count > INTERVALS / 2) {
-+			unsigned int avg_us = div64_u64(sum, count);
-+
-+			/*
-+			 * Avoid spending too much time in an idle state that
-+			 * would be too shallow.
-+			 */
-+			if (!(tick_nohz_tick_stopped() && avg_us < TICK_USEC)) {
-+				idx = teo_find_shallower_state(drv, dev, idx, avg_us);
-+				duration_us = avg_us;
-+			}
-+		}
-+	}
-+
-+	/*
-+	 * Don't stop the tick if the selected state is a polling one or if the
-+	 * expected idle duration is shorter than the tick period length.
-+	 */
-+	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
-+	    duration_us < TICK_USEC) && !tick_nohz_tick_stopped()) {
-+		unsigned int delta_tick_us = ktime_to_us(delta_tick);
-+
-+		*stop_tick = false;
-+
-+		/*
-+		 * The tick is not going to be stopped, so if the target
-+		 * residency of the state to be returned is not within the time
-+		 * till the closest timer including the tick, try to correct
-+		 * that.
-+		 */
-+		if (idx > 0 && drv->states[idx].target_residency > delta_tick_us)
-+			idx = teo_find_shallower_state(drv, dev, idx, delta_tick_us);
-+	}
-+
-+	return idx;
-+}
-+
-+/**
-+ * teo_reflect - Note that governor data for the CPU need to be updated.
-+ * @dev: Target CPU.
-+ * @state: Entered state.
-+ */
-+static void teo_reflect(struct cpuidle_device *dev, int state)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+
-+	cpu_data->last_state = state;
-+	/*
-+	 * If the wakeup was not "natural", but triggered by one of the safety
-+	 * nets, assume that the CPU might have been idle for the entire sleep
-+	 * length time.
-+	 */
-+	if (dev->poll_time_limit ||
-+	    (tick_nohz_idle_got_tick() && cpu_data->sleep_length_ns > TICK_NSEC)) {
-+		dev->poll_time_limit = false;
-+		cpu_data->time_span_ns = cpu_data->sleep_length_ns;
-+	} else {
-+		cpu_data->time_span_ns = local_clock() - cpu_data->time_span_ns;
-+	}
-+}
-+
-+/**
-+ * teo_enable_device - Initialize the governor's data for the target CPU.
-+ * @drv: cpuidle driver (not used).
-+ * @dev: Target CPU.
-+ */
-+static int teo_enable_device(struct cpuidle_driver *drv,
-+			     struct cpuidle_device *dev)
-+{
-+	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
-+	int i;
-+
-+	memset(cpu_data, 0, sizeof(*cpu_data));
-+
-+	for (i = 0; i < INTERVALS; i++)
-+		cpu_data->intervals[i] = UINT_MAX;
-+
-+	return 0;
-+}
-+
-+static struct cpuidle_governor teo_governor = {
-+	.name =		"teo",
-+	.rating =	22,
-+	.enable =	teo_enable_device,
-+	.select =	teo_select,
-+	.reflect =	teo_reflect,
-+};
-+
-+static int __init teo_governor_init(void)
-+{
-+	return cpuidle_register_governor(&teo_governor);
-+}
-+
-+postcore_initcall(teo_governor_init);
-Index: linux-pm/drivers/cpuidle/Kconfig
-===================================================================
---- linux-pm.orig/drivers/cpuidle/Kconfig
-+++ linux-pm/drivers/cpuidle/Kconfig
-@@ -23,6 +23,17 @@ config CPU_IDLE_GOV_LADDER
- config CPU_IDLE_GOV_MENU
- 	bool "Menu governor (for tickless system)"
- 
-+config CPU_IDLE_GOV_TEO
-+	bool "Timer events oriented governor (for tickless systems)"
-+	help
-+	  Menu governor derivative that uses a simplified idle state
-+	  selection method focused on timer events and does not do any
-+	  interactivity boosting.
-+
-+	  Some workloads benefit from using this governor and it generally
-+	  should be safe to use.  Say Y here if you are not happy with the
-+	  alternatives.
-+
- config DT_IDLE_STATES
- 	bool
- 
-Index: linux-pm/drivers/cpuidle/governors/Makefile
-===================================================================
---- linux-pm.orig/drivers/cpuidle/governors/Makefile
-+++ linux-pm/drivers/cpuidle/governors/Makefile
-@@ -4,3 +4,4 @@
- 
- obj-$(CONFIG_CPU_IDLE_GOV_LADDER) += ladder.o
- obj-$(CONFIG_CPU_IDLE_GOV_MENU) += menu.o
-+obj-$(CONFIG_CPU_IDLE_GOV_TEO) += teo.o
-
+Thanks,
+Dennis
