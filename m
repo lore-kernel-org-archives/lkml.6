@@ -2,181 +2,198 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25505C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37ACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F80206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:15:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F80206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 53D3A206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:17:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="fcIQEIoJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D3A206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbeLDPPv (ORCPT
+        id S1726699AbeLDPRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:15:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:28292 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeLDPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:15:51 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 4 Dec 2018 10:17:12 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:44246 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeLDPRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 10:17:11 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 68EC39BB
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 15:17:10 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id oJcDkrdZLS73 for <linux-kernel@vger.kernel.org>;
+        Tue,  4 Dec 2018 09:17:10 -0600 (CST)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2B118308ED62;
-        Tue,  4 Dec 2018 15:15:50 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B93D60920;
-        Tue,  4 Dec 2018 15:15:49 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 18F8A2208FC; Tue,  4 Dec 2018 10:15:49 -0500 (EST)
-Date:   Tue, 4 Dec 2018 10:15:49 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: overlayfs access checks on underlying layers
-Message-ID: <20181204151549.GA21509@redhat.com>
-References: <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
- <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
- <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
- <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
- <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
- <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
- <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 04 Dec 2018 15:15:50 +0000 (UTC)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 39B829C8
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 09:17:10 -0600 (CST)
+Received: by mail-io1-f69.google.com with SMTP id n25so14699964iog.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 07:17:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=N31xBexgIJW5+eH2O9sr6YlKAbFEkhI3s+d2ZJoJz+g=;
+        b=fcIQEIoJJb6yJLnvpD4+ZgMWsoQVVlr4dA0MZyGxVQneHOJuAT0mTdlQIksI/Nw03y
+         1KvS/14IsM2Zvw3HBsHyDfWv8s7vKDPRnc/HuZfIGT5XIb3+LDXZasP3mn4cJ95cu99S
+         U3MOY3WkhN1aoTpEhGXOMXVlwBKqx6BEohdLqF/Phr7LdUEWPHQY6LK8O7Ub2XFtOUkF
+         mM54Qv+EvTrEDWHyudFVg+o9CnT36ngcadMRNEOdYGVOmbnUAnnG2r0BvpR7m917KHu9
+         Mzl/PBMgVxerxnIxFwdtxYT5zxi8kgkWaMM79S3nSUxiYfhQEGh3smmZkr5Qp133VJiX
+         dmmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=N31xBexgIJW5+eH2O9sr6YlKAbFEkhI3s+d2ZJoJz+g=;
+        b=GyNtOXyCXUm7VdAWn6LyKrpxZZtEgx+oUC/wHcmr8NdrvFAzzIhCQbpZszf3/l/8t3
+         1lJrdNw16M8r52xrnkJxtOvKjIItShAaZKWCdExtysCqHZp+20OtUouYLVXLn20LZeLi
+         MQwnxL9tOajf6MfSYbUe5Afwfc1hm4qH/OTUFFrsvmoQXh3DSLO3o25UYMvWsq8DTfj9
+         kj0DJUkMc/E83SFenr9D733YER+ZO7LHvVV7gTzkVJzuO9XTp62ENanpEOJePVfYXHAt
+         DE5uRKM9LdMxoMLFYZc1cvKj1N9CTaOf5/xeoQgBNMpo04Egzvg+k3GYWO68oTHS4ceV
+         dL1Q==
+X-Gm-Message-State: AA+aEWb3CnrCbYSdr2gJfMd5ufoun0SylVCf2UyI47BhzvqxQn6uJPJm
+        QzP04AjbtjJNtSk2PZp4KLwp9x1/LPIJxzczGJnpZH7tbZBZTGn+mTvFcIUiLcadNcNMuWWrPR0
+        695qD/AvHPNkyATjzIJm9PMWzzrF4
+X-Received: by 2002:a24:4e0d:: with SMTP id r13mr11247835ita.140.1543936629827;
+        Tue, 04 Dec 2018 07:17:09 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/UBZdyglOFFzeHCojcDmVLzEt7ltcotRlSEcuBV0Lx0Kwxy2MdqSm7Dsy6zF9a5qpu4DhNUmg==
+X-Received: by 2002:a24:4e0d:: with SMTP id r13mr11247824ita.140.1543936629597;
+        Tue, 04 Dec 2018 07:17:09 -0800 (PST)
+Received: from cs-u-cslp16.cs.umn.edu (cs-u-cslp16.cs.umn.edu. [134.84.121.95])
+        by smtp.gmail.com with ESMTPSA id c25sm6767680ioa.86.2018.12.04.07.17.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Dec 2018 07:17:08 -0800 (PST)
+From:   Wenwen Wang <wang6495@umn.edu>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] misc: mic: fix a DMA pool free failure
+Date:   Tue,  4 Dec 2018 09:16:41 -0600
+Message-Id: <1543936604-6194-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 09:30:53AM -0500, Stephen Smalley wrote:
-> On 12/4/18 8:32 AM, Miklos Szeredi wrote:
-> > On Thu, Nov 29, 2018 at 10:16 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > > 
-> > > On 11/29/18 4:03 PM, Stephen Smalley wrote:
-> > > > On 11/29/18 2:47 PM, Miklos Szeredi wrote:
-> > > > > On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov>
-> > > > > wrote:
-> > > > > 
-> > > > > > Possibly I misunderstood you, but I don't think we want to copy-up on
-> > > > > > permission denial, as that would still allow the mounter to read/write
-> > > > > > special files or execute regular files to which it would normally be
-> > > > > > denied access, because the copy would inherit the context specified by
-> > > > > > the mounter in the context mount case.  It still represents an
-> > > > > > escalation of privilege for the mounter.  In contrast, the copy-up on
-> > > > > > write behavior does not allow the mounter to do anything it could not do
-> > > > > > already (i.e. read from the lower, write to the upper).
-> > > > > 
-> > > > > Let's get this straight:  when file is copied up, it inherits label
-> > > > > from context=, not from label of lower file?
-> > > > 
-> > > > That's correct.  The overlay inodes are all assigned the label from the
-> > > > context= mount option, and so are any upper inodes created through the
-> > > > overlay.  At least that's my understanding of how it is supposed to
-> > > > work.  The original use case was for containers with the lower dir
-> > > > labeled with a context that is read-only to the container context and
-> > > > using a context that is writable by the container context for the
-> > > > context= mount.
-> > > > 
-> > > > > Next question: permission to change metadata is tied to permission to
-> > > > > open?  Is it possible that open is denied, but metadata can be
-> > > > > changed?
-> > > > 
-> > > > There is no metadata change occurring here. The overlay, upper, and
-> > > > lower inodes all keep their labels intact for their lifetime (both
-> > > > overlay and upper always have the context= label; upper has whatever its
-> > >                                                     ^^lower^^
-> > > 
-> > > > original label was), unless explicitly relabeled by some process.  And
-> > > > when viewed through the overlay, the file always has the label specified
-> > > > via context=, even before the copy-up.
-> > 
-> > Okay.
-> > 
-> > > > 
-> > > > > DAC model allows this: metadata change is tied to ownership, not mode
-> > > > > bits.   And different capability flag.
-> > > > > 
-> > > > > If the same is true for MAC, then the pre-v4.20-rc1 is already
-> > > > > susceptible to the privilege escalation you describe, right?
-> > > > 
-> > > > Actually, I guess there wouldn't be a privilege escalation if you
-> > > > checked the mounter's ability to create the new file upon copy-up, and
-> > > > checked the mounter's access to the upper inode label upon the
-> > > > subsequent read, write, or execute access.  Then we'd typically block
-> > > > the ability to create the device file and we'd block the ability to
-> > > > execute files with the label from context=.
-> > > > 
-> > > > But copy-up of special files seems undesirable for other reasons (e.g.
-> > > > requiring mounters to be allowed to create device nodes just to permit
-> > > > client's to read/write them, possible implications for nodev/noexec,
-> > > > implications for socket and fifo files).
-> > 
-> > I think you missed my point: opening a device file or executing an
-> > executable wouldn't normally require copy-up.   If
-> > 
-> >   -  permission is granted on overlay to task, and
-> >   -  permission is granted on lower layer to mounter,
-> > 
-> > then copy-up wouldn't be performed.
-> > 
-> > My proposed sequence would be
-> > 
-> > a) check task's creds against overlay inode, fail -> return fail, otherwise:
-> > b) check mounter's creds against lower inode, success -> return
-> > success, otherwise:
-> > c) copy up inode, fail -> return fail, otherwise
-> > d) check mounter's creds against upper inode, return result.
-> > 
-> > So, unlike write access to regular files, write access to special
-> > files don't necessarily result in copy-up.
-> > 
-> > You say this is an escalation of privilege, but I don't get it how.
-> > As DWalsh points out downthread, if mounter cannot create device
-> > files, then the copy-up will simply fail.  If mounter can create
-> > device files, then this is not an escalation of privilege for the
-> > mounter.
-> 
-> Yes, in that case there isn't an escalation of privilege for the mounter (I
-> acknowledged that above).  I'm still not sure copy-up of special files is a
-> good idea though:
-> 
-> - In the case of device files, there is the potential for mischief by the
-> client task in misusing the mounter's privileges to gain access to otherwise
-> unusable device node (nodev lower vs upper?),
+In _scif_prog_signal(), a DMA pool is allocated if the MIC Coprocessor is
+not X100, i.e., the boolean variable 'x100' is false. This DMA pool will be
+freed eventually through the callback function scif_prog_signal_cb() with
+the parameter of 'status', which actually points to the start of DMA pool.
+Specifically, in scif_prog_signal_cb(), the 'ep' field and the
+'src_dma_addr' field of 'status' are used to free the DMA pool by invoking
+dma_pool_free(). Given that 'status' points to the start address of the DMA
+pool, both 'status->ep' and 'status->src_dma_addr' are in the DMA pool. And
+so, the device has the permission to access them. Even worse, a malicious
+device can modify them. As a result, dma_pool_free() will not succeed.
 
-I was thinking about it as well. But client can always bypass permissions
-of lower device inode by first removing device file and then by doing
-a mknod. And that will be equivalent of copy up. IOW, IIUC, we do not deny
-mknod to client and that always creates a way for it to write to device
-file (and it does not matter what are permissions on lower?)
+To avoid the above issue, this patch introduces a new data structure, i.e.,
+scif_cb_arg, to store the arguments required by the call back function. A
+variable 'cb_arg' is allocated in _scif_prog_signal() to pass the
+arguments. 'cb_arg' will be freed after dma_pool_free() in
+scif_prog_signal_cb().
 
-> - In the case of sockets or fifos, what useful result do you get from a
-> copy-up? Accessing the copy isn't going to yield the same result as
-> accessing the original.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/misc/mic/scif/scif_fence.c | 22 +++++++++++++++++-----
+ drivers/misc/mic/scif/scif_rma.h   | 13 +++++++++++++
+ 2 files changed, 30 insertions(+), 5 deletions(-)
 
-sockets and fifos use overlay inode number (and not lower/upper inode
-number). So even if we create a copy things continue to work. Copying
-up will make sense upon owner or permission change to determine who
-can open socket/fifo in future?
+diff --git a/drivers/misc/mic/scif/scif_fence.c b/drivers/misc/mic/scif/scif_fence.c
+index 7bb929f..2e7ce6a 100644
+--- a/drivers/misc/mic/scif/scif_fence.c
++++ b/drivers/misc/mic/scif/scif_fence.c
+@@ -195,10 +195,11 @@ static inline void *scif_get_local_va(off_t off, struct scif_window *window)
+ 
+ static void scif_prog_signal_cb(void *arg)
+ {
+-	struct scif_status *status = arg;
++	struct scif_cb_arg *cb_arg = arg;
+ 
+-	dma_pool_free(status->ep->remote_dev->signal_pool, status,
+-		      status->src_dma_addr);
++	dma_pool_free(cb_arg->ep->remote_dev->signal_pool, cb_arg->status,
++		      cb_arg->src_dma_addr);
++	kfree(cb_arg);
+ }
+ 
+ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+@@ -209,6 +210,7 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ 	bool x100 = !is_dma_copy_aligned(chan->device, 1, 1, 1);
+ 	struct dma_async_tx_descriptor *tx;
+ 	struct scif_status *status = NULL;
++	struct scif_cb_arg *cb_arg = NULL;
+ 	dma_addr_t src;
+ 	dma_cookie_t cookie;
+ 	int err;
+@@ -257,8 +259,16 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ 		goto dma_fail;
+ 	}
+ 	if (!x100) {
++		cb_arg = kmalloc(sizeof(*cb_arg), GFP_KERNEL);
++		if (!cb_arg) {
++			err = -ENOMEM;
++			goto dma_fail;
++		}
++		cb_arg->src_dma_addr = src;
++		cb_arg->status = status;
++		cb_arg->ep = ep;
+ 		tx->callback = scif_prog_signal_cb;
+-		tx->callback_param = status;
++		tx->callback_param = cb_arg;
+ 	}
+ 	cookie = tx->tx_submit(tx);
+ 	if (dma_submit_error(cookie)) {
+@@ -270,9 +280,11 @@ static int _scif_prog_signal(scif_epd_t epd, dma_addr_t dst, u64 val)
+ 	dma_async_issue_pending(chan);
+ 	return 0;
+ dma_fail:
+-	if (!x100)
++	if (!x100) {
+ 		dma_pool_free(ep->remote_dev->signal_pool, status,
+ 			      src - offsetof(struct scif_status, val));
++		kfree(cb_arg);
++	}
+ alloc_fail:
+ 	return err;
+ }
+diff --git a/drivers/misc/mic/scif/scif_rma.h b/drivers/misc/mic/scif/scif_rma.h
+index fa67222..84af303 100644
+--- a/drivers/misc/mic/scif/scif_rma.h
++++ b/drivers/misc/mic/scif/scif_rma.h
+@@ -206,6 +206,19 @@ struct scif_status {
+ };
+ 
+ /*
++ * struct scif_cb_arg - Stores the argument of the callback func
++ *
++ * @src_dma_addr: Source buffer DMA address
++ * @status: DMA status
++ * @ep: SCIF endpoint
++ */
++struct scif_cb_arg {
++	dma_addr_t src_dma_addr;
++	struct scif_status *status;
++	struct scif_endpt *ep;
++};
++
++/*
+  * struct scif_window - Registration Window for Self and Remote
+  *
+  * @nr_pages: Number of pages which is defined as a s64 instead of an int
+-- 
+2.7.4
 
-Thanks
-Vivek
