@@ -2,132 +2,85 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDF2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5126CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BB320850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:15:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmGSMF/y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BB320850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 17B062087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B062087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbeLDBPg (ORCPT
+        id S1726038AbeLDBUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:15:36 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52495 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeLDBPg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:15:36 -0500
-Received: by mail-it1-f193.google.com with SMTP id i7so12651901iti.2;
-        Mon, 03 Dec 2018 17:15:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lvIMcZstxPuvW/MRjmZbRUzns2Pk9TTnIKTz7yKdmNw=;
-        b=MmGSMF/yxb0TUlCq0R7Hky7sJf1cjMMj/pqVZR41qsQfrwMxW8ZapCdNhav5pXm03P
-         F3zfTfs/vA+47Ij+HBsQJg7ODlUAyn1phSuAC83yNC6w2AgYedKyLn8dQM0TI+G2DIpD
-         YSMGuf+CDjS5r0OLvWKvD7NOQ+I5ggDmzSSTD1CTExqF8K1gdKAvW3tJJx7p71E0i8Ss
-         6tajQCIwh6hqx4SuWIUx9lsZ+arW7bDaRXTYn7yuk5PmJ05vAz52b/SRGUC8hnlkz+Rj
-         Xr0aNFhvYmeuC94+ONnlPK37wYPv3SMkheV/LUZ32qLO1iYWyOvDRZUV29GXmWB9Q47P
-         3SHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lvIMcZstxPuvW/MRjmZbRUzns2Pk9TTnIKTz7yKdmNw=;
-        b=oFpcZutec957imOGios/hcSkXL5w/dM5F9/F4rBZiENkVh17tnLOAeoPIv4qt79IA5
-         sGnODS/fc5Bz9bNV+HRoqNxIPnTOqhbpl0wRyYFD/ej1xujPlXkLos13eLtlM/JN3QVj
-         5vtkmi7st1Vkd1iaa7e+Kr0cVokMjLgx9lE0GvrX9sBd2bmNtFj5YfmA0OOQKMQ7Cc7X
-         HiivUX584tlqkq5XbiyOnlvLCH6RV4OJOSOiOG0jnycJ4TTCuy7cNSYgXRfWTzGIHRb8
-         6kcFyA7MYUpkogdxz9cmRq44tLmi0WDcD3meHYGJOSh9HJj5K1xEdkD3TtW3ByEpPMAw
-         1Pmw==
-X-Gm-Message-State: AA+aEWa4DlGBIsV1SeUUxxvk/B0OEBdz7BoMuZnIZrDwohrgDuV+OudL
-        WsN2Rf0tEowLWE3O1oaHTCd+pum7ka6nc7JZvTA=
-X-Google-Smtp-Source: AFSGD/WI+oNGM/6xgsbQ1UnCf55i1VlG42NOucgiIcIheWSCqeb9hmj+mv7nhG4QW+wxqYbfB6fkbt3YRMa6u4aOP7M=
-X-Received: by 2002:a02:5184:: with SMTP id s126mr15922586jaa.12.1543886133841;
- Mon, 03 Dec 2018 17:15:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20181130142557.2623-1-tiny.windzz@gmail.com> <CAJZ5v0hPPWx6ZbTPRLRMj_0zSF91ApS3BWgYGj31GqzhX45sYw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hPPWx6ZbTPRLRMj_0zSF91ApS3BWgYGj31GqzhX45sYw@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Tue, 4 Dec 2018 09:16:06 +0800
-Message-ID: <CAEExFWuZmcTLF+hFahucUuHzp81OXTxm5sJu_AooCz+jZJUnvA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: nforce2: Remove meaningless return
-To:     rafael@kernel.org
-Cc:     rjw@rjwysocki.net, Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Dec 2018 20:20:39 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:59488 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725943AbeLDBUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:20:39 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id D28E866BEF7BEAAB5153;
+        Tue,  4 Dec 2018 09:20:35 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB41K9I2093766;
+        Tue, 4 Dec 2018 09:20:09 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120409202049-14546822 ;
+          Tue, 4 Dec 2018 09:20:20 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     tglx@linutronix.de, pbonzini@redhat.com, rkrcmar@redhat.com
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH V3]  kvm:x86 :remove unnecessary recalculate_apic_map
+Date:   Tue, 4 Dec 2018 17:42:50 +0800
+Message-Id: <1543916570-55054-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-04 09:20:20,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-04 09:20:05,
+        Serialize complete at 2018-12-04 09:20:05
+X-MAIL: mse01.zte.com.cn wB41K9I2093766
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 5:14 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Fri, Nov 30, 2018 at 3:26 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
-> >
-> > In a function whose return type is void, returning on the last line is
-> > not required.So remove it.Also move the module declaration to the end.
->
-> The last piece is not reflected by the subject.
->
-> Also, why do you move the MODULE_ stuff around at all?
-When writing a driver, in most cases MODULE_  are put to the end.
-Why not modify this? it is more in line with the habits of most people.
+In the previous code, the variable apic_sw_disabled influences
+recalculate_apic_map. But in "KVM: x86: simplify kvm_apic_map"
+(commit:3b5a5ffa928a3f875b0d5dd284eeb7c322e1688a),
+the access to apic_sw_disabled in recalculate_apic_map has been
+deleted.
 
-Yours,
-Yangtao
->
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  drivers/cpufreq/cpufreq-nforce2.c | 11 ++++-------
-> >  1 file changed, 4 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq-nforce2.c b/drivers/cpufreq/cpufreq-nforce2.c
-> > index dbf82f36d270..ccff1f2a7c25 100644
-> > --- a/drivers/cpufreq/cpufreq-nforce2.c
-> > +++ b/drivers/cpufreq/cpufreq-nforce2.c
-> > @@ -47,10 +47,6 @@ static int fid;
-> >  static int min_fsb;
-> >  static int max_fsb;
-> >
-> > -MODULE_AUTHOR("Sebastian Witt <se.witt@gmx.net>");
-> > -MODULE_DESCRIPTION("nForce2 FSB changing cpufreq driver");
-> > -MODULE_LICENSE("GPL");
-> > -
-> >  module_param(fid, int, 0444);
-> >  module_param(min_fsb, int, 0444);
-> >
-> > @@ -123,8 +119,6 @@ static void nforce2_write_pll(int pll)
-> >         /* Now write the value in all 64 registers */
-> >         for (temp = 0; temp <= 0x3f; temp++)
-> >                 pci_write_config_dword(nforce2_dev, NFORCE2_PLLREG, pll);
-> > -
-> > -       return;
-> >  }
-> >
-> >  /**
-> > @@ -436,6 +430,9 @@ static void __exit nforce2_exit(void)
-> >         cpufreq_unregister_driver(&nforce2_driver);
-> >  }
-> >
-> > +MODULE_AUTHOR("Sebastian Witt <se.witt@gmx.net>");
-> > +MODULE_DESCRIPTION("nForce2 FSB changing cpufreq driver");
-> > +MODULE_LICENSE("GPL");
-> > +
-> >  module_init(nforce2_init);
-> >  module_exit(nforce2_exit);
-> > -
-> > --
-> > 2.17.0
-> >
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/x86/kvm/lapic.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index fbb0e6d..a11fbf9 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -246,10 +246,9 @@ static inline void apic_set_spiv(struct kvm_lapic *apic, u32 val)
+ 
+ 	if (enabled != apic->sw_enabled) {
+ 		apic->sw_enabled = enabled;
+-		if (enabled) {
++		if (enabled)
+ 			static_key_slow_dec_deferred(&apic_sw_disabled);
+-			recalculate_apic_map(apic->vcpu->kvm);
+-		} else
++		else
+ 			static_key_slow_inc(&apic_sw_disabled.key);
+ 	}
+ }
+-- 
+1.8.3.1
+
