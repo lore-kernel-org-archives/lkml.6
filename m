@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3804C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD8FC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889D621508
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0970214DE
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSp3mXaA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889D621508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvPqf/Yn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0970214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeLDLBe (ORCPT
+        id S1726758AbeLDLBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:01:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47052 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:01:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726578AbeLDLBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:31 -0500
+        id S1727140AbeLDLBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34F53214F1;
-        Tue,  4 Dec 2018 11:01:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE65214C1;
+        Tue,  4 Dec 2018 11:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921290;
-        bh=kIVfo0g6eBBezIBx5v6rgpRyHJaz6mhpX13ZTPRBHB0=;
+        s=default; t=1543921293;
+        bh=5tSxK3yTi8cJsGYkS0UmopvBpsEDfCufT+Hb9PaBH9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CSp3mXaALIY85B4JYPcAEV1yVCP49QJshAGo/hh8Wwy9qePeDovIMaaf4eQahNlVj
-         kQuvQWPjlcw7LRK3lqX7BU9tXEQWPm9mFRYCcOohmJokJdhd8T1jaPdIpZpO9g0nfx
-         Vc3i0fbKUArbX3VBkEuZBYxrXJmjjDgsqcXCyNTI=
+        b=pvPqf/YnWXzcLrtjtyoV6o0dtr4FI3secY45Ud31WvOD6NSFA5+j7ScjRSsFqK8Tc
+         EEv3oefsujPWCTHv08AWYiLf2/b47V9vWybv1+yzvybNw2NahbXOq4rFEvui3S4B1A
+         FkBF38+Nq2GNUfGyVNL3JPpg7LUl6kvJiYikolaU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sage Weil <sage@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 015/146] libceph: factor out __ceph_x_decrypt()
-Date:   Tue,  4 Dec 2018 11:48:21 +0100
-Message-Id: <20181204103727.414274640@linuxfoundation.org>
+Subject: [PATCH 4.14 016/146] libceph: factor out encrypt_authorizer()
+Date:   Tue,  4 Dec 2018 11:48:22 +0100
+Message-Id: <20181204103727.454906774@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,76 +65,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit c571fe24d243bfe7017f0e67fe800b3cc2a1d1f7 upstream.
+commit 149cac4a50b0b4081b38b2f38de6ef71c27eaa85 upstream.
 
-Will be used for decrypting the server challenge which is only preceded
-by ceph_x_encrypt_header.
-
-Drop struct_v check to allow for extending ceph_x_encrypt_header in the
-future.
+Will be used for encrypting both the initial and updated authorizers.
 
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Reviewed-by: Sage Weil <sage@redhat.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ceph/auth_x.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ net/ceph/auth_x.c | 49 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 13 deletions(-)
 
 diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
-index 2f4a1baf5f52..9cac05239346 100644
+index 9cac05239346..722791f45b2a 100644
 --- a/net/ceph/auth_x.c
 +++ b/net/ceph/auth_x.c
-@@ -70,25 +70,40 @@ static int ceph_x_encrypt(struct ceph_crypto_key *secret, void *buf,
- 	return sizeof(u32) + ciphertext_len;
+@@ -290,6 +290,38 @@ bad:
+ 	return -EINVAL;
  }
  
-+static int __ceph_x_decrypt(struct ceph_crypto_key *secret, void *p,
-+			    int ciphertext_len)
++/*
++ * Encode and encrypt the second part (ceph_x_authorize_b) of the
++ * authorizer.  The first part (ceph_x_authorize_a) should already be
++ * encoded.
++ */
++static int encrypt_authorizer(struct ceph_x_authorizer *au)
 +{
-+	struct ceph_x_encrypt_header *hdr = p;
-+	int plaintext_len;
++	struct ceph_x_authorize_a *msg_a;
++	struct ceph_x_authorize_b *msg_b;
++	void *p, *end;
 +	int ret;
 +
-+	ret = ceph_crypt(secret, false, p, ciphertext_len, ciphertext_len,
-+			 &plaintext_len);
-+	if (ret)
++	msg_a = au->buf->vec.iov_base;
++	WARN_ON(msg_a->ticket_blob.secret_id != cpu_to_le64(au->secret_id));
++	p = (void *)(msg_a + 1) + le32_to_cpu(msg_a->ticket_blob.blob_len);
++	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
++
++	msg_b = p + ceph_x_encrypt_offset();
++	msg_b->struct_v = 1;
++	msg_b->nonce = cpu_to_le64(au->nonce);
++
++	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
++	if (ret < 0)
 +		return ret;
 +
-+	if (le64_to_cpu(hdr->magic) != CEPHX_ENC_MAGIC) {
-+		pr_err("%s bad magic\n", __func__);
-+		return -EINVAL;
-+	}
++	p += ret;
++	WARN_ON(p > end);
++	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
 +
-+	return plaintext_len - sizeof(*hdr);
++	return 0;
 +}
 +
- static int ceph_x_decrypt(struct ceph_crypto_key *secret, void **p, void *end)
+ static void ceph_x_authorizer_cleanup(struct ceph_x_authorizer *au)
  {
--	struct ceph_x_encrypt_header *hdr = *p + sizeof(u32);
--	int ciphertext_len, plaintext_len;
-+	int ciphertext_len;
+ 	ceph_crypto_key_destroy(&au->session_key);
+@@ -306,7 +338,6 @@ static int ceph_x_build_authorizer(struct ceph_auth_client *ac,
+ 	int maxlen;
+ 	struct ceph_x_authorize_a *msg_a;
+ 	struct ceph_x_authorize_b *msg_b;
+-	void *p, *end;
  	int ret;
+ 	int ticket_blob_len =
+ 		(th->ticket_blob ? th->ticket_blob->vec.iov_len : 0);
+@@ -350,21 +381,13 @@ static int ceph_x_build_authorizer(struct ceph_auth_client *ac,
+ 	dout(" th %p secret_id %lld %lld\n", th, th->secret_id,
+ 	     le64_to_cpu(msg_a->ticket_blob.secret_id));
  
- 	ceph_decode_32_safe(p, end, ciphertext_len, e_inval);
- 	ceph_decode_need(p, end, ciphertext_len, e_inval);
- 
--	ret = ceph_crypt(secret, false, *p, end - *p, ciphertext_len,
--			 &plaintext_len);
--	if (ret)
-+	ret = __ceph_x_decrypt(secret, *p, ciphertext_len);
-+	if (ret < 0)
- 		return ret;
- 
--	if (hdr->struct_v != 1 || le64_to_cpu(hdr->magic) != CEPHX_ENC_MAGIC)
--		return -EPERM;
+-	p = msg_a + 1;
+-	p += ticket_blob_len;
+-	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
 -
- 	*p += ciphertext_len;
--	return plaintext_len - sizeof(struct ceph_x_encrypt_header);
-+	return ret;
+-	msg_b = p + ceph_x_encrypt_offset();
+-	msg_b->struct_v = 1;
+ 	get_random_bytes(&au->nonce, sizeof(au->nonce));
+-	msg_b->nonce = cpu_to_le64(au->nonce);
+-	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
+-	if (ret < 0)
++	ret = encrypt_authorizer(au);
++	if (ret) {
++		pr_err("failed to encrypt authorizer: %d", ret);
+ 		goto out_au;
++	}
  
- e_inval:
- 	return -EINVAL;
+-	p += ret;
+-	WARN_ON(p > end);
+-	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
+ 	dout(" built authorizer nonce %llx len %d\n", au->nonce,
+ 	     (int)au->buf->vec.iov_len);
+ 	return 0;
 -- 
 2.17.1
 
