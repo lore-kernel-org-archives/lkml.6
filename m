@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66550C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CADEC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABE32082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41892087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiR2tqHJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABE32082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUReO28E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41892087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbeLDLNy (ORCPT
+        id S1728525AbeLDLOA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:13:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:14:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728123AbeLDLHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:07:15 -0500
+        id S1727482AbeLDLHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:07:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E77921527;
-        Tue,  4 Dec 2018 11:07:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F2C82087F;
+        Tue,  4 Dec 2018 11:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921634;
-        bh=oP1jenC2wuzid8yy8iD2xOoeCvwPRxlkrzQsI0jZpTY=;
+        s=default; t=1543921631;
+        bh=VmbZFj9Kfphev6aT7V38GgiDHI4yACUtnFjWl8UyCYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UiR2tqHJg144ST6DQS5BIeNXUiwL9+oS1o0mZVeHneofODhcR7djD7wBno4h/2Wuw
-         3/WVb67bm8t23sSoPpsdSXFbTNoU8PLDXtwiK8BF909PKNy+WuVd2JK18rwTxoXddN
-         5cOklTFeW8QD5QxPk5OQaI9nf+6W0X0E7CB8oTYo=
+        b=FUReO28EWVN0sjwYpdyPtWaK6crhLsPoLl/nwv29ou46Ejo4eQdw22hECAtmg7FGX
+         Sql5htlR0qys0OUGNdg8QY7OukVk6HBcjUVqYNLULGIcf0tlhMwrEsVNC4V2wLYKV4
+         KvDSZHKnXlBG1uNx7aLQdaoiCdt11Cv127aJ/ogA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 140/146] Revert "usb: dwc3: gadget: skip Set/Clear Halt when invalid"
-Date:   Tue,  4 Dec 2018 11:50:26 +0100
-Message-Id: <20181204103732.461330202@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Michael=20Niew=C3=B6hner?= <linux@mniewoehner.de>
+Subject: [PATCH 4.14 139/146] usb: core: quirks: add RESET_RESUME quirk for Cherry G230 Stream series
+Date:   Tue,  4 Dec 2018 11:50:25 +0100
+Message-Id: <20181204103732.419108364@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -62,44 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Michael Niewöhner <linux@mniewoehner.de>
 
-commit 38317f5c0f2faae5110854f36edad810f841d62f upstream.
+commit effd14f66cc1ef6701a19c5a56e39c35f4d395a5 upstream.
 
-This reverts commit ffb80fc672c3a7b6afd0cefcb1524fb99917b2f3.
+Cherry G230 Stream 2.0 (G85-231) and 3.0 (G85-232) need this quirk to
+function correctly. This fixes a but where double pressing numlock locks
+up the device completely with need to replug the keyboard.
 
-Turns out that commit is wrong. Host controllers are allowed to use
-Clear Feature HALT as means to sync data toggle between host and
-periperal.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Michael Niewöhner <linux@mniewoehner.de>
+Tested-by: Michael Niewöhner <linux@mniewoehner.de>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    5 -----
- 1 file changed, 5 deletions(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1511,9 +1511,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
- 		unsigned transfer_in_flight;
- 		unsigned started;
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -64,6 +64,9 @@ static const struct usb_device_id usb_qu
+ 	/* Microsoft LifeCam-VX700 v2.0 */
+ 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
  
--		if (dep->flags & DWC3_EP_STALL)
--			return 0;
--
- 		if (dep->number > 1)
- 			trb = dwc3_ep_prev_trb(dep, dep->trb_enqueue);
- 		else
-@@ -1535,8 +1532,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
- 		else
- 			dep->flags |= DWC3_EP_STALL;
- 	} else {
--		if (!(dep->flags & DWC3_EP_STALL))
--			return 0;
- 
- 		ret = dwc3_send_clear_stall_ep_cmd(dep);
- 		if (ret)
++	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
++	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
++
+ 	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
+ 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
+ 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
 
 
