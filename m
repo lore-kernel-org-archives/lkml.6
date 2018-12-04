@@ -6,35 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACB3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09791C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D44D2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:26:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D44D2081C
+	by mail.kernel.org (Postfix) with ESMTP id CCCD320834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 17:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCD320834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbeLDR00 (ORCPT
+        id S1727248AbeLDR01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 12:26:26 -0500
-Received: from 8bytes.org ([81.169.241.247]:51574 "EHLO theia.8bytes.org"
+        Tue, 4 Dec 2018 12:26:27 -0500
+Received: from 8bytes.org ([81.169.241.247]:51560 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbeLDR0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 12:26:25 -0500
+        id S1726353AbeLDR00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 12:26:26 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 347243D8; Tue,  4 Dec 2018 18:26:24 +0100 (CET)
+        id 0477D3CA; Tue,  4 Dec 2018 18:26:23 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     iommu@lists.linux-foundation.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>
-Subject: [PATCH 4/5] powerpc/iommu: Use device_iommu_mapped()
-Date:   Tue,  4 Dec 2018 18:25:03 +0100
-Message-Id: <20181204172504.19708-5-joro@8bytes.org>
+Cc:     linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 2/5] iommu/of: Use device_iommu_mapped()
+Date:   Tue,  4 Dec 2018 18:25:01 +0100
+Message-Id: <20181204172504.19708-3-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181204172504.19708-1-joro@8bytes.org>
 References: <20181204172504.19708-1-joro@8bytes.org>
@@ -45,62 +41,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Use the new function to replace the open-coded iommu check.
+Use Use device_iommu_mapped() to check if the device is
+already mapped by an IOMMU.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Russell Currey <ruscur@russell.cc>
-Cc: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/powerpc/kernel/eeh.c   | 2 +-
- arch/powerpc/kernel/iommu.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/iommu/of_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index 6cae6b56ffd6..23fe62f11486 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -1472,7 +1472,7 @@ static int dev_has_iommu_table(struct device *dev, void *data)
- 	if (!dev)
- 		return 0;
- 
--	if (dev->iommu_group) {
-+	if (device_iommu_mapped(dev)) {
- 		*ppdev = pdev;
- 		return 1;
- 	}
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index f0dc680e659a..48d58d1dcac2 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -1086,7 +1086,7 @@ int iommu_add_device(struct device *dev)
- 	if (!device_is_registered(dev))
- 		return -ENOENT;
- 
--	if (dev->iommu_group) {
-+	if (device_iommu_mapped(dev)) {
- 		pr_debug("%s: Skipping device %s with iommu group %d\n",
- 			 __func__, dev_name(dev),
- 			 iommu_group_id(dev->iommu_group));
-@@ -1129,7 +1129,7 @@ void iommu_del_device(struct device *dev)
- 	 * and we needn't detach them from the associated
- 	 * IOMMU groups
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index c5dd63072529..bfcf139503f0 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -220,7 +220,7 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
+ 	 * If we have reason to believe the IOMMU driver missed the initial
+ 	 * add_device callback for dev, replay it to get things in order.
  	 */
--	if (!dev->iommu_group) {
-+	if (!device_iommu_mapped(dev)) {
- 		pr_debug("iommu_tce: skipping device %s with no tbl\n",
- 			 dev_name(dev));
- 		return;
-@@ -1148,7 +1148,7 @@ static int tce_iommu_bus_notifier(struct notifier_block *nb,
-         case BUS_NOTIFY_ADD_DEVICE:
-                 return iommu_add_device(dev);
-         case BUS_NOTIFY_DEL_DEVICE:
--                if (dev->iommu_group)
-+                if (device_iommu_mapped(dev))
-                         iommu_del_device(dev);
-                 return 0;
-         default:
+-	if (ops && ops->add_device && dev->bus && !dev->iommu_group)
++	if (ops && ops->add_device && dev->bus && !device_iommu_mapped(dev))
+ 		err = ops->add_device(dev);
+ 
+ 	/* Ignore all other errors apart from EPROBE_DEFER */
 -- 
 2.17.1
 
