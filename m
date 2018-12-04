@@ -2,154 +2,210 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDABEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE26C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20CC20834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="EIz4ikbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20CC20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
+	by mail.kernel.org (Postfix) with ESMTP id 07E2A2082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07E2A2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeLDOPH (ORCPT
+        id S1726540AbeLDOPL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:15:07 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39156 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeLDOPH (ORCPT
+        Tue, 4 Dec 2018 09:15:11 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:45232 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbeLDOPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:15:07 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c72so8274199pfc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:15:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g.ncu.edu.tw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8JPiqVruzrD5OGaZzdip19sastO5p9E3ha1IKkMYs/A=;
-        b=EIz4ikbfLjJhka7KtNZTWOVLwnJG2BE1jDRQZU8gGzbfCrKPE4Xft9SVix9Xsz4/dr
-         DQ7vJ0nBSEfKsvqY1AaA+IV07GVS7OaSFkvm7tytU2D+BX+reKdcVSokKkpu9O5j3Y9/
-         tDfJvJY6alklmXm5iA/gSGfjY5oeD5J8kTLJU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8JPiqVruzrD5OGaZzdip19sastO5p9E3ha1IKkMYs/A=;
-        b=QnGwln/C9ZUe/hWAVDsQjzgGqmCLnYvIqIJy4mu0a9VDI0n5mm/MibyLOzs9FxQfkb
-         AdAZEEdb8xom0WkHWkV7gzPnzfBHEG+bceyqnHI6A0zj8G8NvsbanegVT2qJAqYxhVgs
-         8gnntHZsgAfqF+V1EdqSgFhV9EQAvNQBt67iv2nGLVWi6VYEK/sz3Xwb0y0+ZUfyXPK+
-         HnW/zIdWoOxYsZMZ87i2/6cW2wWM7GaAZfXlPkW1G6Arb4F1npQe33Ek93wnS6QKE56v
-         9RbW8EoTnyQ+fuuSB4BkQwHF7gxpHF+5Ufs+Y0rFhXkW6e7XvyfH99lvAori0zo+6K1X
-         LQFA==
-X-Gm-Message-State: AA+aEWa8Q87M3b710asIo3Qs7mYgTiIcKZHklXvcMu/j+m8QhdEljdw2
-        tU08b5Mi2KN+7FO80GOB2Ss4iA==
-X-Google-Smtp-Source: AFSGD/U8jvgr5ygk7IiXzVM4RoOJoR5pGRq0PsdpspeDhmhInQMIIIaP2wWjBtn2+DL3gDfirwSWGA==
-X-Received: by 2002:a62:5950:: with SMTP id n77mr19999151pfb.128.1543932904969;
-        Tue, 04 Dec 2018 06:15:04 -0800 (PST)
-Received: from starnight.local ([150.116.248.145])
-        by smtp.gmail.com with ESMTPSA id n66sm36975863pfk.19.2018.12.04.06.15.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 06:15:04 -0800 (PST)
-From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
-To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [PATCH V4 0/6] net: lorawan: Add LoRaWAN soft MAC module
-Date:   Tue,  4 Dec 2018 22:13:36 +0800
-Message-Id: <20181204141341.4353-1-starnight@g.ncu.edu.tw>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
-References: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
+        Tue, 4 Dec 2018 09:15:09 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 89A4C6798D8;
+        Tue,  4 Dec 2018 15:15:06 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 4 Dec 2018
+ 15:15:06 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Tue, 4 Dec 2018 15:15:06 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
+        "han.xu@nxp.com" <han.xu@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>
+Subject: [PATCH v7 0/9] Port the FSL QSPI driver to the SPI framework
+Thread-Topic: [PATCH v7 0/9] Port the FSL QSPI driver to the SPI framework
+Thread-Index: AQHUi9vBRZCttYFBpk+deZjvKknqaQ==
+Date:   Tue, 4 Dec 2018 14:15:06 +0000
+Message-ID: <1543932685-15011-1-git-send-email-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 89A4C6798D8.A18C1
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, david.wolfe@nxp.com,
+        dwmw2@infradead.org, fabio.estevam@nxp.com, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
+        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LoRaWAN(TM) is the MAC layer defined by LoRa Alliance(TM) over LoRa
-devices.  LoRa is one of Low-Power Wide-Area Network (LPWAN) technology.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-LoRaWAN networks typically are laid out in a star-of-stars topology in
-which gateways relay messages between end-devices and a central network
-server at the backend.  Gateways are connected to the network server via
-standard IP connections while end-devices use single hop LoRa(TM) or FSK
-communication to one or many gateways.
+Now that the SPI memory interface was introduced by Boris, it is
+possible to move drivers from mtd/spi-nor to the SPI framework in order
+to use them for different type of SPI memory chips.
 
-A LoRa network distinguishes between a basic LoRaWAN (named Class A) and
-optional features (Class B, Class C ...):
-* Bi-directional end-devices (Class A)
-* Bi-directional end-devices with scheduled receive slots (Class B)
-* Bi-directional end-devices with maximal receive slots (Class C)
+Patch 1 and 2 removes some unused properties from the devicetree and fixes the
+reg properties to correctly reflect the hardware setup.
 
-This patch set add LoRaWAN class module implementing the stack,
-especially the soft MAC, between socket APIs and LoRa device drivers.
+Patch 3 adds the driver for the Freescale QSPI controller to the SPI
+framework. Together with m25p80.c it can be used to interface SPI
+NOR flashes just as the old driver did. This patch also disables the build
+of the old driver.
 
-socket APIs:
-send and receive the data
-------------------------------------------------------------------------
-LoRaWAN class module implements soft MAC:
-append the header/footer, encryption/decryption, timing slot and MAC
-commands
-------------------------------------------------------------------------
-LoRa device drivers:
-send and receive the messages for MAC layer
-------------------------------------------------------------------------
-LoRa devices
+Patch 4 moves the bindings to the correct place and patch 5 adjusts the
+bindings for the new driver.
 
-This module starts from simple and implements partial Class A
-end-devices features defined in LoRaWAN(TM) Specification Ver. 1.0.2.
-More features and complexity, for example regional parameters, confirmed
-data messages, join request/accept messages for Over-The-Air Activation,
-MAC commands ... will be added in the future.
+Patch 6 removes the code of the old driver.
 
-Jian-Hong Pan (6):
-  net: lorawan: Add LoRaWAN socket module
-  net: lorawan: Add LoRaWAN API declaration for LoRa devices
-  net: maclorawan: Add maclorawan module declaration
-  net: maclorawan: Implement the crypto of maclorawan module
-  net: maclorawan: Implement maclorawan class module
-  net: lorawan: List LORAWAN in menuconfig
+Patch 7 and 8 remove 'fsl,qspi-has-second-chip' from the devicetrees.
+Patch 9 adjusts the MAINTAINERS file.
 
- include/linux/lora/lorawan.h        | 131 ++++++
- include/linux/lora/lorawan_netdev.h |  52 +++
- net/Kconfig                         |   2 +
- net/Makefile                        |   2 +
- net/lorawan/Kconfig                 |  10 +
- net/lorawan/Makefile                |   2 +
- net/lorawan/socket.c                | 686 ++++++++++++++++++++++++++++
- net/maclorawan/Kconfig              |  14 +
- net/maclorawan/Makefile             |   2 +
- net/maclorawan/crypto.c             | 212 +++++++++
- net/maclorawan/crypto.h             |  27 ++
- net/maclorawan/mac.c                | 518 +++++++++++++++++++++
- net/maclorawan/maclorawan.h         | 200 ++++++++
- net/maclorawan/main.c               | 605 ++++++++++++++++++++++++
- 14 files changed, 2463 insertions(+)
- create mode 100644 include/linux/lora/lorawan.h
- create mode 100644 include/linux/lora/lorawan_netdev.h
- create mode 100644 net/lorawan/Kconfig
- create mode 100644 net/lorawan/Makefile
- create mode 100644 net/lorawan/socket.c
- create mode 100644 net/maclorawan/Kconfig
- create mode 100644 net/maclorawan/Makefile
- create mode 100644 net/maclorawan/crypto.c
- create mode 100644 net/maclorawan/crypto.h
- create mode 100644 net/maclorawan/mac.c
- create mode 100644 net/maclorawan/maclorawan.h
- create mode 100644 net/maclorawan/main.c
+The new driver was tested with the following setups:
+* i.MX6UL and a Micron SPI NOR @ 60MHz.
+* i.MX6UL and a Toshiba TC58CVG2S0H SPI NAND flash.
+* LS1088ARDB with two SPI NOR chips connected to CS0 and CS1 (Yogesh Gaur)
+* Other i.MX platforms (Han Xu)
+
+The read performance of the new driver is almost the same or even better
+than the old driver, depending on the block size.
+The write performance is a bit slower on average (~10-15%).
+
+---
+Changes in v7:
+==============
+* Remove unused variables in fsl_qspi_select_mem()
+* Update cover letter
+
+Changes in v6:
+==============
+* Add a quirk for LS2080A SoC to fix multi chip setup
+* Use separate area in AHB memory map for each chip
+* Add R-b tags for binding changes
+
+Changes in v5:
+==============
+* Change SoB tags and commit author to new e-mail address
+* Drop change in compatible string of bindings
+* Reset the AHB domain
+* Drop the defconfig changes and reuse the Kconfig option of the old driver
+* Remove unused read()/write() pointers from struct fsl_qspi
+* Remove unused enum fsl_qspi_devtype
+* Fix break condition for fsl_qspi_readl_poll_tout()
+
+Changes in v4:
+==============
+* Rebase on top of v4.20-rc1
+* Drop patches that were merged separately
+* Address change of company name and email address
+* Use readl_poll_timeout() instead of busy waiting
+* Revert change to use callback functions for register read/write
+* Avoid divide by zero by checking op->dummy.nbytes
+* Make big-endian setting SoC-specific and don't read it from devicetree
+* Improve some register macros and masks
+
+Changes in v3:
+==============
+* Move fix for typo in spi-mem.h to a separate patch
+* Fix documentation of spi_mem_get_name() and get_name()
+* Avoid overwriting the name of the memory device in probe of m25p80
+* Add Suggested-by tags
+
+Changes in v2:
+==============
+* Rebase on top of nand/next
+* Add a name field to struct spi_mem and fill it while probing
+* Add Yogesh Gaur and Suresh Gupta as authors
+* Use GENMASK() for generating bitmasks
+* Use callback functions for read/write of registers
+* Attach the seq variable to the selected CS
+* Avoid using conditional in read/write loop
+* Avoid infinite loop and use a timeout instead
+* Return error pointer when allocation in fsl_qspi_get_name() fails
+* Remove redundant iounmap()
+* Put suspend()/resume() in dev_pm_ops instead of platform_driver
+* Split the moving and editing of the dt-bindings in two patches
+---
+Frieder Schrempf (9):
+  ARM: dts: Reflect change of FSL QSPI driver and remove unused
+    properties
+  arm64: dts: Reflect change of FSL QSPI driver and remove unused
+    properties
+  spi: Add a driver for the Freescale/NXP QuadSPI controller
+  dt-bindings: spi: Move the bindings for the FSL QSPI driver
+  dt-bindings: spi: Adjust the bindings for the FSL QSPI driver
+  mtd: fsl-quadspi: Remove the driver as it was replaced by
+    spi-fsl-qspi.c
+  ARM: dts: ls1021a: Remove fsl,qspi-has-second-chip as it is not used
+  ARM64: dts: ls1046a: Remove fsl,qspi-has-second-chip as it is not used
+  MAINTAINERS: Move the Freescale QSPI driver to the SPI framework
+
+ .../fsl-quadspi.txt => spi/spi-fsl-qspi.txt}    |   18 +-
+ MAINTAINERS                                     |    4 +-
+ arch/arm/boot/dts/imx6sx-sdb-reva.dts           |    8 +-
+ arch/arm/boot/dts/imx6sx-sdb.dts                |    8 +-
+ arch/arm/boot/dts/imx6ul-14x14-evk.dtsi         |    2 +
+ arch/arm/boot/dts/ls1021a-moxa-uc-8410a.dts     |    6 +-
+ .../boot/dts/freescale/fsl-ls1043a-qds.dts      |    3 +-
+ .../boot/dts/freescale/fsl-ls1046a-qds.dts      |    4 +-
+ .../boot/dts/freescale/fsl-ls1046a-rdb.dts      |    6 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi  |    1 -
+ .../boot/dts/freescale/fsl-ls208xa-qds.dtsi     |    4 +
+ drivers/mtd/spi-nor/Kconfig                     |    9 -
+ drivers/mtd/spi-nor/Makefile                    |    1 -
+ drivers/mtd/spi-nor/fsl-quadspi.c               | 1224 ------------------
+ drivers/spi/Kconfig                             |   11 +
+ drivers/spi/Makefile                            |    1 +
+ drivers/spi/spi-fsl-qspi.c                      |  966 ++++++++++++++
+ 17 files changed, 1016 insertions(+), 1260 deletions(-)
+ rename Documentation/devicetree/bindings/{mtd/fsl-quadspi.txt => spi/spi-fsl-qspi.txt} (73%)
+ delete mode 100644 drivers/mtd/spi-nor/fsl-quadspi.c
+ create mode 100644 drivers/spi/spi-fsl-qspi.c
 
 -- 
-2.19.2
-
+2.7.4
