@@ -2,267 +2,287 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ECAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066ACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 776BF2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776BF2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id ABA6C2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:51:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q9Qsl5Gn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA6C2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbeLDGuv (ORCPT
+        id S1726073AbeLDGvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:50:51 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15635 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725976AbeLDGuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:50:50 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1661C831211DD;
-        Tue,  4 Dec 2018 14:50:47 +0800 (CST)
-Received: from [127.0.0.1] (10.57.77.109) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
- 14:50:47 +0800
-Subject: Re: [PATCH v4 0/8] vfio/mdev: IOMMU aware mediated device
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
- <5C05F87D.4050206@huawei.com>
- <9a1d0b6f-7363-495d-2f4b-5a1693fb3fd9@linux.intel.com>
-CC:     <kevin.tian@intel.com>, <ashok.raj@intel.com>,
-        <tiwei.bie@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <yi.y.sun@intel.com>,
-        <jacob.jun.pan@intel.com>, <kvm@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-From:   Xu Zaibo <xuzaibo@huawei.com>
-Message-ID: <5C0623C7.3000808@huawei.com>
-Date:   Tue, 4 Dec 2018 14:50:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        Tue, 4 Dec 2018 01:51:13 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37146 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLDGvM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:51:12 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so7812427plr.4;
+        Mon, 03 Dec 2018 22:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=m2bgCmm9oFGj+7a89CfW8WSKtMSZZzQPl2BTKevlZ38=;
+        b=q9Qsl5GnjoKUDVPyQaDHIA0w7cY1yp0ZDagwuXQoGmJSSSQ9siAihfvZ5bT46t00BY
+         OFtToLcKufzyMhdbBUI0c0moFJNdu4z7SGJqoosQ8wpQRDxumqF0sbI/UrIRJ5v65+NP
+         l3vILYYt69168FoC9w9klBKs+d4Qrg0h5YfZgIKxwm1QozFIk6k5ytfY6zk2czUpLh49
+         EFj3vHw7tzVBg37S4Fth03rwCvGKbRwkJ1O7iveAGCIo2fFbX6Tvl8ac65FhsrPEwErX
+         nuqpLNcdeFtR93QtyYRlkKQfjxPU23q5eP4dXKyXObYzrWTxuCHWfwnCT5wIQU8hBBVK
+         +vtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=m2bgCmm9oFGj+7a89CfW8WSKtMSZZzQPl2BTKevlZ38=;
+        b=B8Rb6xllyXlRNBWLRJl8E0S3jns774tHoInRH/NyTCrVZ2yCZR5UeUw6IbHKMwwzCM
+         fr1+dxMbISHTkYIADriV3Gj+CH7V0+ScC6Du1XvMwLLd21uZVIDSsc8EYAqMCJKlF3mD
+         Gbw1MOpHidf88k92/2a7zZYZgVq6LEGtg8+NdGtWvw2waRDotflh7aFDAJvT+tSiHlmW
+         d41S6qxud5FiS2Ee5/atDptRqwUorbM4eqF5VKDnM8eYC24lE5z0XtPNAOybEN0bPsHL
+         JptzJ7S9Lsb/23h1zF1HG5Ey/eBaiPkMeKCg9S1/6+qFghRjqPvz3W/ZrE2Njdr7fO5a
+         ck0w==
+X-Gm-Message-State: AA+aEWbrTdlC8yxQn80PtrqwBbwFeuoh4Xd1ST3/RPArEQjLdvTvb7Hc
+        T+91dMjQGybj9liMgZHM30nSFwo3
+X-Google-Smtp-Source: AFSGD/V5P4x2zNuuorNpTPc2KCkSOwwHsIZbnaXtvXOJgtek5ntT9s4VzTfELikXfh4OAXAFuCbVgA==
+X-Received: by 2002:a17:902:6ac5:: with SMTP id i5mr19095570plt.134.1543906272109;
+        Mon, 03 Dec 2018 22:51:12 -0800 (PST)
+Received: from leo.usersys.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 7sm63236968pfm.8.2018.12.03.22.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 22:51:11 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:51:01 +0800
+From:   Hangbin Liu <liuhangbin@gmail.com>
+To:     Sukumar Gopalakrishnan <sukumarg1973@gmail.com>
+Cc:     davem@davemloft.net, karn@ka9q.net, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: hard-coded limit on unresolved multicast route cache in
+ ipv4/ipmr.c causes slow, unreliable creation of multicast routes on busy
+ networks
+Message-ID: <20181204065100.GT24677@leo.usersys.redhat.com>
+References: <147f730b-8cbf-b76d-f693-b3fdaf72a89c@ka9q.net>
+ <20180721.220309.1193443933653884021.davem@davemloft.net>
+ <20181120092321.GR24677@leo.usersys.redhat.com>
+ <CADiZnkSy=rFq5xLs6RcgJDihQ1Vwo2WBBY9Fi_5jOHr8XupukQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <9a1d0b6f-7363-495d-2f4b-5a1693fb3fd9@linux.intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.77.109]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADiZnkSy=rFq5xLs6RcgJDihQ1Vwo2WBBY9Fi_5jOHr8XupukQ@mail.gmail.com>
+User-Agent: Mutt/1.7.0 (2016-08-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
->>
->> Is this solution trying to support general user space processes who 
->> are directly working on devices?
->
-> Yes, it is.
->
+On Mon, Nov 26, 2018 at 10:44:49AM +0530, Sukumar Gopalakrishnan wrote:
+> Hi,
+> 
+>  There is a patch to make this queue len configurable. Is below mentioned going
+> to be applied ?
+> 
+> http://lkml.iu.edu/hypermail/linux/kernel/1810.3/02344.html
 
-Okay. But I got another question. As I write a Crypto driver, could I 
-call 'mdev_register_device'?
-Or in other words, is 'mdev_register_device' acceptable for drivers of 
-Crypto?
+It looks this topic stuckd again..
 
-+cc: Herbert Xu
-
-Thanks,
-Zaibo
-
->>
->>
->> On 2018/11/5 15:34, Lu Baolu wrote:
->>> Hi,
->>>
->>> The Mediate Device is a framework for fine-grained physical device
->>> sharing across the isolated domains. Currently the mdev framework
->>> is designed to be independent of the platform IOMMU support. As the
->>> result, the DMA isolation relies on the mdev parent device in a
->>> vendor specific way.
->>>
->>> There are several cases where a mediated device could be protected
->>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
->>> [1] introduces a new translation mode called 'scalable mode', which
->>> enables PASID-granular translations. The vt-d scalable mode is the
->>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
->>> sharing a device in minimal possible granularity (ADI - Assignable
->>> Device Interface).
->>>
->>> A mediated device backed by an ADI could be protected and isolated
->>> by the IOMMU since 1) the parent device supports tagging an unique
->>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
->>> translation unit (IOMMU) supports the PASID granular translation.
->>> We can apply IOMMU protection and isolation to this kind of devices
->>> just as what we are doing with an assignable PCI device.
->>>
->>> In order to distinguish the IOMMU-capable mediated devices from those
->>> which still need to rely on parent devices, this patch set adds two
->>> new members in struct mdev_device.
->>>
->>> * iommu_device
->>>    - This, if set, indicates that the mediated device could
->>>      be fully isolated and protected by IOMMU via attaching
->>>      an iommu domain to this device. If empty, it indicates
->>>      using vendor defined isolation.
->>>
->>> * iommu_domain
->>>    - This is a place holder for an iommu domain. A domain
->>>      could be store here for later use once it has been
->>>      attached to the iommu_device of this mdev.
->>>
->>> Below helpers are added to set and get above iommu device
->>> and iommu domain pointers in mdev core implementation.
->>>
->>> * mdev_set/get_iommu_device(dev, iommu_device)
->>>    - Set or get the iommu device which represents this mdev
->>>      in IOMMU's device scope. Drivers don't need to set the
->>>      iommu device if it uses vendor defined isolation.
->>>
->>> * mdev_set/get_iommu_domain(domain)
->>>    - A iommu domain which has been attached to the iommu
->>>      device in order to protect and isolate the mediated
->>>      device will be kept in the mdev data structure and
->>>      could be retrieved later.
->>>
->>> The mdev parent device driver could opt-in that the mdev could be
->>> fully isolated and protected by the IOMMU when the mdev is being
->>> created by invoking mdev_set_iommu_device() in its @create().
->>>
->>> In the vfio_iommu_type1_attach_group(), a domain allocated through
->>> iommu_domain_alloc() will be attached to the mdev iommu device if
->>> an iommu device has been set. Otherwise, the dummy external domain
->>> will be used and all the DMA isolation and protection are routed to
->>> parent driver as the result.
->>>
->>> On IOMMU side, a basic requirement is allowing to attach multiple
->>> domains to a PCI device if the device advertises the capability
->>> and the IOMMU hardware supports finer granularity translations than
->>> the normal PCI Source ID based translation.
->>>
->>> As the result, a PCI device could work in two modes: normal mode
->>> and auxiliary mode. In the normal mode, a pci device could be
->>> isolated in the Source ID granularity; the pci device itself could
->>> be assigned to a user application by attaching a single domain
->>> to it. In the auxiliary mode, a pci device could be isolated in
->>> finer granularity, hence subsets of the device could be assigned
->>> to different user level application by attaching a different domain
->>> to each subset.
->>>
->>> The device driver is able to switch between above two modes with
->>> below interfaces:
->>>
->>> * iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_CAPABILITY)
->>>    - Represents the ability of supporting multiple domains
->>>      per device.
->>>
->>> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLE)
->>>    - Enable the multiple domains capability for the device
->>>      referenced by @dev.
->>>
->>> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_DISABLE)
->>>    - Disable the multiple domains capability for the device
->>>      referenced by @dev.
->>>
->>> * iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID)
->>>    - Return ID used for finer-granularity DMA translation.
->>>
->>> * iommu_attach_device_aux(domain, dev)
->>>    - Attach a domain to the device in the auxiliary mode.
->>>
->>> * iommu_detach_device_aux(domain, dev)
->>>    - Detach the aux domain from device.
->>>
->>> In order for the ease of discussion, sometimes we call "a domain in
->>> auxiliary mode' or simply 'an auxiliary domain' when a domain is
->>> attached to a device for finer granularity translations. But we need
->>> to keep in mind that this doesn't mean there is a differnt domain
->>> type. A same domain could be bound to a device for Source ID based
->>> translation, and bound to another device for finer granularity
->>> translation at the same time.
->>>
->>> This patch series extends both IOMMU and vfio components to support
->>> mdev device passing through when it could be isolated and protected
->>> by the IOMMU units. The first part of this series (PATCH 1/08~5/08)
->>> adds the interfaces and implementation of the multiple domains per
->>> device. The second part (PATCH 6/08~8/08) adds the iommu device
->>> attribute to each mdev, determines isolation type according to the
->>> existence of an iommu device when attaching group in vfio type1 iommu
->>> module, and attaches the domain to iommu aware mediated devices.
->>>
->>> This patch series depends on a patch set posted here [4] for discussion
->>> which added scalable mode support in Intel IOMMU driver.
->>>
->>> References:
->>> [1] 
->>> https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification 
->>>
->>> [2] 
->>> https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification 
->>>
->>> [3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
->>> [4] https://lkml.org/lkml/2018/11/5/136
->>>
->>> Best regards,
->>> Lu Baolu
->>>
->>> Change log:
->>>    v3->v4:
->>>    - Use aux domain specific interfaces for domain attach and detach.
->>>    - Rebase all patches to 4.20-rc1.
->>>
->>>    v2->v3:
->>>    - Remove domain type enum and use a pointer on mdev_device instead.
->>>    - Add a generic interface for getting/setting per device iommu
->>>      attributions. And use it for query aux domain capability, enable
->>>      aux domain and disable aux domain purpose.
->>>    - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
->>>    - We discussed the impact of the default domain implementation
->>>      on reusing iommu_at(de)tach_device() interfaces. We agreed
->>>      that reusing iommu_at(de)tach_device() interfaces is the right
->>>      direction and we could tweak the code to remove the impact.
->>>      https://www.spinics.net/lists/kvm/msg175285.html
->>>    - Removed the RFC tag since no objections received.
->>>    - This patch has been submitted separately.
->>>      https://www.spinics.net/lists/kvm/msg173936.html
->>>
->>>    v1->v2:
->>>    - Rewrite the patches with the concept of auxiliary domains.
->>>
->>> Lu Baolu (8):
->>>    iommu: Add APIs for multiple domains per device
->>>    iommu/vt-d: Add multiple domains per device query
->>>    iommu/vt-d: Enable/disable multiple domains per device
->>>    iommu/vt-d: Attach/detach domains in auxiliary mode
->>>    iommu/vt-d: Return ID associated with an auxiliary domain
->>>    vfio/mdev: Add iommu place holders in mdev_device
->>>    vfio/type1: Add domain at(de)taching group helpers
->>>    vfio/type1: Handle different mdev isolation type
->>>
->>>   drivers/iommu/intel-iommu.c      | 315 
->>> ++++++++++++++++++++++++++++---
->>>   drivers/iommu/iommu.c            |  52 +++++
->>>   drivers/vfio/mdev/mdev_core.c    |  36 ++++
->>>   drivers/vfio/mdev/mdev_private.h |   2 +
->>>   drivers/vfio/vfio_iommu_type1.c  | 162 ++++++++++++++--
->>>   include/linux/intel-iommu.h      |  11 ++
->>>   include/linux/iommu.h            |  52 +++++
->>>   include/linux/mdev.h             |  23 +++
->>>   8 files changed, 618 insertions(+), 35 deletions(-)
->>>
->>
->>
->>
->
-> .
->
-
-
+> 
+> Regards,
+> Sukumar
+> 
+> On Tue, Nov 20, 2018 at 2:55 PM Hangbin Liu <liuhangbin@gmail.com> wrote:
+> 
+>     Hi David,
+> 
+>     On Sat, Jul 21, 2018 at 10:03:09PM -0700, David Miller wrote:
+>     > Yeah that limit is bogus for several reasons.
+>     ...
+>     >
+>     > Therefore, it probably is safe and correct to remove this
+>     > cache_resolve_queue_len altogether.
+>     >
+>     > Something like this:
+>     >
+>     > diff --git a/include/linux/mroute_base.h b/include/linux/mroute_base.h
+>     > index d633f737b3c6..b166465d7c05 100644
+>     > --- a/include/linux/mroute_base.h
+>     > +++ b/include/linux/mroute_base.h
+>     > @@ -234,7 +234,6 @@ struct mr_table_ops {
+>     >   * @mfc_hash: Hash table of all resolved routes for easy lookup
+>     >   * @mfc_cache_list: list of resovled routes for possible traversal
+>     >   * @maxvif: Identifier of highest value vif currently in use
+>     > - * @cache_resolve_queue_len: current size of unresolved queue
+>     >   * @mroute_do_assert: Whether to inform userspace on wrong ingress
+>     >   * @mroute_do_pim: Whether to receive IGMP PIMv1
+>     >   * @mroute_reg_vif_num: PIM-device vif index
+>     > @@ -251,7 +250,6 @@ struct mr_table {
+>     >       struct rhltable         mfc_hash;
+>     >       struct list_head        mfc_cache_list;
+>     >       int                     maxvif;
+>     > -     atomic_t                cache_resolve_queue_len;
+>     >       bool                    mroute_do_assert;
+>     >       bool                    mroute_do_pim;
+>     >       int                     mroute_reg_vif_num;
+>     > diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+>     > index 9f79b9803a16..c007cf9bfe82 100644
+>     > --- a/net/ipv4/ipmr.c
+>     > +++ b/net/ipv4/ipmr.c
+>     > @@ -747,8 +747,6 @@ static void ipmr_destroy_unres(struct mr_table *mrt,
+>     struct mfc_cache *c)
+>     >       struct sk_buff *skb;
+>     >       struct nlmsgerr *e;
+>     > 
+>     > -     atomic_dec(&mrt->cache_resolve_queue_len);
+>     > -
+>     >       while ((skb = skb_dequeue(&c->_c.mfc_un.unres.unresolved))) {
+>     >               if (ip_hdr(skb)->version == 0) {
+>     >                       struct nlmsghdr *nlh = skb_pull(skb,
+>     > @@ -1135,9 +1133,11 @@ static int ipmr_cache_unresolved(struct mr_table
+>     *mrt, vifi_t vifi,
+>     >       }
+>     > 
+>     >       if (!found) {
+>     > +             bool was_empty;
+>     > +
+>     >               /* Create a new entry if allowable */
+>     > -             if (atomic_read(&mrt->cache_resolve_queue_len) >= 10 ||
+>     > -                 (c = ipmr_cache_alloc_unres()) == NULL) {
+>     > +             c = ipmr_cache_alloc_unres();
+>     > +             if (!c) {
+>     >                       spin_unlock_bh(&mfc_unres_lock);
+>     > 
+>     >                       kfree_skb(skb);
+>     > @@ -1163,11 +1163,11 @@ static int ipmr_cache_unresolved(struct mr_table
+>     *mrt, vifi_t vifi,
+>     >                       return err;
+>     >               }
+>     > 
+>     > -             atomic_inc(&mrt->cache_resolve_queue_len);
+>     > +             was_empty = list_empty(&mrt->mfc_unres_queue);
+>     >               list_add(&c->_c.list, &mrt->mfc_unres_queue);
+>     >               mroute_netlink_event(mrt, c, RTM_NEWROUTE);
+>     > 
+>     > -             if (atomic_read(&mrt->cache_resolve_queue_len) == 1)
+>     > +             if (was_empty)
+>     >                       mod_timer(&mrt->ipmr_expire_timer,
+>     >                                 c->_c.mfc_un.unres.expires);
+> 
+>     In ipmr_expire_process() and ipmr_do_expire_process(), they start mod_timer
+>     when !list_empty(&mrt->mfc_unres_queue), should here also be !was_empty?
+> 
+>     BTW, do you have any plan to apply this patch in kernel?
+> 
+>     Regards
+>     Hangbin
+> 
+>     >       }
+>     > @@ -1274,7 +1274,6 @@ static int ipmr_mfc_add(struct net *net, struct
+>     mr_table *mrt,
+>     >               if (uc->mfc_origin == c->mfc_origin &&
+>     >                   uc->mfc_mcastgrp == c->mfc_mcastgrp) {
+>     >                       list_del(&_uc->list);
+>     > -                     atomic_dec(&mrt->cache_resolve_queue_len);
+>     >                       found = true;
+>     >                       break;
+>     >               }
+>     > @@ -1322,7 +1321,7 @@ static void mroute_clean_tables(struct mr_table
+>     *mrt, bool all)
+>     >               mr_cache_put(c);
+>     >       }
+>     > 
+>     > -     if (atomic_read(&mrt->cache_resolve_queue_len) != 0) {
+>     > +     if (!list_empty(&mrt->mfc_unres_queue)) {
+>     >               spin_lock_bh(&mfc_unres_lock);
+>     >               list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue,
+>     list) {
+>     >                       list_del(&c->list);
+>     > @@ -2648,9 +2647,19 @@ static int ipmr_rtm_route(struct sk_buff *skb,
+>     struct nlmsghdr *nlh,
+>     >               return ipmr_mfc_delete(tbl, &mfcc, parent);
+>     >  }
+>     > 
+>     > +static int queue_count(struct mr_table *mrt)
+>     > +{
+>     > +     struct list_head *pos;
+>     > +     int count = 0;
+>     > +     
+>     > +     list_for_each(pos, &mrt->mfc_unres_queue)
+>     > +             count++;
+>     > +     return count;
+>     > +}
+>     > +
+>     >  static bool ipmr_fill_table(struct mr_table *mrt, struct sk_buff *skb)
+>     >  {
+>     > -     u32 queue_len = atomic_read(&mrt->cache_resolve_queue_len);
+>     > +     u32 queue_len = queue_count(mrt);
+>     > 
+>     >       if (nla_put_u32(skb, IPMRA_TABLE_ID, mrt->id) ||
+>     >           nla_put_u32(skb, IPMRA_TABLE_CACHE_RES_QUEUE_LEN, queue_len) ||
+>     > diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+>     > index 0d0f0053bb11..75e9c5a3e7ea 100644
+>     > --- a/net/ipv6/ip6mr.c
+>     > +++ b/net/ipv6/ip6mr.c
+>     > @@ -759,8 +759,6 @@ static void ip6mr_destroy_unres(struct mr_table *mrt,
+>     struct mfc6_cache *c)
+>     >       struct net *net = read_pnet(&mrt->net);
+>     >       struct sk_buff *skb;
+>     > 
+>     > -     atomic_dec(&mrt->cache_resolve_queue_len);
+>     > -
+>     >       while ((skb = skb_dequeue(&c->_c.mfc_un.unres.unresolved)) != NULL)
+>     {
+>     >               if (ipv6_hdr(skb)->version == 0) {
+>     >                       struct nlmsghdr *nlh = skb_pull(skb,
+>     > @@ -1139,8 +1137,8 @@ static int ip6mr_cache_unresolved(struct mr_table
+>     *mrt, mifi_t mifi,
+>     >                *      Create a new entry if allowable
+>     >                */
+>     > 
+>     > -             if (atomic_read(&mrt->cache_resolve_queue_len) >= 10 ||
+>     > -                 (c = ip6mr_cache_alloc_unres()) == NULL) {
+>     > +             c = ip6mr_cache_alloc_unres();
+>     > +             if (!c) {
+>     >                       spin_unlock_bh(&mfc_unres_lock);
+>     > 
+>     >                       kfree_skb(skb);
+>     > @@ -1167,7 +1165,6 @@ static int ip6mr_cache_unresolved(struct mr_table
+>     *mrt, mifi_t mifi,
+>     >                       return err;
+>     >               }
+>     > 
+>     > -             atomic_inc(&mrt->cache_resolve_queue_len);
+>     >               list_add(&c->_c.list, &mrt->mfc_unres_queue);
+>     >               mr6_netlink_event(mrt, c, RTM_NEWROUTE);
+>     > 
+>     > @@ -1455,7 +1452,6 @@ static int ip6mr_mfc_add(struct net *net, struct
+>     mr_table *mrt,
+>     >               if (ipv6_addr_equal(&uc->mf6c_origin, &c->mf6c_origin) &&
+>     >                   ipv6_addr_equal(&uc->mf6c_mcastgrp, &c->mf6c_mcastgrp))
+>     {
+>     >                       list_del(&_uc->list);
+>     > -                     atomic_dec(&mrt->cache_resolve_queue_len);
+>     >                       found = true;
+>     >                       break;
+>     >               }
+>     > @@ -1502,7 +1498,7 @@ static void mroute_clean_tables(struct mr_table
+>     *mrt, bool all)
+>     >               mr_cache_put(c);
+>     >       }
+>     > 
+>     > -     if (atomic_read(&mrt->cache_resolve_queue_len) != 0) {
+>     > +     if (!list_empty(&mrt->mfc_unres_queue)) {
+>     >               spin_lock_bh(&mfc_unres_lock);
+>     >               list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue,
+>     list) {
+>     >                       list_del(&c->list);
+> 
