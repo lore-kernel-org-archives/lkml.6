@@ -2,147 +2,130 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B1FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E72C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49D62082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49D62082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 91880214C1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hKoN2aik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91880214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLDUCG (ORCPT
+        id S1725907AbeLDUFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:02:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:47612 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbeLDUCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:02:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 12:02:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="96110213"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga007.jf.intel.com with ESMTP; 04 Dec 2018 12:02:05 -0800
-Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 4 Dec 2018 12:02:05 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.8]) by
- ORSMSX153.amr.corp.intel.com ([169.254.12.54]) with mapi id 14.03.0415.000;
- Tue, 4 Dec 2018 12:02:04 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "will.deacon@arm.com" <will.deacon@arm.com>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-Thread-Topic: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-Thread-Index: AQHUhrIVlTqKMmCRwUWBsYfr2au/NaVuXiWAgADwQACAAENYAA==
-Date:   Tue, 4 Dec 2018 20:02:03 +0000
-Message-ID: <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
-         <20181128000754.18056-2-rick.p.edgecombe@intel.com>
-         <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
-         <20181204160304.GB7195@arm.com>
-In-Reply-To: <20181204160304.GB7195@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.141]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A505089424EB70449A3E55198D49D917@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 4 Dec 2018 15:05:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43835 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDUFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:05:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so17267203wrs.10
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:05:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
+        b=hKoN2aikVpRjyNb8oSh9ixndigMRZl11ufnqkBhIKtXGsPtQSh0U3b0wrni/fAD7tv
+         VRrxL8Y+eudzYumkgwcrihWXC6ucmsHEiK76WZB6k6i59cu3JXMKFvnttOgC40fKbszZ
+         lmIz+pHtX+cH9+4tHqU6a4+vDz1CgpCQcWKq/0uGqYTw8mvwMwPeP/Pxf71aXOY1wPUD
+         ODnPOinYQwUuL1CblksbONRkNXYbsJv6VM4j5RuYNhor7LQj+Hg7LT0sNIw2B1McDblm
+         E/KU+O7P4zWj+39GbV/Sp5ba0WmljrN8Wvb342HOo/WQZSnbbJr/TNivFWPHu0OrQjAL
+         bRtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
+        b=LaP3pPuvSKjmkUutf+AppiX1z4U3MD4hyxWxNhvECAojt91G31pjBelTFYES78H/Th
+         d9nAKhZWWwG9/zFG5vbAOp3p7mHg2ALnqXrzAPzKbAOn3pg6CqBI4mx315PInkeoDMjH
+         3DFnF7sfd5EiNCaY2jHgaPLMPrinMXxof/YYn/Z8xVYzdVfAAyBRxcB1Uy273ax9dELu
+         18zvP/TSTLjqc1mlXDnM9Tz1HueW3eNlkC6DfkvLt04JQSxdBvCV+XYeumPEQDaQeUZN
+         KZgQti2YegdADHBVNrLxyvZFqUeSaFMF1OaUYq+6BLFXBhKYJ0kqu3D8dJtyg9yXs/gO
+         eQXw==
+X-Gm-Message-State: AA+aEWYdXKhU2f1CIOVM3uf32nVo2sGskOYaxtqoABUUq38D7D8yZOmv
+        uv3vGsqnjN8Ke04E60gA5CKNVA==
+X-Google-Smtp-Source: AFSGD/WAu9R1GRTlJrL0Zb50WTZLNjbk8WFhs2XnaX/wrvCXD4dnHMBMkFJm2nZJOC0MlQf3y5LaBw==
+X-Received: by 2002:adf:fe43:: with SMTP id m3mr18768268wrs.290.1543953904416;
+        Tue, 04 Dec 2018 12:05:04 -0800 (PST)
+Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id c12sm12055655wrs.82.2018.12.04.12.05.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 12:05:03 -0800 (PST)
+Message-ID: <2341ec89691f6221bab6a9696ed0c05c3d3de663.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to
+ static
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Dec 2018 21:05:02 +0100
+In-Reply-To: <5C06D686.50108@baylibre.com>
+References: <20181204125839.14505-1-narmstrong@baylibre.com>
+         <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
+         <5C06D686.50108@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEyLTA0IGF0IDE2OjAzICswMDAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
-T24gTW9uLCBEZWMgMDMsIDIwMTggYXQgMDU6NDM6MTFQTSAtMDgwMCwgTmFkYXYgQW1pdCB3cm90
-ZToNCj4gPiA+IE9uIE5vdiAyNywgMjAxOCwgYXQgNDowNyBQTSwgUmljayBFZGdlY29tYmUgPHJp
-Y2sucC5lZGdlY29tYmVAaW50ZWwuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4gPiANCj4gPiA+IFNp
-bmNlIHZmcmVlIHdpbGwgbGF6aWx5IGZsdXNoIHRoZSBUTEIsIGJ1dCBub3QgbGF6aWx5IGZyZWUg
-dGhlIHVuZGVybHlpbmcNCj4gPiA+IHBhZ2VzLA0KPiA+ID4gaXQgb2Z0ZW4gbGVhdmVzIHN0YWxl
-IFRMQiBlbnRyaWVzIHRvIGZyZWVkIHBhZ2VzIHRoYXQgY291bGQgZ2V0IHJlLXVzZWQuDQo+ID4g
-PiBUaGlzIGlzDQo+ID4gPiB1bmRlc2lyYWJsZSBmb3IgY2FzZXMgd2hlcmUgdGhlIG1lbW9yeSBi
-ZWluZyBmcmVlZCBoYXMgc3BlY2lhbCBwZXJtaXNzaW9ucw0KPiA+ID4gc3VjaA0KPiA+ID4gYXMg
-ZXhlY3V0YWJsZS4NCj4gPiANCj4gPiBTbyBJIGFtIHRyeWluZyB0byBmaW5pc2ggbXkgcGF0Y2gt
-c2V0IGZvciBwcmV2ZW50aW5nIHRyYW5zaWVudCBXK1ggbWFwcGluZ3MNCj4gPiBmcm9tIHRha2lu
-ZyBzcGFjZSwgYnkgaGFuZGxpbmcga3Byb2JlcyAmIGZ0cmFjZSB0aGF0IEkgbWlzc2VkICh0aGFu
-a3MgYWdhaW4NCj4gPiBmb3INCj4gPiBwb2ludGluZyBpdCBvdXQpLg0KPiA+IA0KPiA+IEJ1dCBh
-bGwgb2YgdGhlIHN1ZGRlbiwgSSBkb27igJl0IHVuZGVyc3RhbmQgd2h5IHdlIGhhdmUgdGhlIHBy
-b2JsZW0gdGhhdCB0aGlzDQo+ID4gKHlvdXIpIHBhdGNoLXNldCBkZWFscyB3aXRoIGF0IGFsbC4g
-V2UgYWxyZWFkeSBjaGFuZ2UgdGhlIG1hcHBpbmdzIHRvIG1ha2UNCj4gPiB0aGUgbWVtb3J5IHdy
-aXRhYmxlIGJlZm9yZSBmcmVlaW5nIHRoZSBtZW1vcnksIHNvIHdoeSBjYW7igJl0IHdlIG1ha2Ug
-aXQNCj4gPiBub24tZXhlY3V0YWJsZSBhdCB0aGUgc2FtZSB0aW1lPyBBY3R1YWxseSwgd2h5IGRv
-IHdlIG1ha2UgdGhlIG1vZHVsZSBtZW1vcnksDQo+ID4gaW5jbHVkaW5nIGl0cyBkYXRhIGV4ZWN1
-dGFibGUgYmVmb3JlIGZyZWVpbmcgaXQ/Pz8NCj4gDQo+IFllYWgsIHRoaXMgaXMgcmVhbGx5IGNv
-bmZ1c2luZywgYnV0IEkgaGF2ZSBhIHN1c3BpY2lvbiBpdCdzIGEgY29tYmluYXRpb24NCj4gb2Yg
-dGhlIHZhcmlvdXMgZGlmZmVyZW50IGNvbmZpZ3VyYXRpb25zIGFuZCBoeXN0ZXJpY2FsIHJhaXNp
-bnMuIFdlIGNhbid0DQo+IHJlbHkgb24gbW9kdWxlX2FsbG9jKCkgYWxsb2NhdGluZyBmcm9tIHRo
-ZSB2bWFsbG9jIGFyZWEgKHNlZSBuaW9zMikgbm9yDQo+IGNhbiB3ZSByZWx5IG9uIGRpc2FibGVf
-cm9fbngoKSBiZWluZyBhdmFpbGFibGUgYXQgYnVpbGQgdGltZS4NCj4gDQo+IElmIHdlICpjb3Vs
-ZCogcmVseSBvbiBtb2R1bGUgYWxsb2NhdGlvbnMgYWx3YXlzIHVzaW5nIHZtYWxsb2MoKSwgdGhl
-bg0KPiB3ZSBjb3VsZCBwYXNzIGluIFJpY2sncyBuZXcgZmxhZyBhbmQgZHJvcCBkaXNhYmxlX3Jv
-X254KCkgYWx0b2dldGhlcg0KPiBhZmFpY3QgLS0gd2hvIGNhcmVzIGFib3V0IHRoZSBtZW1vcnkg
-YXR0cmlidXRlcyBvZiBhIG1hcHBpbmcgdGhhdCdzIGFib3V0DQo+IHRvIGRpc2FwcGVhciBhbnl3
-YXk/DQo+IA0KPiBJcyBpdCBqdXN0IG5pb3MyIHRoYXQgZG9lcyBzb21ldGhpbmcgZGlmZmVyZW50
-Pw0KPiANCj4gV2lsbA0KDQpZZWEgaXQgaXMgcmVhbGx5IGludGVydHdpbmVkLiBJIHRoaW5rIGZv
-ciB4ODYsIHNldF9tZW1vcnlfbnggZXZlcnl3aGVyZSB3b3VsZA0Kc29sdmUgaXQgYXMgd2VsbCwg
-aW4gZmFjdCB0aGF0IHdhcyB3aGF0IEkgZmlyc3QgdGhvdWdodCB0aGUgc29sdXRpb24gc2hvdWxk
-IGJlDQp1bnRpbCB0aGlzIHdhcyBzdWdnZXN0ZWQuIEl0J3MgaW50ZXJlc3RpbmcgdGhhdCBmcm9t
-IHRoZSBvdGhlciB0aHJlYWQgTWFzYW1pDQpIaXJhbWF0c3UgcmVmZXJlbmNlZCwgc2V0X21lbW9y
-eV9ueCB3YXMgc3VnZ2VzdGVkIGxhc3QgeWVhciBhbmQgd291bGQgaGF2ZQ0KaW5hZHZlcnRlbnRs
-eSBibG9ja2VkIHRoaXMgb24geDg2LiBCdXQsIG9uIHRoZSBvdGhlciBhcmNoaXRlY3R1cmVzIEkg
-aGF2ZSBzaW5jZQ0KbGVhcm5lZCBpdCBpcyBhIGJpdCBkaWZmZXJlbnQuDQoNCkl0IGxvb2tzIGxp
-a2UgYWN0dWFsbHkgbW9zdCBhcmNoJ3MgZG9uJ3QgcmUtZGVmaW5lIHNldF9tZW1vcnlfKiwgYW5k
-IHNvIGFsbCBvZg0KdGhlIGZyb2JfKiBmdW5jdGlvbnMgYXJlIGFjdHVhbGx5IGp1c3Qgbm9vcHMu
-IEluIHdoaWNoIGNhc2UgYWxsb2NhdGluZyBSV1ggaXMNCm5lZWRlZCB0byBtYWtlIGl0IHdvcmsg
-YXQgYWxsLCBiZWNhdXNlIHRoYXQgaXMgd2hhdCB0aGUgYWxsb2NhdGlvbiBpcyBnb2luZyB0bw0K
-c3RheSBhdC4gU28gaW4gdGhlc2UgYXJjaHMsIHNldF9tZW1vcnlfbnggd29uJ3Qgc29sdmUgaXQg
-YmVjYXVzZSBpdCB3aWxsIGRvDQpub3RoaW5nLg0KDQpPbiB4ODYgSSB0aGluayB5b3UgY2Fubm90
-IGdldCByaWQgb2YgZGlzYWJsZV9yb19ueCBmdWxseSBiZWNhdXNlIHRoZXJlIGlzIHRoZQ0KY2hh
-bmdpbmcgb2YgdGhlIHBlcm1pc3Npb25zIG9uIHRoZSBkaXJlY3RtYXAgYXMgd2VsbC4gWW91IGRv
-bid0IHdhbnQgc29tZSBvdGhlcg0KY2FsbGVyIGdldHRpbmcgYSBwYWdlIHRoYXQgd2FzIGxlZnQg
-Uk8gd2hlbiBmcmVlZCBhbmQgdGhlbiB0cnlpbmcgdG8gd3JpdGUgdG8NCml0LCBpZiBJIHVuZGVy
-c3RhbmQgdGhpcy4NCg0KVGhlIG90aGVyIHJlYXNvbmluZyB3YXMgdGhhdCBjYWxsaW5nIHNldF9t
-ZW1vcnlfbnggaXNuJ3QgZG9pbmcgd2hhdCB3ZSBhcmUNCmFjdHVhbGx5IHRyeWluZyB0byBkbyB3
-aGljaCBpcyBwcmV2ZW50IHRoZSBwYWdlcyBmcm9tIGdldHRpbmcgcmVsZWFzZWQgdG9vDQplYXJs
-eS4NCg0KQSBtb3JlIGNsZWFyIHNvbHV0aW9uIGZvciBhbGwgb2YgdGhpcyBtaWdodCBpbnZvbHZl
-IHJlZmFjdG9yaW5nIHNvbWUgb2YgdGhlDQpzZXRfbWVtb3J5XyBkZS1hbGxvY2F0aW9uIGxvZ2lj
-IG91dCBpbnRvIF9fd2VhayBmdW5jdGlvbnMgaW4gZWl0aGVyIG1vZHVsZXMgb3INCnZtYWxsb2Mu
-IEFzIEplc3NpY2EgcG9pbnRzIG91dCBpbiB0aGUgb3RoZXIgdGhyZWFkIHRob3VnaCwgbW9kdWxl
-cyBkb2VzIGEgbG90DQptb3JlIHN0dWZmIHRoZXJlIHRoYW4gdGhlIG90aGVyIG1vZHVsZV9hbGxv
-YyBjYWxsZXJzLiBJIHRoaW5rIGl0IG1heSB0YWtlIHNvbWUNCnRob3VnaHQgdG8gY2VudHJhbGl6
-ZSBBTkQgbWFrZSBpdCBvcHRpbWFsIGZvciBldmVyeSBtb2R1bGVfYWxsb2Mvdm1hbGxvY19leGVj
-DQp1c2VyIGFuZCBhcmNoLg0KDQpCdXQgZm9yIG5vdyB3aXRoIHRoZSBjaGFuZ2UgaW4gdm1hbGxv
-Yywgd2UgY2FuIGJsb2NrIHRoZSBleGVjdXRhYmxlIG1hcHBpbmcNCmZyZWVkIHBhZ2UgcmUtdXNl
-IGlzc3VlIGluIGEgY3Jvc3MgcGxhdGZvcm0gd2F5Lg0KDQpUaGFua3MsDQoNClJpY2sNCg0K
+On Tue, 2018-12-04 at 20:33 +0100, Neil Armstrong wrote:
+> Hi Stephen,
+> 
+> Le 04/12/2018 18:43, Stephen Boyd a écrit :
+> > Quoting Neil Armstrong (2018-12-04 04:58:39)
+> > > Makes the following sparse warnings silent:
+> > > drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val'
+> > > was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1585:12: warning: symbol
+> > > 'gxbb_vid_pll_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1620:12: warning: symbol
+> > > 'gxbb_vclk_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1980:12: warning: symbol
+> > > 'gxbb_cts_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:2036:12: warning: symbol
+> > > 'gxbb_cts_hdmi_tx_parent_names' was not declared. Should it be static?
+> > 
+> > I fixed all of these already in the patch I sent you.
+> 
+> Sorry I misunderstood...
+> 
+> 
+> > > @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 =
+> > > {
+> > >  };
+> > >  
+> > >  static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
+> > 
+> > I was talking about this mux_table_cts_sel array. Can this be const?
+> > 
+> 
+> Other mux tables aren't const, Jerome so you see a reason why they aren't
+> const ?
+
+I'm surpised we missed that. The PLL params tables of amlogic are all 'static
+const' but all the mux tables are just 'static' , humm
+
+[...] 5 min later [...]
+
+Actually the table field of clk_mux is not const, so giving it a const table
+would produce a warning about discarding const qualifier
+
+I guess there should no problem adding const to the table field of struct
+clk_mux. What do you think Stephen  ?
+
+> 
+> Neil
+
+
