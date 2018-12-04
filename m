@@ -7,54 +7,45 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4F0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA0BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CE7214DB
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 728522146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKMeJk5z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CE7214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGMVgVM/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728522146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeLDK6j (ORCPT
+        id S1727051AbeLDK6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43100 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbeLDK6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:35 -0500
+        id S1727035AbeLDK6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2953A214DA;
-        Tue,  4 Dec 2018 10:58:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BE4020878;
+        Tue,  4 Dec 2018 10:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921114;
-        bh=THxNsdnuD01nV1jyaiy6sPQjeSd1IOdeIQ3xKrNFvro=;
+        s=default; t=1543921130;
+        bh=4AdDbPfadk49x3wuhaFAXMJNfhqhPKdzIlSeenvNwR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZKMeJk5z4k+h2mGaeVE2MHWWjqoxanIubLA1966DEAOkJeq0AM288AsWOTS1e97vI
-         vUGebcP0D2I94FHWx/gLpip4ANn9P9B1OkyfZXZR4KcxzKV2sOiBIFQS9wM9OAVxoF
-         +LTpJfLs0UaSU8btUYPsiF4vLo+ALVKbyxuMDdSk=
+        b=qGMVgVM/0dD8WADoUKAsjapvCRswyOMOwn4N+sqyL4DlbR40G2wa4E5PCNqfKHIwh
+         nspM0mrbK5S4Y4eLbyAc04YzCGdehtbol6jrmaeiOQSGR9KoPZLKYAThlmr6MYeiTY
+         HHcp8YFdovolNOWiRNEuwJ+9SE/MTJyB3O/Nd5Mk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 087/139] perf/x86/intel: Disallow precise_ip on BTS events
-Date:   Tue,  4 Dec 2018 11:49:28 +0100
-Message-Id: <20181204103653.894505656@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 075/139] Btrfs: ensure path name is null terminated at btrfs_control_ioctl
+Date:   Tue,  4 Dec 2018 11:49:16 +0100
+Message-Id: <20181204103653.198863469@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -73,85 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 472de49fdc53365c880ab81ae2b5cfdd83db0b06 upstream.
+commit f505754fd6599230371cb01b9332754ddc104be1 upstream.
 
-Vince reported a crash in the BTS flush code when touching the callchain
-data, which was supposed to be initialized as an 'early' callchain,
-but intel_pmu_drain_bts_buffer() does not do that:
+We were using the path name received from user space without checking that
+it is null terminated. While btrfs-progs is well behaved and does proper
+validation and null termination, someone could call the ioctl and pass
+a non-null terminated patch, leading to buffer overrun problems in the
+kernel.  The ioctl is protected by CAP_SYS_ADMIN.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  Call Trace:
-   <IRQ>
-   intel_pmu_drain_bts_buffer+0x151/0x220
-   ? intel_get_event_constraints+0x219/0x360
-   ? perf_assign_events+0xe2/0x2a0
-   ? select_idle_sibling+0x22/0x3a0
-   ? __update_load_avg_se+0x1ec/0x270
-   ? enqueue_task_fair+0x377/0xdd0
-   ? cpumask_next_and+0x19/0x20
-   ? load_balance+0x134/0x950
-   ? check_preempt_curr+0x7a/0x90
-   ? ttwu_do_wakeup+0x19/0x140
-   x86_pmu_stop+0x3b/0x90
-   x86_pmu_del+0x57/0x160
-   event_sched_out.isra.106+0x81/0x170
-   group_sched_out.part.108+0x51/0xc0
-   __perf_event_disable+0x7f/0x160
-   event_function+0x8c/0xd0
-   remote_function+0x3c/0x50
-   flush_smp_call_function_queue+0x35/0xe0
-   smp_call_function_single_interrupt+0x3a/0xd0
-   call_function_single_interrupt+0xf/0x20
-   </IRQ>
+So just set the last byte of the path to a null character, similar to what
+we do in other ioctls (add/remove/resize device, snapshot creation, etc).
 
-It was triggered by fuzzer but can be easily reproduced by:
-
-  # perf record -e cpu/branch-instructions/pu -g -c 1
-
-Peter suggested not to allow branch tracing for precise events:
-
- > Now arguably, this is really stupid behaviour. Who in his right mind
- > wants callchain output on BTS entries. And even if they do, BTS +
- > precise_ip is nonsensical.
- >
- > So in my mind disallowing precise_ip on BTS would be the simplest fix.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 6cbc304f2f36 ("perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)")
-Link: http://lkml.kernel.org/r/20181121101612.16272-3-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/btrfs/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2990,6 +2990,10 @@ static int intel_pmu_bts_config(struct p
- 		if (!attr->exclude_kernel)
- 			return -EOPNOTSUPP;
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2235,6 +2235,7 @@ static long btrfs_control_ioctl(struct f
+ 	vol = memdup_user((void __user *)arg, sizeof(*vol));
+ 	if (IS_ERR(vol))
+ 		return PTR_ERR(vol);
++	vol->name[BTRFS_PATH_NAME_MAX] = '\0';
  
-+		/* BTS is not allowed for precise events. */
-+		if (attr->precise_ip)
-+			return -EOPNOTSUPP;
-+
- 		/* disallow bts if conflicting events are present */
- 		if (x86_add_exclusive(x86_lbr_exclusive_lbr))
- 			return -EBUSY;
+ 	switch (cmd) {
+ 	case BTRFS_IOC_SCAN_DEV:
 
 
