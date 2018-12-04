@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF9AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C1CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59FAF21527
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121C12146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:07:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cq+bwKlu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59FAF21527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOtT50E6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121C12146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbeLDLHG (ORCPT
+        id S1727914AbeLDLHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:07:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55916 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:07:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbeLDLHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:07:03 -0500
+        id S1727482AbeLDLHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:07:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43A292082D;
-        Tue,  4 Dec 2018 11:07:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54EA82151B;
+        Tue,  4 Dec 2018 11:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921621;
-        bh=CYHKz8oQ1bt2JXcHGj39V/136ykCn4javZGR2IKIWlE=;
+        s=default; t=1543921626;
+        bh=2Ufc4Hl4nkwzTg+vM0RaBdALCZ4lvLuwHF2Hld5GSUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cq+bwKlunKH/jygz+G1PJPIr1Ap7VBl4O11Snav6Z1YCW3cNv+O+AeJE1WrAaRtp8
-         WyriYT9fgDPt/7gn09nzvhJhAmDbZAtXK4S968jxt3DSwtdaEzK2sryflw9awzrY8e
-         ZIRmvCLtmOUiTPCMnyJngFImWyBu8cywwZ8wBoFQ=
+        b=OOtT50E6eGQHGXJPIC1CrMYcisbg1bILvh1sprmHgXVNPiI7cn2iMdvYtbfsKiFSQ
+         xFCBSKk6HI9zZln9+dNhnvChr3KFt6ZuOptbKY00vN1h0YzgcHHpxalAfKKrQXsStJ
+         7QBmf29PLFt/hgsSxAQ4/lgBU2xlmKC7gXO3HjIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -60,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 108/146] x86/speculation: Provide IBPB always command line options
-Date:   Tue,  4 Dec 2018 11:49:54 +0100
-Message-Id: <20181204103731.170847962@linuxfoundation.org>
+Subject: [PATCH 4.14 100/146] x86/speculation: Prepare for conditional IBPB in switch_mm()
+Date:   Tue,  4 Dec 2018 11:49:46 +0100
+Message-Id: <20181204103730.846198793@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -83,13 +83,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 55a974021ec952ee460dc31ca08722158639de72 upstream
+commit 4c71a2b6fd7e42814aa68a6dec88abf3b42ea573 upstream
 
-Provide the possibility to enable IBPB always in combination with 'prctl'
-and 'seccomp'.
+The IBPB speculation barrier is issued from switch_mm() when the kernel
+switches to a user space task with a different mm than the user space task
+which ran last on the same CPU.
 
-Add the extra command line options and rework the IBPB selection to
-evaluate the command instead of the mode selected by the STIPB switch case.
+An additional optimization is to avoid IBPB when the incoming task can be
+ptraced by the outgoing task. This optimization only works when switching
+directly between two user space tasks. When switching from a kernel task to
+a user space task the optimization fails because the previous task cannot
+be accessed anymore. So for quite some scenarios the optimization is just
+adding overhead.
+
+The upcoming conditional IBPB support will issue IBPB only for user space
+tasks which have the TIF_SPEC_IB bit set. This requires to handle the
+following cases:
+
+  1) Switch from a user space task (potential attacker) which has
+     TIF_SPEC_IB set to a user space task (potential victim) which has
+     TIF_SPEC_IB not set.
+
+  2) Switch from a user space task (potential attacker) which has
+     TIF_SPEC_IB not set to a user space task (potential victim) which has
+     TIF_SPEC_IB set.
+
+This needs to be optimized for the case where the IBPB can be avoided when
+only kernel threads ran in between user space tasks which belong to the
+same process.
+
+The current check whether two tasks belong to the same context is using the
+tasks context id. While correct, it's simpler to use the mm pointer because
+it allows to mangle the TIF_SPEC_IB bit into it. The context id based
+mechanism requires extra storage, which creates worse code.
+
+When a task is scheduled out its TIF_SPEC_IB bit is mangled as bit 0 into
+the per CPU storage which is used to track the last user space mm which was
+running on a CPU. This bit can be used together with the TIF_SPEC_IB bit of
+the incoming task to make the decision whether IBPB needs to be issued or
+not to cover the two cases above.
+
+As conditional IBPB is going to be the default, remove the dubious ptrace
+check for the IBPB always case and simply issue IBPB always when the
+process changes.
+
+Move the storage to a different place in the struct as the original one
+created a hole.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -113,129 +152,263 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185006.144047038@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.466447057@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |   12 ++++++++
- arch/x86/kernel/cpu/bugs.c                      |   34 ++++++++++++++++--------
- 2 files changed, 35 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/nospec-branch.h |    2 
+ arch/x86/include/asm/tlbflush.h      |    8 +-
+ arch/x86/kernel/cpu/bugs.c           |   29 +++++++-
+ arch/x86/mm/tlb.c                    |  114 ++++++++++++++++++++++++++---------
+ 4 files changed, 118 insertions(+), 35 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4041,11 +4041,23 @@
- 				  per thread.  The mitigation control state
- 				  is inherited on fork.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -312,6 +312,8 @@ do {									\
+ } while (0)
  
-+			prctl,ibpb
-+				- Like "prctl" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different user
-+				  space processes.
+ DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++DECLARE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
++DECLARE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -185,10 +185,14 @@ struct tlb_state {
+ 
+ #define LOADED_MM_SWITCHING ((struct mm_struct *)1)
+ 
++	/* Last user mm for optimizing IBPB */
++	union {
++		struct mm_struct	*last_user_mm;
++		unsigned long		last_user_mm_ibpb;
++	};
 +
- 			seccomp
- 				- Same as "prctl" above, but all seccomp
- 				  threads will enable the mitigation unless
- 				  they explicitly opt out.
+ 	u16 loaded_mm_asid;
+ 	u16 next_asid;
+-	/* last user mm's ctx id */
+-	u64 last_ctx_id;
  
-+			seccomp,ibpb
-+				- Like "seccomp" above, but only STIBP is
-+				  controlled per thread. IBPB is issued
-+				  always when switching between different
-+				  user space processes.
-+
- 			auto    - Kernel selects the mitigation depending on
- 				  the available CPU features and vulnerability.
- 
+ 	/*
+ 	 * We can be in one of several states:
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -255,7 +255,9 @@ enum spectre_v2_user_cmd {
- 	SPECTRE_V2_USER_CMD_AUTO,
- 	SPECTRE_V2_USER_CMD_FORCE,
- 	SPECTRE_V2_USER_CMD_PRCTL,
-+	SPECTRE_V2_USER_CMD_PRCTL_IBPB,
- 	SPECTRE_V2_USER_CMD_SECCOMP,
-+	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
- };
+@@ -55,6 +55,10 @@ u64 __ro_after_init x86_amd_ls_cfg_ssbd_
  
- static const char * const spectre_v2_user_strings[] = {
-@@ -270,11 +272,13 @@ static const struct {
- 	enum spectre_v2_user_cmd	cmd;
- 	bool				secure;
- } v2_user_options[] __initdata = {
--	{ "auto",	SPECTRE_V2_USER_CMD_AUTO,	false },
--	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
--	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
--	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
--	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
-+	{ "auto",		SPECTRE_V2_USER_CMD_AUTO,		false },
-+	{ "off",		SPECTRE_V2_USER_CMD_NONE,		false },
-+	{ "on",			SPECTRE_V2_USER_CMD_FORCE,		true  },
-+	{ "prctl",		SPECTRE_V2_USER_CMD_PRCTL,		false },
-+	{ "prctl,ibpb",		SPECTRE_V2_USER_CMD_PRCTL_IBPB,		false },
-+	{ "seccomp",		SPECTRE_V2_USER_CMD_SECCOMP,		false },
-+	{ "seccomp,ibpb",	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,	false },
- };
+ /* Control conditional STIPB in switch_to() */
+ DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
++/* Control conditional IBPB in switch_mm() */
++DEFINE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
++/* Control unconditional IBPB in switch_mm() */
++DEFINE_STATIC_KEY_FALSE(switch_mm_always_ibpb);
  
- static void __init spec_v2_user_print_cond(const char *reason, bool secure)
-@@ -320,6 +324,7 @@ spectre_v2_user_select_mitigation(enum s
+ void __init check_bugs(void)
  {
- 	enum spectre_v2_user_mitigation mode = SPECTRE_V2_USER_NONE;
- 	bool smt_possible = IS_ENABLED(CONFIG_SMP);
-+	enum spectre_v2_user_cmd cmd;
- 
- 	if (!boot_cpu_has(X86_FEATURE_IBPB) && !boot_cpu_has(X86_FEATURE_STIBP))
- 		return;
-@@ -328,17 +333,20 @@ spectre_v2_user_select_mitigation(enum s
- 	    cpu_smt_control == CPU_SMT_NOT_SUPPORTED)
- 		smt_possible = false;
- 
--	switch (spectre_v2_parse_user_cmdline(v2_cmd)) {
-+	cmd = spectre_v2_parse_user_cmdline(v2_cmd);
-+	switch (cmd) {
- 	case SPECTRE_V2_USER_CMD_NONE:
- 		goto set_mode;
- 	case SPECTRE_V2_USER_CMD_FORCE:
- 		mode = SPECTRE_V2_USER_STRICT;
- 		break;
- 	case SPECTRE_V2_USER_CMD_PRCTL:
-+	case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
- 		mode = SPECTRE_V2_USER_PRCTL;
- 		break;
- 	case SPECTRE_V2_USER_CMD_AUTO:
- 	case SPECTRE_V2_USER_CMD_SECCOMP:
-+	case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 		if (IS_ENABLED(CONFIG_SECCOMP))
- 			mode = SPECTRE_V2_USER_SECCOMP;
- 		else
-@@ -350,12 +358,15 @@ spectre_v2_user_select_mitigation(enum s
+@@ -330,7 +334,17 @@ spectre_v2_user_select_mitigation(enum s
+ 	/* Initialize Indirect Branch Prediction Barrier */
  	if (boot_cpu_has(X86_FEATURE_IBPB)) {
  		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 
--		switch (mode) {
--		case SPECTRE_V2_USER_STRICT:
-+		switch (cmd) {
-+		case SPECTRE_V2_USER_CMD_FORCE:
-+		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
-+		case SPECTRE_V2_USER_CMD_SECCOMP_IBPB:
- 			static_branch_enable(&switch_mm_always_ibpb);
- 			break;
--		case SPECTRE_V2_USER_PRCTL:
--		case SPECTRE_V2_USER_SECCOMP:
-+		case SPECTRE_V2_USER_CMD_PRCTL:
-+		case SPECTRE_V2_USER_CMD_AUTO:
-+		case SPECTRE_V2_USER_CMD_SECCOMP:
- 			static_branch_enable(&switch_mm_cond_ibpb);
- 			break;
- 		default:
-@@ -363,7 +374,8 @@ spectre_v2_user_select_mitigation(enum s
- 		}
- 
- 		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
--			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
-+			static_key_enabled(&switch_mm_always_ibpb) ?
-+			"always-on" : "conditional");
+-		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
++
++		switch (mode) {
++		case SPECTRE_V2_USER_STRICT:
++			static_branch_enable(&switch_mm_always_ibpb);
++			break;
++		default:
++			break;
++		}
++
++		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
++			mode == SPECTRE_V2_USER_STRICT ? "always-on" : "conditional");
  	}
  
  	/* If enhanced IBRS is enabled no STIPB required */
+@@ -952,10 +966,15 @@ static char *stibp_state(void)
+ 
+ static char *ibpb_state(void)
+ {
+-	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
+-		return ", IBPB";
+-	else
+-		return "";
++	if (boot_cpu_has(X86_FEATURE_IBPB)) {
++		switch (spectre_v2_user) {
++		case SPECTRE_V2_USER_NONE:
++			return ", IBPB: disabled";
++		case SPECTRE_V2_USER_STRICT:
++			return ", IBPB: always-on";
++		}
++	}
++	return "";
+ }
+ 
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,7 +7,6 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
+-#include <linux/ptrace.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -31,6 +30,12 @@
+  */
+ 
+ /*
++ * Use bit 0 to mangle the TIF_SPEC_IB state into the mm pointer which is
++ * stored in cpu_tlb_state.last_user_mm_ibpb.
++ */
++#define LAST_USER_MM_IBPB	0x1UL
++
++/*
+  * We get here when we do something requiring a TLB invalidation
+  * but could not go invalidate all of the contexts.  We do the
+  * necessary invalidation by clearing out the 'ctx_id' which
+@@ -181,17 +186,87 @@ static void sync_current_stack_to_mm(str
+ 	}
+ }
+ 
+-static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
++static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
++{
++	unsigned long next_tif = task_thread_info(next)->flags;
++	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
++
++	return (unsigned long)next->mm | ibpb;
++}
++
++static void cond_ibpb(struct task_struct *next)
+ {
++	if (!next || !next->mm)
++		return;
++
+ 	/*
+-	 * Check if the current (previous) task has access to the memory
+-	 * of the @tsk (next) task. If access is denied, make sure to
+-	 * issue a IBPB to stop user->user Spectre-v2 attacks.
+-	 *
+-	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
++	 * Both, the conditional and the always IBPB mode use the mm
++	 * pointer to avoid the IBPB when switching between tasks of the
++	 * same process. Using the mm pointer instead of mm->context.ctx_id
++	 * opens a hypothetical hole vs. mm_struct reuse, which is more or
++	 * less impossible to control by an attacker. Aside of that it
++	 * would only affect the first schedule so the theoretically
++	 * exposed data is not really interesting.
+ 	 */
+-	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
+-		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
++	if (static_branch_likely(&switch_mm_cond_ibpb)) {
++		unsigned long prev_mm, next_mm;
++
++		/*
++		 * This is a bit more complex than the always mode because
++		 * it has to handle two cases:
++		 *
++		 * 1) Switch from a user space task (potential attacker)
++		 *    which has TIF_SPEC_IB set to a user space task
++		 *    (potential victim) which has TIF_SPEC_IB not set.
++		 *
++		 * 2) Switch from a user space task (potential attacker)
++		 *    which has TIF_SPEC_IB not set to a user space task
++		 *    (potential victim) which has TIF_SPEC_IB set.
++		 *
++		 * This could be done by unconditionally issuing IBPB when
++		 * a task which has TIF_SPEC_IB set is either scheduled in
++		 * or out. Though that results in two flushes when:
++		 *
++		 * - the same user space task is scheduled out and later
++		 *   scheduled in again and only a kernel thread ran in
++		 *   between.
++		 *
++		 * - a user space task belonging to the same process is
++		 *   scheduled in after a kernel thread ran in between
++		 *
++		 * - a user space task belonging to the same process is
++		 *   scheduled in immediately.
++		 *
++		 * Optimize this with reasonably small overhead for the
++		 * above cases. Mangle the TIF_SPEC_IB bit into the mm
++		 * pointer of the incoming task which is stored in
++		 * cpu_tlbstate.last_user_mm_ibpb for comparison.
++		 */
++		next_mm = mm_mangle_tif_spec_ib(next);
++		prev_mm = this_cpu_read(cpu_tlbstate.last_user_mm_ibpb);
++
++		/*
++		 * Issue IBPB only if the mm's are different and one or
++		 * both have the IBPB bit set.
++		 */
++		if (next_mm != prev_mm &&
++		    (next_mm | prev_mm) & LAST_USER_MM_IBPB)
++			indirect_branch_prediction_barrier();
++
++		this_cpu_write(cpu_tlbstate.last_user_mm_ibpb, next_mm);
++	}
++
++	if (static_branch_unlikely(&switch_mm_always_ibpb)) {
++		/*
++		 * Only flush when switching to a user space task with a
++		 * different context than the user space task which ran
++		 * last on this CPU.
++		 */
++		if (this_cpu_read(cpu_tlbstate.last_user_mm) != next->mm) {
++			indirect_branch_prediction_barrier();
++			this_cpu_write(cpu_tlbstate.last_user_mm, next->mm);
++		}
++	}
+ }
+ 
+ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+@@ -262,22 +337,13 @@ void switch_mm_irqs_off(struct mm_struct
+ 	} else {
+ 		u16 new_asid;
+ 		bool need_flush;
+-		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
+ 
+ 		/*
+ 		 * Avoid user/user BTB poisoning by flushing the branch
+ 		 * predictor when switching between processes. This stops
+ 		 * one process from doing Spectre-v2 attacks on another.
+-		 *
+-		 * As an optimization, flush indirect branches only when
+-		 * switching into a processes that can't be ptrace by the
+-		 * current one (as in such case, attacker has much more
+-		 * convenient way how to tamper with the next process than
+-		 * branch buffer poisoning).
+ 		 */
+-		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
+-				ibpb_needed(tsk, last_ctx_id))
+-			indirect_branch_prediction_barrier();
++		cond_ibpb(tsk);
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+ 			/*
+@@ -327,14 +393,6 @@ void switch_mm_irqs_off(struct mm_struct
+ 			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+ 		}
+ 
+-		/*
+-		 * Record last user mm's context id, so we can avoid
+-		 * flushing branch buffer with IBPB if we switch back
+-		 * to the same user.
+-		 */
+-		if (next != &init_mm)
+-			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+-
+ 		/* Make sure we write CR3 before loaded_mm. */
+ 		barrier();
+ 
+@@ -415,7 +473,7 @@ void initialize_tlbstate_and_flush(void)
+ 	write_cr3(build_cr3(mm->pgd, 0));
+ 
+ 	/* Reinitialize tlbstate. */
+-	this_cpu_write(cpu_tlbstate.last_ctx_id, mm->context.ctx_id);
++	this_cpu_write(cpu_tlbstate.last_user_mm_ibpb, LAST_USER_MM_IBPB);
+ 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, 0);
+ 	this_cpu_write(cpu_tlbstate.next_asid, 1);
+ 	this_cpu_write(cpu_tlbstate.ctxs[0].ctx_id, mm->context.ctx_id);
 
 
