@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB656C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA5BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09C620851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2259E20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:33:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u64yVJK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09C620851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1L0RH8SS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2259E20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbeLDLcx (ORCPT
+        id S1726711AbeLDLdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:32:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38854 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:33:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbeLDKzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:55:52 -0500
+        id S1726321AbeLDKzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:55:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02981214D9;
-        Tue,  4 Dec 2018 10:55:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76D53214C1;
+        Tue,  4 Dec 2018 10:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920952;
-        bh=qop8BhrjJAnvhd/UHRRzaR8sJKsnyGw1/RLDgBaXy9E=;
+        s=default; t=1543920949;
+        bh=vVPQDdKE8QH6QCVxNu0Eyzli/Rvqyjgjn79B0xotVO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u64yVJK6VIdLwHfT0Z/6tqDCIlVo60ngUF8yhAIsZTQZ6NGdrneQRojoZCu0QrYYw
-         t2tBPbOHSiUNj2hHQ85P8geTdTAEa6T8OtVnJZ9mZcXpz1G+QoEZfkFZ9o0vmMwohL
-         8X4AMJvZQLO2NI1AZnOkKo8Djss5vrGtZpDNGeWw=
+        b=1L0RH8SShzH0m9YlzrZev9PkOUVmS0a8UB82oaoHuOO7RpWXdl8W6pDjUGckWcD7O
+         9QbArgtjulGKlItXG1PYHYdpIK+nF94NGb/Xaiv9Aff9FZLGbHDT2P/Q9sfOySckAY
+         yFjFo+8W22tis/BBijZSYYCTstu9e1bQgTwddDDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
+        Pavel Popa <pashinho1990@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 023/139] net/dim: Update DIM start sample after each DIM iteration
-Date:   Tue,  4 Dec 2018 11:48:24 +0100
-Message-Id: <20181204103650.932471064@linuxfoundation.org>
+Subject: [PATCH 4.19 022/139] virtio-net: fail XDP set if guest csum is negotiated
+Date:   Tue,  4 Dec 2018 11:48:23 +0100
+Message-Id: <20181204103650.889401339@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,51 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tal Gilboa <talgi@mellanox.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit 0211dda68a4f6531923a2f72d8e8959207f59fba ]
+[ Upstream commit 18ba58e1c234ea1a2d9835ac8c1735d965ce4640 ]
 
-On every iteration of net_dim, the algorithm may choose to
-check for the system state by comparing current data sample
-with previous data sample. After each of these comparison,
-regardless of the action taken, the sample used as baseline
-is needed to be updated.
+We don't support partial csumed packet since its metadata will be lost
+or incorrect during XDP processing. So fail the XDP set if guest_csum
+feature is negotiated.
 
-This patch fixes a bug that causes DIM to take wrong decisions,
-due to never updating the baseline sample for comparison between
-iterations. This way, DIM always compares current sample with
-zeros.
-
-Although this is a functional fix, it also improves and stabilizes
-performance as the algorithm works properly now.
-
-Performance:
-Tested single UDP TX stream with pktgen:
-samples/pktgen/pktgen_sample03_burst_single_flow.sh -i p4p2 -d 1.1.1.1
--m 24:8a:07:88:26:8b -f 3 -b 128
-
-ConnectX-5 100GbE packet rate improved from 15-19Mpps to 19-20Mpps.
-Also, toggling between profiles is less frequent with the fix.
-
-Fixes: 8115b750dbcb ("net/dim: use struct net_dim_sample as arg to net_dim")
-Signed-off-by: Tal Gilboa <talgi@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Fixes: f600b6905015 ("virtio_net: Add XDP support")
+Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Pavel Popa <pashinho1990@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/net_dim.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/virtio_net.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/include/linux/net_dim.h
-+++ b/include/linux/net_dim.h
-@@ -406,6 +406,8 @@ static inline void net_dim(struct net_di
- 		}
- 		/* fall through */
- 	case NET_DIM_START_MEASURE:
-+		net_dim_sample(end_sample.event_ctr, end_sample.pkt_ctr, end_sample.byte_ctr,
-+			       &dim->start_sample);
- 		dim->state = NET_DIM_MEASURE_IN_PROGRESS;
- 		break;
- 	case NET_DIM_APPLY_NEW_PROFILE:
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2312,8 +2312,9 @@ static int virtnet_xdp_set(struct net_de
+ 	    && (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO4) ||
+ 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO6) ||
+ 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_ECN) ||
+-		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO))) {
+-		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO, disable LRO first");
++		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO) ||
++		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))) {
++		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO/CSUM, disable LRO/CSUM first");
+ 		return -EOPNOTSUPP;
+ 	}
+ 
 
 
