@@ -2,184 +2,153 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1625DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6268CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2342081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28B5B2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o1UvByhm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2342081C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GdqlLdYz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B5B2081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbeLDBwX (ORCPT
+        id S1726087AbeLDBwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 3 Dec 2018 20:52:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39010 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:39006 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDBwU (ORCPT
+        with ESMTP id S1725915AbeLDBwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 3 Dec 2018 20:52:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hJd6EBluiw4U3ZnUhV8q7Tb+wHuvITbItn/5jn0A6YA=; b=o1UvByhmBRDGGfdisIAvRFdvq
-        G6d6Hz2kG/Q1QrmQihJvqIxEe3NW5YZiMchFAQ/Fmr2mfWYEF6iw4rbmvl4vD8VJTSSeiz3zM2mjV
-        b+giR5guXI99F+vj4nz3fkY5/3wXxuHHZENElfc4JGObHF+3CYrVn2bby9P83xv0TXI6aNNOzlgNU
-        ZskqDIF4S9440YXzLUbyRiXKkeGJWrvlPiiN4vfIAtiEkX07pL54+y7C2BK5wxzVbStc4sBPpjYiR
-        H1UpXQwvh7THmhl2q8e9yHqfaTCkgOkSnGJXiHjryyaXuwE4O5tODyXszccMbpHyfsUAmcjinCZ20
-        mQqNuA58g==;
+         bh=jgmQpcQxHuexRvCgG6/Z6h9I9dNDaDdFhYff8ArEdNg=; b=GdqlLdYz7B6B5hTlmJ1hjjWa8
+        jM6WNXOoDcSgaS6BIOqCr7mQwODmezpmKU+c0cWdfiqzYY24hu5Hlcr7zgMxt68adxXlYjyzxGEMg
+        ejfe1mGfvcMPhFJVp+9+jDngYBeYawd0vUJ+3UEx9QLssuckP3RB1J6xDXuPtQHS8yLr3HY0SAJ9V
+        4GcfvfFh8yyWRwC3kFBIpmm+zfaCWii8XdiILYy4IcRcz5EsjCmbfhxzrjQwbDVfIti4P7Fv4RuO6
+        /KX809nxPN3TNBA9FpIZV4Uz+U+Oj4YppRBEdMKnfHo+t1Cipup3SS/HO7wIASSWftuM9XJ3WAb2d
+        Kr/UYDdBw==;
 Received: from [2600:1700:65a0:78e0:514:7862:1503:8e4d] (helo=sagi-Latitude-E7470.lbits)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTzsp-0003Zq-Fq; Tue, 04 Dec 2018 01:52:19 +0000
+        id 1gTzsp-0003Zq-OS; Tue, 04 Dec 2018 01:52:19 +0000
 From:   Sagi Grimberg <sagi@grimberg.me>
 To:     linux-nvme@lists.infradead.org
 Cc:     linux-block@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Keith Busch <keith.busch@intel.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v5 00/13] TCP transport binding for NVMe over Fabrics
-Date:   Mon,  3 Dec 2018 17:52:04 -0800
-Message-Id: <20181204015217.16613-1-sagi@grimberg.me>
+Subject: [PATCH v5 01/13] ath6kl: add ath6kl_ prefix to crypto_type
+Date:   Mon,  3 Dec 2018 17:52:05 -0800
+Message-Id: <20181204015217.16613-2-sagi@grimberg.me>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181204015217.16613-1-sagi@grimberg.me>
+References: <20181204015217.16613-1-sagi@grimberg.me>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set implements the NVMe over Fabrics TCP host and the target
-drivers. Now NVMe over Fabrics can run on every Ethernet port in the world.
-The implementation conforms to NVMe over Fabrics 1.1 specification (which
-will include already publicly available NVMe/TCP transport binding, TP 8000).
+From: Sagi Grimberg <sagi@lightbitslabs.com>
 
-The host driver hooks into the NVMe host stack and implements the TCP
-transport binding for NVMe over Fabrics. The NVMe over Fabrics TCP host
-driver is responsible for establishing a NVMe/TCP connection, TCP event
-and error handling and data-plane messaging and stream processing.
+Prevent a namespace conflict as in following patches as skbuff.h will
+include the crypto API.
 
-The target driver hooks into the NVMe target core stack and implements
-the TCP transport binding. The NVMe over Fabrics target driver is
-responsible for accepting and establishing NVMe/TCP connections, TCP
-event and error handling, and data-plane messaging and stream processing.
+Acked-by: David S. Miller <davem@davemloft.net>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sagi Grimberg <sagi@lightbitslabs.com>
+---
+ drivers/net/wireless/ath/ath6kl/cfg80211.c | 2 +-
+ drivers/net/wireless/ath/ath6kl/common.h   | 2 +-
+ drivers/net/wireless/ath/ath6kl/wmi.c      | 6 +++---
+ drivers/net/wireless/ath/ath6kl/wmi.h      | 6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-The implementation of both the host and target are fairly simple and
-straight-forward. Every NVMe queue is backed by a TCP socket that provides
-us reliable, in-order delivery of fabrics capsules and/or data.
-
-All NVMe queues are sharded over a private bound workqueue such that we
-always have a single context handling the byte stream and we don't need
-to worry about any locking/serialization. In addition, close attention
-was paid to a completely non-blocking data plane to minimize context
-switching and/or unforced scheduling.
-
-Also, @netdev mailing list is cc'd as this patch set contains generic
-helpers for online digest calculation (patches 1-3).
-
-The patchset structure:
-- patches 1-6 are prep to add a helper for digest calculation online
-  with data placement
-- patches 7-9 are preparatory patches for NVMe/TCP
-- patches 10-13 implements NVMe/TCP
-
-Thanks to the members of the Fabrics Linux Driver team that helped
-development, testing and benchmarking this work.
-
-Gitweb code is available at:
-
-	git://git.infradead.org/nvme.git nvme-tcp
-
-Changes from v4:
-- Added acks from Dave Miller for relevant patches
-- Fixed possible memory leak in nvmet-tcp error flow
-
-Changes from v3:
-- various changes based on comments from christoph
-  - removed unused variables
-  - united send/recv iter initialization
-  - removed unneeded void * casting
-  - fixed long lines
-  - removed unneeded wrappers (nvme_tcp_free_tagset and friends)
-  - remove null sgl setting
-  - fixed socket callbacks naming
-  - reworked nvmet-tcp send_list processing
-- omitted nvme-cli patches as no changes were made to them and no negative
-  feedback was accepted since v3
-
-Changes from v2:
-- fixed stupid missing symbol export for skb_copy_and_hash_datagram_iter 
-- dropped patch that moved err_work and connect_work to nvme_ctrl
-- fixed maxr2t icreq validation
-- got rid of host and target send/recv context structures by moving
-  the members directly to their parent structure along with some struct
-  documentation
-- removed bh disable when locking the queue lock
-- moved definition in nvme-tcp.h to appropriate patch
-- added patch to rework nvme-cli trtype handling for discovery log entries
-  a bit
-- rebased on top of nvme-4.21 branch
-- cleaned up some checkpatch warnings
-- collected review tags
-
-Changes from v1:
-- unified skb_copy_datagram_iter and skb_copy_and_csum_datagram (and the
-  new skb_hash_and_copy_datagram_iter) to a single code path
-- removed nvmet modparam budgets (made them a define set to their default
-  values)
-- fixed nvme-tcp host chained r2t transfers reported off-list
-- made .install_queue callout return nvme status code
-- Added some review tags
-- rebased on top of nvme-4.21 branch (nvme tree) + sqflow disable patches
-
-Sagi Grimberg (13):
-  ath6kl: add ath6kl_ prefix to crypto_type
-  datagram: open-code copy_page_to_iter
-  iov_iter: pass void csum pointer to csum_and_copy_to_iter
-  datagram: consolidate datagram copy to iter helpers
-  iov_iter: introduce hash_and_copy_to_iter helper
-  datagram: introduce skb_copy_and_hash_datagram_iter helper
-  nvmet: Add install_queue callout
-  nvme-fabrics: allow user passing header digest
-  nvme-fabrics: allow user passing data digest
-  nvme-tcp: Add protocol header
-  nvmet-tcp: add NVMe over TCP target driver
-  nvmet: allow configfs tcp trtype configuration
-  nvme-tcp: add NVMe over TCP host driver
-
- drivers/net/wireless/ath/ath6kl/cfg80211.c |    2 +-
- drivers/net/wireless/ath/ath6kl/common.h   |    2 +-
- drivers/net/wireless/ath/ath6kl/wmi.c      |    6 +-
- drivers/net/wireless/ath/ath6kl/wmi.h      |    6 +-
- drivers/nvme/host/Kconfig                  |   15 +
- drivers/nvme/host/Makefile                 |    3 +
- drivers/nvme/host/fabrics.c                |   10 +
- drivers/nvme/host/fabrics.h                |    4 +
- drivers/nvme/host/tcp.c                    | 2242 ++++++++++++++++++++
- drivers/nvme/target/Kconfig                |   10 +
- drivers/nvme/target/Makefile               |    2 +
- drivers/nvme/target/configfs.c             |    1 +
- drivers/nvme/target/fabrics-cmd.c          |   10 +
- drivers/nvme/target/nvmet.h                |    1 +
- drivers/nvme/target/tcp.c                  | 1737 +++++++++++++++
- include/linux/nvme-tcp.h                   |  189 ++
- include/linux/nvme.h                       |    1 +
- include/linux/skbuff.h                     |    3 +
- include/linux/uio.h                        |    5 +-
- lib/iov_iter.c                             |   19 +-
- net/core/datagram.c                        |  159 +-
- 21 files changed, 4322 insertions(+), 105 deletions(-)
- create mode 100644 drivers/nvme/host/tcp.c
- create mode 100644 drivers/nvme/target/tcp.c
- create mode 100644 include/linux/nvme-tcp.h
-
+diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+index e121187f371f..fa049c4ae315 100644
+--- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
++++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+@@ -1322,7 +1322,7 @@ static int ath6kl_cfg80211_set_default_key(struct wiphy *wiphy,
+ 	struct ath6kl_vif *vif = netdev_priv(ndev);
+ 	struct ath6kl_key *key = NULL;
+ 	u8 key_usage;
+-	enum crypto_type key_type = NONE_CRYPT;
++	enum ath6kl_crypto_type key_type = NONE_CRYPT;
+ 
+ 	ath6kl_dbg(ATH6KL_DBG_WLAN_CFG, "%s: index %d\n", __func__, key_index);
+ 
+diff --git a/drivers/net/wireless/ath/ath6kl/common.h b/drivers/net/wireless/ath/ath6kl/common.h
+index 4f82e8632d37..d6e5234f67a1 100644
+--- a/drivers/net/wireless/ath/ath6kl/common.h
++++ b/drivers/net/wireless/ath/ath6kl/common.h
+@@ -67,7 +67,7 @@ struct ath6kl_llc_snap_hdr {
+ 	__be16 eth_type;
+ } __packed;
+ 
+-enum crypto_type {
++enum ath6kl_crypto_type {
+ 	NONE_CRYPT          = 0x01,
+ 	WEP_CRYPT           = 0x02,
+ 	TKIP_CRYPT          = 0x04,
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
+index 777acc564ac9..9d7ac1ab2d02 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.c
++++ b/drivers/net/wireless/ath/ath6kl/wmi.c
+@@ -1849,9 +1849,9 @@ int ath6kl_wmi_connect_cmd(struct wmi *wmi, u8 if_idx,
+ 			   enum network_type nw_type,
+ 			   enum dot11_auth_mode dot11_auth_mode,
+ 			   enum auth_mode auth_mode,
+-			   enum crypto_type pairwise_crypto,
++			   enum ath6kl_crypto_type pairwise_crypto,
+ 			   u8 pairwise_crypto_len,
+-			   enum crypto_type group_crypto,
++			   enum ath6kl_crypto_type group_crypto,
+ 			   u8 group_crypto_len, int ssid_len, u8 *ssid,
+ 			   u8 *bssid, u16 channel, u32 ctrl_flags,
+ 			   u8 nw_subtype)
+@@ -2301,7 +2301,7 @@ int ath6kl_wmi_disctimeout_cmd(struct wmi *wmi, u8 if_idx, u8 timeout)
+ }
+ 
+ int ath6kl_wmi_addkey_cmd(struct wmi *wmi, u8 if_idx, u8 key_index,
+-			  enum crypto_type key_type,
++			  enum ath6kl_crypto_type key_type,
+ 			  u8 key_usage, u8 key_len,
+ 			  u8 *key_rsc, unsigned int key_rsc_len,
+ 			  u8 *key_material,
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.h b/drivers/net/wireless/ath/ath6kl/wmi.h
+index a60bb49fe920..784940ba4c90 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.h
++++ b/drivers/net/wireless/ath/ath6kl/wmi.h
+@@ -2556,9 +2556,9 @@ int ath6kl_wmi_connect_cmd(struct wmi *wmi, u8 if_idx,
+ 			   enum network_type nw_type,
+ 			   enum dot11_auth_mode dot11_auth_mode,
+ 			   enum auth_mode auth_mode,
+-			   enum crypto_type pairwise_crypto,
++			   enum ath6kl_crypto_type pairwise_crypto,
+ 			   u8 pairwise_crypto_len,
+-			   enum crypto_type group_crypto,
++			   enum ath6kl_crypto_type group_crypto,
+ 			   u8 group_crypto_len, int ssid_len, u8 *ssid,
+ 			   u8 *bssid, u16 channel, u32 ctrl_flags,
+ 			   u8 nw_subtype);
+@@ -2610,7 +2610,7 @@ int ath6kl_wmi_config_debug_module_cmd(struct wmi *wmi, u32 valid, u32 config);
+ 
+ int ath6kl_wmi_get_stats_cmd(struct wmi *wmi, u8 if_idx);
+ int ath6kl_wmi_addkey_cmd(struct wmi *wmi, u8 if_idx, u8 key_index,
+-			  enum crypto_type key_type,
++			  enum ath6kl_crypto_type key_type,
+ 			  u8 key_usage, u8 key_len,
+ 			  u8 *key_rsc, unsigned int key_rsc_len,
+ 			  u8 *key_material,
 -- 
 2.17.1
 
