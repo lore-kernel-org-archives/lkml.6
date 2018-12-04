@@ -2,883 +2,176 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E1EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE58C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0ABA20672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="UC/qIaon"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0ABA20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id B075220672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:37:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B075220672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeLDShW (ORCPT
+        id S1726824AbeLDShg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:37:22 -0500
-Received: from mail-eopbgr680065.outbound.protection.outlook.com ([40.107.68.65]:27712
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726102AbeLDSgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:36:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xUfNx8lJgisyOHae8bNphgYHHrNLNg/h80c5PjSarBc=;
- b=UC/qIaonOUvupAsX1s110LamcVjjEXVN8jUJOm1MycyQcplAcZwURg/PfAsihSB3NEoBAhm/qaApro6QQsLy2kzFeAmZfCQEoms1H247FUM1dVNVY+4QZ3uJ+xrGmykYdIxr9NiMP78oEbvmn+uegOQER7rAKmDtVCyuWqrubkA=
-Received: from BL0PR12MB2355.namprd12.prod.outlook.com (52.132.10.161) by
- BL0PR12MB2818.namprd12.prod.outlook.com (20.177.207.225) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Tue, 4 Dec 2018 18:36:03 +0000
-Received: from BL0PR12MB2355.namprd12.prod.outlook.com
- ([fe80::6d6b:9a9e:71b6:1c0e]) by BL0PR12MB2355.namprd12.prod.outlook.com
- ([fe80::6d6b:9a9e:71b6:1c0e%3]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
- 18:36:03 +0000
-From:   "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-CC:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
-        "djkurtz@chromium.org" <djkurtz@chromium.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Adam.Thomson@diasemi.com" <Adam.Thomson@diasemi.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] ASoC: DA7219: Implement error check on reg read and write
-Thread-Topic: [PATCH 2/2] ASoC: DA7219: Implement error check on reg read and
- write
-Thread-Index: AQHUjAA1pkprxJ5jBUexKsgFP0xI0Q==
-Date:   Tue, 4 Dec 2018 18:36:03 +0000
-Message-ID: <1543948103-20752-2-git-send-email-akshu.agrawal@amd.com>
-References: <1543948103-20752-1-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1543948103-20752-1-git-send-email-akshu.agrawal@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BMXPR01CA0048.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:c::34) To BL0PR12MB2355.namprd12.prod.outlook.com
- (2603:10b6:207:4c::33)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.156.251]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR12MB2818;20:a41w/bfaB9XNQCINcWrsLn+z7dDp5UmKHmLcVdxRc/ouiMv8HYo4/X7AA2uZKAjxrwMr1l+bTaYdr0f2VMwHHdSGyyP4u7PY/k0Vk2GGBb8rozVwpwcJiOizaDZQuHp1j+b8lQ4DzM47meOmqqwu9vhnx8wJBJBlL50Rjp9RQm6uFrQeWI3j7yYGob9laGYALEM7ZqLc6JjdrrC0uzqPHIBl/rucF8QfNNiB+gsgBimPbT2N5MVNCvTd6HNe/Ob4
-x-ms-office365-filtering-correlation-id: d5792f1e-fbd0-45d6-216e-08d65a1757ef
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BL0PR12MB2818;
-x-ms-traffictypediagnostic: BL0PR12MB2818:
-x-microsoft-antispam-prvs: <BL0PR12MB281884E66ADEC6056236C754F8AF0@BL0PR12MB2818.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BL0PR12MB2818;BCL:0;PCL:0;RULEID:;SRVR:BL0PR12MB2818;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(396003)(39860400002)(346002)(199004)(189003)(97736004)(6486002)(6512007)(6436002)(53946003)(109986005)(478600001)(8676002)(53936002)(8936002)(86362001)(68736007)(4326008)(25786009)(39060400002)(54906003)(14454004)(72206003)(14444005)(5660300001)(36756003)(102836004)(26005)(476003)(486006)(305945005)(105586002)(186003)(106356001)(551934003)(81166006)(7736002)(76176011)(59246006)(3846002)(256004)(6506007)(4744004)(6116002)(386003)(99286004)(71200400001)(81156014)(1671002)(2906002)(71190400001)(66066001)(52116002)(446003)(11346002)(316002)(2616005)(66946006)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR12MB2818;H:BL0PR12MB2355.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: m/0sN2ghrw7RoRdZUCFAGx7WXT7HuNfgTqeUdO86DXmDfSfq5rz7p0JLOYZmHkM2qNmbUzd2LAky8+RbqV6QBZU8FPt8BsCFO1gF3TFXlEEyg1nNjgz3SBlf32OOXuDzbhFMSdZrHj394f66oElPIda9YMiasMBgZYZGmabdhBTqA9FGmHLWI6nhADXKDbLgMV1NDyKMnIi/9JcQ43g18qXZo/wLUJ4fqIuXgbUtmXuO4lm1KmcqAmeBMr+TO4YHZ5L/rQH4LalIOa/g1xOi0wfj21pX6n78lXAnFGMTVieDaFT2cR8aTz0k3E3GM8CKBcpsvwN01+TxVqqdzu0Z3g85TLHhLaOhwAJcDfKsE7c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5792f1e-fbd0-45d6-216e-08d65a1757ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 18:36:03.0474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR12MB2818
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 4 Dec 2018 13:37:36 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38360 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeLDSgI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:36:08 -0500
+Received: by mail-yw1-f68.google.com with SMTP id i20so7397559ywc.5;
+        Tue, 04 Dec 2018 10:36:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vqrnr706mxcuTBSv4fGe89XMxxRx6O2pZFhgxbxRlLY=;
+        b=UkSzQiL8h9wa+MLt+yEB+awWsRW6rq2uG1C2zkYHL0eNdcZHoJX54qj3HUvJndKiV0
+         RxujzEg2qN0sfUKc6iiMq8O1bgxKktb4WSjlvbujANaBSahlPv1hx95pCanZogEub7aA
+         hzJU9sJecycIc5oqo2fae+xRXUMnUj7mAKveETeC6XctKNa3piamjBscNlvfRtHZSfAc
+         rD99V2mQs1dyWKzUx+YlSQl4OXNdzZObIt8XBte0WID+plf61QwXU7exSFJlU+O2Ld1i
+         rHmRhBoFieIieEPWVB2mbTrCptiHhhUHMNtgj+ym150ObdDnCEUoLam9Emvg486oQ46u
+         PGSw==
+X-Gm-Message-State: AA+aEWYPVPCjE0dU+1XDH9FgOV9hofblKs6/hQ8r3sYf2uuUhYzE+8wZ
+        nP9BjLISmNxn8i4JqicBFis=
+X-Google-Smtp-Source: AFSGD/VfGZtF1u65ewUYUg8ie7it6Lvgjl9NHIFPmnsIpK+q4ZF3rcE0fhnbaX/gqC4ojc7rtEPIeA==
+X-Received: by 2002:a81:514c:: with SMTP id f73mr21318716ywb.272.1543948566576;
+        Tue, 04 Dec 2018 10:36:06 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id x82sm4274798ywb.34.2018.12.04.10.36.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Dec 2018 10:36:05 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH 02/14] blkcg: update blkg_lookup_create() to do locking
+Date:   Tue,  4 Dec 2018 13:35:48 -0500
+Message-Id: <20181204183600.99746-3-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20181204183600.99746-1-dennis@kernel.org>
+References: <20181204183600.99746-1-dennis@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Failed i2c transaction can lead to failure in reg read or write.
-Need to have error check for each read write operation.
+To know when to create a blkg, the general pattern is to do a
+blkg_lookup() and if that fails, lock and do the lookup again, and if
+that fails finally create. It doesn't make much sense for everyone who
+wants to do creation to write this themselves.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+This changes blkg_lookup_create() to do locking and implement this
+pattern. The old blkg_lookup_create() is renamed to
+__blkg_lookup_create().  If a call site wants to do its own error
+handling or already owns the queue lock, they can use
+__blkg_lookup_create(). This will be used in upcoming patches.
+
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- sound/soc/codecs/da7219.c | 323 +++++++++++++++++++++++++++++++++++-------=
-----
- sound/soc/codecs/da7219.h |   2 +-
- 2 files changed, 247 insertions(+), 78 deletions(-)
+ block/blk-cgroup.c         | 28 +++++++++++++++++++++++++---
+ block/blk-iolatency.c      |  2 +-
+ include/linux/blk-cgroup.h |  4 +++-
+ 3 files changed, 29 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index e46e9f4..6757129 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -312,69 +312,103 @@ static int da7219_enum_locked_put(struct snd_kcontro=
-l *kcontrol,
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 63d226a084cd..b421a9457e05 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -249,7 +249,7 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
  }
-=20
- /* ALC */
--static void da7219_alc_calib(struct snd_soc_component *component)
-+static int da7219_alc_calib(struct snd_soc_component *component)
+ 
+ /**
+- * blkg_lookup_create - lookup blkg, try to create one if not there
++ * __blkg_lookup_create - lookup blkg, try to create one if not there
+  * @blkcg: blkcg of interest
+  * @q: request_queue of interest
+  *
+@@ -262,8 +262,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
+  * value on error.  If @q is dead, returns ERR_PTR(-EINVAL).  If @q is not
+  * dead and bypassing, returns ERR_PTR(-EBUSY).
+  */
+-struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+-				    struct request_queue *q)
++struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
++				      struct request_queue *q)
  {
--	u8 mic_ctrl, mixin_ctrl, adc_ctrl, calib_ctrl;
-+	int mic_ctrl, mixin_ctrl, adc_ctrl, calib_ctrl;
-+	int ret;
-=20
- 	/* Save current state of mic control register */
- 	mic_ctrl =3D snd_soc_component_read32(component, DA7219_MIC_1_CTRL);
-+	if (mic_ctrl < 0)
-+		return mic_ctrl;
-=20
- 	/* Save current state of input mixer control register */
- 	mixin_ctrl =3D snd_soc_component_read32(component, DA7219_MIXIN_L_CTRL);
-+	if (mixin_ctrl < 0)
-+		return mixin_ctrl;
-=20
- 	/* Save current state of input ADC control register */
- 	adc_ctrl =3D snd_soc_component_read32(component, DA7219_ADC_L_CTRL);
-+	if (adc_ctrl < 0)
-+		return adc_ctrl;
-=20
- 	/* Enable then Mute MIC PGAs */
--	snd_soc_component_update_bits(component, DA7219_MIC_1_CTRL, DA7219_MIC_1_=
-AMP_EN_MASK,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_MIC_1_CTRL,
-+			    DA7219_MIC_1_AMP_EN_MASK,
- 			    DA7219_MIC_1_AMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_MIC_1_CTRL,
-+	if (ret < 0)
-+		return ret;
+ 	struct blkcg_gq *blkg;
+ 
+@@ -293,6 +293,28 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ 	}
+ }
+ 
++/**
++ * blkg_lookup_create - find or create a blkg
++ * @blkcg: target block cgroup
++ * @q: target request_queue
++ *
++ * This looks up or creates the blkg representing the unique pair
++ * of the blkcg and the request_queue.
++ */
++struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
++				    struct request_queue *q)
++{
++	struct blkcg_gq *blkg = blkg_lookup(blkcg, q);
 +
-+	ret =3D snd_soc_component_update_bits(component, DA7219_MIC_1_CTRL,
- 			    DA7219_MIC_1_AMP_MUTE_EN_MASK,
- 			    DA7219_MIC_1_AMP_MUTE_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Enable input mixers unmuted */
--	snd_soc_component_update_bits(component, DA7219_MIXIN_L_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_MIXIN_L_CTRL,
- 			    DA7219_MIXIN_L_AMP_EN_MASK |
- 			    DA7219_MIXIN_L_AMP_MUTE_EN_MASK,
- 			    DA7219_MIXIN_L_AMP_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Enable input filters unmuted */
--	snd_soc_component_update_bits(component, DA7219_ADC_L_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_ADC_L_CTRL,
- 			    DA7219_ADC_L_MUTE_EN_MASK | DA7219_ADC_L_EN_MASK,
- 			    DA7219_ADC_L_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Perform auto calibration */
--	snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
- 			    DA7219_ALC_AUTO_CALIB_EN_MASK,
- 			    DA7219_ALC_AUTO_CALIB_EN_MASK);
-+	if (ret < 0)
-+		return ret;
- 	do {
- 		calib_ctrl =3D snd_soc_component_read32(component, DA7219_ALC_CTRL1);
-+		if (calib_ctrl < 0)
-+			return calib_ctrl;
- 	} while (calib_ctrl & DA7219_ALC_AUTO_CALIB_EN_MASK);
-=20
- 	/* If auto calibration fails, disable DC offset, hybrid ALC */
- 	if (calib_ctrl & DA7219_ALC_CALIB_OVERFLOW_MASK) {
- 		dev_warn(component->dev,
- 			 "ALC auto calibration failed with overflow\n");
--		snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
- 				    DA7219_ALC_OFFSET_EN_MASK |
- 				    DA7219_ALC_SYNC_MODE_MASK, 0);
-+		if (ret < 0)
-+			return ret;
- 	} else {
- 		/* Enable DC offset cancellation, hybrid mode */
--		snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_ALC_CTRL1,
- 				    DA7219_ALC_OFFSET_EN_MASK |
- 				    DA7219_ALC_SYNC_MODE_MASK,
- 				    DA7219_ALC_OFFSET_EN_MASK |
- 				    DA7219_ALC_SYNC_MODE_MASK);
-+		if (ret < 0)
-+			return ret;
- 	}
-=20
- 	/* Restore input filter control register to original state */
--	snd_soc_component_write(component, DA7219_ADC_L_CTRL, adc_ctrl);
-+	ret =3D snd_soc_component_write(component, DA7219_ADC_L_CTRL, adc_ctrl);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Restore input mixer control registers to original state */
--	snd_soc_component_write(component, DA7219_MIXIN_L_CTRL, mixin_ctrl);
-+	ret =3D snd_soc_component_write(component, DA7219_MIXIN_L_CTRL,
-+				mixin_ctrl);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Restore MIC control registers to original states */
--	snd_soc_component_write(component, DA7219_MIC_1_CTRL, mic_ctrl);
-+	ret =3D snd_soc_component_write(component, DA7219_MIC_1_CTRL, mic_ctrl);
-+	if (ret < 0)
-+		return ret;
++	if (unlikely(!blkg)) {
++		spin_lock_irq(&q->queue_lock);
++		blkg = __blkg_lookup_create(blkcg, q);
++		spin_unlock_irq(&q->queue_lock);
++	}
 +
-+	return 0;
- }
-=20
- static int da7219_mixin_gain_put(struct snd_kcontrol *kcontrol,
-@@ -391,7 +425,7 @@ static int da7219_mixin_gain_put(struct snd_kcontrol *k=
-control,
- 	 * make sure calibrated offsets are updated.
- 	 */
- 	if ((ret =3D=3D 1) && (da7219->alc_en))
--		da7219_alc_calib(component);
-+		ret =3D da7219_alc_calib(component);
-=20
- 	return ret;
- }
-@@ -401,11 +435,14 @@ static int da7219_alc_sw_put(struct snd_kcontrol *kco=
-ntrol,
++	return blkg;
++}
++
+ static void blkg_destroy(struct blkcg_gq *blkg)
  {
- 	struct snd_soc_component *component =3D snd_soc_kcontrol_component(kcontr=
-ol);
- 	struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(component);
-+	int ret;
-=20
-=20
- 	/* Force ALC offset calibration if enabling ALC */
- 	if ((ucontrol->value.integer.value[0]) && (!da7219->alc_en)) {
--		da7219_alc_calib(component);
-+		ret =3D da7219_alc_calib(component);
-+		if (ret < 0)
-+			return ret;
- 		da7219->alc_en =3D true;
- 	} else {
- 		da7219->alc_en =3D false;
-@@ -813,16 +850,20 @@ static int da7219_dai_event(struct snd_soc_dapm_widge=
-t *w,
- 					return ret;
- 				}
- 			} else {
--				snd_soc_component_update_bits(component,
-+				ret =3D snd_soc_component_update_bits(component,
- 							      DA7219_DAI_CLK_MODE,
- 							      DA7219_DAI_CLK_EN_MASK,
- 							      DA7219_DAI_CLK_EN_MASK);
-+				if (ret < 0)
-+					return ret;
- 			}
- 		}
-=20
- 		/* PC synchronised to DAI */
--		snd_soc_component_update_bits(component, DA7219_PC_COUNT,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_PC_COUNT,
- 				    DA7219_PC_FREERUN_MASK, 0);
-+		if (ret < 0)
-+			return ret;
-=20
- 		/* Slave mode, if SRM not enabled no need for status checks */
- 		pll_ctrl =3D snd_soc_component_read32(component, DA7219_PLL_CTRL);
-@@ -846,19 +887,23 @@ static int da7219_dai_event(struct snd_soc_dapm_widge=
-t *w,
- 		return 0;
- 	case SND_SOC_DAPM_POST_PMD:
- 		/* PC free-running */
--		snd_soc_component_update_bits(component, DA7219_PC_COUNT,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_PC_COUNT,
- 				    DA7219_PC_FREERUN_MASK,
- 				    DA7219_PC_FREERUN_MASK);
-+		if (ret < 0)
-+			return ret;
-=20
- 		/* Disable DAI clks if in master mode */
- 		if (da7219->master) {
- 			if (da7219->dai_clks)
- 				clk_disable_unprepare(da7219->dai_clks);
- 			else
--				snd_soc_component_update_bits(component,
-+				ret =3D snd_soc_component_update_bits(component,
- 							      DA7219_DAI_CLK_MODE,
- 							      DA7219_DAI_CLK_EN_MASK,
- 							      0);
-+				if (ret < 0)
-+					return ret;
- 		}
-=20
- 		return 0;
-@@ -887,6 +932,7 @@ static int da7219_mixout_event(struct snd_soc_dapm_widg=
-et *w,
- {
- 	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w->dapm=
-);
- 	u8 hp_ctrl, min_gain_mask;
-+	int ret;
-=20
- 	switch (w->reg) {
- 	case DA7219_MIXOUT_L_CTRL:
-@@ -904,15 +950,20 @@ static int da7219_mixout_event(struct snd_soc_dapm_wi=
-dget *w,
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMD:
- 		/* Enable minimum gain on HP to avoid pops */
--		snd_soc_component_update_bits(component, hp_ctrl, min_gain_mask,
--				    min_gain_mask);
-+		ret =3D snd_soc_component_update_bits(component, hp_ctrl,
-+				    min_gain_mask, min_gain_mask);
-+		if (ret < 0)
-+			return ret;
-=20
- 		msleep(DA7219_MIN_GAIN_DELAY);
-=20
- 		break;
- 	case SND_SOC_DAPM_POST_PMU:
- 		/* Remove minimum gain on HP */
--		snd_soc_component_update_bits(component, hp_ctrl, min_gain_mask, 0);
-+		ret =3D snd_soc_component_update_bits(component, hp_ctrl,
-+				    min_gain_mask, 0);
-+		if (ret < 0)
-+			return ret;
-=20
- 		break;
- 	}
-@@ -925,21 +976,29 @@ static int da7219_gain_ramp_event(struct snd_soc_dapm=
-_widget *w,
- {
- 	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w->dapm=
-);
- 	struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(component);
-+	int ret;
-=20
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
- 	case SND_SOC_DAPM_PRE_PMD:
- 		/* Ensure nominal gain ramping for DAPM sequence */
--		da7219->gain_ramp_ctrl =3D
--			snd_soc_component_read32(component, DA7219_GAIN_RAMP_CTRL);
--		snd_soc_component_write(component, DA7219_GAIN_RAMP_CTRL,
--			      DA7219_GAIN_RAMP_RATE_NOMINAL);
-+		da7219->gain_ramp_ctrl =3D snd_soc_component_read32(component,
-+						DA7219_GAIN_RAMP_CTRL);
-+		if (da7219->gain_ramp_ctrl < 0)
-+			return da7219->gain_ramp_ctrl;
-+		 ret =3D snd_soc_component_write(component,
-+				DA7219_GAIN_RAMP_CTRL,
-+				DA7219_GAIN_RAMP_RATE_NOMINAL);
-+		if (ret < 0)
-+			return ret;
- 		break;
- 	case SND_SOC_DAPM_POST_PMU:
- 	case SND_SOC_DAPM_POST_PMD:
- 		/* Restore previous gain ramp settings */
--		snd_soc_component_write(component, DA7219_GAIN_RAMP_CTRL,
-+		ret =3D snd_soc_component_write(component, DA7219_GAIN_RAMP_CTRL,
- 			      da7219->gain_ramp_ctrl);
-+		if (ret < 0)
-+			return ret;
- 		break;
- 	}
-=20
-@@ -1177,13 +1236,17 @@ static int da7219_set_dai_sysclk(struct snd_soc_dai=
- *codec_dai,
-=20
- 	switch (clk_id) {
- 	case DA7219_CLKSRC_MCLK_SQR:
--		snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
- 				    DA7219_PLL_MCLK_SQR_EN_MASK,
- 				    DA7219_PLL_MCLK_SQR_EN_MASK);
-+		if (ret < 0)
-+			return ret;
- 		break;
- 	case DA7219_CLKSRC_MCLK:
--		snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
- 				    DA7219_PLL_MCLK_SQR_EN_MASK, 0);
-+		if (ret < 0)
-+			return ret;
- 		break;
- 	default:
- 		dev_err(codec_dai->dev, "Unknown clock source %d\n", clk_id);
-@@ -1219,6 +1282,7 @@ int da7219_set_pll(struct snd_soc_component *componen=
-t, int source, unsigned int
- 	u8 pll_frac_top, pll_frac_bot, pll_integer;
- 	u32 freq_ref;
- 	u64 frac_div;
-+	int ret;
-=20
- 	/* Verify 2MHz - 54MHz MCLK provided, and set input divider */
- 	if (da7219->mclk_rate < 2000000) {
-@@ -1252,9 +1316,11 @@ int da7219_set_pll(struct snd_soc_component *compone=
-nt, int source, unsigned int
- 	switch (source) {
- 	case DA7219_SYSCLK_MCLK:
- 		pll_ctrl |=3D DA7219_PLL_MODE_BYPASS;
--		snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
-+		ret =3D snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
- 				    DA7219_PLL_INDIV_MASK |
- 				    DA7219_PLL_MODE_MASK, pll_ctrl);
-+		if (ret < 0)
-+			return ret;
- 		return 0;
- 	case DA7219_SYSCLK_PLL:
- 		pll_ctrl |=3D DA7219_PLL_MODE_NORMAL;
-@@ -1275,12 +1341,23 @@ int da7219_set_pll(struct snd_soc_component *compon=
-ent, int source, unsigned int
- 	pll_frac_bot =3D (frac_div) & DA7219_BYTE_MASK;
-=20
- 	/* Write PLL config & dividers */
--	snd_soc_component_write(component, DA7219_PLL_FRAC_TOP, pll_frac_top);
--	snd_soc_component_write(component, DA7219_PLL_FRAC_BOT, pll_frac_bot);
--	snd_soc_component_write(component, DA7219_PLL_INTEGER, pll_integer);
--	snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
-+	ret =3D snd_soc_component_write(component, DA7219_PLL_FRAC_TOP,
-+				pll_frac_top);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_write(component, DA7219_PLL_FRAC_BOT,
-+				pll_frac_bot);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_write(component, DA7219_PLL_INTEGER,
-+				pll_integer);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
- 			    DA7219_PLL_INDIV_MASK | DA7219_PLL_MODE_MASK,
- 			    pll_ctrl);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1304,6 +1381,7 @@ static int da7219_set_dai_fmt(struct snd_soc_dai *cod=
-ec_dai, unsigned int fmt)
- 	struct snd_soc_component *component =3D codec_dai->component;
- 	struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(component);
- 	u8 dai_clk_mode =3D 0, dai_ctrl =3D 0;
-+	int ret;
-=20
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBM_CFM:
-@@ -1379,12 +1457,16 @@ static int da7219_set_dai_fmt(struct snd_soc_dai *c=
-odec_dai, unsigned int fmt)
- 	/* By default 64 BCLKs per WCLK is supported */
- 	dai_clk_mode |=3D DA7219_DAI_BCLKS_PER_WCLK_64;
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
- 			    DA7219_DAI_BCLKS_PER_WCLK_MASK |
- 			    DA7219_DAI_CLK_POL_MASK | DA7219_DAI_WCLK_POL_MASK,
- 			    dai_clk_mode);
--	snd_soc_component_update_bits(component, DA7219_DAI_CTRL, DA7219_DAI_FORM=
-AT_MASK,
--			    dai_ctrl);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CTRL,
-+			    DA7219_DAI_FORMAT_MASK, dai_ctrl);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1398,15 +1480,22 @@ static int da7219_set_dai_tdm_slot(struct snd_soc_d=
-ai *dai,
- 	u8 dai_bclks_per_wclk;
- 	u16 offset;
- 	u32 frame_size;
-+	int ret;
-=20
- 	/* No channels enabled so disable TDM, revert to 64-bit frames */
- 	if (!tx_mask) {
--		snd_soc_component_update_bits(component, DA7219_DAI_TDM_CTRL,
-+		ret =3D snd_soc_component_update_bits(component,
-+				    DA7219_DAI_TDM_CTRL,
- 				    DA7219_DAI_TDM_CH_EN_MASK |
- 				    DA7219_DAI_TDM_MODE_EN_MASK, 0);
--		snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+		if (ret < 0)
-+			return ret;
-+		ret =3D snd_soc_component_update_bits(component,
-+				    DA7219_DAI_CLK_MODE,
- 				    DA7219_DAI_BCLKS_PER_WCLK_MASK,
- 				    DA7219_DAI_BCLKS_PER_WCLK_64);
-+		if (ret < 0)
-+			return ret;
- 		return 0;
- 	}
-=20
-@@ -1444,19 +1533,25 @@ static int da7219_set_dai_tdm_slot(struct snd_soc_d=
-ai *dai,
- 		return -EINVAL;
- 	}
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
- 			    DA7219_DAI_BCLKS_PER_WCLK_MASK,
- 			    dai_bclks_per_wclk);
-+	if (ret < 0)
-+		return ret;
-=20
- 	offset =3D cpu_to_le16(rx_mask);
--	regmap_bulk_write(da7219->regmap, DA7219_DAI_OFFSET_LOWER,
-+	ret =3D regmap_bulk_write(da7219->regmap, DA7219_DAI_OFFSET_LOWER,
- 			  &offset, sizeof(offset));
-+	if (ret < 0)
-+		return ret;
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_TDM_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_TDM_CTRL,
- 			    DA7219_DAI_TDM_CH_EN_MASK |
- 			    DA7219_DAI_TDM_MODE_EN_MASK,
- 			    (tx_mask << DA7219_DAI_TDM_CH_EN_SHIFT) |
- 			    DA7219_DAI_TDM_MODE_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1468,6 +1563,7 @@ static int da7219_hw_params(struct snd_pcm_substream =
-*substream,
- 	struct snd_soc_component *component =3D dai->component;
- 	u8 dai_ctrl =3D 0, fs;
- 	unsigned int channels;
-+	int ret;
-=20
- 	switch (params_width(params)) {
- 	case 16:
-@@ -1533,11 +1629,15 @@ static int da7219_hw_params(struct snd_pcm_substrea=
-m *substream,
- 		return -EINVAL;
- 	}
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CTRL,
- 			    DA7219_DAI_WORD_LENGTH_MASK |
- 			    DA7219_DAI_CH_NUM_MASK,
- 			    dai_ctrl);
--	snd_soc_component_write(component, DA7219_SR, fs);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_write(component, DA7219_SR, fs);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1692,9 +1792,12 @@ static int da7219_set_bias_level(struct snd_soc_comp=
-onent *component,
- 	case SND_SOC_BIAS_STANDBY:
- 		if (snd_soc_component_get_bias_level(component) =3D=3D SND_SOC_BIAS_OFF)
- 			/* Master bias */
--			snd_soc_component_update_bits(component, DA7219_REFERENCES,
-+			ret =3D snd_soc_component_update_bits(component,
-+					    DA7219_REFERENCES,
- 					    DA7219_BIAS_EN_MASK,
- 					    DA7219_BIAS_EN_MASK);
-+			if (ret < 0)
-+				return ret;
-=20
- 		if (snd_soc_component_get_bias_level(component) =3D=3D SND_SOC_BIAS_PREP=
-ARE) {
- 			/* Remove MCLK */
-@@ -1705,8 +1808,11 @@ static int da7219_set_bias_level(struct snd_soc_comp=
-onent *component,
- 	case SND_SOC_BIAS_OFF:
- 		/* Only disable master bias if we're not a wake-up source */
- 		if (!da7219->wakeup_source)
--			snd_soc_component_update_bits(component, DA7219_REFERENCES,
-+			ret =3D snd_soc_component_update_bits(component,
-+					    DA7219_REFERENCES,
- 					    DA7219_BIAS_EN_MASK, 0);
-+			if (ret < 0)
-+				return ret;
-=20
- 		break;
- 	}
-@@ -1754,10 +1860,16 @@ static int da7219_handle_supplies(struct snd_soc_co=
-mponent *component)
- 	}
-=20
- 	/* Ensure device in active mode */
--	snd_soc_component_write(component, DA7219_SYSTEM_ACTIVE, DA7219_SYSTEM_AC=
-TIVE_MASK);
-+	ret =3D snd_soc_component_write(component, DA7219_SYSTEM_ACTIVE,
-+				DA7219_SYSTEM_ACTIVE_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Update IO voltage level range */
--	snd_soc_component_write(component, DA7219_IO_CTRL, io_voltage_lvl);
-+	ret =3D snd_soc_component_write(component, DA7219_IO_CTRL,
-+				io_voltage_lvl);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1768,10 +1880,13 @@ static int da7219_dai_clks_prepare(struct clk_hw *h=
-w)
- 	struct da7219_priv *da7219 =3D
- 		container_of(hw, struct da7219_priv, dai_clks_hw);
- 	struct snd_soc_component *component =3D da7219->aad->component;
-+	int ret;
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
- 				      DA7219_DAI_CLK_EN_MASK,
- 				      DA7219_DAI_CLK_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	return 0;
- }
-@@ -1781,9 +1896,12 @@ static void da7219_dai_clks_unprepare(struct clk_hw =
-*hw)
- 	struct da7219_priv *da7219 =3D
- 		container_of(hw, struct da7219_priv, dai_clks_hw);
- 	struct snd_soc_component *component =3D da7219->aad->component;
-+	int ret;
-=20
--	snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAI_CLK_MODE,
- 				      DA7219_DAI_CLK_EN_MASK, 0);
-+	if (ret < 0)
-+		dev_err(component->dev, "Failed to disable clk: %d\n", ret);
- }
-=20
- static int da7219_dai_clks_is_prepared(struct clk_hw *hw)
-@@ -1791,9 +1909,11 @@ static int da7219_dai_clks_is_prepared(struct clk_hw=
- *hw)
- 	struct da7219_priv *da7219 =3D
- 		container_of(hw, struct da7219_priv, dai_clks_hw);
- 	struct snd_soc_component *component =3D da7219->aad->component;
--	u8 clk_reg;
-+	int clk_reg;
-=20
- 	clk_reg =3D snd_soc_component_read32(component, DA7219_DAI_CLK_MODE);
-+	if (clk_reg < 0)
-+		return clk_reg;
-=20
- 	return !!(clk_reg & DA7219_DAI_CLK_EN_MASK);
- }
-@@ -1844,10 +1964,11 @@ static void da7219_register_dai_clks(struct snd_soc=
-_component *component)
- static inline void da7219_register_dai_clks(struct snd_soc_component *comp=
-onent) {}
- #endif /* CONFIG_COMMON_CLK */
-=20
--static void da7219_handle_pdata(struct snd_soc_component *component)
-+static int da7219_handle_pdata(struct snd_soc_component *component)
- {
- 	struct da7219_priv *da7219 =3D snd_soc_component_get_drvdata(component);
- 	struct da7219_pdata *pdata =3D da7219->pdata;
-+	int ret;
-=20
- 	if (pdata) {
- 		u8 micbias_lvl =3D 0;
-@@ -1869,7 +1990,10 @@ static void da7219_handle_pdata(struct snd_soc_compo=
-nent *component)
- 			break;
- 		}
-=20
--		snd_soc_component_write(component, DA7219_MICBIAS_CTRL, micbias_lvl);
-+		ret =3D snd_soc_component_write(component, DA7219_MICBIAS_CTRL,
-+					micbias_lvl);
-+		if (ret < 0)
-+			return ret;
-=20
- 		/*
- 		 * Calculate delay required to compensate for DC offset in
-@@ -1884,11 +2008,15 @@ static void da7219_handle_pdata(struct snd_soc_comp=
-onent *component)
- 		case DA7219_MIC_AMP_IN_SEL_DIFF:
- 		case DA7219_MIC_AMP_IN_SEL_SE_P:
- 		case DA7219_MIC_AMP_IN_SEL_SE_N:
--			snd_soc_component_write(component, DA7219_MIC_1_SELECT,
--				      pdata->mic_amp_in_sel);
-+			ret =3D snd_soc_component_write(component,
-+					DA7219_MIC_1_SELECT,
-+					pdata->mic_amp_in_sel);
-+			if (ret < 0)
-+				return ret;
- 			break;
- 		}
- 	}
-+	return 0;
- }
-=20
- static struct reg_sequence da7219_rev_aa_patch[] =3D {
-@@ -1934,7 +2062,9 @@ static int da7219_probe(struct snd_soc_component *com=
-ponent)
- 	if (!da7219->pdata)
- 		da7219->pdata =3D da7219_fw_to_pdata(component);
-=20
--	da7219_handle_pdata(component);
-+	ret =3D da7219_handle_pdata(component);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Check if MCLK provided */
- 	da7219->mclk =3D devm_clk_get(component->dev, "mclk");
-@@ -1948,36 +2078,57 @@ static int da7219_probe(struct snd_soc_component *c=
-omponent)
- 	}
-=20
- 	/* Default PC counter to free-running */
--	snd_soc_component_update_bits(component, DA7219_PC_COUNT, DA7219_PC_FREER=
-UN_MASK,
--			    DA7219_PC_FREERUN_MASK);
-+	ret =3D snd_soc_component_update_bits(component, DA7219_PC_COUNT,
-+			DA7219_PC_FREERUN_MASK, DA7219_PC_FREERUN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Default gain ramping */
--	snd_soc_component_update_bits(component, DA7219_MIXIN_L_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_MIXIN_L_CTRL,
- 			    DA7219_MIXIN_L_AMP_RAMP_EN_MASK,
- 			    DA7219_MIXIN_L_AMP_RAMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_ADC_L_CTRL, DA7219_ADC_L_=
-RAMP_EN_MASK,
--			    DA7219_ADC_L_RAMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_DAC_L_CTRL, DA7219_DAC_L_=
-RAMP_EN_MASK,
--			    DA7219_DAC_L_RAMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_DAC_R_CTRL, DA7219_DAC_R_=
-RAMP_EN_MASK,
--			    DA7219_DAC_R_RAMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_HP_L_CTRL,
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_ADC_L_CTRL,
-+			DA7219_ADC_L_RAMP_EN_MASK, DA7219_ADC_L_RAMP_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAC_L_CTRL,
-+			DA7219_DAC_L_RAMP_EN_MASK, DA7219_DAC_L_RAMP_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_DAC_R_CTRL,
-+			DA7219_DAC_R_RAMP_EN_MASK, DA7219_DAC_R_RAMP_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_HP_L_CTRL,
- 			    DA7219_HP_L_AMP_RAMP_EN_MASK,
- 			    DA7219_HP_L_AMP_RAMP_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_HP_R_CTRL,
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_HP_R_CTRL,
- 			    DA7219_HP_R_AMP_RAMP_EN_MASK,
- 			    DA7219_HP_R_AMP_RAMP_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Default minimum gain on HP to avoid pops during DAPM sequencing */
--	snd_soc_component_update_bits(component, DA7219_HP_L_CTRL,
-+	ret =3D snd_soc_component_update_bits(component, DA7219_HP_L_CTRL,
- 			    DA7219_HP_L_AMP_MIN_GAIN_EN_MASK,
- 			    DA7219_HP_L_AMP_MIN_GAIN_EN_MASK);
--	snd_soc_component_update_bits(component, DA7219_HP_R_CTRL,
-+	if (ret < 0)
-+		return ret;
-+	ret =3D snd_soc_component_update_bits(component, DA7219_HP_R_CTRL,
- 			    DA7219_HP_R_AMP_MIN_GAIN_EN_MASK,
- 			    DA7219_HP_R_AMP_MIN_GAIN_EN_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Default infinite tone gen, start/stop by Kcontrol */
--	snd_soc_component_write(component, DA7219_TONE_GEN_CYCLES, DA7219_BEEP_CY=
-CLES_MASK);
-+	ret =3D snd_soc_component_write(component, DA7219_TONE_GEN_CYCLES,
-+			DA7219_BEEP_CYCLES_MASK);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* Initialise AAD block */
- 	ret =3D da7219_aad_init(component);
-@@ -2221,16 +2372,28 @@ static int da7219_i2c_probe(struct i2c_client *i2c,
- 	regcache_cache_bypass(da7219->regmap, true);
-=20
- 	/* Disable audio paths if still active from previous start */
--	regmap_read(da7219->regmap, DA7219_SYSTEM_ACTIVE, &system_active);
-+	ret =3D regmap_read(da7219->regmap, DA7219_SYSTEM_ACTIVE, &system_active)=
-;
-+	if (ret < 0)
-+		return ret;
- 	if (system_active) {
--		regmap_write(da7219->regmap, DA7219_GAIN_RAMP_CTRL,
-+		ret =3D regmap_write(da7219->regmap, DA7219_GAIN_RAMP_CTRL,
- 			     DA7219_GAIN_RAMP_RATE_NOMINAL);
--		regmap_write(da7219->regmap, DA7219_SYSTEM_MODES_INPUT, 0x00);
--		regmap_write(da7219->regmap, DA7219_SYSTEM_MODES_OUTPUT, 0x01);
-+		if (ret < 0)
-+			return ret;
-+		ret =3D regmap_write(da7219->regmap, DA7219_SYSTEM_MODES_INPUT,
-+				0x00);
-+		if (ret < 0)
-+			return ret;
-+		ret =3D regmap_write(da7219->regmap, DA7219_SYSTEM_MODES_OUTPUT,
-+				0x01);
-+		if (ret < 0)
-+			return ret;
-=20
- 		for (i =3D 0; i < DA7219_SYS_STAT_CHECK_RETRIES; ++i) {
--			regmap_read(da7219->regmap, DA7219_SYSTEM_STATUS,
-+			ret =3D regmap_read(da7219->regmap, DA7219_SYSTEM_STATUS,
- 				    &system_status);
-+			if (ret < 0)
-+				return ret;
- 			if (!system_status)
- 				break;
-=20
-@@ -2239,13 +2402,19 @@ static int da7219_i2c_probe(struct i2c_client *i2c,
- 	}
-=20
- 	/* Soft reset component */
--	regmap_write_bits(da7219->regmap, DA7219_ACCDET_CONFIG_1,
-+	ret =3D regmap_write_bits(da7219->regmap, DA7219_ACCDET_CONFIG_1,
- 			  DA7219_ACCDET_EN_MASK, 0);
--	regmap_write_bits(da7219->regmap, DA7219_CIF_CTRL,
-+	if (ret < 0)
-+		return ret;
-+	ret =3D regmap_write_bits(da7219->regmap, DA7219_CIF_CTRL,
- 			  DA7219_CIF_REG_SOFT_RESET_MASK,
- 			  DA7219_CIF_REG_SOFT_RESET_MASK);
--	regmap_write_bits(da7219->regmap, DA7219_SYSTEM_ACTIVE,
-+	if (ret < 0)
-+		return ret;
-+	ret =3D regmap_write_bits(da7219->regmap, DA7219_SYSTEM_ACTIVE,
- 			  DA7219_SYSTEM_ACTIVE_MASK, 0);
-+	if (ret < 0)
-+		return ret;
-=20
- 	regcache_cache_bypass(da7219->regmap, false);
-=20
-diff --git a/sound/soc/codecs/da7219.h b/sound/soc/codecs/da7219.h
-index 3a00686..0cf78a7 100644
---- a/sound/soc/codecs/da7219.h
-+++ b/sound/soc/codecs/da7219.h
-@@ -832,7 +832,7 @@ struct da7219_priv {
- 	bool alc_en;
- 	bool micbias_on_event;
- 	unsigned int mic_pga_delay;
--	u8 gain_ramp_ctrl;
-+	int gain_ramp_ctrl;
- };
-=20
- int da7219_set_pll(struct snd_soc_component *component, int source, unsign=
-ed int fout);
---=20
-1.9.1
+ 	struct blkcg *blkcg = blkg->blkcg;
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index fe0c4ca312ff..e6f68f15dee9 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -486,7 +486,7 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
+ 	blkg = blkg_lookup(blkcg, q);
+ 	if (unlikely(!blkg)) {
+ 		spin_lock_irq(&q->queue_lock);
+-		blkg = blkg_lookup_create(blkcg, q);
++		blkg = __blkg_lookup_create(blkcg, q);
+ 		if (IS_ERR(blkg))
+ 			blkg = NULL;
+ 		spin_unlock_irq(&q->queue_lock);
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index f619307171a6..b3b1a8187d23 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -181,6 +181,8 @@ extern struct cgroup_subsys_state * const blkcg_root_css;
+ 
+ struct blkcg_gq *blkg_lookup_slowpath(struct blkcg *blkcg,
+ 				      struct request_queue *q, bool update_hint);
++struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
++				      struct request_queue *q);
+ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ 				    struct request_queue *q);
+ int blkcg_init_queue(struct request_queue *q);
+@@ -799,7 +801,7 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 	blkg = blkg_lookup(blkcg, q);
+ 	if (unlikely(!blkg)) {
+ 		spin_lock_irq(&q->queue_lock);
+-		blkg = blkg_lookup_create(blkcg, q);
++		blkg = __blkg_lookup_create(blkcg, q);
+ 		if (IS_ERR(blkg))
+ 			blkg = NULL;
+ 		spin_unlock_irq(&q->queue_lock);
+-- 
+2.17.1
 
