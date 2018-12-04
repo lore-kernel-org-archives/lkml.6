@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29E0C65BB3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF688C65BBA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E5B2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47B020850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Bd0l//6g";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QKWBJPYD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E5B2146D
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cHL730UI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TSnZlucX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47B020850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbeLDFVx (ORCPT
+        id S1726203AbeLDFV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 00:21:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48490 "EHLO
+        Tue, 4 Dec 2018 00:21:59 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48634 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeLDFVv (ORCPT
+        with ESMTP id S1726112AbeLDFV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 00:21:51 -0500
+        Tue, 4 Dec 2018 00:21:58 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 33A7E60A33; Tue,  4 Dec 2018 05:21:49 +0000 (UTC)
+        id 7BEF160807; Tue,  4 Dec 2018 05:21:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543900910;
-        bh=RaH0QQIKVHYMA7aOVLEDyALnr7ccsWYCH0chY1yqiVI=;
+        s=default; t=1543900917;
+        bh=KtXxYoQzgJK8P3HSnRs9lmArwTNd/sXSyzdaG1WnpcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bd0l//6gY1jvLhd+J4Mv3ch+v8lae3sCHlLYtB/C8mdG+BSgYGmnf8G83gOutaXUl
-         uzFPLlHPTVNj14YOa9LAd9I1lRPd2NMzJw8MLDDAz1f4SqYaFDzayT+zK9eNsc5Bxh
-         WlNuxS26VSDn+i5PZ1yQdRpBV73mGMsi2T+WCzVU=
+        b=cHL730UI0LlmAunLOFoZM7TMh85PzBTvo+0pbqhmZg5V/H/aqU2ThBYTTEMExHqg+
+         1IpkWahKm8AcYviRprGFj4XzYtF9zd42352ci9OG07kKH2HuaZURXW2joTKjvMBDwH
+         PCEgrfdC1zBQkfOyIZbhyfS90giZcIP8/hDkBJX8=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0036660C4C;
-        Tue,  4 Dec 2018 05:21:44 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A208E60C4D;
+        Tue,  4 Dec 2018 05:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543900908;
-        bh=RaH0QQIKVHYMA7aOVLEDyALnr7ccsWYCH0chY1yqiVI=;
+        s=default; t=1543900916;
+        bh=KtXxYoQzgJK8P3HSnRs9lmArwTNd/sXSyzdaG1WnpcY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QKWBJPYDE21cGdnuYG4DmwvYpQrrXOFHr5zfvBiJSavLN8JFaxnScieVGFvseRwi4
-         HUkTIqd7lpowGa2yz2loEe6oD5NC1yDentwVHDU9ivEme431Um3DmG2MfI7pvBugYF
-         6mGiDT889FE0doVm5EFiiYTRlkdojaNaukhURbsk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0036660C4C
+        b=TSnZlucXZThM4qFhsBvuX0mdYIOAo15NfJVrXf98mYH9+mjUd2BOc6FTVOghiU6Jc
+         TlT/Idx/CBFlhlJzLJQqUQfyCX3WnNqj+8QcF28z/XRMBVoCWHuX+gTLZhSWf5VkgT
+         K2dHNYhF9sarjuL+ns8ah7STWuOtwKb9iPbavYxo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A208E60C4D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -59,9 +59,9 @@ To:     robh@kernel.org, viresh.kumar@linaro.org, sboyd@kernel.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v5 5/8] arm64: dts: msm8996: Add rpmpd device node
-Date:   Tue,  4 Dec 2018 10:51:16 +0530
-Message-Id: <20181204052119.806-6-rnayak@codeaurora.org>
+Subject: [PATCH v5 7/8] arm64: dts: sdm845: Add rpmh powercontroller node
+Date:   Tue,  4 Dec 2018 10:51:18 +0530
+Message-Id: <20181204052119.806-8-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181204052119.806-1-rnayak@codeaurora.org>
 References: <20181204052119.806-1-rnayak@codeaurora.org>
@@ -72,60 +72,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add rpmpd device node and its OPP table
+Add the DT node for the rpmhpd powercontroller.
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 51 ++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index b29fe80d7288..ed35f0ced699 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -306,6 +306,40 @@
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0a31a5..a6d0cd8d17b0 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy-qcom-qusb2.h>
++#include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+ 
+@@ -1324,6 +1325,56 @@
+ 				compatible = "qcom,sdm845-rpmh-clk";
  				#clock-cells = <1>;
  			};
- 
-+			rpmpd: power-controller {
-+				compatible = "qcom,msm8996-rpmpd";
++
++			rpmhpd: power-controller {
++				compatible = "qcom,sdm845-rpmhpd";
 +				#power-domain-cells = <1>;
-+				operating-points-v2 = <&rpmpd_opp_table>;
++				operating-points-v2 = <&rpmhpd_opp_table>;
 +			};
 +
-+			rpmpd_opp_table: opp-table {
++			rpmhpd_opp_table: opp-table {
 +				compatible = "operating-points-v2-qcom-level";
 +
-+				rpmpd_opp1: opp1 {
-+					qcom,level = <1>;
++				rpmhpd_opp_ret: opp1 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
 +				};
 +
-+				rpmpd_opp2: opp2 {
-+					qcom,level = <2>;
++				rpmhpd_opp_min_svs: opp2 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
 +				};
 +
-+				rpmpd_opp3: opp3 {
-+					qcom,level = <3>;
++				rpmhpd_opp_low_svs: opp3 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
 +				};
 +
-+				rpmpd_opp4: opp4 {
-+					qcom,level = <4>;
++				rpmhpd_opp_svs: opp4 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_SVS>;
 +				};
 +
-+				rpmpd_opp5: opp5 {
-+					qcom,level = <5>;
++				rpmhpd_opp_svs_l1: opp5 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
 +				};
 +
-+				rpmpd_opp6: opp6 {
-+					qcom,level = <6>;
++				rpmhpd_opp_nom: opp6 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_NOM>;
++				};
++
++				rpmhpd_opp_nom_l1: opp7 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
++				};
++
++				rpmhpd_opp_nom_l2: opp8 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
++				};
++
++				rpmhpd_opp_turbo: opp9 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_TURBO>;
++				};
++
++				rpmhpd_opp_turbo_l1: opp10 {
++					qcom,level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
 +				};
 +			};
-+
- 			pm8994-regulators {
- 				compatible = "qcom,rpm-pm8994-regulators";
+ 		};
  
+ 		intc: interrupt-controller@17a00000 {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
