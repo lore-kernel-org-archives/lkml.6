@@ -2,120 +2,136 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDC8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82214C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C99206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C99206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4699D206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:32:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbWZLk47"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4699D206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeLDQbh (ORCPT
+        id S1727107AbeLDQb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:31:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36498 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbeLDQbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:31:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99EE1A78;
-        Tue,  4 Dec 2018 08:31:36 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45E293F614;
-        Tue,  4 Dec 2018 08:31:36 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 9A04E6800CE; Tue,  4 Dec 2018 16:31:34 +0000 (GMT)
-Date:   Tue, 4 Dec 2018 16:31:34 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Ayan Halder <Ayan.Halder@arm.com>
-Cc:     Brian Starkey <Brian.Starkey@arm.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        nd <nd@arm.com>
-Subject: Re: [RFC AFBC 02/12] drm: Added a new format DRM_FORMAT_XVYU2101010
-Message-ID: <20181204163134.GK988@e110455-lin.cambridge.arm.com>
-References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
- <1543836703-8491-3-git-send-email-ayan.halder@arm.com>
+        Tue, 4 Dec 2018 11:31:59 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45283 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeLDQb6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:31:58 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so15479551ljd.12;
+        Tue, 04 Dec 2018 08:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GLf7jhPRgKHtp81VkqFMGOjWO0dWtGHtzBeMcmUcCjg=;
+        b=VbWZLk47768sb76OJK24tEMJ1ibD1a1O5jZ0bsZGvqPbpzxONxIDJjlPH7F3gDwxoW
+         v6dOBmDM+e/kTY+CJ/r7y3zdWnc080iC9NSY6g1dcGGAPe3DuwWw67y0IJPqlcnZQ1rw
+         drQfYX8SZLQe72O4say82+OK/MA4DqhNJDusHw/rtaHpSZtUdiZGCjFqHvOitGAsGeXv
+         gthpUIBbd2rU9MxnJoBM2ptrG9X8bg+8ek4shDvYpIL1iWYOIHP5sJRdMRIm1l2Wx4SF
+         tGByJ/BSz8+Jc/k5FFTbg3jPQk+qjk9kyqwjqYvi/5o1LyL9rWW26UDpulQKZAEli0ie
+         7ffQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GLf7jhPRgKHtp81VkqFMGOjWO0dWtGHtzBeMcmUcCjg=;
+        b=P+ntIVcrhvtqaJvhYFRf4++PvNsPR9/IPZx31sQXQFCSh5Ko3wNbAZmmQLHl1emgFK
+         Xq8uxaM5Q9QepDWTUaFnwfC5STkh8K8cGcA77t6ECKsJjNCm5xHNbVeSc560gy3OG50E
+         NmTtZus9B96iG9BJuS4+oj1Onm3ycuarVuSNJkPqqNFNeFscGXpdwmx7bEOgzNf2Dynp
+         erjqaErl8GXldJrhOrE2I9MrD+24HF+Ol3wm5TQy63JT/56A6UY/SENv47vHcztdQZ7q
+         wup9NRAc9H//pQtcG6x53OfW0BYB3/e1R9TSQo4wImzNB45TfiGhofJm/ON48TR3c5i2
+         DTOA==
+X-Gm-Message-State: AA+aEWYhzyHSHPrkk2k13lAoMVgp2fhysZ2pJrC4GXAWPHQ6lFK9rcGU
+        wlfEvl2fIUWyjUK79b10FLs=
+X-Google-Smtp-Source: AFSGD/UmIFTzx7tKK8zsfB5+KrBx5ftopt7Mx0IpRjCGNyhx/5JoyyCnbc7R+Zesapyfi8kentDXeA==
+X-Received: by 2002:a2e:5d12:: with SMTP id r18-v6mr14674323ljb.89.1543941114610;
+        Tue, 04 Dec 2018 08:31:54 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id p23sm3051863lfh.47.2018.12.04.08.31.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 08:31:53 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gUDc3-0006cj-0n; Tue, 04 Dec 2018 17:31:55 +0100
+Date:   Tue, 4 Dec 2018 17:31:55 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
+        Florian Zumbiehl <florz@florz.de>
+Subject: Re: [PATCH] USB: serial: console: fix reported terminal settings
+Message-ID: <20181204163155.GD18087@localhost>
+References: <20181204155904.GC18087@localhost>
+ <20181204160036.24625-1-johan@kernel.org>
+ <20181204161518.GA17941@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1543836703-8491-3-git-send-email-ayan.halder@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181204161518.GA17941@kroah.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 11:31:56AM +0000, Ayan Halder wrote:
-> We have added a new format ie DRM_FORMAT_XVYU2101010 which is supported
-> by mali display driver.
+On Tue, Dec 04, 2018 at 05:15:18PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Dec 04, 2018 at 05:00:36PM +0100, Johan Hovold wrote:
+> > The USB-serial console implementation has never reported the actual
+> > terminal settings used. Despite storing the corresponding cflags in its
+> > struct console, this was never honoured on later tty open() where the
+> > tty termios would be left initialised to the driver defaults.
+> > 
+> > Unlike the serial console implementation, the USB-serial code calls
+> > subdriver open() already at console setup. While calling set_termios()
+> > before open() looks like it could work for some USB-serial drivers,
+> > others definitely do not expect this, so modelling this after serial
+> > core is going to be intrusive, if at all possible.
+> > 
+> > Instead, use a (renamed) tty helper to save the termios data used at
+> > console setup, so that the tty termios reflects the actual terminal
+> > settings after a subsequent tty open().
+> > 
+> > Note that the calls to tty_init_termios() (tty_driver_install()) and
+> > tty_save_termios() are serialised using the disconnect mutex.
+> > 
+> > This specifically fixes a regression that was triggered by a recent
+> > change adding software flow control to the pl2303 driver: a getty trying
+> > to disable flow control while leaving the baud rate unchanged would now
+> > also set the baud rate to the driver default (prior to the flow-control
+> > change this had been a noop).
+> > 
+> > Fixes: 7041d9c3f01b ("USB: serial: pl2303: add support for tx xon/xoff flow control")
+> > Cc: stable <stable@vger.kernel.org>	# 4.18
+> > Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> > Cc: Florian Zumbiehl <florz@florz.de>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > ---
+> >  drivers/tty/tty_io.c         | 11 +++++++++--
+> >  drivers/usb/serial/console.c |  2 +-
+> >  include/linux/tty.h          |  1 +
+> >  3 files changed, 11 insertions(+), 3 deletions(-)
 > 
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/drm_fourcc.c  | 1 +
->  include/uapi/drm/drm_fourcc.h | 1 +
->  2 files changed, 2 insertions(+)
+> Ah, messy :)
 > 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 6b7a62e..d31e1ae 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -229,6 +229,7 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_VUY888,          .depth = 0,  .num_planes = 1, .cpp = { 3, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_Y410,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
->  		{ .format = DRM_FORMAT_AYUV,		.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
-> +		{ .format = DRM_FORMAT_XVYU2101010,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
->  		{ .format = DRM_FORMAT_P010,		.depth = 0,  .num_planes = 2, .cpp = { 2, 4, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true  },
->  		{ .format = DRM_FORMAT_P012,		.depth = 0,  .num_planes = 2, .cpp = { 2, 4, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true  },
->  		{ .format = DRM_FORMAT_P016,		.depth = 0,  .num_planes = 2, .cpp = { 2, 4, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true  },
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index 71b2bc7..75c4b5a 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -153,6 +153,7 @@ extern "C" {
->  
->  #define DRM_FORMAT_AYUV		fourcc_code('A', 'Y', 'U', 'V') /* [31:0] A:Y:Cb:Cr 8:8:8:8 little endian */
->  #define DRM_FORMAT_XYUV8888	fourcc_code('X', 'Y', 'U', 'V') /* [31:0] X:Y:Cb:Cr 8:8:8:8 little endian */
-> +#define DRM_FORMAT_XVYU2101010	fourcc_code('X', 'V', '3', '0') /* [31:0] X:Cr:Y:Cb 2:10:10:10 little endian */
->  #define DRM_FORMAT_VUY888	fourcc_code('V', 'U', '2', '4') /* [23:0] Cr:Cb:Y 8:8:8 little endian */
->  #define DRM_FORMAT_Y410		fourcc_code('Y', '4', '1', '0') /* [31:0] A:Cr:Y:Cb 2:10:10:10 little endian */
->  #define DRM_FORMAT_VUY101010	fourcc_code('V', 'U', '3', '0') /* Y followed by U then V, 10:10:10. Non-linear modifier only */
-> -- 
-> 2.7.4
-> 
+> Want me to take this through my tty tree?
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+If you prefer. I was planning on including this in a USB-serial pull
+request for -rc6 since it fixes a user-reported regression, but perhaps
+taking this through your tty-linus branch (which already holds a console
+fix) is easier/faster.
+
+We should wait for Jarkko to confirm that this fixes the problem he
+reported first, though.
+
+Thanks,
+Johan
