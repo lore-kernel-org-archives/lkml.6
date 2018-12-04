@@ -2,130 +2,317 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822BAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490F420834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490F420834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 92D1020834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:54:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jv7Z8csL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D1020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725916AbeLDSyM (ORCPT
+        id S1726122AbeLDSym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:54:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:4454 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbeLDSyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:54:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:54:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="98615661"
-Received: from unknown (HELO [10.7.201.141]) ([10.7.201.141])
-  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 10:54:10 -0800
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
- <20181204184919.GD2937@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <64cf873c-9e1e-f3b0-4869-7e0ebab10452@intel.com>
-Date:   Tue, 4 Dec 2018 10:54:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 4 Dec 2018 13:54:42 -0500
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:36948 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbeLDSyl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:54:41 -0500
+Received: by mail-pl1-f169.google.com with SMTP id b5so8753967plr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:54:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KVdbnxQN/EAigFOsyJ/RDQSseze7WAvrj2qYD4cnbo8=;
+        b=Jv7Z8csLlo3zfOvTWWIuE+ZZ1hc2Ao8Ur1wrHRM54aju/ej+duYt2gGZClpWcugLVG
+         j+JpoIy9DYjt33qLYjSRqDvX9s65/yUW3kLK3ArRHd4Ysj9Y1B2JyklifL6waEnp3iFO
+         GZZd8UaVRhPi4TncvxlvGXf1IJCc3oNh17bbsKk2zGhKBD01SGWK/3hVnTvyOaatcHr7
+         YjK8zWLqRwHUaHv34rmiHfdxePZW8gltDGPVPb3V31xGKMsq47KQ+NNajxEfwkiNCaQZ
+         0Dd78bzPtxCNaDzGavdnuNXGPUTshOybRsEii0rRT2+O81jcBL7vhiMsJPyGfjpblRgX
+         j6OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KVdbnxQN/EAigFOsyJ/RDQSseze7WAvrj2qYD4cnbo8=;
+        b=WxFKjXjSK4oM1f0RdnlrXghbtbfWl46DjWkj8gvIub6jgNqeVJXzbndWhwJBupfj0q
+         fwefKO0puQPGJ+geIP6d2XxDSD/V/DVYmAtXlxw0MPJolDHx7m2+Qd6VIlxbtWtbakw0
+         3Vxuvoz1bX3ykpn+beNMhpeD+jdMhpsutYtFJlJuiWjt21nagj8Uv1uG1H6gkxgywmgc
+         P7xhbsMBNR3MnyjC6hqEgYaCMAk2CNWYDy3qvRwuH5qswCSPL1A0EI/B4qwFIyUELYaQ
+         Go0r69UUrM6/rzxcGtgTP/wNGT1jwgzhYju0VJHelKUhP1Bq5rGk9g3ivtIR66ApYIXN
+         ncYA==
+X-Gm-Message-State: AA+aEWYjZoMjmt0fAQoPtZFwTjwhvgrzH+seTXD27oJB/xFTV3S0+JC3
+        1YqyqzZbLjqQnHVaKMzWtn9KeKRDk9mKevQ2rSo8Nw==
+X-Google-Smtp-Source: AFSGD/Vdsw+yw7CxE9Y+aEtMLHmqEapsThquN1WCBAw/jpUDAdZudT3ANtzJZsHKN0EhSOfhQrVJPm8LKSZYHAYSar4=
+X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr20903350pll.320.1543949679428;
+ Tue, 04 Dec 2018 10:54:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204184919.GD2937@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180915054739.14117-1-natechancellor@gmail.com>
+ <CAKwvOdmQ4pbbPuvYrVYB9myD8ap36h6nLjEdL-mSbYjM37UJ_g@mail.gmail.com>
+ <20180917193936.33e90d5a@coco.lan> <20181204102639.3qsvfxrzmsvybiop@gofer.mess.org>
+ <20181204095714.60ee5b95@coco.lan> <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
+In-Reply-To: <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 4 Dec 2018 10:54:28 -0800
+Message-ID: <CAKwvOdkx87V6Yo9Pmh44Sfr_etSBR_b77aMj79p4U-VCoCQz8Q@mail.gmail.com>
+Subject: Re: [PATCH] [media] dib7000p: Remove dead code
+To:     sean@mess.org
+Cc:     mchehab+samsung@kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 10:49 AM, Jerome Glisse wrote:
-> Policy is same kind of story, this email is long enough now :) But
-> i can write one down if you want.
+On Tue, Dec 4, 2018 at 5:39 AM Sean Young <sean@mess.org> wrote:
+>
+> On Tue, Dec 04, 2018 at 09:57:14AM -0200, Mauro Carvalho Chehab wrote:
+> > Em Tue, 4 Dec 2018 10:26:40 +0000
+> > Sean Young <sean@mess.org> escreveu:
+> >
+> > > On Mon, Sep 17, 2018 at 07:39:36PM -0300, Mauro Carvalho Chehab wrote:
+> > > > Em Mon, 17 Sep 2018 10:58:32 -0700
+> > > > Nick Desaulniers <ndesaulniers@google.com> escreveu:
+> > > >
+> > > > > On Fri, Sep 14, 2018 at 10:47 PM Nathan Chancellor
+> > > > > <natechancellor@gmail.com> wrote:
+> > > > > >
+> > > > > > Clang warns that 'interleaving' is assigned to itself in this function.
+> > > > > >
+> > > > > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> > > > > > assigning value of variable of type 'int' to itself [-Wself-assign]
+> > > > > >         interleaving = interleaving;
+> > > > > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> > > > > > 1 warning generated.
+> > > > > >
+> > > > > > It's correct. Just removing the self-assignment would sufficiently hide
+> > > > > > the warning but all of this code is dead because 'tmp' is zero due to
+> > > > > > being multiplied by zero. This doesn't appear to be an issue with
+> > > > > > dib8000, which this code was copied from in commit 041ad449683b
+> > > > > > ("[media] dib7000p: Add DVBv5 stats support").
+> > > > > >
+> > > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/media/dvb-frontends/dib7000p.c | 10 ++--------
+> > > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > index 58387860b62d..25843658fc68 100644
+> > > > > > --- a/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > +++ b/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > @@ -1800,9 +1800,8 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
+> > > > >
+> > > > > Something looks wrong here (with this function).  The patch is no
+> > > > > functional change, since as you point out `interleaving` is
+> > > > > initialized to 0, then never updated before read, but I think there's
+> > > > > an underlying bug here that should be fixed differently.  Thanks for
+> > > > > the patch though, as it does raise the question.
+> > > > >
+> > > > > dib7000p_get_time_us has this comment above it:
+> > > > >
+> > > > >   1798 /* FIXME: may require changes - this one was borrowed from
+> > > > > dib8000 */
+> > > >
+> > > > The goal of dib7000p_get_time_us() is to estimate how much time it
+> > > > takes, with current tuning parameters, to have a certain number of
+> > > > DVB-T packets. This is used for block error count. That's said,
+> > > > on a quick look, it seems that the code is not right on many ways.
+> > > >
+> > > > It should be aligned with the amount of data it is required for
+> > > > dib7000 to update the block/bit error counters. There are two kinds
+> > > > of implementation:
+> > > >
+> > > > 1) the frontend has an internal counter that it is shifted and made
+> > > >    available to the driver after a certain amount of received data
+> > > >    (usually in the order of 10^5 to 10^7 bits);
+> > > >
+> > > > 2) the frontend has an internal timer that shifts the data from its
+> > > >    internal counter after a certain amount of time (usually at the
+> > > >    seconds range).
+> > > >
+> > > > Different vendors opt for either one of the strategy. Some updates
+> > > > a counter with the amount of bits taken. Unfortunately, this is not
+> > > > the case of those dib* frontends. So, the Kernel has to estimate
+> > > > it, based on the tuning parameters.
+> > > >
+> > > > From the code, it seems that, for block errors, it waits for 1,250,000
+> > > > bits to arrive (e. g. about 766 packets), so, it uses type (1) strategy:
+> > > >
+> > > >                 /* Estimate the number of packets based on bitrate */
+> > > >                 if (!time_us)
+> > > >                         time_us = dib7000p_get_time_us(demod);
+> > > >
+> > > >                 if (time_us) {
+> > > >                         blocks = 1250000ULL * 1000000ULL; // the multiply here is to convert to microsseconds...
+> > > >                         do_div(blocks, time_us * 8 * 204);        // As here it divides by the time in microsseconds
+> > > >                         c->block_count.stat[0].scale = FE_SCALE_COUNTER;
+> > > >                         c->block_count.stat[0].uvalue += blocks;
+> > > >                 }
+> > > >
+> > > > For BER, the logic assumes that the bit error count should be divided
+> > > > by 10^-8:
+> > > >
+> > > >                 c->post_bit_count.stat[0].uvalue += 100000000;
+> > > >
+> > > > and the counter is updated every second. So, it uses (2).
+> > > >
+> > > > >
+> > > > > Wondering if it has the same bug, it seems it does not:
+> > > > > drivers/media/dvb-frontends/dib8000.c#dib8000_get_time_us():3986
+> > > > >
+> > > > > dib8000_get_time_us() seems to loop over multiple layers, and then
+> > > > > assigns interleaving to the final layers interleaving (that looks like
+> > > > > loop invariant code to me).
+> > > > >
+> > > > > Mauro, should dib7000p_get_time_us() use c->layer[???].interleaving?
+> > > >
+> > > > I don't think that time interleaving would affect the bit rate.
+> > > > I suspect that the dead code on dib8000 is just a dead code.
+> > > >
+> > > > > I don't see a single reference to `layer` in
+> > > > > drivers/media/dvb-frontends/dib7000p.c.
+> > > >
+> > > > Layers are specific for ISDB-T, but I think DVB-T (or at least DVB-T2)
+> > > > may use time interleaving.
+> > > >
+> > > > Yet, as I said, the goal is to estimate the streaming bit rate.
+> > > >
+> > > > I don't remember anymore from where the dib8000 formula came.
+> > > >
+> > > > My guts tell that time interleaving shouldn't do much changes (if any)
+> > > > to the bit rate. I suspect that removing the dead code is likely
+> > > > OK, but I'll try to see if I can find something related to where this
+> > > > formula came.
+> > >
+> > > So we have two issues. One is the clang issue and clearly the code needs
+> > > fixing up. The second issue is that we're not sure about the algorithm;
+> > > I've been reading up on mpeg-ts but I'm not anywhere near getting to an
+> > > answer on this.
+> > >
+> > > How about we merge a patch which just fixes the clang issue and leave
+> > > the rest of the code as-is for now?
+> >
+> > I'm ok with that, but it would be better to add a FIXME note somewhere.
+> >
+> > >
+> > > Thanks,
+> > >
+> > > Sean
+> > >
+> > > ---
+> > > From c6e4c5f514c38511d2054c69f7b103e98c520af4 Mon Sep 17 00:00:00 2001
+> > > From: Sean Young <sean@mess.org>
+> > > Date: Tue, 4 Dec 2018 09:59:10 +0000
+> > > Subject: [PATCH v2] media: dib7000p: Remove dead code
+> > >
+> > > Clang warns that 'interleaving' is assigned to itself in this function.
+> > >
+> > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> > > assigning value of variable of type 'int' to itself [-Wself-assign]
+> > >         interleaving = interleaving;
+> > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> > > 1 warning generated.
+> > >
+> > > Just remove the self-assign and leave existing code in place for now.
+> > >
+> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Signed-off-by: Sean Young <sean@mess.org>
 
-Yes, please.  I'd love to see the code.
+Thanks for taking the time to revisit the warning and clean it up.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-We'll do the same on the "HMAT" side and we can compare notes.
+Might be nice to give Nathan some credit when applied:
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+
+> > > ---
+> > >  drivers/media/dvb-frontends/dib7000p.c | 2 --
+> > >  1 file changed, 2 deletions(-)
+> > >
+> > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> > > index 58387860b62d..cd84320c61c9 100644
+> > > --- a/drivers/media/dvb-frontends/dib7000p.c
+> > > +++ b/drivers/media/dvb-frontends/dib7000p.c
+> > > @@ -1871,8 +1871,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
+> > >             break;
+> > >     }
+> > >
+> > > -   interleaving = interleaving;
+> > > -
+> > >     denom = bits_per_symbol * rate_num * fft_div * 384;
+> >
+> > something like:
+> >
+> >       /*
+> >        * FIXME: check if the math makes sense. If so, fill the
+> >        * interleaving var.
+> >        */
+> > >
+> > >     /* If calculus gets wrong, wait for 1s for the next stats */
+> >
+>
+> Good point.
+>
+> Sean
+>
+> From a31c18315830da40561db6443d3b90b8584d5232 Mon Sep 17 00:00:00 2001
+> From: Sean Young <sean@mess.org>
+> Date: Tue, 4 Dec 2018 09:59:10 +0000
+> Subject: [PATCH v3] media: dib7000p: Remove dead code
+>
+> Clang warns that 'interleaving' is assigned to itself in this function.
+>
+> drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> assigning value of variable of type 'int' to itself [-Wself-assign]
+>         interleaving = interleaving;
+>         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> 1 warning generated.
+>
+> Just remove the self-assign and leave existing code in place for now.
+>
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Sean Young <sean@mess.org>
+> ---
+>  drivers/media/dvb-frontends/dib7000p.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> index 58387860b62d..2818e8def1b3 100644
+> --- a/drivers/media/dvb-frontends/dib7000p.c
+> +++ b/drivers/media/dvb-frontends/dib7000p.c
+> @@ -1871,10 +1871,13 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
+>                 break;
+>         }
+>
+> -       interleaving = interleaving;
+> -
+>         denom = bits_per_symbol * rate_num * fft_div * 384;
+>
+> +       /*
+> +        * FIXME: check if the math makes sense. If so, fill the
+> +        * interleaving var.
+> +        */
+> +
+>         /* If calculus gets wrong, wait for 1s for the next stats */
+>         if (!denom)
+>                 return 0;
+> --
+> 2.19.2
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
