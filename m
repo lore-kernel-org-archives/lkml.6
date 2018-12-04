@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EA4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81649C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80C4220851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E54A20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z/YbYYzn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C4220851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVJwsvPB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E54A20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeLDLWX (ORCPT
+        id S1727283AbeLDLCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:22:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48446 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbeLDLC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:27 -0500
+        id S1727592AbeLDLCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72627214DB;
-        Tue,  4 Dec 2018 11:02:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3072146D;
+        Tue,  4 Dec 2018 11:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921346;
-        bh=V9JU1Bbi/BI5jHyyLlxqLYwirfGF0S6rh9mj/ueSPWE=;
+        s=default; t=1543921332;
+        bh=DK6w8pYfV3aONvmII6h2iNDmw6l6Evq53yHFJCvDqRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z/YbYYznQrAKX8SsgcPE57YwAcOSOQhDZyYqZ+aT7VEeuo5vfOztV9mZrPcHccOUl
-         8CdWm++f74Kz9aeP4GvXkYgUmzXDqgB1rhY52u1AoMgFrkGHNcjE7ugox5Kbt5o5H4
-         tXU6gYoufmkaqbMoI4p6zHPEVY7NjqIa03VJTI3g=
+        b=dVJwsvPBEQe6YOThnkKX2NPWkBAYovbEatXUNABoAFPJIlO7UB75pZUCdenJqEV6c
+         JdPLO+iAwG1iUsn3XMJFYYl2zGSpMRCD8H3S+tn9Ohn9RPdjjXKof4iAH6vmuvc4KH
+         nHJFDVSHmto9yDDYQ25L/D/q613A0aljHbqlBwA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Su Yue <suy.fnst@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 036/146] btrfs: tree-checker: Add checker for dir item
-Date:   Tue,  4 Dec 2018 11:48:42 +0100
-Message-Id: <20181204103728.310308634@linuxfoundation.org>
+Subject: [PATCH 4.14 009/146] mm/khugepaged: collapse_shmem() without freezing new_page
+Date:   Tue,  4 Dec 2018 11:48:15 +0100
+Message-Id: <20181204103727.161359379@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -67,208 +69,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit ad7b0368f33cffe67fecd302028915926e50ef7e upstream.
+commit 87c460a0bded56195b5eb497d44709777ef7b415 upstream.
 
-Add checker for dir item, for key types DIR_ITEM, DIR_INDEX and
-XATTR_ITEM.
+khugepaged's collapse_shmem() does almost all of its work, to assemble
+the huge new_page from 512 scattered old pages, with the new_page's
+refcount frozen to 0 (and refcounts of all old pages so far also frozen
+to 0).  Including shmem_getpage() to read in any which were out on swap,
+memory reclaim if necessary to allocate their intermediate pages, and
+copying over all the data from old to new.
 
-This checker does comprehensive checks for:
+Imagine the frozen refcount as a spinlock held, but without any lock
+debugging to highlight the abuse: it's not good, and under serious load
+heads into lockups - speculative getters of the page are not expecting
+to spin while khugepaged is rescheduled.
 
-1) dir_item header and its data size
-   Against item boundary and maximum name/xattr length.
-   This part is mostly the same as old verify_dir_item().
+One can get a little further under load by hacking around elsewhere; but
+fortunately, freezing the new_page turns out to have been entirely
+unnecessary, with no hacks needed elsewhere.
 
-2) dir_type
-   Against maximum file types, and against key type.
-   Since XATTR key should only have FT_XATTR dir item, and normal dir
-   item type should not have XATTR key.
+The huge new_page lock is already held throughout, and guards all its
+subpages as they are brought one by one into the page cache tree; and
+anything reading the data in that page, without the lock, before it has
+been marked PageUptodate, would already be in the wrong.  So simply
+eliminate the freezing of the new_page.
 
-   The check between key->type and dir_type is newly introduced by this
-   patch.
+Each of the old pages remains frozen with refcount 0 after it has been
+replaced by a new_page subpage in the page cache tree, until they are
+all unfrozen on success or failure: just as before.  They could be
+unfrozen sooner, but cause no problem once no longer visible to
+find_get_entry(), filemap_map_pages() and other speculative lookups.
 
-3) name hash
-   For XATTR and DIR_ITEM key, key->offset is name hash (crc32c).
-   Check the hash of the name against the key to ensure it's correct.
-
-   The name hash check is only found in btrfs-progs before this patch.
-
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261527570.2275@eggly.anvils
+Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>	[4.8+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-checker.c | 141 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
+ mm/khugepaged.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index ff4fa8f905d3..b32df86de9bf 100644
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -30,6 +30,7 @@
- #include "tree-checker.h"
- #include "disk-io.h"
- #include "compression.h"
-+#include "hash.h"
- 
- #define CORRUPT(reason, eb, root, slot)					\
- 	btrfs_crit(root->fs_info,					\
-@@ -175,6 +176,141 @@ static int check_csum_item(struct btrfs_root *root, struct extent_buffer *leaf,
- 	return 0;
- }
- 
-+/*
-+ * Customized reported for dir_item, only important new info is key->objectid,
-+ * which represents inode number
-+ */
-+__printf(4, 5)
-+static void dir_item_err(const struct btrfs_root *root,
-+			 const struct extent_buffer *eb, int slot,
-+			 const char *fmt, ...)
-+{
-+	struct btrfs_key key;
-+	struct va_format vaf;
-+	va_list args;
-+
-+	btrfs_item_key_to_cpu(eb, &key, slot);
-+	va_start(args, fmt);
-+
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+
-+	btrfs_crit(root->fs_info,
-+	"corrupt %s: root=%llu block=%llu slot=%d ino=%llu, %pV",
-+		btrfs_header_level(eb) == 0 ? "leaf" : "node", root->objectid,
-+		btrfs_header_bytenr(eb), slot, key.objectid, &vaf);
-+	va_end(args);
-+}
-+
-+static int check_dir_item(struct btrfs_root *root,
-+			  struct extent_buffer *leaf,
-+			  struct btrfs_key *key, int slot)
-+{
-+	struct btrfs_dir_item *di;
-+	u32 item_size = btrfs_item_size_nr(leaf, slot);
-+	u32 cur = 0;
-+
-+	di = btrfs_item_ptr(leaf, slot, struct btrfs_dir_item);
-+	while (cur < item_size) {
-+		char namebuf[max(BTRFS_NAME_LEN, XATTR_NAME_MAX)];
-+		u32 name_len;
-+		u32 data_len;
-+		u32 max_name_len;
-+		u32 total_size;
-+		u32 name_hash;
-+		u8 dir_type;
-+
-+		/* header itself should not cross item boundary */
-+		if (cur + sizeof(*di) > item_size) {
-+			dir_item_err(root, leaf, slot,
-+		"dir item header crosses item boundary, have %lu boundary %u",
-+				cur + sizeof(*di), item_size);
-+			return -EUCLEAN;
-+		}
-+
-+		/* dir type check */
-+		dir_type = btrfs_dir_type(leaf, di);
-+		if (dir_type >= BTRFS_FT_MAX) {
-+			dir_item_err(root, leaf, slot,
-+			"invalid dir item type, have %u expect [0, %u)",
-+				dir_type, BTRFS_FT_MAX);
-+			return -EUCLEAN;
-+		}
-+
-+		if (key->type == BTRFS_XATTR_ITEM_KEY &&
-+		    dir_type != BTRFS_FT_XATTR) {
-+			dir_item_err(root, leaf, slot,
-+		"invalid dir item type for XATTR key, have %u expect %u",
-+				dir_type, BTRFS_FT_XATTR);
-+			return -EUCLEAN;
-+		}
-+		if (dir_type == BTRFS_FT_XATTR &&
-+		    key->type != BTRFS_XATTR_ITEM_KEY) {
-+			dir_item_err(root, leaf, slot,
-+			"xattr dir type found for non-XATTR key");
-+			return -EUCLEAN;
-+		}
-+		if (dir_type == BTRFS_FT_XATTR)
-+			max_name_len = XATTR_NAME_MAX;
-+		else
-+			max_name_len = BTRFS_NAME_LEN;
-+
-+		/* Name/data length check */
-+		name_len = btrfs_dir_name_len(leaf, di);
-+		data_len = btrfs_dir_data_len(leaf, di);
-+		if (name_len > max_name_len) {
-+			dir_item_err(root, leaf, slot,
-+			"dir item name len too long, have %u max %u",
-+				name_len, max_name_len);
-+			return -EUCLEAN;
-+		}
-+		if (name_len + data_len > BTRFS_MAX_XATTR_SIZE(root->fs_info)) {
-+			dir_item_err(root, leaf, slot,
-+			"dir item name and data len too long, have %u max %u",
-+				name_len + data_len,
-+				BTRFS_MAX_XATTR_SIZE(root->fs_info));
-+			return -EUCLEAN;
-+		}
-+
-+		if (data_len && dir_type != BTRFS_FT_XATTR) {
-+			dir_item_err(root, leaf, slot,
-+			"dir item with invalid data len, have %u expect 0",
-+				data_len);
-+			return -EUCLEAN;
-+		}
-+
-+		total_size = sizeof(*di) + name_len + data_len;
-+
-+		/* header and name/data should not cross item boundary */
-+		if (cur + total_size > item_size) {
-+			dir_item_err(root, leaf, slot,
-+		"dir item data crosses item boundary, have %u boundary %u",
-+				cur + total_size, item_size);
-+			return -EUCLEAN;
-+		}
-+
-+		/*
-+		 * Special check for XATTR/DIR_ITEM, as key->offset is name
-+		 * hash, should match its name
-+		 */
-+		if (key->type == BTRFS_DIR_ITEM_KEY ||
-+		    key->type == BTRFS_XATTR_ITEM_KEY) {
-+			read_extent_buffer(leaf, namebuf,
-+					(unsigned long)(di + 1), name_len);
-+			name_hash = btrfs_name_hash(namebuf, name_len);
-+			if (key->offset != name_hash) {
-+				dir_item_err(root, leaf, slot,
-+		"name hash mismatch with key, have 0x%016x expect 0x%016llx",
-+					name_hash, key->offset);
-+				return -EUCLEAN;
-+			}
-+		}
-+		cur += total_size;
-+		di = (struct btrfs_dir_item *)((void *)di + total_size);
-+	}
-+	return 0;
-+}
-+
- /*
-  * Common point to switch the item-specific validation.
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 0eac4344477a..45bf0e5775f7 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1288,7 +1288,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+  * collapse_shmem - collapse small tmpfs/shmem pages into huge one.
+  *
+  * Basic scheme is simple, details are more complex:
+- *  - allocate and freeze a new huge page;
++ *  - allocate and lock a new huge page;
+  *  - scan over radix tree replacing old pages the new one
+  *    + swap in pages if necessary;
+  *    + fill in gaps;
+@@ -1296,11 +1296,11 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+  *  - if replacing succeed:
+  *    + copy data over;
+  *    + free old pages;
+- *    + unfreeze huge page;
++ *    + unlock huge page;
+  *  - if replacing failed;
+  *    + put all pages back and unfreeze them;
+  *    + restore gaps in the radix-tree;
+- *    + free huge page;
++ *    + unlock and free huge page;
   */
-@@ -191,6 +327,11 @@ static int check_leaf_item(struct btrfs_root *root,
- 	case BTRFS_EXTENT_CSUM_KEY:
- 		ret = check_csum_item(root, leaf, key, slot);
- 		break;
-+	case BTRFS_DIR_ITEM_KEY:
-+	case BTRFS_DIR_INDEX_KEY:
-+	case BTRFS_XATTR_ITEM_KEY:
-+		ret = check_dir_item(root, leaf, key, slot);
-+		break;
+ static void collapse_shmem(struct mm_struct *mm,
+ 		struct address_space *mapping, pgoff_t start,
+@@ -1337,13 +1337,11 @@ static void collapse_shmem(struct mm_struct *mm,
+ 	__SetPageSwapBacked(new_page);
+ 	new_page->index = start;
+ 	new_page->mapping = mapping;
+-	BUG_ON(!page_ref_freeze(new_page, 1));
+ 
+ 	/*
+-	 * At this point the new_page is 'frozen' (page_count() is zero), locked
+-	 * and not up-to-date. It's safe to insert it into radix tree, because
+-	 * nobody would be able to map it or use it in other way until we
+-	 * unfreeze it.
++	 * At this point the new_page is locked and not up-to-date.
++	 * It's safe to insert it into the page cache, because nobody would
++	 * be able to map it or use it in another way until we unlock it.
+ 	 */
+ 
+ 	index = start;
+@@ -1521,9 +1519,8 @@ static void collapse_shmem(struct mm_struct *mm,
+ 			index++;
+ 		}
+ 
+-		/* Everything is ready, let's unfreeze the new_page */
+ 		SetPageUptodate(new_page);
+-		page_ref_unfreeze(new_page, HPAGE_PMD_NR);
++		page_ref_add(new_page, HPAGE_PMD_NR - 1);
+ 		set_page_dirty(new_page);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, true);
+ 		lru_cache_add_anon(new_page);
+@@ -1571,8 +1568,6 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		VM_BUG_ON(nr_none);
+ 		spin_unlock_irq(&mapping->tree_lock);
+ 
+-		/* Unfreeze new_page, caller would take care about freeing it */
+-		page_ref_unfreeze(new_page, 1);
+ 		mem_cgroup_cancel_charge(new_page, memcg, true);
+ 		new_page->mapping = NULL;
  	}
- 	return ret;
- }
 -- 
 2.17.1
 
