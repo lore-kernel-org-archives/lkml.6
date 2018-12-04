@@ -2,167 +2,150 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B41C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32431C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F07520851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA3B420878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eepc9sIc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F07520851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LElqGA/l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3B420878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeLECEN (ORCPT
+        id S1726884AbeLECEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:04:13 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37505 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeLECEM (ORCPT
+        Tue, 4 Dec 2018 21:04:31 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33652 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLECEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:04:12 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so9257385plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:04:12 -0800 (PST)
+        Tue, 4 Dec 2018 21:04:31 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r24so10682931wmh.0;
+        Tue, 04 Dec 2018 18:04:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i3JsgtrqAN5H4/62bquhrPpBfGUUSoPEdhvl1dbkYbs=;
-        b=eepc9sIcinu14ossbMKi6r5YOGzfTM3eRYX44Tmcrg+WP+3cog+CDlnsHvBF92H0Bv
-         teD19ZRIfdpYf8yGAd0ZcRf7H3jJyym+Bxprtk4Vf21KZhcFOhZkwBKr94o+NaEZDTCS
-         CTeIjO31zPInUobd4PhnZ25h/Z4WMldOfKbbQ=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mOy+nKu5z+rsGfEFNwh16KQcrlf0QFH4TwKHmcs0Qgg=;
+        b=LElqGA/lWbIDX9Oic9QmaHhfogWzxnK7Vmc1vyjPJ8aFJta/rfC7odb30j7KSO2IN5
+         I9QerJYYVbYtPwF9llJ/425IT6cxvgIQYCgLMEcrYNwGFaCHlFUkE8lxANwWEDh+se4K
+         xSCnGmx/9WOfEcFq8etgry90goBFp9if5Rwz72ImxuaURYLXjdE9JVYDlByY9Nvo7xW/
+         4saHxqWNqG8LDhnCHN+qPb+nM/AkXDNZiu9sV++j3b2ezTvwcKXTAyel5Qvf/PWFGery
+         eS000ZbzntAaappehQdaDNQYFa5PVdc+sCi/DcVSKkUI47xWN/vBIf9l4HYIwravnbzE
+         1akA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i3JsgtrqAN5H4/62bquhrPpBfGUUSoPEdhvl1dbkYbs=;
-        b=rgKXwkb9CRNvkF74WUpwTy5q1+vvOQSuU2KJ9/AUKjsyOCiVr+BfPttCv3wb/S3PpD
-         5+tfUbk2i1ECEyUWlpEhw78sLkZj6yKxNcK9qtN8szVA/dm4syZg7Y0liYNOH6V4oI/3
-         Hgv9WzOYZEJKxtgMme/pv3nnxGlCQ8aUq/yzwOCC+X2u6ZKijGKkEjsaUaV5EAOIebig
-         1TEK3YRfLeuid+MVWviOKIbP0xEAhW67C8m00lXdNmHEBiUPCiM10LAynuiHiX9BpRzy
-         Di6/oSG2g+n8A74l3FKfvJXLYZal0kOMLjNegbS87x/ax5uWwIYK4tBiQAxes/P9w7d8
-         6W3A==
-X-Gm-Message-State: AA+aEWbCxLI208zDPNV4zyp3heY4YDkA3AWedn4+8TJNy2iV/AwmJwKg
-        e16qzuTWfrCjUsljis/D64OgB3Jvusk01NCF7C/REA==
-X-Google-Smtp-Source: AFSGD/XkSLlsQ2LyQJlYMf6he297+QTPtJacZ8h5UKZsc5Chi+WrL+4hsQ58t0vMNLCbflwAyopTZFDzg1MUY7WX3tc=
-X-Received: by 2002:a17:902:2904:: with SMTP id g4mr22170720plb.39.1543975451744;
- Tue, 04 Dec 2018 18:04:11 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mOy+nKu5z+rsGfEFNwh16KQcrlf0QFH4TwKHmcs0Qgg=;
+        b=iEbUywbtJgjaXOWn4NvK43qWKcN8zjsfh7nLLQiClLdY39iRrhl+SVECQIizFzP58J
+         7axVo/b6+VWzMpq/A49TaCIY9hegfLhjw6oKahK6EY1NepyUrBXfyXXy9etBxG1HBGyS
+         s0JiHQIhrBPQ3oDykOsfPUC3TzsRGoelMHbp6SrXq0KoNsc3uzV3HyI76lyMvJ59NIvB
+         0nGqhdAJFaQSykpDj0hU9guF8k9mlwjGD0NmFbj65C3Re+3NoVDo4BaAtG3FH18Rw2UY
+         dVGu2i+dVZyzK8PvdPGwj4Hss6w7IgK879zGtOm4j4/NEoGf83d6KVWx4zv05OKzo/YO
+         o+5Q==
+X-Gm-Message-State: AA+aEWY5FWdP8eqscde0CRtkx8Tqp0DzJqFH1rkiM3RdXNjOhQZO6RN3
+        CRgLecmja+xA8VyyBR8frvpE5tU2
+X-Google-Smtp-Source: AFSGD/Xtuzj8pRLmuYRZhkWnfHHmggbFNk1lBKkDfrhxr+epaxvple2UsGWkiTkrt50ah/fkvQJj9g==
+X-Received: by 2002:a1c:8acd:: with SMTP id m196mr5255848wmd.120.1543975469365;
+        Tue, 04 Dec 2018 18:04:29 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id d4sm13811001wrp.89.2018.12.04.18.04.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 18:04:28 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
+ <1543828720-18345-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
+Date:   Tue, 4 Dec 2018 19:19:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <CANMq1KDxmRcWhtaJbrLHqx6yPGkNaK7WNYYf+iFjH1e8XdrwRg@mail.gmail.com> <b99dd00f-fe1c-1cac-8ee3-5b0c1af9a92e@suse.cz>
-In-Reply-To: <b99dd00f-fe1c-1cac-8ee3-5b0c1af9a92e@suse.cz>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 5 Dec 2018 10:04:00 +0800
-Message-ID: <CANMq1KDzKJqJwGsW3A90JY_0kgDtAMjOikT-3C9zQG01=3dibQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>, hch@infradead.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>, Tomasz Figa <tfiga@google.com>,
-        yingjoe.chen@mediatek.com, Hsin-Yi Wang <hsinyi@chromium.org>,
-        Daniel Kurtz <djkurtz@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1543828720-18345-3-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 10:35 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 12/4/18 10:37 AM, Nicolas Boichat wrote:
-> > On Sun, Nov 11, 2018 at 5:04 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> >>
-> >> This is a follow-up to the discussion in [1], to make sure that the page
-> >> tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
-> >> physical address space.
-> >>
-> >> [1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
-> >
-> > Hi everyone,
-> >
-> > Let's try to summarize here.
-> >
-> > First, we confirmed that this is a regression, and IOMMU errors happen
-> > on 4.19 and linux-next/master on MT8173 (elm, Acer Chromebook R13).
-> > The issue most likely starts from ad67f5a6545f ("arm64: replace
-> > ZONE_DMA with ZONE_DMA32"), i.e. 4.15, and presumably breaks a number
-> > of Mediatek platforms (and maybe others?).
-> >
-> > We have a few options here:
-> > 1. This series [2], that adds support for GFP_DMA32 slab caches,
-> > _without_ adding kmalloc caches (since there are no users of
-> > kmalloc(..., GFP_DMA32)). I think I've addressed all the comments on
-> > the 3 patches, and AFAICT this solution works fine.
-> > 2. genalloc. That works, but unless we preallocate 4MB for L2 tables
-> > (which is wasteful as we usually only need a handful of L2 tables),
-> > we'll need changes in the core (use GFP_ATOMIC) to allow allocating on
-> > demand, and as it stands we'd have no way to shrink the allocation.
-> > 3. page_frag [3]. That works fine, and the code is quite simple. One
-> > drawback is that fragments in partially freed pages cannot be reused
-> > (from limited experiments, I see that IOMMU L2 tables are rarely
-> > freed, so it's unlikely a whole page would get freed). But given the
-> > low number of L2 tables, maybe we can live with that.
-> >
-> > I think 2 is out. Any preference between 1 and 3? I think 1 makes
-> > better use of the memory, so that'd be my preference. But I'm probably
-> > missing something.
->
-> I would prefer 1 as well. IIRC you already confirmed that alignment
-> requirements are not broken for custom kmem caches even in presence of
-> SLUB debug options (and I would say it's a bug to be fixed if they
-> weren't).
+On 12/03/2018 10:18 AM, Mason Yang wrote:
+> Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
 
-> I just asked (and didn't get a reply I think) about your
-> ability to handle the GFP_ATOMIC allocation failures. They should be
-> rare when only single page allocations are needed for the kmem cache.
-> But in case they are not an option, then preallocating would be needed,
-> thus probably option 2.
+RPC is SPI and HF controller, it is not a pure SPI controller.
 
-Oh, sorry, I missed your question.
+How does this deal with the HF part ? Keep in mind the bindings are ABI
+and it will be difficult to redo them later.
 
-I don't have a full answer, but:
-- The allocations themselves are rare (I count a few 10s of L2 tables
-at most on my system, I assume we rarely have >100), and yes, we only
-need a single page, so the failures should be exceptional.
-- My change is probably not making anything worse: I assume that even
-with the current approach using GFP_DMA slab caches on older kernels,
-failures could potentially happen. I don't think we've seen those. If
-we are really concerned about this, maybe we'd need to modify
-mtk_iommu_map to not hold a spinlock (if that's possible), so we don't
-need to use GFP_ATOMIC. I suggest we just keep an eye on such issues,
-and address them if they show up (we can even revisit genalloc at that
-stage).
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> new file mode 100644
+> index 0000000..c6c6d9c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,35 @@
+> +Renesas R-Car Gen3 RPC controller Device Tree Bindings
+> +------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,r8a77995-rpc"
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "rpc_regs" and "dirmap"
+> +- interrupts: interrupt line connected to the RPC SPI controller
 
-Anyway, I'll clean up patches for 1 (mostly commit message changes
-based on the comments in the threads) and resend.
+Not a SPI controller.
 
-Thanks,
+> +- clock-names: should contain "clk_rpc"
+> +- clocks: should contain 1 entries for the module's clock
+> +
+> +Example:
+> +
+> +	rpc: spi@ee200000 {
+> +		compatible = "renesas,r8a77995-rpc";
+> +		reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
+> +		reg-names = "rpc_regs", "dirmap";
+> +		clocks = <&cpg CPG_MOD 917>;
+> +		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +		resets = <&cpg 917>;
+> +		clock-names = "clk_rpc";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		flash@0 {
+> +			compatible = "jedec,spi-nor";
+> +			reg = <0>;
+> +			spi-max-frequency = <40000000>;
+> +			spi-tx-bus-width = <1>;
+> +			spi-rx-bus-width = <1>;
+> +		};
+> +	};
+> 
 
-> > [2] https://patchwork.kernel.org/cover/10677529/, 3 patches
-> > [3] https://patchwork.codeaurora.org/patch/671639/
-> >
-> > Thanks,
-> >
-> > Nicolas
-> >
->
+
+-- 
+Best regards,
+Marek Vasut
