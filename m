@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9856C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F67C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD222087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2816B2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JepZnja5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD222087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNbmPS2P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2816B2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbeLDLP1 (ORCPT
+        id S1728299AbeLDLGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:15:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54894 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:06:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbeLDLG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:28 -0500
+        id S1727909AbeLDLGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFFE42087F;
-        Tue,  4 Dec 2018 11:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89465214DB;
+        Tue,  4 Dec 2018 11:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921587;
-        bh=OEUjJZTk6J7zqX/8ikeYGKOT9dUxBRJlClymZt0e5jY=;
+        s=default; t=1543921577;
+        bh=v+E1mLIL6NOxv5K1/ToSxlj0P3UY/ru/KajIqiqOg7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JepZnja5JDW+6+EXRBsTU9NEeAgAiAdbo9yd5cR83d0SCxkV6xNd9nSxaIkkB7uh/
-         nVDBjvitW6W9AKM+le7iOykVrXmeDneQGkQ6jMFDHYYtVejOPr4Dq4CtbJ6DIewlmK
-         GRd4nl2sb9VVwvojfzySfZItvZk3WR29F2vsxth0=
+        b=sNbmPS2PLqahty6YuAihXD/EweWdrP2G7PdBJw7Zvzh923esNplToXWlAsn2a+MaL
+         vDAYAv19KYSUiSa726wChsailydLq0rZ526FL+Wox7wP6vzs0erkKd2jt9HKy9W75p
+         Q3GzqJ6L8zNlx5MAHJPg/X78VG81Gm+HNSBZxpBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 129/146] ALSA: hda/realtek - Support ALC300
-Date:   Tue,  4 Dec 2018 11:50:15 +0100
-Message-Id: <20181204103732.021639644@linuxfoundation.org>
+Subject: [PATCH 4.14 125/146] ALSA: wss: Fix invalid snd_free_pages() at error path
+Date:   Tue,  4 Dec 2018 11:50:11 +0100
+Message-Id: <20181204103731.862572982@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -63,68 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 1078bef0cd9291355a20369b21cd823026ab8eaa upstream.
+commit 7b69154171b407844c273ab4c10b5f0ddcd6aa29 upstream.
 
-This patch will enable ALC300.
+Some spurious calls of snd_free_pages() have been overlooked and
+remain in the error paths of wss driver code.  Since runtime->dma_area
+is managed by the PCM core helper, we shouldn't release manually.
 
-[ It's almost equivalent with other ALC269-compatible ones, and
-  apparently has no loopback mixer -- tiwai ]
+Drop the superfluous calls.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ sound/isa/wss/wss_lib.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -343,6 +343,7 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0285:
- 	case 0x10ec0298:
- 	case 0x10ec0289:
-+	case 0x10ec0300:
- 		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
- 		break;
- 	case 0x10ec0275:
-@@ -2758,6 +2759,7 @@ enum {
- 	ALC269_TYPE_ALC215,
- 	ALC269_TYPE_ALC225,
- 	ALC269_TYPE_ALC294,
-+	ALC269_TYPE_ALC300,
- 	ALC269_TYPE_ALC700,
- };
- 
-@@ -2792,6 +2794,7 @@ static int alc269_parse_auto_config(stru
- 	case ALC269_TYPE_ALC215:
- 	case ALC269_TYPE_ALC225:
- 	case ALC269_TYPE_ALC294:
-+	case ALC269_TYPE_ALC300:
- 	case ALC269_TYPE_ALC700:
- 		ssids = alc269_ssids;
- 		break;
-@@ -7089,6 +7092,10 @@ static int patch_alc269(struct hda_codec
- 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
- 		break;
-+	case 0x10ec0300:
-+		spec->codec_variant = ALC269_TYPE_ALC300;
-+		spec->gen.mixer_nid = 0; /* no loopback on ALC300 */
-+		break;
- 	case 0x10ec0700:
- 	case 0x10ec0701:
- 	case 0x10ec0703:
-@@ -8160,6 +8167,7 @@ static const struct hda_device_id snd_hd
- 	HDA_CODEC_ENTRY(0x10ec0295, "ALC295", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
- 	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
-+	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
- 	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660", patch_alc861),
- 	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
- 	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
+--- a/sound/isa/wss/wss_lib.c
++++ b/sound/isa/wss/wss_lib.c
+@@ -1531,7 +1531,6 @@ static int snd_wss_playback_open(struct
+ 	if (err < 0) {
+ 		if (chip->release_dma)
+ 			chip->release_dma(chip, chip->dma_private_data, chip->dma1);
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
+ 		return err;
+ 	}
+ 	chip->playback_substream = substream;
+@@ -1572,7 +1571,6 @@ static int snd_wss_capture_open(struct s
+ 	if (err < 0) {
+ 		if (chip->release_dma)
+ 			chip->release_dma(chip, chip->dma_private_data, chip->dma2);
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
+ 		return err;
+ 	}
+ 	chip->capture_substream = substream;
 
 
