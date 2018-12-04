@@ -2,146 +2,182 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704A8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA869C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395582081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395582081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D1B72081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:22:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1B72081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeLDPWO (ORCPT
+        id S1726898AbeLDPWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:22:14 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37784 "EHLO mail.bootlin.com"
+        Tue, 4 Dec 2018 10:22:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56710 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbeLDPWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:22:13 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 09BB620736; Tue,  4 Dec 2018 16:22:09 +0100 (CET)
-Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BB33F20711;
-        Tue,  4 Dec 2018 16:21:58 +0100 (CET)
-Date:   Tue, 4 Dec 2018 16:21:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 04/21] drm/sun4i: frontend: Pass DRM format info to
- input mode helper
-Message-ID: <20181204152158.rclvmyql6ct5jley@flea>
-References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
- <20181204142218.16284-5-paul.kocialkowski@bootlin.com>
+        id S1726151AbeLDPWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 10:22:50 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A96AD3084218;
+        Tue,  4 Dec 2018 15:22:49 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 65CA1611D2;
+        Tue,  4 Dec 2018 15:22:49 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 00ABF2208FC; Tue,  4 Dec 2018 10:22:48 -0500 (EST)
+Date:   Tue, 4 Dec 2018 10:22:48 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181204152248.GB21509@redhat.com>
+References: <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov>
+ <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov>
+ <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
+ <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+ <20181204151549.GA21509@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qmeysasvn3o4kko2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204142218.16284-5-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181204151549.GA21509@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Dec 2018 15:22:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 04, 2018 at 10:15:49AM -0500, Vivek Goyal wrote:
+> On Tue, Dec 04, 2018 at 09:30:53AM -0500, Stephen Smalley wrote:
+> > On 12/4/18 8:32 AM, Miklos Szeredi wrote:
+> > > On Thu, Nov 29, 2018 at 10:16 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > > 
+> > > > On 11/29/18 4:03 PM, Stephen Smalley wrote:
+> > > > > On 11/29/18 2:47 PM, Miklos Szeredi wrote:
+> > > > > > On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov>
+> > > > > > wrote:
+> > > > > > 
+> > > > > > > Possibly I misunderstood you, but I don't think we want to copy-up on
+> > > > > > > permission denial, as that would still allow the mounter to read/write
+> > > > > > > special files or execute regular files to which it would normally be
+> > > > > > > denied access, because the copy would inherit the context specified by
+> > > > > > > the mounter in the context mount case.  It still represents an
+> > > > > > > escalation of privilege for the mounter.  In contrast, the copy-up on
+> > > > > > > write behavior does not allow the mounter to do anything it could not do
+> > > > > > > already (i.e. read from the lower, write to the upper).
+> > > > > > 
+> > > > > > Let's get this straight:  when file is copied up, it inherits label
+> > > > > > from context=, not from label of lower file?
+> > > > > 
+> > > > > That's correct.  The overlay inodes are all assigned the label from the
+> > > > > context= mount option, and so are any upper inodes created through the
+> > > > > overlay.  At least that's my understanding of how it is supposed to
+> > > > > work.  The original use case was for containers with the lower dir
+> > > > > labeled with a context that is read-only to the container context and
+> > > > > using a context that is writable by the container context for the
+> > > > > context= mount.
+> > > > > 
+> > > > > > Next question: permission to change metadata is tied to permission to
+> > > > > > open?  Is it possible that open is denied, but metadata can be
+> > > > > > changed?
+> > > > > 
+> > > > > There is no metadata change occurring here. The overlay, upper, and
+> > > > > lower inodes all keep their labels intact for their lifetime (both
+> > > > > overlay and upper always have the context= label; upper has whatever its
+> > > >                                                     ^^lower^^
+> > > > 
+> > > > > original label was), unless explicitly relabeled by some process.  And
+> > > > > when viewed through the overlay, the file always has the label specified
+> > > > > via context=, even before the copy-up.
+> > > 
+> > > Okay.
+> > > 
+> > > > > 
+> > > > > > DAC model allows this: metadata change is tied to ownership, not mode
+> > > > > > bits.   And different capability flag.
+> > > > > > 
+> > > > > > If the same is true for MAC, then the pre-v4.20-rc1 is already
+> > > > > > susceptible to the privilege escalation you describe, right?
+> > > > > 
+> > > > > Actually, I guess there wouldn't be a privilege escalation if you
+> > > > > checked the mounter's ability to create the new file upon copy-up, and
+> > > > > checked the mounter's access to the upper inode label upon the
+> > > > > subsequent read, write, or execute access.  Then we'd typically block
+> > > > > the ability to create the device file and we'd block the ability to
+> > > > > execute files with the label from context=.
+> > > > > 
+> > > > > But copy-up of special files seems undesirable for other reasons (e.g.
+> > > > > requiring mounters to be allowed to create device nodes just to permit
+> > > > > client's to read/write them, possible implications for nodev/noexec,
+> > > > > implications for socket and fifo files).
+> > > 
+> > > I think you missed my point: opening a device file or executing an
+> > > executable wouldn't normally require copy-up.   If
+> > > 
+> > >   -  permission is granted on overlay to task, and
+> > >   -  permission is granted on lower layer to mounter,
+> > > 
+> > > then copy-up wouldn't be performed.
+> > > 
+> > > My proposed sequence would be
+> > > 
+> > > a) check task's creds against overlay inode, fail -> return fail, otherwise:
+> > > b) check mounter's creds against lower inode, success -> return
+> > > success, otherwise:
+> > > c) copy up inode, fail -> return fail, otherwise
+> > > d) check mounter's creds against upper inode, return result.
+> > > 
+> > > So, unlike write access to regular files, write access to special
+> > > files don't necessarily result in copy-up.
+> > > 
+> > > You say this is an escalation of privilege, but I don't get it how.
+> > > As DWalsh points out downthread, if mounter cannot create device
+> > > files, then the copy-up will simply fail.  If mounter can create
+> > > device files, then this is not an escalation of privilege for the
+> > > mounter.
+> > 
+> > Yes, in that case there isn't an escalation of privilege for the mounter (I
+> > acknowledged that above).  I'm still not sure copy-up of special files is a
+> > good idea though:
+> > 
+> > - In the case of device files, there is the potential for mischief by the
+> > client task in misusing the mounter's privileges to gain access to otherwise
+> > unusable device node (nodev lower vs upper?),
+> 
+> I was thinking about it as well. But client can always bypass permissions
+> of lower device inode by first removing device file and then by doing
+> a mknod. And that will be equivalent of copy up. IOW, IIUC, we do not deny
+> mknod to client and that always creates a way for it to write to device
+> file (and it does not matter what are permissions on lower?)
 
---qmeysasvn3o4kko2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Having said that, this still create little anomaly when mknod to client
+is not allowed on context label. So a device file, which is on lower
+and client can not open it for read/write on host, it can now be opened
+for read/write because mounter will allow access. So why it is different
+that regular copy up. Well, in regular copy up, we created a copy of
+the original object and allowed writing to that object (cp --preserve=all)
+model. But in case of device file, writes will go to same original
+object. (And not a separate copy).
 
-On Tue, Dec 04, 2018 at 03:22:01PM +0100, Paul Kocialkowski wrote:
-> The helper returning the input mode needs to know the number of planes
-> for the provided format. Passing the fourcc requires iterating through
-> the format info list in order to return the number of planes.
->=20
-> Pass the DRM format info structure directly instead, since it's
-> available to the caller. Also rename the input format in the caller
-> function to keep things consistent.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_frontend.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun=
-4i/sun4i_frontend.c
-> index 1a7ebc45747e..c436fa97928f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> @@ -116,9 +116,11 @@ static int sun4i_frontend_drm_format_to_input_fmt(ui=
-nt32_t fmt, u32 *val)
->  	}
->  }
-> =20
-> -static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *va=
-l)
-> +static int
-> +sun4i_frontend_drm_format_to_input_mode(const struct drm_format_info *fo=
-rmat,
-> +					u32 *val)
->  {
-> -	if (drm_format_num_planes(fmt) =3D=3D 1)
-> +	if (format->num_planes =3D=3D 1)
->  		*val =3D SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED;
->  	else
->  		return -EINVAL;
-> @@ -183,12 +185,13 @@ int sun4i_frontend_update_formats(struct sun4i_fron=
-tend *frontend,
->  {
->  	struct drm_plane_state *state =3D plane->state;
->  	struct drm_framebuffer *fb =3D state->fb;
-> -	uint32_t format =3D fb->format->format;
-> +	const struct drm_format_info *format =3D fb->format;
->  	u32 out_fmt_val;
->  	u32 in_fmt_val, in_mod_val, in_ps_val;
->  	int ret;
-> =20
-> -	ret =3D sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
-> +	ret =3D sun4i_frontend_drm_format_to_input_fmt(format->format,
-> +						     &in_fmt_val);
->  	if (ret) {
->  		DRM_DEBUG_DRIVER("Invalid input format\n");
->  		return ret;
-> @@ -200,7 +203,8 @@ int sun4i_frontend_update_formats(struct sun4i_fronte=
-nd *frontend,
->  		return ret;
->  	}
-> =20
-> -	ret =3D sun4i_frontend_drm_format_to_input_sequence(format, &in_ps_val);
-> +	ret =3D sun4i_frontend_drm_format_to_input_sequence(format->format,
-> +							  &in_ps_val);
-
-To keep things really consistent, we should also convert those
-functions to get a drm_format_info pointer instead of the fourcc :)
-
-It can come as a later patch though.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---qmeysasvn3o4kko2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAablgAKCRDj7w1vZxhR
-xbaYAP9zYcfLDWwRHSXU8pqm4aNDYNt0WyMbJYv+h9Z/TWElbgEAupxGTM3QRuOO
-3pk1BQlS5v4jeD7cuC0VLI563zlARAU=
-=/Sxa
------END PGP SIGNATURE-----
-
---qmeysasvn3o4kko2--
+Thanks
+Vivek
