@@ -2,113 +2,134 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13722C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228FCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5098206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5098206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C5778206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5778206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeLDQ20 (ORCPT
+        id S1727020AbeLDQaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:28:26 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36382 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbeLDQ2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:28:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA797A78;
-        Tue,  4 Dec 2018 08:28:24 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 984D83F614;
-        Tue,  4 Dec 2018 08:28:24 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 022F71AE0BA0; Tue,  4 Dec 2018 16:28:44 +0000 (GMT)
-Date:   Tue, 4 Dec 2018 16:28:44 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>, hch@infradead.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>, Tomasz Figa <tfiga@google.com>,
-        yingjoe.chen@mediatek.com, Hsin-Yi Wang <hsinyi@chromium.org>,
-        Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page
- tables
-Message-ID: <20181204162844.GA8169@arm.com>
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <CANMq1KDxmRcWhtaJbrLHqx6yPGkNaK7WNYYf+iFjH1e8XdrwRg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANMq1KDxmRcWhtaJbrLHqx6yPGkNaK7WNYYf+iFjH1e8XdrwRg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 4 Dec 2018 11:30:06 -0500
+Received: from 8bytes.org ([81.169.241.247]:51468 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeLDQaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:30:06 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id A753E239; Tue,  4 Dec 2018 17:30:04 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 1/9] iommu: Introduce wrappers around dev->iommu_fwspec
+Date:   Tue,  4 Dec 2018 17:29:54 +0100
+Message-Id: <20181204163002.15800-2-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181204163002.15800-1-joro@8bytes.org>
+References: <20181204163002.15800-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:37:13PM +0800, Nicolas Boichat wrote:
-> On Sun, Nov 11, 2018 at 5:04 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> >
-> > This is a follow-up to the discussion in [1], to make sure that the page
-> > tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
-> > physical address space.
-> >
-> > [1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
-> 
-> Hi everyone,
-> 
-> Let's try to summarize here.
-> 
-> First, we confirmed that this is a regression, and IOMMU errors happen
-> on 4.19 and linux-next/master on MT8173 (elm, Acer Chromebook R13).
-> The issue most likely starts from ad67f5a6545f ("arm64: replace
-> ZONE_DMA with ZONE_DMA32"), i.e. 4.15, and presumably breaks a number
-> of Mediatek platforms (and maybe others?).
-> 
-> We have a few options here:
-> 1. This series [2], that adds support for GFP_DMA32 slab caches,
-> _without_ adding kmalloc caches (since there are no users of
-> kmalloc(..., GFP_DMA32)). I think I've addressed all the comments on
-> the 3 patches, and AFAICT this solution works fine.
-> 2. genalloc. That works, but unless we preallocate 4MB for L2 tables
-> (which is wasteful as we usually only need a handful of L2 tables),
-> we'll need changes in the core (use GFP_ATOMIC) to allow allocating on
-> demand, and as it stands we'd have no way to shrink the allocation.
-> 3. page_frag [3]. That works fine, and the code is quite simple. One
-> drawback is that fragments in partially freed pages cannot be reused
-> (from limited experiments, I see that IOMMU L2 tables are rarely
-> freed, so it's unlikely a whole page would get freed). But given the
-> low number of L2 tables, maybe we can live with that.
-> 
-> I think 2 is out. Any preference between 1 and 3? I think 1 makes
-> better use of the memory, so that'd be my preference. But I'm probably
-> missing something.
+From: Joerg Roedel <jroedel@suse.de>
 
-FWIW, I'm open to any solution at this point, since I'd like to see this
-regression fixed. (1) does sound better longer-term, but (3) looks pretty
-much ready to do afaict.
+These wrappers will be used to easily change the location of
+the field later when all users are converted.
 
-Will
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu.c | 14 +++++++-------
+ include/linux/iommu.h | 11 +++++++++++
+ 2 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index edbdf5d6962c..4cfd407b972c 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1976,7 +1976,7 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
+ 		      const struct iommu_ops *ops)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 
+ 	if (fwspec)
+ 		return ops == fwspec->ops ? 0 : -EINVAL;
+@@ -1988,26 +1988,26 @@ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
+ 	of_node_get(to_of_node(iommu_fwnode));
+ 	fwspec->iommu_fwnode = iommu_fwnode;
+ 	fwspec->ops = ops;
+-	dev->iommu_fwspec = fwspec;
++	dev_iommu_fwspec_set(dev, fwspec);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(iommu_fwspec_init);
+ 
+ void iommu_fwspec_free(struct device *dev)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 
+ 	if (fwspec) {
+ 		fwnode_handle_put(fwspec->iommu_fwnode);
+ 		kfree(fwspec);
+-		dev->iommu_fwspec = NULL;
++		dev_iommu_fwspec_set(dev, NULL);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(iommu_fwspec_free);
+ 
+ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
+ {
+-	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
++	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	size_t size;
+ 	int i;
+ 
+@@ -2016,11 +2016,11 @@ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
+ 
+ 	size = offsetof(struct iommu_fwspec, ids[fwspec->num_ids + num_ids]);
+ 	if (size > sizeof(*fwspec)) {
+-		fwspec = krealloc(dev->iommu_fwspec, size, GFP_KERNEL);
++		fwspec = krealloc(fwspec, size, GFP_KERNEL);
+ 		if (!fwspec)
+ 			return -ENOMEM;
+ 
+-		dev->iommu_fwspec = fwspec;
++		dev_iommu_fwspec_set(dev, fwspec);
+ 	}
+ 
+ 	for (i = 0; i < num_ids; i++)
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index a1d28f42cb77..f93fdcf7d130 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -398,6 +398,17 @@ void iommu_fwspec_free(struct device *dev);
+ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
+ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
+ 
++static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
++{
++	return dev->iommu_fwspec;
++}
++
++static inline void dev_iommu_fwspec_set(struct device *dev,
++					struct iommu_fwspec *fwspec)
++{
++	dev->iommu_fwspec = fwspec;
++}
++
+ #else /* CONFIG_IOMMU_API */
+ 
+ struct iommu_ops {};
+-- 
+2.17.1
+
