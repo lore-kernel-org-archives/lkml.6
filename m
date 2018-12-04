@@ -2,123 +2,146 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5222EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD9BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD0D2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:02:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieCoQ0us"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD0D2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 96E712081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 02:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E712081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbeLDCCc (ORCPT
+        id S1726007AbeLDCEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 21:02:32 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46041 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDCCb (ORCPT
+        Mon, 3 Dec 2018 21:04:41 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:57151 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeLDCEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 21:02:31 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so7351512pfd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 18:02:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8JsXgMVZT9WZ8I5xgo+nJJPXAjDGvJzYHctbA8LYiB8=;
-        b=ieCoQ0usOyvbvsTinWij+wbb8xxrltpPiE2NczmUVgA6DZvGqlVhiqN1DC2AXdvRTH
-         +965LOBpocJ43Yn5X+6i/pBwYjrwctQyJQYfcggBtELSvBrsVl0u12ZIuJOVyFCdJXSv
-         ICtkU+DUNScVFGbYpu+0rSo2HhEuVIzQxl5bw8zbVycFsSQtNVTaGIblgQALLURIqtic
-         yylPwEbHcueatK5nOab1BO3XJzq6c07kNc3dTpxjHNdqvAaI6lSUMOTt3JqJmXCQyX4j
-         nwqcR0lEhWuIZTJQrEpVRXl6Zd5YPMoL3zKau7WoiLMZQxOy8uMBDfEmOI/A4y6X5rND
-         1/AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8JsXgMVZT9WZ8I5xgo+nJJPXAjDGvJzYHctbA8LYiB8=;
-        b=CE+vZnBUEeW5calz9pYBOGbezlFbyk0uY5vIecZtqSeyuJXKJuOfOqVlXKvuI4aaQL
-         5IoRZf5kbvbCp4pNNOqW8BMIdgtvhvA7MxE2CqQ1UGYTischWmtOrfm6j+y9kfPTbkk/
-         X9y+ujmdR3p5ja9pC/tqJusnav7OeSEkmm/ah+MlPw8yUtPSZe4bN8EYuCtwz+sXHMfO
-         EVFQp/KsSaup85csJoZ/1tM65TBbs3hXbx8Z2G8IUE/EqSnQELWsTOktxmDMgCSTiqs4
-         HzaKnVXoEcGzHAn8HnjGsW8xKpxBnL420qPl4wxINzBkrf6VI9Xc0gJe6UgEGMQnzzEf
-         +r9w==
-X-Gm-Message-State: AA+aEWZhTS1iBjPBPYYEwnHHX+ezpcFxByA58gVhrrctUGpTHxIiV4sm
-        U13aRO5dQWdmm40M+9hKJe8=
-X-Google-Smtp-Source: AFSGD/W4cs8vZJOV2LC5zx4paycuKRO9w/Khqkuzrkhey0PrqKjqC8JDn6Ggg0iv0HsyiM7AWNVYew==
-X-Received: by 2002:a63:cb4a:: with SMTP id m10mr14614523pgi.105.1543888949534;
-        Mon, 03 Dec 2018 18:02:29 -0800 (PST)
-Received: from localhost ([175.223.44.178])
-        by smtp.gmail.com with ESMTPSA id y6sm19812672pfl.187.2018.12.03.18.02.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 18:02:28 -0800 (PST)
-Date:   Tue, 4 Dec 2018 11:02:24 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181204020224.GA7580@jagdpanzerIV>
-References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
- <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
- <1bd509ec-0a3a-55cc-d43b-02baa489019a@i-love.sakura.ne.jp>
+        Mon, 3 Dec 2018 21:04:41 -0500
+Received: from [10.28.18.81] (10.28.18.81) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 4 Dec 2018
+ 10:05:00 +0800
+Subject: Re: [PATCH] pinctrl: meson: fix G12A ao pull registers base address
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>
+CC:     <jbrunet@baylibre.com>, <khilman@baylibre.com>, <carlo@caione.org>,
+        <martin.blumenstingl@googlemail.com>, <robh@kernel.org>,
+        <jianxin.pan@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181203030533.10989-1-xingyu.chen@amlogic.com>
+ <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+Message-ID: <b3ccafc4-0bd2-273b-b0b2-96bbdeb9ee1b@amlogic.com>
+Date:   Tue, 4 Dec 2018 10:05:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1bd509ec-0a3a-55cc-d43b-02baa489019a@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <a240773f-7b05-d950-e5e9-23d7983c7f35@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.81]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/02/18 20:23), Tetsuo Handa wrote:
+
+
+On 2018/12/3 18:27, Neil Armstrong wrote:
+> Hi Xingyu,
 > 
-> Some examples for console output:
 > 
->   [    0.919699]@T1 x86: Booting SMP configuration:
->   [    4.152681]@T271 Fusion MPT base driver 3.04.20
->   [    5.070470]@C0 random: fast init done
->   [    6.587900]@C3 random: crng init done
-
-This is hard to read. Let's have a fixed width space for from_id.
-
-> +#ifdef CONFIG_PRINTK_FROM
-> +	if (in_task())
-> +		msg->from_id = current->pid;
-
-Let's use task_pid_nr().
-
-> -static size_t print_time(u64 ts, char *buf)
-> -{
-> -	unsigned long rem_nsec = do_div(ts, 1000000000);
-> -
-> -	if (!buf)
-> -		return snprintf(NULL, 0, "[%5lu.000000] ", (unsigned long)ts);
-> -
-> -	return sprintf(buf, "[%5lu.%06lu] ",
-> -		       (unsigned long)ts, rem_nsec / 1000);
-> -}
-
-OK, this patch depends on printk_time patch.
-
-> +config PRINTK_FROM
-> +	bool "Show caller information on printks"
-> +	depends on PRINTK
-
-Wasn't it supposed to also depend on DEBUG_AID_FOR_SYZBOT?
-
-	-ss
+> On 03/12/2018 04:05, Xingyu Chen wrote:
+>> Since Meson G12A SoC, Introduce new ao registers AO_RTI_PULL_UP_EN_REG
+>> and AO_GPIO_O.
+>>
+>> These bits of controlling output level are remapped to the new register
+>> AO_GPIO_O, and the AO_GPIO_O_EN_N support only controlling output enable.
+>>
+>> These bits of controlling pull enable are remapped to the new register
+>> AO_RTI_PULL_UP_EN_REG, and the AO_RTI_PULL_UP_REG support only controlling
+>> pull type(up/down).
+>>
+>> The new layout of ao gpio/pull registers is as follows:
+>> - AO_GPIO_O_EN_N        [offset: 0x9 << 2]
+>> - AO_GPIO_I             [offset: 0xa << 2]
+>> - AO_RTI_PULL_UP_REG    [offset: 0xb << 2]
+>> - AO_RTI_PULL_UP_EN_REG [offset: 0xc << 2]
+>> - AO_GPIO_O             [offset: 0xd << 2]
+>>
+>>  From above, we can see ao GPIO registers region has been separated by the
+>> ao pull registers. In order to ensure the continuity of the region on
+>> software, the ao GPIO and ao pull registers use the same base address, but
+>> can be identified by the offset.
+>>
+>> Fixes: 29ae0952e85f ("pinctrl: meson-g12a: add pinctrl driver support")
+>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>> ---
+>>   drivers/pinctrl/meson/pinctrl-meson.c | 22 ++++++++++++----------
+>>   1 file changed, 12 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+>> index 53d449076dee..7ff40cd7a0cb 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>> @@ -31,6 +31,9 @@
+>>    * In some cases the register ranges for pull enable and pull
+>>    * direction are the same and thus there are only 3 register ranges.
+>>    *
+>> + * Since Meson G12A SoC, the ao register ranges for gpio, pull enable
+>> + * and pull direction are the same, so there are only 2 register ranges.
+>> + *
+>>    * For the pull and GPIO configuration every bank uses a contiguous
+>>    * set of bits in the register sets described above; the same register
+>>    * can be shared by more banks with different offsets.
+>> @@ -487,23 +490,22 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
+>>   		return PTR_ERR(pc->reg_mux);
+>>   	}
+>>   
+>> -	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>> -	if (IS_ERR(pc->reg_pull)) {
+>> -		dev_err(pc->dev, "pull registers not found\n");
+>> -		return PTR_ERR(pc->reg_pull);
+>> +	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>> +	if (IS_ERR(pc->reg_gpio)) {
+>> +		dev_err(pc->dev, "gpio registers not found\n");
+>> +		return PTR_ERR(pc->reg_gpio);
+>>   	}
+>>   
+>> +	pc->reg_pull = meson_map_resource(pc, gpio_np, "pull");
+>> +	/* Use gpio region if pull one is not present */
+>> +	if (IS_ERR(pc->reg_pull))
+>> +		pc->reg_pull = pc->reg_gpio;
+>> +
+>>   	pc->reg_pullen = meson_map_resource(pc, gpio_np, "pull-enable");
+>>   	/* Use pull region if pull-enable one is not present */
+>>   	if (IS_ERR(pc->reg_pullen))
+>>   		pc->reg_pullen = pc->reg_pull;
+>>   
+>> -	pc->reg_gpio = meson_map_resource(pc, gpio_np, "gpio");
+>> -	if (IS_ERR(pc->reg_gpio)) {
+>> -		dev_err(pc->dev, "gpio registers not found\n");
+>> -		return PTR_ERR(pc->reg_gpio);
+>> -	}
+>> -
+>>   	return 0;
+>>   }
+>>   
+>>
+> Doesn't it need an update of the bindings ?
+> 
+> Neil
+> 
+Thanks, I will update it in next patch
+> .
+> 
