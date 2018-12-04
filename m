@@ -2,140 +2,193 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C67C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ADDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5497C206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:04:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OxM4LTAx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5497C206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 028692082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:06:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 028692082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeLDWEP (ORCPT
+        id S1726370AbeLDWGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:04:15 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41145 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeLDWEO (ORCPT
+        Tue, 4 Dec 2018 17:06:15 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34485 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeLDWGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:04:14 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so8896756pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=2uwV9K9lD7GjY7kJi/YZk4TItn6nz345cENCtA8i8Zc=;
-        b=OxM4LTAxEYSwPwRdIbGaipZ9XAmtPG80VcAg3dvjXGZPMqSgPfC64RUlyAqbhdjMDC
-         VwHl4EzYdAgQwdf3Sa/05Agqp+fjo88+hIyQQqBcTQf5objSSESSfssqzCZqX0KiNW1o
-         32LauellJH8ytHSKvpBVbMRtByOF/Qo+fX/ODKd1Xjp5XVe7DF1vsN2Qxunj0cwlpgSz
-         +b0eM1d8m5pAC985E9sBPNSNzm3sft9j9v+t5cGijSvgQB97HxWHktUI+f+qgBFQ3jRm
-         WD6tZerttHgeVlUZTja1L+xrZOG3g5C3XIrIB4CmXm3vklLJywG0Kzg0me/sQgo3iK5i
-         kDgA==
+        Tue, 4 Dec 2018 17:06:14 -0500
+Received: by mail-oi1-f196.google.com with SMTP id h25so15777142oig.1;
+        Tue, 04 Dec 2018 14:06:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=2uwV9K9lD7GjY7kJi/YZk4TItn6nz345cENCtA8i8Zc=;
-        b=jbHfVCUSvG2ebMFZpbzjQirVhlDR/XYrfMfAzVznaYNvDErjNTSDexdS3kDXTXLo3/
-         E19NGt/BgKIVgB8iF6z+K+o68jKjPmXa4OmU4teCCWC5hqJfPHp8HJ76twL0Wsb6N0c9
-         ur5Mi74e8NFjE/Sw3m7sklrG9gHL3k/gY2rWdfJbcP761iipsuiP2H8HfeHR/p01K3oe
-         RdWpWatdTvRchOGPsIOKF1/KTeMrO5Kw9sgeV6tDHRUz6qNCShfB1iElKExD0Z0faBNl
-         8WhCMvHY+Wohqn3J8fXuvRPa4kMNGZAIZ3syJCK97AkLidD/GRlNeyHUrpXjTVeHFbEd
-         mAqg==
-X-Gm-Message-State: AA+aEWaWGQXS4IiA78cS0MYhjaGCWV/FckoMM79Sin3gcLzLmYhCEbr6
-        PUCT0vcoXTBviSeKntNB4eTvdw==
-X-Google-Smtp-Source: AFSGD/U7XFus9oc/Trjpr1m8p8Ua6Ig/Fgtrr17Sf4cAi9FgI6oixMXKvXPiDrejfXeBwC8lk0zJRQ==
-X-Received: by 2002:a65:47ca:: with SMTP id f10mr18614523pgs.166.1543961052287;
-        Tue, 04 Dec 2018 14:04:12 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id f13sm26559778pfa.132.2018.12.04.14.04.10
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=od9oqItzrIx6N8qhcUsce2UF97+Rcb6AAq1qNYdYUms=;
+        b=gYf8HiwdROXEjwk2lBeu5evPeME6l3v9r7TqxugCOwkZV/pNbpiSS6lggy+xGyZEDU
+         e0Hx90NjWHyLKnss4iAjESQ44LkHjb/zVRsnT88VyDXPoinErGKvOvN+bgw/IKHUqN0R
+         vBge/Hh7kL6X47/QcX9lsnZJ5+RFAkgVej7cOYzkvWgKdSjN+X/NQanMkgs4CL7IEAj8
+         T+sEV0d7OHbTM5c40nhkoJR1jFCtQlBMFgWF9IQ/Mr85mW+5p+g7EbhDXDmMxiiFfG7g
+         RCzQiHbjCpiHV4chNOI9v4ewOj1KntdcYu8musf2Vfdu0FeyRY8ZNHYtJl0JPH9IUWw3
+         JeEA==
+X-Gm-Message-State: AA+aEWaZpEiGi+6o368A4tgHKnPwSvwPUaEOEO43K96biXBymw3SwcqB
+        dfpTgxwgPUQgpdQ4MOPfpKXcV/Q=
+X-Google-Smtp-Source: AFSGD/WFRoAGzTQtbPEZRj9VxZdwqWdXKlYK5I/jF+u+lIfGPuL/upokUdvnnmaByUAIONIwAbc4Ew==
+X-Received: by 2002:aca:ad14:: with SMTP id w20mr12901459oie.3.1543961173364;
+        Tue, 04 Dec 2018 14:06:13 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x4sm6353853otk.37.2018.12.04.14.06.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 14:04:11 -0800 (PST)
-Date:   Tue, 4 Dec 2018 14:04:10 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        Michal Hocko <mhocko@suse.com>, s.priebe@profihost.ag,
-        mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
- regressions
-In-Reply-To: <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
-Message-ID: <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com> <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 04 Dec 2018 14:06:12 -0800 (PST)
+Date:   Tue, 4 Dec 2018 16:06:12 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jolly Shah <jolly.shah@xilinx.com>
+Cc:     mark.rutland@arm.com, michal.simek@xilinx.com, rajanv@xilinx.com,
+        nava.manne@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jolly Shah <jollys@xilinx.com>
+Subject: Re: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
+Message-ID: <20181204220612.GA640@bogus>
+References: <1542412619-387-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542412619-387-1-git-send-email-jollys@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018, Vlastimil Babka wrote:
+On Fri, Nov 16, 2018 at 03:56:50PM -0800, Jolly Shah wrote:
+> Base firmware node and clock child node binding are part of mainline kernel. This patchset adds documentation to describe rest of the firmware child node bindings. 
+> Complete firmware DT node example is shown below for ease of understanding:
 
-> So, AFAIK, the situation is:
+Shouldn't there be a fpga mgr node too? Called pcap IIRC.
+
 > 
-> - commit 5265047ac301 in 4.1 introduced __GFP_THISNODE for THP. The
-> intention came a bit earlier in 4.0 commit 077fcf116c8c. (I admit acking
-> both as it seemed to make sense).
-
-Yes, both are based on the preference to fault local thp and fallback to 
-local pages before allocating remotely because it does not cause the 
-performance regression introduced by not setting __GFP_THISNODE.
-
-> - The resulting node-reclaim-like behavior regressed Andrea's KVM
-> workloads, but reverting it (only for madvised or non-default
-> defrag=always THP by commit ac5b2c18911f) would regress David's
-> workloads starting with 4.20 to pre-4.1 levels.
+> firmware {
+> 	zynqmp_firmware: zynqmp-firmware {
+> 		compatible = "xlnx,zynqmp-firmware";
+> 		method = "smc";
+> 		#power-domain-cells = <1>;
+> 		#reset-cells = <1>;
 > 
-
-Almost, but the defrag=always case had the subtle difference of also 
-setting __GFP_NORETRY whereas MADV_HUGEPAGE did not.  This was different 
-than the comment in __alloc_pages_slowpath() that expected thp fault 
-allocations to be caught by checking __GFP_NORETRY.
-
-> If the decision is that it's too late to revert a 4.1 regression for one
-> kind of workload in 4.20 because it causes regression for another
-> workload, then I guess we just revert ac5b2c18911f (patch 1) for 4.20
-> and don't rush a different fix (patch 2) to 4.20. It's not a big
-> difference if a 4.1 regression is fixed in 4.20 or 4.21?
+> 		zynqmp_clk: clock-controller {
+> 			#clock-cells = <1>;
+> 			compatible = "xlnx,zynqmp-clk";
+> 			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
+> 			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
+> 		};
 > 
-
-The revert is certainly needed to prevent the regression, yes, but I 
-anticipate that Andrea will report back that patch 2 at least improves the 
-situation for the problem that he was addressing, specifically that it is 
-pointless to thrash any node or reclaim unnecessarily when compaction has 
-already failed.  This is what setting __GFP_NORETRY for all thp fault 
-allocations fixes.
-
-> Because there might be other unexpected consequences of patch 2 that
-> testing won't be able to catch in the remaining 4.20 rc's. And I'm not
-> even sure if it will fix Andrea's workloads. While it should prevent
-> node-reclaim-like thrashing, it will still mean that KVM (or anyone)
-> won't be able to allocate THP's remotely, even if the local node is
-> exhausted of both huge and base pages.
+> 		zynqmp_power: zynqmp-power {
+> 			compatible = "xlnx,zynqmp-power";
+> 			interrupts = <0 35 4>;
+> 		};
 > 
+> 		nvmem_firmware {
+> 			compatible = "xlnx,zynqmp-nvmem-fw";
+> 			#address-cells = <1>;
+> 			#size-cells = <1>;
+> 
+> 			/* Data cells */
+> 			soc_revision: soc_revision {
+> 				reg = <0x0 0x4>;
+> 			};
+> 		};
+> 
+> 		afi0: afi0 {
+> 			compatible = "xlnx,afi-fpga";
+> 			config-afi = <0 2>, <1 1>, <2 1>;
+> 		};
+> 
+> 		qspi: spi@ff0f0000 {
 
-Patch 2 does nothing with respect to the remote allocation policy; it 
-simply prevents reclaim (and potentially thrashing).  Patch 1 sets 
-__GFP_THISNODE to prevent the remote allocation.
+Why is this under firmware node?
 
-Note that the commit to be reverted in patch 1, if not reverted, would 
-cause an even more severe regression from Andrea's case if remote memory 
-is fragmented as well: it opens the door to thrashing both local and 
-remote memory instead of only local memory.  I measured this as a 40% 
-allocation latency regression when purposefully fragmenting all nodes and 
-faulting without __GFP_THISNODE, and that was on Haswell; I can imagine it 
-would be even greater on Rome.
+> 			compatible = "xlnx,zynqmp-qspi-1.0";
+> 			clock-names = "ref_clk", "pclk";
+> 			clocks = <&misc_clk &misc_clk>;
+> 			interrupts = <0 15 4>;
+> 			interrupt-parent = <&gic>;
+> 			num-cs = <1>;
+> 			reg = <0x0 0xff0f0000 0x1000>,<0x0 0xc0000000 0x8000000>;
+> 		};
+> 
+> 		serdes: zynqmp_phy@fd400000 {
+
+And this?
+
+> 			compatible = "xlnx,zynqmp-psgtr";
+> 			status = "okay";
+> 			reg = <0x0 0xfd400000 0x0 0x40000>, <0x0 0xfd3d0000 0x0 0x1000>,
+> 				<0x0 0xff5e0000 0x0 0x1000>;
+> 			reg-names = "serdes", "siou", "lpd";
+> 
+> 			lane0: lane@0 {
+> 				#phy-cells = <4>;
+> 			};
+> 			lane1: lane@1 {
+> 				#phy-cells = <4>;
+> 			};
+> 			lane2: lane@2 {
+> 				#phy-cells = <4>;
+> 			};
+> 			lane3: lane@3 {
+> 				#phy-cells = <4>;
+> 			};
+> 		};
+> 
+> 		pinctrl_uart1_default: uart1-default {
+
+This goes under a pinctrl node.
+
+> 			mux {
+> 				groups = "uart0_4_grp";
+> 				function = "uart0";
+> 			};
+> 
+> 			conf {
+> 				groups = "uart0_4_grp";
+> 				slew-rate = <SLEW_RATE_SLOW>;
+> 				io-standard = <IO_STANDARD_LVCMOS18>;
+> 			};
+> 
+> 			conf-rx {
+> 				pins = "MIO18";
+> 				bias-high-impedance;
+> 			};
+> 
+> 			conf-tx {
+> 				pins = "MIO19";
+> 				bias-disable;
+> 				schmitt-cmos = <PIN_INPUT_TYPE_CMOS>;
+> 			};
+> 		};
+> 		zynqmp-r5-remoteproc@0 {
+
+Wrong unit-address and this doesn't belong here.
+
+> 			compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+
+'remoteproc' is what the h/w block is called?
+
+> 			reg = <0x0 0xFFE00000 0x0 0x10000>,
+> 				<0x0 0xFFE20000 0x0 0x10000>,
+> 				<0x0 0xff340000 0x0 0x100>;
+> 			reg-names = "tcm_a", "tcm_b", "ipi";
+> 			dma-ranges;
+> 			core_conf = "split0";
+> 			memory-region = <&rproc_0_fw_reserved>,
+> 					<&rproc_0_dma_reserved>;
+> 			tcm-pnode-id = <0xf>, <0x10>;
+> 			rpu-pnode-id = <0x7>;
+> 			interrupt-parent = <&gic>;
+> 			interrupts = <0 29 4>;
+> 		};
+> 	};
+> };
