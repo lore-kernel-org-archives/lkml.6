@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3036C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB86214D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B24D214DE
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:55:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8CGjNLB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB86214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCBIaiNS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B24D214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbeLDKzt (ORCPT
+        id S1726359AbeLDKzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:55:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38686 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:55:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbeLDKzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:55:45 -0500
+        id S1726336AbeLDKzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:55:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B5B8214C1;
-        Tue,  4 Dec 2018 10:55:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDAD2214D9;
+        Tue,  4 Dec 2018 10:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920944;
-        bh=R0mJtqZce4o6Y/HgqXNN/jURM/VpDgiINhL/DoQCFwU=;
+        s=default; t=1543920947;
+        bh=3W/qWBZbd32d1QgkJE4byJcup+1bCqps8eRtiHYHcmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S8CGjNLBqLgD1lcoBZz1jgxUv6H7oBfWTh4WYvm7byFE76YHUUlIF5wI/tuXxyamN
-         PzR2MBmKVFONQqedtjPXJr+MSU4EVYJQZYvcP0j+5abOGemez8I2mdiG6jF7zmmXhq
-         JNKXR6IH6E4o9v7K6TwIso4ZiX6TLONsBUVR8tBc=
+        b=cCBIaiNSU4NnwWVGhFDZ73gkm6mYwMmxxGbUEvv/QbMMGUPQR1OFrVFMLlS1MxOcV
+         3DnogwzbixBcG+nfgVND7oBUZt4abxSGDfYeDvgsLcK1CHc/ayczrup0fC2+KnXQlP
+         m5NO+trY9ddlJ+gByZfJisPtiEWcjAyMI647KsCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
+        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
+        Pavel Popa <pashinho1990@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 020/139] net: skb_scrub_packet(): Scrub offload_fwd_mark
-Date:   Tue,  4 Dec 2018 11:48:21 +0100
-Message-Id: <20181204103650.809480977@linuxfoundation.org>
+Subject: [PATCH 4.19 021/139] virtio-net: disable guest csum during XDP set
+Date:   Tue,  4 Dec 2018 11:48:22 +0100
+Message-Id: <20181204103650.849650686@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -65,50 +66,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit b5dd186d10ba59e6b5ba60e42b3b083df56df6f3 ]
+[ Upstream commit e59ff2c49ae16e1d179de679aca81405829aee6c ]
 
-When a packet is trapped and the corresponding SKB marked as
-already-forwarded, it retains this marking even after it is forwarded
-across veth links into another bridge. There, since it ingresses the
-bridge over veth, which doesn't have offload_fwd_mark, it triggers a
-warning in nbp_switchdev_frame_mark().
+We don't disable VIRTIO_NET_F_GUEST_CSUM if XDP was set. This means we
+can receive partial csumed packets with metadata kept in the
+vnet_hdr. This may have several side effects:
 
-Then nbp_switchdev_allowed_egress() decides not to allow egress from
-this bridge through another veth, because the SKB is already marked, and
-the mark (of 0) of course matches. Thus the packet is incorrectly
-blocked.
+- It could be overridden by header adjustment, thus is might be not
+  correct after XDP processing.
+- There's no way to pass such metadata information through
+  XDP_REDIRECT to another driver.
+- XDP does not support checksum offload right now.
 
-Solve by resetting offload_fwd_mark() in skb_scrub_packet(). That
-function is called from tunnels and also from veth, and thus catches the
-cases where traffic is forwarded between bridges and transformed in a
-way that invalidates the marking.
+So simply disable guest csum if possible in this the case of XDP.
 
-Fixes: 6bc506b4fb06 ("bridge: switchdev: Add forward mark support for stacked devices")
-Fixes: abf4bb6b63d0 ("skbuff: Add the offload_mr_fwd_mark field")
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Suggested-by: Ido Schimmel <idosch@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: 3f93522ffab2d ("virtio-net: switch off offloads on demand if possible on XDP set")
+Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Pavel Popa <pashinho1990@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/virtio_net.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4912,6 +4912,11 @@ void skb_scrub_packet(struct sk_buff *sk
- 	nf_reset(skb);
- 	nf_reset_trace(skb);
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -70,7 +70,8 @@ static const unsigned long guest_offload
+ 	VIRTIO_NET_F_GUEST_TSO4,
+ 	VIRTIO_NET_F_GUEST_TSO6,
+ 	VIRTIO_NET_F_GUEST_ECN,
+-	VIRTIO_NET_F_GUEST_UFO
++	VIRTIO_NET_F_GUEST_UFO,
++	VIRTIO_NET_F_GUEST_CSUM
+ };
  
-+#ifdef CONFIG_NET_SWITCHDEV
-+	skb->offload_fwd_mark = 0;
-+	skb->offload_mr_fwd_mark = 0;
-+#endif
-+
- 	if (!xnet)
- 		return;
+ struct virtnet_stat_desc {
+@@ -2285,9 +2286,6 @@ static int virtnet_clear_guest_offloads(
+ 	if (!vi->guest_offloads)
+ 		return 0;
  
+-	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))
+-		offloads = 1ULL << VIRTIO_NET_F_GUEST_CSUM;
+-
+ 	return virtnet_set_guest_offloads(vi, offloads);
+ }
+ 
+@@ -2297,8 +2295,6 @@ static int virtnet_restore_guest_offload
+ 
+ 	if (!vi->guest_offloads)
+ 		return 0;
+-	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))
+-		offloads |= 1ULL << VIRTIO_NET_F_GUEST_CSUM;
+ 
+ 	return virtnet_set_guest_offloads(vi, offloads);
+ }
 
 
