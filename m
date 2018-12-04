@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7321CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A22C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8FC2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF640214C1
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ytHwPkWE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8FC2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2csGMd/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF640214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeLDK7o (ORCPT
+        id S1727203AbeLDK7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbeLDK7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:40 -0500
+        id S1726541AbeLDK7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E17542087F;
-        Tue,  4 Dec 2018 10:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9511214D9;
+        Tue,  4 Dec 2018 10:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921179;
-        bh=rvDwJBwKE4jaHTdbpyWFnbkKBHR+ghP/r6U2bHMk2kQ=;
+        s=default; t=1543921187;
+        bh=+qon3sDx99rrMXoRx29FA0e69KBurroIWmKuiJ4bmy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytHwPkWEjI90BRsTHvBzPrN2UYBaK+NvwxhCA+088cLKYtKmV3b4mKT6nKLJCPf44
-         yyJ5mQCV1FeON3pO4uffgJ6xCsmH+avoCCITm0BKL/pT8c4s7y2f4+nQYJvSy72Zxz
-         OS+QlFaH7Oy5BGsoBsu3kLp4RQ27PwWfMhVwfWuE=
+        b=C2csGMd/2vRz7Tyj3t4lP1eGLMbSD4UokTM6Y7y5/it2Klr7WiV0Aeljbe6eai6t3
+         kQoLSNurvPVsBXqjzGEngyhEEQpXcztJw4XJBapxohf34w9nLP0dopvMTNu7cVG1Vs
+         IpYTwuNtoOKWXs5Jn5QCcRs88WJLZXeC9Cx1/Eqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        stable@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 110/139] MIPS: function_graph: Simplify with function_graph_enter()
-Date:   Tue,  4 Dec 2018 11:49:51 +0100
-Message-Id: <20181204103655.111327626@linuxfoundation.org>
+        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.19 079/139] PCI: layerscape: Fix wrong invocation of outbound window disable accessor
+Date:   Tue,  4 Dec 2018 11:49:20 +0100
+Message-Id: <20181204103653.414387867@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -66,72 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-commit 8712b27c5723c26400a2b350faf1d6d9fd7ffaad upstream.
+commit c6fd6fe9dea44732cdcd970f1130b8cc50ad685a upstream.
 
-The function_graph_enter() function does the work of calling the function
-graph hook function and the management of the shadow stack, simplifying the
-work done in the architecture dependent prepare_ftrace_return().
+The order of parameters is not correct when invoking the outbound
+window disable routine. Fix it.
 
-Have MIPS use the new code, and remove the shadow stack management as well as
-having to set up the trace structure.
-
-This is needed to prepare for a fix of a design bug on how the curr_ret_stack
-is used.
-
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 4a2745d760fa ("PCI: layerscape: Disable outbound windows configured by bootloader")
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+[lorenzo.pieralisi@arm.com: commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ftrace.c |   14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ drivers/pci/controller/dwc/pci-layerscape.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ftrace.c
-+++ b/arch/mips/kernel/ftrace.c
-@@ -322,7 +322,6 @@ void prepare_ftrace_return(unsigned long
- 			   unsigned long fp)
- {
- 	unsigned long old_parent_ra;
--	struct ftrace_graph_ent trace;
- 	unsigned long return_hooker = (unsigned long)
- 	    &return_to_handler;
- 	int faulted, insns;
-@@ -369,12 +368,6 @@ void prepare_ftrace_return(unsigned long
- 	if (unlikely(faulted))
- 		goto out;
+--- a/drivers/pci/controller/dwc/pci-layerscape.c
++++ b/drivers/pci/controller/dwc/pci-layerscape.c
+@@ -88,7 +88,7 @@ static void ls_pcie_disable_outbound_atu
+ 	int i;
  
--	if (ftrace_push_return_trace(old_parent_ra, self_ra, &trace.depth, fp,
--				     NULL) == -EBUSY) {
--		*parent_ra_addr = old_parent_ra;
--		return;
--	}
--
- 	/*
- 	 * Get the recorded ip of the current mcount calling site in the
- 	 * __mcount_loc section, which will be used to filter the function
-@@ -382,13 +375,10 @@ void prepare_ftrace_return(unsigned long
- 	 */
+ 	for (i = 0; i < PCIE_IATU_NUM; i++)
+-		dw_pcie_disable_atu(pcie->pci, DW_PCIE_REGION_OUTBOUND, i);
++		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
+ }
  
- 	insns = core_kernel_text(self_ra) ? 2 : MCOUNT_OFFSET_INSNS + 1;
--	trace.func = self_ra - (MCOUNT_INSN_SIZE * insns);
-+	self_ra -= (MCOUNT_INSN_SIZE * insns);
- 
--	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace)) {
--		current->curr_ret_stack--;
-+	if (function_graph_enter(old_parent_ra, self_ra, fp, NULL))
- 		*parent_ra_addr = old_parent_ra;
--	}
- 	return;
- out:
- 	ftrace_graph_stop();
+ static int ls1021_pcie_link_up(struct dw_pcie *pci)
 
 
