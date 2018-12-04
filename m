@@ -2,86 +2,83 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67009C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A93ACC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC662081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:14:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC662081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6982B2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6982B2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbeLDUOW (ORCPT
+        id S1726165AbeLDUOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:14:22 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33939 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLDUOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:14:21 -0500
-Received: by mail-oi1-f195.google.com with SMTP id h25so15493083oig.1;
-        Tue, 04 Dec 2018 12:14:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BxPFfJdn0iTqfmLdimZV9HsYmTTWR+DBvEKiSjlOSkA=;
-        b=O2L2wHk7SFHUZ/GsXgHV3xYsHFxbcJHw/tjz3coX3meVxQf/d5rqgRPCYQQ2V1BHZs
-         p3Bfz67JK1wBz5TXRdlbscOmXq1L7+/0Qde4ZxHvwhYHP9pUACWfn8FRC6PpiOmwuks3
-         9yu+7kkfxpSkG5VVhzhgO7IMJH7EEdONA1avtS0XAY9n9h8+Wo8RR4NxvXwXK6ldO4lV
-         nBIseHY8zG9oK1n7ojCsEIPJOQh38ge0EjV27GHqzXi15TLOhmgAnQQJhZYnmFMPT7Ub
-         C4tvlQJpSxXFUVAELMy0u22bRfyOhfBiyDS25KJCNA2YEiYF6uvCyNCTPkiPYfpifPBA
-         x9QQ==
-X-Gm-Message-State: AA+aEWYlf2kPtIfMW1c+u73qsSPZp7TtsSHG2uxik/j+tF69iWQ5NWgg
-        dSZzcm3h0h1VyEwbSyvfknqteEg=
-X-Google-Smtp-Source: AFSGD/Www5hngA3MxnIpBoVT7tMrQ0j4KR2OUYdZ4z5jJIv6sDhzuFxnXeskKVfdeh8mJOXPN5fcsg==
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr12556149oix.246.1543954460905;
-        Tue, 04 Dec 2018 12:14:20 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l9sm5474906otj.9.2018.12.04.12.14.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:14:20 -0800 (PST)
-Date:   Tue, 4 Dec 2018 14:14:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yael Chemla <yael.chemla@foss.arm.com>,
-        Ofir Drang <Ofir.Drang@arm.com>, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: crypto: ccree: add dt bindings for
- ccree 703
-Message-ID: <20181204201419.GA13304@bogus>
-References: <1542102039-22256-1-git-send-email-gilad@benyossef.com>
- <1542102039-22256-3-git-send-email-gilad@benyossef.com>
- <20181129064218.53qc33vus5anla76@gondor.apana.org.au>
+        Tue, 4 Dec 2018 15:14:33 -0500
+Received: from mga17.intel.com ([192.55.52.151]:44381 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbeLDUOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:14:33 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 12:14:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="115631846"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga002.jf.intel.com with ESMTP; 04 Dec 2018 12:14:32 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 39349300F9B; Tue,  4 Dec 2018 12:14:32 -0800 (PST)
+Date:   Tue, 4 Dec 2018 12:14:32 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+Message-ID: <20181204201432.GH18167@tassilo.jf.intel.com>
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <20181203233509.20671-3-jglisse@redhat.com>
+ <875zw98bm4.fsf@linux.intel.com>
+ <20181204182421.GC2937@redhat.com>
+ <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
+ <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129064218.53qc33vus5anla76@gondor.apana.org.au>
+In-Reply-To: <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 02:42:18PM +0800, Herbert Xu wrote:
-> On Tue, Nov 13, 2018 at 09:40:36AM +0000, Gilad Ben-Yossef wrote:
-> > Add device tree bindings associating Arm TrustZone CryptoCell 703 with the
-> > ccree driver.
-> > 
-> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> > ---
-> >  Documentation/devicetree/bindings/crypto/arm-cryptocell.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> 
-> Which tree is this patch meant to go through?
+> Also, in the same vein, I think it's wrong to have the API enumerate all
+> the different memory available in the system. The API should simply
 
-You should take it as it is part of a series.
+We need an enumeration API too, just to display to the user what they
+have, and possibly for applications to size their buffers 
+(all we do with existing NUMA nodes)
 
-Rob
+But yes the default usage should be to query for necessary attributes
+
+-Andi
