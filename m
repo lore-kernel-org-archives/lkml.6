@@ -2,134 +2,111 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8048FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF21BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4881C20659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4881C20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 976192081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:23:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="D/c6l9b8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976192081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbeLDNPH (ORCPT
+        id S1726145AbeLDNXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:15:07 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:33262 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbeLDNPG (ORCPT
+        Tue, 4 Dec 2018 08:23:49 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:20436 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbeLDNXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:15:06 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 7pF41z0163XaVaC01pF4ie; Tue, 04 Dec 2018 14:15:05 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUAXY-000627-U1; Tue, 04 Dec 2018 14:15:04 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUAXY-000697-RD; Tue, 04 Dec 2018 14:15:04 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Andreas Schwab <schwab@linux-m68k.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k: Fix crash in free_all_bootmem()
-Date:   Tue,  4 Dec 2018 14:14:55 +0100
-Message-Id: <20181204131456.23579-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 4 Dec 2018 08:23:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1543929828; x=1575465828;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=1p/Eim5pnFRbUZD4qPcV+RGM/ETPQdicBLu/APe9LiM=;
+  b=D/c6l9b8GW04rAMDF41f0Q+6LbLW/36RTlXMbqGXMEXpBLYtYZYPUoyE
+   AW2lTTj4vTxBHc9eCZFUjZOkT2WrSw2D6CxZwDAIvlbD+LaLZS/XGwTFu
+   msbKJWGEOJsx39SbTkFxDFAW5NsfJi+n3gQuwOfUELBY4yX1E+ZXsbtol
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="376130486"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Dec 2018 13:23:47 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id wB4DNe5W107292
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Tue, 4 Dec 2018 13:23:41 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wB4DNbm7020648;
+        Tue, 4 Dec 2018 14:23:37 +0100
+Subject: Re: Task group cleanups and optimizations (was: Re: [RFC 00/60]
+ Coscheduling for Linux)
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20180914111251.GC24106@hirez.programming.kicks-ass.net>
+ <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
+ <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
+ <20180917094844.GR24124@hirez.programming.kicks-ass.net>
+ <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
+ <20181123165102.GB4855@lerouge>
+From:   =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <0f025121-d3b2-36c9-5c0c-7db1d118f317@amazon.de>
+Date:   Tue, 4 Dec 2018 14:23:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181123165102.GB4855@lerouge>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running the kernel in Fast RAM on Atari:
+On 23/11/2018 17.51, Frederic Weisbecker wrote:
+> On Tue, Sep 18, 2018 at 03:22:13PM +0200, Jan H. Schönherr wrote:
+>> On 09/17/2018 11:48 AM, Peter Zijlstra wrote:
+>>> Right, so the whole bandwidth thing becomes a pain; the simplest
+>>> solution is to detect the throttle at task-pick time, dequeue and try
+>>> again. But that is indeed quite horrible.
+>>>
+>>> I'm not quite sure how this will play out.
+>>>
+>>> Anyway, if we pull off this flattening feat, then you can no longer use
+>>> the hierarchy for this co-scheduling stuff.
+>>
+>> Yeah. I might be a bit biased towards keeping or at least not fully throwing away
+>> the nesting of CFS runqueues. ;)
+> 
+> One detail here, is that hierarchical task group a strong requirement for cosched
+> or could you live with it flattened in the end?
 
-    Ignoring memory chunk at 0x0:0xe00000 before the first chunk
-    ...
-    Unable to handle kernel NULL pointer dereference at virtual address (ptrval)
-    Oops: 00000000
-    Modules linked in:
-    PC: [<0069dbac>] free_all_bootmem+0x12c/0x186
-    SR: 2714  SP: (ptrval)  a2: 005e3314
-    d0: 00000000    d1: 0000000a    d2: 00000e00    d3: 00000000
-    d4: 005e1fc0    d5: 0000001a    a0: 01000000    a1: 00000000
-    Process swapper (pid: 0, task=(ptrval))
-    Frame format=7 eff addr=00000736 ssw=0505 faddr=00000736
-    wb 1 stat/addr/data: 0000 00000000 00000000
-    wb 2 stat/addr/data: 0000 00000000 00000000
-    wb 3 stat/addr/data: 0000 00000736 00000000
-    push data: 00000000 00000000 00000000 00000000
-    Stack from 005e1f84:
-            00000000 0000000a 027d3260 006b5006 00000000 00000000 00000000 00000000
-            0004f062 0003a220 0069e272 005e1ff8 0000054c 00000000 00e00000 00000000
-            00000001 00693cd8 027d3260 0004f062 0003a220 00691be6 00000000 00000000
-            00000000 00000000 00000000 00000000 006b5006 00000000 00690872
-    Call Trace: [<0004f062>] printk+0x0/0x18
-     [<0003a220>] parse_args+0x0/0x2d4
-     [<0069e272>] memblock_virt_alloc_try_nid+0x0/0xa4
-     [<00693cd8>] mem_init+0xa/0x5c
-     [<0004f062>] printk+0x0/0x18
-     [<0003a220>] parse_args+0x0/0x2d4
-     [<00691be6>] start_kernel+0x1ca/0x462
-     [<00690872>] _sinittext+0x872/0x11f8
-    Code: 7a1a eaae 2270 6db0 0061 ef14 2f01 2f03 <96a9> 0736 2203 e589 d681 e78b d6a9 0732 2f03 2f40 0034 4eb9 0069 b8d0 260e 4fef
-    Disabling lock debugging due to kernel taint
-    Kernel panic - not syncing: Attempted to kill the idle task!
+Currently, it is a strong requirement.
 
-As the kernel must run in the memory chunk with the lowest address,
-ST-RAM is ignored, and removed from the m68k_memory[] array.
-However, it is not removed from memblock, causing a crash later.
+As mentioned at the bottom of https://lkml.org/lkml/2018/10/19/859 it should be
+possible to pull the hierarchical aspect out of CFS and implement it one level
+higher. But that would be a major re-design of everything.
 
-Fix this by removing ignored memory chunks from memblock.
+I use the hierarchical aspect to a) keep coscheduled groups in separate sets of runqeues,
+so that it is easy to select/balance tasks within a particular group; and b) to implement
+per-core, per-node, per-system runqueues that represent larger fractions of the system,
+which then fan out into per-CPU runqueues (eventually).
 
-Amigas with both Zorro II and Zorro III RAM have a similar issue, as on
-such systems, Zorro II RAM is ignored, and removed from the
-m68k_memory[] array.  Fix this as well.
-
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Fixes: 1008a11590b966b4 ("m68k: switch to MEMBLOCK + NO_BOOTMEM")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-The Amiga part is untested.
----
- arch/m68k/amiga/config.c | 2 ++
- arch/m68k/mm/motorola.c  | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index 65f63a4571300085..73e2bdf0f5ac8f2b 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -427,6 +427,8 @@ void __init config_amiga(void)
- 					continue;
- 				}
- 				disabled_z2mem += m68k_memory[i].size;
-+				memblock_remove(m68k_memory[i].addr,
-+						m68k_memory[i].size);
- 				m68k_num_memory--;
- 				for (j = i; j < m68k_num_memory; j++)
- 					m68k_memory[j] = m68k_memory[j+1];
-diff --git a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
-index 4e17ecb5928aae85..98706bfe10a9ac5e 100644
---- a/arch/m68k/mm/motorola.c
-+++ b/arch/m68k/mm/motorola.c
-@@ -233,6 +233,8 @@ void __init paging_init(void)
- 			printk("Ignoring memory chunk at 0x%lx:0x%lx before the first chunk\n",
- 				m68k_memory[i].addr, m68k_memory[i].size);
- 			printk("Fix your bootloader or use a memfile to make use of this area!\n");
-+			memblock_remove(m68k_memory[i].addr,
-+					m68k_memory[i].size);
- 			m68k_num_memory--;
- 			memmove(m68k_memory + i, m68k_memory + i + 1,
- 				(m68k_num_memory - i) * sizeof(struct m68k_mem_info));
--- 
-2.17.1
-
+Regards
+Jan
