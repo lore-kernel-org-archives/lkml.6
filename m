@@ -2,547 +2,140 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1BFC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C67C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABF92081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5497C206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:04:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4dIfWUz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABF92081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OxM4LTAx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5497C206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbeLDWDG (ORCPT
+        id S1726515AbeLDWEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:03:06 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43513 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbeLDWCe (ORCPT
+        Tue, 4 Dec 2018 17:04:15 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41145 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeLDWEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:02:34 -0500
-Received: by mail-io1-f68.google.com with SMTP id f10so9169948iop.10;
-        Tue, 04 Dec 2018 14:02:33 -0800 (PST)
+        Tue, 4 Dec 2018 17:04:14 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so8896756pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:04:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/e+60MGPDcJkrwSIhlmXLzMHvnweyKXlZKCT5AUMhnI=;
-        b=c4dIfWUzdJTqjenWBFh6ubauQSiEl+FXAS5CSSrfPSX6xAImclk1qsKqZ1TSsn2KsO
-         3vWmQn22mTY+hKjFN11trEXb7ZT6twvpo+0F9InD4WANjNJF+diZXSxtwU2XvjQMCNNE
-         NfINu/i2CI5/mVtpOKYkzxBTer8/2CTbHOqWiAC8MtECpzzW5ffI0XhIp8Ou40Z+pkj6
-         WmsDXYNe50kgec0+m+KLqBay+oMJnQcpzhPCEy2KBn3TSKJlIsQ49jLlKsurhIV7q8P5
-         XqMC3LQwVNn4nu6yyA/F6i+ULDxBq/Appj0CMh0CNN27FpggiNU5Oaxd2n2P8IFNVwcj
-         lTCQ==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=2uwV9K9lD7GjY7kJi/YZk4TItn6nz345cENCtA8i8Zc=;
+        b=OxM4LTAxEYSwPwRdIbGaipZ9XAmtPG80VcAg3dvjXGZPMqSgPfC64RUlyAqbhdjMDC
+         VwHl4EzYdAgQwdf3Sa/05Agqp+fjo88+hIyQQqBcTQf5objSSESSfssqzCZqX0KiNW1o
+         32LauellJH8ytHSKvpBVbMRtByOF/Qo+fX/ODKd1Xjp5XVe7DF1vsN2Qxunj0cwlpgSz
+         +b0eM1d8m5pAC985E9sBPNSNzm3sft9j9v+t5cGijSvgQB97HxWHktUI+f+qgBFQ3jRm
+         WD6tZerttHgeVlUZTja1L+xrZOG3g5C3XIrIB4CmXm3vklLJywG0Kzg0me/sQgo3iK5i
+         kDgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/e+60MGPDcJkrwSIhlmXLzMHvnweyKXlZKCT5AUMhnI=;
-        b=pUYVwkb/uYmTwwwKSfnZ2NLFyjUkpvls8FOeTnlT41+eyjvMNy0iJrmXbP9chGIrN9
-         46jaRkCql3ng6le7vhU36HD76c0YyZYNnQA0N32ezGP7Bs+gNXhK+8LP/iX4Awk0Bvrq
-         MfsSrsUZzZlx0O6n8Z8G4kG3hDLePuLuBWDlBqOVMryxv2WzXeC66qCFl6yIciJtFZtX
-         rnanjuwfJ7y0Ae5hCHUY5BnBhCz2grrtsKmkmrHh4f1PlQrDghrdgLbmx91ZT75A7qNX
-         meW2lbOO0y1uavwrl2RX/TgGtAzIKv4GQ3OYMbNw1NZJeoNkLLUpM6kP/9SB6fxTvzc7
-         tX+A==
-X-Gm-Message-State: AA+aEWbR5Zr4+ZdgjN46r9DzWTsLbadFx4TAZ8X4Uc80zTrrhJkbdw/f
-        UQ/x19kmPW4D5wdjShDmSaw=
-X-Google-Smtp-Source: AFSGD/Uonk/QESXOd25qm0oCIBuGNcbVmWDv5BF91u+WH8iV4L4zq7O8CoeB7v6UW0hpNYWNksJo+w==
-X-Received: by 2002:a5e:d910:: with SMTP id n16mr20467032iop.58.1543960952845;
-        Tue, 04 Dec 2018 14:02:32 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id m2sm4962544iol.75.2018.12.04.14.02.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 14:02:32 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
-To:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
-        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v5 3/6] anybus-s: support the Arcx anybus controller
-Date:   Tue,  4 Dec 2018 17:02:21 -0500
-Message-Id: <20181204220224.27324-4-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181204220224.27324-1-TheSven73@googlemail.com>
-References: <20181204220224.27324-1-TheSven73@googlemail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=2uwV9K9lD7GjY7kJi/YZk4TItn6nz345cENCtA8i8Zc=;
+        b=jbHfVCUSvG2ebMFZpbzjQirVhlDR/XYrfMfAzVznaYNvDErjNTSDexdS3kDXTXLo3/
+         E19NGt/BgKIVgB8iF6z+K+o68jKjPmXa4OmU4teCCWC5hqJfPHp8HJ76twL0Wsb6N0c9
+         ur5Mi74e8NFjE/Sw3m7sklrG9gHL3k/gY2rWdfJbcP761iipsuiP2H8HfeHR/p01K3oe
+         RdWpWatdTvRchOGPsIOKF1/KTeMrO5Kw9sgeV6tDHRUz6qNCShfB1iElKExD0Z0faBNl
+         8WhCMvHY+Wohqn3J8fXuvRPa4kMNGZAIZ3syJCK97AkLidD/GRlNeyHUrpXjTVeHFbEd
+         mAqg==
+X-Gm-Message-State: AA+aEWaWGQXS4IiA78cS0MYhjaGCWV/FckoMM79Sin3gcLzLmYhCEbr6
+        PUCT0vcoXTBviSeKntNB4eTvdw==
+X-Google-Smtp-Source: AFSGD/U7XFus9oc/Trjpr1m8p8Ua6Ig/Fgtrr17Sf4cAi9FgI6oixMXKvXPiDrejfXeBwC8lk0zJRQ==
+X-Received: by 2002:a65:47ca:: with SMTP id f10mr18614523pgs.166.1543961052287;
+        Tue, 04 Dec 2018 14:04:12 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id f13sm26559778pfa.132.2018.12.04.14.04.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 14:04:11 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:04:10 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        Michal Hocko <mhocko@suse.com>, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
+ regressions
+In-Reply-To: <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
+Message-ID: <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com> <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the Arcx anybus controller.
+On Tue, 4 Dec 2018, Vlastimil Babka wrote:
 
-This device implements two Anybus-S hosts (buses),
-and connects to the SoC via a parallel memory bus.
-There is also a CAN power readout, unrelated to the Anybus,
-modelled as a regulator.
+> So, AFAIK, the situation is:
+> 
+> - commit 5265047ac301 in 4.1 introduced __GFP_THISNODE for THP. The
+> intention came a bit earlier in 4.0 commit 077fcf116c8c. (I admit acking
+> both as it seemed to make sense).
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
- drivers/fieldbus/Makefile              |   1 -
- drivers/fieldbus/anybuss/Kconfig       |  14 +
- drivers/fieldbus/anybuss/Makefile      |   2 +
- drivers/fieldbus/anybuss/arcx-anybus.c | 399 +++++++++++++++++++++++++
- 4 files changed, 415 insertions(+), 1 deletion(-)
- create mode 100644 drivers/fieldbus/anybuss/arcx-anybus.c
+Yes, both are based on the preference to fault local thp and fallback to 
+local pages before allocating remotely because it does not cause the 
+performance regression introduced by not setting __GFP_THISNODE.
 
-diff --git a/drivers/fieldbus/Makefile b/drivers/fieldbus/Makefile
-index b9eee708374a..982dc6cede82 100644
---- a/drivers/fieldbus/Makefile
-+++ b/drivers/fieldbus/Makefile
-@@ -8,4 +8,3 @@ fieldbus_dev_core-y		:= dev_core.o
- 
- # Anybus-S core and devices
- obj-$(CONFIG_HMS_ANYBUSS_BUS)	+= anybuss/
--
-diff --git a/drivers/fieldbus/anybuss/Kconfig b/drivers/fieldbus/anybuss/Kconfig
-index 5b495f25c11e..7e563a78be13 100644
---- a/drivers/fieldbus/anybuss/Kconfig
-+++ b/drivers/fieldbus/anybuss/Kconfig
-@@ -7,3 +7,17 @@ config HMS_ANYBUSS_BUS
- 	  You can attach a single Anybus-S compatible card to it, which
- 	  typically provides fieldbus and industrial ethernet
- 	  functionality.
-+
-+if HMS_ANYBUSS_BUS
-+
-+config ARCX_ANYBUS_CONTROLLER
-+	tristate "Arcx Anybus-S Controller"
-+	depends on OF && GPIOLIB
-+	help
-+	  Select this to get support for the Arcx Anybus controller.
-+	  It connects to the SoC via a parallel memory bus, and
-+	  embeds up to two Anybus-S buses (slots).
-+	  There is also a CAN power readout, unrelated to the Anybus,
-+	  modelled as a regulator.
-+
-+endif
-diff --git a/drivers/fieldbus/anybuss/Makefile b/drivers/fieldbus/anybuss/Makefile
-index b1c386cb4ed2..815155f02700 100644
---- a/drivers/fieldbus/anybuss/Makefile
-+++ b/drivers/fieldbus/anybuss/Makefile
-@@ -5,3 +5,5 @@
- 
- obj-y			+= anybuss_core.o
- anybuss_core-y		+= host.o
-+
-+obj-$(CONFIG_ARCX_ANYBUS_CONTROLLER) += arcx-anybus.o
-diff --git a/drivers/fieldbus/anybuss/arcx-anybus.c b/drivers/fieldbus/anybuss/arcx-anybus.c
-new file mode 100644
-index 000000000000..fc5add11e026
---- /dev/null
-+++ b/drivers/fieldbus/anybuss/arcx-anybus.c
-@@ -0,0 +1,399 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Arcx Anybus-S Controller driver
-+ *
-+ * Copyright (C) 2018 Arcx Inc
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/delay.h>
-+#include <linux/idr.h>
-+#include <linux/spinlock.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/anybuss-controller.h>
-+
-+#define CPLD_STATUS1		0x80
-+#define CPLD_CONTROL		0x80
-+#define CPLD_CONTROL_CRST	0x40
-+#define CPLD_CONTROL_RST1	0x04
-+#define CPLD_CONTROL_RST2	0x80
-+#define CPLD_STATUS1_AB		0x02
-+#define CPLD_STATUS1_CAN_POWER	0x01
-+#define CPLD_DESIGN_LO		0x81
-+#define CPLD_DESIGN_HI		0x82
-+#define CPLD_CAP		0x83
-+#define CPLD_CAP_COMPAT		0x01
-+#define CPLD_CAP_SEP_RESETS	0x02
-+
-+struct controller_priv {
-+	struct device *class_dev;
-+	bool common_reset;
-+	struct gpio_desc *reset_gpiod;
-+	void __iomem *cpld_base;
-+	spinlock_t regs_lock;
-+	u8 control_reg;
-+	char version[3];
-+	u16 design_no;
-+};
-+
-+static void do_reset(struct controller_priv *cd, u8 rst_bit, bool reset)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&cd->regs_lock, flags);
-+	/*
-+	 * CPLD_CONTROL is write-only, so cache its value in
-+	 * cd->control_reg
-+	 */
-+	if (reset)
-+		cd->control_reg &= ~rst_bit;
-+	else
-+		cd->control_reg |= rst_bit;
-+	writeb(cd->control_reg, cd->cpld_base + CPLD_CONTROL);
-+	/*
-+	 * h/w work-around:
-+	 * the hardware is 'too fast', so a reset followed by an immediate
-+	 * not-reset will _not_ change the anybus reset line in any way,
-+	 * losing the reset. to prevent this from happening, introduce
-+	 * a minimum reset duration.
-+	 * Verified minimum safe duration required using a scope
-+	 * on 14-June-2018: 100 us.
-+	 */
-+	if (reset)
-+		udelay(100);
-+	spin_unlock_irqrestore(&cd->regs_lock, flags);
-+}
-+
-+static int anybuss_reset(struct controller_priv *cd,
-+			     unsigned long id, bool reset)
-+{
-+	if (id >= 2)
-+		return -EINVAL;
-+	if (cd->common_reset)
-+		do_reset(cd, CPLD_CONTROL_CRST, reset);
-+	else
-+		do_reset(cd, id ? CPLD_CONTROL_RST2 : CPLD_CONTROL_RST1, reset);
-+	return 0;
-+}
-+
-+static void export_reset_0(struct device *dev, bool assert)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	anybuss_reset(cd, 0, assert);
-+}
-+
-+static void export_reset_1(struct device *dev, bool assert)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	anybuss_reset(cd, 1, assert);
-+}
-+
-+/*
-+ * parallel bus limitation:
-+ *
-+ * the anybus is 8-bit wide. we can't assume that the hardware will translate
-+ * word accesses on the parallel bus to multiple byte-accesses on the anybus.
-+ *
-+ * the imx WEIM bus does not provide this type of translation.
-+ *
-+ * to be safe, we will limit parallel bus accesses to a single byte
-+ * at a time for now.
-+ */
-+
-+static int read_reg_bus(void *context, unsigned int reg,
-+				unsigned int *val)
-+{
-+	void __iomem *base = context;
-+
-+	*val = readb(base + reg);
-+	return 0;
-+}
-+
-+static int write_reg_bus(void *context, unsigned int reg,
-+				unsigned int val)
-+{
-+	void __iomem *base = context;
-+
-+	writeb(val, base + reg);
-+	return 0;
-+}
-+
-+static struct regmap *create_parallel_regmap(struct platform_device *pdev,
-+					     int idx)
-+{
-+	struct regmap_config regmap_cfg = {
-+		.reg_bits = 11,
-+		.val_bits = 8,
-+		/*
-+		 * single-byte parallel bus accesses are atomic, so don't
-+		 * require any synchronization.
-+		 */
-+		.disable_locking = true,
-+		.reg_read = read_reg_bus,
-+		.reg_write = write_reg_bus,
-+	};
-+	struct resource *res;
-+	void __iomem *base;
-+	struct device *dev = &pdev->dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, idx+1);
-+	if (resource_size(res) < (1<<regmap_cfg.reg_bits))
-+		return ERR_PTR(-EINVAL);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return ERR_CAST(base);
-+	return devm_regmap_init(dev, NULL, base, &regmap_cfg);
-+}
-+
-+static struct anybuss_host *
-+create_anybus_host(struct platform_device *pdev, int idx)
-+{
-+	struct anybuss_ops ops = {};
-+
-+	switch (idx) {
-+	case 0:
-+		ops.reset = export_reset_0;
-+		break;
-+	case 1:
-+		ops.reset = export_reset_1;
-+		break;
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+	ops.host_idx = idx;
-+	ops.regmap = create_parallel_regmap(pdev, idx);
-+	if (IS_ERR(ops.regmap))
-+		return ERR_CAST(ops.regmap);
-+	ops.irq = platform_get_irq(pdev, idx);
-+	if (ops.irq <= 0)
-+		return ERR_PTR(-EINVAL);
-+	return devm_anybuss_host_common_probe(&pdev->dev, &ops);
-+}
-+
-+static ssize_t version_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%s\n", cd->version);
-+}
-+static DEVICE_ATTR_RO(version);
-+
-+static ssize_t design_number_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct controller_priv *cd = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", cd->design_no);
-+}
-+static DEVICE_ATTR_RO(design_number);
-+
-+static struct attribute *controller_attributes[] = {
-+	&dev_attr_version.attr,
-+	&dev_attr_design_number.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group controller_attribute_group = {
-+	.attrs = controller_attributes,
-+};
-+
-+static const struct attribute_group *controller_attribute_groups[] = {
-+	&controller_attribute_group,
-+	NULL,
-+};
-+
-+static void controller_device_release(struct device *dev)
-+{
-+	kfree(dev);
-+}
-+
-+static int can_power_is_enabled(struct regulator_dev *rdev)
-+{
-+	struct controller_priv *cd = rdev_get_drvdata(rdev);
-+
-+	return !(readb(cd->cpld_base + CPLD_STATUS1) & CPLD_STATUS1_CAN_POWER);
-+}
-+
-+static struct regulator_ops can_power_ops = {
-+	.is_enabled = can_power_is_enabled,
-+};
-+
-+static const struct regulator_desc can_power_desc = {
-+	.name = "regulator-can-power",
-+	.id = -1,
-+	.type = REGULATOR_VOLTAGE,
-+	.owner = THIS_MODULE,
-+	.ops = &can_power_ops,
-+};
-+
-+static struct class *controller_class;
-+static DEFINE_IDA(controller_index_ida);
-+
-+static int controller_probe(struct platform_device *pdev)
-+{
-+	struct controller_priv *cd;
-+	struct device *dev = &pdev->dev;
-+	struct regulator_config config = { };
-+	struct regulator_dev *regulator;
-+	int err, id;
-+	struct resource *res;
-+	struct anybuss_host *host;
-+	u8 status1, cap;
-+
-+	cd = devm_kzalloc(dev, sizeof(*cd), GFP_KERNEL);
-+	if (!cd)
-+		return -ENOMEM;
-+	dev_set_drvdata(dev, cd);
-+	spin_lock_init(&cd->regs_lock);
-+	cd->reset_gpiod = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(cd->reset_gpiod))
-+		return PTR_ERR(cd->reset_gpiod);
-+
-+	/* CPLD control memory, sits at index 0 */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	cd->cpld_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(cd->cpld_base)) {
-+		dev_err(dev,
-+			"failed to map cpld base address\n");
-+		err = PTR_ERR(cd->cpld_base);
-+		goto out_reset;
-+	}
-+
-+	/* identify cpld */
-+	status1 = readb(cd->cpld_base + CPLD_STATUS1);
-+	cd->design_no = (readb(cd->cpld_base + CPLD_DESIGN_HI) << 8) |
-+				readb(cd->cpld_base + CPLD_DESIGN_LO);
-+	snprintf(cd->version, sizeof(cd->version), "%c%d",
-+			'A' + ((status1>>5) & 0x7),
-+			(status1>>2) & 0x7);
-+	dev_info(dev, "design number %d, revision %s\n",
-+		cd->design_no,
-+		cd->version);
-+	cap = readb(cd->cpld_base + CPLD_CAP);
-+	if (!(cap & CPLD_CAP_COMPAT)) {
-+		dev_err(dev, "unsupported controller [cap=0x%02X]", cap);
-+		err = -ENODEV;
-+		goto out_reset;
-+	}
-+
-+	if (status1 & CPLD_STATUS1_AB) {
-+		dev_info(dev, "has anybus-S slot(s)");
-+		cd->common_reset = !(cap & CPLD_CAP_SEP_RESETS);
-+		dev_info(dev, "supports %s", cd->common_reset ?
-+			"a common reset" : "separate resets");
-+		for (id = 0; id < 2; id++) {
-+			host = create_anybus_host(pdev, id);
-+			if (!IS_ERR(host))
-+				continue;
-+			err = PTR_ERR(host);
-+			/* -ENODEV is fine, it just means no card detected */
-+			if (err != -ENODEV)
-+				goto out_reset;
-+		}
-+	}
-+
-+	id = ida_simple_get(&controller_index_ida, 0, 0, GFP_KERNEL);
-+	if (id < 0) {
-+		err = id;
-+		goto out_reset;
-+	}
-+	/* export can power readout as a regulator */
-+	config.dev = dev;
-+	config.driver_data = cd;
-+	regulator = devm_regulator_register(dev, &can_power_desc, &config);
-+	if (IS_ERR(regulator)) {
-+		err = PTR_ERR(regulator);
-+		goto out_reset;
-+	}
-+	/* make controller info visible to userspace */
-+	cd->class_dev = kzalloc(sizeof(*cd->class_dev), GFP_KERNEL);
-+	if (!cd->class_dev) {
-+		err = -ENOMEM;
-+		goto out_ida;
-+	}
-+	cd->class_dev->class = controller_class;
-+	cd->class_dev->groups = controller_attribute_groups;
-+	cd->class_dev->parent = dev;
-+	cd->class_dev->id = id;
-+	cd->class_dev->release = controller_device_release;
-+	dev_set_name(cd->class_dev, "controller%d", cd->class_dev->id);
-+	dev_set_drvdata(cd->class_dev, cd);
-+	err = device_register(cd->class_dev);
-+	if (err)
-+		goto out_dev;
-+	return 0;
-+out_dev:
-+	put_device(cd->class_dev);
-+out_ida:
-+	ida_simple_remove(&controller_index_ida, id);
-+out_reset:
-+	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
-+	return err;
-+}
-+
-+static int controller_remove(struct platform_device *pdev)
-+{
-+	struct controller_priv *cd = platform_get_drvdata(pdev);
-+	int id = cd->class_dev->id;
-+
-+	device_unregister(cd->class_dev);
-+	ida_simple_remove(&controller_index_ida, id);
-+	gpiod_set_value_cansleep(cd->reset_gpiod, 1);
-+	return 0;
-+}
-+
-+static const struct of_device_id controller_of_match[] = {
-+	{ .compatible = "arcx,anybus-controller" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, controller_of_match);
-+
-+static struct platform_driver controller_driver = {
-+	.probe = controller_probe,
-+	.remove = controller_remove,
-+	.driver		= {
-+		.name   = "arcx-anybus-controller",
-+		.of_match_table	= of_match_ptr(controller_of_match),
-+	},
-+};
-+
-+static int __init controller_init(void)
-+{
-+	int err;
-+
-+	controller_class = class_create(THIS_MODULE, "arcx_anybus_controller");
-+	if (!IS_ERR(controller_class)) {
-+		err = platform_driver_register(&controller_driver);
-+		if (err)
-+			class_destroy(controller_class);
-+	} else
-+		err = PTR_ERR(controller_class);
-+	return err;
-+}
-+
-+static void __exit controller_exit(void)
-+{
-+	platform_driver_unregister(&controller_driver);
-+	class_destroy(controller_class);
-+}
-+
-+module_init(controller_init);
-+module_exit(controller_exit);
-+
-+MODULE_DESCRIPTION("Arcx Anybus-S Controller driver");
-+MODULE_AUTHOR("Sven Van Asbroeck <TheSven73@googlemail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+> - The resulting node-reclaim-like behavior regressed Andrea's KVM
+> workloads, but reverting it (only for madvised or non-default
+> defrag=always THP by commit ac5b2c18911f) would regress David's
+> workloads starting with 4.20 to pre-4.1 levels.
+> 
 
+Almost, but the defrag=always case had the subtle difference of also 
+setting __GFP_NORETRY whereas MADV_HUGEPAGE did not.  This was different 
+than the comment in __alloc_pages_slowpath() that expected thp fault 
+allocations to be caught by checking __GFP_NORETRY.
+
+> If the decision is that it's too late to revert a 4.1 regression for one
+> kind of workload in 4.20 because it causes regression for another
+> workload, then I guess we just revert ac5b2c18911f (patch 1) for 4.20
+> and don't rush a different fix (patch 2) to 4.20. It's not a big
+> difference if a 4.1 regression is fixed in 4.20 or 4.21?
+> 
+
+The revert is certainly needed to prevent the regression, yes, but I 
+anticipate that Andrea will report back that patch 2 at least improves the 
+situation for the problem that he was addressing, specifically that it is 
+pointless to thrash any node or reclaim unnecessarily when compaction has 
+already failed.  This is what setting __GFP_NORETRY for all thp fault 
+allocations fixes.
+
+> Because there might be other unexpected consequences of patch 2 that
+> testing won't be able to catch in the remaining 4.20 rc's. And I'm not
+> even sure if it will fix Andrea's workloads. While it should prevent
+> node-reclaim-like thrashing, it will still mean that KVM (or anyone)
+> won't be able to allocate THP's remotely, even if the local node is
+> exhausted of both huge and base pages.
+> 
+
+Patch 2 does nothing with respect to the remote allocation policy; it 
+simply prevents reclaim (and potentially thrashing).  Patch 1 sets 
+__GFP_THISNODE to prevent the remote allocation.
+
+Note that the commit to be reverted in patch 1, if not reverted, would 
+cause an even more severe regression from Andrea's case if remote memory 
+is fragmented as well: it opens the door to thrashing both local and 
+remote memory instead of only local memory.  I measured this as a 40% 
+allocation latency regression when purposefully fragmenting all nodes and 
+faulting without __GFP_THISNODE, and that was on Haswell; I can imagine it 
+would be even greater on Rome.
