@@ -2,264 +2,140 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27096C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE12C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3FD20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3FD20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id DE9902146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9902146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbeLDMzC (ORCPT
+        id S1726355AbeLDMzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:55:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33966 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725767AbeLDMzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:55:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 48588AFC0;
-        Tue,  4 Dec 2018 12:54:56 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 13:54:55 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing registration
- step
-In-Reply-To: <20181129094431.7801-6-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1812031643120.22317@pobox.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com> <20181129094431.7801-6-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 4 Dec 2018 07:55:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33020 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbeLDMzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 07:55:19 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 126A33002887;
+        Tue,  4 Dec 2018 12:55:18 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (dhcp-192-219.str.redhat.com [10.33.192.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F170D5C23E;
+        Tue,  4 Dec 2018 12:55:11 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        serge@hallyn.com, jannh@google.com, luto@kernel.org,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
+        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
+References: <20181120105124.14733-1-christian@brauner.io>
+        <87in0g5aqo.fsf@oldenburg.str.redhat.com>
+        <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io>
+        <20181202100304.labt63mzrlr5utdl@brauner.io>
+        <8736rebl9s.fsf@oldenburg.str.redhat.com>
+        <20181203180224.fkvw4kajtbvru2ku@brauner.io>
+Date:   Tue, 04 Dec 2018 13:55:10 +0100
+In-Reply-To: <20181203180224.fkvw4kajtbvru2ku@brauner.io> (Christian Brauner's
+        message of "Mon, 3 Dec 2018 19:02:29 +0100")
+Message-ID: <874lbtjvtd.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 04 Dec 2018 12:55:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mainly nits below. Overall it looks good.
+* Christian Brauner:
 
-> The possibility to re-enable a registered patch was useful for immediate
-> patches where the livepatch module had to stay until the system reboot.
-> The improved consistency model allows to achieve the same result by
-> unloading and loading the livepatch module again.
-> 
-> Also we are going to add a feature called atomic replace. It will allow
-> to create a patch that would replace all already registered patches.
-> The aim is to handle dependent patches more securely. It will obsolete
-> the stack of patches that helped to handle the dependencies so far.
-> Then it might be unclear when a cumulative patch re-enabling is safe.
-> 
-> It would be complicated to support the many modes. Instead we could
-> actually make the API and code easier to understand.
-> 
-> This patch removes the two step public API. All the checks and init calls
+> On Mon, Dec 03, 2018 at 05:57:51PM +0100, Florian Weimer wrote:
+>> * Christian Brauner:
+>> 
+>> > Ok, I finally have access to source code again. Scratch what I said above!
+>> > I looked at the code and tested it. If the process has exited but not
+>> > yet waited upon aka is a zombie procfd_send_signal() will return 0. This
+>> > is identical to kill(2) behavior. It should've been sort-of obvious
+>> > since when a process is in zombie state /proc/<pid> will still be around
+>> > which means that struct pid must still be around.
+>> 
+>> Should we make this state more accessible, by providing a different
+>> error code?
+>
+> No, I don't think we want that. Imho, It's not really helpful. Signals
+> are still delivered to zombies. If zombie state were to always mean that
+> no-one is going to wait on this thread anymore then it would make sense
+> to me. But given that zombie can also mean that someone put a
+> sleep(1000) right before their wait() call in the parent it seems odd to
+> report back that it is a zombie.
 
-I know there are two different meanings of patch used in the changelog and 
-you need to distinguish between them. "This patch" however does not look 
-good. Could you change the sentence (and probably fix the changelog then a 
-bit) to imperative mood? It sounds better anyway. Something like 
-"Therefore, remove the two step public API" for example.
+It allows for error checking that the recipient of a signal is still
+running.  It's obviously not reliable, but I think it could be helpful
+in the context of closely cooperating processes.
 
-> are moved from klp_register_patch() to klp_enabled_patch(). Also the patch
-> is automatically freed, including the sysfs interface when the transition
-> to the disabled state is completed.
-> 
-> As a result, there is never a disabled patch on the top of the stack.
-> Therefore we do not need to check the stack in __klp_enable_patch().
-> And we could simplify the check in __klp_disable_patch().
-> 
-> Also the API and logic is much easier. It is enough to call
-> klp_enable_patch() in module_init() call. The patch patch can be disabled
+>> Will the system call ever return ESRCH, given that you have a handle for
+>> the process?
+>
+> Yes, whenever you signal a process that has already been waited upon:
+> - get procfd handle referring to <proc>
+> - <proc> exits and is waited upon
+> - procfd_send_signal(procfd, ...) returns -1 with errno == ESRCH
 
-s/The patch patch/patch/
+I see, thanks.
 
-> by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
-> can be removed once the transition finishes and sysfs interface is freed.
-> 
-> The only problem is how to free the structures and kobjects a safe way.
+>> Do you want to land all this in one kernel release?  I wonder how
+>> applications are supposed to discover kernel support if functionality is
+>> split across several kernel releases.  If you get EINVAL or EBADF, it
+>> may not be obvious what is going on.
+>
+> Sigh, I get that but I really don't want to have to land this in one big
+> chunk. I want this syscall to go in in a as soon as we can to fulfill
+> the most basic need: having a way that guarantees us that we signal the
+> process that we intended to signal.
+>
+> The thread case is easy to implement on top of it. But I suspect we will
+> quibble about the exact semantics for a long time. Even now we have been
+> on multiple - justified - detrous. That's all pefectly fine and
+> expected. But if we have the basic functionality in we have time to do
+> all of that. We might even land it in the same kernel release still. I
+> really don't want to come of as tea-party-kernel-conservative here but I
+> have time-and-time again seen that making something fancy and cover ever
+> interesting feature in one patchset takes a very very long time.
+>
+> If you care about userspace being able to detect that case I can return
+> EOPNOTSUPP when a tid descriptor is passed.
 
-s/a safe way/safely/
+I suppose that's fine.  Or alternatively, when thread group support is
+added, introduce a flag that applications have to use to enable it, so
+that they can probe for support by checking support for the flag.
 
-> The operation is triggered from the sysfs interface. We could not put
-> the related kobject from there because it would cause lock inversion
-> between klp_mutex and kernfs locks, see kn->count lockdep map.
-> 
-> This patch solved the problem by offloading the free task to
+I wouldn't be opposed to a new system call like this either:
 
-"This patch" again.
+  int procfd_open (pid_t thread_group, pid_t thread_id, unsigned flags);
 
-> a workqueue. It is perfectly fine:
-> 
->   + The patch cannot not longer be used in the livepatch operations.
+But I think this is frowned upon on the kernel side.
 
-s/cannot not longer/can no longer/
+>> What happens if you use the new interface with an O_PATH descriptor?
+>
+> You get EINVAL. When an O_PATH file descriptor is created the kernel
+> will set file->f_op = &empty_fops at which point the check I added 
+>         if (!proc_is_tgid_procfd(f.file))
+>                 goto err;
+> will fail. Imho this is correct behavior since technically signaling a
+> struct pid is the equivalent of writing to a file and hence doesn't
+> purely operate on the file descriptor level.
 
->   + The module could not be removed until the free operation finishes
->     and module_put() is called.
-> 
->   + The operation is asynchronous already when the first
->     klp_try_complete_transition() fails and another call
->     is queued with a delay.
-> 
-> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  Documentation/livepatch/livepatch.txt        | 137 ++++++-------
->  include/linux/livepatch.h                    |   5 +-
->  kernel/livepatch/core.c                      | 275 +++++++++------------------
->  kernel/livepatch/core.h                      |   2 +
->  kernel/livepatch/transition.c                |  19 +-
->  samples/livepatch/livepatch-callbacks-demo.c |  13 +-
->  samples/livepatch/livepatch-sample.c         |  13 +-
->  samples/livepatch/livepatch-shadow-fix1.c    |  14 +-
->  samples/livepatch/livepatch-shadow-fix2.c    |  14 +-
->  9 files changed, 166 insertions(+), 326 deletions(-)
-> 
-> diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
-> index 2d7ed09dbd59..d849af312576 100644
-> --- a/Documentation/livepatch/livepatch.txt
-> +++ b/Documentation/livepatch/livepatch.txt
-> @@ -12,12 +12,11 @@ Table of Contents:
->  4. Livepatch module
->     4.1. New functions
->     4.2. Metadata
-> -   4.3. Livepatch module handling
->  5. Livepatch life-cycle
-> -   5.1. Registration
-> +   5.1. Loading
->     5.2. Enabling
->     5.3. Disabling
-> -   5.4. Unregistration
-> +   5.4. Removing
->  6. Sysfs
->  7. Limitations
->  
-> @@ -298,117 +297,91 @@ into three levels:
->      see the "Consistency model" section.
->  
->  
-> -4.3. Livepatch module handling
-> -------------------------------
-> -
-> -The usual behavior is that the new functions will get used when
-> -the livepatch module is loaded. For this, the module init() function
-> -has to register the patch (struct klp_patch) and enable it. See the
-> -section "Livepatch life-cycle" below for more details about these
-> -two operations.
-> -
-> -Module removal is only safe when there are no users of the underlying
-> -functions. This is the reason why the force feature permanently disables
-> -the removal. The forced tasks entered the functions but we cannot say
-> -that they returned back.  Therefore it cannot be decided when the
-> -livepatch module can be safely removed. When the system is successfully
-> -transitioned to a new patch state (patched/unpatched) without being
-> -forced it is guaranteed that no task sleeps or runs in the old code.
+Yes, that's quite reasonable.  Thanks.
 
-Is the change necessary? The documentation in v13 looked ok and I am not 
-sure if it is better now. Only my opinion though and I understand why you 
-changed it.
-
->  5. Livepatch life-cycle
->  =======================
->  
-> -Livepatching defines four basic operations that define the life cycle of each
-> -live patch: registration, enabling, disabling and unregistration.  There are
-> -several reasons why it is done this way.
-> -
-> -First, the patch is applied only when all patched symbols for already
-> -loaded objects are found. The error handling is much easier if this
-> -check is done before particular functions get redirected.
-> +Livepatching can be described by four basic operations:
-> +loading, enabling, disabling, removing.
->  
-> -Second, it might take some time until the entire system is migrated with
-> -the hybrid consistency model being used. The patch revert might block
-> -the livepatch module removal for too long. Therefore it is useful to
-> -revert the patch using a separate operation that might be called
-> -explicitly. But it does not make sense to remove all information until
-> -the livepatch module is really removed.
->  
-> +5.1. Loading
-> +------------
->  
-> -5.1. Registration
-> ------------------
-> +The only reasonable way is to enable the patch when the livepatch kernel
-> +module is being loaded. For this, klp_enable_patch() has to be called
-> +in module_init() callback. There are two main reasons:
->  
-> -Each patch first has to be registered using klp_register_patch(). This makes
-> -the patch known to the livepatch framework. Also it does some preliminary
-> -computing and checks.
-> +First, only the module has an easy access to the related struct klp_patch.
->  
-> -In particular, the patch is added into the list of known patches. The
-> -addresses of the patched functions are found according to their names.
-> -The special relocations, mentioned in the section "New functions", are
-> -applied. The relevant entries are created under
-> -/sys/kernel/livepatch/<name>. The patch is rejected when any operation
-> -fails.
-> +Second, the error code might be used to refuse loading the module when
-> +the patch cannot get enabled.
->  
->  
->  5.2. Enabling
->  -------------
->  
-> -Registered patches might be enabled either by calling klp_enable_patch() or
-> -by writing '1' to /sys/kernel/livepatch/<name>/enabled. The system will
-> -start using the new implementation of the patched functions at this stage.
-> +The livepatch gets enabled by calling klp_enable_patch() typically from
-> +module_init() callback. The system will start using the new implementation
-> +of the patched functions at this stage.
-
-5.1 is now saying that klp_enable_patch() has to be called in 
-module_init() callback and we should be consistent.
-
-> @@ -309,40 +297,33 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
->  
->  	mutex_lock(&klp_mutex);
->  
-> -	if (!klp_is_patch_registered(patch)) {
-> -		/*
-> -		 * Module with the patch could either disappear meanwhile or is
-> -		 * not properly initialized yet.
-> -		 */
-> -		ret = -EINVAL;
-> -		goto err;
-> -	}
-> -
->  	if (patch->enabled == enabled) {
->  		/* already in requested state */
->  		ret = -EINVAL;
-> -		goto err;
-> +		goto out;
->  	}
->  
-> -	if (patch == klp_transition_patch) {
-> +	/*
-> +	 * Allow to reverse a pending transition in both ways. It might be
-> +	 * necessary to complete the transition without forcing and breaking
-> +	 * the system integrity.
-> +	 *
-> +	 * Do not allow to re-enable a disabled patch because this interface
-> +	 * is being destroyed.
-
-A nit, but I think the second part is not necessary and may be confusing.
-
-"Do not allow to re-enable a disabled patch." should be sufficient.
-
-Regards,
-Miroslav
+Florian
