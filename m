@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB98C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3976DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 110A52082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F36162082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:12:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMzEhYP3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110A52082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1E137Hh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36162082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeLDLIG (ORCPT
+        id S1728267AbeLDLH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:08:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57274 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:07:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728549AbeLDLIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:08:02 -0500
+        id S1728047AbeLDLHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:07:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 577922151B;
-        Tue,  4 Dec 2018 11:08:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6510D214DB;
+        Tue,  4 Dec 2018 11:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921681;
-        bh=nkcHH/Rk4Xw3Qc5yXz7X8r4aAO1nOiYQK/Y15zle+ow=;
+        s=default; t=1543921673;
+        bh=LceI+C7JCLql+hoMLnPwFTrCr5tGY9Lcqdm3iXXR5sw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aMzEhYP3b71fYs9A3Z8PsJxZQMUrvnKO/zfVevsLu2/rDWcJD/APnGnXV8sbnGace
-         D5uHYzXzraPXoykeGx2brEn+3VpVxGIG1p5uos4EnffIppCB5X2ZL88nM5Qwj1iAm2
-         AUoFF9CLhQSfypi0yDVHb2QgxnYgtg2CHpyZgWWA=
+        b=1E137Hh+XSTsLvr/CDyYTgX2RYlUH1vDUpOJAeehhq3mW3GSj55xSga/woFsc3ene
+         D8s3OHjy6ejEGjkIpE5oLXXv19q5y8dZOWE+4bmP7GKsAjrNpRgqCN6iHGlfN9vIt/
+         AiNcOFNwClItXJSzTQQq9d+5hG9R/mPbk6J1pwiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 19/50] kvm: mmu: Fix race in emulated page table writes
-Date:   Tue,  4 Dec 2018 11:50:14 +0100
-Message-Id: <20181204103715.498761676@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 16/50] rapidio/rionet: do not free skb before reading its length
+Date:   Tue,  4 Dec 2018 11:50:11 +0100
+Message-Id: <20181204103715.344002629@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103714.485546262@linuxfoundation.org>
 References: <20181204103714.485546262@linuxfoundation.org>
@@ -63,91 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Junaid Shahid <junaids@google.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 0e0fee5c539b61fdd098332e0e2cc375d9073706 upstream.
+[ Upstream commit cfc435198f53a6fa1f656d98466b24967ff457d0 ]
 
-When a guest page table is updated via an emulated write,
-kvm_mmu_pte_write() is called to update the shadow PTE using the just
-written guest PTE value. But if two emulated guest PTE writes happened
-concurrently, it is possible that the guest PTE and the shadow PTE end
-up being out of sync. Emulated writes do not mark the shadow page as
-unsync-ed, so this inconsistency will not be resolved even by a guest TLB
-flush (unless the page was marked as unsync-ed at some other point).
+skb is freed via dev_kfree_skb_any, however, skb->len is read then. This
+may result in a use-after-free bug.
 
-This is fixed by re-reading the current value of the guest PTE after the
-MMU lock has been acquired instead of just using the value that was
-written prior to calling kvm_mmu_pte_write().
-
-Signed-off-by: Junaid Shahid <junaids@google.com>
-Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: e6161d64263 ("rapidio/rionet: rework driver initialization and removal")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/mmu.c |   27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+ drivers/net/rionet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4297,9 +4297,9 @@ static bool need_remote_flush(u64 old, u
- }
- 
- static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
--				    const u8 *new, int *bytes)
-+				    int *bytes)
- {
--	u64 gentry;
-+	u64 gentry = 0;
- 	int r;
- 
- 	/*
-@@ -4311,22 +4311,12 @@ static u64 mmu_pte_write_fetch_gpte(stru
- 		/* Handle a 32-bit guest writing two halves of a 64-bit gpte */
- 		*gpa &= ~(gpa_t)7;
- 		*bytes = 8;
--		r = kvm_vcpu_read_guest(vcpu, *gpa, &gentry, 8);
--		if (r)
--			gentry = 0;
--		new = (const u8 *)&gentry;
+--- a/drivers/net/rionet.c
++++ b/drivers/net/rionet.c
+@@ -216,9 +216,9 @@ static int rionet_start_xmit(struct sk_b
+ 			 * it just report sending a packet to the target
+ 			 * (without actual packet transfer).
+ 			 */
+-			dev_kfree_skb_any(skb);
+ 			ndev->stats.tx_packets++;
+ 			ndev->stats.tx_bytes += skb->len;
++			dev_kfree_skb_any(skb);
+ 		}
  	}
- 
--	switch (*bytes) {
--	case 4:
--		gentry = *(const u32 *)new;
--		break;
--	case 8:
--		gentry = *(const u64 *)new;
--		break;
--	default:
--		gentry = 0;
--		break;
-+	if (*bytes == 4 || *bytes == 8) {
-+		r = kvm_vcpu_read_guest_atomic(vcpu, *gpa, &gentry, *bytes);
-+		if (r)
-+			gentry = 0;
- 	}
- 
- 	return gentry;
-@@ -4437,8 +4427,6 @@ static void kvm_mmu_pte_write(struct kvm
- 
- 	pgprintk("%s: gpa %llx bytes %d\n", __func__, gpa, bytes);
- 
--	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, new, &bytes);
--
- 	/*
- 	 * No need to care whether allocation memory is successful
- 	 * or not since pte prefetch is skiped if it does not have
-@@ -4447,6 +4435,9 @@ static void kvm_mmu_pte_write(struct kvm
- 	mmu_topup_memory_caches(vcpu);
- 
- 	spin_lock(&vcpu->kvm->mmu_lock);
-+
-+	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, &bytes);
-+
- 	++vcpu->kvm->stat.mmu_pte_write;
- 	kvm_mmu_audit(vcpu, AUDIT_PRE_PTE_WRITE);
  
 
 
