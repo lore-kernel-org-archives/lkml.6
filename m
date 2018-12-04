@@ -2,147 +2,105 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211D2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B5DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D0D206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D0D206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 41EDE2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JUy7xZ1y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EDE2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeLDTdB (ORCPT
+        id S1726045AbeLDTda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:33:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37804 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbeLDTdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:33:01 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 42C6F307D866;
-        Tue,  4 Dec 2018 19:33:00 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 160C35C237;
-        Tue,  4 Dec 2018 19:32:58 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:32:56 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-Message-ID: <20181204193256.GH2937@redhat.com>
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <20181203233509.20671-3-jglisse@redhat.com>
- <875zw98bm4.fsf@linux.intel.com>
- <20181204182421.GC2937@redhat.com>
- <CAPcyv4gtv7eUc1_3Yhz-f-B3Lct=Vq7zqUJKOqCtWYb4BS6i9g@mail.gmail.com>
- <20181204185725.GE2937@redhat.com>
- <CAPcyv4iddjvOvdRRRMrD5RtrVzLB13cPATbpE52ZcuPWWsyx-w@mail.gmail.com>
+        Tue, 4 Dec 2018 14:33:30 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37750 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbeLDTd3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:33:29 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j10so17196609wru.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:33:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=U1ZYP6oYAAntHDYYsujvmJKRg1jgOj9qNI/7yXapawo=;
+        b=JUy7xZ1y+ZHjNaY0AH8j9gg20kS6LbUmskvJBrXKCzG+yEqOH20s+A3rbBaoDFf3sI
+         QcNN5/ify7QgiMjC1CSNSqpCoX21B0qwZLyQAXE/LwUXkv2OiGocZ2owihJBOtD5d11P
+         UDs35/bUhcrsK6pKE+ubYJayEPTOoHM21HJXiJtfsMA1p0RX634H0ygbfKbHC8v8BwTA
+         ztTlRagwwjr36ER4swjGaRRpelwQJM+UPMTAem7zv/lqigCDvR2MCoTQqBa+uNZo9atM
+         OQHwB9XpQzr1f3eF2UgJyLC8TepoLU3HkLqtMUXeYTDLmUvrBrSCmLM3U7IN3jefW4hq
+         0Rcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=U1ZYP6oYAAntHDYYsujvmJKRg1jgOj9qNI/7yXapawo=;
+        b=HFFQY6gWGOyGAwPycK6Z9eCYcM2+U/D8brrBD6yqUYdy8upklI8fxfMThLKAw3sCeD
+         /nHlonSsqYWYrM3sOqSuSj747jbjhKCixFu4VR3Qu1QFj+xriXTorQPs1S2plINMlHK2
+         rpNoNcA8MlZF24pKjDO1nObVgZ0Wfuqydvm+BugkBrT6Jd7N30Ul273JthFVoZSDS/TG
+         F1aelae/OO4Nh2lffFeU9vCsLP2pNMjy0PwA75Cw5XJaJaklTPOF/ulLMtLuflV+dio+
+         KjgGJq9iOtlR5cl/q63rXIfOjDZ0nNEGWjgmB8MBrTJ1yCYz2huN+OT3FhqN7z+3Lqc1
+         D8iw==
+X-Gm-Message-State: AA+aEWYQpDD5kZ00wUmOAPWk0gAPTMpAMk20TbIDttnGRp8qsj/xlbo3
+        trCIvNP/4vdtHzJSxgn/klQUbQ==
+X-Google-Smtp-Source: AFSGD/X7r16gWudQW2YVxqV2zTsyBJntvrarll+US+93cB8FRkbTvOLXkx+FFZAWkdJo+Ni5nyeP/A==
+X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr4659731wrt.241.1543952007805;
+        Tue, 04 Dec 2018 11:33:27 -0800 (PST)
+Received: from Armstrongs-MacBook-Pro.local ([2a01:cb1d:4ce:ea00:457b:c7f4:7108:f8c4])
+        by smtp.gmail.com with ESMTPSA id z17sm15702072wrv.2.2018.12.04.11.33.26
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Dec 2018 11:33:27 -0800 (PST)
+Message-ID: <5C06D686.50108@baylibre.com>
+Date:   Tue, 04 Dec 2018 20:33:26 +0100
+From:   Neil Armstrong <narmstrong@baylibre.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com
+CC:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to static
+References: <20181204125839.14505-1-narmstrong@baylibre.com> <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
+In-Reply-To: <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4iddjvOvdRRRMrD5RtrVzLB13cPATbpE52ZcuPWWsyx-w@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 04 Dec 2018 19:33:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:19:23AM -0800, Dan Williams wrote:
-> On Tue, Dec 4, 2018 at 10:58 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> >
-> > On Tue, Dec 04, 2018 at 10:31:17AM -0800, Dan Williams wrote:
-> > > On Tue, Dec 4, 2018 at 10:24 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> > > >
-> > > > On Tue, Dec 04, 2018 at 09:06:59AM -0800, Andi Kleen wrote:
-> > > > > jglisse@redhat.com writes:
-> > > > >
-> > > > > > +
-> > > > > > +To help with forward compatibility each object as a version value and
-> > > > > > +it is mandatory for user space to only use target or initiator with
-> > > > > > +version supported by the user space. For instance if user space only
-> > > > > > +knows about what version 1 means and sees a target with version 2 then
-> > > > > > +the user space must ignore that target as if it does not exist.
-> > > > >
-> > > > > So once v2 is introduced all applications that only support v1 break.
-> > > > >
-> > > > > That seems very un-Linux and will break Linus' "do not break existing
-> > > > > applications" rule.
-> > > > >
-> > > > > The standard approach that if you add something incompatible is to
-> > > > > add new field, but keep the old ones.
-> > > >
-> > > > No that's not how it is suppose to work. So let says it is 2018 and you
-> > > > have v1 memory (like your regular main DDR memory for instance) then it
-> > > > will always be expose a v1 memory.
-> > > >
-> > > > Fast forward 2020 and you have this new type of memory that is not cache
-> > > > coherent and you want to expose this to userspace through HMS. What you
-> > > > do is a kernel patch that introduce the v2 type for target and define a
-> > > > set of new sysfs file to describe what v2 is. On this new computer you
-> > > > report your usual main memory as v1 and your new memory as v2.
-> > > >
-> > > > So the application that only knew about v1 will keep using any v1 memory
-> > > > on your new platform but it will not use any of the new memory v2 which
-> > > > is what you want to happen. You do not have to break existing application
-> > > > while allowing to add new type of memory.
-> > >
-> > > That sounds needlessly restrictive. Let the kernel arbitrate what
-> > > memory an application gets, don't design a system where applications
-> > > are hard coded to a memory type. Applications can hint, or optionally
-> > > specify an override and the kernel can react accordingly.
-> >
-> > You do not want to randomly use non cache coherent memory inside your
-> > application :)
+Hi Stephen,
+
+Le 04/12/2018 18:43, Stephen Boyd a Ã©crit :
+> Quoting Neil Armstrong (2018-12-04 04:58:39)
+>> Makes the following sparse warnings silent:
+>> drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val' was not declared. Should it be static?
+>> drivers/clk/meson/gxbb.c:1585:12: warning: symbol 'gxbb_vid_pll_parent_names' was not declared. Should it be static?
+>> drivers/clk/meson/gxbb.c:1620:12: warning: symbol 'gxbb_vclk_parent_names' was not declared. Should it be static?
+>> drivers/clk/meson/gxbb.c:1980:12: warning: symbol 'gxbb_cts_parent_names' was not declared. Should it be static?
+>> drivers/clk/meson/gxbb.c:2036:12: warning: symbol 'gxbb_cts_hdmi_tx_parent_names' was not declared. Should it be static?
 > 
-> The kernel arbitrates memory, it's a bug if it hands out something
-> that exotic to an unaware application.
+> I fixed all of these already in the patch I sent you.
 
-In some case and for some period of time some application would like
-to use exotic memory for performance reasons. This does exist today.
-Graphics API routinely expose uncache memory to application and it has
-been doing so for many years.
+Sorry I misunderstood...
 
-Some compute folks would like to have some of the benefit of that
-sometime. The idea is that you malloc() some memory in your application
-do stuff on the CPU, business as usual, then you gonna use that memory
-on some exotic device and for that device it would be best if you
-migrated that memory to uncache/uncoherent memory. If application
-knows its safe to do so then it can decide to pick such memory with
-HMS and migrate its malloced stuff there.
 
-This is not only happening in application, it can happen inside a
-library that the application use and the application might be totaly
-unaware of the library doing so. This is very common today in AI/ML
-workload where all the various library in your AI/ML stacks do thing
-to the memory you handed them over. It is all part of the library
-API contract.
+> 
+>> @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 = {
+>>  };
+>>  
+>>  static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
+> 
+> I was talking about this mux_table_cts_sel array. Can this be const?
+> 
 
-So they are legitimate use case for this hence why i would like to
-be able to expose exotic memory to userspace so that it can migrate
-regular allocation there when that make sense.
+Other mux tables aren't const, Jerome so you see a reason why they aren't const ?
 
-Cheers,
-Jérôme
+Neil
