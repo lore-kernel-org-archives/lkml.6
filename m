@@ -2,123 +2,95 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFADC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFCEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC9D20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:13:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC9D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
+	by mail.kernel.org (Postfix) with ESMTP id 5100E20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 12:15:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5100E20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeLDMN6 (ORCPT
+        id S1726241AbeLDMPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 07:13:58 -0500
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:37813 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbeLDMN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 07:13:57 -0500
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 768415C0FF8; Tue,  4 Dec 2018 12:13:18 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 13:13:18 +0100
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: mux: demux-pinctrl: handle failure case of
- devm_kstrdup()
-Message-ID: <20181204121318.GB28201@osadl.at>
-References: <1543658470-20887-1-git-send-email-hofrat@osadl.org>
- <549eba3a-28b9-e4b0-f680-8fb51b160879@axentia.se>
+        Tue, 4 Dec 2018 07:15:48 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:44691 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbeLDMPr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 07:15:47 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gU9ba-0005AU-If; Tue, 04 Dec 2018 13:15:10 +0100
+Date:   Tue, 4 Dec 2018 13:15:10 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        the arch/x86 maintainers <x86@kernel.org>, nstange@suse.de,
+        Rik van Riel <riel@surriel.com>,
+        KVM devel mailing list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/fpu] x86/fpu: Don't export __kernel_fpu_{begin,end}()
+Message-ID: <20181204121510.ebw4vb265lcepa2m@linutronix.de>
+References: <20181129150210.2k4mawt37ow6c2vq@linutronix.de>
+ <tip-7d79adb87fa79e4a4c59424fd5b5a922861fc5f6@git.kernel.org>
+ <CAKv+Gu-s59fSWrMevmbJWyBtNVYLkF7FATALGBD470CWsN9C1Q@mail.gmail.com>
+ <20181203220841.GB4794@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <549eba3a-28b9-e4b0-f680-8fb51b160879@axentia.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181203220841.GB4794@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:16:59AM +0000, Peter Rosin wrote:
-> Hi!
+On 2018-12-03 23:08:41 [+0100], Borislav Petkov wrote:
+> On Mon, Dec 03, 2018 at 10:12:19PM +0100, Ard Biesheuvel wrote:
+> > > + * Using the FPU in hardirq is not allowed.
+> > 
+> > According to the documentation in x86/kernel/fpu/core.c, this is not
+> > true. So which one is accurate?
 > 
-> This patch looks like a good idea. However, a nitpick below.
+> I think you mean the irq from user mode... Yap, we do allow that.
 > 
-> On 2018-12-01 11:01, Nicholas Mc Guire wrote:
-> > devm_kstrdup() may return NULL if internal allocation failed.
-> > Thus using  name, value  is unsafe without being checked. As
-> > i2c_demux_pinctrl_probe() can return -ENOMEM in other cases
-> > a dev_err() message is included to make the failure location
-> > clear.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > Fixes: e35478eac030 ("i2c: mux: demux-pinctrl: run properly with multiple instances")
-> > ---
-> > 
-> > Problem located with experimental coccinelle script
-> > 
-> > Q: The use of devm_kstrdup() seems a bit odd while technically not wrong,
-> >    personally I think devm_kasprintf() would be more suitable here.
-> > 
-> > Patch was compile tested with: multi_v7_defconfig 
-> > (implies I2C_DEMUX_PINCTRL=y)
-> > 
-> > Patch is against 4.20-rc4 (localversion-next is next-20181130)
-> > 
-> >  drivers/i2c/muxes/i2c-demux-pinctrl.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> > index 035032e..c466999 100644
-> > --- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> > +++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> > @@ -244,6 +244,12 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
-> >  
-> >  		props[i].name = devm_kstrdup(&pdev->dev, "status", GFP_KERNEL);
-> >  		props[i].value = devm_kstrdup(&pdev->dev, "ok", GFP_KERNEL);
-> > +		if (!props[i].name || !props[i].value) {
-> > +			dev_err(&pdev->dev,
-> > +				"chan %d name, value allocation failed\n", i);
-> 
-> Please drop this memory allocation failure message. You should get such a
-> message from devm_kstrdup.
->
+> Sebastian?
 
-hm...tried to figure out where that message would be comming
-from - but I could not find any point in the call tree that
-would issue such a message ?
+Do you refer to
+| *   - by IRQ context code to potentially use the FPU
+| *     if it's unused.
+  
+? It is possible to use the FPU in IRQ context.
+The FPU could be used in user-context surrounded by kernel_fpu_begin().
+This only disables preemption so an IRQ could interrupt it. This IRQ
+could then use the FPU or raise a SoftIRQ which would use it.
+Therefore on x86 it is required to check with irq_fpu_usable() if the
+FPU can be used. If the FPU can not be used, you have to implement
+fallback code.
 
- devm_kstrdup() 
-   -> devm_kmalloc()
-        -> alloc_dr()
-             --> kmalloc_track_caller() (non-NUMA)
-             |     -> __kmalloc_node()
-             |        -> __do_kmalloc_node()
-             `-> __kmalloc_node_track_caller() (NUMA)
-                   -> __do_kmalloc_node()
+With the "restore FPU on return to userland" series we need to modify
+the FPU in a few places. The softirq and preemption is disabled. I
+didn't find any in-IRQ users.
+Going forward I would like to remove the in-IRQ part and
+irq_fpu_usable() and disable softirq as part of kernel_fpu_begin().
 
- __do_kmalloc_node() seems like it simply returns NULL but
- issues no failure message.
- Am I overlooking something ? 
+> Thx.
 
-thx!
-hofrat 
- 
-> Cheers,
-> Peter
-> 
-> > +			err = -ENOMEM;
-> > +			goto err_rollback;
-> > +		}
-> >  		props[i].length = 3;
-> >  
-> >  		of_changeset_init(&priv->chan[i].chgset);
-> > 
-> 
+Sebastian
