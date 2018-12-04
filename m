@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4363BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9856C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A65C2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABD222087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zz+DAVWk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A65C2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JepZnja5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD222087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbeLDLPP (ORCPT
+        id S1728307AbeLDLP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:15:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55116 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:15:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728338AbeLDLGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:06:35 -0500
+        id S1728312AbeLDLG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A854C2087F;
-        Tue,  4 Dec 2018 11:06:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFFE42087F;
+        Tue,  4 Dec 2018 11:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921595;
-        bh=K9kN02ET5o0sfsZi7kTjxZto4whS8Ebkdg92RuZNaZk=;
+        s=default; t=1543921587;
+        bh=OEUjJZTk6J7zqX/8ikeYGKOT9dUxBRJlClymZt0e5jY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zz+DAVWkTrG7CLAuHwLI3bV6/qAaEGZXs8+XjlN3ZWNJyDG2PCmIh6EOz/5cAeFe5
-         G/uyVLF6Kxlf8Puwy5N0sN+YWToyGsQpeXQWYST/Eh9xU+8O4lB9A+fVe4poL9JtNJ
-         jWLMSo9IEHL0wDIvxicMTQEiVvX5IuHkOE717tvU=
+        b=JepZnja5JDW+6+EXRBsTU9NEeAgAiAdbo9yd5cR83d0SCxkV6xNd9nSxaIkkB7uh/
+         nVDBjvitW6W9AKM+le7iOykVrXmeDneQGkQ6jMFDHYYtVejOPr4Dq4CtbJ6DIewlmK
+         GRd4nl2sb9VVwvojfzySfZItvZk3WR29F2vsxth0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.14 131/146] ext2: fix potential use after free
-Date:   Tue,  4 Dec 2018 11:50:17 +0100
-Message-Id: <20181204103732.097609937@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 129/146] ALSA: hda/realtek - Support ALC300
+Date:   Tue,  4 Dec 2018 11:50:15 +0100
+Message-Id: <20181204103732.021639644@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -63,36 +63,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit ecebf55d27a11538ea84aee0be643dd953f830d5 upstream.
+commit 1078bef0cd9291355a20369b21cd823026ab8eaa upstream.
 
-The function ext2_xattr_set calls brelse(bh) to drop the reference count
-of bh. After that, bh may be freed. However, following brelse(bh),
-it reads bh->b_data via macro HDR(bh). This may result in a
-use-after-free bug. This patch moves brelse(bh) after reading field.
+This patch will enable ALC300.
 
-CC: stable@vger.kernel.org
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+[ It's almost equivalent with other ALC269-compatible ones, and
+  apparently has no loopback mixer -- tiwai ]
+
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext2/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/ext2/xattr.c
-+++ b/fs/ext2/xattr.c
-@@ -612,9 +612,9 @@ skip_replace:
- 	}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -343,6 +343,7 @@ static void alc_fill_eapd_coef(struct hd
+ 	case 0x10ec0285:
+ 	case 0x10ec0298:
+ 	case 0x10ec0289:
++	case 0x10ec0300:
+ 		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
+ 		break;
+ 	case 0x10ec0275:
+@@ -2758,6 +2759,7 @@ enum {
+ 	ALC269_TYPE_ALC215,
+ 	ALC269_TYPE_ALC225,
+ 	ALC269_TYPE_ALC294,
++	ALC269_TYPE_ALC300,
+ 	ALC269_TYPE_ALC700,
+ };
  
- cleanup:
--	brelse(bh);
- 	if (!(bh && header == HDR(bh)))
- 		kfree(header);
-+	brelse(bh);
- 	up_write(&EXT2_I(inode)->xattr_sem);
- 
- 	return error;
+@@ -2792,6 +2794,7 @@ static int alc269_parse_auto_config(stru
+ 	case ALC269_TYPE_ALC215:
+ 	case ALC269_TYPE_ALC225:
+ 	case ALC269_TYPE_ALC294:
++	case ALC269_TYPE_ALC300:
+ 	case ALC269_TYPE_ALC700:
+ 		ssids = alc269_ssids;
+ 		break;
+@@ -7089,6 +7092,10 @@ static int patch_alc269(struct hda_codec
+ 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
+ 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
+ 		break;
++	case 0x10ec0300:
++		spec->codec_variant = ALC269_TYPE_ALC300;
++		spec->gen.mixer_nid = 0; /* no loopback on ALC300 */
++		break;
+ 	case 0x10ec0700:
+ 	case 0x10ec0701:
+ 	case 0x10ec0703:
+@@ -8160,6 +8167,7 @@ static const struct hda_device_id snd_hd
+ 	HDA_CODEC_ENTRY(0x10ec0295, "ALC295", patch_alc269),
+ 	HDA_CODEC_ENTRY(0x10ec0298, "ALC298", patch_alc269),
+ 	HDA_CODEC_ENTRY(0x10ec0299, "ALC299", patch_alc269),
++	HDA_CODEC_ENTRY(0x10ec0300, "ALC300", patch_alc269),
+ 	HDA_CODEC_REV_ENTRY(0x10ec0861, 0x100340, "ALC660", patch_alc861),
+ 	HDA_CODEC_ENTRY(0x10ec0660, "ALC660-VD", patch_alc861vd),
+ 	HDA_CODEC_ENTRY(0x10ec0861, "ALC861", patch_alc861),
 
 
