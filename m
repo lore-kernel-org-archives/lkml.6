@@ -2,151 +2,117 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C741C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFABC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3467A20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3467A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 04B2A20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UeawtK66";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b8U+8Xr8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04B2A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726051AbeLDJ2O convert rfc822-to-8bit (ORCPT
+        id S1726063AbeLDJ3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:28:14 -0500
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:43180 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbeLDJ2N (ORCPT
+        Tue, 4 Dec 2018 04:29:04 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36264 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbeLDJ3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:28:13 -0500
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wB49RxoB003372
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 4 Dec 2018 18:27:59 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB49RwpE026185;
-        Tue, 4 Dec 2018 18:27:58 +0900
-Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB49QvFr002275;
-        Tue, 4 Dec 2018 18:27:58 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-320053; Tue, 4 Dec 2018 18:11:06 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Tue, 4
- Dec 2018 18:11:05 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Oscar Salvador <OSalvador@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        "Pavel Tatashin" <pasha.tatashin@soleen.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
- be offlined
-Thread-Topic: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages
- to be offlined
-Thread-Index: AQHUiu9tY5+24nB+PkGyMm7atS1YiqVtlyQAgAAYWwCAAAZUgA==
-Date:   Tue, 4 Dec 2018 09:11:05 +0000
-Message-ID: <20181204091104.GA3788@hori1.linux.bs1.fc.nec.co.jp>
-References: <20181203100309.14784-1-mhocko@kernel.org>
- <20181204072116.GA24446@hori1.linux.bs1.fc.nec.co.jp>
- <20181204081801.GA1286@dhcp22.suse.cz>
-In-Reply-To: <20181204081801.GA1286@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.80]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <868BCEB5723EFF4496D5263F47421292@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Dec 2018 04:29:04 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 73C8861661; Tue,  4 Dec 2018 09:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543915743;
+        bh=S4rnCLAEYzUqxRh1KMVkzX/Tmng5R/aHYsuksyr8VbY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=UeawtK66cXsmcrj1LPU4pO1xmA4FS3HwcGvE+zhGwrPkmqwBmI9IHX4b218zZSYBm
+         GbZkeao2j0tmaRofeLv9ohv0ys2+wINVwzx7iemEfMfxPR2pmsUHE/lBS99ICdOlE6
+         keJRO2/zO2FLf5+HgcmHs/DV4tDfqiuzaJYvnIKg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 70AED61657;
+        Tue,  4 Dec 2018 09:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543915742;
+        bh=S4rnCLAEYzUqxRh1KMVkzX/Tmng5R/aHYsuksyr8VbY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=b8U+8Xr8pjqQ7CmS+4y50jaJAylE9mHCCIhMP2xv9JFLS/JJgCcXzWbRN18vN7ELD
+         a1LACNWq3twMEE7KcPmxffnKaSxCFxCieslwj674W2o6lzr04YGxttYAG6glEMb77w
+         9pwpwkBD0dinMEvcPfLu9sXafOwdYYtRVfXJ67sk=
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 04 Dec 2018 17:29:02 +0800
+From:   yuankuiz@codeaurora.org
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: proc: printf using alarm for alrm
+Message-ID: <b44225b8e243a70c6ab63a40a3de630d@codeaurora.org>
+X-Sender: yuankuiz@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 09:48:26AM +0100, Michal Hocko wrote:
-> On Tue 04-12-18 07:21:16, Naoya Horiguchi wrote:
-> > On Mon, Dec 03, 2018 at 11:03:09AM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > We have received a bug report that an injected MCE about faulty memory
-> > > prevents memory offline to succeed. The underlying reason is that the
-> > > HWPoison page has an elevated reference count and the migration keeps
-> > > failing. There are two problems with that. First of all it is dubious
-> > > to migrate the poisoned page because we know that accessing that memory
-> > > is possible to fail. Secondly it doesn't make any sense to migrate a
-> > > potentially broken content and preserve the memory corruption over to a
-> > > new location.
-> > > 
-> > > Oscar has found out that it is the elevated reference count from
-> > > memory_failure that is confusing the offlining path. HWPoisoned pages
-> > > are isolated from the LRU list but __offline_pages might still try to
-> > > migrate them if there is any preceding migrateable pages in the pfn
-> > > range. Such a migration would fail due to the reference count but
-> > > the migration code would put it back on the LRU list. This is quite
-> > > wrong in itself but it would also make scan_movable_pages stumble over
-> > > it again without any way out.
-> > > 
-> > > This means that the hotremove with hwpoisoned pages has never really
-> > > worked (without a luck). HWPoisoning really needs a larger surgery
-> > > but an immediate and backportable fix is to skip over these pages during
-> > > offlining. Even if they are still mapped for some reason then
-> > > try_to_unmap should turn those mappings into hwpoison ptes and cause
-> > > SIGBUS on access. Nobody should be really touching the content of the
-> > > page so it should be safe to ignore them even when there is a pending
-> > > reference count.
-> > > 
-> > > Debugged-by: Oscar Salvador <osalvador@suse.com>
-> > > Cc: stable
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > ---
-> > > Hi,
-> > > I am sending this as an RFC now because I am not fully sure I see all
-> > > the consequences myself yet. This has passed a testing by Oscar but I
-> > > would highly appreciate a review from Naoya about my assumptions about
-> > > hwpoisoning. E.g. it is not entirely clear to me whether there is a
-> > > potential case where the page might be still mapped.
-> > 
-> > One potential case is ksm page, for which we give up unmapping and leave
-> > it unmapped. Rather than that I don't have any idea, but any new type of
-> > page would be potentially categorized to this class.
-> 
-> Could you be more specific why hwpoison code gives up on ksm pages while
-> we can safely unmap here?
+Hi,
 
-Actually no big reason. Ksm pages never dominate memory, so we simply didn't
-have strong motivation to save the pages.
+ From 549bae59445c5ec67dd6a46f3ea4f58966d40c9b
 
-> [...]
-> > 
-> > I think this looks OK (no better idea.)
-> > 
-> > Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> 
-> Thanks!
-> 
-> > I wondered why I didn't find this for long, and found that my testing only
-> > covered the case where PageHWPoison is the first page of memory block.
-> > scan_movable_pages() considers PageHWPoison as non-movable, so do_migrate_range()
-> > started with pfn after the PageHWPoison and never tried to migrate it
-> > (so effectively ignored every PageHWPoison as the above code does.)
-> 
-> Yeah, it seems that the hotremove worked only by chance in presence of
-> hwpoison pages so far. The specific usecase which triggered this patch
-> is a heavily memory utilized system with in memory database IIRC. So it
-> is quite likely that hwpoison pages are punched to otherwise used
-> memory.
-> 
-> Thanks for the review Naoya!
+Current the struct rtc_wkalrm is dumped as
+"alrm_" by printing converted from the struct
+name of "alrm.*" directly. Shall we use the
+"alarm *" to replace the "alrm_*" during this
+dumping?
 
-Your welcome, and thank you for reporting/fixing the issue.
+Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+---
+  drivers/rtc/rtc-proc.c | 8 ++++----
+  1 file changed, 4 insertions(+), 4 deletions(-)
 
-- Naoya
+diff --git a/drivers/rtc/rtc-proc.c b/drivers/rtc/rtc-proc.c
+index a9dd921..d4a3c91 100644
+--- a/drivers/rtc/rtc-proc.c
++++ b/drivers/rtc/rtc-proc.c
+@@ -58,7 +58,7 @@ static int rtc_proc_show(struct seq_file *seq, void 
+*offset)
+
+  	err = rtc_read_alarm(rtc, &alrm);
+  	if (err == 0) {
+-		seq_printf(seq, "alrm_time\t: ");
++		seq_printf(seq, "alarm time\t: ");
+  		if ((unsigned int)alrm.time.tm_hour <= 24)
+  			seq_printf(seq, "%02d:", alrm.time.tm_hour);
+  		else
+@@ -72,7 +72,7 @@ static int rtc_proc_show(struct seq_file *seq, void 
+*offset)
+  		else
+  			seq_printf(seq, "**\n");
+
+-		seq_printf(seq, "alrm_date\t: ");
++		seq_printf(seq, "alarm date\t: ");
+  		if ((unsigned int)alrm.time.tm_year <= 200)
+  			seq_printf(seq, "%04d-", alrm.time.tm_year + 1900);
+  		else
+@@ -85,9 +85,9 @@ static int rtc_proc_show(struct seq_file *seq, void 
+*offset)
+  			seq_printf(seq, "%02d\n", alrm.time.tm_mday);
+  		else
+  			seq_printf(seq, "**\n");
+-		seq_printf(seq, "alarm_IRQ\t: %s\n",
++		seq_printf(seq, "alarm IRQ\t: %s\n",
+  				alrm.enabled ? "yes" : "no");
+-		seq_printf(seq, "alrm_pending\t: %s\n",
++		seq_printf(seq, "alarm pending\t: %s\n",
+  				alrm.pending ? "yes" : "no");
+  		seq_printf(seq, "update IRQ enabled\t: %s\n",
+  			(rtc->uie_rtctimer.enabled) ? "yes" : "no");
+-- 
+2.7.4
