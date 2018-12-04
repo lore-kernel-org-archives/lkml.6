@@ -2,100 +2,115 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6543C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB96C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920A52146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:54:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLern7E8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920A52146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 950112087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950112087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbeLDGy6 (ORCPT
+        id S1726044AbeLDG7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:54:58 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37965 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeLDGy5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:54:57 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so12966880ede.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 22:54:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LCVw5D5JKQwcqynqXV6M4mR/vwbFVP76FkiLwGbnmyk=;
-        b=DLern7E82sXQQ+3tY8VlFT+NyxT+q1U3KNhWKSskHXkqlnjB1eFBWJf06c2B4sxYzL
-         2NkDDBAA8jWUPZor6jqsiQN4kDtPY+G4tHhh/j9dqSvz5E87Rq5WWHZ9lkhkAcUAoh9Y
-         dqXiR6skDOuX8LXiQvc+ZjKmxfdUU660htastXuovwdVkgPa71QT0WuR3AN4FjQhwhmB
-         1/v8EXeFnSESRgaZaMTc5q5LyHFsL7R105FtgZ/pMLcJjcKeO0PHjwWTBGfbkcsPiBFb
-         VMCM1cq/DpwRtpy72bfe8qwnlDrWMBeSzJNKfmzONx4hWfOk3kXfP6A2RSJvpDPiZyQY
-         fgcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LCVw5D5JKQwcqynqXV6M4mR/vwbFVP76FkiLwGbnmyk=;
-        b=ol8tAkmNBrVw2LaLZ/dMKTOO5oqlOmrWptZv7EdFdQox7nwuqeTFzCbhiz/ackYWMu
-         nBE39exoOgLWWzZvxmQ/fEosbXMDXnXPcTOiPehakF0RCzrQXcE5Kd8T0Fsn3TYOUYzI
-         wsyiPDN5+NokvFhxcmLiMrnYMVVHP3SBBbbPZfhEoAIf5xKbku8dcUNm94HUVKQqBlce
-         9WguuwseUwJmPq3rMYbcIqSOlJwh/zSAYpIrKErXnB0zMOi4u7qX0xBDZ+7Iu+rZucty
-         lO6N9UhUd+uTUuJusXRz95KTDlHQZ96zB/y9PcPwhRXXAXCLXcvhGUj5gZv3m2d6uw2V
-         B4Tw==
-X-Gm-Message-State: AA+aEWadKGeaCs6mGcBAev8UZcFdXduTl9NEBvZUNN5C2n/MAnaF5CQu
-        js8wCKQK2dQ4KRnsZvvXGq8=
-X-Google-Smtp-Source: AFSGD/UCjyTzod88DfphnUryNaMCijJ1rOPG2piwjYLGAmdItuP3MIREw+b7rrcMAxeHuiLz9VjXMg==
-X-Received: by 2002:a50:c089:: with SMTP id k9mr16226073edf.89.1543906495209;
-        Mon, 03 Dec 2018 22:54:55 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id l17sm4467216edc.56.2018.12.03.22.54.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 22:54:54 -0800 (PST)
-Date:   Tue, 4 Dec 2018 06:54:53 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
- offline
-Message-ID: <20181204065453.4rsyhtsk2aej4vim@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
+        Tue, 4 Dec 2018 01:59:33 -0500
+Received: from mga06.intel.com ([134.134.136.31]:3228 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbeLDG7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:59:33 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 22:59:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
+   d="scan'208";a="126879544"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Dec 2018 22:59:31 -0800
+Received: from tiger-server (dazhang1-ssd.sh.intel.com [10.239.48.128])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id EE272580375;
+        Mon,  3 Dec 2018 22:59:28 -0800 (PST)
+Date:   Tue, 4 Dec 2018 14:59:15 +0800
+From:   Yi Zhang <yi.z.zhang@linux.intel.com>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     dan.j.williams@intel.com, pbonzini@redhat.com, brho@google.com,
+        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
+        david@redhat.com, jack@suse.cz, hch@lst.de, rkrcmar@redhat.com,
+        jglisse@redhat.com
+Subject: Re: [PATCH RFC 0/3] Fix KVM misinterpreting Reserved page as an MMIO
+ page
+Message-ID: <20181204065914.GB73736@tiger-server>
+Mail-Followup-To: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        dan.j.williams@intel.com, pbonzini@redhat.com, brho@google.com,
+        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dave.jiang@intel.com, yu.c.zhang@intel.com, pagupta@redhat.com,
+        david@redhat.com, jack@suse.cz, hch@lst.de, rkrcmar@redhat.com,
+        jglisse@redhat.com
+References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:05:57AM +0800, Pingfan Liu wrote:
->During my test on some AMD machine, with kexec -l nr_cpus=x option, the
->kernel failed to bootup, because some node's data struct can not be allocated,
->e.g, on x86, initialized by init_cpu_to_node()->init_memory_less_node(). But
->device->numa_node info is used as preferred_nid param for
+On 2018-12-03 at 11:25:20 -0800, Alexander Duyck wrote:
+> I have loosely based this patch series off of the following patch series
+> from Zhang Yi:
+> https://lore.kernel.org/lkml/cover.1536342881.git.yi.z.zhang@linux.intel.com
+> 
+> The original set had attempted to address the fact that DAX pages were
+> treated like MMIO pages which had resulted in reduced performance. It
+> attempted to address this by ignoring the PageReserved flag if the page
+> was either a DEV_DAX or FS_DAX page.
+> 
+> I am proposing this as an alternative to that set. The main reason for this
+> is because I believe there are a few issues that were overlooked with that
+> original set. Specifically KVM seems to have two different uses for the
+> PageReserved flag. One being whether or not we can pin the memory, the other
+> being if we should be marking the pages as dirty or accessed. I believe
+> only the pinning really applies so I have split the uses of
+> kvm_is_reserved_pfn and updated the function uses to determine support for
+> page pinning to include a check of the pgmap to see if it supports pinning.
+kvm is not the only one users of the dax page.
 
-could we fix the preferred_nid before passed to
-__alloc_pages_nodemask()?
+A similar user of PageReserved to look at is:
+ drivers/vfio/vfio_iommu_type1.c:is_invalid_reserved_pfn(
+vfio is also want to know the page is capable for pinning.
 
-BTW, I don't catch the function call flow to this point. Would you mind
-giving me some hint?
+I throught that you have removed the reserved flag on the dax page
 
--- 
-Wei Yang
-Help you, Help me
+in https://patchwork.kernel.org/patch/10707267/
+
+is something I missing here?
+
+> 
+> ---
+> 
+> Alexander Duyck (3):
+>       kvm: Split use cases for kvm_is_reserved_pfn to kvm_is_refcounted_pfn
+>       mm: Add support for exposing if dev_pagemap supports refcount pinning
+>       kvm: Add additional check to determine if a page is refcounted
+> 
+> 
+>  arch/x86/kvm/mmu.c        |    6 +++---
+>  drivers/nvdimm/pfn_devs.c |    2 ++
+>  include/linux/kvm_host.h  |    2 +-
+>  include/linux/memremap.h  |    5 ++++-
+>  include/linux/mm.h        |   11 +++++++++++
+>  virt/kvm/kvm_main.c       |   34 +++++++++++++++++++++++++---------
+>  6 files changed, 46 insertions(+), 14 deletions(-)
+> 
+> --
