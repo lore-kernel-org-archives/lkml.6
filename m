@@ -2,132 +2,143 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A43C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F495C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215C120672
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:56:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZvJD6FN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 215C120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 24BC620672
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BC620672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbeLDP4n (ORCPT
+        id S1726855AbeLDP6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:56:43 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40509 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeLDP4n (ORCPT
+        Tue, 4 Dec 2018 10:58:55 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46094 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeLDP6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:56:43 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so8502571plq.7;
-        Tue, 04 Dec 2018 07:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EXje32CS1sesbGGDolcJfJAsuFY1fojEpfFYBgrkW3o=;
-        b=QZvJD6FNXOFDSVuhanryykB8yUHKz4DvyC6BBCwUUH1/Pa7Yp0NVMJQfD4v1HXnqxV
-         PmyX43Jkq+L7MtYExs8pn1v+/gm5pRvLfaTpz4T9MA1HSsb1bqBXg0V1Mn59duHIhQ7K
-         HemSoDQ6idxKuJovScOr9g/1Ntuu2sZc/L9NFphU5lhSXWEQiN5wxnM4DfyGAREFbu07
-         wKEPL/sNB/hdHWStINnXznMjM/oqfU9CXraY2aH2F6AsLKUAZiLIvKv9vk8wV9yq3q4N
-         XDz0z8+hKG6mdFVSoiIprMVk4o4/Hkpp2quCm445T2Erfa9xNK2cDrWOAqub7dUUpHnr
-         AoLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EXje32CS1sesbGGDolcJfJAsuFY1fojEpfFYBgrkW3o=;
-        b=aICHoIigf0+iAKes5yYgBhmSERYwf6qdXyQC7q26AZN3L/g3zqtLAfuAeOe+63wIYJ
-         OrG5VDvJ7PgqRbF1APwDb//goOvaleZA4EwGk8o52qeMPjXBqNpgIUzwTke0AHOlyPhZ
-         5WweWtoL/w7VgCZhzvB4pn8HJJ6fXEF4bmmZaLdWjfhklGI93ZEI5Z+htIxFnWkAF21C
-         EJ91M9sLog6S+0CPRNYygWJFeRTfRxxMhYpA5XuONdhsS2w5BhC174do9tkbip7FO1Py
-         UAczpJ8QwvOqz0COnsBVwdh8CLFJRZafW8B/zOCIvf/iXIclWGDEKaZjOMEXy7a4rJNC
-         yWwA==
-X-Gm-Message-State: AA+aEWY5PyPDw1e+NyuosIhGgpn59ynAPSKAoEEBKvJR32YiPpHJ9fgC
-        1PcV4bUorC1IS/tOk6JYphc2ASMU+MrEtw==
-X-Google-Smtp-Source: AFSGD/UwJVnCWwRtPQCcXllCcmWOqvvX88TGxbzsuy0t2HYhBoSwojwOLmTCdJIKVYNnfKcuYHtMRA==
-X-Received: by 2002:a17:902:30a3:: with SMTP id v32mr14812653plb.26.1543939002710;
-        Tue, 04 Dec 2018 07:56:42 -0800 (PST)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id w10sm18175287pgi.81.2018.12.04.07.56.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 07:56:42 -0800 (PST)
-Date:   Tue, 4 Dec 2018 21:26:35 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 04/26] Staging: fbtft: flexfb: Switch to the gpio
- descriptor interface
-Message-ID: <20181204155634.GA16146@nishad>
-References: <cover.1543142440.git.nishadkamdar@gmail.com>
- <0bc27a5c4f06e50f9cc2d568c6ce5f983dc84925.1543142440.git.nishadkamdar@gmail.com>
- <20181126101308.GI3088@unbuntlaptop>
+        Tue, 4 Dec 2018 10:58:54 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4433E26395B
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     lee.jones@linaro.org
+Cc:     gwendal@chromium.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org, dtor@google.com,
+        stable@vger.kernel.org
+Subject: [PATCH] Revert "mfd: cros_ec: Use devm_kzalloc for private data"
+Date:   Tue,  4 Dec 2018 16:58:43 +0100
+Message-Id: <20181204155843.11411-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126101308.GI3088@unbuntlaptop>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 01:13:08PM +0300, Dan Carpenter wrote:
-> On Sun, Nov 25, 2018 at 04:56:29PM +0530, Nishad Kamdar wrote:
-> > This switches the flexfb.c to use GPIO descriptors
-> > rather than numerical gpios.
-> > 
-> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > ---
-> >  drivers/staging/fbtft/flexfb.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/staging/fbtft/flexfb.c b/drivers/staging/fbtft/flexfb.c
-> > index 2af474469e7d..c5fa59105a43 100644
-> > --- a/drivers/staging/fbtft/flexfb.c
-> > +++ b/drivers/staging/fbtft/flexfb.c
-> > @@ -9,7 +9,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/init.h>
-> >  #include <linux/vmalloc.h>
-> > -#include <linux/gpio.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/spi/spi.h>
-> >  #include <linux/delay.h>
-> >  
-> > @@ -521,7 +521,7 @@ static int flexfb_verify_gpios_dc(struct fbtft_par *par)
-> >  {
-> >  	fbtft_par_dbg(DEBUG_VERIFY_GPIOS, par, "%s()\n", __func__);
-> >  
-> > -	if (par->gpio.dc < 0) {
-> > +	if (!par->gpio.dc) {
-> >  		dev_err(par->info->device,
-> >  			"Missing info about 'dc' gpio. Aborting.\n");
-> >  		return -EINVAL;
-> 
-> We changed par->gpio.c from an int to a pointer in patch 1 so we have
-> to update all the checks as well in the same patch.  Otherwise it breaks
-> `git bisect`.
-> 
-> (I don't know this code well.  But it just feels like it has to be
-> breaking git bisect just from from glancing at the patches.  Perhaps I
-> have misunderstood).
-> 
-> regards,
-> dan carpenter
-> 
-Ok. I'll merge them into one patch.
+This reverts commit 3aa2177e47878f7e7616da8a2050c44f22301b6e.
 
-Thanks for the review and the pointer.
+That commit triggered a new WARN when unloading the module (see at the
+end of the commit message). When a class_dev is embedded in a structure
+then that class_dev is the thing that controls the lifetime of that
+structure, for that reason device managed allocations can't be used here.
+See Documentation/kobject.txt.
 
-Regards,
-Nishad
+Revert the above patch, so the struct is allocated using kzalloc and we
+have a release function for it that frees the allocated memory, otherwise
+it is broken.
+
+ ------------[ cut here ]------------
+ Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
+ WARNING: CPU: 3 PID: 3675 at drivers/base/core.c:895 device_release+0x80/0x90
+ Modules linked in: btusb btrtl btintel btbcm bluetooth ...
+ CPU: 3 PID: 3675 Comm: rmmod Not tainted 4.20.0-rc4 #76
+ Hardware name: Google Kevin (DT)
+ pstate: 40000005 (nZcv daif -PAN -UAO)
+ pc : device_release+0x80/0x90
+ lr : device_release+0x80/0x90
+ sp : ffff00000c47bc70
+ x29: ffff00000c47bc70 x28: ffff8000e86b0d40
+ x27: 0000000000000000 x26: 0000000000000000
+ x25: 0000000056000000 x24: 0000000000000015
+ x23: ffff8000f0bbf860 x22: ffff000000d320a0
+ x21: ffff8000ee93e100 x20: ffff8000ed931428
+ x19: ffff8000ed931418 x18: 0000000000000020
+ x17: 0000000000000000 x16: 0000000000000000
+ x15: 0000000000000400 x14: 0000000000000143
+ x13: 0000000000000000 x12: 0000000000000400
+ x11: 0000000000000157 x10: 0000000000000960
+ x9 : ffff00000c47b9b0 x8 : ffff8000e86b1700
+ x7 : 0000000000000000 x6 : ffff8000f7d520b8
+ x5 : ffff8000f7d520b8 x4 : 0000000000000000
+ x3 : ffff8000f7d58e68 x2 : ffff8000e86b0d40
+ x1 : 37d859939c964800 x0 : 0000000000000000
+ Call trace:
+  device_release+0x80/0x90
+  kobject_put+0x74/0xe8
+  device_unregister+0x20/0x30
+  ec_device_remove+0x34/0x48 [cros_ec_dev]
+  platform_drv_remove+0x28/0x48
+  device_release_driver_internal+0x1a8/0x240
+  driver_detach+0x40/0x80
+  bus_remove_driver+0x54/0xa8
+  driver_unregister+0x2c/0x58
+  platform_driver_unregister+0x10/0x18
+  cros_ec_dev_exit+0x1c/0x2d8 [cros_ec_dev]
+  __arm64_sys_delete_module+0x16c/0x1f8
+  el0_svc_common+0x84/0xd8
+  el0_svc_handler+0x2c/0x80
+  el0_svc+0x8/0xc
+ ---[ end trace a57c4625f3c60ae8 ]---
+
+Cc: stable@vger.kernel.org
+Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+ drivers/mfd/cros_ec_dev.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 8f9d6964173e..b99a194ce5a4 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -263,6 +263,11 @@ static const struct file_operations fops = {
+ #endif
+ };
+ 
++static void cros_ec_class_release(struct device *dev)
++{
++	kfree(to_cros_ec_dev(dev));
++}
++
+ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+ {
+ 	/*
+@@ -395,7 +400,7 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	int retval = -ENOMEM;
+ 	struct device *dev = &pdev->dev;
+ 	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
+-	struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
++	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
+ 
+ 	if (!ec)
+ 		return retval;
+@@ -417,6 +422,7 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	ec->class_dev.devt = MKDEV(ec_major, pdev->id);
+ 	ec->class_dev.class = &cros_class;
+ 	ec->class_dev.parent = dev;
++	ec->class_dev.release = cros_ec_class_release;
+ 
+ 	retval = dev_set_name(&ec->class_dev, "%s", ec_platform->ec_name);
+ 	if (retval) {
+-- 
+2.19.1
+
