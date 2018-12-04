@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C1FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E10F62146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239CE2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kj02J1SJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10F62146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZgeg8GB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239CE2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbeLDK4k (ORCPT
+        id S1726526AbeLDK4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:56:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39992 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:56:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbeLDK4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:56:36 -0500
+        id S1726501AbeLDK4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:56:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E709A214C1;
-        Tue,  4 Dec 2018 10:56:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8916521508;
+        Tue,  4 Dec 2018 10:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920995;
-        bh=Kpf8zoHVtLASvAFmI86NJPrxaNh9ML0FexWRMT0doB0=;
+        s=default; t=1543920993;
+        bh=GQYbBTYiA6s/AOZMS87ly6cILcsApi0hOsMREvY4TYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kj02J1SJJg2PyVbNFjvNBrePvqJPgzFDBDuhP6LNwWWT4/tWJjb9zQZhm0DMkLZif
-         /15DOGeyMuM///ZCLcCdJRKBvlS+k/CEcH1KfhihYt6mq2dpASTzqy+f/V2JRt+NAO
-         dn6qKHtwPO+JWRvZqj/n9Alww1NP88JN6aMm15XY=
+        b=EZgeg8GBbueEcRdcWG2TYs3UeUxLskbkcxcy/Pz1uVa6+qsOU+Xh0sN8JbDHg6iiI
+         9zQIaJ46id1yb1OKFvglz09Tvgk/yw6fGDtR/gEAmVXC4I3JQfAGHPNpWoHASoeLnZ
+         KwSvq+U6L/JPNKiSnScWYwyB3LLscbIJ2jW+3tuk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 007/139] mm/khugepaged: minor reorderings in collapse_shmem()
-Date:   Tue,  4 Dec 2018 11:48:08 +0100
-Message-Id: <20181204103650.262956844@linuxfoundation.org>
+Subject: [PATCH 4.19 006/139] mm/khugepaged: collapse_shmem() remember to clear holes
+Date:   Tue,  4 Dec 2018 11:48:07 +0100
+Message-Id: <20181204103650.219807209@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -69,14 +69,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 042a30824871fa3149b0127009074b75cc25863c upstream.
+commit 2af8ff291848cc4b1cce24b6c943394eb2c761e8 upstream.
 
-Several cleanups in collapse_shmem(): most of which probably do not
-really matter, beyond doing things in a more familiar and reassuring
-order.  Simplify the failure gotos in the main loop, and on success
-update stats while interrupts still disabled from the last iteration.
+Huge tmpfs testing reminds us that there is no __GFP_ZERO in the gfp
+flags khugepaged uses to allocate a huge page - in all common cases it
+would just be a waste of effort - so collapse_shmem() must remember to
+clear out any holes that it instantiates.
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261526400.2275@eggly.anvils
+The obvious place to do so, where they are put into the page cache tree,
+is not a good choice: because interrupts are disabled there.  Leave it
+until further down, once success is assured, where the other pages are
+copied (before setting PageUptodate).
+
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261525080.2275@eggly.anvils
 Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
 Signed-off-by: Hugh Dickins <hughd@google.com>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
@@ -88,213 +93,38 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/khugepaged.c | 73 ++++++++++++++++++++-----------------------------
- 1 file changed, 30 insertions(+), 43 deletions(-)
+ mm/khugepaged.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 068868763b78..d0a347e6fd08 100644
+index 87dbb0fcfa1a..068868763b78 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -1330,13 +1330,12 @@ static void collapse_shmem(struct mm_struct *mm,
- 		goto out;
- 	}
- 
-+	__SetPageLocked(new_page);
-+	__SetPageSwapBacked(new_page);
- 	new_page->index = start;
- 	new_page->mapping = mapping;
--	__SetPageSwapBacked(new_page);
--	__SetPageLocked(new_page);
- 	BUG_ON(!page_ref_freeze(new_page, 1));
- 
--
- 	/*
- 	 * At this point the new_page is 'frozen' (page_count() is zero), locked
- 	 * and not up-to-date. It's safe to insert it into radix tree, because
-@@ -1365,13 +1364,13 @@ static void collapse_shmem(struct mm_struct *mm,
- 		 */
- 		if (n && !shmem_charge(mapping->host, n)) {
- 			result = SCAN_FAIL;
--			break;
-+			goto tree_locked;
- 		}
--		nr_none += n;
- 		for (; index < min(iter.index, end); index++) {
- 			radix_tree_insert(&mapping->i_pages, index,
- 					new_page + (index % HPAGE_PMD_NR));
- 		}
-+		nr_none += n;
- 
- 		/* We are done. */
- 		if (index >= end)
-@@ -1387,12 +1386,12 @@ static void collapse_shmem(struct mm_struct *mm,
- 				result = SCAN_FAIL;
- 				goto tree_unlocked;
- 			}
--			xa_lock_irq(&mapping->i_pages);
- 		} else if (trylock_page(page)) {
- 			get_page(page);
-+			xa_unlock_irq(&mapping->i_pages);
- 		} else {
- 			result = SCAN_PAGE_LOCK;
--			break;
-+			goto tree_locked;
- 		}
- 
- 		/*
-@@ -1407,11 +1406,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 			result = SCAN_TRUNCATED;
- 			goto out_unlock;
- 		}
--		xa_unlock_irq(&mapping->i_pages);
- 
- 		if (isolate_lru_page(page)) {
- 			result = SCAN_DEL_PAGE_LRU;
--			goto out_isolate_failed;
-+			goto out_unlock;
- 		}
- 
- 		if (page_mapped(page))
-@@ -1432,7 +1430,9 @@ static void collapse_shmem(struct mm_struct *mm,
- 		 */
- 		if (!page_ref_freeze(page, 3)) {
- 			result = SCAN_PAGE_COUNT;
--			goto out_lru;
-+			xa_unlock_irq(&mapping->i_pages);
-+			putback_lru_page(page);
-+			goto out_unlock;
- 		}
- 
- 		/*
-@@ -1448,17 +1448,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 		slot = radix_tree_iter_resume(slot, &iter);
- 		index++;
- 		continue;
--out_lru:
--		xa_unlock_irq(&mapping->i_pages);
--		putback_lru_page(page);
--out_isolate_failed:
--		unlock_page(page);
--		put_page(page);
--		goto tree_unlocked;
- out_unlock:
- 		unlock_page(page);
- 		put_page(page);
--		break;
-+		goto tree_unlocked;
- 	}
- 
- 	/*
-@@ -1466,7 +1459,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 	 * This code only triggers if there's nothing in radix tree
- 	 * beyond 'end'.
- 	 */
--	if (result == SCAN_SUCCEED && index < end) {
-+	if (index < end) {
- 		int n = end - index;
- 
- 		/* Stop if extent has been truncated, and is now empty */
-@@ -1478,7 +1471,6 @@ static void collapse_shmem(struct mm_struct *mm,
- 			result = SCAN_FAIL;
- 			goto tree_locked;
- 		}
--
- 		for (; index < end; index++) {
- 			radix_tree_insert(&mapping->i_pages, index,
- 					new_page + (index % HPAGE_PMD_NR));
-@@ -1486,14 +1478,19 @@ static void collapse_shmem(struct mm_struct *mm,
- 		nr_none += n;
- 	}
- 
-+	__inc_node_page_state(new_page, NR_SHMEM_THPS);
-+	if (nr_none) {
-+		struct zone *zone = page_zone(new_page);
-+
-+		__mod_node_page_state(zone->zone_pgdat, NR_FILE_PAGES, nr_none);
-+		__mod_node_page_state(zone->zone_pgdat, NR_SHMEM, nr_none);
-+	}
-+
- tree_locked:
- 	xa_unlock_irq(&mapping->i_pages);
- tree_unlocked:
- 
- 	if (result == SCAN_SUCCEED) {
--		unsigned long flags;
--		struct zone *zone = page_zone(new_page);
--
- 		/*
+@@ -1498,7 +1498,12 @@ static void collapse_shmem(struct mm_struct *mm,
  		 * Replacing old pages with new one has succeed, now we need to
  		 * copy the content and free old pages.
-@@ -1507,11 +1504,11 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		 */
++		index = start;
+ 		list_for_each_entry_safe(page, tmp, &pagelist, lru) {
++			while (index < page->index) {
++				clear_highpage(new_page + (index % HPAGE_PMD_NR));
++				index++;
++			}
  			copy_highpage(new_page + (page->index % HPAGE_PMD_NR),
  					page);
  			list_del(&page->lru);
--			unlock_page(page);
--			page_ref_unfreeze(page, 1);
- 			page->mapping = NULL;
-+			page_ref_unfreeze(page, 1);
+@@ -1508,6 +1513,11 @@ static void collapse_shmem(struct mm_struct *mm,
  			ClearPageActive(page);
  			ClearPageUnevictable(page);
-+			unlock_page(page);
  			put_page(page);
- 			index++;
- 		}
-@@ -1520,28 +1517,17 @@ static void collapse_shmem(struct mm_struct *mm,
- 			index++;
++			index++;
++		}
++		while (index < end) {
++			clear_highpage(new_page + (index % HPAGE_PMD_NR));
++			index++;
  		}
  
--		local_irq_save(flags);
--		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--		if (nr_none) {
--			__mod_node_page_state(zone->zone_pgdat, NR_FILE_PAGES, nr_none);
--			__mod_node_page_state(zone->zone_pgdat, NR_SHMEM, nr_none);
--		}
--		local_irq_restore(flags);
--
--		/*
--		 * Remove pte page tables, so we can re-faulti
--		 * the page as huge.
--		 */
--		retract_page_tables(mapping, start);
--
- 		/* Everything is ready, let's unfreeze the new_page */
--		set_page_dirty(new_page);
- 		SetPageUptodate(new_page);
- 		page_ref_unfreeze(new_page, HPAGE_PMD_NR);
-+		set_page_dirty(new_page);
- 		mem_cgroup_commit_charge(new_page, memcg, false, true);
- 		lru_cache_add_anon(new_page);
--		unlock_page(new_page);
- 
-+		/*
-+		 * Remove pte page tables, so we can re-fault the page as huge.
-+		 */
-+		retract_page_tables(mapping, start);
- 		*hpage = NULL;
- 
- 		khugepaged_pages_collapsed++;
-@@ -1573,8 +1559,8 @@ static void collapse_shmem(struct mm_struct *mm,
- 			radix_tree_replace_slot(&mapping->i_pages, slot, page);
- 			slot = radix_tree_iter_resume(slot, &iter);
- 			xa_unlock_irq(&mapping->i_pages);
--			putback_lru_page(page);
- 			unlock_page(page);
-+			putback_lru_page(page);
- 			xa_lock_irq(&mapping->i_pages);
- 		}
- 		VM_BUG_ON(nr_none);
-@@ -1583,9 +1569,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 		/* Unfreeze new_page, caller would take care about freeing it */
- 		page_ref_unfreeze(new_page, 1);
- 		mem_cgroup_cancel_charge(new_page, memcg, true);
--		unlock_page(new_page);
- 		new_page->mapping = NULL;
- 	}
-+
-+	unlock_page(new_page);
- out:
- 	VM_BUG_ON(!list_empty(&pagelist));
- 	/* TODO: tracepoints */
+ 		local_irq_save(flags);
 -- 
 2.17.1
 
