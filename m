@@ -2,139 +2,143 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE701C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EFFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD602081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45DE82082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9Kj3r0o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD602081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fjfeRnG2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45DE82082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbeLDOpI (ORCPT
+        id S1726681AbeLDOqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:45:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbeLDOpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:45:06 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB74214DA;
-        Tue,  4 Dec 2018 14:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543934705;
-        bh=hVb8TID6cd1Olg3jtzdBexIhOrCiR/d52f5IOpnmACI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=I9Kj3r0o3/KmrFHvG5GA+pHQ+dy7Ck2z0nBok1uWJCjEzruGA59yQo0y1FUoCsswk
-         o1aUEqebWNFZ+Ip6QC3hVzUmt5fPdbbp1IG8/nQbMgOSbjkGWOSY/gCtPmTyidtwMS
-         Yy/BeYZ28OHA5lgEi9DmgXTRG0r6SrbtOljEJnKM=
-Received: by mail-qt1-f176.google.com with SMTP id r14so18303203qtp.1;
-        Tue, 04 Dec 2018 06:45:05 -0800 (PST)
-X-Gm-Message-State: AA+aEWabfDNQBcpbRss9JXgU3Ay3IIqzCytJBrREZgoS/w6xd1DUpFNH
-        ig8sLjT91RoK/1Xcd+UpjTPJCYWcAMlZnApXlg==
-X-Google-Smtp-Source: AFSGD/WGVWJioClsa0lvQGJtAOGi8FkeeWgHBEl1fwnzno8/vkh5RpuvYCjALLTG0ebaUzuRMqN9CWkjmLCc7SNclL4=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr19931119qtf.26.1543934704526;
- Tue, 04 Dec 2018 06:45:04 -0800 (PST)
+        Tue, 4 Dec 2018 09:46:01 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35243 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeLDOqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:46:00 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so14779169itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:45:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g32YqTA80V6kUsfx+TbEyMJOZvuwJB1QJlsNROCRuVU=;
+        b=fjfeRnG2tSePA6vDhDxv9wsQGy4eOWo4RR/eL+AHMYNkP844nH7JeykS4onSFSxMjq
+         gM7jAb4y+BSJ9222KtucEpAu3XkeJgf4CUOKT9A+3mQf4FeKZw0g2x6lRkiTP8JsOElA
+         c0fN2p9DnRxY4Z+gjK0P8UUxRKO2PmoTu0qfc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g32YqTA80V6kUsfx+TbEyMJOZvuwJB1QJlsNROCRuVU=;
+        b=lHB/OYZiOy9rP3iwyp4556mqudoR2iUR74Ot/fiDxEpfu+D6696k8EELZsnb39kGQp
+         +A/VfnllrYwPyB3Mtdr4q7G7uBeeFkpDTETCZWJwmTNByH08H6oBcQHxQckfgW7ERslT
+         8ehFxTZ47ijIgBO6Os0fzhIXVnGIIDI84tG9pH1pTeCuqmtqxrTautDd9oO1HkvVFOd1
+         ZLvEVeFW54Cb0PlU62jyW8LE077/Sjdy9msdvfdZuZF0ALO4FKUyUcyRFml8IboHekSn
+         4i/l78/B6xOhVBBExqSI9MM9Rx3aQn4JG0jUkuAOY5mQnp9vkC7fnGiVtw5kLo4uwYba
+         2GQg==
+X-Gm-Message-State: AA+aEWYh1GYHXismSjja94CzUnW+3jcJQRJ8UkdkppI31TdlWnAepAhm
+        TKe/Okjuv7vyBbMNUpmBZZ29N5k6aVSkL3bAGUjAPA==
+X-Google-Smtp-Source: AFSGD/UKGia79uPg6xLcuayor1AMNGZV2YnIRQHmXYZRlKJ7tNZ6/uJT74/CEViZI8zJDOJA1B08Ya3h5rkmDYLSAwQ=
+X-Received: by 2002:a02:3da:: with SMTP id e87mr17254771jae.78.1543934759464;
+ Tue, 04 Dec 2018 06:45:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-15-robh@kernel.org>
- <dfb921ca-63c5-a4c2-f3e2-c2eebdf688f6@baylibre.com>
-In-Reply-To: <dfb921ca-63c5-a4c2-f3e2-c2eebdf688f6@baylibre.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 4 Dec 2018 08:44:52 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+e2m5VaibpvuTYURZ+E=MCSUGH8cokdWYWEjn_jy9iwA@mail.gmail.com>
-Message-ID: <CAL_Jsq+e2m5VaibpvuTYURZ+E=MCSUGH8cokdWYWEjn_jy9iwA@mail.gmail.com>
-Subject: Re: [PATCH v2 14/34] dt-bindings: arm: Convert Amlogic board/soc
- bindings to json-schema
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Grant Likely <grant.likely@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com> <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com> <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov> <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov> <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
+ <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov> <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com> <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+In-Reply-To: <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 4 Dec 2018 15:45:47 +0100
+Message-ID: <CAJfpegujwNpWL5Eujrb+=EQF8OMOkO03yq8ZZSkfhFfwQvhGKQ@mail.gmail.com>
+Subject: Re: overlayfs access checks on underlying layers
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 2:39 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Tue, Dec 4, 2018 at 3:28 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
 >
-> Hi Rob,
->
-> You forgot linux-amlogic in CC...
->
-> On 03/12/2018 22:32, Rob Herring wrote:
-> > Convert Amlogic SoC bindings to DT schema format using json-schema.
+> On 12/4/18 8:32 AM, Miklos Szeredi wrote:
+
+> > My proposed sequence would be
 > >
-> > Cc: Carlo Caione <carlo@caione.org>
-> > Cc: Kevin Hilman <khilman@baylibre.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-
-[...]
-
-> > +      - items:
-> > +          - enum:
-> > +              - amlogic,s400
-> > +          - const: amlogic,a113d
-> > +          - const: amlogic,meson-axg
-> > +      - items:
-> > +          - enum:
-> > +              - amlogic,u200
-> > +          - const: amlogic,g12a
+> > a) check task's creds against overlay inode, fail -> return fail, otherwise:
+> > b) check mounter's creds against lower inode, success -> return
+> > success, otherwise:
+> > c) copy up inode, fail -> return fail, otherwise
+> > d) check mounter's creds against upper inode, return result.
+> >
+> > So, unlike write access to regular files, write access to special
+> > files don't necessarily result in copy-up.
+> >
+> > You say this is an escalation of privilege, but I don't get it how.
+> > As DWalsh points out downthread, if mounter cannot create device
+> > files, then the copy-up will simply fail.  If mounter can create
+> > device files, then this is not an escalation of privilege for the
+> > mounter.
 >
-> but all this feels wrong for me.
+> Yes, in that case there isn't an escalation of privilege for the mounter
+> (I acknowledged that above).  I'm still not sure copy-up of special
+> files is a good idea though:
 >
-> First of all, this yaml description is not human friendly and not intuitive at all,
-> and secondly with this conversion we loose all the comments about the SoC family relationship
-> with the compatible strings !
->
-> I really understand the point to have automated verification, but really it's a pain to read
-> (I can't imagine newcomers... the actual DT bindings are already hard to read...) and
-> I feel it will be a real pain to write !
+> - In the case of device files, there is the potential for mischief by
+> the client task in misusing the mounter's privileges to gain access to
+> otherwise unusable device node (nodev lower vs upper?),
 
-What do you suggest that would be easier? Is it the YAML itself or the
-json-schema vocabulary? For the former, we could use {} and [] to make
-things more json style. But I imagine it is the latter.
+The mount flag "nodev" on lower or upper has no effect on the overlay,
+and never had.
 
-There is some learning curve for json-schema and is certainly a
-concern I have, but there would be a learning curve for anything. Our
-choices are use some existing schema language or invent one. All the
-previous efforts (there's been about 5 since 2013) have been inventing
-one, and they've not gone far. There will be far few resources
-available to train people with if we do something custom.
+> - In the case of sockets or fifos, what useful result do you get from a
+> copy-up? Accessing the copy isn't going to yield the same result as
+> accessing the original.
 
-> Can't we mix an "humam text" with a "yaml" part on a same document ? we are in 2018 (nearly 2019),
-> and it should be easy to extract a yaml description from a text document without pain and
-> keep all the human description, no ?
+This is a misconception.  Overlayfs is a filesystem (that uses other
+filesystems as backing store), but it's more a filesystem and less a
+vfs hack (and trying to completely get out of the vfs hack business),
+and copy up has no effect on I/O being performed on a socket or FIFO:
+it's the same object before and after the copy up, and it's a
+different object from either the lower or upper nodes.   Same as NFS:
+fifo on server is logically different object than fifo having the same
+name on any number of clients.
 
-Yes. Please go look at the annotated example in patch 2.
+> For executables, this copy-up behavior might trigger a lot of undesired
+> copies of non-executable files from the lower dir into the upper, even
+> if we ultimately end up denying the execute.
 
-> What will be the case for all the bindings with ASCII art to describe the architecture of the
-> HW ? will you simply drop it to replace it with cold yaml description ?
+That would only happen if
 
-No, you can have literal blocks and/or comments with however much
-description you like. In fact, there's some notion to write the
-descriptions in sphinx and extract them to generate documentation, but
-that's a ways off. That's just the extent of what is possible.
+  - task is allowed exec on overlay
+  - mounter is denied exec on lower
+  - copy up is allowed
+  - mounter is denied exec on upper
 
-Rob
+In fact in the model where upper object inherits context from overlay
+this is pretty much impossible, AFAICT.
+
+Thanks,
+Miklos
