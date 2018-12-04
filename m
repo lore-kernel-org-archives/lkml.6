@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFD5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C71C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104A92151B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E5A214ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9pDvAhB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104A92151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcFVq2Ta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31E5A214ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeLDLCZ (ORCPT
+        id S1727632AbeLDLCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48306 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbeLDLCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:20 -0500
+        id S1727621AbeLDLCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78D1E214E0;
-        Tue,  4 Dec 2018 11:02:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F0BE21536;
+        Tue,  4 Dec 2018 11:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921340;
-        bh=OACRTtEG7kXbrTL16o1902E9nXQtCWxlyjzHLwZyQjs=;
+        s=default; t=1543921343;
+        bh=l30MuosTXsNKQftTf2XOKvBBqYufD1eksCDbWXsdQI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E9pDvAhBadENZzjDHuO3N/bMMU5JMTw8Gki8B1i0LgbMPvytVcoa7h9K2pLaIRPN+
-         66aMii0NwTom9EnEAopeoTeVz1u3iBhN+5zfSiN/dInvUiANpUImbx1yDoiY9mSZSO
-         QcvsdWIitXTvOvCag3PuvLR7ZtRlEpDSBBvHDVDg=
+        b=fcFVq2TaVN4NuVGnyz33g3oEC0NwWs3x8qGCaQBScX4UYuDAm55+mm255jE9eI8bq
+         bInHLAtjkiAbJdfU36UlF9Aa+sjH3S9y4bNxpmAKGXWLMl5LxHcciYJKNibFThVUSb
+         7OMukbHLefXdUPZsq+bGnwDldhH4f3XlL69PrW7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@gmail.com>,
+        "Lakshmipathi.G" <lakshmipathi.g@gmail.com>,
+        Qu Wenruo <wqu@suse.com>, Liu Bo <bo.li.liu@oracle.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 034/146] btrfs: tree-checker: Enhance btrfs_check_node output
-Date:   Tue,  4 Dec 2018 11:48:40 +0100
-Message-Id: <20181204103728.238824768@linuxfoundation.org>
+Subject: [PATCH 4.14 035/146] btrfs: tree-checker: Fix false panic for sanity test
+Date:   Tue,  4 Dec 2018 11:48:41 +0100
+Message-Id: <20181204103728.272938894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,128 +67,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit bba4f29896c986c4cec17bc0f19f2ce644fceae1 upstream.
+commit 69fc6cbbac542c349b3d350d10f6e394c253c81d upstream.
 
-Use inline function to replace macro since we don't need
-stringification.
-(Macro still exists until all callers get updated)
+[BUG]
+If we run btrfs with CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y, it will
+instantly cause kernel panic like:
 
-And add more info about the error, and replace EIO with EUCLEAN.
+------
+...
+assertion failed: 0, file: fs/btrfs/disk-io.c, line: 3853
+...
+Call Trace:
+ btrfs_mark_buffer_dirty+0x187/0x1f0 [btrfs]
+ setup_items_for_insert+0x385/0x650 [btrfs]
+ __btrfs_drop_extents+0x129a/0x1870 [btrfs]
+...
+-----
 
-For nr_items error, report if it's too large or too small, and output
-the valid value range.
+[Cause]
+Btrfs will call btrfs_check_leaf() in btrfs_mark_buffer_dirty() to check
+if the leaf is valid with CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y.
 
-For node block pointer, added a new alignment checker.
+However quite some btrfs_mark_buffer_dirty() callers(*) don't really
+initialize its item data but only initialize its item pointers, leaving
+item data uninitialized.
 
-For key order, also output the next key to make the problem more
-obvious.
+This makes tree-checker catch uninitialized data as error, causing
+such panic.
 
-Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-[ wording adjustments, unindented long strings ]
+*: These callers include but not limited to
+setup_items_for_insert()
+btrfs_split_item()
+btrfs_expand_item()
+
+[Fix]
+Add a new parameter @check_item_data to btrfs_check_leaf().
+With @check_item_data set to false, item data check will be skipped and
+fallback to old btrfs_check_leaf() behavior.
+
+So we can still get early warning if we screw up item pointers, and
+avoid false panic.
+
+Cc: Filipe Manana <fdmanana@gmail.com>
+Reported-by: Lakshmipathi.G <lakshmipathi.g@gmail.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-checker.c | 68 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 7 deletions(-)
+ fs/btrfs/disk-io.c      | 10 ++++++++--
+ fs/btrfs/tree-checker.c | 27 ++++++++++++++++++++++-----
+ fs/btrfs/tree-checker.h | 14 +++++++++++++-
+ 3 files changed, 43 insertions(+), 8 deletions(-)
 
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 2df5e906db08..e42673477c25 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -610,7 +610,7 @@ static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
+ 	 * that we don't try and read the other copies of this block, just
+ 	 * return -EIO.
+ 	 */
+-	if (found_level == 0 && btrfs_check_leaf(root, eb)) {
++	if (found_level == 0 && btrfs_check_leaf_full(root, eb)) {
+ 		set_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
+ 		ret = -EIO;
+ 	}
+@@ -3870,7 +3870,13 @@ void btrfs_mark_buffer_dirty(struct extent_buffer *buf)
+ 					 buf->len,
+ 					 fs_info->dirty_metadata_batch);
+ #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
+-	if (btrfs_header_level(buf) == 0 && btrfs_check_leaf(root, buf)) {
++	/*
++	 * Since btrfs_mark_buffer_dirty() can be called with item pointer set
++	 * but item data not updated.
++	 * So here we should only check item pointers, not item data.
++	 */
++	if (btrfs_header_level(buf) == 0 &&
++	    btrfs_check_leaf_relaxed(root, buf)) {
+ 		btrfs_print_leaf(buf);
+ 		ASSERT(0);
+ 	}
 diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index 56e25a630103..5acdf3355a3f 100644
+index 5acdf3355a3f..ff4fa8f905d3 100644
 --- a/fs/btrfs/tree-checker.c
 +++ b/fs/btrfs/tree-checker.c
-@@ -37,6 +37,46 @@
- 		   btrfs_header_level(eb) == 0 ? "leaf" : "node",	\
- 		   reason, btrfs_header_bytenr(eb), root->objectid, slot)
+@@ -195,7 +195,8 @@ static int check_leaf_item(struct btrfs_root *root,
+ 	return ret;
+ }
  
-+/*
-+ * Error message should follow the following format:
-+ * corrupt <type>: <identifier>, <reason>[, <bad_value>]
-+ *
-+ * @type:	leaf or node
-+ * @identifier:	the necessary info to locate the leaf/node.
-+ * 		It's recommened to decode key.objecitd/offset if it's
-+ * 		meaningful.
-+ * @reason:	describe the error
-+ * @bad_value:	optional, it's recommened to output bad value and its
-+ *		expected value (range).
-+ *
-+ * Since comma is used to separate the components, only space is allowed
-+ * inside each component.
-+ */
-+
-+/*
-+ * Append generic "corrupt leaf/node root=%llu block=%llu slot=%d: " to @fmt.
-+ * Allows callers to customize the output.
-+ */
-+__printf(4, 5)
-+static void generic_err(const struct btrfs_root *root,
-+			const struct extent_buffer *eb, int slot,
-+			const char *fmt, ...)
+-int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf)
++static int check_leaf(struct btrfs_root *root, struct extent_buffer *leaf,
++		      bool check_item_data)
+ {
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+ 	/* No valid key type is 0, so all key should be larger than this key */
+@@ -299,10 +300,15 @@ int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf)
+ 			return -EUCLEAN;
+ 		}
+ 
+-		/* Check if the item size and content meet other criteria */
+-		ret = check_leaf_item(root, leaf, &key, slot);
+-		if (ret < 0)
+-			return ret;
++		if (check_item_data) {
++			/*
++			 * Check if the item size and content meet other
++			 * criteria
++			 */
++			ret = check_leaf_item(root, leaf, &key, slot);
++			if (ret < 0)
++				return ret;
++		}
+ 
+ 		prev_key.objectid = key.objectid;
+ 		prev_key.type = key.type;
+@@ -312,6 +318,17 @@ int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf)
+ 	return 0;
+ }
+ 
++int btrfs_check_leaf_full(struct btrfs_root *root, struct extent_buffer *leaf)
 +{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+
-+	btrfs_crit(root->fs_info,
-+		"corrupt %s: root=%llu block=%llu slot=%d, %pV",
-+		btrfs_header_level(eb) == 0 ? "leaf" : "node",
-+		root->objectid, btrfs_header_bytenr(eb), slot, &vaf);
-+	va_end(args);
++	return check_leaf(root, leaf, true);
 +}
 +
- static int check_extent_data_item(struct btrfs_root *root,
- 				  struct extent_buffer *leaf,
- 				  struct btrfs_key *key, int slot)
-@@ -282,9 +322,11 @@ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node)
++int btrfs_check_leaf_relaxed(struct btrfs_root *root,
++			     struct extent_buffer *leaf)
++{
++	return check_leaf(root, leaf, false);
++}
++
+ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node)
+ {
+ 	unsigned long nr = btrfs_header_nritems(node);
+diff --git a/fs/btrfs/tree-checker.h b/fs/btrfs/tree-checker.h
+index 96c486e95d70..3d53e8d6fda0 100644
+--- a/fs/btrfs/tree-checker.h
++++ b/fs/btrfs/tree-checker.h
+@@ -20,7 +20,19 @@
+ #include "ctree.h"
+ #include "extent_io.h"
  
- 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root->fs_info)) {
- 		btrfs_crit(root->fs_info,
--			   "corrupt node: block %llu root %llu nritems %lu",
--			   node->start, root->objectid, nr);
--		return -EIO;
-+"corrupt node: root=%llu block=%llu, nritems too %s, have %lu expect range [1,%u]",
-+			   root->objectid, node->start,
-+			   nr == 0 ? "small" : "large", nr,
-+			   BTRFS_NODEPTRS_PER_BLOCK(root->fs_info));
-+		return -EUCLEAN;
- 	}
+-int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf);
++/*
++ * Comprehensive leaf checker.
++ * Will check not only the item pointers, but also every possible member
++ * in item data.
++ */
++int btrfs_check_leaf_full(struct btrfs_root *root, struct extent_buffer *leaf);
++
++/*
++ * Less strict leaf checker.
++ * Will only check item pointers, not reading item data.
++ */
++int btrfs_check_leaf_relaxed(struct btrfs_root *root,
++			     struct extent_buffer *leaf);
+ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node);
  
- 	for (slot = 0; slot < nr - 1; slot++) {
-@@ -293,14 +335,26 @@ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node)
- 		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
- 
- 		if (!bytenr) {
--			CORRUPT("invalid item slot", node, root, slot);
--			ret = -EIO;
-+			generic_err(root, node, slot,
-+				"invalid NULL node pointer");
-+			ret = -EUCLEAN;
-+			goto out;
-+		}
-+		if (!IS_ALIGNED(bytenr, root->fs_info->sectorsize)) {
-+			generic_err(root, node, slot,
-+			"unaligned pointer, have %llu should be aligned to %u",
-+				bytenr, root->fs_info->sectorsize);
-+			ret = -EUCLEAN;
- 			goto out;
- 		}
- 
- 		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
--			CORRUPT("bad key order", node, root, slot);
--			ret = -EIO;
-+			generic_err(root, node, slot,
-+	"bad key order, current (%llu %u %llu) next (%llu %u %llu)",
-+				key.objectid, key.type, key.offset,
-+				next_key.objectid, next_key.type,
-+				next_key.offset);
-+			ret = -EUCLEAN;
- 			goto out;
- 		}
- 	}
+ #endif
 -- 
 2.17.1
 
