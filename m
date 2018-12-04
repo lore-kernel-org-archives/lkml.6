@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1941C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9B8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94251214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B5DB214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Cc5RY+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94251214DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh1egg4+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5DB214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeLDK5Y (ORCPT
+        id S1726339AbeLDK53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41158 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbeLDK5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:57:21 -0500
+        id S1726728AbeLDK5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:57:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3F48214D9;
-        Tue,  4 Dec 2018 10:57:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03DAC214DA;
+        Tue,  4 Dec 2018 10:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921039;
-        bh=btSCoALJaOnApqgclvxuhqqt8TNJO793VlxGpS4LyeY=;
+        s=default; t=1543921044;
+        bh=EcZxHCZezCyU4AFYBrzSPiXRtS4nFCYC815nHCco10o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Cc5RY+3gVWYR3R5KmUw5wUvbCTGfaZJhvo/GdeNZRDRFMv44x4xyMad8JmDxqLGy
-         qvKWfOyrWydTP+VNVelqgiYyoqKlqifPw/2v2a5N3selXyRKRzAr0Og6jBobnIXslk
-         kBFwv51T88PJ2aqHicIp/HLapbG8VF+v6k8nt4gs=
+        b=Jh1egg4+r7FBmUy+RgzRq0hw2x1XGm2jYQ1j1KoH8dLo/iQU3Qo/gaP9D3+u8RPRO
+         ef3+1dwlCafttKhOWWiSaFQpZPA5eDYGD8nMr8C8CtXFoFLpLSkFz1f9MmrG9HgVRB
+         Sqgv1g5EPmmzDjlCU5jU06qT6BMfGwZETco3SnS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -59,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 056/139] x86/speculation: Prevent stale SPEC_CTRL msr content
-Date:   Tue,  4 Dec 2018 11:48:57 +0100
-Message-Id: <20181204103652.277494765@linuxfoundation.org>
+Subject: [PATCH 4.19 058/139] x86/speculation: Add prctl() control for indirect branch speculation
+Date:   Tue,  4 Dec 2018 11:48:59 +0100
+Message-Id: <20181204103652.354066865@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -82,49 +83,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 6d991ba509ebcfcc908e009d1db51972a4f7a064 upstream
+commit 9137bb27e60e554dab694eafa4cca241fa3a694f upstream
 
-The seccomp speculation control operates on all tasks of a process, but
-only the current task of a process can update the MSR immediately. For the
-other threads the update is deferred to the next context switch.
+Add the PR_SPEC_INDIRECT_BRANCH option for the PR_GET_SPECULATION_CTRL and
+PR_SET_SPECULATION_CTRL prctls to allow fine grained per task control of
+indirect branch speculation via STIBP and IBPB.
 
-This creates the following situation with Process A and B:
+Invocations:
+ Check indirect branch speculation status with
+ - prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
 
-Process A task 2 and Process B task 1 are pinned on CPU1. Process A task 2
-does not have the speculation control TIF bit set. Process B task 1 has the
-speculation control TIF bit set.
+ Enable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
 
-CPU0					CPU1
-					MSR bit is set
-					ProcB.T1 schedules out
-					ProcA.T2 schedules in
-					MSR bit is cleared
-ProcA.T1
-  seccomp_update()
-  set TIF bit on ProcA.T2
-					ProcB.T1 schedules in
-					MSR is not updated  <-- FAIL
+ Disable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
 
-This happens because the context switch code tries to avoid the MSR update
-if the speculation control TIF bits of the incoming and the outgoing task
-are the same. In the worst case ProcB.T1 and ProcA.T2 are the only tasks
-scheduling back and forth on CPU1, which keeps the MSR stale forever.
+ Force disable indirect branch speculation with
+ - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
 
-In theory this could be remedied by IPIs, but chasing the remote task which
-could be migrated is complex and full of races.
+See Documentation/userspace-api/spec_ctrl.rst.
 
-The straight forward solution is to avoid the asychronous update of the TIF
-bit and defer it to the next context switch. The speculation control state
-is stored in task_struct::atomic_flags by the prctl and seccomp updates
-already.
-
-Add a new TIF_SPEC_FORCE_UPDATE bit and set this after updating the
-atomic_flags. Check the bit on context switch and force a synchronous
-update of the speculation control if set. Use the same mechanism for
-updating the current task.
-
-Reported-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -133,7 +115,6 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -145,157 +126,216 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811272247140.1875@nanos.tec.linutronix.de
+Link: https://lkml.kernel.org/r/20181125185005.866780996@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/spec-ctrl.h   |    6 +-----
- arch/x86/include/asm/thread_info.h |    4 +++-
- arch/x86/kernel/cpu/bugs.c         |   18 +++++++-----------
- arch/x86/kernel/process.c          |   30 +++++++++++++++++++++++++++++-
- 4 files changed, 40 insertions(+), 18 deletions(-)
+ Documentation/userspace-api/spec_ctrl.rst |    9 ++++
+ arch/x86/include/asm/nospec-branch.h      |    1 
+ arch/x86/kernel/cpu/bugs.c                |   67 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/process.c                 |    5 ++
+ include/linux/sched.h                     |    9 ++++
+ include/uapi/linux/prctl.h                |    1 
+ tools/include/uapi/linux/prctl.h          |    1 
+ 7 files changed, 93 insertions(+)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -83,10 +83,6 @@ static inline void speculative_store_byp
- #endif
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -92,3 +92,12 @@ Speculation misfeature controls
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
++
++- PR_SPEC_INDIR_BRANCH: Indirect Branch Speculation in User Processes
++                        (Mitigate Spectre V2 style attacks against user processes)
++
++  Invocations:
++   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, 0, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_ENABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_DISABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIRECT_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -232,6 +232,7 @@ enum spectre_v2_mitigation {
+ enum spectre_v2_user_mitigation {
+ 	SPECTRE_V2_USER_NONE,
+ 	SPECTRE_V2_USER_STRICT,
++	SPECTRE_V2_USER_PRCTL,
+ };
  
- extern void speculation_ctrl_update(unsigned long tif);
--
--static inline void speculation_ctrl_update_current(void)
--{
--	speculation_ctrl_update(current_thread_info()->flags);
--}
-+extern void speculation_ctrl_update_current(void);
- 
- #endif
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -84,6 +84,7 @@ struct thread_info {
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
- #define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
-+#define TIF_SPEC_FORCE_UPDATE	10	/* Force speculation MSR update in context switch */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_PATCH_PENDING	13	/* pending live patching update */
-@@ -112,6 +113,7 @@ struct thread_info {
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
- #define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
-+#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
-@@ -149,7 +151,7 @@ struct thread_info {
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
--	 _TIF_SSBD)
-+	 _TIF_SSBD | _TIF_SPEC_FORCE_UPDATE)
- 
- /*
-  * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
+ /* The Speculative Store Bypass disable variants */
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -700,14 +700,10 @@ static void ssb_select_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "Speculation prctl: " fmt
+@@ -564,6 +564,8 @@ void arch_smt_update(void)
+ 	case SPECTRE_V2_USER_STRICT:
+ 		update_stibp_strict();
+ 		break;
++	case SPECTRE_V2_USER_PRCTL:
++		break;
+ 	}
  
--static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
-+static void task_update_spec_tif(struct task_struct *tsk)
- {
--	bool update;
--
--	if (on)
--		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
--	else
--		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
-+	/* Force the update of the real TIF bits */
-+	set_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE);
- 
- 	/*
- 	 * Immediately update the speculation control MSRs for the current
-@@ -717,7 +713,7 @@ static void task_update_spec_tif(struct
- 	 * This can only happen for SECCOMP mitigation. For PRCTL it's
- 	 * always the current task.
- 	 */
--	if (tsk == current && update)
-+	if (tsk == current)
- 		speculation_ctrl_update_current();
+ 	mutex_unlock(&spec_ctrl_mutex);
+@@ -750,12 +752,50 @@ static int ssb_prctl_set(struct task_str
+ 	return 0;
  }
  
-@@ -733,16 +729,16 @@ static int ssb_prctl_set(struct task_str
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, false);
++static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
++			return 0;
++		/*
++		 * Indirect branch speculation is always disabled in strict
++		 * mode.
++		 */
++		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
++			return -EPERM;
++		task_clear_spec_ib_disable(task);
 +		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, true);
++		break;
++	case PR_SPEC_DISABLE:
++	case PR_SPEC_FORCE_DISABLE:
++		/*
++		 * Indirect branch speculation is always allowed when
++		 * mitigation is force disabled.
++		 */
++		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
++			return -EPERM;
++		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
++			return 0;
++		task_set_spec_ib_disable(task);
++		if (ctrl == PR_SPEC_FORCE_DISABLE)
++			task_set_spec_ib_force_disable(task);
 +		task_update_spec_tif(task);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		task_update_spec_tif(task, TIF_SSBD, true);
-+		task_update_spec_tif(task);
- 		break;
++		break;
++	default:
++		return -ERANGE;
++	}
++	return 0;
++}
++
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_set(task, ctrl);
++	case PR_SPEC_INDIRECT_BRANCH:
++		return ib_prctl_set(task, ctrl);
  	default:
- 		return -ERANGE;
+ 		return -ENODEV;
+ 	}
+@@ -788,11 +828,34 @@ static int ssb_prctl_get(struct task_str
+ 	}
+ }
+ 
++static int ib_prctl_get(struct task_struct *task)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
++		return PR_SPEC_NOT_AFFECTED;
++
++	switch (spectre_v2_user) {
++	case SPECTRE_V2_USER_NONE:
++		return PR_SPEC_ENABLE;
++	case SPECTRE_V2_USER_PRCTL:
++		if (task_spec_ib_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (task_spec_ib_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	case SPECTRE_V2_USER_STRICT:
++		return PR_SPEC_DISABLE;
++	default:
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_get(task);
++	case PR_SPEC_INDIRECT_BRANCH:
++		return ib_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -972,6 +1035,8 @@ static char *stibp_state(void)
+ 		return ", STIBP: disabled";
+ 	case SPECTRE_V2_USER_STRICT:
+ 		return ", STIBP: forced";
++	case SPECTRE_V2_USER_PRCTL:
++		return "";
+ 	}
+ 	return "";
+ }
+@@ -984,6 +1049,8 @@ static char *ibpb_state(void)
+ 			return ", IBPB: disabled";
+ 		case SPECTRE_V2_USER_STRICT:
+ 			return ", IBPB: always-on";
++		case SPECTRE_V2_USER_PRCTL:
++			return "";
+ 		}
+ 	}
+ 	return "";
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -443,6 +443,18 @@ static __always_inline void __speculatio
- 		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
-+static unsigned long speculation_ctrl_update_tif(struct task_struct *tsk)
-+{
-+	if (test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_FORCE_UPDATE)) {
-+		if (task_spec_ssb_disable(tsk))
-+			set_tsk_thread_flag(tsk, TIF_SSBD);
+@@ -450,6 +450,11 @@ static unsigned long speculation_ctrl_up
+ 			set_tsk_thread_flag(tsk, TIF_SSBD);
+ 		else
+ 			clear_tsk_thread_flag(tsk, TIF_SSBD);
++
++		if (task_spec_ib_disable(tsk))
++			set_tsk_thread_flag(tsk, TIF_SPEC_IB);
 +		else
-+			clear_tsk_thread_flag(tsk, TIF_SSBD);
-+	}
-+	/* Return the updated threadinfo flags*/
-+	return task_thread_info(tsk)->flags;
-+}
++			clear_tsk_thread_flag(tsk, TIF_SPEC_IB);
+ 	}
+ 	/* Return the updated threadinfo flags*/
+ 	return task_thread_info(tsk)->flags;
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1439,6 +1439,8 @@ static inline bool is_percpu_thread(void
+ #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
+ #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
+ #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
++#define PFA_SPEC_IB_DISABLE		5	/* Indirect branch speculation restricted */
++#define PFA_SPEC_IB_FORCE_DISABLE	6	/* Indirect branch speculation permanently restricted */
+ 
+ #define TASK_PFA_TEST(name, func)					\
+ 	static inline bool task_##func(struct task_struct *p)		\
+@@ -1470,6 +1472,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ss
+ TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ 
++TASK_PFA_TEST(SPEC_IB_DISABLE, spec_ib_disable)
++TASK_PFA_SET(SPEC_IB_DISABLE, spec_ib_disable)
++TASK_PFA_CLEAR(SPEC_IB_DISABLE, spec_ib_disable)
 +
- void speculation_ctrl_update(unsigned long tif)
++TASK_PFA_TEST(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
++TASK_PFA_SET(SPEC_IB_FORCE_DISABLE, spec_ib_force_disable)
++
+ static inline void
+ current_restore_flags(unsigned long orig_flags, unsigned long flags)
  {
- 	/* Forced update. Make sure all relevant TIF flags are different */
-@@ -451,6 +463,14 @@ void speculation_ctrl_update(unsigned lo
- 	preempt_enable();
- }
- 
-+/* Called from seccomp/prctl update */
-+void speculation_ctrl_update_current(void)
-+{
-+	preempt_disable();
-+	speculation_ctrl_update(speculation_ctrl_update_tif(current));
-+	preempt_enable();
-+}
-+
- void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
- {
- 	struct thread_struct *prev, *next;
-@@ -482,7 +502,15 @@ void __switch_to_xtra(struct task_struct
- 	if ((tifp ^ tifn) & _TIF_NOCPUID)
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
--	__speculation_ctrl_update(tifp, tifn);
-+	if (likely(!((tifp | tifn) & _TIF_SPEC_FORCE_UPDATE))) {
-+		__speculation_ctrl_update(tifp, tifn);
-+	} else {
-+		speculation_ctrl_update_tif(prev_p);
-+		tifn = speculation_ctrl_update_tif(next_p);
-+
-+		/* Enforce MSR update to ensure consistent state */
-+		__speculation_ctrl_update(~tifn, tifn);
-+	}
- }
- 
- /*
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIRECT_BRANCH	1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIRECT_BRANCH	1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
 
 
