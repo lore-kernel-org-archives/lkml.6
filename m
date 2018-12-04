@@ -2,170 +2,167 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBC0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297C0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D326A2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D326A2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id E23222082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wJZ/4SHC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23222082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbeLDLP4 (ORCPT
+        id S1728123AbeLDLQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:15:56 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:38129 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbeLDLPz (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 4 Dec 2018 06:15:55 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 04 Dec 2018 12:15:50 +0100
-Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 04 Dec 2018 11:15:19 +0000
-From:   Oscar Salvador <osalvador@suse.de>
-To:     akpm@linux-foundation.org
-Cc:     mhocko@suse.com, pavel.tatashin@microsoft.com, vbabka@suse.cz,
-        alexander.h.duyck@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH] mm, page_alloc: Drop uneeded __meminit and __meminitdata
-Date:   Tue,  4 Dec 2018 12:15:07 +0100
-Message-Id: <20181204111507.4808-1-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
+        Tue, 4 Dec 2018 06:16:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728249AbeLDLGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:05 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F258214DB;
+        Tue,  4 Dec 2018 11:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543921564;
+        bh=sCdxcCH0NNxYIDe1J8Vc6DJ8BurYL3ek+Z99gj2ssPc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wJZ/4SHCBns7koehn1SH5gDtbs5JY25e26yUIV4YQbqNnpe/sa78V3eKR6d3/qhd/
+         WKtuZvOMmbkrGCiSAaRPshYmd0groyuLVBeiZy20LLtP0JrmncxYZSTqlXR+9AfmXX
+         QHTJNy66x9FIErCNQn1Pd+ixHRKFj6jwo71pM71w=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        John Clemens <clemej@gmail.com>, Borislav Petkov <bp@suse.de>,
+        John Clemens <john@deater.net>,
+        Aravind Gopalakrishnan <aravindksg.lkml@gmail.com>,
+        linux-edac@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        x86@kernel.org, Yazen Ghannam <Yazen.Ghannam@amd.com>
+Subject: [PATCH 4.14 120/146] x86/MCE/AMD: Fix the thresholding machinery initialization order
+Date:   Tue,  4 Dec 2018 11:50:06 +0100
+Message-Id: <20181204103731.659254879@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
+References: <20181204103726.750894136@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 03e85f9d5f1 ("mm/page_alloc: Introduce free_area_init_core_hotplug"),
-some functions changed to only be called during system initialization.
-In concret, free_area_init_node and and the functions that hang from it.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Also, some variables are no longer used after the system has gone
-through initialization.
-So this could be considered as a late clean-up for that patch.
+------------------
 
-This patch changes the functions from __meminit to __init, and
-the variables from __meminitdata to __initdata.
+From: Borislav Petkov <bp@suse.de>
 
-In return, we get some KBs back:
+commit 60c8144afc287ef09ce8c1230c6aa972659ba1bb upstream.
 
-Before:
-Freeing unused kernel image memory: 2472K
+Currently, the code sets up the thresholding interrupt vector and only
+then goes about initializing the thresholding banks. Which is wrong,
+because an early thresholding interrupt would cause a NULL pointer
+dereference when accessing those banks and prevent the machine from
+booting.
 
-After:
-Freeing unused kernel image memory: 2480K
+Therefore, set the thresholding interrupt vector only *after* having
+initialized the banks successfully.
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Fixes: 18807ddb7f88 ("x86/mce/AMD: Reset Threshold Limit after logging error")
+Reported-by: Rafał Miłecki <rafal@milecki.pl>
+Reported-by: John Clemens <clemej@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Rafał Miłecki <rafal@milecki.pl>
+Tested-by: John Clemens <john@deater.net>
+Cc: Aravind Gopalakrishnan <aravindksg.lkml@gmail.com>
+Cc: linux-edac@vger.kernel.org
+Cc: stable@vger.kernel.org
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86@kernel.org
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Link: https://lkml.kernel.org/r/20181127101700.2964-1-zajec5@gmail.com
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201291
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/page_alloc.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |   19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index fee5e9bad0dd..94e16eba162c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -266,18 +266,18 @@ int watermark_boost_factor __read_mostly = 15000;
- int watermark_scale_factor = 10;
- int fragment_stall_order __read_mostly = (PAGE_ALLOC_COSTLY_ORDER + 1);
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -56,7 +56,7 @@
+ /* Threshold LVT offset is at MSR0xC0000410[15:12] */
+ #define SMCA_THR_LVT_OFF	0xF000
  
--static unsigned long nr_kernel_pages __meminitdata;
--static unsigned long nr_all_pages __meminitdata;
--static unsigned long dma_reserve __meminitdata;
-+static unsigned long nr_kernel_pages __initdata;
-+static unsigned long nr_all_pages __initdata;
-+static unsigned long dma_reserve __initdata;
+-static bool thresholding_en;
++static bool thresholding_irq_en;
  
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
--static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __meminitdata;
--static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __meminitdata;
-+static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __initdata;
-+static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __initdata;
- static unsigned long required_kernelcore __initdata;
- static unsigned long required_kernelcore_percent __initdata;
- static unsigned long required_movablecore __initdata;
- static unsigned long required_movablecore_percent __initdata;
--static unsigned long zone_movable_pfn[MAX_NUMNODES] __meminitdata;
-+static unsigned long zone_movable_pfn[MAX_NUMNODES] __initdata;
- static bool mirrored_kernelcore __meminitdata;
+ static const char * const th_names[] = {
+ 	"load_store",
+@@ -533,9 +533,8 @@ prepare_threshold_block(unsigned int ban
  
- /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
-@@ -6211,7 +6211,7 @@ void __init sparse_memory_present_with_active_regions(int nid)
-  * with no available memory, a warning is printed and the start and end
-  * PFNs will be 0.
-  */
--void __meminit get_pfn_range_for_nid(unsigned int nid,
-+void __init get_pfn_range_for_nid(unsigned int nid,
- 			unsigned long *start_pfn, unsigned long *end_pfn)
+ set_offset:
+ 	offset = setup_APIC_mce_threshold(offset, new);
+-
+-	if ((offset == new) && (mce_threshold_vector != amd_threshold_interrupt))
+-		mce_threshold_vector = amd_threshold_interrupt;
++	if (offset == new)
++		thresholding_irq_en = true;
+ 
+ done:
+ 	mce_threshold_block_init(&b, offset);
+@@ -1356,9 +1355,6 @@ int mce_threshold_remove_device(unsigned
  {
- 	unsigned long this_start_pfn, this_end_pfn;
-@@ -6260,7 +6260,7 @@ static void __init find_usable_zone_for_movable(void)
-  * highest usable zone for ZONE_MOVABLE. This preserves the assumption that
-  * zones within a node are in order of monotonic increases memory addresses
-  */
--static void __meminit adjust_zone_range_for_zone_movable(int nid,
-+static void __init adjust_zone_range_for_zone_movable(int nid,
- 					unsigned long zone_type,
- 					unsigned long node_start_pfn,
- 					unsigned long node_end_pfn,
-@@ -6291,7 +6291,7 @@ static void __meminit adjust_zone_range_for_zone_movable(int nid,
-  * Return the number of pages a zone spans in a node, including holes
-  * present_pages = zone_spanned_pages_in_node() - zone_absent_pages_in_node()
-  */
--static unsigned long __meminit zone_spanned_pages_in_node(int nid,
-+static unsigned long __init zone_spanned_pages_in_node(int nid,
- 					unsigned long zone_type,
- 					unsigned long node_start_pfn,
- 					unsigned long node_end_pfn,
-@@ -6326,7 +6326,7 @@ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
-  * Return the number of holes in a range on a node. If nid is MAX_NUMNODES,
-  * then all holes in the requested range will be accounted for.
-  */
--unsigned long __meminit __absent_pages_in_range(int nid,
-+unsigned long __init __absent_pages_in_range(int nid,
- 				unsigned long range_start_pfn,
- 				unsigned long range_end_pfn)
+ 	unsigned int bank;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (!(per_cpu(bank_map, cpu) & (1 << bank)))
+ 			continue;
+@@ -1376,9 +1372,6 @@ int mce_threshold_create_device(unsigned
+ 	struct threshold_bank **bp;
+ 	int err = 0;
+ 
+-	if (!thresholding_en)
+-		return 0;
+-
+ 	bp = per_cpu(threshold_banks, cpu);
+ 	if (bp)
+ 		return 0;
+@@ -1407,9 +1400,6 @@ static __init int threshold_init_device(
  {
-@@ -6356,7 +6356,7 @@ unsigned long __init absent_pages_in_range(unsigned long start_pfn,
+ 	unsigned lcpu = 0;
+ 
+-	if (mce_threshold_vector == amd_threshold_interrupt)
+-		thresholding_en = true;
+-
+ 	/* to hit CPUs online before the notifier is up */
+ 	for_each_online_cpu(lcpu) {
+ 		int err = mce_threshold_create_device(lcpu);
+@@ -1418,6 +1408,9 @@ static __init int threshold_init_device(
+ 			return err;
+ 	}
+ 
++	if (thresholding_irq_en)
++		mce_threshold_vector = amd_threshold_interrupt;
++
+ 	return 0;
  }
- 
- /* Return the number of page frames in holes in a zone on a node */
--static unsigned long __meminit zone_absent_pages_in_node(int nid,
-+static unsigned long __init zone_absent_pages_in_node(int nid,
- 					unsigned long zone_type,
- 					unsigned long node_start_pfn,
- 					unsigned long node_end_pfn,
-@@ -6408,7 +6408,7 @@ static unsigned long __meminit zone_absent_pages_in_node(int nid,
- }
- 
- #else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
--static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
-+static inline unsigned long __init zone_spanned_pages_in_node(int nid,
- 					unsigned long zone_type,
- 					unsigned long node_start_pfn,
- 					unsigned long node_end_pfn,
-@@ -6427,7 +6427,7 @@ static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
- 	return zones_size[zone_type];
- }
- 
--static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
-+static inline unsigned long __init zone_absent_pages_in_node(int nid,
- 						unsigned long zone_type,
- 						unsigned long node_start_pfn,
- 						unsigned long node_end_pfn,
-@@ -6441,7 +6441,7 @@ static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
- 
- #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- 
--static void __meminit calculate_node_totalpages(struct pglist_data *pgdat,
-+static void __init calculate_node_totalpages(struct pglist_data *pgdat,
- 						unsigned long node_start_pfn,
- 						unsigned long node_end_pfn,
- 						unsigned long *zones_size,
--- 
-2.13.7
+ /*
+
 
