@@ -2,112 +2,102 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EC5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69A6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E282081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33E282081C
+	by mail.kernel.org (Postfix) with ESMTP id 79E9420834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:48:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="apVfSUwK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79E9420834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeLDUsQ (ORCPT
+        id S1726546AbeLDUsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:48:16 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38517 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeLDUsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:48:15 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so7910255pgc.5;
-        Tue, 04 Dec 2018 12:48:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ATZABLl9Bqbp1x1mZMnGmiXL3gq2GOvFyXJbrsiveeI=;
-        b=UAobD5kCs4t6TsC6Ip4VXK53MkJ8pHBUrnuEQDzWH5h53tcF7KRWplFS0GbK+LSPQH
-         mxAXpXWzpKlQwK+5BwgDVimTGEINGV+HzazWsgOgSEpdSKoVhfinipl1lShVBirVED2m
-         Bv3SaDpcevMo4LYUHxxzbg1jrMD/BrCVQwgEMuVHnEjqGTC8hPqB2A/9aODKBcAuRETx
-         9Efib6MpRZXvVCRXSBBZPMfOD+McUGam5FIqKq7cgo0jb4fAlKAngNZlTFx3+d6CInbJ
-         9F0Pn9CuXDIv7/tY+U3OLRjIEwShJVSxzb436pdsm8wOmgAXUyMvFgQHjtvJ5+XP4CVH
-         4/Yw==
-X-Gm-Message-State: AA+aEWaXf3hLw4i6sjjiyrL5XBR6ucWis0puDPJbwxHuC7BgAOOW1pBj
-        UkRBfNzrVloWD1CObm+nEEQ=
-X-Google-Smtp-Source: AFSGD/Vdn1T0BG6alMhunJUXrxgIuveC+wGVaaou8MIb4wLy8h5txEMQsvEMhgnn13OZfYN/j/ELEA==
-X-Received: by 2002:a63:d40a:: with SMTP id a10mr17694223pgh.394.1543956494466;
-        Tue, 04 Dec 2018 12:48:14 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id q75sm35343000pfa.38.2018.12.04.12.48.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:48:13 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Tue, 04 Dec 2018 12:48:10 -0800
-Date:   Tue, 4 Dec 2018 12:48:10 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Felix Guo <felixguoxiuping@gmail.com>
-Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
- config and kernel
-Message-ID: <20181204204810.GU28501@garbanzo.do-not-panic.com>
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-12-brendanhiggins@google.com>
- <20181130034425.GO18410@garbanzo.do-not-panic.com>
- <CAFd5g44L1dV61CPm9GUvOgs-tH_urN-Twm-fj=Pw6h-kgfZ5rQ@mail.gmail.com>
+        Tue, 4 Dec 2018 15:48:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbeLDUs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:48:29 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17012081C;
+        Tue,  4 Dec 2018 20:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543956509;
+        bh=OvBgnq+2LA2p+yjrxYv6kkcxJlY2CrrflOhenOOEWgY=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=apVfSUwKhsNa4DY0g0wvy4McqOG68xXVOAt9kZEXBwUUBOjAareqPh09LtKuICbqN
+         Cx3O9wd+MWLvk5nXhxvn21OurhSDRsx2RKSq9DeP54DIun/Jxt5aU1T2xM2EdryoER
+         zodbzbtiQekhDpef6yVPvijO4kV/mcrkpObTWfH8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFd5g44L1dV61CPm9GUvOgs-tH_urN-Twm-fj=Pw6h-kgfZ5rQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <2341ec89691f6221bab6a9696ed0c05c3d3de663.camel@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181204125839.14505-1-narmstrong@baylibre.com>
+ <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
+ <5C06D686.50108@baylibre.com>
+ <2341ec89691f6221bab6a9696ed0c05c3d3de663.camel@baylibre.com>
+Message-ID: <154395650817.88331.14817295166592104160@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to static
+Date:   Tue, 04 Dec 2018 12:48:28 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 03:50:48PM -0800, Brendan Higgins wrote:
-> On Thu, Nov 29, 2018 at 7:44 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Nov 28, 2018 at 11:36:28AM -0800, Brendan Higgins wrote:
-> > > The ultimate goal is to create minimal isolated test binaries; in the
-> > > meantime we are using UML to provide the infrastructure to run tests, so
-> > > define an abstract way to configure and run tests that allow us to
-> > > change the context in which tests are built without affecting the user.
-> > > This also makes pretty and dynamic error reporting, and a lot of other
-> > > nice features easier.
-> > >
-> > > kunit_config.py:
-> > >   - parse .config and Kconfig files.
-> > >
-> > >
-> > > kunit_kernel.py: provides helper functions to:
-> > >   - configure the kernel using kunitconfig.
-> >
-> > We get the tools to run the config stuff, build, etc, but not a top
-> > level 'make kunitconfig' or whatever. We have things like 'make
-> > kvmconfig' and 'make xenconfig', I think it would be reasonable to
-> > add similar for this.
-> 
-> Are you just asking for a defconfig for KUnit, or are you asking for a
-> way to run KUnit from make?
+Quoting Jerome Brunet (2018-12-04 12:05:02)
+> On Tue, 2018-12-04 at 20:33 +0100, Neil Armstrong wrote:
+> > Le 04/12/2018 18:43, Stephen Boyd a =C3=A9crit :
+> > > Quoting Neil Armstrong (2018-12-04 04:58:39)
+> > > > @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div=
+12 =3D
+> > > > {
+> > > >  };
+> > > >  =
 
-At least the first. The later seems intrusive as a top level Makefile
-thing.
+> > > >  static u32 mux_table_cts_sel[] =3D { 0, 1, 2, 3, 4, 8, 9, 10, 11, =
+12 };
+> > > =
 
-  Luis
+> > > I was talking about this mux_table_cts_sel array. Can this be const?
+> > > =
+
+> > =
+
+> > Other mux tables aren't const, Jerome so you see a reason why they aren=
+'t
+> > const ?
+> =
+
+> I'm surpised we missed that. The PLL params tables of amlogic are all 'st=
+atic
+> const' but all the mux tables are just 'static' , humm
+> =
+
+> [...] 5 min later [...]
+> =
+
+> Actually the table field of clk_mux is not const, so giving it a const ta=
+ble
+> would produce a warning about discarding const qualifier
+> =
+
+> I guess there should no problem adding const to the table field of struct
+> clk_mux. What do you think Stephen  ?
+
+Yes it would need to be marked const in the struct clk_mux as well. Go
+for it to move more things to the RO section.
+
