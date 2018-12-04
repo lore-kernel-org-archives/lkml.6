@@ -2,125 +2,138 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083EDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD35C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF092082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D9682082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZuwpxMVP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF092082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="eRSieXz8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D9682082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725936AbeLDS0u (ORCPT
+        id S1725988AbeLDS2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:26:50 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41621 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbeLDS0u (ORCPT
+        Tue, 4 Dec 2018 13:28:19 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:36940 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725839AbeLDS2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:26:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so8627384pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:26:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=sccmubOLUTItf+0brntkdqphxOPJEelFgdE2QEi1Pkc=;
-        b=ZuwpxMVP9Yd3FsLyFhdC0p2Fga+181N172OBbvZLOmWnd7iO8sGMTmCoiksId+qR8P
-         CQ9oYGBUlklN6mNjw3GyQJ00cx0/8hfHNb/F1S8g8sKoSj2J1JUI6BTjTy3ZVtojods6
-         8utPbWguNXsmq/EMH6BEjIZZK8+0FeWOHqOEY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=sccmubOLUTItf+0brntkdqphxOPJEelFgdE2QEi1Pkc=;
-        b=QSRdKMl8p6riSItDh1JefLJR5MOJTyceY8qrNoEGktbc5gCd9xRgQJcfxwhss4zQoX
-         DukuRtQHmL5TQxmrjSXPiCRRgKZEa1+/9hvW4K5U4gU91hBKPi4C+Pg7si0gyNw+J8QH
-         sUMhBnX4CfTpZEFqkHqoGcgaL0/wSe6DcMgr82sr8Rl95aP3IgNx/VQAVOSGzscWBPMJ
-         uC7OaH5jyOCYWkcKZrURcv/EyPH+URojdZwUPr4wO3qhyoE8ATdzM2zw+Wz00kO/KjA9
-         Pa2SckZtbZy239InAIZ9g37E+2az8YidHwKGcWXDvM19imA+dThNmJOQQX1DZpxPOWjX
-         W2XQ==
-X-Gm-Message-State: AA+aEWZj6Q/1cU0Wk6nGd1BMCdBjSHnM5wYH3Z9PyyCwnf8cIISCb8Yd
-        6yPjLc5rbDE8olStdNgx9LtEew==
-X-Google-Smtp-Source: AFSGD/W1q4GSz85hSjUZRBXIKC3NxNq20S0rv2QvvvWIWf9mYWG0644lNV/dUEJtPQqQLNKHwSyjkw==
-X-Received: by 2002:a62:c28e:: with SMTP id w14mr21029424pfk.115.1543948009167;
-        Tue, 04 Dec 2018 10:26:49 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id e23sm24567323pfh.68.2018.12.04.10.26.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 10:26:48 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Dec 2018 13:28:19 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 243D910C08CB;
+        Tue,  4 Dec 2018 10:28:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543948099; bh=+PdpExVMX+3D7APAGBkcyJjcK6TwJ649539QewZSdvs=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To:From;
+        b=eRSieXz86cbSQX2Wbn7aTOQg++jPrKKIBxGtGEBz5FyXWKZNrGatU3kxaq0pehwEh
+         AAYJ7r5sfo+5BwVqEYT/I8mfedcikgj3Bm7Dm1+BFFwE670VGy8fyCGlnH53d3wUHg
+         OCnOj92eMmxB/fpPTJGY0AaWHgMiwhANOm+yah/4Q93XTWbLs52AeLRQS5M3Q38i6W
+         BEmftBR79TDI4NL3uvyUTZPGNC1O8SXSIR9bUUKTOc4KG1Hf8CRLNdHonNnACpSaKq
+         3mH0OC2A6OLnWgI7fZP/tQ4vUgPl2a/3pHozHXGi7lcMgA/A4ZUT2kGrPQ8bIqqreN
+         7Rh9/3CE87azA==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E25763CE9;
+        Tue,  4 Dec 2018 10:28:18 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 4 Dec 2018 10:28:18 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 4 Dec 2018 19:28:16 +0100
+Received: from [10.0.2.15] (10.107.19.104) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 4 Dec
+ 2018 19:28:15 +0100
+Subject: Re: [PATCH] i3c: Rename dw-i3c-master.c into i3c-master-dw.c
+From:   vitor <vitor.soares@synopsys.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        vitor <vitor.soares@synopsys.com>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20181126084514.23663-1-boris.brezillon@bootlin.com>
+ <20181203110739.0959d6c0@bbrezillon>
+ <fd4905e9-a5d9-349c-0dce-be59f0100f31@synopsys.com>
+Message-ID: <07f663b9-a973-39cf-c1ab-cc5ffb1a6210@synopsys.com>
+Date:   Tue, 4 Dec 2018 18:28:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Matthias Kaehlcke <mka@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181204173549.GB14307@google.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181201005254.139908-1-mka@chromium.org>
- <20181201005254.139908-3-mka@chromium.org>
- <154394184065.88331.4558186365546696323@swboyd.mtv.corp.google.com>
- <20181204173549.GB14307@google.com>
-Message-ID: <154394800757.88331.14079790416847469573@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 2/8] drm/msm/dsi: 28nm 8960 PHY: Get ref clock from the DT
-Date:   Tue, 04 Dec 2018 10:26:47 -0800
+In-Reply-To: <fd4905e9-a5d9-349c-0dce-be59f0100f31@synopsys.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.107.19.104]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Kaehlcke (2018-12-04 09:35:49)
-> On Tue, Dec 04, 2018 at 08:44:00AM -0800, Stephen Boyd wrote:
-> > Quoting Matthias Kaehlcke (2018-11-30 16:52:48)
-> > > +
-> > >         /* custom byte clock divider */
-> > >         struct clk_bytediv *bytediv;
-> > >  =
+Hi Boris,
 
-> > > @@ -125,7 +127,10 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_=
-hw *hw, unsigned long rate,
-> > >         DBG("rate=3D%lu, parent's=3D%lu", rate, parent_rate);
-> > >  =
+On 04/12/18 00:38, vitor wrote:
+> Hi Boris,
+>
+>
+> On 03/12/18 10:07, Boris Brezillon wrote:
+>> Hi Vitor,
+>>
+>> On Mon, 26 Nov 2018 09:45:14 +0100
+>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>>
+>>> Follow the naming scheme introduced by the Cadence driver to keep 
+>>> things
+>>> consistent.
+>>>
+>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>>> ---
+>>>   drivers/i3c/master/Makefile                             | 2 +-
+>>>   drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} | 0
+>>>   2 files changed, 1 insertion(+), 1 deletion(-)
+>>>   rename drivers/i3c/master/{dw-i3c-master.c => i3c-master-dw.c} (100%)
+>> Any opinion on this rename. If you disagree with this, then I'd like to
+>> know it.
+>>
+>> Regards,
+>>
+>> Boris
 
-> > >         temp =3D rate / 10;
-> > > -       val =3D VCO_REF_CLK_RATE / 10;
-> > > +       if (parent_rate)
-> > > +               val =3D parent_rate / 10;
-> > > +       else
-> > > +               val =3D VCO_REF_CLK_DEFAULT_RATE / 10;
-> > =
 
-> > Is the clk not properly hooked up to a parent sometimes so parent_rate
-> > is 0? That sounds odd given the fact that it used to be 'pxo' and that
-> > has always existed on the system as 27 MHz. So I'd remove this and just
-> > use parent_rate all the time.
-> =
+I don't agree with the master folder name. The name is redundant.
 
-> I wondered about this, but since I don't have hardware for testing I
-> kept the previous hardcoded rate. If we know for sure that 'pxo'
-> always exists it should indeed be fine to use the parent rate.
 
-Yes we know for sure. The 'pxo' board clk is there on apq8064 dtsi file
-which seems to be the only place this is used. The pxo_board clk is sent
-through a 'pxo' clk that's created in drivers/clk/qcom/common.c
-qcom_cc_register_board_clk().
+If you want to change my driver name I don't mind.
+
+
+>>
+>>> diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
+>>> index fc53939a0bb1..c5f52733aa10 100644
+>>> --- a/drivers/i3c/master/Makefile
+>>> +++ b/drivers/i3c/master/Makefile
+>>> @@ -1,2 +1,2 @@
+>>>   obj-$(CONFIG_CDNS_I3C_MASTER)        += i3c-master-cdns.o
+>>> -obj-$(CONFIG_DW_I3C_MASTER)        += dw-i3c-master.o
+>>> +obj-$(CONFIG_DW_I3C_MASTER)        += i3c-master-dw.o
+>>> diff --git a/drivers/i3c/master/dw-i3c-master.c 
+>>> b/drivers/i3c/master/i3c-master-dw.c
+>>> similarity index 100%
+>>> rename from drivers/i3c/master/dw-i3c-master.c
+>>> rename to drivers/i3c/master/i3c-master-dw.c
+>
+>
+> I already reply on initial thread. Please check my answers.
+>
+>
+> Best regards,
+>
+> Vitor Soares
+
+
+Best regards,
+
+Vitor Soares
 
