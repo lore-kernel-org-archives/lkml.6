@@ -2,105 +2,107 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4518C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90541C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFEE2082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58BFA2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ZZwnSbNG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFEE2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ieGqtLJT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58BFA2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbeLDJxo (ORCPT
+        id S1726039AbeLDJyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:53:44 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:27753 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDJxo (ORCPT
+        Tue, 4 Dec 2018 04:54:09 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52192 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbeLDJyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:53:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1543917222;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=fV6Oq88QW84WgDR4XQNS7Mjr7KzgOPfnxos1rNZEUog=;
-        b=ZZwnSbNG/yYFEpVCab8W9hB69MOwJ0QNbpI3XqyTRT2j0Jr4sc3lwn/xcT9broOB0Q
-        JJFwXLxuH3T/u4I0FM+AbcQVJ7TVf9nnv3NdbWexyFA5S9DRspBQDZ/eqHElDmqSqym3
-        vWdXM134e17EksgimHPKZw8DHsfoTHqRQKYzR9IWvR/7tl1BoRGtx2qaMAnDqIWeLlop
-        orpnX8gNv5H53sW+08FrYN9lDzPO4DTWfUW8t83YcRyF0ueN/e/yAjF6lvGipRzlErJ9
-        hJUuOiEjMUKSCc/n/LUuhNe6Tt7aHrJYxF0VXSIwsgtfAflQFeJGdfke8rpWjWDiCL1r
-        xAEQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkOjkRqsj0YvdYw8SBQvk+g3Fshzw=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:1027:9d07:f327:cfc7]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB49reYRW
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 4 Dec 2018 10:53:40 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181114082314.8965-1-hch@lst.de> <20181127074253.GB30186@lst.de>
- <87zhttfonk.fsf@concordia.ellerman.id.au>
- <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
- <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
-Message-ID: <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
-Date:   Tue, 4 Dec 2018 10:53:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Tue, 4 Dec 2018 04:54:06 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s14so8878865wmh.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZTAJqDRp6LQ0GsMdutAAABs90ihZh20zfr1KVJjWnNY=;
+        b=ieGqtLJTBW7W7g5OwY5vXESJXRtL0FgYW1Bf5eNR7l8x5EIV6ye/P2WneAUqZrdOMR
+         8p8Rsd05h8ofxpyaUjioYJcsOf8sVRVUn0foDaOvj4teTiN+fyIk76f+Zc7mbyz38mLZ
+         ekambhewGpcap/fyrwCltuYUI9/rFr335moNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZTAJqDRp6LQ0GsMdutAAABs90ihZh20zfr1KVJjWnNY=;
+        b=r+ZqN7iRJ/aPiM+MiOsd0iQfR1z/JS4TLLM7oY3akiwLSN4z884RGuoqSTg4uupBIw
+         Rd+c4UuWkwVNPMfSxbErxGAl7u6UGVGD9TnnqLQ/3T+TGUMTyfe3/kM/diB7I1RLyoBH
+         kNx2CcJRxXqFGwoJ8fvdw0fh3voKAnXwVoQeNuidTt/O9HZ56wulaUKOYHjApxWmz0xh
+         mZjOgXoQtIaOPAxVrnQM9tjIShLx0Fbp99NogdjWI2U8N1N09euU5SvXv9oQi+RcIEXD
+         SHIT+oSSWr2o07Z+wtEJ0KZo2uAO5W3jPAe0GTxJCN+tLyMLRuPU5yDO1YfdBqe9brpL
+         WQBQ==
+X-Gm-Message-State: AA+aEWbn+47prhF41txZD63qAB8OhYaJD4QCHw2DjM1qpfez4r/uczzQ
+        IWrRHcUimTHkqyYrm1bMB7uIDg==
+X-Google-Smtp-Source: AFSGD/U8h3XEZ3ONUO8ajzUP3YMBpnRA4HNqS9Fpv5WrIQOtiLkrpXI6+le0AM/DzMSONZz2q8CmCQ==
+X-Received: by 2002:a1c:b94b:: with SMTP id j72mr11613099wmf.11.1543917244139;
+        Tue, 04 Dec 2018 01:54:04 -0800 (PST)
+Received: from dell ([2.31.167.218])
+        by smtp.gmail.com with ESMTPSA id o17sm5142766wmg.35.2018.12.04.01.54.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 01:54:03 -0800 (PST)
+Date:   Tue, 4 Dec 2018 09:54:01 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-input@vger.kernel.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: ti-tsc-adc: Add new compatible for AM654
+ SoCs
+Message-ID: <20181204095401.GU26661@dell>
+References: <20181119094509.22542-1-vigneshr@ti.com>
+ <4b42082c-462d-3d94-8ee9-6e7a61f57134@ti.com>
+ <20181204095233.GT26661@dell>
 MIME-Version: 1.0
-In-Reply-To: <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181204095233.GT26661@dell>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04 December 2018 at 08:31AM, Christian Zigotzky wrote:
-> Hi All,
->
-> Could you please test Christoph's kernel on your PASEMI and NXP 
-> boards? Download:
->
-> 'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
->
-> Thanks,
-> Christian
->
-I successfully tested this kernel on a virtual e5500 QEMU machine today.
+On Tue, 04 Dec 2018, Lee Jones wrote:
+> On Tue, 04 Dec 2018, Vignesh R wrote:
+> > On 19/11/18 3:15 PM, Vignesh R wrote:
+> > > AM654 SoCs has ADC IP which is similar to AM335x. Add new compatible to
+> > > handle AM654 SoCs. Also, it seems that existing compatible strings used
+> > > in the kernel DTs were never documented. So, document them now.
+> > > 
+> > > Signed-off-by: Vignesh R <vigneshr@ti.com>
+> > > ---
+> > 
+> > Gentle ping on this patch..
+> 
+> Don't do that.
+> 
+> If you think your patch has been forgotten, please submit a [RESEND].
 
-Command: ./qemu-system-ppc64 -M ppce500 -cpu e5500 -m 2048 -kernel 
-uImage-dma -drive 
-format=raw,file=MATE_PowerPC_Remix_2017_0.9.img,index=0,if=virtio -nic 
-user,model=e1000 -append "rw root=/dev/vda" -device virtio-vga -device 
-virtio-mouse-pci -device virtio-keyboard-pci -usb -soundhw es1370 -smp 4
+As an aside, the subject line is missing a subsystem, which might be
+why it was missed by the subsystem maintainer.
 
-QEMU version 3.1.0.
-
-I don't know why this kernel doesn't recognize the hard disks connected 
-to my physical P5020 board and why the onboard ethernet on my PASEMI 
-board doesn't work. (dma_direct_map_page: overflow)
-
--- Christian
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
