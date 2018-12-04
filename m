@@ -2,49 +2,48 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49053C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD481C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB492082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37CD2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="R53k8nBQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB492082B
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="f8c0h3rr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37CD2082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbeLDTyX (ORCPT
+        id S1725942AbeLDTy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:54:23 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54124 "EHLO
+        Tue, 4 Dec 2018 14:54:27 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54166 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725875AbeLDTyV (ORCPT
+        by vger.kernel.org with ESMTP id S1726406AbeLDTyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:54:21 -0500
+        Tue, 4 Dec 2018 14:54:23 -0500
 Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wB4Jk80M032470
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 11:54:20 -0800
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wB4Jk80R032470
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 11:54:22 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=9VodBoRK8qP/GUwWKVvU2YiUFbCHu4E9Td2/AwSxeZc=;
- b=R53k8nBQ676YG4lsoKrTmkkXgFpf3LgDSy1q0AGadBbhkn6FTVO1VUKGM1J7myu02TAU
- y/yJh8RoxB7SjRW+Br1l7wbI8P538zWiVDxkHrelozUZCZeLCrCL33mLCMbJQyWm0ze1
- 1cNhFnsXMyFDcjLcAadthHZx+SLArSvKavM= 
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=k3vhgKNIOUqfF+ezFVZGVZ19C29Fw21QnzWMIpL4hIA=;
+ b=f8c0h3rrU+8u4JFg4DL2kEkAmqRSYAo2f01wfEp3d7IABPmxDSJwraUXSCAoA2P0GojO
+ zOGL3vUpFPG/QeloPYns2f3368LbWIZowInbe3ActzTVF2F0ZmDf8Ct50T4bv52glNcg
+ 4zk8kuPMMspmlU/5GyrvMCzw6B2TrYW7uK8= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2p5xqu89s8-1
+        by m0001303.ppops.net with ESMTP id 2p5xqu89s8-7
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:54:20 -0800
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:54:22 -0800
 Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
  mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 4 Dec 2018 11:54:08 -0800
+ Tue, 4 Dec 2018 11:54:09 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 9FA1762E19D2; Tue,  4 Dec 2018 11:54:02 -0800 (PST)
+        id 74B1262E1546; Tue,  4 Dec 2018 11:54:02 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -53,12 +52,10 @@ CC:     Song Liu <songliubraving@fb.com>, <acme@kernel.org>,
         <ast@kernel.org>, <daniel@iogearbox.net>, <kernel-team@fb.com>,
         <peterz@infradead.org>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v2 perf,bpf 3/3] perf util: basic handling of PERF_RECORD_BPF_EVENT
-Date:   Tue, 4 Dec 2018 11:53:55 -0800
-Message-ID: <20181204195355.4079788-4-songliubraving@fb.com>
+Subject: [PATCH v2 perf,bpf 0/3] reveal invisible bpf programs
+Date:   Tue, 4 Dec 2018 11:53:52 -0800
+Message-ID: <20181204195355.4079788-1-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181204195355.4079788-1-songliubraving@fb.com>
-References: <20181204195355.4079788-1-songliubraving@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -71,236 +68,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic handling of PERF_RECORD_BPF_EVENT in perf util.
-Future patches add more logic that leverages these events.
+Changes v2 -> PATCH v1:
+1. Only 3 of the 5 patches in v1, to focus on ABI first;
+2. Generate PERF_RECORD_BPF_EVENT per bpf sub program instead of per prog;
+3. Modify PERF_RECORD_BPF_EVENT with more details (addr, len, name),
+   so that it can be used for basic profiling without calling sys_bpf.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/perf/util/event.c   | 22 ++++++++++++++++++++++
- tools/perf/util/event.h   | 26 ++++++++++++++++++++++++++
- tools/perf/util/evsel.c   |  1 +
- tools/perf/util/machine.c | 10 ++++++++++
- tools/perf/util/machine.h |  2 ++
- tools/perf/util/session.c |  4 ++++
- tools/perf/util/tool.h    |  4 +++-
- 7 files changed, 68 insertions(+), 1 deletion(-)
+Changes RFC -> PATCH v1:
+1. In perf-record, poll vip events in a separate thread;
+2. Add tag to bpf prog name;
+3. Small refactorings.
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index e9c108a6b1c3..ada7797006f9 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -24,6 +24,7 @@
- #include "symbol/kallsyms.h"
- #include "asm/bug.h"
- #include "stat.h"
-+#include "session.h"
- 
- static const char *perf_event__names[] = {
- 	[0]					= "TOTAL",
-@@ -43,6 +44,7 @@ static const char *perf_event__names[] = {
- 	[PERF_RECORD_SWITCH]			= "SWITCH",
- 	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
- 	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-+	[PERF_RECORD_BPF_EVENT]			= "BPF_EVENT",
- 	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
- 	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
- 	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-@@ -1335,6 +1337,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
- 	return machine__process_switch_event(machine, event);
- }
- 
-+int perf_event__process_bpf_event(struct perf_tool *tool __maybe_unused,
-+				  union perf_event *event,
-+				  struct perf_sample *sample __maybe_unused,
-+				  struct machine *machine)
-+{
-+	return machine__process_bpf_event(machine, event);
-+}
-+
- size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
- {
- 	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-@@ -1467,6 +1477,15 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
- 	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
- }
- 
-+size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp)
-+{
-+	return fprintf(fp, " bpf event with type %u, flags %u, id %u sub_id %u addr %lx len %lu name %s\n",
-+		       event->bpf_event.type, event->bpf_event.flags,
-+		       event->bpf_event.id, event->bpf_event.sub_id,
-+		       event->bpf_event.addr, event->bpf_event.len,
-+		       event->bpf_event.name);
-+}
-+
- size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- {
- 	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-@@ -1502,6 +1521,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
- 	case PERF_RECORD_LOST:
- 		ret += perf_event__fprintf_lost(event, fp);
- 		break;
-+	case PERF_RECORD_BPF_EVENT:
-+		ret += perf_event__fprintf_bpf_event(event, fp);
-+		break;
- 	default:
- 		ret += fprintf(fp, "\n");
- 	}
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index bfa60bcafbde..cea19b1b128a 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -5,6 +5,7 @@
- #include <limits.h>
- #include <stdio.h>
- #include <linux/kernel.h>
-+#include <linux/bpf.h>
- 
- #include "../perf.h"
- #include "build-id.h"
-@@ -84,6 +85,25 @@ struct throttle_event {
- 	u64 stream_id;
- };
- 
-+#ifndef KSYM_NAME_LEN
-+#define KSYM_NAME_LEN 256
-+#endif
-+
-+/* Record different types of bpf events, see enum perf_bpf_event_type */
-+struct bpf_event {
-+	struct perf_event_header header;
-+	u32 type;
-+	u32 flags;
-+	u32 id;
-+	u32 sub_id;
-+
-+	/* for bpf_prog types */
-+	u8 tag[BPF_TAG_SIZE];  // prog tag
-+	u64 addr;
-+	u64 len;
-+	char name[KSYM_NAME_LEN];
-+};
-+
- #define PERF_SAMPLE_MASK				\
- 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
- 	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-@@ -651,6 +671,7 @@ union perf_event {
- 	struct stat_round_event		stat_round;
- 	struct time_conv_event		time_conv;
- 	struct feature_event		feat;
-+	struct bpf_event		bpf_event;
- };
- 
- void perf_event__print_totals(void);
-@@ -750,6 +771,10 @@ int perf_event__process_exit(struct perf_tool *tool,
- 			     union perf_event *event,
- 			     struct perf_sample *sample,
- 			     struct machine *machine);
-+int perf_event__process_bpf_event(struct perf_tool *tool,
-+				  union perf_event *event,
-+				  struct perf_sample *sample,
-+				  struct machine *machine);
- int perf_tool__process_synth_event(struct perf_tool *tool,
- 				   union perf_event *event,
- 				   struct machine *machine,
-@@ -814,6 +839,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-+size_t perf_event__fprintf_bpf_event(union perf_event *event, FILE *fp);
- size_t perf_event__fprintf(union perf_event *event, FILE *fp);
- 
- int kallsyms__get_function_start(const char *kallsyms_filename,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index dbc0466db368..484ea0b19414 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1652,6 +1652,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
- 	PRINT_ATTRf(context_switch, p_unsigned);
- 	PRINT_ATTRf(write_backward, p_unsigned);
- 	PRINT_ATTRf(namespaces, p_unsigned);
-+	PRINT_ATTRf(bpf_event, p_unsigned);
- 
- 	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
- 	PRINT_ATTRf(bp_type, p_unsigned);
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..eee444fbaa7a 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -681,6 +681,14 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
- 	return 0;
- }
- 
-+int machine__process_bpf_event(struct machine *machine __maybe_unused,
-+			       union perf_event *event)
-+{
-+	if (dump_trace)
-+		perf_event__fprintf_bpf_event(event, stdout);
-+	return 0;
-+}
-+
- static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
- {
- 	const char *dup_filename;
-@@ -1812,6 +1820,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		ret = machine__process_switch_event(machine, event); break;
-+	case PERF_RECORD_BPF_EVENT:
-+		ret = machine__process_bpf_event(machine, event); break;
- 	default:
- 		ret = -1;
- 		break;
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index d856b85862e2..0ed237d6fd0a 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -127,6 +127,8 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
- 				struct perf_sample *sample);
- int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
- 				 struct perf_sample *sample);
-+int machine__process_bpf_event(struct machine *machine,
-+			       union perf_event *event);
- int machine__process_event(struct machine *machine, union perf_event *event,
- 				struct perf_sample *sample);
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 7d2c8ce6cfad..dffe5120d2d3 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -371,6 +371,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
- 		tool->itrace_start = perf_event__process_itrace_start;
- 	if (tool->context_switch == NULL)
- 		tool->context_switch = perf_event__process_switch;
-+	if (tool->bpf_event == NULL)
-+		tool->bpf_event = perf_event__process_bpf_event;
- 	if (tool->read == NULL)
- 		tool->read = process_event_sample_stub;
- 	if (tool->throttle == NULL)
-@@ -1300,6 +1302,8 @@ static int machines__deliver_event(struct machines *machines,
- 	case PERF_RECORD_SWITCH:
- 	case PERF_RECORD_SWITCH_CPU_WIDE:
- 		return tool->context_switch(tool, event, sample, machine);
-+	case PERF_RECORD_BPF_EVENT:
-+		return tool->bpf_event(tool, event, sample, machine);
- 	default:
- 		++evlist->stats.nr_unknown_events;
- 		return -1;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 56e4ca54020a..69ae898ca024 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -53,7 +53,9 @@ struct perf_tool {
- 			itrace_start,
- 			context_switch,
- 			throttle,
--			unthrottle;
-+			unthrottle,
-+			bpf_event;
-+
- 	event_attr_op	attr;
- 	event_attr_op	event_update;
- 	event_op2	tracing_data;
--- 
+This is to follow up Alexei's early effort to show bpf programs
+
+   https://www.spinics.net/lists/netdev/msg524232.html
+
+In this version, PERF_RECORD_BPF_EVENT is introduced to send real time BPF
+load/unload events to user space.
+
+Thanks,
+Song
+
+Song Liu (3):
+  perf, bpf: Introduce PERF_RECORD_BPF_EVENT
+  perf: sync tools/include/uapi/linux/perf_event.h
+  perf util: basic handling of PERF_RECORD_BPF_EVENT
+
+ include/linux/filter.h                |   1 +
+ include/linux/perf_event.h            |  10 +++
+ include/uapi/linux/perf_event.h       |  35 +++++++-
+ kernel/bpf/core.c                     |   2 +-
+ kernel/bpf/syscall.c                  |   3 +
+ kernel/events/core.c                  | 123 +++++++++++++++++++++++++-
+ tools/include/uapi/linux/perf_event.h |  35 +++++++-
+ tools/perf/util/event.c               |  22 +++++
+ tools/perf/util/event.h               |  26 ++++++
+ tools/perf/util/evsel.c               |   1 +
+ tools/perf/util/machine.c             |  10 +++
+ tools/perf/util/machine.h             |   2 +
+ tools/perf/util/session.c             |   4 +
+ tools/perf/util/tool.h                |   4 +-
+ 14 files changed, 273 insertions(+), 5 deletions(-)
+
+--
 2.17.1
-
