@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F4BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D311C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BC4920850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D971C2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:54:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PIfw1Yd3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC4920850
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NXYQQ7ZO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D971C2081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbeLDBwV (ORCPT
+        id S1726156AbeLDBx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:52:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39014 "EHLO
+        Mon, 3 Dec 2018 20:53:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39036 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeLDBwU (ORCPT
+        with ESMTP id S1726041AbeLDBwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:52:20 -0500
+        Mon, 3 Dec 2018 20:52:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bYaZ4qlIQDKGcnjv76hOkv1dLfD9fJnppYA9pfY+0qE=; b=PIfw1Yd3X082vcelUypqH2guP
-        KW0XRCxacAWM4x3VNb4O88mK2i90/uc7xr/MhZaxrioUYj5jJ5RFXSAmTlernvL3cAgYrQJWlsTix
-        2VMOiaApx00EnVRYabve5OnRldxF6dHd+xv95qNPJsm+Ku+VDEgMLkiYP7Pts99Ubo3oyzGYh8WLg
-        Gdnh1sMSjjATS5vMuFHC8+SvyUNhX53RyQCPnTm0BXrbElBmJaFusGIffbpnQAxxn5WrD5FKRrcQS
-        nwYHXA4HVmrqzN/unK76lHSRLqqg0Eloh94PUT0HUOGETZC7qfLd8qIqP4ABjVGsS4DtXywbLEdN+
-        0QIAfxKqw==;
+         bh=1xaWj2DkSruQXBA0LceZdeUUzKkF1j3gtF+8ajMkIng=; b=NXYQQ7ZO4wtBmZY2tF19CwKif
+        nf9JgZyv/ONW9YpAoPSCOG8GOlP7ftTxW/Wn9hjWlFtH5Cuks/MMEvOpLaTDUwyQOYr8TrnR59d+d
+        N4R0gDk8WnAER34MNlvGliDV24MXvDWz9mDT95R8ATGe/1ptQ/SvdEqCmcwdkrlLk+FR2q39/IQRf
+        F8tcdLM7kdnxfIelvYjWftIvxL2Qr+skOuf3VxURRaV9lk8hhhd36AfwT/U17CUlUx6CJksLsA0qs
+        iXJP0Z9XGiTfq5uK7Zo/b3hyENZq+loPK94oIfig1KcDylvROedp0cMlHFB7qHrWC6QZIp7hynxlp
+        mX11FexnA==;
 Received: from [2600:1700:65a0:78e0:514:7862:1503:8e4d] (helo=sagi-Latitude-E7470.lbits)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gTzsq-0003Zq-0l; Tue, 04 Dec 2018 01:52:20 +0000
+        id 1gTzsq-0003Zq-Q4; Tue, 04 Dec 2018 01:52:20 +0000
 From:   Sagi Grimberg <sagi@grimberg.me>
 To:     linux-nvme@lists.infradead.org
 Cc:     linux-block@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
         Keith Busch <keith.busch@intel.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v5 02/13] datagram: open-code copy_page_to_iter
-Date:   Mon,  3 Dec 2018 17:52:06 -0800
-Message-Id: <20181204015217.16613-3-sagi@grimberg.me>
+Subject: [PATCH v5 05/13] iov_iter: introduce hash_and_copy_to_iter helper
+Date:   Mon,  3 Dec 2018 17:52:09 -0800
+Message-Id: <20181204015217.16613-6-sagi@grimberg.me>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181204015217.16613-1-sagi@grimberg.me>
 References: <20181204015217.16613-1-sagi@grimberg.me>
@@ -59,37 +59,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sagi Grimberg <sagi@lightbitslabs.com>
 
-This will be useful to consolidate skb_copy_and_hash_datagram_iter and
-skb_copy_and_csum_datagram to a single code path.
+Allow consumers that want to use iov iterator helpers and also update
+a predefined hash calculation online when copying data. This is useful
+when copying incoming network buffers to a local iterator and calculate
+a digest on the incoming stream. nvme-tcp host driver that will be
+introduced in following patches is the first consumer via
+skb_copy_and_hash_datagram_iter.
 
 Acked-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sagi Grimberg <sagi@lightbitslabs.com>
 ---
- net/core/datagram.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ include/linux/uio.h |  3 +++
+ lib/iov_iter.c      | 16 ++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 57f3a6fcfc1e..abe642181b64 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -445,11 +445,14 @@ int skb_copy_datagram_iter(const struct sk_buff *skb, int offset,
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 41d1f8d3313d..ecf584f6b82d 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -11,6 +11,7 @@
  
- 		end = start + skb_frag_size(frag);
- 		if ((copy = end - offset) > 0) {
-+			struct page *page = skb_frag_page(frag);
-+			u8 *vaddr = kmap(page);
+ #include <linux/kernel.h>
+ #include <linux/thread_info.h>
++#include <crypto/hash.h>
+ #include <uapi/linux/uio.h>
+ 
+ struct page;
+@@ -269,6 +270,8 @@ static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
+ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *csump, struct iov_iter *i);
+ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum, struct iov_iter *i);
+ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum, struct iov_iter *i);
++size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
++		struct iov_iter *i);
+ 
+ int import_iovec(int type, const struct iovec __user * uvector,
+ 		 unsigned nr_segs, unsigned fast_segs,
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index db93531ca3e3..8a5f7b2ae346 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -6,6 +6,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/splice.h>
+ #include <net/checksum.h>
++#include <linux/scatterlist.h>
+ 
+ #define PIPE_PARANOIA /* for now */
+ 
+@@ -1475,6 +1476,21 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *csump,
+ }
+ EXPORT_SYMBOL(csum_and_copy_to_iter);
+ 
++size_t hash_and_copy_to_iter(const void *addr, size_t bytes, void *hashp,
++		struct iov_iter *i)
++{
++	struct ahash_request *hash = hashp;
++	struct scatterlist sg;
++	size_t copied;
 +
- 			if (copy > len)
- 				copy = len;
--			n = copy_page_to_iter(skb_frag_page(frag),
--					      frag->page_offset + offset -
--					      start, copy, to);
-+			n = copy_to_iter(vaddr + frag->page_offset +
-+					 offset - start, copy, to);
-+			kunmap(page);
- 			offset += n;
- 			if (n != copy)
- 				goto short_copy;
++	copied = copy_to_iter(addr, bytes, i);
++	sg_init_one(&sg, addr, copied);
++	ahash_request_set_crypt(hash, &sg, NULL, copied);
++	crypto_ahash_update(hash);
++	return copied;
++}
++EXPORT_SYMBOL(hash_and_copy_to_iter);
++
+ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+ {
+ 	size_t size = i->count;
 -- 
 2.17.1
 
