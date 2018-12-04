@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949A9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98E2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C38E2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B992082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sngmoEFu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C38E2082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fg6iYCYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B992082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbeLDLF1 (ORCPT
+        id S1728118AbeLDLRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:17:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728132AbeLDLFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:24 -0500
+        id S1728110AbeLDLFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B502E214DE;
-        Tue,  4 Dec 2018 11:05:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D0FE2146D;
+        Tue,  4 Dec 2018 11:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921523;
-        bh=ovSiYiymwV3SIO1P/PFsz7QWYYVB+j6Cbk8JUUy1okY=;
+        s=default; t=1543921520;
+        bh=SaoXWiAPKn7EKf9vrOfOU8YcDNExd1aBr6YpghV3aBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sngmoEFuKjvhtxZxHMSCggIHdsfrZyYZpY5oPWaVJSlgEn2hP9snz6OQgFC5m+roM
-         iqwTnjE0Zwr3JCchqX3csfWo36MGFl1iQRxohqmSe2L37/myng6gfFNHcXLDpuHzeG
-         Gqu/dw/vaMthaPgZlJHgwkiGRv0Ao53NnD4XoV+o=
+        b=fg6iYCYGYGMGQSl6wBiYvYvaboY43YxteqtP0EHaHYzyDjYGxsXP3v/OKvbhVqwOE
+         ItNQ4M8EJhX77thl60zCCiS+wZMJfr/YlcTlgaSagbYC8bHQo0yGk2uV05G7eJ+d7x
+         sjlgtcKUOeK1fxYkv6ObBywIZuSzAbRphZnFVCmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        kvm@vger.kernel.org, andrew.cooper3@citrix.com,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.14 069/146] x86/bugs: Add AMDs variant of SSB_NO
-Date:   Tue,  4 Dec 2018 11:49:15 +0100
-Message-Id: <20181204103729.615003937@linuxfoundation.org>
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 068/146] sched/core: Fix cpu.max vs. cpuhotplug deadlock
+Date:   Tue,  4 Dec 2018 11:49:14 +0100
+Message-Id: <20181204103729.576480739@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -70,68 +66,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konrad Rzeszutek Wilk konrad.wilk@oracle.com
+From: Peter Zijlstra peterz@infradead.org
 
-commit 24809860012e0130fbafe536709e08a22b3e959e upstream
+commit ce48c146495a1a50e48cdbfbfaba3e708be7c07c upstream
 
-The AMD document outlining the SSBD handling
-124441_AMD64_SpeculativeStoreBypassDisable_Whitepaper_final.pdf
-mentions that the CPUID 8000_0008.EBX[26] will mean that the
-speculative store bypass disable is no longer needed.
+Tejun reported the following cpu-hotplug lock (percpu-rwsem) read recursion:
 
-A copy of this document is available at:
-    https://bugzilla.kernel.org/show_bug.cgi?id=199889
+  tg_set_cfs_bandwidth()
+    get_online_cpus()
+      cpus_read_lock()
 
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Cc: kvm@vger.kernel.org
-Cc: andrew.cooper3@citrix.com
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180601145921.9500-2-konrad.wilk@oracle.com
+    cfs_bandwidth_usage_inc()
+      static_key_slow_inc()
+        cpus_read_lock()
+
+Reported-by: Tejun Heo <tj@kernel.org>
+Tested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180122215328.GP3397@worktop
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/cpufeatures.h |    1 +
- arch/x86/kernel/cpu/common.c       |    3 ++-
- arch/x86/kvm/cpuid.c               |    2 +-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ include/linux/jump_label.h |    7 +++++++
+ kernel/jump_label.c        |   12 +++++++++---
+ kernel/sched/fair.c        |    4 ++--
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -285,6 +285,7 @@
- #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
-+#define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -160,6 +160,8 @@ extern void arch_jump_label_transform_st
+ extern int jump_label_text_reserved(void *start, void *end);
+ extern void static_key_slow_inc(struct static_key *key);
+ extern void static_key_slow_dec(struct static_key *key);
++extern void static_key_slow_inc_cpuslocked(struct static_key *key);
++extern void static_key_slow_dec_cpuslocked(struct static_key *key);
+ extern void jump_label_apply_nops(struct module *mod);
+ extern int static_key_count(struct static_key *key);
+ extern void static_key_enable(struct static_key *key);
+@@ -222,6 +224,9 @@ static inline void static_key_slow_dec(s
+ 	atomic_dec(&key->enabled);
+ }
  
- /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
- #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -958,7 +958,8 @@ static void __init cpu_set_bug_bits(stru
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
++#define static_key_slow_inc_cpuslocked(key) static_key_slow_inc(key)
++#define static_key_slow_dec_cpuslocked(key) static_key_slow_dec(key)
++
+ static inline int jump_label_text_reserved(void *start, void *end)
+ {
+ 	return 0;
+@@ -416,6 +421,8 @@ extern bool ____wrong_branch_error(void)
  
- 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
--	   !(ia32_cap & ARCH_CAP_SSB_NO))
-+	   !(ia32_cap & ARCH_CAP_SSB_NO) &&
-+	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ #define static_branch_inc(x)		static_key_slow_inc(&(x)->key)
+ #define static_branch_dec(x)		static_key_slow_dec(&(x)->key)
++#define static_branch_inc_cpuslocked(x)	static_key_slow_inc_cpuslocked(&(x)->key)
++#define static_branch_dec_cpuslocked(x)	static_key_slow_dec_cpuslocked(&(x)->key)
  
- 	if (x86_match_cpu(cpu_no_speculation))
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -367,7 +367,7 @@ static inline int __do_cpuid_ent(struct
+ /*
+  * Normal usage; boolean enable/disable.
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -79,7 +79,7 @@ int static_key_count(struct static_key *
+ }
+ EXPORT_SYMBOL_GPL(static_key_count);
  
- 	/* cpuid 0x80000008.ebx */
- 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
--		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
-+		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD) | F(AMD_SSB_NO);
+-static void static_key_slow_inc_cpuslocked(struct static_key *key)
++void static_key_slow_inc_cpuslocked(struct static_key *key)
+ {
+ 	int v, v1;
  
- 	/* cpuid 0xC0000001.edx */
- 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+@@ -180,7 +180,7 @@ void static_key_disable(struct static_ke
+ }
+ EXPORT_SYMBOL_GPL(static_key_disable);
+ 
+-static void static_key_slow_dec_cpuslocked(struct static_key *key,
++static void __static_key_slow_dec_cpuslocked(struct static_key *key,
+ 					   unsigned long rate_limit,
+ 					   struct delayed_work *work)
+ {
+@@ -211,7 +211,7 @@ static void __static_key_slow_dec(struct
+ 				  struct delayed_work *work)
+ {
+ 	cpus_read_lock();
+-	static_key_slow_dec_cpuslocked(key, rate_limit, work);
++	__static_key_slow_dec_cpuslocked(key, rate_limit, work);
+ 	cpus_read_unlock();
+ }
+ 
+@@ -229,6 +229,12 @@ void static_key_slow_dec(struct static_k
+ }
+ EXPORT_SYMBOL_GPL(static_key_slow_dec);
+ 
++void static_key_slow_dec_cpuslocked(struct static_key *key)
++{
++	STATIC_KEY_CHECK_USE();
++	__static_key_slow_dec_cpuslocked(key, 0, NULL);
++}
++
+ void static_key_slow_dec_deferred(struct static_key_deferred *key)
+ {
+ 	STATIC_KEY_CHECK_USE();
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4040,12 +4040,12 @@ static inline bool cfs_bandwidth_used(vo
+ 
+ void cfs_bandwidth_usage_inc(void)
+ {
+-	static_key_slow_inc(&__cfs_bandwidth_used);
++	static_key_slow_inc_cpuslocked(&__cfs_bandwidth_used);
+ }
+ 
+ void cfs_bandwidth_usage_dec(void)
+ {
+-	static_key_slow_dec(&__cfs_bandwidth_used);
++	static_key_slow_dec_cpuslocked(&__cfs_bandwidth_used);
+ }
+ #else /* HAVE_JUMP_LABEL */
+ static bool cfs_bandwidth_used(void)
 
 
