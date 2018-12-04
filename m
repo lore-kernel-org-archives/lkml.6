@@ -2,114 +2,172 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826FDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45472C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B0E8208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:11:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0E8208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 0342A208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 04:13:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="migyHbcs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0342A208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeLDELf convert rfc822-to-8bit (ORCPT
+        id S1726034AbeLDENE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 23:11:35 -0500
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:24796 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeLDELf (ORCPT
+        Mon, 3 Dec 2018 23:13:04 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:36108 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbeLDENE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 23:11:35 -0500
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id A40D423B4
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 04:11:33 +0000 (UTC)
-Received: from G1W8108.americas.hpqcorp.net (g1w8108.austin.hp.com [16.193.72.60])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g4t3425.houston.hpe.com (Postfix) with ESMTPS id 92EDE92
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 04:11:33 +0000 (UTC)
-Received: from G4W9120.americas.hpqcorp.net (2002:10d2:150f::10d2:150f) by
- G1W8108.americas.hpqcorp.net (2002:10c1:483c::10c1:483c) with Microsoft SMTP
- Server (TLS) id 15.0.1367.3; Tue, 4 Dec 2018 04:11:33 +0000
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (15.241.52.12) by
- G4W9120.americas.hpqcorp.net (16.210.21.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Tue, 4 Dec 2018 04:11:33 +0000
-Received: from AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.138) by
- AT5PR8401MB0612.NAMPRD84.PROD.OUTLOOK.COM (10.169.4.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Tue, 4 Dec 2018 04:11:31 +0000
-Received: from AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::51f2:e4cd:af67:5d5b]) by AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::51f2:e4cd:af67:5d5b%9]) with mapi id 15.20.1382.023; Tue, 4 Dec 2018
- 04:11:31 +0000
-From:   "Arackal, Paulose Kuriakose (STSD)" 
-        <paulose.kuriakose.arackal@hpe.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Query regarding Spectre fixes for qemu-kvm...4.4 LTS Kernel.
-Thread-Topic: Query regarding Spectre fixes for qemu-kvm...4.4 LTS Kernel.
-Thread-Index: AdSLhV9I1vEX+F6FR36M0R/JnUUKHw==
-Date:   Tue, 4 Dec 2018 04:11:31 +0000
-Message-ID: <AT5PR8401MB1138DE66FC69195F3F2A9886B8AF0@AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=paulose.kuriakose.arackal@hpe.com; 
-x-originating-ip: [16.242.235.132]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0612;6:VEGAF7Y4WCnpcZlVFb8HgAaznXiIiMJg83F1i6Hcn94+6fTu+W0E0S1weJ0KyxYd+HO8M+Tm/TGMocAay/VEc09nE4mZZpEKQUwqIKqRD+0z7sMNPWKNZ9kDk9KSOHoTCKoqR0KpUtZ5aTH08HoeUzrT9ekXpPXKzc+QEa7sCRLknpraikVrponullMBSfkF876H3/1oW0gJ9vROKBKH0pbVIOTy8cfOH+KQOa26W0i2FYLi+GyCqWp/gMqkHmLEO7WKo4RqiYdtxGVUG0+f3f/agPchHZNIUEi5Em9p/SmOcODSX5ietuHHa6hldxtsRWyBoZL8AgSsXPD6IT4sV2xkS0BH+6mwTJo6sEJ8dVHGGp2EgHTrpSHcXMyudjwxRFIdjaIHXZ7g6khWdPfpdPf6Xv8sI7E13DEL72Liu/tCWsyXbtmfGTnN8tD+Gn1ZUqYdiW4c5tOxbzhG0K5Dyw==;5:a8QHPLm0bbpqFUPkWEyhagGq2hXgHjtnvQPgu+b13DndfmDwUgjhEBD7BOpi+3MYwA1+BZG6z6ChYsapXG17eFOaVV34SQamAZMOEALaSpQNSRoHN4D+ijI0r+mxjca9T52L3Lo3vCm3MjVL62okE3+VJ+JjJn5tbv7viuafX+s=;7:qnjXOcz4A1Z6XzrTek7CupDC8n5GxunPam1pBIDjY+vXE74EKuHiyN652oWVj3fQkDl7kUq0mNsSkc15N7bn5ESLjdHshhwn7zoAIv16xg/5IhxJ/+zO5UAS+GFpsk/dECoZqbAT8HyEovnSCeqN7g==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 901fe1d9-a106-4151-3824-08d6599e9237
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0612;
-x-ms-traffictypediagnostic: AT5PR8401MB0612:
-x-microsoft-antispam-prvs: <AT5PR8401MB0612A37369FCDCED9CE262C1B8AF0@AT5PR8401MB0612.NAMPRD84.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB0612;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0612;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(136003)(366004)(39860400002)(396003)(346002)(376002)(189003)(199004)(5640700003)(2501003)(305945005)(7736002)(25786009)(6436002)(66066001)(105586002)(106356001)(71200400001)(71190400001)(8936002)(81156014)(81166006)(8676002)(486006)(2351001)(476003)(86362001)(575784001)(6916009)(478600001)(256004)(14444005)(68736007)(14454004)(97736004)(7696005)(55016002)(6116002)(3846002)(74316002)(53936002)(316002)(5660300001)(9686003)(102836004)(2906002)(99286004)(6506007)(186003)(26005)(33656002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0612;H:AT5PR8401MB1138.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tZl4V1lqbfgCEsgfIHggia2i0YKwqYxPPydVu9+uwmFdNWsFAq3AMk/uoIE7FSXNROYGTnz2yeFXYRfFIfiGr7av6FiIzwuIBW+TyJSnSKtXr5AX8qKLo6IeqKnGVc/iVizsVtz7oJL9L6tLrQ1HB5Qb0+cea9Zn9k/7xvjMrn6i50v2fKf+AQxbLboB/+FEVcl6dMf+yFFIix5Hc5Z28bESRXOcBGiZe+8SuI/ALdLlgFXzoe0PT2hsWlQFXA0WotAes5ruZXmFx9/YLFoiuD+t06uFaGurlbxaF2Cnf0pJRuRFEiGD87ytRfK2BX/qftaI8YQ/Xq6vT6oTQr2f8zyrgoLwtwyujwrkVTExUNo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 3 Dec 2018 23:13:04 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB44Bd6f033481;
+        Tue, 4 Dec 2018 04:12:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=cl1Qb8Ff2PKHbyKChMfPlXaB7oxxT5awaOgK/aWrWvQ=;
+ b=migyHbcsEI8+MK3VPEg4JCmB09ELZvrSheKDJGHJLI42krobDURd7mxQIDWWknFDuYI9
+ UvBd7pRYFM+nua5wA85r+sp6gZI/emtrINtc2fITGizMRHf7r6g0Hw7mBaDu4qA1lByq
+ 5TU1cVC50aEbY3kplAQtCyffyhIARSgWBYkrqlkDzeYGV9RL8yMXu4XJdu2+zVjdu31C
+ /2lRKzkYJ50XYzJt4LpEIvtBkmt3T0qFdw31w4SCHNVn6LdOISoq/YoBtIH0UsR7PUJm
+ /g4WwSIYTJA3qfuMGQKqclsKUSihfLyksFp7NbYeX+yhO2d7HT28pAnXhMgpT/PwqUqx qQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2p3jxr9yaj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Dec 2018 04:12:49 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB44CisP022284
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Dec 2018 04:12:44 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB44CgNh013114;
+        Tue, 4 Dec 2018 04:12:43 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 03 Dec 2018 20:12:42 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>
+Subject: Re: [PATCH v3 4/4] scsi: hisi_sas: Add support for DIF feature for v3 hw
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1543838994-30028-1-git-send-email-john.garry@huawei.com>
+        <1543838994-30028-5-git-send-email-john.garry@huawei.com>
+Date:   Mon, 03 Dec 2018 23:12:39 -0500
+In-Reply-To: <1543838994-30028-5-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Mon, 3 Dec 2018 20:09:54 +0800")
+Message-ID: <yq1ftveszew.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 901fe1d9-a106-4151-3824-08d6599e9237
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 04:11:31.1190
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0612
-X-OriginatorOrg: hpe.com
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9096 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=364
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812040035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-I have few queries regarding qemu-kvm support of Spectre related fixes at 4.4.* LTS Kernel.
+John,
 
-I see that in upstream kernels, svm_vcpu_run() calls  x86_spec_ctrl_set_guest() and  x86_spec_ctrl_restore_host().
-And calling into x86_virt_spec_ctrl(), that sets IBRS/IBPB/SSBD bits accordingly for guest context.
+> +static int hisi_sas_dif_dma_map(struct hisi_hba *hisi_hba,
+> +				int *n_elem_dif, struct sas_task *task)
+> +{
+> +	struct device *dev = hisi_hba->dev;
+> +	struct sas_ssp_task *ssp_task;
+> +	struct scsi_cmnd *scsi_cmnd;
+> +	int rc;
+> +
+> +	if (task->num_scatter) {
+> +		ssp_task = &task->ssp_task;
+> +		scsi_cmnd = ssp_task->cmd;
+> +
+> +		if (scsi_prot_sg_count(scsi_cmnd)) {
+> +			*n_elem_dif = dma_map_sg(dev,
+> +						 scsi_prot_sglist(scsi_cmnd),
+> +						 scsi_prot_sg_count(scsi_cmnd),
+> +						 task->data_dir);
+> +
 
-Related commit IDs below:
-commit 5cf687548705412da47c9cec342fd952d71ed3d5
-commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24
+If you're only supporting DIF there is no DMA mapping or unmapping since
+the PI is generated by or verified by the HBA. No additional data is
+transferred to/from host memory. The protection scatterlist will be
+NULL.
 
-Looks like this change is not fully ported to 4.4 LTS yet. 
-x86_spec_ctrl_set_guest() and  x86_spec_ctrl_restore_host() interfaces are available, however looks like  svm_vcpu_run() is not calling them.  
-So qemu-kvm running on 4.4 kernels may not have SPEC_CTRL set properly in guest context.
+> +	switch (prot_op) {
+> +	case SCSI_PROT_READ_INSERT:
+> +		prot->dw0 |= T10_INSRT_EN_MSK;
+> +		prot->lbrtgv = lbrt_chk_val;
+> +		break;
+> +	case SCSI_PROT_READ_STRIP:
+> +		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
+> +		prot->lbrtcv = lbrt_chk_val;
+> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+> +			prot->dw4 |= (0xc << 16);
+> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+> +			prot->dw4 |= (0xfc << 16);
+> +		break;
+> +	case SCSI_PROT_READ_PASS:
+> +		prot->dw0 |= T10_CHK_EN_MSK;
+> +		prot->lbrtcv = lbrt_chk_val;
+> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+> +			prot->dw4 |= (0xc << 16);
+> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+> +			prot->dw4 |= (0xfc << 16);
+> +		break;
+> +	case SCSI_PROT_WRITE_INSERT:
+> +		prot->dw0 |= T10_INSRT_EN_MSK;
+> +		prot->lbrtgv = lbrt_chk_val;
+> +		break;
+> +	case SCSI_PROT_WRITE_STRIP:
+> +		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
+> +		prot->lbrtcv = lbrt_chk_val;
+> +		break;
+> +	case SCSI_PROT_WRITE_PASS:
+> +		prot->dw0 |= T10_CHK_EN_MSK;
+> +		prot->lbrtcv = lbrt_chk_val;
+> +		if (prot_type == SCSI_PROT_DIF_TYPE1)
+> +			prot->dw4 |= (0xc << 16);
+> +		else if (prot_type == SCSI_PROT_DIF_TYPE3)
+> +			prot->dw4 |= (0xfc << 16);
+> +		break;
+> +	default:
+> +		WARN(1, "prot_op(0x%x) is not valid\n", prot_op);
+> +		break;
+> +	}
 
-Is there a plan to backport above changes fully into 4.4 LTS kernel?.
+DIF is WRITE_INSERT/READ_STRIP operations only.
 
-Thanks,
-Paulose. 
+> +		if ((prot_op == SCSI_PROT_READ_INSERT) ||
+> +		    (prot_op == SCSI_PROT_WRITE_INSERT) ||
+> +		    (prot_op == SCSI_PROT_WRITE_PASS) ||
+> +		    (prot_op == SCSI_PROT_READ_PASS)) {
+> +			unsigned int interval = scsi_prot_interval(scsi_cmnd);
+> +			unsigned int ilog2_interval = ilog2(interval);
+> +
+> +			len = (task->total_xfer_len >> ilog2_interval) * 8;
+> +		}
 
+if (scmd->prot_flags & SCSI_PROT_TRANSFER_PI) {
+
+> +	.sg_prot_tablesize	= HISI_SAS_SGE_PAGE_CNT,
+
+Also not required if you're only doing DIF. There is no protection
+scatterlist.
+
+Anyway. Instead of throwing the DIX stuff away, let's figure out what
+the problem is.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
