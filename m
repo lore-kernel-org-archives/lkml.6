@@ -2,160 +2,259 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83846C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19518C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F979208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:23:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bMexLY6q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jRHc9qT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F979208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CAA4F208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:23:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA4F208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbeLDGXG (ORCPT
+        id S1726175AbeLDGXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:23:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60112 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLDGXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:23:05 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5AE6961330; Tue,  4 Dec 2018 06:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543904584;
-        bh=2oM7nGlEc676NkVqRQCuFvnMw7qZCWlXC+n2IiReOUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bMexLY6qykkPFnG4UwU0KHJv4ZTuHooWNHGDgQx1nAssI8Vzoh9k0e5FJ4ID2hasf
-         mhCGf9hyjxqqTrnYW0DXcC08OhA9hnnjQxGqCvHC1S/ftV5BjYUxXr5tlkMqTr3duX
-         jxfOWvKKtz0iwfj2J0cPC5cSZUjnuTR/EbYcgYZk=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0B31F6130A;
-        Tue,  4 Dec 2018 06:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543904576;
-        bh=2oM7nGlEc676NkVqRQCuFvnMw7qZCWlXC+n2IiReOUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jRHc9qT7RSaM0dFhTCZbBF6zJUYImlFpTmyeQ4Fef0KUEEzdhzkyDBIzKSKvmLBhI
-         3QB2yelT3o/7dbI6XrRGNDBdAc0waz4X5YP6ugYM2A9MEfnpnQHTdWI6Q5A021Kv+K
-         GLN/8qgNXVie6M5IfYy7cluC08Sn0uij4h61t+38=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B31F6130A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        will.deacon@arm.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, sboyd@kernel.org,
-        tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        thor.thayer@linux.intel.com,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH v19 4/5] dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
-Date:   Tue,  4 Dec 2018 11:52:12 +0530
-Message-Id: <20181204062213.6875-5-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20181204062213.6875-1-vivek.gautam@codeaurora.org>
-References: <20181204062213.6875-1-vivek.gautam@codeaurora.org>
+        Tue, 4 Dec 2018 01:23:11 -0500
+Received: from mga17.intel.com ([192.55.52.151]:8029 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725983AbeLDGXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 01:23:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 22:23:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,312,1539673200"; 
+   d="scan'208";a="115843305"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Dec 2018 22:23:06 -0800
+Cc:     baolu.lu@linux.intel.com, kevin.tian@intel.com,
+        ashok.raj@intel.com, tiwei.bie@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        sanjay.k.kumar@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, yi.y.sun@intel.com,
+        jacob.jun.pan@intel.com, kvm@vger.kernel.org
+Subject: Re: [PATCH v4 0/8] vfio/mdev: IOMMU aware mediated device
+To:     Xu Zaibo <xuzaibo@huawei.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
+ <5C05F87D.4050206@huawei.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <9a1d0b6f-7363-495d-2f4b-5a1693fb3fd9@linux.intel.com>
+Date:   Tue, 4 Dec 2018 14:20:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <5C05F87D.4050206@huawei.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings doc for Qcom's smmu-v2 implementation.
+Hi,
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
----
+On 12/4/18 11:46 AM, Xu Zaibo wrote:
+> Hi,
+> 
+> Is this solution trying to support general user space processes who are 
+> directly working on devices?
 
-Changes since v18:
- None.
+Yes, it is.
 
- .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+> 
+> Thanks,
+> Zaibo
 
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-index 8a6ffce12af5..a6504b37cc21 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-@@ -17,10 +17,16 @@ conditions.
-                         "arm,mmu-401"
-                         "arm,mmu-500"
-                         "cavium,smmu-v2"
-+                        "qcom,smmu-v2"
- 
-                   depending on the particular implementation and/or the
-                   version of the architecture implemented.
- 
-+                  Qcom SoCs must contain, as below, SoC-specific compatibles
-+                  along with "qcom,smmu-v2":
-+                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
-+                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
-+
- - reg           : Base address and size of the SMMU.
- 
- - #global-interrupts : The number of global interrupts exposed by the
-@@ -71,6 +77,22 @@ conditions.
-                   or using stream matching with #iommu-cells = <2>, and
-                   may be ignored if present in such cases.
- 
-+- clock-names:    List of the names of clocks input to the device. The
-+                  required list depends on particular implementation and
-+                  is as follows:
-+                  - for "qcom,smmu-v2":
-+                    - "bus": clock required for downstream bus access and
-+                             for the smmu ptw,
-+                    - "iface": clock required to access smmu's registers
-+                               through the TCU's programming interface.
-+                  - unspecified for other implementations.
-+
-+- clocks:         Specifiers for all clocks listed in the clock-names property,
-+                  as per generic clock bindings.
-+
-+- power-domains:  Specifiers for power domains required to be powered on for
-+                  the SMMU to operate, as per generic power domain bindings.
-+
- ** Deprecated properties:
- 
- - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-@@ -137,3 +159,20 @@ conditions.
-                 iommu-map = <0 &smmu3 0 0x400>;
-                 ...
-         };
-+
-+	/* Qcom's arm,smmu-v2 implementation */
-+	smmu4: iommu@d00000 {
-+		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-+		reg = <0xd00000 0x10000>;
-+
-+		#global-interrupts = <1>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-+		#iommu-cells = <1>;
-+		power-domains = <&mmcc MDSS_GDSC>;
-+
-+		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-+			 <&mmcc SMMU_MDP_AHB_CLK>;
-+		clock-names = "bus", "iface";
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Best regards,
+Lu Baolu
 
+> 
+> .
+> 
+> On 2018/11/5 15:34, Lu Baolu wrote:
+>> Hi,
+>>
+>> The Mediate Device is a framework for fine-grained physical device
+>> sharing across the isolated domains. Currently the mdev framework
+>> is designed to be independent of the platform IOMMU support. As the
+>> result, the DMA isolation relies on the mdev parent device in a
+>> vendor specific way.
+>>
+>> There are several cases where a mediated device could be protected
+>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+>> [1] introduces a new translation mode called 'scalable mode', which
+>> enables PASID-granular translations. The vt-d scalable mode is the
+>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
+>> sharing a device in minimal possible granularity (ADI - Assignable
+>> Device Interface).
+>>
+>> A mediated device backed by an ADI could be protected and isolated
+>> by the IOMMU since 1) the parent device supports tagging an unique
+>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
+>> translation unit (IOMMU) supports the PASID granular translation.
+>> We can apply IOMMU protection and isolation to this kind of devices
+>> just as what we are doing with an assignable PCI device.
+>>
+>> In order to distinguish the IOMMU-capable mediated devices from those
+>> which still need to rely on parent devices, this patch set adds two
+>> new members in struct mdev_device.
+>>
+>> * iommu_device
+>>    - This, if set, indicates that the mediated device could
+>>      be fully isolated and protected by IOMMU via attaching
+>>      an iommu domain to this device. If empty, it indicates
+>>      using vendor defined isolation.
+>>
+>> * iommu_domain
+>>    - This is a place holder for an iommu domain. A domain
+>>      could be store here for later use once it has been
+>>      attached to the iommu_device of this mdev.
+>>
+>> Below helpers are added to set and get above iommu device
+>> and iommu domain pointers in mdev core implementation.
+>>
+>> * mdev_set/get_iommu_device(dev, iommu_device)
+>>    - Set or get the iommu device which represents this mdev
+>>      in IOMMU's device scope. Drivers don't need to set the
+>>      iommu device if it uses vendor defined isolation.
+>>
+>> * mdev_set/get_iommu_domain(domain)
+>>    - A iommu domain which has been attached to the iommu
+>>      device in order to protect and isolate the mediated
+>>      device will be kept in the mdev data structure and
+>>      could be retrieved later.
+>>
+>> The mdev parent device driver could opt-in that the mdev could be
+>> fully isolated and protected by the IOMMU when the mdev is being
+>> created by invoking mdev_set_iommu_device() in its @create().
+>>
+>> In the vfio_iommu_type1_attach_group(), a domain allocated through
+>> iommu_domain_alloc() will be attached to the mdev iommu device if
+>> an iommu device has been set. Otherwise, the dummy external domain
+>> will be used and all the DMA isolation and protection are routed to
+>> parent driver as the result.
+>>
+>> On IOMMU side, a basic requirement is allowing to attach multiple
+>> domains to a PCI device if the device advertises the capability
+>> and the IOMMU hardware supports finer granularity translations than
+>> the normal PCI Source ID based translation.
+>>
+>> As the result, a PCI device could work in two modes: normal mode
+>> and auxiliary mode. In the normal mode, a pci device could be
+>> isolated in the Source ID granularity; the pci device itself could
+>> be assigned to a user application by attaching a single domain
+>> to it. In the auxiliary mode, a pci device could be isolated in
+>> finer granularity, hence subsets of the device could be assigned
+>> to different user level application by attaching a different domain
+>> to each subset.
+>>
+>> The device driver is able to switch between above two modes with
+>> below interfaces:
+>>
+>> * iommu_get_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_CAPABILITY)
+>>    - Represents the ability of supporting multiple domains
+>>      per device.
+>>
+>> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_ENABLE)
+>>    - Enable the multiple domains capability for the device
+>>      referenced by @dev.
+>>
+>> * iommu_set_dev_attr(dev, IOMMU_DEV_ATTR_AUXD_DISABLE)
+>>    - Disable the multiple domains capability for the device
+>>      referenced by @dev.
+>>
+>> * iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID)
+>>    - Return ID used for finer-granularity DMA translation.
+>>
+>> * iommu_attach_device_aux(domain, dev)
+>>    - Attach a domain to the device in the auxiliary mode.
+>>
+>> * iommu_detach_device_aux(domain, dev)
+>>    - Detach the aux domain from device.
+>>
+>> In order for the ease of discussion, sometimes we call "a domain in
+>> auxiliary mode' or simply 'an auxiliary domain' when a domain is
+>> attached to a device for finer granularity translations. But we need
+>> to keep in mind that this doesn't mean there is a differnt domain
+>> type. A same domain could be bound to a device for Source ID based
+>> translation, and bound to another device for finer granularity
+>> translation at the same time.
+>>
+>> This patch series extends both IOMMU and vfio components to support
+>> mdev device passing through when it could be isolated and protected
+>> by the IOMMU units. The first part of this series (PATCH 1/08~5/08)
+>> adds the interfaces and implementation of the multiple domains per
+>> device. The second part (PATCH 6/08~8/08) adds the iommu device
+>> attribute to each mdev, determines isolation type according to the
+>> existence of an iommu device when attaching group in vfio type1 iommu
+>> module, and attaches the domain to iommu aware mediated devices.
+>>
+>> This patch series depends on a patch set posted here [4] for discussion
+>> which added scalable mode support in Intel IOMMU driver.
+>>
+>> References:
+>> [1] 
+>> https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification 
+>>
+>> [2] 
+>> https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification 
+>>
+>> [3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+>> [4] https://lkml.org/lkml/2018/11/5/136
+>>
+>> Best regards,
+>> Lu Baolu
+>>
+>> Change log:
+>>    v3->v4:
+>>    - Use aux domain specific interfaces for domain attach and detach.
+>>    - Rebase all patches to 4.20-rc1.
+>>
+>>    v2->v3:
+>>    - Remove domain type enum and use a pointer on mdev_device instead.
+>>    - Add a generic interface for getting/setting per device iommu
+>>      attributions. And use it for query aux domain capability, enable
+>>      aux domain and disable aux domain purpose.
+>>    - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
+>>    - We discussed the impact of the default domain implementation
+>>      on reusing iommu_at(de)tach_device() interfaces. We agreed
+>>      that reusing iommu_at(de)tach_device() interfaces is the right
+>>      direction and we could tweak the code to remove the impact.
+>>      https://www.spinics.net/lists/kvm/msg175285.html
+>>    - Removed the RFC tag since no objections received.
+>>    - This patch has been submitted separately.
+>>      https://www.spinics.net/lists/kvm/msg173936.html
+>>
+>>    v1->v2:
+>>    - Rewrite the patches with the concept of auxiliary domains.
+>>
+>> Lu Baolu (8):
+>>    iommu: Add APIs for multiple domains per device
+>>    iommu/vt-d: Add multiple domains per device query
+>>    iommu/vt-d: Enable/disable multiple domains per device
+>>    iommu/vt-d: Attach/detach domains in auxiliary mode
+>>    iommu/vt-d: Return ID associated with an auxiliary domain
+>>    vfio/mdev: Add iommu place holders in mdev_device
+>>    vfio/type1: Add domain at(de)taching group helpers
+>>    vfio/type1: Handle different mdev isolation type
+>>
+>>   drivers/iommu/intel-iommu.c      | 315 ++++++++++++++++++++++++++++---
+>>   drivers/iommu/iommu.c            |  52 +++++
+>>   drivers/vfio/mdev/mdev_core.c    |  36 ++++
+>>   drivers/vfio/mdev/mdev_private.h |   2 +
+>>   drivers/vfio/vfio_iommu_type1.c  | 162 ++++++++++++++--
+>>   include/linux/intel-iommu.h      |  11 ++
+>>   include/linux/iommu.h            |  52 +++++
+>>   include/linux/mdev.h             |  23 +++
+>>   8 files changed, 618 insertions(+), 35 deletions(-)
+>>
+> 
+> 
+> 
