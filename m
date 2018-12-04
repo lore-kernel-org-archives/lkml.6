@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D1DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDA8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA37820851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 690E62146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:25:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZkYlLHv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA37820851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcYVzLqA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690E62146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbeLDLAY (ORCPT
+        id S1727310AbeLDLAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45574 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727291AbeLDLAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:18 -0500
+        id S1726187AbeLDLAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A66402087F;
-        Tue,  4 Dec 2018 11:00:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59ACC2087F;
+        Tue,  4 Dec 2018 11:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921218;
-        bh=eUz4JVIwxuElcrRMF8v3SBYGj8g2TiHASa2KDgDGilE=;
+        s=default; t=1543921220;
+        bh=wtVx14OOD1E5wWaajC87aGsT/gfnUSj+mnC2i3nq8kA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZkYlLHvdiZ7Y53KTC7jvg26pjVyDDnGA3qRxsn70BrrT6909s0Iswu4fg2zDkwSL
-         s5qDzIubZdK8zHSV9LFVuTxF2Ch3uG8XvNFyI6npjJbt7TkfgpnNtpBTTz8a74JAWR
-         /2u8CRXGos+dbA3PkEhTXJlInjdRDiblogv+MOp4=
+        b=YcYVzLqAOkOWmVufZIsCAuENEini0XQ9EqCZRjWwoRQzGNwejNIpmrbU9GDzK0SYu
+         0qFkb31oy0eCUEAXbBog0uV1qFB76PNxd+NeBl3xUciT192FQab93OIVYK7JnhzK7v
+         0sJn8CWrMWNu5rUtBLZwmKLdtl/U7e6Z74I/jWdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: [PATCH 4.19 127/139] staging: mt7621-pinctrl: fix uninitialized variable ngroups
-Date:   Tue,  4 Dec 2018 11:50:08 +0100
-Message-Id: <20181204103655.955006571@linuxfoundation.org>
+        stable@vger.kernel.org, youling257 <youling257@gmail.com>,
+        u.srikant.patnaik@gmail.com,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.19 128/139] staging: rtl8723bs: Fix incorrect sense of ether_addr_equal
+Date:   Tue,  4 Dec 2018 11:50:09 +0100
+Message-Id: <20181204103656.008256903@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -63,39 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit cd56a5141331abfe218d744a3d66e1788135d482 upstream.
+commit c948c6915b620f075496846df8d4487ee0c56121 upstream.
 
-Currently the for_each_node_with_property loop us incrementing variable
-ngroups however it was not initialized and hence will contain garbage.
-Fix this by initializing ngroups to zero.
+In commit b37f9e1c3801 ("staging: rtl8723bs: Fix lines too long in
+update_recvframe_attrib()."), the refactoring involved replacing
+two memcmp() calls with ether_addr_equal() calls. What the author
+missed is that memcmp() returns false when the two strings are equal,
+whereas ether_addr_equal() returns true when the two addresses are
+equal. One side effect of this error is that the strength of an
+unassociated AP was much stronger than the same AP after association.
+This bug is reported at bko#201611.
 
-Detected with static analysis with cppcheck:
-
-drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c:89]: (error) Uninitialized
-variable: ngroups
-
-Fixes: e12a1a6e087b ("staging: mt7621-pinctrl: refactor rt2880_pinctrl_dt_node_to_map function")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: b37f9e1c3801 ("staging: rtl8723bs: Fix lines too long in update_recvframe_attrib().")
+Cc: Stable <stable@vger.kernel.org>
+Cc: youling257 <youling257@gmail.com>
+Cc: u.srikant.patnaik@gmail.com
+Reported-and-tested-by: youling257 <youling257@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -82,7 +82,7 @@ static int rt2880_pinctrl_dt_node_to_map
- 	struct property *prop;
- 	const char *function_name, *group_name;
- 	int ret;
--	int ngroups;
-+	int ngroups = 0;
- 	unsigned int reserved_maps = 0;
+--- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
+@@ -109,12 +109,12 @@ static void update_recvframe_phyinfo(uni
+ 	rx_bssid = get_hdr_bssid(wlanhdr);
+ 	pkt_info.bssid_match = ((!IsFrameTypeCtrl(wlanhdr)) &&
+ 				!pattrib->icv_err && !pattrib->crc_err &&
+-				!ether_addr_equal(rx_bssid, my_bssid));
++				ether_addr_equal(rx_bssid, my_bssid));
  
- 	for_each_node_with_property(np_config, "group")
+ 	rx_ra = get_ra(wlanhdr);
+ 	my_hwaddr = myid(&padapter->eeprompriv);
+ 	pkt_info.to_self = pkt_info.bssid_match &&
+-		!ether_addr_equal(rx_ra, my_hwaddr);
++		ether_addr_equal(rx_ra, my_hwaddr);
+ 
+ 
+ 	pkt_info.is_beacon = pkt_info.bssid_match &&
 
 
