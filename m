@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0C4C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65872C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138952087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F11E20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAHaxkLK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138952087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5FAcmuE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F11E20878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeLDLTR (ORCPT
+        id S1727738AbeLDLTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:19:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51188 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:19:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727471AbeLDLER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:04:17 -0500
+        id S1727907AbeLDLEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:04:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A479214ED;
-        Tue,  4 Dec 2018 11:04:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8B342087F;
+        Tue,  4 Dec 2018 11:04:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921456;
-        bh=qJtgzPk1nZ1meUkJbkS5H7UPv/wHtmTOylGEyyRfUM4=;
+        s=default; t=1543921444;
+        bh=XzmtIm5dZRYf63xU8c9kcs2n/NQT+j1jOmb5T7g1DP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XAHaxkLKi6bcfHx3yh0+m3gpQg4MK4VC++e/WunORaZoPd9blAUJhj3h/zVYAcCaR
-         NHKZtZAhF6WtWePwOT5xJ1MZOZAK1Xl0p/7TW4w+nJ+XTatz49swqtlt8SS2eC7379
-         EEN6ChKtbaTuiI9cUAli93bnMFNwQnwLewjJJCG0=
+        b=d5FAcmuEdsDYtl0jlUdU9jFJntKjoLVLpPFoWVe4GaafwqDdX5l+wqAfHXdKLPj+I
+         sGpRoX05QApa63zVYEeWNZE0r2lBOfYrrXx07Gwq6iR3HyBprFMGrlKjrFNiiVS5FA
+         dPBit4P0mw9YMWtcae11ZNpjWAnY2NWlNyJtyzVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        srinivas.eeda@oracle.com
-Subject: [PATCH 4.14 079/146] x86/retpoline: Remove minimal retpoline support
-Date:   Tue,  4 Dec 2018 11:49:25 +0100
-Message-Id: <20181204103730.009096935@linuxfoundation.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "WoodhouseDavid" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "SchauflerCasey" <casey.schaufler@intel.com>
+Subject: [PATCH 4.14 074/146] x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+Date:   Tue,  4 Dec 2018 11:49:20 +0100
+Message-Id: <20181204103729.815479763@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -68,83 +70,179 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhenzhong Duan zhenzhong.duan@oracle.com
+From: Jiri Kosina jkosina@suse.cz
 
-commit ef014aae8f1cd2793e4e014bbb102bed53f852b7 upstream
+commit 53c613fe6349994f023245519265999eed75957f upstream
 
-Now that CONFIG_RETPOLINE hard depends on compiler support, there is no
-reason to keep the minimal retpoline support around which only provided
-basic protection in the assembly files.
+STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
+(once enabled) prevents cross-hyperthread control of decisions made by
+indirect branch predictors.
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Enable this feature if
+
+- the CPU is vulnerable to spectre v2
+- the CPU supports SMT and has SMT siblings online
+- spectre_v2 mitigation autoselection is enabled (default)
+
+After some previous discussion, this leaves STIBP on all the time, as wrmsr
+on crossing kernel boundary is a no-no. This could perhaps later be a bit
+more optimized (like disabling it in NOHZ, experiment with disabling it in
+idle, etc) if needed.
+
+Note that the synchronization of the mask manipulation via newly added
+spec_ctrl_mutex is currently not strictly needed, as the only updater is
+already being serialized by cpu_add_remove_lock, but let's make this a
+little bit more future-proof.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: <srinivas.eeda@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/f06f0a89-5587-45db-8ed2-0a9d6638d5c0@default
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/nospec-branch.h |    3 ---
- arch/x86/kernel/cpu/bugs.c           |   13 ++-----------
- 2 files changed, 2 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   57 ++++++++++++++++++++++++++++++++++++++++-----
+ kernel/cpu.c               |   11 +++++++-
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -221,11 +221,8 @@
- /* The Spectre V2 mitigation variants */
- enum spectre_v2_mitigation {
- 	SPECTRE_V2_NONE,
--	SPECTRE_V2_RETPOLINE_MINIMAL,
--	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
--	SPECTRE_V2_IBRS,
- 	SPECTRE_V2_IBRS_ENHANCED,
- };
- 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -134,8 +134,6 @@ enum spectre_v2_mitigation_cmd {
+@@ -34,12 +34,10 @@ static void __init spectre_v2_select_mit
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
  
- static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_NONE]			= "Vulnerable",
--	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
--	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
- 	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
-@@ -249,11 +247,6 @@ static void __init spec2_print_if_secure
- 		pr_info("%s selected on command line.\n", reason);
+-/*
+- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+- * writes to SPEC_CTRL contain whatever reserved bits have been set.
+- */
+-u64 __ro_after_init x86_spec_ctrl_base;
++/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
++u64 x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
++static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -324,6 +322,46 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
  }
  
--static inline bool retp_compiler(void)
--{
--	return __is_defined(CONFIG_RETPOLINE);
--}
--
- static inline bool match_option(const char *arg, int arglen, const char *opt)
++static bool stibp_needed(void)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
++}
++
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++	mask = x86_spec_ctrl_base;
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		mask |= SPEC_CTRL_STIBP;
++	else
++		mask &= ~SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++				cpu_smt_control == CPU_SMT_ENABLED ?
++				"Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ static void __init spectre_v2_select_mitigation(void)
  {
- 	int len = strlen(opt);
-@@ -414,14 +407,12 @@ retpoline_auto:
- 			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
- 			goto retpoline_generic;
- 		}
--		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_AMD :
--					 SPECTRE_V2_RETPOLINE_MINIMAL_AMD;
-+		mode = SPECTRE_V2_RETPOLINE_AMD;
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE_AMD);
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	} else {
- 	retpoline_generic:
--		mode = retp_compiler() ? SPECTRE_V2_RETPOLINE_GENERIC :
--					 SPECTRE_V2_RETPOLINE_MINIMAL;
-+		mode = SPECTRE_V2_RETPOLINE_GENERIC;
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -423,6 +461,9 @@ specv2_set_mode:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
  	}
++
++	/* Enable STIBP if appropriate */
++	arch_smt_update();
+ }
  
+ #undef pr_fmt
+@@ -813,6 +854,8 @@ static ssize_t l1tf_show_state(char *buf
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -827,10 +870,12 @@ static ssize_t cpu_show_common(struct de
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
++		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2045,6 +2045,12 @@ static void cpuhp_online_cpu_device(unsi
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { };
++
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2071,8 +2077,10 @@ static int cpuhp_smt_disable(enum cpuhp_
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret)
++	if (!ret) {
+ 		cpu_smt_control = ctrlval;
++		arch_smt_update();
++	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2083,6 +2091,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
 
 
