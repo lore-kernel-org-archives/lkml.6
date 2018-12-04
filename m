@@ -2,189 +2,180 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E20C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225FAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5772081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D594A2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYpoiwit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5772081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eWwVwzy6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D594A2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbeLDQBO (ORCPT
+        id S1726934AbeLDQBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:01:14 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42130 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbeLDQBO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:01:14 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so12321627lfh.9;
-        Tue, 04 Dec 2018 08:01:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4AfIsjpkJHb43W/ZaV+KazQjDgZpHguTHKABJHXmS4k=;
-        b=tYpoiwitTOKccZVDzZLWbWjAwiHqWx0SlN2hEzsHRgx6BXi08Pfiz0Kp1ahO7+ZVyR
-         jeLLVJdM5qK3gQjiMihY6b5VOIa403OyPhi05UkouSjqdK8qFxmB+pYW58JQNnQPVoXd
-         rANO5r8ELK4Yn22RHuje0u5WZViqJLMUJqxX0EVYJXL6RXpKQgZpofigTUbceRHjaNfI
-         +q5kox9N//RkyxnJ+lo3Ez+4iTi5EWjdhtcISnJ6GLy7p2mFAcOgdNcr5fPBQZ28rOBG
-         8ljuyjSpSGFH7E+SY93prvKs2W5K9Gt9aLPl2v8SODQ3RrjyI3Z6+oVHkkLTxTSvMUIF
-         9pDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=4AfIsjpkJHb43W/ZaV+KazQjDgZpHguTHKABJHXmS4k=;
-        b=VCff88zPNo8+vjT/3Phi4GOV50WaPHL3qN1k/sOgehn4bHJPaa63ei0YGd19zu+aDY
-         cwiFH0uVzPqnLgP4P/SUx+gbzBQXZJCUkuTfrPXOs9k9/PKHRJwMe5T4Sw6YCn28pd4V
-         gNG5NbdGI0fXVppR2tnHzdWAN9LRkWAPk5doIEccXSfb0ieFSmC9vGHiuiUhI2+sqmAi
-         JiN6lmBUDZ869RnuE9OWLtKJLT23DVVMFssYYZoZmCH3T85l7LLk4T/0D9bE64+s9Yyr
-         ixWEcR7uThL+lzDYpVeeB0PidzJqttzepvizb+3H72gadNh6DzRGpYZaAc9QmqRL3I2O
-         9FbA==
-X-Gm-Message-State: AA+aEWa94PftarmXDa/6gxd3RKPZ/sxiRRsEmfnsu+OIs0M2Fl6SGNdo
-        WRgDz/m9671Vb5xwEjJm8eJQWEMW
-X-Google-Smtp-Source: AFSGD/WuCs2XhGLOhkkif9QXxWD2kLyTmpvXrxmRd3GctHYLZXx9YEptiQUunRXK3bkyMdExfxLgOQ==
-X-Received: by 2002:a19:1901:: with SMTP id 1mr10661394lfz.99.1543939270148;
-        Tue, 04 Dec 2018 08:01:10 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id o17sm2994042lff.77.2018.12.04.08.01.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 08:01:09 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1gUD8I-0006Pw-QE; Tue, 04 Dec 2018 17:01:10 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     linux-usb@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Florian Zumbiehl <florz@florz.de>
-Subject: [PATCH] USB: serial: console: fix reported terminal settings
-Date:   Tue,  4 Dec 2018 17:00:36 +0100
-Message-Id: <20181204160036.24625-1-johan@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204155904.GC18087@localhost>
-References: <20181204155904.GC18087@localhost>
+        Tue, 4 Dec 2018 11:01:52 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49648 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbeLDQBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:01:52 -0500
+Received: from zn.tnic (p200300EC2BC7BF00BC61940C2B6F1886.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:bf00:bc61:940c:2b6f:1886])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5F16F1EC0229;
+        Tue,  4 Dec 2018 17:01:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543939310;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=gp6cjwxBy7EYDhDhF+JUrl/ImlJ4usANKUTRqPLA9Nc=;
+        b=eWwVwzy6AD+eVcqhvXI9JLwF0JLq+4Q0v3RPouHe7Nojq+etUQsVea4sAmLuLgXzLJSmyX
+        XEXSWDXGwq5us0SzY0HMKLZM7og5FNXLrLRD8bw/53DE5KgBJX+So0ZsVe9zKPeTNsI7Hx
+        kqIwrj71EJF3OR1k4Put87LhOjrCgEY=
+Date:   Tue, 4 Dec 2018 17:01:45 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v6 04/26] x86/fpu/xstate: Introduce XSAVES system
+ states
+Message-ID: <20181204160144.GG11803@zn.tnic>
+References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
+ <20181119214809.6086-5-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181119214809.6086-5-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The USB-serial console implementation has never reported the actual
-terminal settings used. Despite storing the corresponding cflags in its
-struct console, this was never honoured on later tty open() where the
-tty termios would be left initialised to the driver defaults.
+On Mon, Nov 19, 2018 at 01:47:47PM -0800, Yu-cheng Yu wrote:
+> Control-flow Enforcement (CET) MSR contents are XSAVES system states.
+> To support CET, introduce XSAVES system states first.
+> 
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> ---
+>  arch/x86/include/asm/fpu/internal.h |  3 +-
+>  arch/x86/include/asm/fpu/xstate.h   |  4 +-
+>  arch/x86/kernel/fpu/core.c          |  6 +-
+>  arch/x86/kernel/fpu/init.c          | 10 ---
+>  arch/x86/kernel/fpu/xstate.c        | 94 +++++++++++++++++++----------
+>  5 files changed, 69 insertions(+), 48 deletions(-)
 
-Unlike the serial console implementation, the USB-serial code calls
-subdriver open() already at console setup. While calling set_termios()
-before open() looks like it could work for some USB-serial drivers,
-others definitely do not expect this, so modelling this after serial
-core is going to be intrusive, if at all possible.
+...
 
-Instead, use a (renamed) tty helper to save the termios data used at
-console setup, so that the tty termios reflects the actual terminal
-settings after a subsequent tty open().
+> @@ -704,6 +710,7 @@ static int init_xstate_size(void)
+>   */
+>  static void fpu__init_disable_system_xstate(void)
+>  {
+> +	xfeatures_mask_all = 0;
+>  	xfeatures_mask_user = 0;
+>  	cr4_clear_bits(X86_CR4_OSXSAVE);
+>  	fpu__xstate_clear_all_cpu_caps();
+> @@ -717,6 +724,8 @@ void __init fpu__init_system_xstate(void)
+>  {
+>  	unsigned int eax, ebx, ecx, edx;
+>  	static int on_boot_cpu __initdata = 1;
+> +	u64 cpu_system_xfeatures_mask;
+> +	u64 cpu_user_xfeatures_mask;
 
-Note that the calls to tty_init_termios() (tty_driver_install()) and
-tty_save_termios() are serialised using the disconnect mutex.
+So what I had in mind is to not have those local vars but use
+xfeatures_mask_user and xfeatures_mask_system here directly...
 
-This specifically fixes a regression that was triggered by a recent
-change adding software flow control to the pl2303 driver: a getty trying
-to disable flow control while leaving the baud rate unchanged would now
-also set the baud rate to the driver default (prior to the flow-control
-change this had been a noop).
+>  	int err;
+>  	int i;
+>  
+> @@ -739,10 +748,23 @@ void __init fpu__init_system_xstate(void)
+>  		return;
+>  	}
+>  
+> +	/*
+> +	 * Find user states supported by the processor.
+> +	 * Only these bits can be set in XCR0.
+> +	 */
+>  	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> -	xfeatures_mask_user = eax + ((u64)edx << 32);
+> +	cpu_user_xfeatures_mask = eax + ((u64)edx << 32);
+>  
+> -	if ((xfeatures_mask_user & XFEATURE_MASK_FPSSE) != XFEATURE_MASK_FPSSE) {
+> +	/*
+> +	 * Find system states supported by the processor.
+> +	 * Only these bits can be set in IA32_XSS MSR.
+> +	 */
+> +	cpuid_count(XSTATE_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> +	cpu_system_xfeatures_mask = ecx + ((u64)edx << 32);
+> +
+> +	xfeatures_mask_all = cpu_user_xfeatures_mask | cpu_system_xfeatures_mask;
 
-Fixes: 7041d9c3f01b ("USB: serial: pl2303: add support for tx xon/xoff flow control")
-Cc: stable <stable@vger.kernel.org>	# 4.18
-Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Florian Zumbiehl <florz@florz.de>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/tty/tty_io.c         | 11 +++++++++--
- drivers/usb/serial/console.c |  2 +-
- include/linux/tty.h          |  1 +
- 3 files changed, 11 insertions(+), 3 deletions(-)
+... and not introduce xfeatures_mask_all at all but everywhere you need
+all features, to do:
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index ee80dfbd5442..687250ec8032 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1373,7 +1373,13 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
- 	return ERR_PTR(retval);
- }
- 
--static void tty_free_termios(struct tty_struct *tty)
-+/**
-+ * tty_save_termios() - save tty termios data in driver table
-+ * @tty: tty whose termios data to save
-+ *
-+ * Locking: Caller guarantees serialisation with tty_init_termios().
-+ */
-+void tty_save_termios(struct tty_struct *tty)
- {
- 	struct ktermios *tp;
- 	int idx = tty->index;
-@@ -1392,6 +1398,7 @@ static void tty_free_termios(struct tty_struct *tty)
- 	}
- 	*tp = tty->termios;
- }
-+EXPORT_SYMBOL_GPL(tty_save_termios);
- 
- /**
-  *	tty_flush_works		-	flush all works of a tty/pty pair
-@@ -1491,7 +1498,7 @@ static void release_tty(struct tty_struct *tty, int idx)
- 	WARN_ON(!mutex_is_locked(&tty_mutex));
- 	if (tty->ops->shutdown)
- 		tty->ops->shutdown(tty);
--	tty_free_termios(tty);
-+	tty_save_termios(tty);
- 	tty_driver_remove_tty(tty->driver, tty);
- 	tty->port->itty = NULL;
- 	if (tty->link)
-diff --git a/drivers/usb/serial/console.c b/drivers/usb/serial/console.c
-index 17940589c647..7d289302ff6c 100644
---- a/drivers/usb/serial/console.c
-+++ b/drivers/usb/serial/console.c
-@@ -101,7 +101,6 @@ static int usb_console_setup(struct console *co, char *options)
- 		cflag |= PARENB;
- 		break;
- 	}
--	co->cflag = cflag;
- 
- 	/*
- 	 * no need to check the index here: if the index is wrong, console
-@@ -164,6 +163,7 @@ static int usb_console_setup(struct console *co, char *options)
- 			serial->type->set_termios(tty, port, &dummy);
- 
- 			tty_port_tty_set(&port->port, NULL);
-+			tty_save_termios(tty);
- 			tty_kref_put(tty);
- 		}
- 		tty_port_set_initialized(&port->port, 1);
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index 414db2bce715..392138fe59b6 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -556,6 +556,7 @@ extern struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx);
- extern void tty_release_struct(struct tty_struct *tty, int idx);
- extern int tty_release(struct inode *inode, struct file *filp);
- extern void tty_init_termios(struct tty_struct *tty);
-+extern void tty_save_termios(struct tty_struct *tty);
- extern int tty_standard_install(struct tty_driver *driver,
- 		struct tty_struct *tty);
- 
+	(xfeatures_mask_user | xfeatures_mask_system)
+
+and work with that.
+
+...
+
+> @@ -1178,7 +1208,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
+>  	 * The state that came in from userspace was user-state only.
+>  	 * Mask all the user states out of 'xfeatures':
+>  	 */
+> -	xsave->header.xfeatures &= XFEATURE_MASK_SUPERVISOR;
+> +	xsave->header.xfeatures &= (xfeatures_mask_all & ~xfeatures_mask_user);
+
+... and this would be
+
+	xsave->header.xfeatures &= xfeatures_mask_system;
+
+>  
+>  	/*
+>  	 * Add back in the features that came in from userspace:
+> @@ -1234,7 +1264,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
+>  	 * The state that came in from userspace was user-state only.
+>  	 * Mask all the user states out of 'xfeatures':
+>  	 */
+> -	xsave->header.xfeatures &= XFEATURE_MASK_SUPERVISOR;
+> +	xsave->header.xfeatures &= (xfeatures_mask_all & ~xfeatures_mask_user);
+
+Ditto here.
+
+This way you have *two* mask variables and code queries them only.
+
+Hmmm?
+
+Or am I missing something?
+
 -- 
-2.19.2
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
