@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921EBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E18C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 565EA214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 180DF214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Skn8P+pi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565EA214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtQvJ0LF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180DF214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbeLDK6J (ORCPT
+        id S1726904AbeLDK6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726881AbeLDK6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:06 -0500
+        id S1726881AbeLDK6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EF9520878;
-        Tue,  4 Dec 2018 10:58:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C6022146D;
+        Tue,  4 Dec 2018 10:58:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921085;
-        bh=X+k8CePXtJQcEHkQMp+gcHYllhsjrpYmimqMgmUPlNs=;
+        s=default; t=1543921090;
+        bh=hBpKJb8G9eFot7Af/cyDWxswkIfd2WCq060JV0Wr4SA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Skn8P+pi+gh7QrpK6FCDY+yulNn1YoryTd8d7dpY2JMHh4ebo98zL8KbBwu65K9r3
-         0gzlnU6Gif8tEXAE5wPI8aedQSTFWWaKD6qkfOtor7QiolSiebcVHHBpdnsSbE8qUt
-         7fns0pvhkhKJ9V8/FxqACngS1z4hMf3Ldl/TaH4I=
+        b=EtQvJ0LFqg+41ZTM8d6gboXCrULeAV7b/W4yl04C7IODsMsJln4qYXTXHwrJY0aZA
+         xrlRmQnyiSnk3hfdKE0mB+zXGtUcSMfvgLBrFJZbrcvrYPh6ZNb4ZaD/NUJfXOe3mc
+         klCkIlj4QgpEKYHm8wOEUv8Id4RCdgS2YI4E6eJQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Jiri Kosina <jkosina@suse.cz>,
@@ -61,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 040/139] sched/smt: Make sched_smt_present track topology
-Date:   Tue,  4 Dec 2018 11:48:41 +0100
-Message-Id: <20181204103651.627721480@linuxfoundation.org>
+Subject: [PATCH 4.19 042/139] sched/smt: Expose sched_smt_present static key
+Date:   Tue,  4 Dec 2018 11:48:43 +0100
+Message-Id: <20181204103651.711282955@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -82,25 +81,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra (Intel) peterz@infradead.org
+From: Thomas Gleixner tglx@linutronix.de
 
-commit c5511d03ec090980732e929c318a7a6374b5550e upstream
+commit 321a874a7ef85655e93b3206d0f36b4a6097f948 upstream
 
-Currently the 'sched_smt_present' static key is enabled when at CPU bringup
-SMT topology is observed, but it is never disabled. However there is demand
-to also disable the key when the topology changes such that there is no SMT
-present anymore.
+Make the scheduler's 'sched_smt_present' static key globaly available, so
+it can be used in the x86 speculation control code.
 
-Implement this by making the key count the number of cores that have SMT
-enabled.
+Provide a query function and a stub for the CONFIG_SMP=n case.
 
-In particular, the SMT topology bits are set before interrrupts are enabled
-and similarly, are cleared after interrupts are disabled for the last time
-and the CPU dies.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Jiri Kosina <jkosina@suse.cz>
@@ -120,47 +112,53 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.246110444@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185004.430168326@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/core.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ include/linux/sched/smt.h |   18 ++++++++++++++++++
+ kernel/sched/sched.h      |    4 +---
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5741,15 +5741,10 @@ int sched_cpu_activate(unsigned int cpu)
- 
- #ifdef CONFIG_SCHED_SMT
- 	/*
--	 * The sched_smt_present static key needs to be evaluated on every
--	 * hotplug event because at boot time SMT might be disabled when
--	 * the number of booted CPUs is limited.
--	 *
--	 * If then later a sibling gets hotplugged, then the key would stay
--	 * off and SMT scheduling would never be functional.
-+	 * When going up, increment the number of cores with SMT present.
- 	 */
--	if (cpumask_weight(cpu_smt_mask(cpu)) > 1)
--		static_branch_enable_cpuslocked(&sched_smt_present);
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+		static_branch_inc_cpuslocked(&sched_smt_present);
- #endif
- 	set_cpu_active(cpu, true);
- 
-@@ -5793,6 +5788,14 @@ int sched_cpu_deactivate(unsigned int cp
- 	 */
- 	synchronize_rcu_mult(call_rcu, call_rcu_sched);
- 
+--- /dev/null
++++ b/include/linux/sched/smt.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_SCHED_SMT_H
++#define _LINUX_SCHED_SMT_H
++
++#include <linux/static_key.h>
++
 +#ifdef CONFIG_SCHED_SMT
-+	/*
-+	 * When going down, decrement the number of cores with SMT present.
-+	 */
-+	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-+		static_branch_dec_cpuslocked(&sched_smt_present);
++extern struct static_key_false sched_smt_present;
++
++static __always_inline bool sched_smt_active(void)
++{
++	return static_branch_likely(&sched_smt_present);
++}
++#else
++static inline bool sched_smt_active(void) { return false; }
 +#endif
 +
- 	if (!sched_smp_initialized)
- 		return 0;
++#endif
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -23,6 +23,7 @@
+ #include <linux/sched/prio.h>
+ #include <linux/sched/rt.h>
+ #include <linux/sched/signal.h>
++#include <linux/sched/smt.h>
+ #include <linux/sched/stat.h>
+ #include <linux/sched/sysctl.h>
+ #include <linux/sched/task.h>
+@@ -930,9 +931,6 @@ static inline int cpu_of(struct rq *rq)
  
+ 
+ #ifdef CONFIG_SCHED_SMT
+-
+-extern struct static_key_false sched_smt_present;
+-
+ extern void __update_idle_core(struct rq *rq);
+ 
+ static inline void update_idle_core(struct rq *rq)
 
 
