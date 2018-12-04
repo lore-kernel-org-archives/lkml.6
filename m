@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3CEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6D7206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:24:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6D7206B7
+	by mail.kernel.org (Postfix) with ESMTP id 236DF20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:25:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236DF20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbeLDOXR (ORCPT
+        id S1726610AbeLDOZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:23:17 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33279 "EHLO mail.bootlin.com"
+        Tue, 4 Dec 2018 09:25:00 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33229 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbeLDOXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:23:14 -0500
+        id S1725956AbeLDOXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:23:04 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F1B3520731; Tue,  4 Dec 2018 15:23:09 +0100 (CET)
+        id C22BB20A58; Tue,  4 Dec 2018 15:22:59 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 03F9220A60;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3E11F20A59;
         Tue,  4 Dec 2018 15:22:39 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v3 05/21] drm/sun4i: frontend: Determine input format based on colorspace
-Date:   Tue,  4 Dec 2018 15:22:02 +0100
-Message-Id: <20181204142218.16284-6-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 02/21] drm/fourcc: Add format info helpers for checking YUV sub-sampling
+Date:   Tue,  4 Dec 2018 15:21:59 +0100
+Message-Id: <20181204142218.16284-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
 References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
@@ -50,57 +50,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since all the RGB input formats have the same value for the DATA_FMT
-field of the INPUT_FMT register, we can group them when the format is
-known to be RGB. Here, we assume that a non-YUV format is RGB, because
-the hardware does not support any other colorspace than RGB and YUV.
-
-Pass the full DRM format info structure to check whether the format uses
-a YUV colorspace.
+Display engine drivers often need to distinguish between different types of
+YUV sub-sampling. This introduces helpers to check for common sub-sampling
+ratios in their commonly-used denomination from the DRM format info.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index c436fa97928f..d0eca4b8784d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -104,16 +104,16 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+index 01cd353d9302..b3d9d88ab290 100644
+--- a/include/drm/drm_fourcc.h
++++ b/include/drm/drm_fourcc.h
+@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
+ 	return info->is_yuv && info->num_planes == 3;
  }
- EXPORT_SYMBOL(sun4i_frontend_update_buffer);
  
--static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
-+static int
-+sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
-+				       u32 *val)
- {
--	switch (fmt) {
--	case DRM_FORMAT_XRGB8888:
-+	if (!format->is_yuv)
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
--		return 0;
--
--	default:
-+	else
- 		return -EINVAL;
--	}
++/**
++ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
++ * YUV format with 4:1:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
++}
 +
-+	return 0;
- }
- 
- static int
-@@ -190,8 +190,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	u32 in_fmt_val, in_mod_val, in_ps_val;
- 	int ret;
- 
--	ret = sun4i_frontend_drm_format_to_input_fmt(format->format,
--						     &in_fmt_val);
-+	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
- 	if (ret) {
- 		DRM_DEBUG_DRIVER("Invalid input format\n");
- 		return ret;
++/**
++ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
++ * YUV format with 4:1:1 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:1
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
++ * YUV format with 4:2:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
++ * YUV format with 4:2:2 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:2
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
++ * YUV format with 4:4:4 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:4:4
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
++}
++
+ const struct drm_format_info *__drm_format_info(u32 format);
+ const struct drm_format_info *drm_format_info(u32 format);
+ const struct drm_format_info *
 -- 
 2.19.2
 
