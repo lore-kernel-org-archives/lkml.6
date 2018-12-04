@@ -2,155 +2,216 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E56B7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62226C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB0F2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EE6D2082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="PZ7ib2+S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB0F2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ot8M1kUk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE6D2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbeLDNtR (ORCPT
+        id S1726466AbeLDNti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:49:17 -0500
-Received: from mail-eopbgr150101.outbound.protection.outlook.com ([40.107.15.101]:64032
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725863AbeLDNtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:49:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kIA3+7gUMpuT8vcJgnbEOaB71jKoypi2SChod57cYhI=;
- b=PZ7ib2+SwIHB1TBat9lMbCuPm1rP1Hlf5bEbVVTHt1AYslbdGKjj6GJP3f4JRvv8Ws6MZcA60TeFdbn6lcSDLR9W7LDtHYf+sRfz1mw+RYYQEbni5StfWfRsE0tjdQLIb/nTX5DwCSqbwxVVr9xv4YVFhY41K5+AvN2MBTXdbNI=
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
- VI1PR02MB4222.eurprd02.prod.outlook.com (20.177.60.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Tue, 4 Dec 2018 13:49:11 +0000
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39]) by VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39%3]) with mapi id 15.20.1361.022; Tue, 4 Dec 2018
- 13:49:11 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Nicholas Mc Guire <der.herr@hofr.at>
-CC:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: mux: demux-pinctrl: handle failure case of
- devm_kstrdup()
-Thread-Topic: [PATCH] i2c: mux: demux-pinctrl: handle failure case of
- devm_kstrdup()
-Thread-Index: AQHUiV04FT84eXxBo0+Q2gJyFszP86VucwAAgAAPwACAABrHAA==
-Date:   Tue, 4 Dec 2018 13:49:11 +0000
-Message-ID: <2c43e965-9a12-0367-fb23-bedfaaed4f68@axentia.se>
-References: <1543658470-20887-1-git-send-email-hofrat@osadl.org>
- <549eba3a-28b9-e4b0-f680-8fb51b160879@axentia.se>
- <20181204121318.GB28201@osadl.at>
-In-Reply-To: <20181204121318.GB28201@osadl.at>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR0101CA0015.eurprd01.prod.exchangelabs.com
- (2603:10a6:3:77::25) To VI1PR02MB5119.eurprd02.prod.outlook.com
- (2603:10a6:803:b7::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR02MB4222;6:BY6hM/PFOB9Ne73bWiyu7o9Ohv590GKVesSOhLZxIYjKhyPOonT8SPK1sY4t7y6Yob80wf6Ia8IptJ0j8OtFv8YDh3oUABonYNCSKpv25vCu/Je6SzRRuhW+W/ZGd9Faw3fST6tJcfLnKCEUvnnXQd3KxuutaoZbz/FjnHulJfll25dWNlf5UgnOx0gZbBi5TLO04JmYz4RgFgj9mSYcKNLb5CpKLO2QjFElQ41zEXBo10V3FhDWA/WUNOYb7l1Ghdmhf6W/GoxNTtgemR2jkbfZQWGfRF6RsMABJ2qml+xGOimLuVaK/HX+mCq0rj4znSH6hx3dUkWJKGonZlWXcHC9XhDVP0nuoQyGWZix6znB5hsNcxOp2e/SfBpfp7MLIsDJRkCBRTiBJVHhqDQtOaZAJKLImJXp+SFdtZTjoe7UM9U5WQKEBs2r3cGfDzUeCCV7n1WW2nrPrtEDouG/6Q==;5:nl/XH1yYB2eKPmEonX6ov2hA8UtivjLT/mHA0aRhgm90hiuG4Xm/eks0bWbENnDYvhSPqegScFtJxauqfFUqxZl9eeiByIny6X2uz+sw6fFyDkPrqYi4PYegdyhZrBs+EpsdspdI0YOu9yHze9qnoY4txnODO7DYV++t65pAwHg=;7:adrjSSaxEAVWeM12w0iQv8H3uepWEbWGXwumKg7nw/losbo+PHS3Fa9g85LQXQ1x9etzUN6vpjUwMJ8k5o+fk/X7ol6rVKoGTL6KtdV/oE2CRwCsxf6vk4p7+MUQskZMuGxmmJvQHqfeAHhiJy0B1A==
-x-ms-office365-filtering-correlation-id: f4593a12-2e9b-41ea-33dc-08d659ef44fb
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB4222;
-x-ms-traffictypediagnostic: VI1PR02MB4222:
-x-microsoft-antispam-prvs: <VI1PR02MB4222336211AEA05C00883FA2BCAF0@VI1PR02MB4222.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231455)(999002)(944501493)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(2016111802025)(20161123558120)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB4222;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB4222;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(366004)(39830400003)(346002)(396003)(189003)(199004)(11346002)(7736002)(105586002)(305945005)(2616005)(86362001)(486006)(446003)(6486002)(476003)(4326008)(508600001)(74482002)(66066001)(65956001)(26005)(53936002)(5660300001)(71200400001)(229853002)(6512007)(64126003)(65826007)(65806001)(31696002)(256004)(31686004)(14444005)(186003)(97736004)(36756003)(386003)(6506007)(6916009)(54906003)(53546011)(58126008)(316002)(76176011)(81166006)(8676002)(2906002)(68736007)(81156014)(25786009)(99286004)(6116002)(8936002)(3846002)(6246003)(102836004)(52116002)(106356001)(71190400001)(14454004)(6436002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4222;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7Ifry+Wu1vnI+Lov/queo2qFJMG3SvOLGlHKtL1DuXlQEbGJD4L0wpCA2I9r9qpwCNWk+NWKhw5R9MFN7AAwGdHjpGnCCMY1qOoqzaTuaKGmhP0kllMLteY+9/PTcyAfdueeEUi1Q08+dPtyd3ge+tMX0uhiVbN/6ehuVApVva9Yi4ORPDDSAnkHLZEBXRB3YJWt+t+B6VUhkmxOgLriUHVbDXO58hRwHDm9XZpLjm81OJrKrWqA/zO3DjvTCbrh7kdUsEY3ef9FYLzZWQWESGYBX7Tm+Lbq2exw9OUdK/wwzdzds8LurXGm8Gt+AsYGToA8wlUaxerSBCAtT1G5t8reYqVQR9Oof1fe6FchigQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <175875D639804E4EBE8F25B263FD6455@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 4 Dec 2018 08:49:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbeLDNtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:49:36 -0500
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E9A9214C1;
+        Tue,  4 Dec 2018 13:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543931375;
+        bh=g4kDTDS6pldHhQc9NehMUFvt/MRg5/EkNX4xAVTtWbY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ot8M1kUkjyV66hIi31UhnrMKWlfXyYLGWSlxZDXUJZWEJBBXKFUJlFy5OjnD7za8k
+         kErJsyHiYNB7btmzbKBs+ZJNIxYeFLu6/uCYobmpl7pitOuDHpKN+vOvsv8GdimUEI
+         Bz0COrLhFZZA8KZMr1n/j6kVGILx8KitaKC4xnX0=
+Received: by mail-qk1-f173.google.com with SMTP id w204so9600466qka.2;
+        Tue, 04 Dec 2018 05:49:35 -0800 (PST)
+X-Gm-Message-State: AA+aEWbtkSl3r5PGTktlBkXOEfgo99D3VRUSHTrjvFXH9X6+F+xl/Xh4
+        ipu05qEmVlSVkVlIdbl0Fum58RgGUzhrdoj4cw==
+X-Google-Smtp-Source: AFSGD/U9YchkMS8xWtc58jOlXD8/P7OYuXYe+HCZeVM6sZDQTSuPUkEAllEHnjjIUaUFjA6FFZXoeAwWKNWNNfeYIJ8=
+X-Received: by 2002:a37:7682:: with SMTP id r124mr18861001qkc.79.1543931374238;
+ Tue, 04 Dec 2018 05:49:34 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4593a12-2e9b-41ea-33dc-08d659ef44fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 13:49:11.4527
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4222
+References: <20181128193636.254378-1-brendanhiggins@google.com> <f34ee937-83d6-3ff6-12b3-c6cd9acbfc38@gmail.com>
+In-Reply-To: <f34ee937-83d6-3ff6-12b3-c6cd9acbfc38@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 4 Dec 2018 07:49:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL0t_p8=Ueq4mHS5i2YEQdc7S7AtPWfkcOsj1g2SixUkA@mail.gmail.com>
+Message-ID: <CAL_JsqL0t_p8=Ueq4mHS5i2YEQdc7S7AtPWfkcOsj1g2SixUkA@mail.gmail.com>
+Subject: Re: [RFC v3 00/19] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        knut.omang@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMi0wNCAxMzoxMywgTmljaG9sYXMgTWMgR3VpcmUgd3JvdGU6DQo+IE9uIFR1ZSwg
-RGVjIDA0LCAyMDE4IGF0IDExOjE2OjU5QU0gKzAwMDAsIFBldGVyIFJvc2luIHdyb3RlOg0KPj4g
-SGkhDQo+Pg0KPj4gVGhpcyBwYXRjaCBsb29rcyBsaWtlIGEgZ29vZCBpZGVhLiBIb3dldmVyLCBh
-IG5pdHBpY2sgYmVsb3cuDQo+Pg0KPj4gT24gMjAxOC0xMi0wMSAxMTowMSwgTmljaG9sYXMgTWMg
-R3VpcmUgd3JvdGU6DQo+Pj4gZGV2bV9rc3RyZHVwKCkgbWF5IHJldHVybiBOVUxMIGlmIGludGVy
-bmFsIGFsbG9jYXRpb24gZmFpbGVkLg0KPj4+IFRodXMgdXNpbmcgIG5hbWUsIHZhbHVlICBpcyB1
-bnNhZmUgd2l0aG91dCBiZWluZyBjaGVja2VkLiBBcw0KPj4+IGkyY19kZW11eF9waW5jdHJsX3By
-b2JlKCkgY2FuIHJldHVybiAtRU5PTUVNIGluIG90aGVyIGNhc2VzDQo+Pj4gYSBkZXZfZXJyKCkg
-bWVzc2FnZSBpcyBpbmNsdWRlZCB0byBtYWtlIHRoZSBmYWlsdXJlIGxvY2F0aW9uDQo+Pj4gY2xl
-YXIuDQo+Pj4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBOaWNob2xhcyBNYyBHdWlyZSA8aG9mcmF0QG9z
-YWRsLm9yZz4NCj4+PiBGaXhlczogZTM1NDc4ZWFjMDMwICgiaTJjOiBtdXg6IGRlbXV4LXBpbmN0
-cmw6IHJ1biBwcm9wZXJseSB3aXRoIG11bHRpcGxlIGluc3RhbmNlcyIpDQo+Pj4gLS0tDQo+Pj4N
-Cj4+PiBQcm9ibGVtIGxvY2F0ZWQgd2l0aCBleHBlcmltZW50YWwgY29jY2luZWxsZSBzY3JpcHQN
-Cj4+Pg0KPj4+IFE6IFRoZSB1c2Ugb2YgZGV2bV9rc3RyZHVwKCkgc2VlbXMgYSBiaXQgb2RkIHdo
-aWxlIHRlY2huaWNhbGx5IG5vdCB3cm9uZywNCj4+PiAgICBwZXJzb25hbGx5IEkgdGhpbmsgZGV2
-bV9rYXNwcmludGYoKSB3b3VsZCBiZSBtb3JlIHN1aXRhYmxlIGhlcmUuDQo+Pj4NCj4+PiBQYXRj
-aCB3YXMgY29tcGlsZSB0ZXN0ZWQgd2l0aDogbXVsdGlfdjdfZGVmY29uZmlnIA0KPj4+IChpbXBs
-aWVzIEkyQ19ERU1VWF9QSU5DVFJMPXkpDQo+Pj4NCj4+PiBQYXRjaCBpcyBhZ2FpbnN0IDQuMjAt
-cmM0IChsb2NhbHZlcnNpb24tbmV4dCBpcyBuZXh0LTIwMTgxMTMwKQ0KPj4+DQo+Pj4gIGRyaXZl
-cnMvaTJjL211eGVzL2kyYy1kZW11eC1waW5jdHJsLmMgfCA2ICsrKysrKw0KPj4+ICAxIGZpbGUg
-Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9p
-MmMvbXV4ZXMvaTJjLWRlbXV4LXBpbmN0cmwuYyBiL2RyaXZlcnMvaTJjL211eGVzL2kyYy1kZW11
-eC1waW5jdHJsLmMNCj4+PiBpbmRleCAwMzUwMzJlLi5jNDY2OTk5IDEwMDY0NA0KPj4+IC0tLSBh
-L2RyaXZlcnMvaTJjL211eGVzL2kyYy1kZW11eC1waW5jdHJsLmMNCj4+PiArKysgYi9kcml2ZXJz
-L2kyYy9tdXhlcy9pMmMtZGVtdXgtcGluY3RybC5jDQo+Pj4gQEAgLTI0NCw2ICsyNDQsMTIgQEAg
-c3RhdGljIGludCBpMmNfZGVtdXhfcGluY3RybF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQ0KPj4+ICANCj4+PiAgCQlwcm9wc1tpXS5uYW1lID0gZGV2bV9rc3RyZHVwKCZwZGV2
-LT5kZXYsICJzdGF0dXMiLCBHRlBfS0VSTkVMKTsNCj4+PiAgCQlwcm9wc1tpXS52YWx1ZSA9IGRl
-dm1fa3N0cmR1cCgmcGRldi0+ZGV2LCAib2siLCBHRlBfS0VSTkVMKTsNCj4+PiArCQlpZiAoIXBy
-b3BzW2ldLm5hbWUgfHwgIXByb3BzW2ldLnZhbHVlKSB7DQo+Pj4gKwkJCWRldl9lcnIoJnBkZXYt
-PmRldiwNCj4+PiArCQkJCSJjaGFuICVkIG5hbWUsIHZhbHVlIGFsbG9jYXRpb24gZmFpbGVkXG4i
-LCBpKTsNCj4+DQo+PiBQbGVhc2UgZHJvcCB0aGlzIG1lbW9yeSBhbGxvY2F0aW9uIGZhaWx1cmUg
-bWVzc2FnZS4gWW91IHNob3VsZCBnZXQgc3VjaCBhDQo+PiBtZXNzYWdlIGZyb20gZGV2bV9rc3Ry
-ZHVwLg0KPj4NCj4gDQo+IGhtLi4udHJpZWQgdG8gZmlndXJlIG91dCB3aGVyZSB0aGF0IG1lc3Nh
-Z2Ugd291bGQgYmUgY29tbWluZw0KPiBmcm9tIC0gYnV0IEkgY291bGQgbm90IGZpbmQgYW55IHBv
-aW50IGluIHRoZSBjYWxsIHRyZWUgdGhhdA0KPiB3b3VsZCBpc3N1ZSBzdWNoIGEgbWVzc2FnZSA/
-DQo+IA0KPiAgZGV2bV9rc3RyZHVwKCkgDQo+ICAgIC0+IGRldm1fa21hbGxvYygpDQo+ICAgICAg
-ICAgLT4gYWxsb2NfZHIoKQ0KPiAgICAgICAgICAgICAgLS0+IGttYWxsb2NfdHJhY2tfY2FsbGVy
-KCkgKG5vbi1OVU1BKQ0KPiAgICAgICAgICAgICAgfCAgICAgLT4gX19rbWFsbG9jX25vZGUoKQ0K
-PiAgICAgICAgICAgICAgfCAgICAgICAgLT4gX19kb19rbWFsbG9jX25vZGUoKQ0KPiAgICAgICAg
-ICAgICAgYC0+IF9fa21hbGxvY19ub2RlX3RyYWNrX2NhbGxlcigpIChOVU1BKQ0KPiAgICAgICAg
-ICAgICAgICAgICAgLT4gX19kb19rbWFsbG9jX25vZGUoKQ0KPiANCj4gIF9fZG9fa21hbGxvY19u
-b2RlKCkgc2VlbXMgbGlrZSBpdCBzaW1wbHkgcmV0dXJucyBOVUxMIGJ1dA0KPiAgaXNzdWVzIG5v
-IGZhaWx1cmUgbWVzc2FnZS4NCj4gIEFtIEkgb3Zlcmxvb2tpbmcgc29tZXRoaW5nID8gDQoNCldl
-bGwsIEkgZG9uJ3Qga25vdyB0aGUgZGV0YWlscywgYnV0IGNoZWNrcGF0Y2ggd2lsbCB3YXJuIGFi
-b3V0IHNpbXBsZQ0KZXJyb3IgbWVzc2FnZXMgb24gZGV2bV9rc3RyZHVwIGZhaWx1cmUgKGlmIEkg
-cmVhZCB0aGUgY2hlY2twYXRjaCBzb3VyY2UNCmNvcnJlY3RseSkuIEJ1dCBpbiB0aGlzIGNhc2Ug
-dGhlcmUgYXJlIHR3byBwYXJhbGxlbCBjb25kaXRpb25zIGluIHRoZQ0KaWYgYW5kIGhlbmNlIGNo
-ZWNrcGF0Y2ggc3R1bWJsZXMsIGJ1dCBnaXN0IGlzIHRoZSBzYW1lLCB5b3Ugc2hvdWxkIG5vdA0K
-c3ByaW5rbGUgbWVzc2FnZXMgb24gbWVtb3J5IGFsbG9jYXRpb24gZmFpbHVyZS4NCg0KQ2hlZXJz
-LA0KUGV0ZXINCg0KPiB0aHghDQo+IGhvZnJhdCANCj4gIA0KPj4gQ2hlZXJzLA0KPj4gUGV0ZXIN
-Cj4+DQo+Pj4gKwkJCWVyciA9IC1FTk9NRU07DQo+Pj4gKwkJCWdvdG8gZXJyX3JvbGxiYWNrOw0K
-Pj4+ICsJCX0NCj4+PiAgCQlwcm9wc1tpXS5sZW5ndGggPSAzOw0KPj4+ICANCj4+PiAgCQlvZl9j
-aGFuZ2VzZXRfaW5pdCgmcHJpdi0+Y2hhbltpXS5jaGdzZXQpOw0KPj4+DQo+Pg0KDQo=
+On Tue, Dec 4, 2018 at 5:40 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> Hi Brendan, Rob,
+>
+> On 11/28/18 11:36 AM, Brendan Higgins wrote:
+> > This patch set proposes KUnit, a lightweight unit testing and mocking
+> > framework for the Linux kernel.
+> >
+> > Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> > it does not require installing the kernel on a test machine or in a VM
+> > and does not require tests to be written in userspace running on a host
+> > kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> > can run several dozen tests in under a second. Currently, the entire
+> > KUnit test suite for KUnit runs in under a second from the initial
+> > invocation (build time excluded).
+> >
+> > KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> > Googletest/Googlemock for C++. KUnit provides facilities for defining
+> > unit test cases, grouping related test cases into test suites, providing
+> > common infrastructure for running tests, mocking, spying, and much more.
+> >
+> > ## What's so special about unit testing?
+> >
+> > A unit test is supposed to test a single unit of code in isolation,
+> > hence the name. There should be no dependencies outside the control of
+> > the test; this means no external dependencies, which makes tests orders
+> > of magnitudes faster. Likewise, since there are no external dependencies,
+> > there are no hoops to jump through to run the tests. Additionally, this
+> > makes unit tests deterministic: a failing unit test always indicates a
+> > problem. Finally, because unit tests necessarily have finer granularity,
+> > they are able to test all code paths easily solving the classic problem
+> > of difficulty in exercising error handling code.
+> >
+> > ## Is KUnit trying to replace other testing frameworks for the kernel?
+> >
+> > No. Most existing tests for the Linux kernel are end-to-end tests, which
+> > have their place. A well tested system has lots of unit tests, a
+> > reasonable number of integration tests, and some end-to-end tests. KUnit
+> > is just trying to address the unit test space which is currently not
+> > being addressed.
+> >
+> > ## More information on KUnit
+> >
+> > There is a bunch of documentation near the end of this patch set that
+> > describes how to use KUnit and best practices for writing unit tests.
+> > For convenience I am hosting the compiled docs here:
+> > https://google.github.io/kunit-docs/third_party/kernel/docs/
+> > Additionally for convenience, I have applied these patches to a branch:
+> > https://kunit.googlesource.com/linux/+/kunit/rfc/4.19/v3
+> > The repo may be cloned with:
+> > git clone https://kunit.googlesource.com/linux
+> > This patchset is on the kunit/rfc/4.19/v3 branch.
+> >
+> > ## Changes Since Last Version
+> >
+> >  - Changed namespace prefix from `test_*` to `kunit_*` as requested by
+> >    Shuah.
+>
+>
+> >  - Started converting/cleaning up the device tree unittest to use KUnit.
+> >  - Started adding KUnit expectations with custom messages.
+> >
+>
+> Sorry I missed your reply to me in the v1 patch thread.  I've been
+> traveling a lot the last few weeks.  I'm starting to read messages
+> that occurred late in the v1 patch thread and the v2 patch thread,
+> so I'm just coming up to speed on this.
+>
+> My comments below are motivated by adding the devicetree unittest to
+> this version of the patch series.
+>
+> Pulling a comment from way back in the v1 patch thread:
+>
+> On 10/17/18 3:22 PM, Brendan Higgins wrote:
+> > On Wed, Oct 17, 2018 at 10:49 AM <Tim.Bird@sony.com> wrote:
+>
+> < snip >
+>
+> > The test and the code under test are linked together in the same
+> > binary and are compiled under Kbuild. Right now I am linking
+> > everything into a UML kernel, but I would ultimately like to make
+> > tests compile into completely independent test binaries. So each test
+> > file would get compiled into its own test binary and would link
+> > against only the code needed to run the test, but we are a bit of a
+> > ways off from that.
+>
+> I have never used UML, so you should expect naive questions from me,
+> exhibiting my lack of understanding.
+>
+> Does this mean that I have to build a UML architecture kernel to run
+> the KUnit tests?
+
+In this version of the patch series, yes.
+
+> *** Rob, if the answer is yes, then it seems like for my workflow,
+> which is to build for real ARM hardware, my work is doubled (or
+> worse), because for every patch/commit that I apply, I not only have
+> to build the ARM kernel and boot on the real hardware to test, I also
+> have to build the UML kernel and boot in UML.  If that is correct
+> then I see this as a major problem for me.
+
+I've already raised this issue elsewhere in the series. Restricting
+the DT tests to UML is a non-starter.
+
+> Brenden, in the above quote you said that in the future you would
+> like to make the "tests compile into completely independent test
+> binaries".  I am assuming those are intended to run as standalone
+> user space programs instead of inside UML.  Is that correct?  If
+> so, how will KUnit tests be able to test code that uses locking
+> mechanisms that require instructions that are not available to
+> user space execution?  (I _think_ that such instructions may be
+> present, depending on which locking mechanism, but I might be
+> mistaken.)
+
+I think he means as kernel modules as kunit is for testing internal
+kernel interfaces. kselftest is userspace level tests.
+
+If this were true about locking, then UML itself would not be viable.
+
+> Another possible concern that I have for removing the devicetree
+> unit tests from my normal kernel build process is that I think
+> that the ability to use sparse to analyze the source in the
+> unit tests is removed.  Please correct me if I misunderstand
+> that.
+>
+> Another issue is that the devicetree unit tests will no longer
+> be cross compiled with my ARM compiler, so I lose a small
+> amount of testing for compiler related issues.
+
+0-day does that for you. :)
+
+> Overall, I'm still trying to learn enough to determine whether
+> the gains from moving to KUnit outweigh the losses.
+>
+> -Frank
