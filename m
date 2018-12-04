@@ -2,51 +2,67 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F9CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05287C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D451D21527
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C060021536
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:04:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXJNRRnZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D451D21527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjAMXxw5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C060021536
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeLDLE2 (ORCPT
+        id S1728007AbeLDLEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:04:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51428 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeLDLEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:04:25 -0500
+        id S1726888AbeLDLEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:04:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4892521508;
-        Tue,  4 Dec 2018 11:04:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DAA221508;
+        Tue,  4 Dec 2018 11:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921464;
-        bh=XrvhqPbzedG8a8nhggLBTcSV16WAHiB6wVsc9n3hxfU=;
+        s=default; t=1543921469;
+        bh=EeHMqIadgNetA8soLjy3kcZYyEurupfsFFexHTIkQG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FXJNRRnZ4p2VzWX4IzU3eUrG87poG4adxYtLW/ooD/KALzVaTqc5PzTUpg1mFY/Na
-         B3zyJrvmVBoTpCysPyPeNkBDtbijAq9gw9jpSQ9C+NNWrzac5224JyfwDJBDHaSb9F
-         QXQLsjrIP4mrFZE6pYOO6SILf0bwRRMTC409hrfQ=
+        b=kjAMXxw5XnMHVjEe6RfMjGxCJLDqv5VWYDpjnlkDY2j6EYvHnCOeLq2gr0OcnfiRG
+         ZB3jfwHnUPTi9/kTR/rhz7MEcK1K9uzAqu4pnk/Lh94iPgbxHToRaqGeeMq1msO1h4
+         tQqEiBQM1bRnFzt5YbziZae0RMwSY/y74+RlfWw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Anand H. Krishnan" <anandhkrishnan@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 064/146] packet: copy user buffers before orphan or clone
-Date:   Tue,  4 Dec 2018 11:49:10 +0100
-Message-Id: <20181204103729.416508828@linuxfoundation.org>
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 083/146] x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
+Date:   Tue,  4 Dec 2018 11:49:29 +0100
+Message-Id: <20181204103730.165701738@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,100 +81,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Tim Chen tim.c.chen@linux.intel.com
 
-[ Upstream commit 5cd8d46ea1562be80063f53c7c6a5f40224de623 ]
+commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream
 
-tpacket_snd sends packets with user pages linked into skb frags. It
-notifies that pages can be reused when the skb is released by setting
-skb->destructor to tpacket_destruct_skb.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
 
-This can cause data corruption if the skb is orphaned (e.g., on
-transmit through veth) or cloned (e.g., on mirror to another psock).
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
-Create a kernel-private copy of data in these cases, same as tun/tap
-zerocopy transmission. Reuse that infrastructure: mark the skb as
-SKBTX_ZEROCOPY_FRAG, which will trigger copy in skb_orphan_frags(_rx).
-
-Unlike other zerocopy packets, do not set shinfo destructor_arg to
-struct ubuf_info. tpacket_destruct_skb already uses that ptr to notify
-when the original skb is released and a timestamp is recorded. Do not
-change this timestamp behavior. The ubuf_info->callback is not needed
-anyway, as no zerocopy notification is expected.
-
-Mark destructor_arg as not-a-uarg by setting the lower bit to 1. The
-resulting value is not a valid ubuf_info pointer, nor a valid
-tpacket_snd frame address. Add skb_zcopy_.._nouarg helpers for this.
-
-The fix relies on features introduced in commit 52267790ef52 ("sock:
-add MSG_ZEROCOPY"), so can be backported as is only to 4.14.
-
-Tested with from `./in_netns.sh ./txring_overwrite` from
-http://github.com/wdebruij/kerneltools/tests
-
-Fixes: 69e3c75f4d54 ("net: TX_RING and packet mmap")
-Reported-by: Anand H. Krishnan <anandhkrishnan@gmail.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |   18 +++++++++++++++++-
- net/packet/af_packet.c |    4 ++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -1288,6 +1288,22 @@ static inline void skb_zcopy_set(struct
- 	}
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -841,6 +841,22 @@ static ssize_t l1tf_show_state(char *buf
  }
+ #endif
  
-+static inline void skb_zcopy_set_nouarg(struct sk_buff *skb, void *val)
++static char *stibp_state(void)
 +{
-+	skb_shinfo(skb)->destructor_arg = (void *)((uintptr_t) val | 0x1UL);
-+	skb_shinfo(skb)->tx_flags |= SKBTX_ZEROCOPY_FRAG;
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
++		return "";
 +}
 +
-+static inline bool skb_zcopy_is_nouarg(struct sk_buff *skb)
++static char *ibpb_state(void)
 +{
-+	return (uintptr_t) skb_shinfo(skb)->destructor_arg & 0x1UL;
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
 +}
 +
-+static inline void *skb_zcopy_get_nouarg(struct sk_buff *skb)
-+{
-+	return (void *)((uintptr_t) skb_shinfo(skb)->destructor_arg & ~0x1UL);
-+}
-+
- /* Release a reference on a zerocopy structure */
- static inline void skb_zcopy_clear(struct sk_buff *skb, bool zerocopy)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
  {
-@@ -1297,7 +1313,7 @@ static inline void skb_zcopy_clear(struc
- 		if (uarg->callback == sock_zerocopy_callback) {
- 			uarg->zerocopy = uarg->zerocopy && zerocopy;
- 			sock_zerocopy_put(uarg);
--		} else {
-+		} else if (!skb_zcopy_is_nouarg(skb)) {
- 			uarg->callback(uarg, zerocopy);
- 		}
+@@ -859,9 +875,9 @@ static ssize_t cpu_show_common(struct de
  
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2433,7 +2433,7 @@ static void tpacket_destruct_skb(struct
- 		void *ph;
- 		__u32 ts;
+ 	case X86_BUG_SPECTRE_V2:
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
  
--		ph = skb_shinfo(skb)->destructor_arg;
-+		ph = skb_zcopy_get_nouarg(skb);
- 		packet_dec_pending(&po->tx_ring);
- 
- 		ts = __packet_set_timestamp(po, ph, skb);
-@@ -2499,7 +2499,7 @@ static int tpacket_fill_skb(struct packe
- 	skb->priority = po->sk.sk_priority;
- 	skb->mark = po->sk.sk_mark;
- 	sock_tx_timestamp(&po->sk, sockc->tsflags, &skb_shinfo(skb)->tx_flags);
--	skb_shinfo(skb)->destructor_arg = ph.raw;
-+	skb_zcopy_set_nouarg(skb, ph.raw);
- 
- 	skb_reserve(skb, hlen);
- 	skb_reset_network_header(skb);
 
 
