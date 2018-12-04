@@ -2,128 +2,277 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D802DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683BEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877A020850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F07320850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:53:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="ZeJPTTq5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877A020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KRTXTLsh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F07320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeLDBxC (ORCPT
+        id S1726270AbeLDBxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:53:02 -0500
-Received: from mail-eopbgr30081.outbound.protection.outlook.com ([40.107.3.81]:64652
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725938AbeLDBw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:52:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nbTeUBFpiUKTXSMXipxiAzHGCyxc7VLSh3MIWL5UgoM=;
- b=ZeJPTTq5BagpwFBJy0NrPKrkZfMXnnAJ1ZvCb549xpQLNrLrzDL7pJNWkcwOik44ji+o22G2Gm1vUdbc1HyLMXF5AU19BkPF2HXGGOQa+UDj/4qt7gGoVAtvB79xpYyGubkOW8xir4jexzz3v0gz9NsfzHftkdGnVMR3PIhosSI=
-Received: from AM6PR05MB5553.eurprd05.prod.outlook.com (20.177.119.202) by
- AM6PR05MB4822.eurprd05.prod.outlook.com (20.177.34.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.19; Tue, 4 Dec 2018 01:52:54 +0000
-Received: from AM6PR05MB5553.eurprd05.prod.outlook.com
- ([fe80::6136:d1d6:67c2:3920]) by AM6PR05MB5553.eurprd05.prod.outlook.com
- ([fe80::6136:d1d6:67c2:3920%2]) with mapi id 15.20.1382.020; Tue, 4 Dec 2018
- 01:52:54 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Guy Levi(SW)" <guyle@mellanox.com>,
-        Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Thread-Topic: linux-next: build failure after merge of the rdma tree
-Thread-Index: AQHUi2r6IQWSBn9b6USjr6/zZkt17qVt0UaA
-Date:   Tue, 4 Dec 2018 01:52:54 +0000
-Message-ID: <20181204015247.GR12288@mellanox.com>
-References: <20181204114731.48b18bfc@canb.auug.org.au>
-In-Reply-To: <20181204114731.48b18bfc@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MW2PR16CA0010.namprd16.prod.outlook.com (2603:10b6:907::23)
- To AM6PR05MB5553.eurprd05.prod.outlook.com (2603:10a6:20b:30::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR05MB4822;6:VKl/FlcLk1rx+mjNJTo7u1dstctrRD75uC9J3A/Wu8pF4uOTRcPGH4Q6XMNr/RT7MkNzSwI2ndWq1bTacXXjCutpyBgrjQVPwIvDhsQ3L1ujJ3seFOzjN3lVgVgxzvWkg+Il7UEyKWZ1+pQoDPC1//Y8OyNwhu5shMslse4YtJ7PzIyBZvXBjhjxzAAhtDADsPpgwf3auR59ym2PfnXvlKu7OEFtNuNlW4ZVK9jcT2wD4dogR5samxfPIXRrTVmX3io2lvkDv+rIJpoJ8700sHtGFIweyNSU/b1P4KrmMp00sdclZkcjxyhjaMzcPji9bCrGH4A+OUZa6wLVh3sI6UrEXJyPttiMGCJaA3/wlxHYBKQiLZf8Ae5+nhKskU4Yyeuvl6YngspfPHbixpNx6Coc0B74V6GvZfZNpusF/smuzoTw0UAjgUYYCOik4nmK2uSTaB4jO0HL0gnUtpcmQA==;5:WTjbvo+JtaCp1otkGQcVQo8ku5S5DQ2Kqd1rCTs0U9FqlkI0uHvn0tVbbur3Hxr917z+XYsaS2Jfst04p+5lde8XTaJImeEJDks0drx3UaxW/4ve+Mx5PBk7c/uWvsyrxWhNlVdVUJRAwbgK1Bd6BiWKcW9dTPVLHohyrRo9B1s=;7:6ugJ0Fg7KPYEywfm9zEx2GGhTYb/IRpDtynibEFNvDe0xuFwnRs2S0q4V25lzJE3JCx5COyMXT/GEHnvSwnJ/XXnzt089IXFmUjJAbe3cU6VCkKHWKzlbP2OFRM0l4R5FVg7/yHusHU0ZimNzpuAQQ==
-x-ms-office365-filtering-correlation-id: 749116fd-2524-4909-969f-08d6598b3428
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4822;
-x-ms-traffictypediagnostic: AM6PR05MB4822:
-x-microsoft-antispam-prvs: <AM6PR05MB4822B7B725886712E00FF308CFAF0@AM6PR05MB4822.eurprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231455)(999002)(944501493)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM6PR05MB4822;BCL:0;PCL:0;RULEID:;SRVR:AM6PR05MB4822;
-x-forefront-prvs: 0876988AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(376002)(346002)(39860400002)(53754006)(189003)(199004)(36756003)(52116002)(105586002)(71190400001)(476003)(25786009)(6512007)(4326008)(1076002)(81156014)(81166006)(71200400001)(8676002)(478600001)(106356001)(54906003)(99286004)(53936002)(14454004)(107886003)(6246003)(305945005)(7736002)(229853002)(97736004)(6116002)(186003)(26005)(3846002)(6486002)(5660300001)(256004)(14444005)(86362001)(8936002)(6436002)(66066001)(6916009)(2906002)(316002)(6506007)(386003)(68736007)(2616005)(102836004)(486006)(11346002)(446003)(33656002)(76176011)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4822;H:AM6PR05MB5553.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: DthjvluTb30rKxAlST3YPqNz745KOAiOuDq3Urx8TRENjcY6XWBmO209F0nm5g38mtscFG0hebAIdP1csIM1qRFHq+M+0U6WP5UOxmclnFcnTpIzzWVWSKRi59tILx25U9kE5/ci0I6Qa0AUsM2p1NtCatAUa2fFkamyt3Qo13UZFlv7WKM6iasl9TonNpQiLvw/cm5A2JkxSyuqyFMpf/tZN3/i3m+k+/LOpq2D86cWEuMVpAZoJVV2aJbG+j1rpQeRV3x80kqWeNUdR0Ujs0LsHrFHMyAnuwLHpop48l7FjS+xUVpxE3BJ9BxXVG65tF5UYgF8CDPKvV50TjxuBpfbBFQ4ytinoXxVqP0LcfQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3C9D767E85910C4FAE523A23D712CC7D@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 749116fd-2524-4909-969f-08d6598b3428
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 01:52:54.4285
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4822
+        Mon, 3 Dec 2018 20:53:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39150 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeLDBwY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:52:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Z9Tk+kvNC8RkGYE6N7woPufQI8UdQA653raAxTiVtnM=; b=KRTXTLshE5DeBSpEezxKvGvC1
+        V/Y+Dnh7DknGEHyrwOclHm7hOalWgPc0p/3+vaiIbNwHILBCU0aqRQJCpMU+PDTUDRC7yp0BA7lJb
+        VDgkKWl86HGdbmveJiPa9ALPJ6Pt0VjJ5UEU2wIcfYnReDoV21KNlXoO+eWlswS4EyEmWbxHLg5l3
+        4B6OEDy9O9wi5oBFYNNgDgdbdbYG+yTN4JqltdkW84X1XkavQ4YbqbYNg4bplmuhCxCcvZj4xQhl0
+        y1UaeLXCB/jdVWTBH/b7MwM6McNiuYA+QUZWJYDrfC/HCjGWLuLokicjOVM+XcpQInEO9+SYUv6Y2
+        p4rzSn51A==;
+Received: from [2600:1700:65a0:78e0:514:7862:1503:8e4d] (helo=sagi-Latitude-E7470.lbits)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gTzss-0003Zq-6W; Tue, 04 Dec 2018 01:52:22 +0000
+From:   Sagi Grimberg <sagi@grimberg.me>
+To:     linux-nvme@lists.infradead.org
+Cc:     linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH v5 10/13] nvme-tcp: Add protocol header
+Date:   Mon,  3 Dec 2018 17:52:14 -0800
+Message-Id: <20181204015217.16613-11-sagi@grimberg.me>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181204015217.16613-1-sagi@grimberg.me>
+References: <20181204015217.16613-1-sagi@grimberg.me>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:47:31AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> ERROR: "mlx5_get_send_wqe" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefi=
-ned!
->=20
-> Caused by commit
->=20
->   34f4c9554d8b ("IB/mlx5: Use fragmented QP's buffer for in-kernel users"=
-)
->=20
-> mlx5_get_send_wqe() is still used in drivers/infiniband/hw/mlx5/cq.c
-> and declared in drivers/infiniband/hw/mlx5/mlx5_ib.h ...
->=20
-> I have used the version of the rdma tree from next-20181203 for today.
+From: Sagi Grimberg <sagi@lightbitslabs.com>
 
-Huh. So apparently every compiler that tested this patch (0-day, mine,
-the submitters) optimized this call away because is_atomic_response()
-always returns 0: meaning mlx5_get_atomic_laddr is never callable and
-can be deleted entirely, including the call to mlx5_get_send_wqe.
+Signed-off-by: Sagi Grimberg <sagi@lightbitslabs.com>
+---
+ include/linux/nvme-tcp.h | 189 +++++++++++++++++++++++++++++++++++++++
+ include/linux/nvme.h     |   1 +
+ 2 files changed, 190 insertions(+)
+ create mode 100644 include/linux/nvme-tcp.h
 
-Not sure what compiler setup will hit this, but it is clearly wrong
-code..
+diff --git a/include/linux/nvme-tcp.h b/include/linux/nvme-tcp.h
+new file mode 100644
+index 000000000000..03d87c0550a9
+--- /dev/null
++++ b/include/linux/nvme-tcp.h
+@@ -0,0 +1,189 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * NVMe over Fabrics TCP protocol header.
++ * Copyright (c) 2018 Lightbits Labs. All rights reserved.
++ */
++
++#ifndef _LINUX_NVME_TCP_H
++#define _LINUX_NVME_TCP_H
++
++#include <linux/nvme.h>
++
++#define NVME_TCP_DISC_PORT	8009
++#define NVME_TCP_ADMIN_CCSZ	SZ_8K
++#define NVME_TCP_DIGEST_LENGTH	4
++
++enum nvme_tcp_pfv {
++	NVME_TCP_PFV_1_0 = 0x0,
++};
++
++enum nvme_tcp_fatal_error_status {
++	NVME_TCP_FES_INVALID_PDU_HDR		= 0x01,
++	NVME_TCP_FES_PDU_SEQ_ERR		= 0x02,
++	NVME_TCP_FES_HDR_DIGEST_ERR		= 0x03,
++	NVME_TCP_FES_DATA_OUT_OF_RANGE		= 0x04,
++	NVME_TCP_FES_R2T_LIMIT_EXCEEDED		= 0x05,
++	NVME_TCP_FES_DATA_LIMIT_EXCEEDED	= 0x05,
++	NVME_TCP_FES_UNSUPPORTED_PARAM		= 0x06,
++};
++
++enum nvme_tcp_digest_option {
++	NVME_TCP_HDR_DIGEST_ENABLE	= (1 << 0),
++	NVME_TCP_DATA_DIGEST_ENABLE	= (1 << 1),
++};
++
++enum nvme_tcp_pdu_type {
++	nvme_tcp_icreq		= 0x0,
++	nvme_tcp_icresp		= 0x1,
++	nvme_tcp_h2c_term	= 0x2,
++	nvme_tcp_c2h_term	= 0x3,
++	nvme_tcp_cmd		= 0x4,
++	nvme_tcp_rsp		= 0x5,
++	nvme_tcp_h2c_data	= 0x6,
++	nvme_tcp_c2h_data	= 0x7,
++	nvme_tcp_r2t		= 0x9,
++};
++
++enum nvme_tcp_pdu_flags {
++	NVME_TCP_F_HDGST		= (1 << 0),
++	NVME_TCP_F_DDGST		= (1 << 1),
++	NVME_TCP_F_DATA_LAST		= (1 << 2),
++	NVME_TCP_F_DATA_SUCCESS		= (1 << 3),
++};
++
++/**
++ * struct nvme_tcp_hdr - nvme tcp pdu common header
++ *
++ * @type:          pdu type
++ * @flags:         pdu specific flags
++ * @hlen:          pdu header length
++ * @pdo:           pdu data offset
++ * @plen:          pdu wire byte length
++ */
++struct nvme_tcp_hdr {
++	__u8	type;
++	__u8	flags;
++	__u8	hlen;
++	__u8	pdo;
++	__le32	plen;
++};
++
++/**
++ * struct nvme_tcp_icreq_pdu - nvme tcp initialize connection request pdu
++ *
++ * @hdr:           pdu generic header
++ * @pfv:           pdu version format
++ * @hpda:          host pdu data alignment (dwords, 0's based)
++ * @digest:        digest types enabled
++ * @maxr2t:        maximum r2ts per request supported
++ */
++struct nvme_tcp_icreq_pdu {
++	struct nvme_tcp_hdr	hdr;
++	__le16			pfv;
++	__u8			hpda;
++	__u8			digest;
++	__le32			maxr2t;
++	__u8			rsvd2[112];
++};
++
++/**
++ * struct nvme_tcp_icresp_pdu - nvme tcp initialize connection response pdu
++ *
++ * @hdr:           pdu common header
++ * @pfv:           pdu version format
++ * @cpda:          controller pdu data alignment (dowrds, 0's based)
++ * @digest:        digest types enabled
++ * @maxdata:       maximum data capsules per r2t supported
++ */
++struct nvme_tcp_icresp_pdu {
++	struct nvme_tcp_hdr	hdr;
++	__le16			pfv;
++	__u8			cpda;
++	__u8			digest;
++	__le32			maxdata;
++	__u8			rsvd[112];
++};
++
++/**
++ * struct nvme_tcp_term_pdu - nvme tcp terminate connection pdu
++ *
++ * @hdr:           pdu common header
++ * @fes:           fatal error status
++ * @fei:           fatal error information
++ */
++struct nvme_tcp_term_pdu {
++	struct nvme_tcp_hdr	hdr;
++	__le16			fes;
++	__le32			fei;
++	__u8			rsvd[8];
++};
++
++/**
++ * struct nvme_tcp_cmd_pdu - nvme tcp command capsule pdu
++ *
++ * @hdr:           pdu common header
++ * @cmd:           nvme command
++ */
++struct nvme_tcp_cmd_pdu {
++	struct nvme_tcp_hdr	hdr;
++	struct nvme_command	cmd;
++};
++
++/**
++ * struct nvme_tcp_rsp_pdu - nvme tcp response capsule pdu
++ *
++ * @hdr:           pdu common header
++ * @hdr:           nvme-tcp generic header
++ * @cqe:           nvme completion queue entry
++ */
++struct nvme_tcp_rsp_pdu {
++	struct nvme_tcp_hdr	hdr;
++	struct nvme_completion	cqe;
++};
++
++/**
++ * struct nvme_tcp_r2t_pdu - nvme tcp ready-to-transfer pdu
++ *
++ * @hdr:           pdu common header
++ * @command_id:    nvme command identifier which this relates to
++ * @ttag:          transfer tag (controller generated)
++ * @r2t_offset:    offset from the start of the command data
++ * @r2t_length:    length the host is allowed to send
++ */
++struct nvme_tcp_r2t_pdu {
++	struct nvme_tcp_hdr	hdr;
++	__u16			command_id;
++	__u16			ttag;
++	__le32			r2t_offset;
++	__le32			r2t_length;
++	__u8			rsvd[4];
++};
++
++/**
++ * struct nvme_tcp_data_pdu - nvme tcp data pdu
++ *
++ * @hdr:           pdu common header
++ * @command_id:    nvme command identifier which this relates to
++ * @ttag:          transfer tag (controller generated)
++ * @data_offset:   offset from the start of the command data
++ * @data_length:   length of the data stream
++ */
++struct nvme_tcp_data_pdu {
++	struct nvme_tcp_hdr	hdr;
++	__u16			command_id;
++	__u16			ttag;
++	__le32			data_offset;
++	__le32			data_length;
++	__u8			rsvd[4];
++};
++
++union nvme_tcp_pdu {
++	struct nvme_tcp_icreq_pdu	icreq;
++	struct nvme_tcp_icresp_pdu	icresp;
++	struct nvme_tcp_cmd_pdu		cmd;
++	struct nvme_tcp_rsp_pdu		rsp;
++	struct nvme_tcp_r2t_pdu		r2t;
++	struct nvme_tcp_data_pdu	data;
++};
++
++#endif /* _LINUX_NVME_TCP_H */
+diff --git a/include/linux/nvme.h b/include/linux/nvme.h
+index 88812cb15be0..4d7907e3771e 100644
+--- a/include/linux/nvme.h
++++ b/include/linux/nvme.h
+@@ -52,6 +52,7 @@ enum {
+ enum {
+ 	NVMF_TRTYPE_RDMA	= 1,	/* RDMA */
+ 	NVMF_TRTYPE_FC		= 2,	/* Fibre Channel */
++	NVMF_TRTYPE_TCP		= 3,	/* TCP/IP */
+ 	NVMF_TRTYPE_LOOP	= 254,	/* Reserved for host usage */
+ 	NVMF_TRTYPE_MAX,
+ };
+-- 
+2.17.1
 
-Guy/Leon, please send a fixup.. Maybe just delete all this
-handle_atomics stuff?
-
-Thanks,
-Jason
