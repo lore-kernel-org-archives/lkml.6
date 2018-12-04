@@ -2,134 +2,80 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9569C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18F5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25F5420851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F5420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id B0A0520851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A0520851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbeLDIpc (ORCPT
+        id S1725901AbeLDIqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 03:45:32 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:52739 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbeLDIpc (ORCPT
+        Tue, 4 Dec 2018 03:46:34 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40561 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbeLDIqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 03:45:32 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TEqRxdG_1543913079;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0TEqRxdG_1543913079)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 04 Dec 2018 16:44:40 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH 2/3] mm/vmscan: Enable kswapd to reclaim low-protected
- memory
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20181203080119.18989-1-xlpang@linux.alibaba.com>
- <20181203080119.18989-2-xlpang@linux.alibaba.com>
- <20181203115646.GP31738@dhcp22.suse.cz>
- <54a3f0a6-6e7d-c620-97f2-ac567c057bc2@linux.alibaba.com>
- <20181203172007.GG31738@dhcp22.suse.cz>
- <a77ed2a6-ed9b-4c1b-e2e9-fb9a5108c1f9@linux.alibaba.com>
- <20181204072508.GU31738@dhcp22.suse.cz>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <4e06fac2-7269-23a7-e4f5-18928998ece2@linux.alibaba.com>
-Date:   Tue, 4 Dec 2018 16:44:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.2
+        Tue, 4 Dec 2018 03:46:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s5so14416395oth.7;
+        Tue, 04 Dec 2018 00:46:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S0k1toQy8X+pcn8e5FQaDvxoUuVDJ89U+ALoV+0Cvhg=;
+        b=ID3lnsK+5R1/9MCfrHlw6e5240kNrA1G1IUzMveo/txDQMmkctbGrH6T2Q/9x6/pnr
+         cgwqNIKfRuzYZn7vryUZtU/o+gzdGbXpbEztr2lcFi2aQwrxY5klKTeKmFlU6bi7xBpP
+         dPm0k8tAnWB/rKRp1+TniFQjdPjueJt0bTCLWapn5srJBoNKT5aNoLpOtc5Iyam1yzrb
+         j5HZXdkIoxdDFFTVjNgTYADr7BXRy9vyLs3mrKR4lHINzgC6bOiifgT0DtP5dCiQq9y2
+         /TZMfQiW0Z3rozuxV6N0xurmiN1Vpt/m6kAmF8tuq3J6iBAyazVe1GXZdowdeJLAunE6
+         ukhA==
+X-Gm-Message-State: AA+aEWbkheyEt2T/psGaohzo9RPzEzBMIcoBlT2McLFXZYseMHLMxkVZ
+        cVDO3jsAlMUsKwIKpKDTW4zZrzMWfGNR3tZukdMWTQ==
+X-Google-Smtp-Source: AFSGD/XylzhtE7SQ2iUb2Ns1OnMF9p7btTVIqyAfxB+Rn89bilpiyEGAAwUi0h8NPK6hsOXXWV+YVuPjoEFp5ZUD/dc=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr12775466otg.139.1543913193306;
+ Tue, 04 Dec 2018 00:46:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204072508.GU31738@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+References: <20181130142557.2623-1-tiny.windzz@gmail.com> <CAJZ5v0hPPWx6ZbTPRLRMj_0zSF91ApS3BWgYGj31GqzhX45sYw@mail.gmail.com>
+ <CAEExFWuZmcTLF+hFahucUuHzp81OXTxm5sJu_AooCz+jZJUnvA@mail.gmail.com>
+In-Reply-To: <CAEExFWuZmcTLF+hFahucUuHzp81OXTxm5sJu_AooCz+jZJUnvA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 4 Dec 2018 09:46:21 +0100
+Message-ID: <CAJZ5v0iApdOc+kgpUrJGSvtmTsXfCFksWg2PsNekOKHaZbffrA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: nforce2: Remove meaningless return
+To:     tiny.windzz@gmail.com
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/4 PM 3:25, Michal Hocko wrote:
-> On Tue 04-12-18 10:40:29, Xunlei Pang wrote:
->> On 2018/12/4 AM 1:22, Michal Hocko wrote:
->>> On Mon 03-12-18 23:20:31, Xunlei Pang wrote:
->>>> On 2018/12/3 下午7:56, Michal Hocko wrote:
->>>>> On Mon 03-12-18 16:01:18, Xunlei Pang wrote:
->>>>>> There may be cgroup memory overcommitment, it will become
->>>>>> even common in the future.
->>>>>>
->>>>>> Let's enable kswapd to reclaim low-protected memory in case
->>>>>> of memory pressure, to mitigate the global direct reclaim
->>>>>> pressures which could cause jitters to the response time of
->>>>>> lantency-sensitive groups.
->>>>>
->>>>> Please be more descriptive about the problem you are trying to handle
->>>>> here. I haven't actually read the patch but let me emphasise that the
->>>>> low limit protection is important isolation tool. And allowing kswapd to
->>>>> reclaim protected memcgs is going to break the semantic as it has been
->>>>> introduced and designed.
->>>>
->>>> We have two types of memcgs: online groups(important business)
->>>> and offline groups(unimportant business). Online groups are
->>>> all configured with MAX low protection, while offline groups
->>>> are not at all protected(with default 0 low).
->>>>
->>>> When offline groups are overcommitted, the global memory pressure
->>>> suffers. This will cause the memory allocations from online groups
->>>> constantly go to the slow global direct reclaim in order to reclaim
->>>> online's page caches, as kswap is not able to reclaim low-protection
->>>> memory. low is not hard limit, it's reasonable to be reclaimed by
->>>> kswapd if there's no other reclaimable memory.
->>>
->>> I am sorry I still do not follow. What role do offline cgroups play.
->>> Those are certainly not low mem protected because mem_cgroup_css_offline
->>> will reset them to 0.
->>>
->>
->> Oh, I meant "offline groups" to be "offline-business groups", memcgs
->> refered to here are all "online state" from kernel's perspective.
-> 
-> What is offline-business group? Please try to explain the actual problem
-> in much more details and do not let us guess.
-> 
+On Tue, Dec 4, 2018 at 2:15 AM Frank Lee <tiny.windzz@gmail.com> wrote:
+>
+> On Mon, Dec 3, 2018 at 5:14 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Fri, Nov 30, 2018 at 3:26 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> > >
+> > > In a function whose return type is void, returning on the last line is
+> > > not required.So remove it.Also move the module declaration to the end.
+> >
+> > The last piece is not reflected by the subject.
+> >
+> > Also, why do you move the MODULE_ stuff around at all?
+> When writing a driver, in most cases MODULE_  are put to the end.
+> Why not modify this? it is more in line with the habits of most people.
 
-Maybe I choosed the wrong word, let me rephase it, and
-here is an example.
+If you write a new driver, then yes.
 
-                root 200GB
-           /                  \
-important(100GB)  unimportant(100GB+DYNAMIC)
-  /     |      \         /          \
-docker0 docker1...  normal(100GB) oversold(DYNAMIC)
-                      /  |  \      / |  \
-                     j0 j1 ...    w0 w1 ...
-
-"DYNAMIC" is controlled by the cluster job scheduler dynamically,
-it periodically samples the available system memory(/proc/meminfo
-"MemAvailable"), and use part of that to launch oversold jobs
-under some special conditions. When "oversold" is active, the
-whole system is put under heavy global memory pressure although
-memcgs are not.
-
-IOW "DYNAMIC" is primarily borrowed from "dockers" temporarily,
-oversold workers will be killed in a timely fashion if "dockers"
-needs their memory back suddenly which is rare.
-
-If kswapd doesn't reclaim low-protected memory configured among
-"important" dockers, memory allocations from dockers will trap
-into global direct reclaim constantly which harms their performance
-and response time. The inactive caches from dockers are allowed
-to be reclaimed although they are under low-protected(we used a
-simple MAX setting), we allow the inactive low-protected memory
-to be reclaimed immediately and asynchronously as long as there's
-no unprotected reclaimable memory. Its's also friendly to disk IO.
-
-For really latency-sensitive docker, memory.min is supposed to be
-used to guarantee its memory QoS.
-
-Thanks
+But why do you want to modify existing drivers this way?  What value
+do you see in those changes, exactly?
