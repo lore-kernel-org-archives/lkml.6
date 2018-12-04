@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DCFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCBFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51D52082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A1B2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 14:11:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="gopouSyp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51D52082B
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ayXCV5tX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A1B2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbeLDOLW (ORCPT
+        id S1726506AbeLDOL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:11:22 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33703 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeLDOLW (ORCPT
+        Tue, 4 Dec 2018 09:11:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40648 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeLDOL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:11:22 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z11so7443957pgu.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:11:21 -0800 (PST)
+        Tue, 4 Dec 2018 09:11:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so7419557pgp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 06:11:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rquojr46N0DT8TNw1OqodG4b4JFdn/DRt/UImRH2pNs=;
-        b=gopouSypkCUDiKsYoLEe34rSJgyCu3D13Whb2hsHrWlUMo9FK1M9GD0JjmxxQlAu06
-         DC/fyyVT+JQZ8LwBpjwQL7BTT2sY35HrAqonl03n2Qz5l+aPJOE4S9bRm+FvX4fp0tcw
-         ngrWx3s2pdaqyY0NmevKTqf8meVtOV7bYjQ5JfvRnB5dHPlTbzKZ+6XkH4KbrUXQvGs1
-         Q7Dgwkxma55agw3W2UAgAYcG1ftTDeSX8rCEcudNsyEat86SEXKfg59g/NTe4JgQH6Ox
-         sWAn1adcanyWHyjvCK0q2eLi9f4EgIlZw8iKMglVt8MzJHhQHWHhcMPJlO8gXz5GVkEf
-         6BKg==
+        bh=JjE3m3KhoW/fupLlyitIScJqRKLQdmncQOfWLq2YHj4=;
+        b=ayXCV5tXDBvefnE96niiHdR1lxYBaQDf/OrEr6JpIHqyUIcgHz5rwM5VBe5W+Q30aw
+         pNA5lzvZNDJnqOyz/XFSRdDbmsr4rfCajEGmZNNfUB54sUfcd3+HqGvFlmazQLbDcSKx
+         GgWKvD7lrGXYCFsFPeJFtaF8nGrbSG9pes/pGxJjRisFIBDZNp6QxJfJVoP/d+KsvYJA
+         QTPbfCRrnadMdcOgaZnlNWWJtB0bbbF6mzUuh0E1V9XuZIAJtrrEkeiiHdbwnjSzpn4/
+         cRtYiHgzNdZFjt0lHdFyWuGcC8FVw7Ilr3vwewmCp4RhaJbw/GXlPlzthQDkdomd+7VF
+         l5Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rquojr46N0DT8TNw1OqodG4b4JFdn/DRt/UImRH2pNs=;
-        b=BnaDQZ3JqgWim2M/trM1RxJzNFnM4EEefjaeg0cPWJKzy+CvYGaFjUBZHv8GA9IdpD
-         smKsGnYc2du+7PKZm/CDG3DWrXY1XYhCc5/mVQmR0ZleToXQfQzr45YHGLuU74BeorWx
-         4GGQCktM/ZgVBgZr9HZHjBO4U4VapEDdoz+1h6R8eeUQmrGvHnYT286jqsvlrYzLC73g
-         VwN0zjufX39fPPfrDT1oxHcKmTyIfc1BZXSk8vAXpWFzpCeVpwysuDOdr1Oi0c00vx/I
-         28VYx6zvFjwnnmDVDq5fP4jOItKs8Bd8PWzEvyE/PHHopzKqui8AAd4WSCkfIItTK0Ia
-         ftGg==
-X-Gm-Message-State: AA+aEWZRvIN2EzYkNDTtVYUf/YrlTglN6qEkJwh6xwpChjr7vTs25UlR
-        au/JnW6rzIyt4DV83HSxk5WoEg==
-X-Google-Smtp-Source: AFSGD/U2ACi+EMyJKkM+0b6OcU8NBpdc3iaZaawwGFLQGWmj3usKTeCb5cqTPEnNsYR7r4P0oDOtoA==
-X-Received: by 2002:a62:644:: with SMTP id 65mr20270358pfg.161.1543932681416;
-        Tue, 04 Dec 2018 06:11:21 -0800 (PST)
+        bh=JjE3m3KhoW/fupLlyitIScJqRKLQdmncQOfWLq2YHj4=;
+        b=snxQd8ts8uyv03Kvb35BTXFJFxLW+N0c/K2Ac7xrJmSFozOdOiwWnqOSV1jmvmPVKj
+         Ldoqy3FL1sQvPtlw/x/yRZZl5MPONsMhcQ6VXinf6BdgiXYgKAZhV+Rx9wS0VrIYaYPf
+         S3GqKwxKpwLDE+V4aYVteth3TsekAjI3/59b24PTIp/FSyRv/pseIBvVw+Szrycabtkk
+         7r03fnLlzJLLNRUnrY+xe7U0AtHHywthuAmXvPlBZnQc6E/NR5xhK49FiVSvWMhYW8dQ
+         9ZH1B0XgViiOAX2PM3eXTZ24bbRNkZ+XihLtY7Xn6/tZj9KBGibaiaK6uFjgch2QHgKQ
+         JYSA==
+X-Gm-Message-State: AA+aEWYfpa/Qs4YZ97LQ4cP5SkGaj7+WCB2cAsSKj9efWEhZl+Xu6yj7
+        aYGv6ODHe/OxvF2a6EaFLl+GtmeyDwbAPg==
+X-Google-Smtp-Source: AFSGD/WFzf2OlR+iBlm92g06JcgbMovmeH6PyBxCULu5iF8ycg+wb//PssBQCzrDSC4V7y7QtGsM4g==
+X-Received: by 2002:a63:4706:: with SMTP id u6mr15986664pga.95.1543932687281;
+        Tue, 04 Dec 2018 06:11:27 -0800 (PST)
 Received: from anup-ubuntu64.qualcomm.com ([49.207.53.58])
-        by smtp.googlemail.com with ESMTPSA id k129sm31298884pgk.29.2018.12.04.06.11.17
+        by smtp.googlemail.com with ESMTPSA id k129sm31298884pgk.29.2018.12.04.06.11.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 06:11:20 -0800 (PST)
+        Tue, 04 Dec 2018 06:11:26 -0800 (PST)
 From:   Anup Patel <anup@brainfault.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
@@ -68,9 +68,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         Anup Patel <anup@brainfault.org>
-Subject: [PATCH 2/3] RISC-V: defconfig: Enable RISC-V SBI earlycon support
-Date:   Tue,  4 Dec 2018 19:25:06 +0530
-Message-Id: <20181204135507.3706-3-anup@brainfault.org>
+Subject: [PATCH 3/3] RISC-V: Remove EARLY_PRINTK support
+Date:   Tue,  4 Dec 2018 19:25:07 +0530
+Message-Id: <20181204135507.3706-4-anup@brainfault.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181204135507.3706-1-anup@brainfault.org>
 References: <20181204135507.3706-1-anup@brainfault.org>
@@ -79,27 +79,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables RISC-V SBI earlycon support in default defconfig
-so that we can use "earlycon=sbi" in kernel parameters for early
-debug prints.
+The EARLY_PRINTK using SBI console calls is not required
+any more because we now have RISC-V SBI support in generic
+earlycon framework.
 
 Signed-off-by: Anup Patel <anup@brainfault.org>
 ---
- arch/riscv/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/Kconfig.debug  |  2 --
+ arch/riscv/kernel/setup.c | 28 ----------------------------
+ 2 files changed, 30 deletions(-)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index ef4f15df9adf..f399659d3b8d 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -46,6 +46,7 @@ CONFIG_INPUT_MOUSEDEV=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_OF_PLATFORM=y
-+CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
- CONFIG_HVC_RISCV_SBI=y
- # CONFIG_PTP_1588_CLOCK is not set
- CONFIG_DRM=y
+diff --git a/arch/riscv/Kconfig.debug b/arch/riscv/Kconfig.debug
+index c5a72f17c469..e69de29bb2d1 100644
+--- a/arch/riscv/Kconfig.debug
++++ b/arch/riscv/Kconfig.debug
+@@ -1,2 +0,0 @@
+-config EARLY_PRINTK
+-	def_bool y
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 2c290e6aaa6e..fc8006a042eb 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -35,31 +35,9 @@
+ #include <asm/sections.h>
+ #include <asm/pgtable.h>
+ #include <asm/smp.h>
+-#include <asm/sbi.h>
+ #include <asm/tlbflush.h>
+ #include <asm/thread_info.h>
+ 
+-#ifdef CONFIG_EARLY_PRINTK
+-static void sbi_console_write(struct console *co, const char *buf,
+-			      unsigned int n)
+-{
+-	int i;
+-
+-	for (i = 0; i < n; ++i) {
+-		if (buf[i] == '\n')
+-			sbi_console_putchar('\r');
+-		sbi_console_putchar(buf[i]);
+-	}
+-}
+-
+-struct console riscv_sbi_early_console_dev __initdata = {
+-	.name	= "early",
+-	.write	= sbi_console_write,
+-	.flags	= CON_PRINTBUFFER | CON_BOOT | CON_ANYTIME,
+-	.index	= -1
+-};
+-#endif
+-
+ #ifdef CONFIG_DUMMY_CONSOLE
+ struct screen_info screen_info = {
+ 	.orig_video_lines	= 30,
+@@ -219,12 +197,6 @@ static void __init setup_bootmem(void)
+ 
+ void __init setup_arch(char **cmdline_p)
+ {
+-#if defined(CONFIG_EARLY_PRINTK)
+-       if (likely(early_console == NULL)) {
+-               early_console = &riscv_sbi_early_console_dev;
+-               register_console(early_console);
+-       }
+-#endif
+ 	*cmdline_p = boot_command_line;
+ 
+ 	parse_early_param();
 -- 
 2.17.1
 
