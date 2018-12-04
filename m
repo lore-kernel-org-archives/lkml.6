@@ -6,108 +6,110 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB80C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA79C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A91206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A277B206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IeON+W7j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A91206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Hs6mcaN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A277B206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbeLDTd6 (ORCPT
+        id S1726189AbeLDTeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:33:58 -0500
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:34748 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbeLDTd5 (ORCPT
+        Tue, 4 Dec 2018 14:34:07 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38360 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbeLDTeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:33:57 -0500
-Received: by mail-lj1-f172.google.com with SMTP id u6-v6so16037528ljd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:33:56 -0800 (PST)
+        Tue, 4 Dec 2018 14:34:07 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p86so12872602lfg.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:34:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0v1PwKxmmsTkB8PjeALCaZBS0XNbiV4V2qeuZmJerjs=;
-        b=IeON+W7jCdYuUXnDE0SU5AmweOANdxgDFSNoGU3gJ/BxMk7YxV8fbPE/CcEzXtaJ8Q
-         dX75XmBHdTlPKtytVWCgzGrs2A/MMDUOwqLOe+3JQzAqAdoxk8xupa0fa6/yeeBNz6hi
-         GB6Mv7MS4UQacr0iwerEeL9y4dMLqF/2BnzAU=
+        bh=nD/XFtR4UmMT9lKfdvocO5nslzuqWh3QvhkIFnNL0z8=;
+        b=Hs6mcaN1DnoMeSm1wWgWpvwPANZhvqle8Lh8124W5YsMM42yp/70vVXQbw6hWHC5Sv
+         10Wue/CktDau6Ol9HerhltDd4Kr0Qhfxu1W5lB+DVWtEPsma+vBcBCY1GIKMZp2AnBlc
+         01OhQjB57/+2LlHLFy6znABseQ3VtR0peR7GA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0v1PwKxmmsTkB8PjeALCaZBS0XNbiV4V2qeuZmJerjs=;
-        b=k8V4pJhjQduPLgLpa2surbcthMJrLxgM6c0P5+KzWneB4Ep3RAzDqpQPf7rpkCyOnx
-         cGzWT7Cdjw5p1hf4reQ7WQuDyHo3JdEJB61tANNJF+3HlaQAyltEZjxOyO80KQ5JaO1t
-         bvE+IU/8raSTN7aRbU1M36xouFSGx6DPbOT4/nNbOyasduWjtnTAJZFRruMWmVT3FLcO
-         Ll7CwtIa/5/vKW7GW7iHGoK4fhAsKxpZ+z2Is9pBMIc04B/mS4ehLkNYdtEg7sIis/nc
-         lEkEqfGCMzKlF1FB3cLazoxyrd7l3MhVjd9N9+1FbXvIjJM4YmYJfNGE/KBSzTtsKupk
-         RQYw==
-X-Gm-Message-State: AA+aEWaA0HLpF4xRnXkMmx8XEYihFEq7guYMaSQPqSz1x88OWMSHWEsE
-        EkR26J5KJa5Eltqo6qo17JSOBQT+k5f0hNk4SkprJw==
-X-Google-Smtp-Source: AFSGD/Vb0JinOVIa7YWhwgLpd4aon5430RrR8lc6je2RsMIoIVWnyIxRHi0pKxOlmnNxGHQPhEzpvXLhPZMMWNCyK2M=
-X-Received: by 2002:a2e:5d12:: with SMTP id r18-v6mr15100382ljb.89.1543952035629;
- Tue, 04 Dec 2018 11:33:55 -0800 (PST)
+        bh=nD/XFtR4UmMT9lKfdvocO5nslzuqWh3QvhkIFnNL0z8=;
+        b=Fmd2/LytYAuiDoF0qjsuB/ECIgCQDafLnrj3tMl1S220UbJOUwpdcM5ky5Ei5A+iX3
+         yIgn4Byw90Qel19Orohib/ak4bWcTYHH5Dlog8wrqXTbe93qeGUBxidkjsp4LkSEohMy
+         jBCnjzPhzII80qZBgHEVrIc7Be0fS5Rl5mxu6vZGUn4uazxFJzFBOgLtiE7cd0biXYxL
+         rq07UK2LB+EvCJh+HTH8sOHaAVBn5fPPribesbd1rUbc91W774aUwV/ui0UieYiO7MZP
+         3eHN5nQj14DtkpjTuMMwSh4cokETXnuZP1DdFU44kNuCkjj5pkwicvM9xmXKdJZlqd7j
+         WFcA==
+X-Gm-Message-State: AA+aEWZU+wOuj42xeHtkOBaQ9SKoaq62YnSxRKs+3h7gjOqUsB6rRsmA
+        wk7Ni3RBbYkA2k5M3LibjTDoN9eqwEo=
+X-Google-Smtp-Source: AFSGD/U5tSczQw8/J2J0iQ4UOS7xwcX/sTdFPJbXR+L7uZNPWXoqC9Of6o7pBMTuW1UhwROZnWe5jg==
+X-Received: by 2002:a19:2755:: with SMTP id n82mr4964819lfn.94.1543952044780;
+        Tue, 04 Dec 2018 11:34:04 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id c203sm3137674lfe.95.2018.12.04.11.34.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 11:34:03 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id p6so12874640lfc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 11:34:03 -0800 (PST)
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr13277279lfc.124.1543952042971;
+ Tue, 04 Dec 2018 11:34:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20181130211750.5571-1-roland@purestorage.com> <alpine.DEB.2.21.1812041237460.8181@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1812041237460.8181@nanos.tec.linutronix.de>
-From:   Roland Dreier <roland@purestorage.com>
-Date:   Tue, 4 Dec 2018 11:33:43 -0800
-Message-ID: <CAL1RGDV_f8_sDMrK6rUq1P-xh-=E0xwphPo0bQ6tHSnJk6JQmw@mail.gmail.com>
-Subject: Re: [PATCH] clocksource: Add heuristics to avoid switching away from
- TSC due to timer delay
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     john.stultz@linaro.org, sboyd@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181203123857.GS31738@dhcp22.suse.cz> <20181203131006.GA10054@amd>
+ <20181203135351.GU31738@dhcp22.suse.cz> <20181203141459.GA14789@amd>
+ <20181203141737.GY31738@dhcp22.suse.cz> <20181204090228.GC73770@gmail.com>
+ <20181204091020.GD1286@dhcp22.suse.cz> <20181204093310.GE73770@gmail.com>
+ <20181204095802.GF1286@dhcp22.suse.cz> <CAHk-=wgaEw566btStrWE+NOgPJLn1whS-Yw1-=K2Qr6MDvSZ+A@mail.gmail.com>
+ <20181204181714.GR1286@dhcp22.suse.cz>
+In-Reply-To: <20181204181714.GR1286@dhcp22.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 4 Dec 2018 11:33:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh128U4GxVeHa+z_5sB52ZVXhzt0__LQq4asZgh8VtvBw@mail.gmail.com>
+Message-ID: <CAHk-=wh128U4GxVeHa+z_5sB52ZVXhzt0__LQq4asZgh8VtvBw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux 4.20-rc4)
+To:     mhocko@kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>, pavel@ucw.cz,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        rafael.j.wysocki@intel.com, chanho.min@lge.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->                  /*
->                   * Proper multiline comments look like this not like
->                   * the above.
->                   */
-
-Got it, will fix next time around.
-
-> That aside. Why are you trying to do heuristics on the delta?
+On Tue, Dec 4, 2018 at 10:17 AM Michal Hocko <mhocko@kernel.org> wrote:
 >
-> We have way better information than that. The watchdog timer expiry time is
-> known and we can determine the exact delay of the timer.
+> > How about something like we set PF_NOFREEZE when we set PF_EXITING? At
+> > that point we've pretty much turned into a kernel thread, no?
 >
-> The watchdog clocksource provides the maximum 'idle' time, i.e. the time
-> between two reads, in clocksource::max_idle_ns. That value is filled in
-> when the clocksource is configured.
->
-> So without doing speculation we can make an informed decision:
->
->     elapsed = jiffies_to_nsec(jiffies - watchdog_timer->expires) +
->               WATCHDOG_INTERVAL_NS;
->
->     if (elapsed > wdcs->max_idle_ns) {
->             Skip ......
->     }
+> Hmm, that doesn't sound like a bad idea but I am not sure it will
+> help because those threads we are waiting for might be block way before
+> they reached PF_EXITING.
 
-Yes, that makes more sense than what I was doing, although I'm not
-sure on the details.  Just missed that idea.
+Yeah, looks that way. We've got the whole "zap_other_threads() ->
+actually starting the exit" window, which is probably much bigger than
+the "start the exit -> release_task" window.
 
-Why are you adding the watchdog interval to the calculated elapsed
-time?  It seems we have an issue exactly if jiffies -
-watchdog_timer->expires is too big, without adding the interval we
-tried to wait in on top.  Also I think we might want to be careful
-that jiffies is >= the expires time - or is it not possible that a
-timer fires one jiffy early?
+So we'd have to mark things non-freezable at zap time, not at exit
+time, and that's a lot more questionable.
 
-Also for full generality it seems we should check against the
-clocksource max_idle_ns as well - for x86 TSC is wider than HPET but
-there may be other architectures that could hit the same problem, just
-with the clocksource being checked wrapping around instead of the
-watchdog clocksource.  Right?
+Looking at this, I'm agreeing that ot would be better to just try to
+narrow down the cred_guard_mutex use a lot.
 
-Thanks!
-  Roland
+Oleg, if you had patch that got push-back for that, maybe this problem
+is now the impetus for people to say "yeah, that's not nice but we
+clearly need to do it".
+
+I'm not finding any old emails on this, but considering I redid my
+email setup recently, that doesn't necessarily mean much.
+
+                   Linus
