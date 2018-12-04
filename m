@@ -2,103 +2,124 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9912CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371CAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C25320850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:48:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kae8pN6q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C25320850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 014F920850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014F920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbeLDVsc (ORCPT
+        id S1726311AbeLDVth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:48:32 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42469 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbeLDVsb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:48:31 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so13124806lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 13:48:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vj6GT3eveI27j/Bj9yewPJUZgNmPQCpJLb+Kzh1op4M=;
-        b=kae8pN6qIQf7+C8xB1YKuHzOVRK0ji3JfwVU2JHASb/GJHSYGOMBTaJdpmGqxnOb+s
-         7+hXv2+fanc40KJrN2oniSVCIcj7S5pGsuPXWO5vNiOLVKaQXbb3iv7o9qbeqz+gjx7o
-         FVqq+Rk+J3s1qf9LubyutMW+ui1sZm7ZaUPXA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Vj6GT3eveI27j/Bj9yewPJUZgNmPQCpJLb+Kzh1op4M=;
-        b=ktnQQgf9+NPGqYva9iOoxgEuqs+pDn1qwnMDFYHtJ2/7vD4BT9SMX888IWxlJMPTJ6
-         BzsUkrUyd6yUB5uP7Jx+qjtDKO4tAEhzNtcnbHDMeBGZxjG/7GbmqzCz2E5y+jOcyKaF
-         IHmYTyJHb9H+HVijIhBjvBTRFTjiba0MTU6tsXnK6uL+50kT0A6aWdJWin8yeIac+Zlm
-         dcFzISazlevJjuAr8kFFLVuWA85UyWgRkD5P53rC28rTYQbTn/q90fQ5fL6lOeCf9A/t
-         NdvCTx8jbs9B/6y+yc3OzQdknVyDab0fPQI9VsWwcY+58omOWyCOpkIIF09F+Q7RHYrZ
-         R+yQ==
-X-Gm-Message-State: AA+aEWaoHK8X5LPPiHBJHsg1nRCKIYavWkCLM+uokPmrDSmfLhxGIJUr
-        2aoZ26lwfX4EsEySXtXHsKwowA==
-X-Google-Smtp-Source: AFSGD/WhXuusn9Nmd/jf2kT6fJya2Cd9tSpVPZWBzgKj4rVw2bnAw4dmUc3wLlM03+M7KjpCn+BfbQ==
-X-Received: by 2002:a19:f89:: with SMTP id 9mr12577610lfp.10.1543960109427;
-        Tue, 04 Dec 2018 13:48:29 -0800 (PST)
-Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id f20-v6sm3393640ljk.33.2018.12.04.13.48.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 13:48:28 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     will.deacon@arm.com, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] scripts/atomic: change 'fold' to 'grep'
-Date:   Tue,  4 Dec 2018 22:47:13 +0100
-Message-Id: <20181204214713.5812-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.19.2
+        Tue, 4 Dec 2018 16:49:37 -0500
+Received: from mga03.intel.com ([134.134.136.65]:44474 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbeLDVtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:49:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:49:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="107303699"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 13:49:36 -0800
+Subject: [PATCH v3 0/5] x86/mm: Drop usage of __flush_tlb_all() in
+ kernel_physical_mapping_init()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     tglx@linutronix.de
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 04 Dec 2018 13:37:01 -0800
+Message-ID: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some distibutions and build systems doesn't include 'fold' from
-coreutils default.
+Changes since v2 [1]:
+* Fix links in the changelogs to reference lkml.kernel.org instead of
+  lore.kernel.org (Peter)
+* Collect Acked-by's from Kirill and Peter.
+* Add more Cc's for patches 1 and 2.
+* Strengthen the lead-in comment for the set_p*_safe() helpers (Dave)
 
-.../scripts/atomic/atomic-tbl.sh: line 183: fold: command not found
+[1]: https://lkml.org/lkml/2018/12/1/358
 
-Rework to use 'grep' instead of 'fold' to use a dependency that is
-already used a lot in the kernel.
-
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Suggested-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- scripts/atomic/atomic-tbl.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/atomic/atomic-tbl.sh b/scripts/atomic/atomic-tbl.sh
-index 9d6be538a987..81d5c32039dd 100755
---- a/scripts/atomic/atomic-tbl.sh
-+++ b/scripts/atomic/atomic-tbl.sh
-@@ -180,7 +180,7 @@ gen_proto_variants()
- #gen_proto(meta, ...)
- gen_proto() {
- 	local meta="$1"; shift
--	for m in $(echo "${meta}" | fold -w1); do
-+	for m in $(echo "${meta}" | grep -o .); do
- 		gen_proto_variants "${m}" "$@"
- 	done
- }
--- 
-2.19.2
+>From patch 5:
 
+    Commit f77084d96355 "x86/mm/pat: Disable preemption around
+    __flush_tlb_all()" addressed a case where __flush_tlb_all() is called
+    without preemption being disabled. It also left a warning to catch other
+    cases where preemption is not disabled. That warning triggers for the
+    memory hotplug path which is also used for persistent memory enabling:
+    
+     WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
+     RIP: 0010:__flush_tlb_all+0x1b/0x3a
+     [..]
+     Call Trace:
+      phys_pud_init+0x29c/0x2bb
+      kernel_physical_mapping_init+0xfc/0x219
+      init_memory_mapping+0x1a5/0x3b0
+      arch_add_memory+0x2c/0x50
+      devm_memremap_pages+0x3aa/0x610
+      pmem_attach_disk+0x585/0x700 [nd_pmem]
+    
+    Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
+    and Dave confirmed the expectation for TLB flush is for modifying /
+    invalidating existing pte entries, but not initial population [2]. Drop
+    the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
+    expectation that this path is only ever populating empty entries for the
+    linear map. Note, at linear map teardown time there is a call to the
+    all-cpu flush_tlb_all() to invalidate the removed mappings.
+
+Additionally, Dave wanted some runtime assurances that
+kernel_physical_mapping_init() is only populating and not changing
+existing page table entries. Patches 1 - 4 are implementing a new
+set_pte() family of helpers for that purpose.
+
+Patch 5 is tagged for -stable because the false positive warning is now
+showing up on 4.19-stable kernels. Patches 1 - 4 are not tagged for
+-stable, but if the sanity checking is needed please mark them as such.
+
+The hang that was observed while developing the sanity checking
+implementation was resolved by Peter's suggestion to not trigger when
+the same pte value is being rewritten.
+
+---
+
+Dan Williams (5):
+      generic/pgtable: Make {pmd,pud}_same() unconditionally available
+      generic/pgtable: Introduce {p4d,pgd}_same()
+      generic/pgtable: Introduce set_pte_safe()
+      x86/mm: Validate kernel_physical_mapping_init() pte population
+      x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
+
+
+ arch/x86/include/asm/pgalloc.h           |   27 ++++++++++++++
+ arch/x86/mm/init_64.c                    |   30 ++++++----------
+ include/asm-generic/5level-fixup.h       |    1 +
+ include/asm-generic/pgtable-nop4d-hack.h |    1 +
+ include/asm-generic/pgtable-nop4d.h      |    1 +
+ include/asm-generic/pgtable-nopud.h      |    1 +
+ include/asm-generic/pgtable.h            |   56 +++++++++++++++++++++++++-----
+ 7 files changed, 90 insertions(+), 27 deletions(-)
