@@ -1,135 +1,133 @@
 Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54D0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C969CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D4E20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88D0F20661
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 09:33:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARiKUZqQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D4E20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koyJQjvu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D0F20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbeLDJbf (ORCPT
+        id S1726024AbeLDJdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:31:35 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44518 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDJbf (ORCPT
+        Tue, 4 Dec 2018 04:33:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37957 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbeLDJdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 04:31:35 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so11385457lfe.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:31:32 -0800 (PST)
+        Tue, 4 Dec 2018 04:33:14 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so15117352wrw.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 01:33:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X/+uP3K8EqS6DjUlKc3PTvxgefYHP/AxCgxfi+++j3c=;
-        b=ARiKUZqQdKQ/cwek5oMlZZ2VJxpmPViqJkYf6xwyZsAOB61JCPd+jmkAugBGp692RD
-         QhdMsLYJx099VKQAi8B8QXNQJUfxV36MjNuYsig7krJL8ishUsMOCdQs1+3ObrMM9oYp
-         IHUi3SwGqLE5ufXg9lEeT9GQsXwJpNP9FKpUs=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/L+Nothtj0/irGbapL65oAuoEL0J39co1kH1poDXbvs=;
+        b=koyJQjvuESQv7RzcOwG8XRkDPzW6IlJObYZGzzmB2Rsb/Q4ALjFL53zkmQpz4/77/7
+         h4JnhVme666tPGJxWYwAXTySGd+gxHklWaAs2B/t0qeJXDvOSpAaPlQS1L8m+30ByUNz
+         aO3Fn6lIPdOWTHWLdtdjiTq6u/GxZR7nJDmkE+vufZy+2QttTWmJERR3/O2kFKUsHfuC
+         w+TkZdHn4LF6wn8Gkl+ZKGdfW8FdroX/SuMAM5GynTDfascr7aTv34BSPpj73EYy16fb
+         6iwuxdVFA7/E/2NCt6qMfoUZHWNpsvOZEwKZxg53S0vCZWQZ2DmvG02pdWZpfpsmfOQa
+         KWBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X/+uP3K8EqS6DjUlKc3PTvxgefYHP/AxCgxfi+++j3c=;
-        b=AHwBYckwtx9gKKyXy4eKgRbUtyf3aL6UtV6PXynureAE2U84Q4KDIQjKdQBpyXsczi
-         tyHOoowptnAur8Y2XD+cJtU3YHvbVl80OrCBIOhWF2Np2nkKRI5Zj0X9eoSxQHUmHAuC
-         8FE/iegAhGjL5GbeiV9URzIswP2CIYEs+8hAm7v1eVOtkt/ManukSbCXI2SPr7T3wzaa
-         X+QFAW8nyg14fI2jKVNDZ/i29aw/ZppERnqEekitlFIfmVvh3SExhKiFPBosoIiDfGiL
-         cdvt8tVD4WZoIkSDsNTTixeHK7PNntLqYMfv8oXrD8KeDfAO8zksrhYwGZGxrh1cMxpM
-         KpYg==
-X-Gm-Message-State: AA+aEWaNGOQHlyNNDcxmPqR4Q5FWHeST8RbdOG8E8hvefHekUX75adN7
-        8aq0Bv7nagF7n8IKCmv4Ataf7UbuyXHUWRmMks8pLA==
-X-Google-Smtp-Source: AFSGD/XRhXIh3Gba8hHx9zCAb8RDaZF8X1p7SN/zJtLJezE2KmMlNhhAVB8I3jaE/yEfp4rJe9p+tpeD3ztgS0UKpnI=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr11880370lfb.96.1543915891274;
- Tue, 04 Dec 2018 01:31:31 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/L+Nothtj0/irGbapL65oAuoEL0J39co1kH1poDXbvs=;
+        b=XKFa3COr0XOMBkZqVRQo0EA4lioDb9wTGhFtb/P2hBex9dI56HfTun+F3NCcdRxLDE
+         9b8CRYLDAbdJLj6mfrzD7rb5bY3ONSSQhAw9WmCBLbilhpD0IMY52j1PtsnAIfpfY0EW
+         q06UE0V9yFI99mZ/u7rJdtp3sf7epNcGWh/kZVsQnsTgJjyygfmpCJ6uhMsj4B2zJWOS
+         uCPWU3aEWHY+/AjfcqGTBwXp6pevJJqxJXnO3K5MiPF7Dia+3z2F2M43LVInFCa6rS22
+         nr8qjJ5KSjzjBexYSm4bFeStV+VkFXXwtqEFdQaTnDptjJn4aPpRPZNASJzGU8hZJFXb
+         MtfA==
+X-Gm-Message-State: AA+aEWYZzLmoo24QiTHJ2HtlxAlY/9ZkVY3yAo8nP4lNUqTbotNP0xDE
+        dIwl1244x8uHZxgTsYokqck=
+X-Google-Smtp-Source: AFSGD/UK1fzF/z09oAcNe1mfeiiO+v0Wehs67eLOMrLTTINcR3suHt1nngnR2gkbil4iykuA/eUC7w==
+X-Received: by 2002:a5d:694d:: with SMTP id r13mr16660352wrw.323.1543915993168;
+        Tue, 04 Dec 2018 01:33:13 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id d2sm12409357wrs.97.2018.12.04.01.33.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 01:33:12 -0800 (PST)
+Date:   Tue, 4 Dec 2018 10:33:10 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
+ 4.20-rc4)
+Message-ID: <20181204093310.GE73770@gmail.com>
+References: <20181203074700.GA21240@gmail.com>
+ <20181203083942.GF31738@dhcp22.suse.cz>
+ <20181203123149.GB31795@redhat.com>
+ <20181203123857.GS31738@dhcp22.suse.cz>
+ <20181203131006.GA10054@amd>
+ <20181203135351.GU31738@dhcp22.suse.cz>
+ <20181203141459.GA14789@amd>
+ <20181203141737.GY31738@dhcp22.suse.cz>
+ <20181204090228.GC73770@gmail.com>
+ <20181204091020.GD1286@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <CGME20181201154428epcas4p3a1a5c9c576027b1c56f8dd1510b32187@epcas4p3.samsung.com>
- <20181201154151.14890-1-linus.walleij@linaro.org> <d6b5f384-51aa-0e99-7e88-a1debcf5eca3@samsung.com>
-In-Reply-To: <d6b5f384-51aa-0e99-7e88-a1debcf5eca3@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 4 Dec 2018 10:31:19 +0100
-Message-ID: <CACRpkdYQ5cy1-8wu--deF0kdzrRGVJ_teNh2LRF7tr9vyh+oHw@mail.gmail.com>
-Subject: Re: [PATCH 00/13 v2] Regulator ena_gpiod fixups
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204091020.GD1286@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
 
-first, thanks a *lot* for testing this, it is is much, much appreciated!
+* Michal Hocko <mhocko@kernel.org> wrote:
 
-On Mon, Dec 3, 2018 at 3:35 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+> I dunno. I do not use hibernation. I am a heavy user of the suspend 
+> though. I s2ram all the time. And I have certainly experienced cases 
+> where suspend has failed and I onlyi found out later when I've picked 
+> up my laptop from my heat up bag. Nothing fatal has resulted from that 
+> but this is certainly annoying.
 
-> The idea is good imho, but it looks that there are some missing cases in
-> the code. Here are some logs from the boards I have access to:
+Hm, so I (mistakenly) thought freezing was mostly limited to hibernation 
+and to a few weird cases when in flight DMA must not be suspended - but 
+I'm wrong and in practice we always freeze tasks during s2ram, right?
 
-OK let's fix this!
+And indeed:
 
-> Artik5 evaluation board (arch/arm/boot/dts/exynos3250-artik5-eval.dtb):
-> s2mps11-pmic s2mps14-regulator: Failed to get control GPIO for 11/LDO12
+ config SUSPEND_FREEZER
+        bool "Enable freezer for suspend to RAM/standby" \
+                if ARCH_WANTS_FREEZER_CONTROL || BROKEN
+        depends on SUSPEND
+        default y
 
-Question: this is supposed to fail, right? It is something
-like a probe deferral or nonexisting GPIO controller?
+which is essentially always enabled on x86.
 
-I look in the upstream tree:
-arch/arm/boot/dts/exynos3250-artik5.dtsi
-where s2mps14 is defined:
+TIL ...
 
-ldo12_reg: LDO12 {
-    /* VDD72 ~ VDD73 */
-    regulator-name = "VLDO12_2.8V";
-    regulator-min-microvolt = <2800000>;
-    regulator-max-microvolt = <2800000>;
-    samsung,ext-control-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
-};
+s2ram is obviously a huge deal.
 
-I didn't really change anything about this, so this missing
-GPIO descriptor looks worrysome.
+Just a newbie question: any chance to not do any freezing at all on 
+modern laptops when doing s2ram, or at least only warn if it fails and 
+try to suspend?
 
-Anyways what happens is this:
+Because in practice losing power due to failed freezing *will* result in 
+data loss, in about 90% of the time ...
 
-gpio[reg] = devm_gpiod_get_from_of_node(...)
-if (IS_ERR(gpio[reg]))
-(...)
-            continue;
+So I don't even know what we are trying to protect against by refusing to 
+freeze - avoiding a 0.001% data loss risk against a 90% data loss risk?
 
-So this IS_ERR descriptor is left around. So we should
-probably handle erronoeus or NULL descriptors in
-gpiod_unhinge().
+Thanks,
 
-If you add this on top, does it start working?
-
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 5864e758d7f2..e35751bf0ea8 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -332,6 +332,8 @@ EXPORT_SYMBOL(devm_gpiod_put);
-
- void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
- {
-+       if (IS_ERR_OR_NULL(desc))
-+               return;
-        WARN_ON(devres_destroy(dev, devm_gpiod_release,
-                               devm_gpiod_match, desc));
- }
-
-Yours,
-Linus Walleij
+	Ingo
