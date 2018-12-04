@@ -2,101 +2,94 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA25BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DD3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 770A4204FD
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:08:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dw/75FWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770A4204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 65F9420850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:09:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F9420850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbeLDAIP (ORCPT
+        id S1726069AbeLDAJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:08:15 -0500
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:44037 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbeLDAIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:08:14 -0500
-Received: by mail-ot1-f48.google.com with SMTP id f18so13451622otl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:08:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iQfRL74ErdChu048ys5z9LflH5c6GKBTjd+Iml3JJyM=;
-        b=Dw/75FWP4g7jgJD5o8MzQz2xwEu3WurBEU+r1TH+c38+2gREbQ3l6TcoKfoAayhH21
-         Wbkm/L6JqEmzoyNGPK2EwSzLMSYeLM9mWzH98FRd6oKgoyfAduVJZJRbMXyJrRwWNs6D
-         jmdAzDz71rooxDDVtYvVIUewUNICr9zzz8xr5krdL0z6nBAhwBoPpNbtiBcLykpBvDq3
-         3zTo6nk6/xTSzQYedvdKwqyO9F4ZsVnUYbRT8NY9CX1cznaPePzFi8yTWiMotTU2YiQ7
-         V/wAfKjrZ6WaHmXjGX2vDTYUYPRFBN/Ru1KaK1BWY6K26grUY8MeC8M37BwPXhavtLEx
-         fxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iQfRL74ErdChu048ys5z9LflH5c6GKBTjd+Iml3JJyM=;
-        b=XjFj/Ngflwno2Vk1FXJmE5MzELZ4mDX7pJ24xx1j4DVecWEGtaFsQdGsqdckp5SGVy
-         aPBt3MX+hsrGuUyczEfq89NggsPIBaoGx2UGsLu5b92ETXUVrIjLZgofCLrqYBtmemB+
-         yavVwHDiLs+suU6oqfu5R++WB7Femr1d+mm8WluW51Lt82IC6NELWrWxuEvUKNvz5HgU
-         Ovkt6LQGwr0STIo8I0LfewjGn1DqrDQQ8XcS2mdl32uZCxNTUBjSBYosVsHBN49X42HW
-         McII25DFP5fwKKDVGAXTcC3zRAAroj+gXsJMa3UgwN9xAg5ebcZ8NDhFwWSDMifcrVUH
-         SqjQ==
-X-Gm-Message-State: AA+aEWY5Zmqk09GoHUfZOKKHH3B+BF5dwti1rFOo/bxREtipO08GXkk6
-        odBNVqhpp7JQZ5VeMsw7kfPR+GidS/pxqVTXoHGS8g==
-X-Google-Smtp-Source: AFSGD/UgbYB5Rd1vxff6SL8u6gvZ9YrwKGjjmb2IMcqnzLgKBxvdvWo51EfiHqCAw1/+HkLlDPFb1bwxm/dyWx2vHfg=
-X-Received: by 2002:a05:6830:1005:: with SMTP id a5mr10870915otp.113.1543882094045;
- Mon, 03 Dec 2018 16:08:14 -0800 (PST)
+        Mon, 3 Dec 2018 19:09:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38304 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeLDAJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 19:09:18 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC05283F51;
+        Tue,  4 Dec 2018 00:09:17 +0000 (UTC)
+Received: from redhat.com (ovpn-120-188.rdu2.redhat.com [10.10.120.188])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 910F45D738;
+        Tue,  4 Dec 2018 00:09:15 +0000 (UTC)
+Date:   Mon, 3 Dec 2018 19:09:12 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm/mmu_notifier: use structure for
+ invalidate_range_start/end calls
+Message-ID: <20181204000911.GB20742@redhat.com>
+References: <20181203201817.10759-1-jglisse@redhat.com>
+ <20181203201817.10759-3-jglisse@redhat.com>
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-18-brendanhiggins@google.com> <CAL_Jsq+09Kx7yMBC_Jw45QGmk6U_fp4N6HOZDwYrM4tWw+_dOA@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+09Kx7yMBC_Jw45QGmk6U_fp4N6HOZDwYrM4tWw+_dOA@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 3 Dec 2018 16:08:02 -0800
-Message-ID: <CAFd5g44bmhAOLYeHX8timke-zSr_6AA4tuxQcfeyc6AHFAxHeQ@mail.gmail.com>
-Subject: Re: [RFC v3 17/19] of: unittest: migrate tests to run on KUnit
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
-        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
-        mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
-        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, dan.j.williams@intel.com,
-        linux-nvdimm@lists.01.org, kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181203201817.10759-3-jglisse@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 04 Dec 2018 00:09:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 12:56 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Nov 28, 2018 at 1:38 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > Migrate tests without any cleanup, or modifying test logic in anyway to
-> > run under KUnit using the KUnit expectation and assertion API.
->
-> Nice! You beat me to it. This is probably going to conflict with what
-> is in the DT tree for 4.21. Also, please Cc the DT list for
-> drivers/of/ changes.
+On Mon, Dec 03, 2018 at 03:18:16PM -0500, jglisse@redhat.com wrote:
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index f7e4bfdc13b7..4896dd9d8b28 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2303,8 +2303,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>   */
+>  static void migrate_vma_collect(struct migrate_vma *migrate)
+>  {
+> +	struct mmu_notifier_range range;
+>  	struct mm_walk mm_walk;
+>  
+> +	range.start = migrate->start;
+> +	range.end = migrate->end;
+> +	range.mm = mm_walk.mm;
 
-Oh, I thought you were asking me to do it :-) In any case, I am happy to.
+Andrew can you replace above line by:
 
-Oh yeah, sorry about not CC'ing the list.
++	range.mm = migrate->vma->vm_mm;
 
-Cheers
+I made a mistake here when i was rebasing before posting. I checked
+the patchset again and i believe this is the only mistake i made.
+
+Do you want me to repost ?
+
+Sorry for my stupid mistake.
+
+Cheers,
+Jérôme
