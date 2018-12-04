@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2124CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 437C1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81DF2146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0971520851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAmTktTz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81DF2146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwV9m6TD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0971520851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeLDK7P (ORCPT
+        id S1727235AbeLDL1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:59:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43840 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:27:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727087AbeLDK7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:11 -0500
+        id S1727092AbeLDK7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BE9A2087F;
-        Tue,  4 Dec 2018 10:59:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9DA32087F;
+        Tue,  4 Dec 2018 10:59:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921150;
-        bh=H1TWguv+DMajJTFb9kOb9pphIz78VkeuJ0deYrJTy5k=;
+        s=default; t=1543921153;
+        bh=1i8SjF8QGA8KgtwlZUVEuwWBOwzKYA9kqBhUV0hwibU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eAmTktTzuWBnGf9aplv1yYKgJHiiMxJSzcZOqEqcaJDXJ1XcYDypiUNyUE874F1+j
-         IcFxQx93k2wVCOTE7HyxmIVfDQkgpRn9g6RFBrY538kC3+ibUubsAyqc9E1SfXqBr7
-         CL+9g7DkLjE32cZG9vLWdzE4cF+fiXhAUVvH7BuY=
+        b=gwV9m6TDeT3jqMwJmN6sIOpogZLQ8ucJLyUTdkN+3auiwd/93Kfd3IfyJGy2yQ8xS
+         XDy3Xi0dHwlP+JwbUz7TWmcW7nh5Zl3T2AI3hnqfX/eA4BEC/AD5+SgoMvakPs+eCB
+         9Yrz5G3X9eqBbeL1MV+Mwx7+43dZ1VRtpIuzP/7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         stable@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 100/139] microblaze: function_graph: Simplify with function_graph_enter()
-Date:   Tue,  4 Dec 2018 11:49:41 +0100
-Message-Id: <20181204103654.587164492@linuxfoundation.org>
+Subject: [PATCH 4.19 101/139] x86/function_graph: Simplify with function_graph_enter()
+Date:   Tue,  4 Dec 2018 11:49:42 +0100
+Message-Id: <20181204103654.662131418@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -66,19 +68,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 556763e5a500d71879d632867b75826551acd49c upstream.
+commit 07f7175b43827640d1e69c9eded89aa089a234b4 upstream.
 
 The function_graph_enter() function does the work of calling the function
 graph hook function and the management of the shadow stack, simplifying the
 work done in the architecture dependent prepare_ftrace_return().
 
-Have microblaze use the new code, and remove the shadow stack management as well as
+Have x86 use the new code, and remove the shadow stack management as well as
 having to set up the trace structure.
 
 This is needed to prepare for a fix of a design bug on how the curr_ret_stack
 is used.
 
-Cc: Michal Simek <monstr@monstr.eu>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
 Cc: stable@kernel.org
 Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
@@ -86,40 +92,39 @@ Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/microblaze/kernel/ftrace.c |   15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ arch/x86/kernel/ftrace.c |   15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
---- a/arch/microblaze/kernel/ftrace.c
-+++ b/arch/microblaze/kernel/ftrace.c
-@@ -22,8 +22,7 @@
- void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -994,7 +994,6 @@ void prepare_ftrace_return(unsigned long
  {
  	unsigned long old;
--	int faulted, err;
+ 	int faulted;
 -	struct ftrace_graph_ent trace;
-+	int faulted;
  	unsigned long return_hooker = (unsigned long)
  				&return_to_handler;
  
-@@ -63,18 +62,8 @@ void prepare_ftrace_return(unsigned long
+@@ -1046,19 +1045,7 @@ void prepare_ftrace_return(unsigned long
  		return;
  	}
  
--	err = ftrace_push_return_trace(old, self_addr, &trace.depth, 0, NULL);
--	if (err == -EBUSY) {
-+	if (function_graph_enter(old, self_addr, 0, NULL))
+-	trace.func = self_addr;
+-	trace.depth = current->curr_ret_stack + 1;
+-
+-	/* Only trace if the calling function expects to */
+-	if (!ftrace_graph_entry(&trace)) {
++	if (function_graph_enter(old, self_addr, frame_pointer, parent))
  		*parent = old;
 -		return;
 -	}
 -
--	trace.func = self_addr;
--	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace)) {
--		current->curr_ret_stack--;
+-	if (ftrace_push_return_trace(old, self_addr, &trace.depth,
+-				     frame_pointer, parent) == -EBUSY) {
 -		*parent = old;
+-		return;
 -	}
  }
  #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
- 
 
 
