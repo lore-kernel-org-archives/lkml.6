@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591C4C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18B4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F808214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A63D214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xFdLD+tN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F808214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVnpsrpa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A63D214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeLDLBT (ORCPT
+        id S1727477AbeLDLBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:01:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46684 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:01:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbeLDLBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:01:16 -0500
+        id S1727014AbeLDLBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A70162146D;
-        Tue,  4 Dec 2018 11:01:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CE24214C1;
+        Tue,  4 Dec 2018 11:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921275;
-        bh=Gk07QEuLu4OBgEBIVqq9uy1KfwyIqe6uBI8PVyOhErY=;
+        s=default; t=1543921277;
+        bh=Y6NXbNvYtM1Fy7I2lfIRwONSxi+UDKXwlGGNOfL0XdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xFdLD+tNKM5T2kH54KmPedXNfgpPA1zbz/bI5VSYA8UzmJkJaV0AxQaXpaK/18042
-         E0eC/xaeZlwd9IofkY2f4hpxYprfkuGgvTZIU0Hd2cjXgzNf+XKhxvpsnl9z0Lbvo1
-         lCvyvuUrntl+CRMj2tdLny0ytmPVQE+jww4njHsw=
+        b=CVnpsrpaX7hmSe6pfRts7DQYHdgwF/QCEzTcJtZZs/QrlISBOwUBt6hd3KNi+nPJF
+         rcU2cel9A0JWrbVXckkXlzBsrKt1fP5tobrDnH8HaTnW8BQzp8jh1cI0M5O4uaP43O
+         efIhIMt/UjedLGgD6cjnXhvGBWnjac8EzEoLt9Qk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,13 +48,15 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 001/146] mm/huge_memory: rename freeze_page() to unmap_page()
-Date:   Tue,  4 Dec 2018 11:48:07 +0100
-Message-Id: <20181204103726.808995724@linuxfoundation.org>
+Subject: [PATCH 4.14 010/146] mm/khugepaged: collapse_shmem() do not crash on Compound
+Date:   Tue,  4 Dec 2018 11:48:16 +0100
+Message-Id: <20181204103727.206521255@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -67,21 +69,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 906f9cdfc2a0800f13683f9e4ebdfd08c12ee81b upstream.
+commit 06a5e1268a5fb9c2b346a3da6b97e85f2eba0f07 upstream.
 
-The term "freeze" is used in several ways in the kernel, and in mm it
-has the particular meaning of forcing page refcount temporarily to 0.
-freeze_page() is just too confusing a name for a function that unmaps a
-page: rename it unmap_page(), and rename unfreeze_page() remap_page().
+collapse_shmem()'s VM_BUG_ON_PAGE(PageTransCompound) was unsafe: before
+it holds page lock of the first page, racing truncation then extension
+might conceivably have inserted a hugepage there already.  Fail with the
+SCAN_PAGE_COMPOUND result, instead of crashing (CONFIG_DEBUG_VM=y) or
+otherwise mishandling the unexpected hugepage - though later we might
+code up a more constructive way of handling it, with SCAN_SUCCESS.
 
-Went to change the mention of freeze_page() added later in mm/rmap.c,
-but found it to be incorrect: ordinary page reclaim reaches there too;
-but the substance of the comment still seems correct, so edit it down.
-
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261514080.2275@eggly.anvils
-Fixes: e9b61f19858a5 ("thp: reintroduce split_huge_page()")
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261529310.2275@eggly.anvils
+Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
 Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Jerome Glisse <jglisse@redhat.com>
 Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Cc: Matthew Wilcox <willy@infradead.org>
@@ -90,67 +90,30 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/huge_memory.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ mm/khugepaged.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index adacfe66cf3d..09d7e9c4de89 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2280,7 +2280,7 @@ void vma_adjust_trans_huge(struct vm_area_struct *vma,
- 	}
- }
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 45bf0e5775f7..d27a73737f1a 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1401,7 +1401,15 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		 */
+ 		VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 		VM_BUG_ON_PAGE(!PageUptodate(page), page);
+-		VM_BUG_ON_PAGE(PageTransCompound(page), page);
++
++		/*
++		 * If file was truncated then extended, or hole-punched, before
++		 * we locked the first page, then a THP might be there already.
++		 */
++		if (PageTransCompound(page)) {
++			result = SCAN_PAGE_COMPOUND;
++			goto out_unlock;
++		}
  
--static void freeze_page(struct page *page)
-+static void unmap_page(struct page *page)
- {
- 	enum ttu_flags ttu_flags = TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS |
- 		TTU_RMAP_LOCKED | TTU_SPLIT_HUGE_PMD;
-@@ -2295,7 +2295,7 @@ static void freeze_page(struct page *page)
- 	VM_BUG_ON_PAGE(!unmap_success, page);
- }
- 
--static void unfreeze_page(struct page *page)
-+static void remap_page(struct page *page)
- {
- 	int i;
- 	if (PageTransHuge(page)) {
-@@ -2412,7 +2412,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- 	spin_unlock_irqrestore(zone_lru_lock(page_zone(head)), flags);
- 
--	unfreeze_page(head);
-+	remap_page(head);
- 
- 	for (i = 0; i < HPAGE_PMD_NR; i++) {
- 		struct page *subpage = head + i;
-@@ -2593,7 +2593,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	}
- 
- 	/*
--	 * Racy check if we can split the page, before freeze_page() will
-+	 * Racy check if we can split the page, before unmap_page() will
- 	 * split PMDs
- 	 */
- 	if (!can_split_huge_page(head, &extra_pins)) {
-@@ -2602,7 +2602,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	}
- 
- 	mlocked = PageMlocked(page);
--	freeze_page(head);
-+	unmap_page(head);
- 	VM_BUG_ON_PAGE(compound_mapcount(head), head);
- 
- 	/* Make sure the page is not on per-CPU pagevec as it takes pin */
-@@ -2659,7 +2659,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- fail:		if (mapping)
- 			spin_unlock(&mapping->tree_lock);
- 		spin_unlock_irqrestore(zone_lru_lock(page_zone(head)), flags);
--		unfreeze_page(head);
-+		remap_page(head);
- 		ret = -EBUSY;
- 	}
- 
+ 		if (page_mapping(page) != mapping) {
+ 			result = SCAN_TRUNCATED;
 -- 
 2.17.1
 
