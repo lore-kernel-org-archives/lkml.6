@@ -4,42 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D284C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B04C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95B7214F1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49614214E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcD2GDOf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95B7214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HY1JCOFs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49614214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeLDK6S (ORCPT
+        id S1726931AbeLDK6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42512 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbeLDK6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:15 -0500
+        id S1726415AbeLDK6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E288214C1;
-        Tue,  4 Dec 2018 10:58:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46BE1214DB;
+        Tue,  4 Dec 2018 10:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921094;
-        bh=YuXFXN7awfwlw2UVCbQmNZqfzlcBAFflEjCk/1g/nYw=;
+        s=default; t=1543921099;
+        bh=Lv8h2rowhYwKBV5JuVzF/XbTgptd22+XCxgGiFlIEdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lcD2GDOf8+HBEJ1GRyPqP6895a6mbaC1glH/qU5blmzY0l5vXEL7PIflaf4dEXwV8
-         n+1br/L0S/3C2eQGL0vtrlAwsrI8qVMvPXnBdrapgcVQebxnCbELPNcMWD299ZrUaC
-         V50l+14H2GbuSmlh25b1x/933J9B22LEuVK8BHUA=
+        b=HY1JCOFsk5lQCuD0yA5xbqNTSGeHxnmX8ZpKx6zF8PJBwGmrXOocs+WZpawUipkxU
+         k6HLU38N4ogzELKkRoJbeJMN5aEZaROe1WacMpWLZVtu37c95bWzRor4+Op+8tqb0N
+         4I9FGSIGIMKzzqAMsa407iG8qW2N0NiMWVM7x1uU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
@@ -49,7 +51,6 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Casey Schaufler <casey.schaufler@intel.com>,
@@ -59,9 +60,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Waiman Long <longman9394@gmail.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 044/139] x86/l1tf: Show actual SMT state
-Date:   Tue,  4 Dec 2018 11:48:45 +0100
-Message-Id: <20181204103651.798712505@linuxfoundation.org>
+Subject: [PATCH 4.19 036/139] x86/speculation: Move STIPB/IBPB string conditionals out of cpu_show_common()
+Date:   Tue,  4 Dec 2018 11:48:37 +0100
+Message-Id: <20181204103651.471509429@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -80,18 +81,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner tglx@linutronix.de
+From: Tim Chen tim.c.chen@linux.intel.com
 
-commit 130d6f946f6f2a972ee3ec8540b7243ab99abe97 upstream
+commit a8f76ae41cd633ac00be1b3019b1eb4741be3828 upstream
 
-Use the now exposed real SMT state, not the SMT sysfs control knob
-state. This reflects the state of the system when the mitigation status is
-queried.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
 
-This does not change the warning in the VMX launch code. There the
-dependency on the control knob makes sense because siblings could be
-brought online anytime after launching the VM.
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -102,7 +104,6 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Casey Schaufler <casey.schaufler@intel.com>
@@ -114,30 +115,48 @@ Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Dave Stewart <david.c.stewart@intel.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.613357354@linutronix.de
+Link: https://lkml.kernel.org/r/20181125185003.874479208@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -830,13 +830,14 @@ static ssize_t l1tf_show_state(char *buf
- 
- 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
- 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
--	     cpu_smt_control == CPU_SMT_ENABLED))
-+	     sched_smt_active())) {
- 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
- 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
-+	}
- 
- 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
- 		       l1tf_vmx_states[l1tf_vmx_mitigation],
--		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
-+		       sched_smt_active() ? "vulnerable" : "disabled");
+@@ -842,6 +842,22 @@ static ssize_t l1tf_show_state(char *buf
  }
- #else
- static ssize_t l1tf_show_state(char *buf)
+ #endif
+ 
++static char *stibp_state(void)
++{
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
++		return "";
++}
++
++static char *ibpb_state(void)
++{
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
++}
++
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+@@ -863,9 +879,9 @@ static ssize_t cpu_show_common(struct de
+ 
+ 	case X86_BUG_SPECTRE_V2:
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
+ 
 
 
