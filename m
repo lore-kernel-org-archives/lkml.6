@@ -2,282 +2,527 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BADC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 778A7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C5CF214DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B908208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XqOowwIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C5CF214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IprvrREp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B908208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLDFgS (ORCPT
+        id S1726017AbeLDFjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 00:36:18 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:14517 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeLDFgS (ORCPT
+        Tue, 4 Dec 2018 00:39:18 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54416 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeLDFjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 00:36:18 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181204053615epoutp02380fc98edc33c4350effa94c4d6e87d5~tCnwXBp2k1281112811epoutp02C;
-        Tue,  4 Dec 2018 05:36:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181204053615epoutp02380fc98edc33c4350effa94c4d6e87d5~tCnwXBp2k1281112811epoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543901775;
-        bh=KcuQ2k4cSB8paUNuhdomC7q2w0oKUqGv1RxpN+45NUA=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=XqOowwIyyYJ7bIgnVXVEMLZgRrxukD5fC18PkGUPFAfxlSpVCAmhvHpuPtfr/uP2t
-         ydy9NT9P2yhDoADEuxm5WLs+KCjZejbvFYrSjMpe+b5yGh/jU1CqfQOucZadL23uMj
-         RLfrVvGQ8iCIZ4daICX6BqleX4XAdKyaV347QAZo=
-Received: from epsmges2p4.samsung.com (unknown [182.195.40.153]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181204053612epcas1p2030242731222dadd867a8b416b49c15b~tCnuAEJgF1499314993epcas1p2m;
-        Tue,  4 Dec 2018 05:36:12 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        67.36.04055.C42160C5; Tue,  4 Dec 2018 14:36:12 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20181204053612epcas2p2d2bae82ef8af2e80261abc67c6a43962~tCntr-Rwi2921329213epcas2p2P;
-        Tue,  4 Dec 2018 05:36:12 +0000 (GMT)
-X-AuditID: b6c32a48-3c1ff70000000fd7-a7-5c06124cbf3d
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6A.31.03627.C42160C5; Tue,  4 Dec 2018 14:36:12 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PJ7006V668BWR60@mmp1.samsung.com>; Tue, 04 Dec 2018 14:36:12 +0900 (KST)
-Message-id: <5C06124B.5030409@samsung.com>
-Date:   Tue, 04 Dec 2018 14:36:11 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-Subject: Re: [PATCH v2 2/5] devfreq: add support for suspend/resume of a
- devfreq device
-In-reply-to: <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIJsWRmVeSWpSXmKPExsWy7bCmua6PEFuMwfl2HYuDWzUtNs5Yz2qx
-        feM3Vov5R86xWjQvXs9mcaY716L/8Wtmi/PnN7BbnG16w25xq0HGYtaUvUwWmx5fY7W4vGsO
-        m8Xn3iOMFjPO72OyWHvkLrvF0usXmSxuN65gs7h76ijQjNOXWC1a9x5ht2hb/YHV4s2FeywO
-        4h7bdm9j9Vgzbw2jx+yGiyweE/o/MXos3vOSyWPTqk42j/1z17B7bF5S7/HvGLvHwXd7mDy2
-        XG1n8ejbsorRY8Xq7+wenzfJBfBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqY
-        KynkJeam2iq5+AToumXmAL2vpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNAr
-        TswtLs1L10vOz7UyNDAwMgUqTMjO+HDhJlvBXtWKmyd/MzUw/pTtYuTkkBAwkXjb3cTUxcjF
-        ISSwg1Hi0KJ3LBDOd0aJm5N3s8JUtU4+DpXYzShxf+cBZpAEr4CgxI/J94ASHBzMAvISRy5l
-        g4SZBTQlXnyZBFV/l1Hi/6xPUPVaEpO+bQSzWQRUJbbfegNmswHF97+4wQZi8wsoSlz98ZgR
-        xBYViJDYOf8bO8ggEYHzjBJrdu4Bu5VZoJVZ4t+HLWAdwgKREqcWPwWbxCngJTH5xDlWkCIJ
-        gUYOiWX39jND/OAi8XPhZyYIW1ji1fEt7BC2tMSzVRsZIRraGSW+vGiG6p7AKPHh1GaoDmOJ
-        Zwu7mCC+45PoOPyXHeRpCQFeiY42IYgSD4m+nnXscE8/nN7HNIFRdhZSOM1ChNMspHBawMi8
-        ilEstaA4Nz212KjABDkGNzGCk7uWxw7GA+d8DjEKcDAq8fA6OLDGCLEmlhVX5h5ilOBgVhLh
-        LShkiRHiTUmsrEotyo8vKs1JLT7EaAoM5onMUqLJ+cDMk1cSb2hqZGxsbGFqbmlsYKkkzvtQ
-        em60kEB6YklqdmpqQWoRTB8TB6dUA+N8s2tz/vttYaow7/n44F7DoqKn8w89fKDCnxx9+eOd
-        c+0fXO9/N1/6T5+jfgLrnrPn2op4292vzg56Ebyw7vn88w7ZTNXrp/a6zi9NND5qIH/z7CPb
-        qyeP358T2dU1UXDvpoanDsv5Pq9NPtl1sKDtXXjVtAuBDnJGKyq1z8hc67yumvxTOFRLiaU4
-        I9FQi7moOBEAvojoEAQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t9jAV0fIbYYg/vdEhYHt2pabJyxntVi
-        +8ZvrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht3iVoOMxawpe5ksNj2+xmpxedcc
-        NovPvUcYLWac38dksfbIXXaLpdcvMlncblzBZnH31FGgGacvsVq07j3CbtG2+gOrxZsL91gc
-        xD227d7G6rFm3hpGj9kNF1k8JvR/YvRYvOclk8emVZ1sHvvnrmH32Lyk3uPfMXaPg+/2MHls
-        udrO4tG3ZRWjx4rV39k9Pm+SC+CL4rJJSc3JLEst0rdL4Mr4cOEmW8Fe1YqbJ38zNTD+lO1i
-        5OSQEDCRaJ18nKWLkYtDSGAno0T7shfMIAleAUGJH5PvASU4OJgF5CWOXMqGMNUlpkzJhSi/
-        zyhx5dsiFohyLYlJ3zaCtbIIqEpsv/UGzGYDiu9/cYMNxOYXUJS4+uMxI8gcUYEIie4TlSBz
-        RATOM0oc7OtkBalhFmhllnjUlgViCwtESpxa/JQZYtldRokJ+9YygSQ4BbwkJp84xzqBUWAW
-        klNnIZw6C+HUBYzMqxglUwuKc9Nzi40KjPJSy/WKE3OLS/PS9ZLzczcxAiN722Gt/h2Mj5fE
-        H2IU4GBU4uF1cGCNEWJNLCuuzD3EKMHBrCTCW1DIEiPEm5JYWZValB9fVJqTWnyIUZqDRUmc
-        lz//WKSQQHpiSWp2ampBahFMlomDU6qBcf8a5/QWx/bPbKf71Z9tMGM8rsCYVnYuNfTJWW+n
-        HudWmTX7jie0v9o//1y7gt8Vddd5tb17qjdN3NBYN0XliPA6icyzrbtnTN70O3nF9FNya+Ys
-        v/Z4/e2wOZxzV1unPLwXnhu9eB2v7//NIXl8bczKS1M/FwW8uXvc8O2l+7K/X10UieJg+KnE
-        UpyRaKjFXFScCACbozxJ6AIAAA==
-X-CMS-MailID: 20181204053612epcas2p2d2bae82ef8af2e80261abc67c6a43962
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181203143131eucas1p217f22ac6d19682a54a57658a06980914
-References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181203143131eucas1p217f22ac6d19682a54a57658a06980914@eucas1p2.samsung.com>
-        <1543847475-7600-3-git-send-email-l.luba@partner.samsung.com>
+        Tue, 4 Dec 2018 00:39:18 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB45dBiL018891;
+        Mon, 3 Dec 2018 23:39:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543901951;
+        bh=3UflfmQAb+jImBBScTI1IjNvgWybKibGhFnBN1fbeTw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=IprvrREpxSW86qofk/u1GSqtznE4gShsBBE7fR2JIx6Sd1p00YPjwnmwlI+uJLvRF
+         U/u8KuvUR0FLxmPLcDQXvyUTsDMKqmgqmy6z2tkjklS2S3c2I8yw5Bjik6vaitNtvl
+         c8HnogyIVFjZBhw17hPlzhxgxq+2cye3S+zQ2IDI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB45dBsO102626
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 3 Dec 2018 23:39:11 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 3
+ Dec 2018 23:39:11 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 3 Dec 2018 23:39:10 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB45d8a5008775;
+        Mon, 3 Dec 2018 23:39:08 -0600
+Subject: Re: [PATCH v2 2/3] phy: sr-usb: Add stingray usb phy driver
+To:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Tejun Heo <tj@kernel.org>,
+        "Jayachandran C --cc=devicetree @ vger . kernel . org" 
+        <jnair@caviumnetworks.com>, <linux-kernel@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>
+References: <1543826208-22742-1-git-send-email-srinath.mannam@broadcom.com>
+ <1543826208-22742-3-git-send-email-srinath.mannam@broadcom.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <8b255dec-869b-91a7-1446-5f00ffedcc94@ti.com>
+Date:   Tue, 4 Dec 2018 11:09:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1543826208-22742-3-git-send-email-srinath.mannam@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+Hi,
 
-Looks good to me. But, I add the some comments.
-If you will fix it, feel free to add my tag:
-Reviewed-by: Chanwoo choi <cw00.choi@samsung.com>
-
-On 2018년 12월 03일 23:31, Lukasz Luba wrote:
-> The patch prepares devfreq device for handling suspend/resume
-> functionality.  The new fields will store needed information during this
-
-nitpick. Remove unneeded space. There are two spaces between '.' and 'The new'. 
-
-> process.  Devfreq framework handles opp-suspend DT entry and there is no
-
-ditto.
-
-> need of modyfications in the drivers code.  It uses atomic variables to
-
-ditto.
-
-> make sure no race condition affects the process.
+On 03/12/18 2:06 PM, Srinath Mannam wrote:
+> This driver supports all versions of stingray SS and HS
+> USB phys.
+> In version 1 is combo phy contain both SS and HS phys
+> in a common IO space.
+> In version 2 a single HS phy.
+> These phys support both xHCI host driver and
+> BDC Broadcom device controller driver.
 > 
-> The patch is based on earlier work by Tobias Jakobi.
-
-Please remove it from each patch description.
-
-> 
-> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 > ---
->  drivers/devfreq/devfreq.c | 51 +++++++++++++++++++++++++++++++++++++++--------
->  include/linux/devfreq.h   |  7 +++++++
->  2 files changed, 50 insertions(+), 8 deletions(-)
+>  drivers/phy/broadcom/Kconfig          |  11 +
+>  drivers/phy/broadcom/Makefile         |   1 +
+>  drivers/phy/broadcom/phy-bcm-sr-usb.c | 373 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 385 insertions(+)
+>  create mode 100644 drivers/phy/broadcom/phy-bcm-sr-usb.c
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index a9fd61b..36bed24 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -316,6 +316,10 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
->  			"Couldn't update frequency transition information.\n");
+> diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+> index 8786a96..c1e4dd5 100644
+> --- a/drivers/phy/broadcom/Kconfig
+> +++ b/drivers/phy/broadcom/Kconfig
+> @@ -10,6 +10,17 @@ config PHY_CYGNUS_PCIE
+>  	  Enable this to support the Broadcom Cygnus PCIe PHY.
+>  	  If unsure, say N.
 >  
->  	devfreq->previous_freq = new_freq;
+> +config PHY_BCM_SR_USB
+> +	tristate "Broadcom Stingray USB PHY driver"
+> +	depends on OF && (ARCH_BCM_IPROC || COMPILE_TEST)
+> +	select GENERIC_PHY
+> +	default ARCH_BCM_IPROC
+> +	help
+> +	  Enable this to support the Broadcom Stingray USB PHY
+> +	  driver. It supports all versions of Superspeed and
+> +	  Highspeed PHYs.
+> +	  If unsure, say N.
 > +
-> +	if (devfreq->suspend_freq)
-> +		devfreq->resume_freq = cur_freq;
-> +
->  	return err;
->  }
+>  config BCM_KONA_USB2_PHY
+>  	tristate "Broadcom Kona USB2 PHY Driver"
+>  	depends on HAS_IOMEM
+> diff --git a/drivers/phy/broadcom/Makefile b/drivers/phy/broadcom/Makefile
+> index 0f60184..f453c7d 100644
+> --- a/drivers/phy/broadcom/Makefile
+> +++ b/drivers/phy/broadcom/Makefile
+> @@ -11,3 +11,4 @@ obj-$(CONFIG_PHY_BRCM_USB)		+= phy-brcm-usb-dvr.o
+>  phy-brcm-usb-dvr-objs := phy-brcm-usb.o phy-brcm-usb-init.o
 >  
-> @@ -667,6 +671,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  	}
->  	devfreq->max_freq = devfreq->scaling_max_freq;
->  
-> +	devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
-> +	atomic_set(&devfreq->suspend_count, 0);
+>  obj-$(CONFIG_PHY_BCM_SR_PCIE)		+= phy-bcm-sr-pcie.o
+> +obj-$(CONFIG_PHY_BCM_SR_USB)		+= phy-bcm-sr-usb.o
+> diff --git a/drivers/phy/broadcom/phy-bcm-sr-usb.c b/drivers/phy/broadcom/phy-bcm-sr-usb.c
+> new file mode 100644
+> index 0000000..52484b3
+> --- /dev/null
+> +++ b/drivers/phy/broadcom/phy-bcm-sr-usb.c
+> @@ -0,0 +1,373 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016-2018 Broadcom
+> + */
 > +
->  	dev_set_name(&devfreq->dev, "devfreq%d",
->  				atomic_inc_return(&devfreq_no));
->  	err = device_register(&devfreq->dev);
-> @@ -867,14 +874,28 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->   */
->  int devfreq_suspend_device(struct devfreq *devfreq)
->  {
-> +	int ret;
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
 > +
->  	if (!devfreq)
->  		return -EINVAL;
->  
-> -	if (!devfreq->governor)
-> -		return 0;
-> +	if (devfreq->governor) {
-> +		ret = devfreq->governor->event_handler(devfreq,
-> +					DEVFREQ_GOV_SUSPEND, NULL);
-> +		if (ret)
-> +			return ret;
-> +	}
+> +enum bcm_usb_phy_version {
+> +	BCM_USB_PHY_V1,
+> +	BCM_USB_PHY_V2,
+> +};
 > +
-> +	if (devfreq->suspend_freq) {
-> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
+> +enum bcm_usb_phy_reg {
+> +	PLL_NDIV_FRAC,
+> +	PLL_NDIV_INT,
+> +	PLL_CTRL,
+> +	PHY_CTRL,
+> +	PHY_PLL_CTRL,
+> +};
+> +
+> +/* USB PHY registers */
+> +
+> +static const u8 bcm_usb_u3phy_v1[] = {
+> +	[PLL_CTRL]		= 0x18,
+> +	[PHY_CTRL]		= 0x14,
+> +};
+> +
+> +static const u8 bcm_usb_u2phy_v1[] = {
+> +	[PLL_NDIV_FRAC]	= 0x04,
+> +	[PLL_NDIV_INT]	= 0x08,
+> +	[PLL_CTRL]	= 0x0c,
+> +	[PHY_CTRL]	= 0x10,
+> +};
+> +
+> +#define HSPLL_NDIV_INT_VAL	0x13
+> +#define HSPLL_NDIV_FRAC_VAL	0x1005
+> +
+> +static const u8 bcm_usb_u2phy_v2[] = {
+> +	[PLL_NDIV_FRAC]	= 0x0,
+> +	[PLL_NDIV_INT]	= 0x4,
+> +	[PLL_CTRL]	= 0x8,
+> +	[PHY_CTRL]	= 0xc,
+> +};
+> +
+> +enum pll_ctrl_bits {
+> +	PLL_RESETB,
+> +	SSPLL_SUSPEND_EN,
+> +	PLL_SEQ_START,
+> +	PLL_LOCK,
+> +	PLL_PDIV,
+> +};
+> +
+> +static const u8 u3pll_ctrl[] = {
+> +	[PLL_RESETB]		= 0,
+> +	[SSPLL_SUSPEND_EN]	= 1,
+> +	[PLL_SEQ_START]		= 2,
+> +	[PLL_LOCK]		= 3,
+> +};
+> +
+> +#define HSPLL_PDIV_MASK		0xF
+> +#define HSPLL_PDIV_VAL		0x1
+> +
+> +static const u8 u2pll_ctrl[] = {
+> +	[PLL_PDIV]	= 1,
+> +	[PLL_RESETB]	= 5,
+> +	[PLL_LOCK]	= 6,
+> +};
+> +
+> +enum bcm_usb_phy_ctrl_bits {
+> +	CORERDY,
+> +	AFE_LDO_PWRDWNB,
+> +	AFE_PLL_PWRDWNB,
+> +	AFE_BG_PWRDWNB,
+> +	PHY_ISO,
+> +	PHY_RESETB,
+> +	PHY_PCTL,
+> +};
+> +
+> +#define PHY_PCTL_MASK	0xffff
+> +/*
+> + * 0x0806 of PCTL_VAL has below bits set
+> + * BIT-8 : refclk divider 1
+> + * BIT-3:2: device mode; mode is not effect
+> + * BIT-1: soft reset active low
+> + */
+> +#define HSPHY_PCTL_VAL	0x0806
+> +#define SSPHY_PCTL_VAL	0x0006
+> +
+> +static const u8 u3phy_ctrl[] = {
+> +	[PHY_RESETB]	= 1,
+> +	[PHY_PCTL]	= 2,
+> +};
+> +
+> +static const u8 u2phy_ctrl[] = {
+> +	[CORERDY]		= 0,
+> +	[AFE_LDO_PWRDWNB]	= 1,
+> +	[AFE_PLL_PWRDWNB]	= 2,
+> +	[AFE_BG_PWRDWNB]	= 3,
+> +	[PHY_ISO]		= 4,
+> +	[PHY_RESETB]		= 5,
+> +	[PHY_PCTL]		= 6,
+> +};
+> +
+> +struct bcm_usb_phy_cfg {
+> +	uint32_t type;
+> +	uint32_t ver;
+> +	void __iomem *regs;
+> +	struct phy *phy;
+> +	const u8 *offset;
+> +};
+> +
+> +#define PLL_LOCK_RETRY_COUNT	1000
+> +
+> +enum bcm_usb_phy_type {
+> +	USB_HS_PHY,
+> +	USB_SS_PHY,
+> +};
+> +
+> +static inline void bcm_usb_reg32_clrbits(void __iomem *addr, uint32_t clear)
+> +{
+> +	writel(readl(addr) & ~clear, addr);
+> +}
+> +
+> +static inline void bcm_usb_reg32_setbits(void __iomem *addr, uint32_t set)
+> +{
+> +	writel(readl(addr) | set, addr);
+> +}
+> +
+> +static int bcm_usb_pll_lock_check(void __iomem *addr, u32 bit)
+> +{
+> +	int retry;
+> +	u32 rd_data;
+> +
+> +	retry = PLL_LOCK_RETRY_COUNT;
+> +	do {
+> +		rd_data = readl(addr);
+> +		if (rd_data & bit)
 > +			return 0;
+> +		udelay(1);
+> +	} while (--retry > 0);
 > +
-> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
-> +		if (ret)
-> +			return ret;
+> +	pr_err("%s: FAIL\n", __func__);
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +static int bcm_usb_ss_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
+> +{
+> +	int ret = 0;
+> +	void __iomem *regs = phy_cfg->regs;
+> +	const u8 *offset;
+> +	u32 rd_data;
+> +
+> +	offset = phy_cfg->offset;
+> +
+> +	/* Set pctl with mode and soft reset */
+> +	rd_data = readl(regs + offset[PHY_CTRL]);
+> +	rd_data &= ~(PHY_PCTL_MASK << u3phy_ctrl[PHY_PCTL]);
+> +	rd_data |= (SSPHY_PCTL_VAL << u3phy_ctrl[PHY_PCTL]);
+> +	writel(rd_data, regs + offset[PHY_CTRL]);
+> +
+> +	bcm_usb_reg32_clrbits(regs + offset[PLL_CTRL],
+> +			      BIT(u3pll_ctrl[SSPLL_SUSPEND_EN]));
+> +	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> +			      BIT(u3pll_ctrl[PLL_SEQ_START]));
+> +	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> +			      BIT(u3pll_ctrl[PLL_RESETB]));
+> +
+> +	/* Maximum timeout for PLL reset done */
+> +	msleep(30);
+> +
+> +	ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
+> +				     BIT(u3pll_ctrl[PLL_LOCK]));
+> +
+> +	return ret;
+> +}
+> +
+> +static int bcm_usb_hs_phy_init(struct bcm_usb_phy_cfg *phy_cfg)
+> +{
+> +	int ret = 0;
+> +	void __iomem *regs = phy_cfg->regs;
+> +	const u8 *offset;
+> +	u32 rd_data;
+> +
+> +	offset = phy_cfg->offset;
+> +
+> +	writel(HSPLL_NDIV_INT_VAL, regs + offset[PLL_NDIV_INT]);
+> +	writel(HSPLL_NDIV_FRAC_VAL, regs + offset[PLL_NDIV_FRAC]);
+> +
+> +	rd_data = readl(regs + offset[PLL_CTRL]);
+> +	rd_data &= ~(HSPLL_PDIV_MASK << u2pll_ctrl[PLL_PDIV]);
+> +	rd_data |= (HSPLL_PDIV_VAL << u2pll_ctrl[PLL_PDIV]);
+> +	writel(rd_data, regs + offset[PLL_CTRL]);
+> +
+> +	/* Set Core Ready high */
+> +	bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> +			      BIT(u2phy_ctrl[CORERDY]));
+> +
+> +	/* Maximum timeout for Core Ready done */
+> +	msleep(30);
+> +
+> +	bcm_usb_reg32_setbits(regs + offset[PLL_CTRL],
+> +			      BIT(u2pll_ctrl[PLL_RESETB]));
+> +	bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> +			      BIT(u2phy_ctrl[PHY_RESETB]));
+> +
+> +
+> +	rd_data = readl(regs + offset[PHY_CTRL]);
+> +	rd_data &= ~(PHY_PCTL_MASK << u2phy_ctrl[PHY_PCTL]);
+> +	rd_data |= (HSPHY_PCTL_VAL << u2phy_ctrl[PHY_PCTL]);
+> +	writel(rd_data, regs + offset[PHY_CTRL]);
+> +
+> +	/* Maximum timeout for PLL reset done */
+> +	msleep(30);
+> +
+> +	ret = bcm_usb_pll_lock_check(regs + offset[PLL_CTRL],
+> +				     BIT(u2pll_ctrl[PLL_LOCK]));
+> +
+> +	return ret;
+> +}
+> +
+> +static int bcm_usb_phy_reset(struct phy *phy)
+> +{
+> +	struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
+> +	void __iomem *regs = phy_cfg->regs;
+> +	const u8 *offset;
+> +
+> +	offset = phy_cfg->offset;
+> +
+> +	if (phy_cfg->type == USB_HS_PHY) {
+> +		bcm_usb_reg32_clrbits(regs + offset[PHY_CTRL],
+> +				      BIT(u2phy_ctrl[CORERDY]));
+> +		bcm_usb_reg32_setbits(regs + offset[PHY_CTRL],
+> +				      BIT(u2phy_ctrl[CORERDY]));
 > +	}
->  
-> -	return devfreq->governor->event_handler(devfreq,
-> -				DEVFREQ_GOV_SUSPEND, NULL);
+> +
 > +	return 0;
->  }
->  EXPORT_SYMBOL(devfreq_suspend_device);
->  
-> @@ -888,14 +909,28 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->   */
->  int devfreq_resume_device(struct devfreq *devfreq)
->  {
+> +}
+> +
+> +static int bcm_usb_phy_init(struct phy *phy)
+> +{
+> +	struct bcm_usb_phy_cfg *phy_cfg = phy_get_drvdata(phy);
+> +	int ret = -EINVAL;
+> +
+> +	if (phy_cfg->type == USB_SS_PHY)
+> +		ret = bcm_usb_ss_phy_init(phy_cfg);
+> +	else if (phy_cfg->type == USB_HS_PHY)
+> +		ret = bcm_usb_hs_phy_init(phy_cfg);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct phy_ops sr_phy_ops = {
+> +	.init		= bcm_usb_phy_init,
+> +	.reset		= bcm_usb_phy_reset,
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+> +static int bcm_usb_phy_create(struct device *dev, struct device_node *node,
+> +			     void __iomem *regs, uint32_t version)
+> +{
+> +	struct bcm_usb_phy_cfg *phy_cfg;
+> +	struct phy_provider *phy_provider;
+> +
+> +	phy_cfg = devm_kzalloc(dev, sizeof(struct bcm_usb_phy_cfg), GFP_KERNEL);
+> +	if (!phy_cfg)
+> +		return -ENOMEM;
+> +
+> +	phy_cfg->regs = regs;
+> +	phy_cfg->ver = version;
+> +
+> +	if (phy_cfg->ver == BCM_USB_PHY_V1) {
+> +		unsigned int id;
+> +
+> +		if (of_property_read_u32(node, "reg", &id)) {
+> +			dev_err(dev, "missing reg property in node %s\n",
+> +				node->name);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (id == 0) {
+> +			phy_cfg->offset = bcm_usb_u2phy_v1;
+> +			phy_cfg->type = USB_HS_PHY;
+> +		} else if (id == 1) {
+> +			phy_cfg->offset = bcm_usb_u3phy_v1;
+> +			phy_cfg->type = USB_SS_PHY;
+> +		} else {
+> +			return -ENODEV;
+> +		}
+> +	} else if (phy_cfg->ver == BCM_USB_PHY_V2) {
+> +		phy_cfg->offset = bcm_usb_u2phy_v2;
+> +		phy_cfg->type = USB_HS_PHY;
+> +	}
+> +
+> +	phy_cfg->phy = devm_phy_create(dev, node, &sr_phy_ops);
+> +	if (IS_ERR(phy_cfg->phy))
+> +		return PTR_ERR(phy_cfg->phy);
+> +
+> +	phy_set_drvdata(phy_cfg->phy, phy_cfg);
+> +	phy_provider = devm_of_phy_provider_register(&phy_cfg->phy->dev,
+> +						     of_phy_simple_xlate);
+
+The phy_provider_register usage is wrong here. The device passed shouldn't be
+PHY's device rather it should be PHY provider device. So
+devm_of_phy_provider_register should have just used dev from the argument of
+this function instead of &phy_cfg->phy->dev.
+
+Moreover a single PHY provider can support multiple PHYs. So you can actually
+move the devm_of_phy_provider_register out of this function and register the
+PHY provider only once.
+
+Remove devm_of_phy_provider_register from this function and add the following
+in the probe
+phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+return PTR_ERR_OR_ZERO(phy_provider);
+
+Thanks
+Kishon
+
+> +	if (IS_ERR(phy_provider)) {
+> +		dev_err(dev, "Failed to register phy provider\n");
+> +		return PTR_ERR(phy_provider);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id bcm_usb_phy_of_match[] = {
+> +	{
+> +		.compatible = "brcm,sr-usb-phy",
+> +		.data = (void *)BCM_USB_PHY_V1,
+> +	},
+> +	{
+> +		.compatible = "brcm,sr-usb-phy-v2",
+> +		.data = (void *)BCM_USB_PHY_V2,
+> +	},
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm_usb_phy_of_match);
+> +
+> +static int bcm_usb_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *dn = dev->of_node, *child;
+> +	const struct of_device_id *of_id;
+> +	struct resource *res;
+> +	void __iomem *regs;
 > +	int ret;
+> +	enum bcm_usb_phy_version version;
 > +
->  	if (!devfreq)
->  		return -EINVAL;
->  
-> -	if (!devfreq->governor)
-> -		return 0;
-> +	if (devfreq->resume_freq) {
-> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
-> +			return 0;
->  
-> -	return devfreq->governor->event_handler(devfreq,
-> -				DEVFREQ_GOV_RESUME, NULL);
-> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	regs = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
 > +
-> +	if (devfreq->governor) {
-> +		ret = devfreq->governor->event_handler(devfreq,
-> +					DEVFREQ_GOV_RESUME, NULL);
-> +		if (ret)
+> +	of_id = of_match_node(bcm_usb_phy_of_match, dn);
+> +	if (of_id)
+> +		version = (enum bcm_usb_phy_version)of_id->data;
+> +	else
+> +		return -ENODEV;
+> +
+> +	if (of_get_child_count(dn) == 0)
+> +		return bcm_usb_phy_create(dev, dn, regs, version);
+> +
+> +	for_each_available_child_of_node(dn, child) {
+> +		ret = bcm_usb_phy_create(dev, child, regs, version);
+> +		if (ret) {
+> +			of_node_put(child);
 > +			return ret;
+> +		}
 > +	}
 > +
 > +	return 0;
->  }
->  EXPORT_SYMBOL(devfreq_resume_device);
->  
-> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-> index e4963b0..d985199 100644
-> --- a/include/linux/devfreq.h
-> +++ b/include/linux/devfreq.h
-> @@ -131,6 +131,9 @@ struct devfreq_dev_profile {
->   * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
->   * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
->   * @stop_polling:	 devfreq polling status of a device.
-> + * @suspend_freq:	 frequency of a device set during suspend phase.
-> + * @resume_freq:	 frequency of a device set in resume phase.
-> + * @suspend_count:	 suspend requests counter for a device.
->   * @total_trans:	Number of devfreq transitions
->   * @trans_table:	Statistics of devfreq transitions
->   * @time_in_state:	Statistics of devfreq states
-> @@ -167,6 +170,10 @@ struct devfreq {
->  	unsigned long scaling_max_freq;
->  	bool stop_polling;
->  
-> +	unsigned long suspend_freq;
-> +	unsigned long resume_freq;
-> +	atomic_t suspend_count;
+> +}
 > +
->  	/* information for device frequency transition */
->  	unsigned int total_trans;
->  	unsigned int *trans_table;
+> +static struct platform_driver bcm_usb_phy_driver = {
+> +	.driver = {
+> +		.name = "phy-bcm-sr-usb",
+> +		.of_match_table = bcm_usb_phy_of_match,
+> +	},
+> +	.probe = bcm_usb_phy_probe,
+> +};
+> +module_platform_driver(bcm_usb_phy_driver);
+> +
+> +MODULE_AUTHOR("Broadcom");
+> +MODULE_DESCRIPTION("Broadcom stingray USB Phy driver");
+> +MODULE_LICENSE("GPL v2");
 > 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
