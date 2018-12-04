@@ -2,120 +2,188 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC44C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CBDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7312082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3272082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:03:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t66LeFoe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7312082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JoF//ver"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3272082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbeLDACo (ORCPT
+        id S1726174AbeLDADU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:02:44 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37627 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDACo (ORCPT
+        Mon, 3 Dec 2018 19:03:20 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:47037 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbeLDADT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:02:44 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 40so13466488oth.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:02:43 -0800 (PST)
+        Mon, 3 Dec 2018 19:03:19 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f23so10557182lfc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 16:03:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ahw4gQwLvsmvV1zqofEEtSGIGNpYJZgQPEmRreWh4Ug=;
-        b=t66LeFoeiVsceyTItnEJaMZBTEW3J1/kCDeNlU2TChD25kycQWLXBp2ewy0s2d+HYS
-         xYVQ5d34XxU91YGYKyuR8gWXy5sEkck0AL6/tDjNbY8b5m65XpL0CUDpm4PgVAPYFY7N
-         bPknRuB2bz9rZZ+Gx82ROtY5kPbySIia53Lz2LMPqnqDRf/U0s+d6ylgSie4SjuYtrTU
-         kGnE1rXvWkw5XPMI3apfsdMVXRyawVLANnpX0T3iRTGEYtXdWnjUUf7NNMszmxW0ury2
-         BQFc1Sd8Sbml3644mi/1+oOsZ1isnXvvp6tm2+BW3rBtaNJTWQ4BW8CSgKalv0A2XYzs
-         fTFw==
+        bh=4K7yIBZFtcXnzyNWvJFcpBdx/s17elumaSwwTZXnU1Q=;
+        b=JoF//verM7fYMxKhJvqgOX7fBd4H9+PbZUHbmzjUBGDL8E7ucFgV1lEUPYZelIQ1xf
+         g4xuCd2x3opnVuSu/3vhVdE4ZMG3QUIC6L0KvvAaF9OKnEwadFCii10+IZpPW4m3cdEa
+         Qics7JZJF9KcKUN0HJwmRu+JRfyop3VOCnACKckBHRPjG4VFPqGKFjgiMiTfkxdblICR
+         kY6/0QVUzgVdUdZcOC2SNUBY4FwKf10AHOmrqBVLJuS4KKGa4g0f8h97XyswddgQGEzz
+         bc8es7XdqPJRvTIOGQ90ueJrPBBJxl7Ojtm2gN6Xx+iRqdsJFNkYA6EbtGCvmIk3/J8Y
+         tJdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ahw4gQwLvsmvV1zqofEEtSGIGNpYJZgQPEmRreWh4Ug=;
-        b=Xf/OcoOTDNSnoBrrHM1ZJLf/P4Jb/pY2l++2jZDuP38P940OC5IelNThfJJwJW60cb
-         0EtlEaJ3aIQgtW/LBvNwRC3IpdWJqoMOdo3T+w3zybAx3AHnTrdjJtHLDJJVbrPwp+XC
-         L5beXsxDMYPHSzGGFUYWtpMY/eOAO9dwpBfOr5sJMbzQTJAei0ovpjuhMbf4D6mzenfZ
-         ZBA1dcgT53/ZFPT1v0smXJds0Ln2TdF5hh3xWWus4xXb8MHmhK2OA7U+SMCO5s/XWq5z
-         4KQu7XekCq2n8ryg7U7TUhs9w9Lxs5W5myzSBF+QbtEL2Xbo+q7rAHVjhqTaMdUPRXtq
-         cXyA==
-X-Gm-Message-State: AA+aEWZlsTMYlTn2gtvTs95UKRTmShhdfkh2WN6e11TsNj1mtVYoaYbI
-        FRfcG8wqX4gp0aNPO5mwd2u53jZXNL7uOqk/e/K89Q==
-X-Google-Smtp-Source: AFSGD/Wc35K87HZq9TdXKn1wnrVi5iRwzFZ7uaeINhcG7HMGFULmA1ak6g5fCY7uKLH+Ssfby8hfkiG0LHRqnnlbRZg=
-X-Received: by 2002:a9d:638f:: with SMTP id w15mr10850019otk.230.1543881763067;
- Mon, 03 Dec 2018 16:02:43 -0800 (PST)
+        bh=4K7yIBZFtcXnzyNWvJFcpBdx/s17elumaSwwTZXnU1Q=;
+        b=GG651eaNUzjy8OJ8o5kTOcIjRtL+jWsNhD1X+3xpi6qMijcOJmXkBfn5RFZ7fXEQ5e
+         zIH6y07PUDe/vYqzzB2MckAd7LxMrPMJHp+QOZSo7VDIV0DQIMQmMJJ1h6E1q5ct65Qr
+         YvMfsSMwu3GTpaA7zzVaYTmQxK5FK435p9yPOJ+5ySpn5T/YyRvVxIj98xDMIKTBjLUX
+         2PbqzfOtqoXFtClFlnZdyLH3GcxdcfwmbNQXRwwRkCTKGHfS9YiJmYPbQIp7gFlW+/Xa
+         U0UVx9ofmMETDQBzRoLZY1UZE4/exT0rrmyFSnlQkgZIqUgguA59T8pqwBWo3WCHMBDo
+         n7oA==
+X-Gm-Message-State: AA+aEWbLvybIwgwv8nbSqZ5ezY7NmlMsAUBgZAcKqKq74bmh/elvEyVE
+        J+Cg7KbNTiMXJQSqmZnFwgJLMvAmbjKIaPljezAD
+X-Google-Smtp-Source: AFSGD/UJtAYMZRAvE0v8uG0QGntZniICdSLxWODrcPpwrTXC2UhYC0WXivTOng2eAw88GzftrcWA8IbnGCn8na8VAF4=
+X-Received: by 2002:a19:6719:: with SMTP id b25mr9647612lfc.38.1543881797125;
+ Mon, 03 Dec 2018 16:03:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-17-brendanhiggins@google.com> <20181130034623.GQ18410@garbanzo.do-not-panic.com>
-In-Reply-To: <20181130034623.GQ18410@garbanzo.do-not-panic.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 3 Dec 2018 16:02:31 -0800
-Message-ID: <CAFd5g463cxzsF+DJ06aL=mjGzNX1NcE5Xp8b584U2TAJ5joQKw@mail.gmail.com>
-Subject: Re: [RFC v3 16/19] arch: um: make UML unflatten device tree when testing
-To:     mcgrof@kernel.org
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
-        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
-        Tim.Bird@sony.com, khilman@baylibre.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
-        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
-        kieran.bingham@ideasonboard.com,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
+References: <20181203032827.27978-1-tycho@tycho.ws> <20181203032827.27978-3-tycho@tycho.ws>
+ <20181203050108.GB31406@mail.hallyn.com>
+In-Reply-To: <20181203050108.GB31406@mail.hallyn.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 3 Dec 2018 19:03:05 -0500
+Message-ID: <CAHC9VhRsgv0bceoqCZt00qMc-KvuOkKsF1xaoYdmxUt93kPWmw@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] seccomp: switch system call argument type to void *
+To:     Serge Hallyn <serge@hallyn.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, mtk.manpages@gmail.com,
+        keescook@chromium.org, luto@amacapital.net, oleg@redhat.com,
+        ebiederm@xmission.com, christian@brauner.io, tyhicks@canonical.com,
+        suda.akihiro@lab.ntt.co.jp, asarai@suse.de, jannh@google.com,
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 7:46 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Mon, Dec 3, 2018 at 12:01 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> On Sun, Dec 02, 2018 at 08:28:25PM -0700, Tycho Andersen wrote:
+> > The const qualifier causes problems for any code that wants to write to the
+> > third argument of the seccomp syscall, as we will do in a future patch in
+> > this series.
+> >
+> > The third argument to the seccomp syscall is documented as void *, so
+> > rather than just dropping the const, let's switch everything to use void *
+> > as well.
+> >
+> > I believe this is safe because of 1. the documentation above, 2. there's no
+> > real type information exported about syscalls anywhere besides the man
+> > pages.
+> >
+> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > CC: Kees Cook <keescook@chromium.org>
+> > CC: Andy Lutomirski <luto@amacapital.net>
+> > CC: Oleg Nesterov <oleg@redhat.com>
+> > CC: Eric W. Biederman <ebiederm@xmission.com>
+> > CC: "Serge E. Hallyn" <serge@hallyn.com>
 >
-> On Wed, Nov 28, 2018 at 11:36:33AM -0800, Brendan Higgins wrote:
-> > Make UML unflatten any present device trees when running KUnit tests.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >  arch/um/kernel/um_arch.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
-> > index a818ccef30ca2..bd58ae3bf4148 100644
-> > --- a/arch/um/kernel/um_arch.c
-> > +++ b/arch/um/kernel/um_arch.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/sched.h>
-> >  #include <linux/sched/task.h>
-> >  #include <linux/kmsg_dump.h>
-> > +#include <linux/of_fdt.h>
-> >
-> >  #include <asm/pgtable.h>
-> >  #include <asm/processor.h>
-> > @@ -347,6 +348,9 @@ void __init setup_arch(char **cmdline_p)
-> >       read_initrd();
-> >
-> >       paging_init();
-> > +#if IS_ENABLED(CONFIG_OF_UNITTEST)
-> > +     unflatten_device_tree();
-> > +#endif
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 >
-> *Why?*
+> Though I'm not entirely convinced there will be no ill effects of changing
+> the argument type.  I'll feel comfortable when Michael and Paul say it's
+> fine :)
 
-Whoops, I didn't realize how bad that looked. In anycase, doing what
-Rob suggested as a separate patch should clear this up.
+Well, looking at the seccomp(2) manpage on my system (dated
+2018-02-02) the third argument is already shown as a "void *args":
+
+ SYNOPSIS
+      #include <linux/seccomp.h>
+      #include <linux/filter.h>
+      #include <linux/audit.h>
+      #include <linux/signal.h>
+      #include <sys/ptrace.h>
+
+      int seccomp(unsigned int operation, unsigned int flags, void *args);
+
+... so I think we're safe :)
+
+From a libseccomp perspective, we always call seccomp(2) via
+syscall(2) so it is unlikely we would ever run into problems, not too
+mention that we are just talking about the pointer type used in the
+kernel; from a syscall ABI perspective it is still a pointer value and
+that is the important part.
+
+> > CC: Christian Brauner <christian@brauner.io>
+> > CC: Tyler Hicks <tyhicks@canonical.com>
+> > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> > ---
+> >  include/linux/seccomp.h | 2 +-
+> >  kernel/seccomp.c        | 8 ++++----
+> >  2 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> > index e5320f6c8654..b5103c019cf4 100644
+> > --- a/include/linux/seccomp.h
+> > +++ b/include/linux/seccomp.h
+> > @@ -43,7 +43,7 @@ extern void secure_computing_strict(int this_syscall);
+> >  #endif
+> >
+> >  extern long prctl_get_seccomp(void);
+> > -extern long prctl_set_seccomp(unsigned long, char __user *);
+> > +extern long prctl_set_seccomp(unsigned long, void __user *);
+> >
+> >  static inline int seccomp_mode(struct seccomp *s)
+> >  {
+> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > index 96afc32e041d..393e029f778a 100644
+> > --- a/kernel/seccomp.c
+> > +++ b/kernel/seccomp.c
+> > @@ -924,7 +924,7 @@ static long seccomp_get_action_avail(const char __user *uaction)
+> >
+> >  /* Common entry point for both prctl and syscall. */
+> >  static long do_seccomp(unsigned int op, unsigned int flags,
+> > -                    const char __user *uargs)
+> > +                    void __user *uargs)
+> >  {
+> >       switch (op) {
+> >       case SECCOMP_SET_MODE_STRICT:
+> > @@ -944,7 +944,7 @@ static long do_seccomp(unsigned int op, unsigned int flags,
+> >  }
+> >
+> >  SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+> > -                      const char __user *, uargs)
+> > +                      void __user *, uargs)
+> >  {
+> >       return do_seccomp(op, flags, uargs);
+> >  }
+> > @@ -956,10 +956,10 @@ SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
+> >   *
+> >   * Returns 0 on success or -EINVAL on failure.
+> >   */
+> > -long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
+> > +long prctl_set_seccomp(unsigned long seccomp_mode, void __user *filter)
+> >  {
+> >       unsigned int op;
+> > -     char __user *uargs;
+> > +     void __user *uargs;
+> >
+> >       switch (seccomp_mode) {
+> >       case SECCOMP_MODE_STRICT:
+> > --
+> > 2.19.1
+
+
+
+-- 
+paul moore
+www.paul-moore.com
