@@ -2,170 +2,244 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA8FC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE71C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 383E6214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93B52087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:19:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Q+2MUYa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383E6214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aZH8dZaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93B52087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbeLDGRh (ORCPT
+        id S1726063AbeLDGTm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:17:37 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:43986 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeLDGRg (ORCPT
+        Tue, 4 Dec 2018 01:19:42 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:11738 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbeLDGTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 01:17:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vU3JYL/AF0Tm2ddYUZ66F/fVe3M4RxxE3gBW3GR/D1s=; b=Q+2MUYa5yLOW92I+RHVx1udTo
-        ovk/VTF/Xh+kPq05WsbMLq1YIo4OsZc9S5v7INYmrx4VtMPM6KnIXTcymQROn71CcJk3wxv5rG9wV
-        2IIGmlfYM0x4yd5z/wffx8NkED1A8qhXbVImnK6fxdVKHaZFCqMUQBaWm5rMHh9EkXJ7I=;
-Received: from [77.247.85.71] (helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gU41L-0005tC-Ls; Tue, 04 Dec 2018 07:17:23 +0100
-Received: from [::1] (helo=localhost)
-        by eeepc with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gTqzu-0004iH-OO; Mon, 03 Dec 2018 17:23:02 +0100
-Date:   Mon, 3 Dec 2018 17:22:46 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        bcousson@baylibre.com, letux-kernel@openphoenux.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181203172246.0e767a16@kemnade.info>
-In-Reply-To: <20181203153910.GA6707@atomide.com>
-References: <20181110203115.13335-1-andreas@kemnade.info>
-        <20181110203115.13335-3-andreas@kemnade.info>
-        <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
-        <20181130071534.0a6cd455@kemnade.info>
-        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
-        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
-        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
-        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-        <20181130153729.GG53235@atomide.com>
-        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
-        <20181203153910.GA6707@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MhEEXM=lh9cLcZUfXC+oZzA"; protocol="application/pgp-signature"
+        Tue, 4 Dec 2018 01:19:42 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181204061936epoutp0347b1937a6968b8e23a17ef8fd9c93e8b~tDNm5rLKw3207632076epoutp038;
+        Tue,  4 Dec 2018 06:19:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181204061936epoutp0347b1937a6968b8e23a17ef8fd9c93e8b~tDNm5rLKw3207632076epoutp038
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543904376;
+        bh=KAWhR31NxtOmiWLfxm4iRJWBqukFe+N418flXq88B2A=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=aZH8dZaWNWd5u4ZRQHMwT/jNZ/UbRsT0i84oyay2e8nTQy+X28GRuq5tOqv+vQpvB
+         vscvr7JyRMzLaXLtT6nSPG/ASI71bgukLNS3WjaJKdIO7xtw4LjAjvBD8PtAO2e0fg
+         Sg7uCFDvpO2AZAlmaOpd42f27Kumg4LlxuzuBnpc=
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.158]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181204061933epcas1p130cb84e1eea4741d9316db3419d2971f~tDNkQkuf52171421714epcas1p1V;
+        Tue,  4 Dec 2018 06:19:33 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        29.F5.04055.57C160C5; Tue,  4 Dec 2018 15:19:33 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20181204061933epcas2p3fc013e7960266fcf9e3f1abab94bdd61~tDNjzxLcZ2199121991epcas2p39;
+        Tue,  4 Dec 2018 06:19:33 +0000 (GMT)
+X-AuditID: b6c32a45-711ff70000000fd7-69-5c061c75d631
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        45.82.03627.47C160C5; Tue,  4 Dec 2018 15:19:33 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PJ700A4V88KCE60@mmp1.samsung.com>; Tue, 04 Dec 2018 15:19:32 +0900 (KST)
+Message-id: <5C061C74.808@samsung.com>
+Date:   Tue, 04 Dec 2018 15:19:32 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH v2 3/5] devfreq: add devfreq_suspend/resume() functions
+In-reply-to: <1543847475-7600-4-git-send-email-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xbVRjNfa/vB8uKb2VsV5hbfcZlkLC11MrFrEbdNC92USL+sSgGn/AC
+        rL+efS2KjlAGjK3LXJXF1G6IA4YTuhRYxxiwkZU6kg1XwYCLkyUOM4EthIyFTZ1oXx8q/53z
+        fee7955z76VxzRyZRpfZXYLTzltZcpWqZygjJ8u9gSzQfR5k0aWzGajLHyLQua5FAjVFrxGo
+        piVEopFDNnRk6g6OYrFOCn237y6FfvJsQIGjFzDUPTVBoB/6jpNo4XAUIH/sIoZORycpdPLH
+        UQzdqD5Foskr38bXuDpGoLoLUQrt75gn0N3vb6peWM/19PcQXPDLIOCOeUZVnO/IPcC1DMxg
+        XHf7QZIbbAxS3JnWKm7pMsVdmhvAuPB4vYr7JNwOuFMdDyhuoXtjXvJblu2lAl8sOLWCvchR
+        XGYvMbHm/MIdhcZndfosfS7KYbV23iaY2J278rJeKbPG7bPact7qjpfyeElitz2/3elwuwRt
+        qUNymVhBLLaKueJWibdJbnvJ1iKH7Tm9TpdtjAvftZR2NTwuHtv44RdtU8ADYtALkmjIPAN7
+        /AdJL1hFa5heAP1tzZRCHgDY+atMllWLh4DS6Aewdt8sITfUzBr4sOGmygtoGmc2weiYRS7j
+        TAacvv+ZStFPAjgW6AOyRs1shr0TH8saFfM0PDd6mZQxyWTCwenrCfwY8yQcfzgFZJzK7Ibn
+        mxYTB1rLxAAMnh/AZIIzdThcmg8nJlIYM/yldiQxkcS8CsNNdxI7Q6aahh0XD5OKhZ1wYrZ/
+        2U4KnB0OL+N0eLu9CygD9QDen64hFOIDcP7KGUxRGeDtE15MMZcMDwz9Rcl+IKOGB/ZrFMjB
+        E3Nr/rP89x+zwAeeCKxIKfB/SoEVKX0F8HawThAlW4kgZYv6ldfXDRJvPfPlXuC/tisCGBqw
+        q9X+l4gCDcGXSxW2CIA0zq5Vi++rCjTqYr7iI8HpKHS6rYIUAcZ4yp/iaalFjvjPsbsK9cZs
+        g8GAjDm5Bl0uu159K73xbQ1TwrsEiyCIgvPfOYxOSvOAVG/zN62v8ebGdabVFSHPXtvpoXf8
+        u09u2rKFv7XgE4vSQ8cfvdd0NTg+8jOhflReZf6gz1I93PLi0ps3fJV/1t8brP56z1LNTDhy
+        9o2UzLoGOrk1ULlnqK5ZO5zv68PCuOn12tQZyt2646nebddDVeHa39gZYGgz741FNuf/XtnJ
+        qqRSXp+JOyX+H7PD5F8BBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t9jAd1SGbYYgzldnBYHt2pabJyxntVi
+        +8ZvrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht3iVoOMxawpe5ksNj2+xmpxedcc
+        NovPvUcYLWac38dksfbIXXaLpdcvMlncblzBZnH31FGgGacvsVq07j3CbtG2+gOrxZsL91gc
+        xD227d7G6rFm3hpGj9kNF1k8JvR/YvRYvOclk8emVZ1sHvvnrmH32Lyk3uPfMXaPg+/2MHls
+        udrO4tG3ZRWjx4rV39k9Pm+SC+CL4rJJSc3JLEst0rdL4MrYOFmyYLZcxcxljxkbGM9LdDFy
+        ckgImEhs+9bN2MXIxSEksJNR4vm5u6wgCV4BQYkfk++xdDFycDALyEscuZQNYapLTJmSC1F+
+        n1Fi1t9mZpA4r4CaxI5r1SCdLAKqEtsvHmMDsdkEtCT2v7gBZvMLKEpc/fGYEaRcVCBCovtE
+        JcgYEYHzjBIH+zrBtjILtDJLPGrLArGFBbwlHracgTrtLqPE1Y+vmEESnAJeElvmv2aZwCgw
+        C8mlsxAunYVw6QJG5lWMkqkFxbnpucVGBUZ5qeV6xYm5xaV56XrJ+bmbGIFRve2wVv8OxsdL
+        4g8xCnAwKvHwOjiwxgixJpYVV+YeYpTgYFYS4S0oZIkR4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+        zsuffyxSSCA9sSQ1OzW1ILUIJsvEwSnVwDi1xry+ennK1/t2fi+7q9y+7nixknfijOATUqdc
+        GBbOms11/3XlbsEJThnTSj9YhLWekf4vOyn93vGl+QbRpbq72fYsXXnS7OqiVSfjCvmeyUw7
+        2n4/edYKE1NrN1vfvv+KsTcTG//niG1Rq08slI24cbi768xBn1V3zcuvyZn8NlY8utx5p4ES
+        S3FGoqEWc1FxIgAdFJyt5gIAAA==
+X-CMS-MailID: 20181204061933epcas2p3fc013e7960266fcf9e3f1abab94bdd61
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181203143132eucas1p128c029a7c7461e1127924a08e4a71811
+References: <1543847475-7600-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181203143132eucas1p128c029a7c7461e1127924a08e4a71811@eucas1p1.samsung.com>
+        <1543847475-7600-4-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/MhEEXM=lh9cLcZUfXC+oZzA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Lukasz,
 
-On Mon, 3 Dec 2018 07:39:10 -0800
-Tony Lindgren <tony@atomide.com> wrote:
+On 2018년 12월 03일 23:31, Lukasz Luba wrote:
+> This patch adds implementation for global suspend/resume for
+> devfreq framework. System suspend will next use these functions.
+> 
+> The patch is based on earlier work by Tobias Jakobi.
 
-> * Stephen Boyd <sboyd@kernel.org> [181130 23:52]:
-> > Quoting Tony Lindgren (2018-11-30 07:37:29) =20
-> > > Hi,
-> > >=20
-> > > * Tero Kristo <t-kristo@ti.com> [181130 09:21]: =20
-> > > > On 30/11/2018 09:57, Stephen Boyd wrote: =20
-> > > > > No that is not preferred. Can the omap2_clk_deny_idle() function =
-be
-> > > > > integrated closer into the clk framework in some way that allows =
-it to
-> > > > > be part of the clk_ops structure? And then have that take a clk_hw
-> > > > > structure instead of a struct clk? I haven't looked at this in any
-> > > > > detail whatsoever so I may be way off right now. =20
-> > > >=20
-> > > > It could be added under the main clk_ops struct, however this would
-> > > > introduce two new func pointers to it which are not used by anythin=
-g else
-> > > > but OMAP. Are you aware of any other platforms requiring similar fe=
-ature? =20
-> > >=20
-> > > From consumer usage point of view, I'm still wondering about
-> > > the relationship of clk_deny_idle() and clkdm_deny_idle().
-> > >=20
-> > > It seems that we need to allow reset control drivers call
-> > > clk_deny_idle() for the duration of reset. And it seems the
-> > > clk_deny_idle() should propagate to also up to the related
-> > > clock domain driver to do clkdm_deny_idle().
-> > >=20
-> > > So maybe clk_deny_idle() is could just be something like:
-> > >=20
-> > > dev =3D clk_get_device(clk);
-> > > ...
-> > > error =3D pm_runtime_get(dev);
-> > > ...
-> > > pm_runtime_put(dev);
-> > > ...
-> > >=20
-> > > And that way it would just propagate to the parent clock
-> > > domain driver and the clock framework does not need to know
-> > > about clockdomains. A clockdomain could be just a genpd
-> > > domain.
-> > >=20
-> > > Or do you guys have better ideas?
-> > >  =20
-> >=20
-> > Wouldn't the device link in clk framework patches do this for you if we
-> > had the RUNTIME_PM flag passed in. If this is about keeping the clock
-> > controller active when a consumer device is using it then I think it may
-> > work. =20
->=20
-> The consumer device stays active just fine with PM runtime
-> calls. So yes, the problem is keeping a clock controller forced
-> active for the period of consumer device reset. Other than
-> that typically autoidle can be just kept enabled.
->=20
-Are we still talking about the same problem? Maybe I am losing track
-here. Just to make sure.=20
-The patch series was about disabling autoidle for devices which cannot
-work with it during normal operation. Not during reset or something
-like that.=20
-Or is the keep-clock-active-during-reset just a requirement for bigger
-restructuring ideas?
+Please remove it from each patch description.
 
-Regards,
-Andreas
+> 
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/devfreq/devfreq.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/devfreq.h   |  6 ++++++
+>  2 files changed, 48 insertions(+)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 36bed24..7d60423 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -935,6 +935,48 @@ int devfreq_resume_device(struct devfreq *devfreq)
+>  EXPORT_SYMBOL(devfreq_resume_device);
+>  
+>  /**
+> + * devfreq_suspend() - Suspend devfreq governors and devices
+> + *
+> + * Called during system wide Suspend/Hibernate cycles for suspending governors
+> + * and devices preserving the state for resume. On some platforms the devfreq
+> + * device must have precise state (frequency) after resume in order to provide
+> + * fully operating setup.
+> + */
+> +void devfreq_suspend(void)
+> +{
+> +	struct devfreq *devfreq;
+> +	int ret;
+> +
+> +	mutex_lock(&devfreq_list_lock);
+> +	list_for_each_entry(devfreq, &devfreq_list, node) {
+> +		ret = devfreq_suspend_device(devfreq);
+> +		if (ret)
+> +			dev_warn(&devfreq->dev, "device suspend failed\n");
 
---Sig_/MhEEXM=lh9cLcZUfXC+oZzA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+When I checked the cpufreq_suspend(), cpufreq_suspend() prints message as 'err' level.
+I think that dev_err is more proper than dev_warn.
 
------BEGIN PGP SIGNATURE-----
+I'm not sure what is more correct log.
+But, 'devfreq->dev' device has the separate suspend/resume function.
+So, I think that devfreq_suspend() should print error log containing
+that it is error by devfreq framework.
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwFWFcACgkQfb1qx03i
-kySk6g/+POdYvoVVKYBjrqm8GKTLWubPUYY+oelza7BS0AKMJzYPTvpbv57Qn7Tt
-Nq2uUJXp12CCJ5jVw6j1M3m3A0vuySx0ILwawNiNdTpkj4x7ugwOp1N6OCepojrn
-FDyw+9xHfofNKWnk/bs67PxTIS0upsQLBUg1pBB9bi8zMBn4kkAtHkVgnnqVEF8Y
-/v7BWbpr63hLNv3aVys9cQ5iP0bC0wfJ5/lPAH9g33ROdqVlzrBKUHkkVmahyW+e
-wNbNLTgLPSnZFiPqF2NTT+lITgWdC8ca95biJAid83W/3aNIkRdhI0zW/bgZwz/x
-z2SHVnMwuGwxC/JcR1S6k6Y1plReLMMJRShcverR+CtnYNsLnyUahBd2Kq+IdeIP
-x/CMwUHDOnEf9euNJXTTC0rYJeBKrWK6kMrOV1kGHuPpLkXLS+eryuHxDOT3PDcZ
-BUwDpm5DNdtPM0s6vnrHRM8AlGEOo/zUZyuhy3Haq9fXDzmBqr5jdWLodb8xQxdQ
-ioZHavWlLlOyiIHm1bfrRXBjr4c0ZFnWtS4a46CoGZad1py6UqKNcpZFe4dT4qXe
-rbteKFT+DKqPlOleMLkXwmFhZXwbbkSOGQFUt0QBUIvj9tulM2tP1NpC+lYvAFci
-+DukCT1on+3G6v6YakpnToswR6xza9kW+mdAwhXkZPtyGS6m/o0=
-=FLW9
------END PGP SIGNATURE-----
+"device suspend failed"
+-> "failed to suspend devfreq device"
 
---Sig_/MhEEXM=lh9cLcZUfXC+oZzA--
+> +	}
+> +	mutex_unlock(&devfreq_list_lock);
+> +}
+> +
+> +/**
+> + * devfreq_resume() - Resume devfreq governors and devices
+> + *
+> + * Called during system wide Suspend/Hibernate cycle for resuming governors and
+> + * devices that are suspended with devfreq_suspend().
+> + */
+> +void devfreq_resume(void)
+> +{
+> +	struct devfreq *devfreq;
+> +	int ret;
+> +
+> +	mutex_lock(&devfreq_list_lock);
+> +	list_for_each_entry(devfreq, &devfreq_list, node) {
+> +		ret = devfreq_resume_device(devfreq);
+> +		if (ret)
+> +			dev_warn(&devfreq->dev, "device resume failed\n");
+
+ditto.
+
+"device resume failed"
+-> "failed to resume devfreq device"
+
+
+> +	}
+> +	mutex_unlock(&devfreq_list_lock);
+> +}
+> +
+> +/**
+>   * devfreq_add_governor() - Add devfreq governor
+>   * @governor:	the devfreq governor to be added
+>   */
+> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+> index d985199..fbffa74 100644
+> --- a/include/linux/devfreq.h
+> +++ b/include/linux/devfreq.h
+> @@ -205,6 +205,9 @@ extern void devm_devfreq_remove_device(struct device *dev,
+>  extern int devfreq_suspend_device(struct devfreq *devfreq);
+>  extern int devfreq_resume_device(struct devfreq *devfreq);
+>  
+> +extern void devfreq_suspend(void);
+> +extern void devfreq_resume(void);
+> +
+>  /**
+>   * update_devfreq() - Reevaluate the device and configure frequency
+>   * @devfreq:	the devfreq device
+> @@ -331,6 +334,9 @@ static inline int devfreq_resume_device(struct devfreq *devfreq)
+>  	return 0;
+>  }
+>  
+> +static inline void devfreq_suspend(void) {}
+> +static inline void devfreq_resume(void) {}
+> +
+>  static inline struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+>  					   unsigned long *freq, u32 flags)
+>  {
+> 
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
