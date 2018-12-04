@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D9BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603E6C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FD220850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21ED12146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 00:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="C3UMBZV6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FD220850
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="UoDFCLPV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21ED12146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbeLDA3V (ORCPT
+        id S1726205AbeLDA3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 19:29:21 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:56641 "EHLO
+        Mon, 3 Dec 2018 19:29:22 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:33355 "EHLO
         com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeLDA3T (ORCPT
+        with ESMTP id S1726156AbeLDA3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 19:29:19 -0500
+        Mon, 3 Dec 2018 19:29:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=cg5zgzx/V5+lCb+X9DhkeWkgIReX1qzBSvaKWXJvia8=; b=C3UMBZV6qeZt
-        qV+fF4yFC8ADI/v4jT6gyQeUcME/zgYwwmNbkyvhBKwtcTGngLY90CBSxaGflMLtXyzcEI8qjcxfN
-        RgjFtyBMsis5tUPAw/vVXqOVsFFK7KsUAB9vUnpAAPOJx1/7PQc0nFIR0+nkHpB/gv2Ja+3Y9Qrbg
-        +EDANWa919yoBtjrDuRGb+cMSgOlCZCfSWOQvG19r1nJYOwm6+VbQ9ks/w1vJfGHmjzGbcppNXNzI
-        CL4JiN2IX32hQLiuo7Z1kQ2LUvGQF2jNU3iYL7vtzMnK3QFpqA1MD7wJ2uzWwcAun2jD39wzI4m3Q
-        J8ot/sd7vpf9yH4mVNR9Mg==;
+        content-type; bh=ZuPMBY55/YjK7vtkzLINNioKB+LET4RE+keU5P06Kbg=; b=UoDFCLPVt4bK
+        i7Dg8PnheIhHKH8wBb7efRF66tDKF6EM6kyb+7YVJaxIWmDDDoLoFdPkH4G4yc5WGC8WpQgP+61G7
+        SvMXNynlqUTUeCkqTphkoQAipOuhj49rHVRZr2nSGrb7tS3H+/NqWd6a9T/rNPqHba3glVooQ2nWe
+        ZQxcTS4BLbk3n7yaYzk3L8EP4IsIFm4HmORLWnZYlHef5nRYQBG4JVOtF14HWo/HASI1kp3UIKNV9
+        PW7vMKTOAFvSDV8KPP9VLKdZXVUIXqWig6t0z86NKIw55guZVmZSsFExzTMBLs+f3RVppbwLa9Fb8
+        rcahW8/D5swlF7uRcA5DQw==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.155])
         by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gTyaF-00085R-4u; Tue, 04 Dec 2018 01:29:04 +0100
+        id 1gTyaH-00084F-8o; Tue, 04 Dec 2018 01:29:05 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 30FA5C073F;
-        Tue,  4 Dec 2018 01:28:57 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 9D092C0798;
+        Tue,  4 Dec 2018 01:29:02 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     mingo@redhat.com
 Cc:     peterz@infradead.org, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v2 06/24] liblockdep: Add dummy print_irqtrace_events() implementation
-Date:   Mon,  3 Dec 2018 16:28:15 -0800
-Message-Id: <20181204002833.55452-7-bvanassche@acm.org>
+Subject: [PATCH v2 08/24] locking/lockdep: Declare local symbols static
+Date:   Mon,  3 Dec 2018 16:28:17 -0800
+Message-Id: <20181204002833.55452-9-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <20181204002833.55452-1-bvanassche@acm.org>
 References: <20181204002833.55452-1-bvanassche@acm.org>
@@ -63,22 +63,22 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.03)
+X-SpamExperts-Outgoing-Evidence: Combined (0.01)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5jt/PrGzO/BgeX7KfxPOVYB602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5ptWZXYjR6iqQ/15bXrihih602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
  YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORoTzDmVyeT77VVz2sI0
- XFEoSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORp5DUfukDabUWTydlZq
+ oOM0SNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
  CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
  VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
  Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
  f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZv1QA
- MG9uIMDMLiZXx21su+VQjL+CeRXYyJUjOvWGx/aqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
+ U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZMMr0
+ 2d0F0HPu94z8zH2zQbjbuiqoegAUIkqF7XCkxWWqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
  LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3DxxyRsd8grl1y6raDzaUpsYepit/nNz0QO23jgLswQoYD5IAiDKO1d3jsySf+J0s
+ AQh13vqug5h3DxzFipuWGWTSfLq0V1EeKgR4V2CEiTiHMeHSqN7PzH5YS5IAiDKO1d3jsySf+J0s
  zc3volzWZu5fe7ghC/HzOt6Mfqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
  VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
  MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
@@ -88,33 +88,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch avoids that linking against liblockdep fails due to no
-print_irqtrace_events() definition being available.
+This patch avoids that sparse complains about a missing declaration for
+the lock_classes array.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- tools/lib/lockdep/lockdep.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/locking/lockdep.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/lib/lockdep/lockdep.c b/tools/lib/lockdep/lockdep.c
-index 6002fcf2f9bc..348a9d0fb766 100644
---- a/tools/lib/lockdep/lockdep.c
-+++ b/tools/lib/lockdep/lockdep.c
-@@ -15,6 +15,11 @@ u32 prandom_u32(void)
- 	abort();
- }
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 1efada2dd9dd..7434a00b2b2f 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -138,6 +138,9 @@ static struct lock_list list_entries[MAX_LOCKDEP_ENTRIES];
+  * get freed - this significantly simplifies the debugging code.
+  */
+ unsigned long nr_lock_classes;
++#ifndef CONFIG_DEBUG_LOCKDEP
++static
++#endif
+ struct lock_class lock_classes[MAX_LOCKDEP_KEYS];
  
-+void print_irqtrace_events(struct task_struct *curr)
-+{
-+	abort();
-+}
-+
- static struct new_utsname *init_utsname(void)
- {
- 	static struct new_utsname n = (struct new_utsname) {
+ static inline struct lock_class *hlock_class(struct held_lock *hlock)
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
