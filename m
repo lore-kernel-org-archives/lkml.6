@@ -2,167 +2,139 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9E9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D58C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3952081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:30:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB3952081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id CABD020878
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CABD020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbeLDNag (ORCPT
+        id S1726424AbeLDNbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:30:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39350 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725770AbeLDNaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:30:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7CD32AE21;
-        Tue,  4 Dec 2018 13:30:30 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 14:30:28 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 02/21] lib/vsprintf: Print time and date in human
- readable format via %pt
-Message-ID: <20181204133028.xkdnc5bqtqlnb3zu@pathway.suse.cz>
-References: <20181129105956.25933-1-andriy.shevchenko@linux.intel.com>
- <20181129105956.25933-3-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129105956.25933-3-andriy.shevchenko@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Tue, 4 Dec 2018 08:31:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59358 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725910AbeLDNbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:31:12 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E277420711; Tue,  4 Dec 2018 14:31:09 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9ACEC207AD;
+        Tue,  4 Dec 2018 14:30:59 +0100 (CET)
+Message-ID: <673fa8ed8e43943c29f050fd21954e77789134c3.camel@bootlin.com>
+Subject: Re: [PATCH v2 34/43] drm/sun4i: Add buffer stride and offset
+ configuration for tiling mode
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 04 Dec 2018 14:30:59 +0100
+In-Reply-To: <20181127092428.z7p4mxnf3jxuqcv7@flea>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+         <20181123092515.2511-35-paul.kocialkowski@bootlin.com>
+         <20181127092428.z7p4mxnf3jxuqcv7@flea>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-11-29 12:59:40, Andy Shevchenko wrote:
-> There are users which print time and date represented by content of
-> struct rtc_time in human readable format.
+Hi,
+
+On Tue, 2018-11-27 at 10:24 +0100, Maxime Ripard wrote:
+> On Fri, Nov 23, 2018 at 10:25:06AM +0100, Paul Kocialkowski wrote:
+> > This introduces stride and offset configuration for the VPU tiling mode.
+> > Stride is calculated differently than it is for linear formats and an
+> > offset is calculated, for which new register definitions are introduced.
+> > 
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.c | 54 ++++++++++++++++++++++++--
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.h |  7 ++++
+> >  2 files changed, 58 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > index efa1ff0802bd..3f76a5572449 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > @@ -125,21 +125,69 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
+> >  {
+> >  	struct drm_plane_state *state = plane->state;
+> >  	struct drm_framebuffer *fb = state->fb;
+> > +	unsigned int strides[3] = {};
+> > +
+> >  	dma_addr_t paddr;
+> >  	bool swap;
+> >  
+> > +	if (fb->modifier == DRM_FORMAT_MOD_ALLWINNER_TILED) {
+> > +		unsigned int width = state->src_w >> 16;
+> > +		unsigned int offset;
+> > +
+> > +		/*
+> > +		 * In MB32 tiled mode, the stride is defined as the distance
+> > +		 * between the start of the end line of the current tile and
+> > +		 * the start of the first line in the next vertical tile.
+> > +		 *
+> > +		 * Tiles are represented in row-major order, thus the end line
+> > +		 * of current tile starts at: 31 * 32 (31 lines of 32 cols),
+> > +		 * the next vertical tile starts at: 32-bit-aligned-width * 32
+> > +		 * and the distance is: 32 * (32-bit-aligned-width - 31).
+> > +		 */
+> > +
+> > +		strides[0] = (fb->pitches[0] - 31) * 32;
+> > +
+> > +		/* Offset of the bottom-right point in the end tile. */
+> > +		offset = (width + (32 - 1)) & (32 - 1);
 > 
-> Instead of open coding that each time introduce %ptR[dt][r] specifier.
+> Those computations are a bit obscure. I guess adding a bunch of
+> defines, and using the round_up / _down and ALIGN macros would help
+
+Fair enough, I will add a more explicit comment and a macro in v3.
+
+> > +		regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF0_REG,
+> > +			     SUN4I_FRONTEND_TB_OFF_X1(offset));
+> > +
+> > +		if (fb->format->num_planes > 1) {
+> > +			strides[1] = (fb->pitches[1] - 31) * 32;
+> > +
+> > +			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF1_REG,
+> > +				     SUN4I_FRONTEND_TB_OFF_X1(offset));
+> > +		}
+> > +
+> > +		if (fb->format->num_planes > 2) {
+> > +			strides[2] = (fb->pitches[2] - 31) * 32;
+> > +
+> > +			regmap_write(frontend->regs, SUN4I_FRONTEND_TB_OFF2_REG,
+> > +				     SUN4I_FRONTEND_TB_OFF_X1(offset));
+> > +		}
 > 
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 53527ea822b5..97b7d14961d6 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -418,6 +418,11 @@ struct_va_format(void)
->  {
->  }
->  
-> +static void __init
-> +struct_rtc_time(void)
-> +{
-> +}
+> I guess we could fall in a situation where this is not cleared when
+> moving from a format with 3 planes to one with 2 for example. Would
+> that break anything?
 
-Just by chance, do you have any plans to add the test code? ;-)
+I have tested this case and nothing breaks so we're good!
 
-I understand that you did now want to spend time on it before
-the real change was accepted.
+Cheers,
 
+Paul
 
->  static void __init
->  struct_clk(void)
->  {
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 37a54a6dd594..b7114799b91f 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> +static noinline_for_stack
-> +char *rtc_str(char *buf, char *end, const struct rtc_time *tm, const char *fmt)
-> +{
-> +	bool have_t = true, have_d = true;
-> +	bool raw = false;
-> +	int count = 2;
-> +	bool found;
-> +
-> +	switch (fmt[count]) {
-> +	case 'd':
-> +		have_t = false;
-> +		count++;
-> +		break;
-> +	case 't':
-> +		have_d = false;
-> +		count++;
-> +		break;
-> +	}
-> +
-> +	found = true;
-> +	do {
-> +		switch (fmt[count++]) {
-> +		case 'r':
-> +			raw = true;
-> +			break;
-> +		default:
-> +			found = false;
-> +			break;
-> +		}
-> +	} while (found);
+-- 
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
 
-I guess that the while cycle is remainder from an older version and
-should not be here. It handles only the final 'r' now. 
-
-
-> +	if (have_d)
-> +		buf = date_str(buf, end, tm, raw);
-> +	if (have_d && have_t) {
-> +		/* Respect ISO 8601 */
-> +		if (buf < end)
-> +			*buf = 'T';
-
-I checked several conversion patches and the original code did not use
-the ISO format. The change makes sense (even though I personally
-do not like the format much ;-)
-
-Anyway, people might expect that the conversion is 1:1. The change
-should get mentioned in the affected patches so that people are
-not later surprised.
-
-
-> +		buf++;
-> +	}
-> +	if (have_t)
-> +		buf = time_str(buf, end, tm, raw);
-> +
-> +	return buf;
-> +}
-> +
-> +static noinline_for_stack
-> +char *timeanddate(char *buf, char *end, void *ptr, struct printf_spec spec,
-> +		  const char *fmt)
-
-Please, rename the function to time_and_date(). It is the style used
-in this source file and it is much easier to read.
-
-Otherwise, the patch looks fine. It helps to remove the many variants
-of the code and unifies the output format.
-
-Best Regards,
-Petr
