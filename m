@@ -2,99 +2,120 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF44C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F52C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DD22082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:17:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DD22082B
+	by mail.kernel.org (Postfix) with ESMTP id F39C12082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:21:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mxh6dvBe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39C12082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeLDSRU (ORCPT
+        id S1725963AbeLDSVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:17:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33090 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeLDSRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:17:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0D600B160;
-        Tue,  4 Dec 2018 18:17:18 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 19:17:14 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, pavel@ucw.cz,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        rafael.j.wysocki@intel.com, chanho.min@lge.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
- 4.20-rc4)
-Message-ID: <20181204181714.GR1286@dhcp22.suse.cz>
-References: <20181203123857.GS31738@dhcp22.suse.cz>
- <20181203131006.GA10054@amd>
- <20181203135351.GU31738@dhcp22.suse.cz>
- <20181203141459.GA14789@amd>
- <20181203141737.GY31738@dhcp22.suse.cz>
- <20181204090228.GC73770@gmail.com>
- <20181204091020.GD1286@dhcp22.suse.cz>
- <20181204093310.GE73770@gmail.com>
- <20181204095802.GF1286@dhcp22.suse.cz>
- <CAHk-=wgaEw566btStrWE+NOgPJLn1whS-Yw1-=K2Qr6MDvSZ+A@mail.gmail.com>
+        Tue, 4 Dec 2018 13:21:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeLDSVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:21:15 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4309A2081B;
+        Tue,  4 Dec 2018 18:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543947674;
+        bh=ji3ydNM9SAxkRfwU4F7pz7IU3OSBPHbSsD5+rB3CtjE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=Mxh6dvBeoILkGY7JQWm9eHVEtdIGzc31l5mDVHjU33+gY0nmzB8039rMp/3c8DFIP
+         IenYO7tNM5siEPvUG5ja6mDDge9vLVLoulcaGATqqDTEgpISHfrIxt48SMXeO+Dj05
+         8O/w11s2m6SBxBKixpmDT43w9VJjjt5Bs8rTxpiI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgaEw566btStrWE+NOgPJLn1whS-Yw1-=K2Qr6MDvSZ+A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181204071315.GA31204@localhost.localdomain>
+Cc:     mazziesaccount@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+ <20181130105022.GA15388@localhost.localdomain>
+ <154388011043.88331.6461709079501929390@swboyd.mtv.corp.google.com>
+ <20181204071315.GA31204@localhost.localdomain>
+Message-ID: <154394767367.88331.17679291261207728780@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and provider
+ registrations
+Date:   Tue, 04 Dec 2018 10:21:13 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-12-18 09:31:11, Linus Torvalds wrote:
-> On Tue, Dec 4, 2018 at 1:58 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > AFAIU both suspend and hibernation require the system to enter quiescent
-> > state with no task potentially interfering with suspended devices. And
-> > in this particular case those de-thread-ed threads will certainly not
-> > interfere so silencing the lockdep sounds like a reasonable workaround.
-> 
-> I still think it would be better to simply not freeze killed user processes.
-> 
-> We already  have things like
-> 
->         if (test_tsk_thread_flag(p, TIF_MEMDIE))
->                 return false;
-> 
-> exactly because we do not want to freeze processes that are about to
-> die due to being killed. Very similar situation: we don't want to
-> freeze those processes, because doing so would halt them from freeing
-> the resources that may be needed for suspend or hibernate.
+Quoting Matti Vaittinen (2018-12-03 23:13:15)
+> On Mon, Dec 03, 2018 at 03:35:10PM -0800, Stephen Boyd wrote:
+> =
 
-Yeah, we do not freeze oom victims but that is really far from trivial
-to achieve. In order to do so we post-pone quiescent state until we know
-all the TIF_MEMDIE threads are gone. See oom_killer_disable. In short it
-is a painfull code.
+> > If the DT doesn't have the #clock-cells property in the node being
+> > registered then calling clk_get() will fail for any consumer devices
+> > that point to the node with a phandle and clock specifier. I don't
+> > expect us to get very far into development if that's the case.
+> =
 
-> How about something like we set PF_NOFREEZE when we set PF_EXITING? At
-> that point we've pretty much turned into a kernel thread, no?
+> Makes sense. So only potential thing to break is if someone out there
+> has broken DT/driver - where they currently see this failure. Eg. they
+> use node w/o #clock-cells as provider and where they try and fail
+> controlling this clock - but ignore the error (and system just "works"
+> with HW defaults). After this change they may actually succeed in
+> controlling - but do control wrong clock.
+> =
 
-Hmm, that doesn't sound like a bad idea but I am not sure it will
-help because those threads we are waiting for might be block way before
-they reached PF_EXITING. I would expect that threads that actually reach
-that state usually die shortly. Unless I am missing something we are
-talking about basically two cases here. Those threads are frozen while
-de_thread waits for them because zap_other_threads cannot wake them from
-the fridge or they are blocked in uninterruptible sleep somewhere in the
-kernel. The later is the fundamental problem. The former could be hacked
-around (check PF_FROZEN and use uninterruptible wake), I guess but I
-haven't thought that through yet.
--- 
-Michal Hocko
-SUSE Labs
+> Not likely scenario (sure happens somewhere) - and it involves already
+> broken design. So I agree with you. Besides, you are the maintainer for
+> clk framework and thus get the most of the rain if **** hits the fan =3DD
+
+Yes, exactly.
+
+> =
+
+> > Of course, we don't fail in of_clk_add_provider() if there isn't a
+> > #clock-cells property in the node, we just happily add the node to the
+> > provider list and carry on. I doubt anyone is failing to specify the DT
+> > property, but maybe they are, in which case we could keep not failing
+> > and just add the node of whatever we're called with originally if
+> > neither the parent or the passed node have the #clock-cells property. I
+> > wouldn't try to go any higher than one node above the current node and
+> > look for a #clock-cells though.
+> =
+
+> I think we should use parent device's node, not the paren node in DT,
+> right? But I agree, we should only look "one level up in the chain".
+
+Are these two things different? I'm suggesting looking at
+device_node::parent and trying to find a #clock-cells property.
+
