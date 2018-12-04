@@ -2,52 +2,52 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694A2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA58C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8B1214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8459E214E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:03:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2SUEwzkH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8B1214DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYgm4Uk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8459E214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbeLDLDj (ORCPT
+        id S1727858AbeLDLDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:03:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50166 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:03:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbeLDLDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:36 -0500
+        id S1726402AbeLDLDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:03:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BA3B214DA;
-        Tue,  4 Dec 2018 11:03:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AE70214DA;
+        Tue,  4 Dec 2018 11:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921416;
-        bh=V/uc3oedLBbIgliwfsTlM7aJ0pmMuPUMQBEHIXtwdCM=;
+        s=default; t=1543921418;
+        bh=iBiGUctwaj/a9ks6zN/5StmSDeksdLU/ijDUIoX8m+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2SUEwzkHQB2Kr6G0EVyLy8ojYYqNuXh51G7J/Famg7RnrBhFo96zxY1B4JSsj6cck
-         4iit8ONH2hwjHZ4Z1dAtMBrU1K0PSQ63T8I8nrrI1DM6W6pFHTVuDLFBdk7pofqaa0
-         +F2m1rX7lkN/fgIW8+jvRFrZ2oqPvWAwqVsRDL3U=
+        b=SYgm4Uk+X0U5PnjUxL/4hOPmfjRGZ3Ptb6G0/jeaRGCopsJwD0zrceXuQWpsschfk
+         VYnDkA/+iPrbNXEy5UIKYqt0P5WlpjNIQjbN58vU4V6dcFQwKCQDNG4wLMnlrXeaYB
+         f4n3BGZzPLzTOovFxENWLK9xBIW0qNYLeQ2/Yf84=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Pavel Popa <pashinho1990@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 061/146] virtio-net: disable guest csum during XDP set
-Date:   Tue,  4 Dec 2018 11:49:07 +0100
-Message-Id: <20181204103729.293745783@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 028/146] btrfs: Verify that every chunk has corresponding block group at mount time
+Date:   Tue,  4 Dec 2018 11:48:34 +0100
+Message-Id: <20181204103727.990828074@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -66,64 +66,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+commit 7ef49515fa6727cb4b6f2f5b0ffbc5fc20a9f8c6 upstream.
 
-[ Upstream commit e59ff2c49ae16e1d179de679aca81405829aee6c ]
+If a crafted image has missing block group items, it could cause
+unexpected behavior and breaks the assumption of 1:1 chunk<->block group
+mapping.
 
-We don't disable VIRTIO_NET_F_GUEST_CSUM if XDP was set. This means we
-can receive partial csumed packets with metadata kept in the
-vnet_hdr. This may have several side effects:
+Although we have the block group -> chunk mapping check, we still need
+chunk -> block group mapping check.
 
-- It could be overridden by header adjustment, thus is might be not
-  correct after XDP processing.
-- There's no way to pass such metadata information through
-  XDP_REDIRECT to another driver.
-- XDP does not support checksum offload right now.
+This patch will do extra check to ensure each chunk has its
+corresponding block group.
 
-So simply disable guest csum if possible in this the case of XDP.
-
-Fixes: 3f93522ffab2d ("virtio-net: switch off offloads on demand if possible on XDP set")
-Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Pavel Popa <pashinho1990@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199847
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Gu Jinxiang <gujx@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/virtio_net.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/btrfs/extent-tree.c | 58 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 1 deletion(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -61,7 +61,8 @@ static const unsigned long guest_offload
- 	VIRTIO_NET_F_GUEST_TSO4,
- 	VIRTIO_NET_F_GUEST_TSO6,
- 	VIRTIO_NET_F_GUEST_ECN,
--	VIRTIO_NET_F_GUEST_UFO
-+	VIRTIO_NET_F_GUEST_UFO,
-+	VIRTIO_NET_F_GUEST_CSUM
- };
- 
- struct virtnet_stats {
-@@ -1939,9 +1940,6 @@ static int virtnet_clear_guest_offloads(
- 	if (!vi->guest_offloads)
- 		return 0;
- 
--	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))
--		offloads = 1ULL << VIRTIO_NET_F_GUEST_CSUM;
--
- 	return virtnet_set_guest_offloads(vi, offloads);
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index 2cb3569ac548..fdc42eddccc2 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10092,6 +10092,62 @@ btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
+ 	return cache;
  }
  
-@@ -1951,8 +1949,6 @@ static int virtnet_restore_guest_offload
++
++/*
++ * Iterate all chunks and verify that each of them has the corresponding block
++ * group
++ */
++static int check_chunk_block_group_mappings(struct btrfs_fs_info *fs_info)
++{
++	struct btrfs_mapping_tree *map_tree = &fs_info->mapping_tree;
++	struct extent_map *em;
++	struct btrfs_block_group_cache *bg;
++	u64 start = 0;
++	int ret = 0;
++
++	while (1) {
++		read_lock(&map_tree->map_tree.lock);
++		/*
++		 * lookup_extent_mapping will return the first extent map
++		 * intersecting the range, so setting @len to 1 is enough to
++		 * get the first chunk.
++		 */
++		em = lookup_extent_mapping(&map_tree->map_tree, start, 1);
++		read_unlock(&map_tree->map_tree.lock);
++		if (!em)
++			break;
++
++		bg = btrfs_lookup_block_group(fs_info, em->start);
++		if (!bg) {
++			btrfs_err(fs_info,
++	"chunk start=%llu len=%llu doesn't have corresponding block group",
++				     em->start, em->len);
++			ret = -EUCLEAN;
++			free_extent_map(em);
++			break;
++		}
++		if (bg->key.objectid != em->start ||
++		    bg->key.offset != em->len ||
++		    (bg->flags & BTRFS_BLOCK_GROUP_TYPE_MASK) !=
++		    (em->map_lookup->type & BTRFS_BLOCK_GROUP_TYPE_MASK)) {
++			btrfs_err(fs_info,
++"chunk start=%llu len=%llu flags=0x%llx doesn't match block group start=%llu len=%llu flags=0x%llx",
++				em->start, em->len,
++				em->map_lookup->type & BTRFS_BLOCK_GROUP_TYPE_MASK,
++				bg->key.objectid, bg->key.offset,
++				bg->flags & BTRFS_BLOCK_GROUP_TYPE_MASK);
++			ret = -EUCLEAN;
++			free_extent_map(em);
++			btrfs_put_block_group(bg);
++			break;
++		}
++		start = em->start + em->len;
++		free_extent_map(em);
++		btrfs_put_block_group(bg);
++	}
++	return ret;
++}
++
+ int btrfs_read_block_groups(struct btrfs_fs_info *info)
+ {
+ 	struct btrfs_path *path;
+@@ -10264,7 +10320,7 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
+ 	}
  
- 	if (!vi->guest_offloads)
- 		return 0;
--	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))
--		offloads |= 1ULL << VIRTIO_NET_F_GUEST_CSUM;
- 
- 	return virtnet_set_guest_offloads(vi, offloads);
- }
+ 	init_global_block_rsv(info);
+-	ret = 0;
++	ret = check_chunk_block_group_mappings(info);
+ error:
+ 	btrfs_free_path(path);
+ 	return ret;
+-- 
+2.17.1
+
 
 
