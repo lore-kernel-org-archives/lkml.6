@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4D8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D67C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F417F214E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCF7B214E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PunfKxgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F417F214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wOtS4LyJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF7B214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeLDLCm (ORCPT
+        id S1727682AbeLDLCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48702 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbeLDLCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:37 -0500
+        id S1726755AbeLDLCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C708E214DE;
-        Tue,  4 Dec 2018 11:02:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69DC02146D;
+        Tue,  4 Dec 2018 11:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921356;
-        bh=ruVAxiGuJ65EF5ZwxUgltLbCsYIIEWCQo6Fz8fa3H0k=;
+        s=default; t=1543921363;
+        bh=nmTklXzd1IAB7WxyavY8WHHLdTMDoUzEqYuyAxQVdeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PunfKxgU68n4Uy20K1Tb4otoKJfZ05AZI6vUhFzf8URwaK22EDDOdtlRLu3xhDSeL
-         eWlk10AL39pYKf04fDEFYRdBmMgRhsvLx5wThRxiujeDkcsOHTozTEG84WiR+ZjUA6
-         dC3VNLA4HQiGUdcYYJORrXfkPz8UdLYdJIN/7OL0=
+        b=wOtS4LyJY6Eu0qy9bLWSqK9D/4Ayz1yYYYl/I/YTM0+vieiD8RO5igF0i2S9APREW
+         +3taddjC7GQwIF/veGxeZzm3dWCqYCFcZmL0HmRk9Zj0xqqa61CaCj1NKvTYbHSPwL
+         pK96dk/nWUE8ImyK9WwpzZZb9G/GqQy1VO6agueM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Qu Wenruo <wqu@suse.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 040/146] btrfs: tree-checker: Detect invalid and empty essential trees
-Date:   Tue,  4 Dec 2018 11:48:46 +0100
-Message-Id: <20181204103728.477493119@linuxfoundation.org>
+Subject: [PATCH 4.14 043/146] btrfs: tree-checker: Fix misleading group system information
+Date:   Tue,  4 Dec 2018 11:48:49 +0100
+Message-Id: <20181204103728.593587894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -66,72 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit ba480dd4db9f1798541eb2d1c423fc95feee8d36 upstream.
+commit 761333f2f50ccc887aa9957ae829300262c0d15b upstream.
 
-A crafted image has empty root tree block, which will later cause NULL
-pointer dereference.
+block_group_err shows the group system as a decimal value with a '0x'
+prefix, which is somewhat misleading.
 
-The following trees should never be empty:
-1) Tree root
-   Must contain at least root items for extent tree, device tree and fs
-   tree
+Fix it to print hexadecimal, as was intended.
 
-2) Chunk tree
-   Or we can't even bootstrap as it contains the mapping.
-
-3) Fs tree
-   At least inode item for top level inode (.).
-
-4) Device tree
-   Dev extents for chunks
-
-5) Extent tree
-   Must have corresponding extent for each chunk.
-
-If any of them is empty, we are sure the fs is corrupted and no need to
-mount it.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199847
-Reported-by: Xu Wen <wen.xu@gatech.edu>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Tested-by: Gu Jinxiang <gujx@cn.fujitsu.com>
+Fixes: fce466eab7ac6 ("btrfs: tree-checker: Verify block_group_item")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 4.14: Pass root instead of fs_info to generic_err()]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-checker.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-checker.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index cf9b10a07134..31756bac75b4 100644
+index fa8f64119e6f..f206aec1525d 100644
 --- a/fs/btrfs/tree-checker.c
 +++ b/fs/btrfs/tree-checker.c
-@@ -456,9 +456,22 @@ static int check_leaf(struct btrfs_root *root, struct extent_buffer *leaf,
- 	 * skip this check for relocation trees.
- 	 */
- 	if (nritems == 0 && !btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_RELOC)) {
-+		u64 owner = btrfs_header_owner(leaf);
- 		struct btrfs_root *check_root;
- 
--		key.objectid = btrfs_header_owner(leaf);
-+		/* These trees must never be empty */
-+		if (owner == BTRFS_ROOT_TREE_OBJECTID ||
-+		    owner == BTRFS_CHUNK_TREE_OBJECTID ||
-+		    owner == BTRFS_EXTENT_TREE_OBJECTID ||
-+		    owner == BTRFS_DEV_TREE_OBJECTID ||
-+		    owner == BTRFS_FS_TREE_OBJECTID ||
-+		    owner == BTRFS_DATA_RELOC_TREE_OBJECTID) {
-+			generic_err(root, leaf, 0,
-+			"invalid root, root %llu must never be empty",
-+				    owner);
-+			return -EUCLEAN;
-+		}
-+		key.objectid = owner;
- 		key.type = BTRFS_ROOT_ITEM_KEY;
- 		key.offset = (u64)-1;
- 
+@@ -399,7 +399,7 @@ static int check_block_group_item(struct btrfs_fs_info *fs_info,
+ 	    type != (BTRFS_BLOCK_GROUP_METADATA |
+ 			   BTRFS_BLOCK_GROUP_DATA)) {
+ 		block_group_err(fs_info, leaf, slot,
+-"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llu or 0x%llx",
++"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llx or 0x%llx",
+ 			type, hweight64(type),
+ 			BTRFS_BLOCK_GROUP_DATA, BTRFS_BLOCK_GROUP_METADATA,
+ 			BTRFS_BLOCK_GROUP_SYSTEM,
 -- 
 2.17.1
 
