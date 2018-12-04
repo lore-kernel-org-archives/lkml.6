@@ -2,172 +2,338 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E110EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA9EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9848220834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:04:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ok7lG4mm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9848220834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D03E20878
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D03E20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbeLDKEy (ORCPT
+        id S1725999AbeLDKHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:04:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:40158 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbeLDKEx (ORCPT
+        Tue, 4 Dec 2018 05:07:43 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:12586 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDKHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:04:53 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB4A3wQ4101807;
-        Tue, 4 Dec 2018 04:03:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543917838;
-        bh=B8J3sc3nmIiZr+4K9PcmGrK2QlFeB+qIYKkJFvtoE9Y=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=Ok7lG4mmz+SH7asAclprmTXH5HyjH8HkAJXn8XrD86llC5rupeDFYAu2VKItcozxI
-         uI6ybL4gco17/0fK3X5zZCRVvzXYSvFJ07bDsnlaofqqnuIkEDQ5+ffJNpfmwvvHiy
-         EIDJ1mmpqSSMgFbO03blnryB/RvtdzSeFwRHqef4=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB4A3wpe106239
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 04:03:58 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 4
- Dec 2018 04:03:56 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 4 Dec 2018 04:03:56 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB4A3qN8016455;
-        Tue, 4 Dec 2018 04:03:53 -0600
-Subject: Re: [PATCH 01/16] remoteproc: Extend rproc_da_to_va() API with a
- flags parameter
-To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>, <s-anna@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-2-git-send-email-rogerq@ti.com>
- <d93c4c96-e0b9-59cd-6098-92684bc2360b@lechnology.com>
- <5BFFBFA0.9000104@ti.com>
- <ec83108c-1748-cec4-bebf-119d261fb229@lechnology.com>
-CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <nsekhar@ti.com>, <t-kristo@ti.com>,
-        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
-        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C065107.8080600@ti.com>
-Date:   Tue, 4 Dec 2018 12:03:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Tue, 4 Dec 2018 05:07:42 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wB4A6vRu043066;
+        Tue, 4 Dec 2018 19:06:57 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Tue, 04 Dec 2018 19:06:57 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wB4A6fCR042967
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 4 Dec 2018 19:06:57 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
+ <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
+ <20181130123027.cyqfi2k34nh2gjmx@pathway.suse.cz>
+ <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
+ <8634f952-7a14-055d-943c-d219ab5d8c1b@i-love.sakura.ne.jp>
+ <1c1de4f8-f08e-37e5-2438-47ab985d476e@i-love.sakura.ne.jp>
+ <20181204025614.GC7580@jagdpanzerIV>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <555af37c-b9e0-f940-cb73-a78eba2d4944@i-love.sakura.ne.jp>
+Date:   Tue, 4 Dec 2018 19:06:39 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <ec83108c-1748-cec4-bebf-119d261fb229@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181204025614.GC7580@jagdpanzerIV>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/11/18 18:12, David Lechner wrote:
-> On 11/29/18 4:29 AM, Roger Quadros wrote:
->> Bjorn, Suman,
->>
->> On 26/11/18 23:29, David Lechner wrote:
->>> On 11/26/18 1:52 AM, Roger Quadros wrote:
->>>> From: Suman Anna <s-anna@ti.com>
->>>>
->>>> The rproc_da_to_va() API is currently used to perform any device
->>>> to kernel address translations to meet the different needs of the
->>>> remoteproc core/platform drivers (eg: loading). The function also
->>>> invokes the da_to_va ops, if present, to allow the remoteproc
->>>> platform drivers to provide address translation. However, not all
->>>> platform implementations have linear address spaces, and may need
->>>> an additional parameter to be able to perform proper translations.
->>>>
->>>> The rproc_da_to_va() API and the rproc .da_to_va ops have therefore
->>>> been expanded to take in an additional flags field enabling some
->>>> remoteproc implementations (like the TI PRUSS remoteproc driver)
->>>> to use these flags. Also, define some semantics for this flags
->>>> argument as this can vary from one implementation to another. A
->>>> new flags type is encoded into the upper 16 bits along side the
->>>> actual value in the lower 16-bits for the flags argument, to
->>>> allow different individual implementations to have better
->>>> flexibility in interpreting the flags as per their needs.
->>>
->>> This seems like an overly complex solution for a rather simple
->>> problem. Instead of passing all sorts of flags, could we just add
->>> a parameter named "page" to da_to_va() that indicates the memory
->>> page of the address in the remote processor?
->>>
->>> Or perhaps there is some other use for all of these flags that I
->>> am not aware of?
->>
->> I'm not a big fan of this patch either.
->>
->> rproc_da_to_va() is used at the following places
->>
->> 2 qcom_q6v5_mss.c         qcom_q6v5_dump_segment           974 void *ptr = rproc_da_to_va(rproc, segment->da, segment->size,
->> 3 remoteproc_core.c       rproc_da_to_va                   197 void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
->> 4 remoteproc_core.c       rproc_handle_trace               582 ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, RPROC_FLAGS_NONE);
->> 5 remoteproc_core.c       rproc_coredump                  1592 ptr = rproc_da_to_va(rproc, segment->da, segment->size,
->> 6 remoteproc_elf_loader.c rproc_elf_load_segments          185 ptr = rproc_da_to_va(rproc, da, memsz,
->> 7 remoteproc_elf_loader.c rproc_elf_find_loaded_rsc_table  337 return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size,
->>
->> At rproc_elf_load_segments() we need to pass enough information so that
->> the rproc driver can load the segment into proper area (IRAM vs DRAM).
->> So providing page should suffice.
-> 
-> FYI, the PRU series I sent a while back has some patches to do
-> something like this so feel free to use them if they are helpful.
-> 
-> https://lore.kernel.org/lkml/20180623210810.21232-2-david@lechnology.com/
-> https://lore.kernel.org/lkml/20180623210810.21232-3-david@lechnology.com/
-> 
+On 2018/12/04 11:56, Sergey Senozhatsky wrote:
+> Can we please have something better than 'f'?
 
-Thanks. I think we need to do something like that. Too bad you had to reverse engineer
-the TI specific headers. I'll check if we have this available somewhere internally.
+OK. To pass 80 column limit, one line increased. ;-)
 
->>
->> I want to understand more about rproc_elf_find_loaded_rsc_table() myself.
->> rproc_elf_find_loaded_rsc_table() is called only in rproc_start() in remoteproc_core.c
->> with the comment
->>
->>          /*
->>           * The starting device has been given the rproc->cached_table as the
->>           * resource table. The address of the vring along with the other
->>           * allocated resources (carveouts etc) is stored in cached_table.
->>           * In order to pass this information to the remote device we must copy
->>           * this information to device memory. We also update the table_ptr so
->>           * that any subsequent changes will be applied to the loaded version.
->>           */
->>          loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
->>
->> Why isn't cached_table sufficient?
->> Why do we need to call rproc_find_loaded_rsc_table()?
->>
->> why do we need to load the resource table into remote processor memory at all.
->> As discussed earlier, some PRU systems have very little memory (512 bytes?)
->> and we want to avoid unnecessary loading.
->>
+< +                     bool f = syslog_partial ? syslog_time : printk_time;
+> +                     bool time = syslog_partial ? syslog_time : printk_time;
 
-This question still holds.
-Suman?
+< +                             error += msg_print_text(msg, true, f, NULL, 0);
+< +                             f = printk_time;
+> +                             error += msg_print_text(msg, true, time, NULL,
+> +                                                     0);
+> +                             time = printk_time;
 
-cheers,
--roger
+From d233699cbd1b43178ef6ce1f801e8a3b8e4326b9 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 4 Dec 2018 19:00:01 +0900
+Subject: [PATCH v3] printk: fix printk_time race.
 
+Since printk_time can be toggled via /sys/module/printk/parameters/time ,
+it is not safe to assume that output length does not change across
+multiple msg_print_text() calls. If we hit this race, we can observe
+failures such as SYSLOG_ACTION_READ_ALL writes more bytes than userspace
+has supplied, SYSLOG_ACTION_SIZE_UNREAD returns -EFAULT when succeeded,
+SYSLOG_ACTION_READ reads garbage memory or even triggers an kernel oops
+at _copy_to_user() due to integer overflow.
+
+To close this race, get a snapshot value of printk_time and pass it to
+SYSLOG_ACTION_READ, SYSLOG_ACTION_READ_ALL, SYSLOG_ACTION_SIZE_UNREAD and
+kmsg_dump_get_buffer().
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 70 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 39 insertions(+), 31 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 5c2079d..4f18472 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -403,6 +403,7 @@ __packed __aligned(4)
+ static u64 syslog_seq;
+ static u32 syslog_idx;
+ static size_t syslog_partial;
++static bool syslog_time;
+ 
+ /* index and sequence number of the first record stored in the buffer */
+ static u64 log_first_seq;
+@@ -1228,12 +1229,7 @@ static inline void boot_delay_msec(int level)
+ 
+ static size_t print_time(u64 ts, char *buf)
+ {
+-	unsigned long rem_nsec;
+-
+-	if (!printk_time)
+-		return 0;
+-
+-	rem_nsec = do_div(ts, 1000000000);
++	unsigned long rem_nsec = do_div(ts, 1000000000);
+ 
+ 	if (!buf)
+ 		return snprintf(NULL, 0, "[%5lu.000000] ", (unsigned long)ts);
+@@ -1242,7 +1238,8 @@ static size_t print_time(u64 ts, char *buf)
+ 		       (unsigned long)ts, rem_nsec / 1000);
+ }
+ 
+-static size_t print_prefix(const struct printk_log *msg, bool syslog, char *buf)
++static size_t print_prefix(const struct printk_log *msg, bool syslog,
++			   bool time, char *buf)
+ {
+ 	size_t len = 0;
+ 	unsigned int prefix = (msg->facility << 3) | msg->level;
+@@ -1261,11 +1258,13 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog, char *buf)
+ 		}
+ 	}
+ 
+-	len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
++	if (time)
++		len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
+ 	return len;
+ }
+ 
+-static size_t msg_print_text(const struct printk_log *msg, bool syslog, char *buf, size_t size)
++static size_t msg_print_text(const struct printk_log *msg, bool syslog,
++			     bool time, char *buf, size_t size)
+ {
+ 	const char *text = log_text(msg);
+ 	size_t text_size = msg->text_len;
+@@ -1284,17 +1283,17 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog, char *bu
+ 		}
+ 
+ 		if (buf) {
+-			if (print_prefix(msg, syslog, NULL) +
++			if (print_prefix(msg, syslog, time, NULL) +
+ 			    text_len + 1 >= size - len)
+ 				break;
+ 
+-			len += print_prefix(msg, syslog, buf + len);
++			len += print_prefix(msg, syslog, time, buf + len);
+ 			memcpy(buf + len, text, text_len);
+ 			len += text_len;
+ 			buf[len++] = '\n';
+ 		} else {
+ 			/* SYSLOG_ACTION_* buffer size only calculation */
+-			len += print_prefix(msg, syslog, NULL);
++			len += print_prefix(msg, syslog, time, NULL);
+ 			len += text_len;
+ 			len++;
+ 		}
+@@ -1331,9 +1330,17 @@ static int syslog_print(char __user *buf, int size)
+ 			break;
+ 		}
+ 
++		/*
++		 * To keep reading/counting partial line consistent,
++		 * use printk_time value as of the biginning of a line.
++		 */
++		if (!syslog_partial)
++			syslog_time = printk_time;
++
+ 		skip = syslog_partial;
+ 		msg = log_from_idx(syslog_idx);
+-		n = msg_print_text(msg, true, text, LOG_LINE_MAX + PREFIX_MAX);
++		n = msg_print_text(msg, true, syslog_time, text,
++				   LOG_LINE_MAX + PREFIX_MAX);
+ 		if (n - syslog_partial <= size) {
+ 			/* message fits into buffer, move forward */
+ 			syslog_idx = log_next(syslog_idx);
+@@ -1373,11 +1380,13 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
+ 	u64 next_seq;
+ 	u64 seq;
+ 	u32 idx;
++	bool time;
+ 
+ 	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
+ 	if (!text)
+ 		return -ENOMEM;
+ 
++	time = printk_time;
+ 	logbuf_lock_irq();
+ 	/*
+ 	 * Find first record that fits, including all following records,
+@@ -1388,7 +1397,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
+ 	while (seq < log_next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+-		len += msg_print_text(msg, true, NULL, 0);
++		len += msg_print_text(msg, true, time, NULL, 0);
+ 		idx = log_next(idx);
+ 		seq++;
+ 	}
+@@ -1399,7 +1408,7 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
+ 	while (len > size && seq < log_next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+-		len -= msg_print_text(msg, true, NULL, 0);
++		len -= msg_print_text(msg, true, time, NULL, 0);
+ 		idx = log_next(idx);
+ 		seq++;
+ 	}
+@@ -1410,14 +1419,9 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
+ 	len = 0;
+ 	while (len >= 0 && seq < next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+-		int textlen;
++		int textlen = msg_print_text(msg, true, time, text,
++					     LOG_LINE_MAX + PREFIX_MAX);
+ 
+-		textlen = msg_print_text(msg, true, text,
+-					 LOG_LINE_MAX + PREFIX_MAX);
+-		if (textlen < 0) {
+-			len = textlen;
+-			break;
+-		}
+ 		idx = log_next(idx);
+ 		seq++;
+ 
+@@ -1541,11 +1545,14 @@ int do_syslog(int type, char __user *buf, int len, int source)
+ 		} else {
+ 			u64 seq = syslog_seq;
+ 			u32 idx = syslog_idx;
++			bool time = syslog_partial ? syslog_time : printk_time;
+ 
+ 			while (seq < log_next_seq) {
+ 				struct printk_log *msg = log_from_idx(idx);
+ 
+-				error += msg_print_text(msg, true, NULL, 0);
++				error += msg_print_text(msg, true, time, NULL,
++							0);
++				time = printk_time;
+ 				idx = log_next(idx);
+ 				seq++;
+ 			}
+@@ -2003,6 +2010,7 @@ asmlinkage __visible int printk(const char *fmt, ...)
+ 
+ #define LOG_LINE_MAX		0
+ #define PREFIX_MAX		0
++#define printk_time		false
+ 
+ static u64 syslog_seq;
+ static u32 syslog_idx;
+@@ -2026,8 +2034,8 @@ static void console_lock_spinning_enable(void) { }
+ static int console_lock_spinning_disable_and_check(void) { return 0; }
+ static void call_console_drivers(const char *ext_text, size_t ext_len,
+ 				 const char *text, size_t len) {}
+-static size_t msg_print_text(const struct printk_log *msg,
+-			     bool syslog, char *buf, size_t size) { return 0; }
++static size_t msg_print_text(const struct printk_log *msg, bool syslog,
++			     bool time, char *buf, size_t size) { return 0; }
+ static bool suppress_message_printing(int level) { return false; }
+ 
+ #endif /* CONFIG_PRINTK */
+@@ -2385,8 +2393,7 @@ void console_unlock(void)
+ 
+ 		len += msg_print_text(msg,
+ 				console_msg_format & MSG_FORMAT_SYSLOG,
+-				text + len,
+-				sizeof(text) - len);
++				printk_time, text + len, sizeof(text) - len);
+ 		if (nr_ext_console_drivers) {
+ 			ext_len = msg_print_ext_header(ext_text,
+ 						sizeof(ext_text),
+@@ -3110,7 +3117,7 @@ bool kmsg_dump_get_line_nolock(struct kmsg_dumper *dumper, bool syslog,
+ 		goto out;
+ 
+ 	msg = log_from_idx(dumper->cur_idx);
+-	l = msg_print_text(msg, syslog, line, size);
++	l = msg_print_text(msg, syslog, printk_time, line, size);
+ 
+ 	dumper->cur_idx = log_next(dumper->cur_idx);
+ 	dumper->cur_seq++;
+@@ -3181,6 +3188,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+ 	u32 next_idx;
+ 	size_t l = 0;
+ 	bool ret = false;
++	bool time = printk_time;
+ 
+ 	if (!dumper->active)
+ 		goto out;
+@@ -3204,7 +3212,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+ 	while (seq < dumper->next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+-		l += msg_print_text(msg, true, NULL, 0);
++		l += msg_print_text(msg, true, time, NULL, 0);
+ 		idx = log_next(idx);
+ 		seq++;
+ 	}
+@@ -3215,7 +3223,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+ 	while (l > size && seq < dumper->next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+-		l -= msg_print_text(msg, true, NULL, 0);
++		l -= msg_print_text(msg, true, time, NULL, 0);
+ 		idx = log_next(idx);
+ 		seq++;
+ 	}
+@@ -3228,7 +3236,7 @@ bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+ 	while (seq < dumper->next_seq) {
+ 		struct printk_log *msg = log_from_idx(idx);
+ 
+-		l += msg_print_text(msg, syslog, buf + l, size - l);
++		l += msg_print_text(msg, syslog, time, buf + l, size - l);
+ 		idx = log_next(idx);
+ 		seq++;
+ 	}
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.8.3.1
+
