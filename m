@@ -2,130 +2,116 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7326C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965F2C65BB0
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8663C2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:21:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bJwh9xQa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8663C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6152E20834
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6152E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726113AbeLDVVj (ORCPT
+        id S1726054AbeLDVXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:21:39 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42787 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeLDVVi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:21:38 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 64so8840260pfr.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 13:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Okg2dLAdUq9xzknRgDrH/k6iGHxYSlP2kr+i2uhoW4c=;
-        b=bJwh9xQaiwIdwcdg3WTWOEat47vkaTIHqYf6iKfqjU+V7OWvZGQedfvnTONkZCLO+T
-         3iNslwneI9t8DiNylQw6l0yhKkNRjjWnU/P2h6SVzFeqttY8pUCIIc+qmAFWr/hfF5Na
-         5IrAYF0Vutahdbg0tOs7lic8fX+IPFljxwRujRoIgVpy4ZKgv6sTtTBKyI6kIfIGi3Nx
-         GC2+xAJ8QBGkYqYEE/KXvEECgv5qSKPEeb8zKE1rnnDcH/p2btFhw2Xt6f54rqrhWkfq
-         WRez80PKxpnFpkN/nZsampersDAjyhuv04hms+eCknyVDRdBV2o8XARy91q2FxKNolE9
-         /8gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Okg2dLAdUq9xzknRgDrH/k6iGHxYSlP2kr+i2uhoW4c=;
-        b=tWU2alMtpEudb07eV0AzAPWt+bPEfeYtAU1eKZ8PqdJd23PLQl8gbdO5AVrSKxoBVu
-         CBq7iLSuIefoMwQ1CwGBqGeaabAct/IVPb9kkdyL4LOURyDWofJIfQ528bXtHt/8yNUA
-         q0smWT92RXw8c3NOuTnfrpRw25RBUR517zCqCFoOxdt92mVCnSPookT+JRMhP+ik69Ww
-         oyuGt1m1ko+TV/jBbqtP6B9lwyXsUidlEeOsFz4rSRJhRpvxC2wj6BKRqeAzfKAdKm+x
-         RPr1BxLflgumu720cb/d9v8HmNIiEJ7LvfEBVh+mAfGkveuNRxR+SWUoSIii1iqgz2oa
-         NFQQ==
-X-Gm-Message-State: AA+aEWZB3OsZqiJt7wJ4UQdAxDkbzG+GTBRSjBcQLUlApR9vrSMQybAL
-        610gZjXHmg8fLKXw/RhITP9n/6Ppe2Di5l/HYVNMyQ==
-X-Google-Smtp-Source: AFSGD/VtaEfRh2hiWuXDBLKccWPb8c44tm9rpMePzuDP7PUczO4XVyHUAbON4bt9PiFyHi3D+B1O6VNpXhxiWRBozTw=
-X-Received: by 2002:a62:7e13:: with SMTP id z19mr21631726pfc.94.1543958496523;
- Tue, 04 Dec 2018 13:21:36 -0800 (PST)
+        Tue, 4 Dec 2018 16:23:36 -0500
+Received: from mga04.intel.com ([192.55.52.120]:21301 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725880AbeLDVXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:23:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:23:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="280939572"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 04 Dec 2018 13:23:32 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 4B2DF2D3; Tue,  4 Dec 2018 23:23:31 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Joe Perches <joe@perches.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v6 03/20] rtc: at91rm9200: Switch to use %ptR
+Date:   Tue,  4 Dec 2018 23:23:13 +0200
+Message-Id: <20181204212330.69515-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204212330.69515-1-andriy.shevchenko@linux.intel.com>
+References: <20181204212330.69515-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-References: <20181128140852.178260-1-liuxiaozhou@bytedance.com> <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
-In-Reply-To: <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 4 Dec 2018 13:21:25 -0800
-Message-ID: <CAKwvOdk3K_fUU-nUbpDVXvGr0CzBzznZOjCJN1cg2T+aW2vTEg@mail.gmail.com>
-Subject: Re: [PATCH] Compiler Attributes: move kernel-only attributes into __KERNEL__
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     liuxiaozhou@bytedance.com,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        paul.burton@mips.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 9:35 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Hi Xiaozhou,
->
-> On Wed, Nov 28, 2018 at 3:09 PM Xiaozhou Liu <liuxiaozhou@bytedance.com> =
-wrote:
-> >
-> > Attributes such as `__gnu_inline' are meant to be used within the
-> > kernel. When userspace somehow includes <linux/compiler.h>
-> > (eg. tools/bpf), compilation errors would be shown:
-> >
-> >         "error: unknown type name =E2=80=98__gnu_inline=E2=80=99"
-> >
-> > So just move these things into __KERNEL__ and the behavior is kept
-> > as before.
->
-> That is not exactly correct -- a3f8a30f3f00 moved some attributes to
-> another file, moving them into __KERNEL__ (in particular,__gnu_inline
-> is).
->
-> The problem is, instead, that __gnu_inline is not anymore defined
-> outside __KERNEL__, but something else that uses it is (the inline
-> macro definition, if I had to guess).
->
-> If your problem is fixed by putting __gnu_inline into __KERNEL__
-> again, it means we can simply move the inline definition inside
-> __KERNEL__ too. That way, we don't pollute userspace users with macro
-> definitions.
->
-> Having said that, does someone know whether userspace should have
-> access to those attributes (or rather, other code that uses in turn
-> those attributes)?
+Use %ptR instead of open coded variant to print content of
+struct rtc_time in human readable format.
 
-This is tricky territory; the kernel is redefining `inline` in headers
-in order to get __attribute__((gnu_inline)) semantics.  If non kernel
-users include those headers, the kernel may be redefining the
-semantics of `inline` for those programs (unexpectedly).  Admittedly,
-gnu_inline kind of an edge case so most users might not notice, but
-that may be an argument for `-f gnu_inline` rather than redefining
-`inline` in a header.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/rtc/rtc-at91rm9200.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
->
-> Cheers,
-> Miguel
+diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
+index caa71d04e989..862b993c3142 100644
+--- a/drivers/rtc/rtc-at91rm9200.c
++++ b/drivers/rtc/rtc-at91rm9200.c
+@@ -147,9 +147,7 @@ static int at91_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	tm->tm_yday = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+ 	tm->tm_year = tm->tm_year - 1900;
+ 
+-	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
+-		1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
+-		tm->tm_hour, tm->tm_min, tm->tm_sec);
++	dev_dbg(dev, "%s(): %ptR\n", __func__, tm);
+ 
+ 	return 0;
+ }
+@@ -161,9 +159,7 @@ static int at91_rtc_settime(struct device *dev, struct rtc_time *tm)
+ {
+ 	unsigned long cr;
+ 
+-	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
+-		1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
+-		tm->tm_hour, tm->tm_min, tm->tm_sec);
++	dev_dbg(dev, "%s(): %ptR\n", __func__, tm);
+ 
+ 	wait_for_completion(&at91_rtc_upd_rdy);
+ 
+@@ -209,8 +205,7 @@ static int at91_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->enabled = (at91_rtc_read_imr() & AT91_RTC_ALARM)
+ 			? 1 : 0;
+ 
+-	dev_dbg(dev, "%s(): %02d-%02d %02d:%02d:%02d %sabled\n", __func__,
+-		tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,
++	dev_dbg(dev, "%s(): %ptR %sabled\n", __func__, tm,
+ 		alrm->enabled ? "en" : "dis");
+ 
+ 	return 0;
+@@ -247,9 +242,7 @@ static int at91_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 		at91_rtc_write_ier(AT91_RTC_ALARM);
+ 	}
+ 
+-	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
+-		tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour,
+-		tm.tm_min, tm.tm_sec);
++	dev_dbg(dev, "%s(): %ptR\n", __func__, &tm);
+ 
+ 	return 0;
+ }
+-- 
+2.19.2
 
-
-
---=20
-Thanks,
-~Nick Desaulniers
