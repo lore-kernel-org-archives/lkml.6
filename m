@@ -7,45 +7,62 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DCBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F31C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02A522082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4385A2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QM/B2twe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A522082D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ca9lt52F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4385A2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeLDLOL (ORCPT
+        id S1728400AbeLDLHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:14:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728398AbeLDLHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:07:05 -0500
+        id S1728071AbeLDLHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:07:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBF8321508;
-        Tue,  4 Dec 2018 11:07:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCCD3214ED;
+        Tue,  4 Dec 2018 11:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921624;
-        bh=6B22mIB0VZuTvpm0AtuvTvH94jsahbQJaxjk1HGjFe4=;
+        s=default; t=1543921619;
+        bh=r78YlVfpMP1Kz5rwwizIWA8Ma+mtT2ig/oGw2TOdT1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QM/B2twe06e85a1PZODGRu0iZ7y0DsFNOMpnvRiy8il4APgqPmCZegxfb3aZN5UMw
-         J8BVjyfWdf5VD36wZoVdDg4bedh25fZ91fBQj92TBK/TCKR8/0DrZQZJRpsk2BVmIK
-         J3sk7hZzrEgWzzH74NhLl6imaJbSnb/2oE4dVINc=
+        b=ca9lt52FYf42zMKP/nyookoSwY70wveQb1+qtah+Hb5dXA4IrnHGz04EER63IpU98
+         hSuAZd3MhjKQlCbj+a4XFO4xjjqZ37KH0jcfXixwNsEefS2F+3XGG0DV9/Acpii2cK
+         6T6C9I0KEsIVvIjLtGkArmx4bH1n8mHG9UcwPm/c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junaid Shahid <junaids@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 109/146] kvm: mmu: Fix race in emulated page table writes
-Date:   Tue,  4 Dec 2018 11:49:55 +0100
-Message-Id: <20181204103731.212838462@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 107/146] x86/speculation: Add seccomp Spectre v2 user space protection mode
+Date:   Tue,  4 Dec 2018 11:49:53 +0100
+Message-Id: <20181204103731.132713630@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -64,91 +81,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Junaid Shahid <junaids@google.com>
+From: Thomas Gleixner tglx@linutronix.de
 
-commit 0e0fee5c539b61fdd098332e0e2cc375d9073706 upstream.
+commit 6b3e64c237c072797a9ec918654a60e3a46488e2 upstream
 
-When a guest page table is updated via an emulated write,
-kvm_mmu_pte_write() is called to update the shadow PTE using the just
-written guest PTE value. But if two emulated guest PTE writes happened
-concurrently, it is possible that the guest PTE and the shadow PTE end
-up being out of sync. Emulated writes do not mark the shadow page as
-unsync-ed, so this inconsistency will not be resolved even by a guest TLB
-flush (unless the page was marked as unsync-ed at some other point).
+If 'prctl' mode of user space protection from spectre v2 is selected
+on the kernel command-line, STIBP and IBPB are applied on tasks which
+restrict their indirect branch speculation via prctl.
 
-This is fixed by re-reading the current value of the guest PTE after the
-MMU lock has been acquired instead of just using the value that was
-written prior to calling kvm_mmu_pte_write().
+SECCOMP enables the SSBD mitigation for sandboxed tasks already, so it
+makes sense to prevent spectre v2 user space to user space attacks as
+well.
 
-Signed-off-by: Junaid Shahid <junaids@google.com>
-Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
+The Intel mitigation guide documents how STIPB works:
+    
+   Setting bit 1 (STIBP) of the IA32_SPEC_CTRL MSR on a logical processor
+   prevents the predicted targets of indirect branches on any logical
+   processor of that core from being controlled by software that executes
+   (or executed previously) on another logical processor of the same core.
+
+Ergo setting STIBP protects the task itself from being attacked from a task
+running on a different hyper-thread and protects the tasks running on
+different hyper-threads from being attacked.
+
+While the document suggests that the branch predictors are shielded between
+the logical processors, the observed performance regressions suggest that
+STIBP simply disables the branch predictor more or less completely. Of
+course the document wording is vague, but the fact that there is also no
+requirement for issuing IBPB when STIBP is used points clearly in that
+direction. The kernel still issues IBPB even when STIBP is used until Intel
+clarifies the whole mechanism.
+
+IBPB is issued when the task switches out, so malicious sandbox code cannot
+mistrain the branch predictor for the next user space task on the same
+logical processor.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Casey Schaufler <casey.schaufler@intel.com>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jon Masters <jcm@redhat.com>
+Cc: Waiman Long <longman9394@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Dave Stewart <david.c.stewart@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Link: https://lkml.kernel.org/r/20181125185006.051663132@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/mmu.c |   27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |    9 ++++++++-
+ arch/x86/include/asm/nospec-branch.h            |    1 +
+ arch/x86/kernel/cpu/bugs.c                      |   17 ++++++++++++++++-
+ 3 files changed, 25 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4734,9 +4734,9 @@ static bool need_remote_flush(u64 old, u
- }
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4041,9 +4041,16 @@
+ 				  per thread.  The mitigation control state
+ 				  is inherited on fork.
  
- static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
--				    const u8 *new, int *bytes)
-+				    int *bytes)
++			seccomp
++				- Same as "prctl" above, but all seccomp
++				  threads will enable the mitigation unless
++				  they explicitly opt out.
++
+ 			auto    - Kernel selects the mitigation depending on
+ 				  the available CPU features and vulnerability.
+-				  Default is prctl.
++
++			Default mitigation:
++			If CONFIG_SECCOMP=y then "seccomp", otherwise "prctl"
+ 
+ 			Not specifying this option is equivalent to
+ 			spectre_v2_user=auto.
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -233,6 +233,7 @@ enum spectre_v2_user_mitigation {
+ 	SPECTRE_V2_USER_NONE,
+ 	SPECTRE_V2_USER_STRICT,
+ 	SPECTRE_V2_USER_PRCTL,
++	SPECTRE_V2_USER_SECCOMP,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -255,12 +255,14 @@ enum spectre_v2_user_cmd {
+ 	SPECTRE_V2_USER_CMD_AUTO,
+ 	SPECTRE_V2_USER_CMD_FORCE,
+ 	SPECTRE_V2_USER_CMD_PRCTL,
++	SPECTRE_V2_USER_CMD_SECCOMP,
+ };
+ 
+ static const char * const spectre_v2_user_strings[] = {
+ 	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
+ 	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
+ 	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
++	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
+ };
+ 
+ static const struct {
+@@ -272,6 +274,7 @@ static const struct {
+ 	{ "off",	SPECTRE_V2_USER_CMD_NONE,	false },
+ 	{ "on",		SPECTRE_V2_USER_CMD_FORCE,	true  },
+ 	{ "prctl",	SPECTRE_V2_USER_CMD_PRCTL,	false },
++	{ "seccomp",	SPECTRE_V2_USER_CMD_SECCOMP,	false },
+ };
+ 
+ static void __init spec_v2_user_print_cond(const char *reason, bool secure)
+@@ -331,10 +334,16 @@ spectre_v2_user_select_mitigation(enum s
+ 	case SPECTRE_V2_USER_CMD_FORCE:
+ 		mode = SPECTRE_V2_USER_STRICT;
+ 		break;
+-	case SPECTRE_V2_USER_CMD_AUTO:
+ 	case SPECTRE_V2_USER_CMD_PRCTL:
+ 		mode = SPECTRE_V2_USER_PRCTL;
+ 		break;
++	case SPECTRE_V2_USER_CMD_AUTO:
++	case SPECTRE_V2_USER_CMD_SECCOMP:
++		if (IS_ENABLED(CONFIG_SECCOMP))
++			mode = SPECTRE_V2_USER_SECCOMP;
++		else
++			mode = SPECTRE_V2_USER_PRCTL;
++		break;
+ 	}
+ 
+ 	/* Initialize Indirect Branch Prediction Barrier */
+@@ -346,6 +355,7 @@ spectre_v2_user_select_mitigation(enum s
+ 			static_branch_enable(&switch_mm_always_ibpb);
+ 			break;
+ 		case SPECTRE_V2_USER_PRCTL:
++		case SPECTRE_V2_USER_SECCOMP:
+ 			static_branch_enable(&switch_mm_cond_ibpb);
+ 			break;
+ 		default:
+@@ -588,6 +598,7 @@ void arch_smt_update(void)
+ 		update_stibp_strict();
+ 		break;
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		update_indir_branch_cond();
+ 		break;
+ 	}
+@@ -830,6 +841,8 @@ void arch_seccomp_spec_mitigate(struct t
  {
--	u64 gentry;
-+	u64 gentry = 0;
- 	int r;
+ 	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
+ 		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++	if (spectre_v2_user == SPECTRE_V2_USER_SECCOMP)
++		ib_prctl_set(task, PR_SPEC_FORCE_DISABLE);
+ }
+ #endif
  
- 	/*
-@@ -4748,22 +4748,12 @@ static u64 mmu_pte_write_fetch_gpte(stru
- 		/* Handle a 32-bit guest writing two halves of a 64-bit gpte */
- 		*gpa &= ~(gpa_t)7;
- 		*bytes = 8;
--		r = kvm_vcpu_read_guest(vcpu, *gpa, &gentry, 8);
--		if (r)
--			gentry = 0;
--		new = (const u8 *)&gentry;
+@@ -861,6 +874,7 @@ static int ib_prctl_get(struct task_stru
+ 	case SPECTRE_V2_USER_NONE:
+ 		return PR_SPEC_ENABLE;
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		if (task_spec_ib_force_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
+ 		if (task_spec_ib_disable(task))
+@@ -1060,6 +1074,7 @@ static char *stibp_state(void)
+ 	case SPECTRE_V2_USER_STRICT:
+ 		return ", STIBP: forced";
+ 	case SPECTRE_V2_USER_PRCTL:
++	case SPECTRE_V2_USER_SECCOMP:
+ 		if (static_key_enabled(&switch_to_cond_stibp))
+ 			return ", STIBP: conditional";
  	}
- 
--	switch (*bytes) {
--	case 4:
--		gentry = *(const u32 *)new;
--		break;
--	case 8:
--		gentry = *(const u64 *)new;
--		break;
--	default:
--		gentry = 0;
--		break;
-+	if (*bytes == 4 || *bytes == 8) {
-+		r = kvm_vcpu_read_guest_atomic(vcpu, *gpa, &gentry, *bytes);
-+		if (r)
-+			gentry = 0;
- 	}
- 
- 	return gentry;
-@@ -4876,8 +4866,6 @@ static void kvm_mmu_pte_write(struct kvm
- 
- 	pgprintk("%s: gpa %llx bytes %d\n", __func__, gpa, bytes);
- 
--	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, new, &bytes);
--
- 	/*
- 	 * No need to care whether allocation memory is successful
- 	 * or not since pte prefetch is skiped if it does not have
-@@ -4886,6 +4874,9 @@ static void kvm_mmu_pte_write(struct kvm
- 	mmu_topup_memory_caches(vcpu);
- 
- 	spin_lock(&vcpu->kvm->mmu_lock);
-+
-+	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, &bytes);
-+
- 	++vcpu->kvm->stat.mmu_pte_write;
- 	kvm_mmu_audit(vcpu, AUDIT_PRE_PTE_WRITE);
- 
 
 
