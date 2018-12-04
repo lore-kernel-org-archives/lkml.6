@@ -2,114 +2,112 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C7EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55D7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA902081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 955702081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 20:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0ZLwjEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAA902081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPrpv9wF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955702081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeLDULI (ORCPT
+        id S1726152AbeLDULU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:11:08 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51379 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbeLDULI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:11:08 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so10977069wmh.1;
-        Tue, 04 Dec 2018 12:11:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0V8p0CTYgcbpfzrxiZxqv+Go/DUrlDa0VjPxfipib4g=;
-        b=X0ZLwjEaNOUa1WKo3BwTeiqJDnneBYr329xK2+6f3GHGAy0bhFu9VFvnZBvNlSgj0t
-         CpNjBS+B2JGD738GAnrw6UBeE4Qn7DE2DOLdDCLWCH86NmIIVfp0HzQN+IpG0OOaALi9
-         02oYxtVRUY/CtX/exCzXk3mVsmiwE0kg7x+F06ksT8cXZU0YQeXp1qVU3rYbRKNJhZuQ
-         aSBSuFb23+66uw6+2xhpSym4JHYJVFmQbtyhxHVIJ1PorvJycVuHb5LOeWOJME6yQrNb
-         CuuZ4utdSo+UhVMrBbuD/M5Ce3hMHZZe/PsO24Eq/v1INkvr2PLBpZwNYjSxs4PJvqWA
-         HtJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=0V8p0CTYgcbpfzrxiZxqv+Go/DUrlDa0VjPxfipib4g=;
-        b=dgjcMHXRpzl+xy+XUxcNey2h/qk/u8w9SN9v/IG3CRGsySNFXNeGAwzrIcKgyrIYMS
-         sBB2F+Ts03/AJhIEebFAGMUneGzdCl4ghWPB1BgnltlKkAnFFS3k3A6MzQo59KZxNmBy
-         rUC95IjebyTPy/h6PjZ7lBaNaksiW4nOHZxzw42VPCs5pneoOJWvXAN3U3PBURspIqda
-         tbBhc3iB46/D5DEuawAKs9C3ysxUhEH3D1nwMUkW0MYm0YPXaA/EJx2zb8henCLSRs5i
-         5Cy0u9IZyOKuNtPiopO5wQFTW1a7Md5NsbZxvfv4jS8RFC5rTvLp40EuzgGCuYc48MPO
-         VqHw==
-X-Gm-Message-State: AA+aEWZlxAcxPH64WmdcMAjj8XkXsNcvZWf1GsBEFufs42YU0T4yDD5U
-        SpjtSB8kzi32YdFq+eibacg=
-X-Google-Smtp-Source: AFSGD/VL6HrNh+uyfKtVCrz1bfOHbhpEX+/m0AJS1zdtoNbHVt/AHf8xQnf0FXBFraMD/lSrIjKoMQ==
-X-Received: by 2002:a1c:174f:: with SMTP id 76mr12834444wmx.116.1543954265494;
-        Tue, 04 Dec 2018 12:11:05 -0800 (PST)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id w8sm22270181wrv.7.2018.12.04.12.11.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:11:03 -0800 (PST)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 62E151144AA5; Tue,  4 Dec 2018 21:11:02 +0100 (CET)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     trivial@kernel.org, kernel-janitors@vger.kernel.org,
-        Mathieu Malaterre <malat@debian.org>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mtd: rawnand: jz4780: annotate implicit fall throughs
-Date:   Tue,  4 Dec 2018 21:10:57 +0100
-Message-Id: <20181204201057.30733-1-malat@debian.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181203212214.8862-1-malat@debian.org>
-References: <20181203212214.8862-1-malat@debian.org>
+        Tue, 4 Dec 2018 15:11:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbeLDULU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 15:11:20 -0500
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E23AC20851
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 20:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543954279;
+        bh=TtPfR0QvZaffYPTc84h47nLX5iJvykdqYEEinZcbiNM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HPrpv9wFc+7di/F6+r+5VhL34V9boJa0rHBzwEE+/wFkpe3IeOp4Cfa62DBUlnm3e
+         o69Tq6AnNhC+MM4tkdvT5xj3qWId7u+fIYyrz54ml49dzoWSnqvDf7vvxugO0ZStXo
+         TpStAfOQtIjuMNIkf8cSP2ql5fc8QoBlt2Izkgmw=
+Received: by mail-wm1-f49.google.com with SMTP id n190so8501721wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 12:11:18 -0800 (PST)
+X-Gm-Message-State: AA+aEWYi2ADLQ6suCvJN7P1568pOX751+qxA2bIbOf3yTWf6vOqinEXP
+        +QPoDyyDi/Yo5F2bqJ9GUK9zQuSkZeudIE+RZehwwQ==
+X-Google-Smtp-Source: AFSGD/XqvFjexh8VobjQufCZnvaQyo1ngJ2zltm4soKzt7g9u+V4phsgWgM+Zjb9l3GL6vgMRl+Jxm/R0q2W5Ll07XQ=
+X-Received: by 2002:a7b:ce17:: with SMTP id m23mr14507433wmc.74.1543954277442;
+ Tue, 04 Dec 2018 12:11:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1542841400.git.luto@kernel.org> <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
+ <20181122084119.GA44720@gmail.com> <20181127153202.GA27075@linux.intel.com>
+ <CALCETrW00oTpXOONwbONHHuiyqp9QbNMe0gvVgf8X3_X0fidqw@mail.gmail.com>
+ <20181204193346.GD17374@linux.intel.com> <CALCETrU1LFNR+m_YmVDmGMMbNyf5A7AFjFsu9JiET0X8YRgeaQ@mail.gmail.com>
+ <20181204195239.GE17374@linux.intel.com>
+In-Reply-To: <20181204195239.GE17374@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Dec 2018 12:11:05 -0800
+X-Gmail-Original-Message-ID: <CALCETrWMuHoEWcyytgy6vEzGGMNj0FU0ZrrX2iyu9bDGSdOwFg@mail.gmail.com>
+Message-ID: <CALCETrWMuHoEWcyytgy6vEzGGMNj0FU0ZrrX2iyu9bDGSdOwFg@mail.gmail.com>
+Subject: Re: [PATCH 6/5] x86/fault: Clean up the page fault oops decoder a bit
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a plan to build the kernel with -Wimplicit-fallthrough and
-these places in the code produced warnings. Fix them up.
+On Tue, Dec 4, 2018 at 11:52 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Tue, Dec 04, 2018 at 11:47:10AM -0800, Andy Lutomirski wrote:
+> > On Tue, Dec 4, 2018 at 11:34 AM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > On Tue, Dec 04, 2018 at 11:22:25AM -0800, Andy Lutomirski wrote:
+> > > > On Tue, Nov 27, 2018 at 7:32 AM Sean Christopherson
+> > > > <sean.j.christopherson@intel.com> wrote:
+> > > > > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> > > > > index 2ff25ad33233..510e263c256b 100644
+> > > > > --- a/arch/x86/mm/fault.c
+> > > > > +++ b/arch/x86/mm/fault.c
+> > > > > @@ -660,8 +660,10 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
+> > > > >         err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
+> > > > >         err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
+> > > > >         err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
+> > > > > -
+> > > > > -       pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
+> > > > > +       err_str_append(~error_code, err_txt, X86_PF_USER, "[KERNEL]");
+> > > > > +       err_str_append(~error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR,
+> > > > > +                                                         "[READ]");
+> > > > > +       pr_alert("#PF error code: %s\n", err_txt);
+> > > > >
+> > > >
+> > > > Seems generally nice, but I would suggest making the bit-not-set name
+> > > > be another parameter to err_str_append().  I'm also slightly uneasy
+> > > > about making "KERNEL" look like a bit, but I guess it doesn't bother
+> > > > me too much.
+> > >
+> > > What about "SUPERVISOR" instead of "KERNEL"?  It'd be consistent with
+> > > the SDM and hopefully less likely to be misconstrued as something else.
+> >
+> > Or even just [!USER], perhaps.
+>
+> I thought about that too, but the pedant in me didn't like the inconsistency
+> of doing "READ" instead of "[!WRITE] [!INSTR]", and IMO "READ" is a lot more
+> readable (no pun intended).  I also like having completely different text,
+> makes it harder to miss a single "!" and go down the wrong path.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v2: fix subject prefix non sense
-
- drivers/mtd/nand/raw/jz4780_bch.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
-index 731c6051d91e..7201827809e9 100644
---- a/drivers/mtd/nand/raw/jz4780_bch.c
-+++ b/drivers/mtd/nand/raw/jz4780_bch.c
-@@ -136,8 +136,10 @@ static void jz4780_bch_read_parity(struct jz4780_bch *bch, void *buf,
- 	switch (size8) {
- 	case 3:
- 		dest8[2] = (val >> 16) & 0xff;
-+		/* fall through */
- 	case 2:
- 		dest8[1] = (val >> 8) & 0xff;
-+		/* fall through */
- 	case 1:
- 		dest8[0] = val & 0xff;
- 		break;
--- 
-2.19.2
-
+Fair enough.  I'm sold.
