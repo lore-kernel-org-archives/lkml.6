@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2FFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A86C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 979FE20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A18820851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bh7fQNt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 979FE20851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8af4505"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A18820851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbeLDK6u (ORCPT
+        id S1726594AbeLDK6s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:58:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43328 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:58:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727012AbeLDK6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:58:45 -0500
+        id S1727003AbeLDK6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:58:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 740B92087F;
-        Tue,  4 Dec 2018 10:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6BEE214DB;
+        Tue,  4 Dec 2018 10:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921125;
-        bh=P50WxyPqsRLjb07+AVptViZV8wwuBNq9wYCbtEIOpJ0=;
+        s=default; t=1543921122;
+        bh=tRcto52dn5Sr+E7ceFzICBGwvl3M/6YTIpVod1+AOZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bh7fQNt9OaoEueUIjsEhcfWB6GEFgMkYazKvjYnEqjSetFcHw3KtOwKtxdCZPaQN/
-         sVfhISTyAEYO+dh+uYR8YasxamlsBPjSonSC4xrm9F0tj+BFlhfwv3EceZAXR40RBi
-         oE8C7fBz/2YlmoyH3Szw1iKXUsPCRTn0Oo5k6OsA=
+        b=d8af4505EXfVfuaDhjGJc9lBXSb0WEXq2IdtHunQ9zeOWfYDslg21/wsd8HJ3mAaG
+         ZJmwjFPtztlD2abY0J7WSNgZOjbHZ19KJ6/2K7AnffWHiQnKEXAVWJbdfhfDXMY+GB
+         ZdaNuMT3PdKrAsskTnRftpuSzdVoWBCXEq3bM4XA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+dc09047bce3820621ba2@syzkaller.appspotmail.com,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 091/139] ALSA: control: Fix race between adding and removing a user element
-Date:   Tue,  4 Dec 2018 11:49:32 +0100
-Message-Id: <20181204103654.084810935@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 090/139] ALSA: ac97: Fix incorrect bit shift at AC97-SPSA control write
+Date:   Tue,  4 Dec 2018 11:49:31 +0100
+Message-Id: <20181204103654.040088878@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -66,156 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit e1a7bfe3807974e66f971f2589d4e0197ec0fced upstream.
+commit 7194eda1ba0872d917faf3b322540b4f57f11ba5 upstream.
 
-The procedure for adding a user control element has some window opened
-for race against the concurrent removal of a user element.  This was
-caught by syzkaller, hitting a KASAN use-after-free error.
+The function snd_ac97_put_spsa() gets the bit shift value from the
+associated private_value, but it extracts too much; the current code
+extracts 8 bit values in bits 8-15, but this is a combination of two
+nibbles (bits 8-11 and bits 12-15) for left and right shifts.
+Due to the incorrect bits extraction, the actual shift may go beyond
+the 32bit value, as spotted recently by UBSAN check:
+ UBSAN: Undefined behaviour in sound/pci/ac97/ac97_codec.c:836:7
+ shift exponent 68 is too large for 32-bit type 'int'
 
-This patch addresses the bug by wrapping the whole procedure to add a
-user control element with the card->controls_rwsem, instead of only
-around the increment of card->user_ctl_count.
+This patch fixes the shift value extraction by masking the properly
+with 0x0f instead of 0xff.
 
-This required a slight code refactoring, too.  The function
-snd_ctl_add() is split to two parts: a core function to add the
-control element and a part calling it.  The former is called from the
-function for adding a user control element inside the controls_rwsem.
-
-One change to be noted is that snd_ctl_notify() for adding a control
-element gets called inside the controls_rwsem as well while it was
-called outside the rwsem.  But this should be OK, as snd_ctl_notify()
-takes another (finer) rwlock instead of rwsem, and the call of
-snd_ctl_notify() inside rwsem is already done in another code path.
-
-Reported-by: syzbot+dc09047bce3820621ba2@syzkaller.appspotmail.com
+Reported-and-tested-by: Meelis Roos <mroos@linux.ee>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/control.c |   80 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 45 insertions(+), 35 deletions(-)
+ sound/pci/ac97/ac97_codec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -348,6 +348,40 @@ static int snd_ctl_find_hole(struct snd_
- 	return 0;
- }
- 
-+/* add a new kcontrol object; call with card->controls_rwsem locked */
-+static int __snd_ctl_add(struct snd_card *card, struct snd_kcontrol *kcontrol)
-+{
-+	struct snd_ctl_elem_id id;
-+	unsigned int idx;
-+	unsigned int count;
-+
-+	id = kcontrol->id;
-+	if (id.index > UINT_MAX - kcontrol->count)
-+		return -EINVAL;
-+
-+	if (snd_ctl_find_id(card, &id)) {
-+		dev_err(card->dev,
-+			"control %i:%i:%i:%s:%i is already present\n",
-+			id.iface, id.device, id.subdevice, id.name, id.index);
-+		return -EBUSY;
-+	}
-+
-+	if (snd_ctl_find_hole(card, kcontrol->count) < 0)
-+		return -ENOMEM;
-+
-+	list_add_tail(&kcontrol->list, &card->controls);
-+	card->controls_count += kcontrol->count;
-+	kcontrol->id.numid = card->last_numid + 1;
-+	card->last_numid += kcontrol->count;
-+
-+	id = kcontrol->id;
-+	count = kcontrol->count;
-+	for (idx = 0; idx < count; idx++, id.index++, id.numid++)
-+		snd_ctl_notify(card, SNDRV_CTL_EVENT_MASK_ADD, &id);
-+
-+	return 0;
-+}
-+
- /**
-  * snd_ctl_add - add the control instance to the card
-  * @card: the card instance
-@@ -364,45 +398,18 @@ static int snd_ctl_find_hole(struct snd_
-  */
- int snd_ctl_add(struct snd_card *card, struct snd_kcontrol *kcontrol)
+--- a/sound/pci/ac97/ac97_codec.c
++++ b/sound/pci/ac97/ac97_codec.c
+@@ -824,7 +824,7 @@ static int snd_ac97_put_spsa(struct snd_
  {
--	struct snd_ctl_elem_id id;
--	unsigned int idx;
--	unsigned int count;
- 	int err = -EINVAL;
- 
- 	if (! kcontrol)
- 		return err;
- 	if (snd_BUG_ON(!card || !kcontrol->info))
- 		goto error;
--	id = kcontrol->id;
--	if (id.index > UINT_MAX - kcontrol->count)
--		goto error;
- 
- 	down_write(&card->controls_rwsem);
--	if (snd_ctl_find_id(card, &id)) {
--		up_write(&card->controls_rwsem);
--		dev_err(card->dev, "control %i:%i:%i:%s:%i is already present\n",
--					id.iface,
--					id.device,
--					id.subdevice,
--					id.name,
--					id.index);
--		err = -EBUSY;
--		goto error;
--	}
--	if (snd_ctl_find_hole(card, kcontrol->count) < 0) {
--		up_write(&card->controls_rwsem);
--		err = -ENOMEM;
--		goto error;
--	}
--	list_add_tail(&kcontrol->list, &card->controls);
--	card->controls_count += kcontrol->count;
--	kcontrol->id.numid = card->last_numid + 1;
--	card->last_numid += kcontrol->count;
--	id = kcontrol->id;
--	count = kcontrol->count;
-+	err = __snd_ctl_add(card, kcontrol);
- 	up_write(&card->controls_rwsem);
--	for (idx = 0; idx < count; idx++, id.index++, id.numid++)
--		snd_ctl_notify(card, SNDRV_CTL_EVENT_MASK_ADD, &id);
-+	if (err < 0)
-+		goto error;
- 	return 0;
- 
-  error:
-@@ -1361,9 +1368,12 @@ static int snd_ctl_elem_add(struct snd_c
- 		kctl->tlv.c = snd_ctl_elem_user_tlv;
- 
- 	/* This function manage to free the instance on failure. */
--	err = snd_ctl_add(card, kctl);
--	if (err < 0)
--		return err;
-+	down_write(&card->controls_rwsem);
-+	err = __snd_ctl_add(card, kctl);
-+	if (err < 0) {
-+		snd_ctl_free_one(kctl);
-+		goto unlock;
-+	}
- 	offset = snd_ctl_get_ioff(kctl, &info->id);
- 	snd_ctl_build_ioff(&info->id, kctl, offset);
- 	/*
-@@ -1374,10 +1384,10 @@ static int snd_ctl_elem_add(struct snd_c
- 	 * which locks the element.
- 	 */
- 
--	down_write(&card->controls_rwsem);
- 	card->user_ctl_count++;
--	up_write(&card->controls_rwsem);
- 
-+ unlock:
-+	up_write(&card->controls_rwsem);
- 	return 0;
- }
- 
+ 	struct snd_ac97 *ac97 = snd_kcontrol_chip(kcontrol);
+ 	int reg = kcontrol->private_value & 0xff;
+-	int shift = (kcontrol->private_value >> 8) & 0xff;
++	int shift = (kcontrol->private_value >> 8) & 0x0f;
+ 	int mask = (kcontrol->private_value >> 16) & 0xff;
+ 	// int invert = (kcontrol->private_value >> 24) & 0xff;
+ 	unsigned short value, old, new;
 
 
