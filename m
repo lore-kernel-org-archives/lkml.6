@@ -2,52 +2,51 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06AEC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC85C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2C820851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2269C2146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:20:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTbWg45V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2C820851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYv5O1wm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2269C2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeLDLUI (ORCPT
+        id S1727975AbeLDLU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:20:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50276 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:20:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbeLDLDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:03:42 -0500
+        id S1727455AbeLDLDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:03:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0152087F;
-        Tue,  4 Dec 2018 11:03:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B9AE2087F;
+        Tue,  4 Dec 2018 11:03:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921421;
-        bh=R4mzaICfOqnGpEJTPuQVAG8MEhYlOOLWbVw6fmnva/M=;
+        s=default; t=1543921410;
+        bh=X1zK1qSxNZ8h4U7RIMLIGIr+XQ+2/cK5szhiPsHkC9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BTbWg45VKqyjzQC+LcffoRvBvSE8nxfOoyaS9KRMV6UZVjx4zj0eXEQdHZFdKIbSC
-         vyBkNUet461Nga7TuaJTwK3eP20miwQ36wXL2Pk16lsAl88JMuoOVN1bQKoyF7NdjQ
-         q2h6dvqWAj547b1dtdUnPW1nW7i6jIew0wo5bPyw=
+        b=CYv5O1wm6KcXhZtah5SHQVPaqjXs4iVoxFu0lNMMdKuhN3Q5Fxt4oSScjbN2798Yg
+         MJ1lSrBsss7Dv75xLngRDxEo4JWwJc7uJqnInuaGSpmMpA57TURboBxVwSa08+/C0k
+         GH4DHCBvKqxMB2cvM6+fjB4dYQqsfKPPv5Yr5xRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 029/146] btrfs: Refactor check_leaf function for later expansion
-Date:   Tue,  4 Dec 2018 11:48:35 +0100
-Message-Id: <20181204103728.033382562@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 059/146] net: skb_scrub_packet(): Scrub offload_fwd_mark
+Date:   Tue,  4 Dec 2018 11:49:05 +0100
+Message-Id: <20181204103729.214402485@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -66,137 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit c3267bbaa9cae09b62960eafe33ad19196803285 upstream.
+From: Petr Machata <petrm@mellanox.com>
 
-Current check_leaf() function does a good job checking key order and
-item offset/size.
+[ Upstream commit b5dd186d10ba59e6b5ba60e42b3b083df56df6f3 ]
 
-However it only checks from slot 0 to the last but one slot, this is
-good but makes later expansion hard.
+When a packet is trapped and the corresponding SKB marked as
+already-forwarded, it retains this marking even after it is forwarded
+across veth links into another bridge. There, since it ingresses the
+bridge over veth, which doesn't have offload_fwd_mark, it triggers a
+warning in nbp_switchdev_frame_mark().
 
-So this refactoring iterates from slot 0 to the last slot.
-For key comparison, it uses a key with all 0 as initial key, so all
-valid keys should be larger than that.
+Then nbp_switchdev_allowed_egress() decides not to allow egress from
+this bridge through another veth, because the SKB is already marked, and
+the mark (of 0) of course matches. Thus the packet is incorrectly
+blocked.
 
-And for item size/offset checks, it compares current item end with
-previous item offset.
-For slot 0, use leaf end as a special case.
+Solve by resetting offload_fwd_mark() in skb_scrub_packet(). That
+function is called from tunnels and also from veth, and thus catches the
+cases where traffic is forwarded between bridges and transformed in a
+way that invalidates the marking.
 
-This makes later item/key offset checks and item size checks easier to
-be implemented.
-
-Also, makes check_leaf() to return -EUCLEAN other than -EIO to indicate
-error.
-
-Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6bc506b4fb06 ("bridge: switchdev: Add forward mark support for stacked devices")
+Fixes: abf4bb6b63d0 ("skbuff: Add the offload_mr_fwd_mark field")
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/disk-io.c | 50 +++++++++++++++++++++++++---------------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
+ net/core/skbuff.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 0e67cee73c53..4a1e63df1183 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -554,8 +554,9 @@ static noinline int check_leaf(struct btrfs_root *root,
- 			       struct extent_buffer *leaf)
- {
- 	struct btrfs_fs_info *fs_info = root->fs_info;
-+	/* No valid key type is 0, so all key should be larger than this key */
-+	struct btrfs_key prev_key = {0, 0, 0};
- 	struct btrfs_key key;
--	struct btrfs_key leaf_key;
- 	u32 nritems = btrfs_header_nritems(leaf);
- 	int slot;
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4882,6 +4882,10 @@ void skb_scrub_packet(struct sk_buff *sk
+ 	nf_reset(skb);
+ 	nf_reset_trace(skb);
  
-@@ -588,7 +589,7 @@ static noinline int check_leaf(struct btrfs_root *root,
- 				CORRUPT("non-root leaf's nritems is 0",
- 					leaf, check_root, 0);
- 				free_extent_buffer(eb);
--				return -EIO;
-+				return -EUCLEAN;
- 			}
- 			free_extent_buffer(eb);
- 		}
-@@ -598,28 +599,23 @@ static noinline int check_leaf(struct btrfs_root *root,
- 	if (nritems == 0)
- 		return 0;
- 
--	/* Check the 0 item */
--	if (btrfs_item_offset_nr(leaf, 0) + btrfs_item_size_nr(leaf, 0) !=
--	    BTRFS_LEAF_DATA_SIZE(fs_info)) {
--		CORRUPT("invalid item offset size pair", leaf, root, 0);
--		return -EIO;
--	}
--
- 	/*
--	 * Check to make sure each items keys are in the correct order and their
--	 * offsets make sense.  We only have to loop through nritems-1 because
--	 * we check the current slot against the next slot, which verifies the
--	 * next slot's offset+size makes sense and that the current's slot
--	 * offset is correct.
-+	 * Check the following things to make sure this is a good leaf, and
-+	 * leaf users won't need to bother with similar sanity checks:
-+	 *
-+	 * 1) key order
-+	 * 2) item offset and size
-+	 *    No overlap, no hole, all inside the leaf.
- 	 */
--	for (slot = 0; slot < nritems - 1; slot++) {
--		btrfs_item_key_to_cpu(leaf, &leaf_key, slot);
--		btrfs_item_key_to_cpu(leaf, &key, slot + 1);
-+	for (slot = 0; slot < nritems; slot++) {
-+		u32 item_end_expected;
++#ifdef CONFIG_NET_SWITCHDEV
++	skb->offload_fwd_mark = 0;
++#endif
 +
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
+ 	if (!xnet)
+ 		return;
  
- 		/* Make sure the keys are in the right order */
--		if (btrfs_comp_cpu_keys(&leaf_key, &key) >= 0) {
-+		if (btrfs_comp_cpu_keys(&prev_key, &key) >= 0) {
- 			CORRUPT("bad key order", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
- 
- 		/*
-@@ -627,10 +623,14 @@ static noinline int check_leaf(struct btrfs_root *root,
- 		 * item data starts at the end of the leaf and grows towards the
- 		 * front.
- 		 */
--		if (btrfs_item_offset_nr(leaf, slot) !=
--			btrfs_item_end_nr(leaf, slot + 1)) {
-+		if (slot == 0)
-+			item_end_expected = BTRFS_LEAF_DATA_SIZE(fs_info);
-+		else
-+			item_end_expected = btrfs_item_offset_nr(leaf,
-+								 slot - 1);
-+		if (btrfs_item_end_nr(leaf, slot) != item_end_expected) {
- 			CORRUPT("slot offset bad", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
- 
- 		/*
-@@ -641,8 +641,12 @@ static noinline int check_leaf(struct btrfs_root *root,
- 		if (btrfs_item_end_nr(leaf, slot) >
- 		    BTRFS_LEAF_DATA_SIZE(fs_info)) {
- 			CORRUPT("slot end outside of leaf", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
-+
-+		prev_key.objectid = key.objectid;
-+		prev_key.type = key.type;
-+		prev_key.offset = key.offset;
- 	}
- 
- 	return 0;
--- 
-2.17.1
-
 
 
