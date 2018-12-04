@@ -2,101 +2,134 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8048FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A930420659
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A930420659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 4881C20659
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4881C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbeLDNNi (ORCPT
+        id S1726395AbeLDNPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:13:38 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:52560 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725802AbeLDNNi (ORCPT
+        Tue, 4 Dec 2018 08:15:07 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:33262 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeLDNPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:13:38 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 71D6A634C7E;
-        Tue,  4 Dec 2018 15:13:33 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gUAW5-0000Jo-64; Tue, 04 Dec 2018 15:13:33 +0200
-Date:   Tue, 4 Dec 2018 15:13:33 +0200
-From:   sakari.ailus@iki.fi
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] media: dt-bindings: media: sun6i: Separate H3
- compatible from A31
-Message-ID: <20181204131333.peobmjkksl2p3hvv@valkosipuli.retiisi.org.uk>
-References: <20181130075849.16941-1-wens@csie.org>
- <20181130075849.16941-2-wens@csie.org>
- <CAMty3ZC-4hnVOx9AYhm7uUCUHF=n_NoH3xV-3SyUXWxb_X8TGg@mail.gmail.com>
- <CAGb2v67xoqV+QuVxDyBrUzzpab9vsbJRQBFPA0OS=h_bZ2H7Tw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v67xoqV+QuVxDyBrUzzpab9vsbJRQBFPA0OS=h_bZ2H7Tw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 4 Dec 2018 08:15:06 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id 7pF41z0163XaVaC01pF4ie; Tue, 04 Dec 2018 14:15:05 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gUAXY-000627-U1; Tue, 04 Dec 2018 14:15:04 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gUAXY-000697-RD; Tue, 04 Dec 2018 14:15:04 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Andreas Schwab <schwab@linux-m68k.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Schmitz <schmitzmic@gmail.com>
+Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k: Fix crash in free_all_bootmem()
+Date:   Tue,  4 Dec 2018 14:14:55 +0100
+Message-Id: <20181204131456.23579-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen-Yu,
+When running the kernel in Fast RAM on Atari:
 
-On Mon, Dec 03, 2018 at 05:48:31PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Dec 3, 2018 at 5:42 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > On Fri, Nov 30, 2018 at 1:29 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> > >
-> > > The CSI controller found on the H3 (and H5) is a reduced version of the
-> > > one found on the A31. It only has 1 channel, instead of 4 channels for
-> > > time-multiplexed BT.656. Since the H3 is a reduced version, it cannot
-> > > "fallback" to a compatible that implements more features than it
-> > > supports.
-> > >
-> > > Split out the H3 compatible as a separate entry, with no fallback.
-> > >
-> > > Fixes: b7eadaa3a02a ("media: dt-bindings: media: sun6i: Add A31 and H3
-> > >                       compatibles")
-> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >
-> > "media" text appear two times on commit head.
-> 
-> Just following what previous commits did. :)
+    Ignoring memory chunk at 0x0:0xe00000 before the first chunk
+    ...
+    Unable to handle kernel NULL pointer dereference at virtual address (ptrval)
+    Oops: 00000000
+    Modules linked in:
+    PC: [<0069dbac>] free_all_bootmem+0x12c/0x186
+    SR: 2714  SP: (ptrval)  a2: 005e3314
+    d0: 00000000    d1: 0000000a    d2: 00000e00    d3: 00000000
+    d4: 005e1fc0    d5: 0000001a    a0: 01000000    a1: 00000000
+    Process swapper (pid: 0, task=(ptrval))
+    Frame format=7 eff addr=00000736 ssw=0505 faddr=00000736
+    wb 1 stat/addr/data: 0000 00000000 00000000
+    wb 2 stat/addr/data: 0000 00000000 00000000
+    wb 3 stat/addr/data: 0000 00000736 00000000
+    push data: 00000000 00000000 00000000 00000000
+    Stack from 005e1f84:
+            00000000 0000000a 027d3260 006b5006 00000000 00000000 00000000 00000000
+            0004f062 0003a220 0069e272 005e1ff8 0000054c 00000000 00e00000 00000000
+            00000001 00693cd8 027d3260 0004f062 0003a220 00691be6 00000000 00000000
+            00000000 00000000 00000000 00000000 006b5006 00000000 00690872
+    Call Trace: [<0004f062>] printk+0x0/0x18
+     [<0003a220>] parse_args+0x0/0x2d4
+     [<0069e272>] memblock_virt_alloc_try_nid+0x0/0xa4
+     [<00693cd8>] mem_init+0xa/0x5c
+     [<0004f062>] printk+0x0/0x18
+     [<0003a220>] parse_args+0x0/0x2d4
+     [<00691be6>] start_kernel+0x1ca/0x462
+     [<00690872>] _sinittext+0x872/0x11f8
+    Code: 7a1a eaae 2270 6db0 0061 ef14 2f01 2f03 <96a9> 0736 2203 e589 d681 e78b d6a9 0732 2f03 2f40 0034 4eb9 0069 b8d0 260e 4fef
+    Disabling lock debugging due to kernel taint
+    Kernel panic - not syncing: Attempted to kill the idle task!
 
-I understand Mauro has a  script prefixes everything going through the
-media tree with "media: " unless it's already there. I'd drop the latter,
-but perhaps elaborate a bit this is about CSI. Fine details... I think it's
-fine as-is for now.
+As the kernel must run in the memory chunk with the lowest address,
+ST-RAM is ignored, and removed from the m68k_memory[] array.
+However, it is not removed from memblock, causing a crash later.
 
-> 
-> > Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
-> 
-> BTW, I know you've been trying to get CSI to work on the A64.
-> I have it working for the Bananapi-M64. The CSI SCLK needs to
-> be lowered to 300 MHz or the image gets corrupted.
-> 
-> ChenYu
+Fix this by removing ignored memory chunks from memblock.
 
+Amigas with both Zorro II and Zorro III RAM have a similar issue, as on
+such systems, Zorro II RAM is ignored, and removed from the
+m68k_memory[] array.  Fix this as well.
+
+Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Fixes: 1008a11590b966b4 ("m68k: switch to MEMBLOCK + NO_BOOTMEM")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+The Amiga part is untested.
+---
+ arch/m68k/amiga/config.c | 2 ++
+ arch/m68k/mm/motorola.c  | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index 65f63a4571300085..73e2bdf0f5ac8f2b 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -427,6 +427,8 @@ void __init config_amiga(void)
+ 					continue;
+ 				}
+ 				disabled_z2mem += m68k_memory[i].size;
++				memblock_remove(m68k_memory[i].addr,
++						m68k_memory[i].size);
+ 				m68k_num_memory--;
+ 				for (j = i; j < m68k_num_memory; j++)
+ 					m68k_memory[j] = m68k_memory[j+1];
+diff --git a/arch/m68k/mm/motorola.c b/arch/m68k/mm/motorola.c
+index 4e17ecb5928aae85..98706bfe10a9ac5e 100644
+--- a/arch/m68k/mm/motorola.c
++++ b/arch/m68k/mm/motorola.c
+@@ -233,6 +233,8 @@ void __init paging_init(void)
+ 			printk("Ignoring memory chunk at 0x%lx:0x%lx before the first chunk\n",
+ 				m68k_memory[i].addr, m68k_memory[i].size);
+ 			printk("Fix your bootloader or use a memfile to make use of this area!\n");
++			memblock_remove(m68k_memory[i].addr,
++					m68k_memory[i].size);
+ 			m68k_num_memory--;
+ 			memmove(m68k_memory + i, m68k_memory + i + 1,
+ 				(m68k_num_memory - i) * sizeof(struct m68k_mem_info));
 -- 
-Sakari Ailus
+2.17.1
+
