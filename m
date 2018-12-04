@@ -2,120 +2,103 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F52C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89A1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39C12082B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:21:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mxh6dvBe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39C12082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 873182082F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873182082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbeLDSVQ (ORCPT
+        id S1725998AbeLDSWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:21:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 13:22:40 -0500
+Received: from mga04.intel.com ([192.55.52.120]:1118 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeLDSVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:21:15 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4309A2081B;
-        Tue,  4 Dec 2018 18:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543947674;
-        bh=ji3ydNM9SAxkRfwU4F7pz7IU3OSBPHbSsD5+rB3CtjE=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Mxh6dvBeoILkGY7JQWm9eHVEtdIGzc31l5mDVHjU33+gY0nmzB8039rMp/3c8DFIP
-         IenYO7tNM5siEPvUG5ja6mDDge9vLVLoulcaGATqqDTEgpISHfrIxt48SMXeO+Dj05
-         8O/w11s2m6SBxBKixpmDT43w9VJjjt5Bs8rTxpiI=
-Content-Type: text/plain; charset="utf-8"
+        id S1725797AbeLDSWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:22:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:22:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
+   d="scan'208";a="300985219"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga005.fm.intel.com with ESMTP; 04 Dec 2018 10:22:39 -0800
+Date:   Tue, 4 Dec 2018 10:22:39 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 1/2] x86/vdso: Remove obsolete "fake section table"
+ reservation
+Message-ID: <20181204182239.GA17374@linux.intel.com>
+References: <20181204161741.12292-1-sean.j.christopherson@intel.com>
+ <20181204161741.12292-2-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204071315.GA31204@localhost.localdomain>
-Cc:     mazziesaccount@gmail.com, Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
- <20181130105022.GA15388@localhost.localdomain>
- <154388011043.88331.6461709079501929390@swboyd.mtv.corp.google.com>
- <20181204071315.GA31204@localhost.localdomain>
-Message-ID: <154394767367.88331.17679291261207728780@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and provider
- registrations
-Date:   Tue, 04 Dec 2018 10:21:13 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204161741.12292-2-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matti Vaittinen (2018-12-03 23:13:15)
-> On Mon, Dec 03, 2018 at 03:35:10PM -0800, Stephen Boyd wrote:
-> =
+On Tue, Dec 04, 2018 at 08:17:40AM -0800, Sean Christopherson wrote:
+> At one point the vDSO image was manually stripped down by vdso2c in an
+> attempt to minimize the size of the image mapped into userspace.  Part
+> of that stripping process involved building a fake section table so as
+> not to break userspace processes that parse the section table.  Memory
+> for the fake section table was reserved in the .rodata section so that
+> vdso2c could simply copy the entire PT_LOAD segment into the userspace
+> image after building the fake table.
+> 
+> Eventually, the entire fake section table approach was dropped in favor
+> of stripping the vdso "the old fashioned way", i.e. via objdump -S.
+> But, the reservation in .rodata for the fake table was left behind.
+> Remove the reserveration along with a few other related defines and
+> section entries.
+> 
+> Removing the fake section table placeholder zaps a whopping 0x340 bytes
+> from the 64-bit vDSO image, which drops the current image's size to
+> under 4k, i.e. reduces the effective size of the userspace vDSO mapping
+> by a full page.
+> 
+> Fixes: da861e18eccc ("x86, vdso: Get rid of the fake section mechanism")
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+> diff --git a/arch/x86/entry/vdso/vdso2c.c b/arch/x86/entry/vdso/vdso2c.c
+> index 4674f58581a1..2479a454b15c 100644
+> --- a/arch/x86/entry/vdso/vdso2c.c
+> +++ b/arch/x86/entry/vdso/vdso2c.c
+> @@ -98,12 +98,6 @@ struct vdso_sym required_syms[] = {
+>  	[sym_hpet_page] = {"hpet_page", true},
+>  	[sym_pvclock_page] = {"pvclock_page", true},
+>  	[sym_hvclock_page] = {"hvclock_page", true},
+> -	[sym_VDSO_FAKE_SECTION_TABLE_START] = {
+> -		"VDSO_FAKE_SECTION_TABLE_START", false
+> -	},
+> -	[sym_VDSO_FAKE_SECTION_TABLE_END] = {
+> -		"VDSO_FAKE_SECTION_TABLE_END", false
+> -	},
 
-> > If the DT doesn't have the #clock-cells property in the node being
-> > registered then calling clk_get() will fail for any consumer devices
-> > that point to the node with a phandle and clock specifier. I don't
-> > expect us to get very far into development if that's the case.
-> =
+Doh, I missed removing the definitions for sym_VDSO_FAKE_SECTION_TABLE_*.
 
-> Makes sense. So only potential thing to break is if someone out there
-> has broken DT/driver - where they currently see this failure. Eg. they
-> use node w/o #clock-cells as provider and where they try and fail
-> controlling this clock - but ignore the error (and system just "works"
-> with HW defaults). After this change they may actually succeed in
-> controlling - but do control wrong clock.
-> =
-
-> Not likely scenario (sure happens somewhere) - and it involves already
-> broken design. So I agree with you. Besides, you are the maintainer for
-> clk framework and thus get the most of the rain if **** hits the fan =3DD
-
-Yes, exactly.
-
-> =
-
-> > Of course, we don't fail in of_clk_add_provider() if there isn't a
-> > #clock-cells property in the node, we just happily add the node to the
-> > provider list and carry on. I doubt anyone is failing to specify the DT
-> > property, but maybe they are, in which case we could keep not failing
-> > and just add the node of whatever we're called with originally if
-> > neither the parent or the passed node have the #clock-cells property. I
-> > wouldn't try to go any higher than one node above the current node and
-> > look for a #clock-cells though.
-> =
-
-> I think we should use parent device's node, not the paren node in DT,
-> right? But I agree, we should only look "one level up in the chain".
-
-Are these two things different? I'm suggesting looking at
-device_node::parent and trying to find a #clock-cells property.
-
+>  	{"VDSO32_NOTE_MASK", true},
+>  	{"__kernel_vsyscall", true},
+>  	{"__kernel_sigreturn", true},
+> -- 
+> 2.19.2
+> 
