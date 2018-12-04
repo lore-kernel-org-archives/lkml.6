@@ -2,106 +2,126 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DEBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D03C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46BC20851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:48:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46BC20851
+	by mail.kernel.org (Postfix) with ESMTP id CA91E20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 08:48:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA91E20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeLDIs0 (ORCPT
+        id S1726013AbeLDIsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 03:48:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51796 "EHLO mx1.suse.de"
+        Tue, 4 Dec 2018 03:48:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51842 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725764AbeLDIs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 03:48:26 -0500
+        id S1725764AbeLDIsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 03:48:33 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D5B52B009;
-        Tue,  4 Dec 2018 08:48:22 +0000 (UTC)
-Date:   Tue, 4 Dec 2018 09:48:21 +0100
+        by mx1.suse.de (Postfix) with ESMTP id C9CC6B009;
+        Tue,  4 Dec 2018 08:48:28 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 09:48:26 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ying.huang@intel.com, Andrea Arcangeli <aarcange@redhat.com>,
-        s.priebe@profihost.ag, mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Oscar Salvador <OSalvador@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181204084821.GB1286@dhcp22.suse.cz>
-References: <CAHk-=wjgRO-=NPaU9EmrdC3it3o7kvf4u7sewv3crtNLkE13Hg@mail.gmail.com>
- <CAHk-=wjgpWOA7zQ9H5=Zj6KQijm5CBXZc7J=it6C5gdEV0hb5Q@mail.gmail.com>
- <20181203181456.GK31738@dhcp22.suse.cz>
- <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz>
- <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz>
- <alpine.DEB.2.21.1812031237340.192288@chino.kir.corp.google.com>
- <20181203212539.GR31738@dhcp22.suse.cz>
- <alpine.DEB.2.21.1812031345180.224765@chino.kir.corp.google.com>
+        Dan Williams <dan.j.williams@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
+ be offlined
+Message-ID: <20181204081801.GA1286@dhcp22.suse.cz>
+References: <20181203100309.14784-1-mhocko@kernel.org>
+ <20181204072116.GA24446@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812031345180.224765@chino.kir.corp.google.com>
+In-Reply-To: <20181204072116.GA24446@hori1.linux.bs1.fc.nec.co.jp>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 03-12-18 13:53:21, David Rientjes wrote:
-> On Mon, 3 Dec 2018, Michal Hocko wrote:
-> 
-> > > I think extending functionality so thp can be allocated remotely if truly 
-> > > desired is worthwhile
+On Tue 04-12-18 07:21:16, Naoya Horiguchi wrote:
+> On Mon, Dec 03, 2018 at 11:03:09AM +0100, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
 > > 
-> > This is a complete NUMA policy antipatern that we have for all other
-> > user memory allocations. So far you have to be explicit for your numa
-> > requirements. You are trying to conflate NUMA api with MADV and that is
-> > just conflating two orthogonal things and that is just wrong.
+> > We have received a bug report that an injected MCE about faulty memory
+> > prevents memory offline to succeed. The underlying reason is that the
+> > HWPoison page has an elevated reference count and the migration keeps
+> > failing. There are two problems with that. First of all it is dubious
+> > to migrate the poisoned page because we know that accessing that memory
+> > is possible to fail. Secondly it doesn't make any sense to migrate a
+> > potentially broken content and preserve the memory corruption over to a
+> > new location.
 > > 
+> > Oscar has found out that it is the elevated reference count from
+> > memory_failure that is confusing the offlining path. HWPoisoned pages
+> > are isolated from the LRU list but __offline_pages might still try to
+> > migrate them if there is any preceding migrateable pages in the pfn
+> > range. Such a migration would fail due to the reference count but
+> > the migration code would put it back on the LRU list. This is quite
+> > wrong in itself but it would also make scan_movable_pages stumble over
+> > it again without any way out.
+> > 
+> > This means that the hotremove with hwpoisoned pages has never really
+> > worked (without a luck). HWPoisoning really needs a larger surgery
+> > but an immediate and backportable fix is to skip over these pages during
+> > offlining. Even if they are still mapped for some reason then
+> > try_to_unmap should turn those mappings into hwpoison ptes and cause
+> > SIGBUS on access. Nobody should be really touching the content of the
+> > page so it should be safe to ignore them even when there is a pending
+> > reference count.
+> > 
+> > Debugged-by: Oscar Salvador <osalvador@suse.com>
+> > Cc: stable
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > Hi,
+> > I am sending this as an RFC now because I am not fully sure I see all
+> > the consequences myself yet. This has passed a testing by Oscar but I
+> > would highly appreciate a review from Naoya about my assumptions about
+> > hwpoisoning. E.g. it is not entirely clear to me whether there is a
+> > potential case where the page might be still mapped.
 > 
-> No, the page allocator change for both my patch and __GFP_COMPACT_ONLY has 
-> nothing to do with any madvise() mode.  It has to do with where thp 
-> allocations are preferred.  Yes, this is different than other memory 
-> allocations where it doesn't cause a 13.9% access latency regression for 
-> the lifetime of a binary for users who back their text with hugepages.  
-> MADV_HUGEPAGE still has its purpose to try synchronous memory compaction 
-> at fault time under all thp defrag modes other than "never".  The specific 
-> problem being reported here, and that both my patch and __GFP_COMPACT_ONLY 
-> address, is the pointless reclaim activity that does not assist in making 
-> compaction more successful.
+> One potential case is ksm page, for which we give up unmapping and leave
+> it unmapped. Rather than that I don't have any idea, but any new type of
+> page would be potentially categorized to this class.
 
-You do not address my concern though. Sure there are reclaim related
-issues. Nobody is questioning that. But that is only half of the
-problem.
+Could you be more specific why hwpoison code gives up on ksm pages while
+we can safely unmap here?
 
-The thing I am really up to here is that reintroduction of
-__GFP_THISNODE, which you are pushing for, will conflate madvise mode
-resp. defrag=always with a numa placement policy because the allocation
-doesn't fallback to a remote node.
+[...]
+> 
+> I think this looks OK (no better idea.)
+> 
+> Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-And that is a fundamental problem and the antipattern I am talking
-about. Look at it this way. All normal allocations are utilizing all the
-available memory even though they might hit a remote latency penalty. If
-you do care about NUMA placement you have an API to enforce a specific
-placement.  What is so different about THP to behave differently. Do
-we really want to later invent an API to actually allow to utilize all
-the memory? There are certainly usecases (that triggered the discussion
-previously) that do not mind the remote latency because all other
-benefits simply outweight it?
+Thanks!
 
-That being said what should users who want to use all the memory do to
-use as many THPs as possible?
+> I wondered why I didn't find this for long, and found that my testing only
+> covered the case where PageHWPoison is the first page of memory block.
+> scan_movable_pages() considers PageHWPoison as non-movable, so do_migrate_range()
+> started with pfn after the PageHWPoison and never tried to migrate it
+> (so effectively ignored every PageHWPoison as the above code does.)
+
+Yeah, it seems that the hotremove worked only by chance in presence of
+hwpoison pages so far. The specific usecase which triggered this patch
+is a heavily memory utilized system with in memory database IIRC. So it
+is quite likely that hwpoison pages are punched to otherwise used
+memory.
+
+Thanks for the review Naoya!
+
 -- 
 Michal Hocko
 SUSE Labs
