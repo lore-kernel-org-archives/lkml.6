@@ -2,534 +2,315 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9308CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03516C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F0820834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:02:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F0820834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A4A052081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 19:04:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mI/GA1M2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A052081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbeLDTCS (ORCPT
+        id S1726159AbeLDTEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:02:18 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50084 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725880AbeLDTCR (ORCPT
+        Tue, 4 Dec 2018 14:04:51 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40564 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDTEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:02:17 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4IxpE9088380
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 14:02:15 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5ybfg5kj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:02:14 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 4 Dec 2018 19:02:13 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Dec 2018 19:02:10 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4J29JU21430316
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 19:02:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E537B2064;
-        Tue,  4 Dec 2018 19:02:09 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8E2CB206E;
-        Tue,  4 Dec 2018 19:02:05 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Dec 2018 19:02:05 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 73C5416C196D; Tue,  4 Dec 2018 11:02:06 -0800 (PST)
-Date:   Tue, 4 Dec 2018 11:02:06 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Jason Baron <jbaron@akamai.com>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
- ep_poll_callback() contention
-Reply-To: paulmck@linux.ibm.com
-References: <20181203110237.14787-1-rpenyaev@suse.de>
- <45bce871-edfd-c402-acde-2e57e80cc522@akamai.com>
+        Tue, 4 Dec 2018 14:04:50 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q26so10421012wmf.5;
+        Tue, 04 Dec 2018 11:04:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iArjsd8D/6NBfzIjUFM8/RIE4xSFq/81usK1VGylZHc=;
+        b=mI/GA1M2vHIySTglwpARRJnJ9ndD7Alx7CfvPpfEOXNR8gHnyCUJl7J5tTu1ZGw2st
+         yoPpQYf5TUqAwuJWYMUaay1z6Jx+/IaCTDVfXG7y4rqoYZ9Cosrf3DXV8zBMVYn0cTl/
+         Y5OyKnBO2KnVQHZVY8YuykBSHnaGnKKMroz2T4cor4N+LgT1tZgWoWkPY/DgvHCItWde
+         HKbL22Ie41R7ST3hontE++VnP7tfFF9whl+/74oCwZn6bRAIpYZx+IXhhM4weBoQhDfZ
+         cvnAxPwtiymIQNox81pwKoz3hdzepi+W9TRzpF+4US/GkDVUwPhyl9qjhq0ndlk/hcvF
+         YmfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iArjsd8D/6NBfzIjUFM8/RIE4xSFq/81usK1VGylZHc=;
+        b=adjUIftpk/MCrt0CQFZX4cKcxybZ5lBTRivNXkT60FONUeoEEablxORs+ILI+nHG2z
+         O1X7YOn6/RJ7nVoPEeWnSHrboBke32IJApizCJFYaqsr/Ldc7I7ZXhlzE2xAtXhPk/bx
+         lXTbK5/EB/r1cBtPRcKEr4byTrK7ddJLYiCQgKTfcdJ46WOVxq4vnkRtz5G2fq2Tj+Pa
+         n0LAEbTDo2wmZ19sK2gDG+BxS+WIOvYDImOPlfNiUeGoqz/Ot/N3sIKxgnWw3ZwcQA2k
+         mmxfpSixKLBFnof8QtG7Vl2N2IbueAY697+aIKdRjcXNnWPphrNaDgatTNTRQD4hhbFJ
+         8NcQ==
+X-Gm-Message-State: AA+aEWbvLXLCCW/ZTgebW84Uo8YcBsgMvQrGdyfdLnlVA7ntDDCEptg6
+        ZOgRcv22po97SqzZe1lKWjBrTLyw+z0=
+X-Google-Smtp-Source: AFSGD/UsZZMMZucGUlm7+/N0qT23JIM2Rlf0a37QR9vIsCWsz1y7pi8PoOYHVUZXuqJaGLB6xnbcXQ==
+X-Received: by 2002:a1c:c303:: with SMTP id t3mr12734118wmf.94.1543950287522;
+        Tue, 04 Dec 2018 11:04:47 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id v4sm8173631wme.6.2018.12.04.11.04.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:04:46 -0800 (PST)
+Date:   Tue, 4 Dec 2018 12:04:44 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Sean Young <sean@mess.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [media] dib7000p: Remove dead code
+Message-ID: <20181204190444.GA9298@flashbox>
+References: <20180915054739.14117-1-natechancellor@gmail.com>
+ <CAKwvOdmQ4pbbPuvYrVYB9myD8ap36h6nLjEdL-mSbYjM37UJ_g@mail.gmail.com>
+ <20180917193936.33e90d5a@coco.lan>
+ <20181204102639.3qsvfxrzmsvybiop@gofer.mess.org>
+ <20181204095714.60ee5b95@coco.lan>
+ <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45bce871-edfd-c402-acde-2e57e80cc522@akamai.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120419-0060-0000-0000-000002DE7758
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010171; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01126969; UDB=6.00585327; IPR=6.00907105;
- MB=3.00024445; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-04 19:02:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120419-0061-0000-0000-0000476C55EF
-Message-Id: <20181204190206.GB4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812040162
+In-Reply-To: <20181204133922.aaxvzu3qumbfakzu@gofer.mess.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 12:23:08PM -0500, Jason Baron wrote:
+On Tue, Dec 04, 2018 at 01:39:22PM +0000, Sean Young wrote:
+> On Tue, Dec 04, 2018 at 09:57:14AM -0200, Mauro Carvalho Chehab wrote:
+> > Em Tue, 4 Dec 2018 10:26:40 +0000
+> > Sean Young <sean@mess.org> escreveu:
+> > 
+> > > On Mon, Sep 17, 2018 at 07:39:36PM -0300, Mauro Carvalho Chehab wrote:
+> > > > Em Mon, 17 Sep 2018 10:58:32 -0700
+> > > > Nick Desaulniers <ndesaulniers@google.com> escreveu:
+> > > >   
+> > > > > On Fri, Sep 14, 2018 at 10:47 PM Nathan Chancellor
+> > > > > <natechancellor@gmail.com> wrote:  
+> > > > > >
+> > > > > > Clang warns that 'interleaving' is assigned to itself in this function.
+> > > > > >
+> > > > > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> > > > > > assigning value of variable of type 'int' to itself [-Wself-assign]
+> > > > > >         interleaving = interleaving;
+> > > > > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> > > > > > 1 warning generated.
+> > > > > >
+> > > > > > It's correct. Just removing the self-assignment would sufficiently hide
+> > > > > > the warning but all of this code is dead because 'tmp' is zero due to
+> > > > > > being multiplied by zero. This doesn't appear to be an issue with
+> > > > > > dib8000, which this code was copied from in commit 041ad449683b
+> > > > > > ("[media] dib7000p: Add DVBv5 stats support").
+> > > > > >
+> > > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > > ---
+> > > > > >  drivers/media/dvb-frontends/dib7000p.c | 10 ++--------
+> > > > > >  1 file changed, 2 insertions(+), 8 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > index 58387860b62d..25843658fc68 100644
+> > > > > > --- a/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > +++ b/drivers/media/dvb-frontends/dib7000p.c
+> > > > > > @@ -1800,9 +1800,8 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)    
+> > > > > 
+> > > > > Something looks wrong here (with this function).  The patch is no
+> > > > > functional change, since as you point out `interleaving` is
+> > > > > initialized to 0, then never updated before read, but I think there's
+> > > > > an underlying bug here that should be fixed differently.  Thanks for
+> > > > > the patch though, as it does raise the question.
+> > > > > 
+> > > > > dib7000p_get_time_us has this comment above it:
+> > > > > 
+> > > > >   1798 /* FIXME: may require changes - this one was borrowed from
+> > > > > dib8000 */  
+> > > > 
+> > > > The goal of dib7000p_get_time_us() is to estimate how much time it
+> > > > takes, with current tuning parameters, to have a certain number of
+> > > > DVB-T packets. This is used for block error count. That's said,
+> > > > on a quick look, it seems that the code is not right on many ways.
+> > > > 
+> > > > It should be aligned with the amount of data it is required for
+> > > > dib7000 to update the block/bit error counters. There are two kinds
+> > > > of implementation:
+> > > > 
+> > > > 1) the frontend has an internal counter that it is shifted and made
+> > > >    available to the driver after a certain amount of received data
+> > > >    (usually in the order of 10^5 to 10^7 bits);
+> > > > 
+> > > > 2) the frontend has an internal timer that shifts the data from its
+> > > >    internal counter after a certain amount of time (usually at the
+> > > >    seconds range).
+> > > > 
+> > > > Different vendors opt for either one of the strategy. Some updates
+> > > > a counter with the amount of bits taken. Unfortunately, this is not
+> > > > the case of those dib* frontends. So, the Kernel has to estimate
+> > > > it, based on the tuning parameters.
+> > > > 
+> > > > From the code, it seems that, for block errors, it waits for 1,250,000
+> > > > bits to arrive (e. g. about 766 packets), so, it uses type (1) strategy:
+> > > > 
+> > > >                 /* Estimate the number of packets based on bitrate */
+> > > >                 if (!time_us)
+> > > >                         time_us = dib7000p_get_time_us(demod);
+> > > > 
+> > > >                 if (time_us) {
+> > > >                         blocks = 1250000ULL * 1000000ULL;	// the multiply here is to convert to microsseconds...
+> > > >                         do_div(blocks, time_us * 8 * 204);	// As here it divides by the time in microsseconds
+> > > >                         c->block_count.stat[0].scale = FE_SCALE_COUNTER;
+> > > >                         c->block_count.stat[0].uvalue += blocks;
+> > > >                 }
+> > > > 
+> > > > For BER, the logic assumes that the bit error count should be divided
+> > > > by 10^-8:
+> > > > 
+> > > >                 c->post_bit_count.stat[0].uvalue += 100000000;
+> > > > 
+> > > > and the counter is updated every second. So, it uses (2).
+> > > >   
+> > > > > 
+> > > > > Wondering if it has the same bug, it seems it does not:
+> > > > > drivers/media/dvb-frontends/dib8000.c#dib8000_get_time_us():3986
+> > > > > 
+> > > > > dib8000_get_time_us() seems to loop over multiple layers, and then
+> > > > > assigns interleaving to the final layers interleaving (that looks like
+> > > > > loop invariant code to me).
+> > > > > 
+> > > > > Mauro, should dib7000p_get_time_us() use c->layer[???].interleaving?  
+> > > > 
+> > > > I don't think that time interleaving would affect the bit rate.
+> > > > I suspect that the dead code on dib8000 is just a dead code.
+> > > >   
+> > > > > I don't see a single reference to `layer` in
+> > > > > drivers/media/dvb-frontends/dib7000p.c.  
+> > > > 
+> > > > Layers are specific for ISDB-T, but I think DVB-T (or at least DVB-T2)
+> > > > may use time interleaving. 
+> > > > 
+> > > > Yet, as I said, the goal is to estimate the streaming bit rate. 
+> > > > 
+> > > > I don't remember anymore from where the dib8000 formula came.
+> > > > 
+> > > > My guts tell that time interleaving shouldn't do much changes (if any)
+> > > > to the bit rate. I suspect that removing the dead code is likely
+> > > > OK, but I'll try to see if I can find something related to where this
+> > > > formula came.  
+> > > 
+> > > So we have two issues. One is the clang issue and clearly the code needs
+> > > fixing up. The second issue is that we're not sure about the algorithm;
+> > > I've been reading up on mpeg-ts but I'm not anywhere near getting to an
+> > > answer on this.
+> > > 
+> > > How about we merge a patch which just fixes the clang issue and leave
+> > > the rest of the code as-is for now?
+> > 
+> > I'm ok with that, but it would be better to add a FIXME note somewhere.
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > > Sean
+> > > 
+> > > ---
+> > > From c6e4c5f514c38511d2054c69f7b103e98c520af4 Mon Sep 17 00:00:00 2001
+> > > From: Sean Young <sean@mess.org>
+> > > Date: Tue, 4 Dec 2018 09:59:10 +0000
+> > > Subject: [PATCH v2] media: dib7000p: Remove dead code
+> > > 
+> > > Clang warns that 'interleaving' is assigned to itself in this function.
+> > > 
+> > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> > > assigning value of variable of type 'int' to itself [-Wself-assign]
+> > >         interleaving = interleaving;
+> > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> > > 1 warning generated.
+> > > 
+> > > Just remove the self-assign and leave existing code in place for now.
+> > > 
+> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Signed-off-by: Sean Young <sean@mess.org>
+> > > ---
+> > >  drivers/media/dvb-frontends/dib7000p.c | 2 --
+> > >  1 file changed, 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> > > index 58387860b62d..cd84320c61c9 100644
+> > > --- a/drivers/media/dvb-frontends/dib7000p.c
+> > > +++ b/drivers/media/dvb-frontends/dib7000p.c
+> > > @@ -1871,8 +1871,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
+> > >  		break;
+> > >  	}
+> > >  
+> > > -	interleaving = interleaving;
+> > > -
+> > >  	denom = bits_per_symbol * rate_num * fft_div * 384;
+> > 
+> > something like:
+> > 
+> > 	/* 
+> > 	 * FIXME: check if the math makes sense. If so, fill the
+> > 	 * interleaving var.
+> > 	 */
+> > >  
+> > >  	/* If calculus gets wrong, wait for 1s for the next stats */
+> > 
 > 
+> Good point. 
 > 
-> On 12/3/18 6:02 AM, Roman Penyaev wrote:
-> > Hi all,
-> > 
-> > The goal of this patch is to reduce contention of ep_poll_callback() which
-> > can be called concurrently from different CPUs in case of high events
-> > rates and many fds per epoll.  Problem can be very well reproduced by
-> > generating events (write to pipe or eventfd) from many threads, while
-> > consumer thread does polling.  In other words this patch increases the
-> > bandwidth of events which can be delivered from sources to the poller by
-> > adding poll items in a lockless way to the list.
-> > 
-> > The main change is in replacement of the spinlock with a rwlock, which is
-> > taken on read in ep_poll_callback(), and then by adding poll items to the
-> > tail of the list using xchg atomic instruction.  Write lock is taken
-> > everywhere else in order to stop list modifications and guarantee that list
-> > updates are fully completed (I assume that write side of a rwlock does not
-> > starve, it seems qrwlock implementation has these guarantees).
-> > 
-> > The following are some microbenchmark results based on the test [1] which
-> > starts threads which generate N events each.  The test ends when all
-> > events are successfully fetched by the poller thread:
-> > 
-> > spinlock
-> > ========
-> > 
-> > threads       run time    events per ms
-> > -------       ---------   -------------
-> >       8         13191ms         6064/ms
-> >      16         30758ms         5201/ms
-> >      32         44315ms         7220/ms
-> > 
-> > rwlock + xchg
-> > =============
-> > 
-> > threads       run time    events per ms
-> > -------       ---------   -------------
-> >       8          8581ms         9323/ms
-> >      16         13800ms        11594/ms
-> >      32         24167ms        13240/ms
-> > 
-> > According to the results bandwidth of delivered events is significantly
-> > increased, thus execution time is reduced.
-> > 
-> > This is RFC because I did not run any benchmarks comparing current
-> > qrwlock and spinlock implementations (4.19 kernel), although I did
-> > not notice any epoll performance degradations in other benchmarks.
-> > 
-> > Also I'm not quite sure where to put very special lockless variant
-> > of adding element to the list (list_add_tail_lockless() in this
-> > patch).  Seems keeping it locally is safer.
-> > 
-> > [1] https://github.com/rouming/test-tools/blob/master/stress-epoll.c
-> > 
-> > Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  fs/eventpoll.c | 107 +++++++++++++++++++++++++++++++------------------
-> >  1 file changed, 69 insertions(+), 38 deletions(-)
-> > 
-> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > index 42bbe6824b4b..89debda47aca 100644
-> > --- a/fs/eventpoll.c
-> > +++ b/fs/eventpoll.c
-> > @@ -50,10 +50,10 @@
-> >   *
-> >   * 1) epmutex (mutex)
-> >   * 2) ep->mtx (mutex)
-> > - * 3) ep->wq.lock (spinlock)
-> > + * 3) ep->lock (rwlock)
-> >   *
-> >   * The acquire order is the one listed above, from 1 to 3.
-> > - * We need a spinlock (ep->wq.lock) because we manipulate objects
-> > + * We need a rwlock (ep->lock) because we manipulate objects
-> >   * from inside the poll callback, that might be triggered from
-> >   * a wake_up() that in turn might be called from IRQ context.
-> >   * So we can't sleep inside the poll callback and hence we need
-> > @@ -85,7 +85,7 @@
-> >   * of epoll file descriptors, we use the current recursion depth as
-> >   * the lockdep subkey.
-> >   * It is possible to drop the "ep->mtx" and to use the global
-> > - * mutex "epmutex" (together with "ep->wq.lock") to have it working,
-> > + * mutex "epmutex" (together with "ep->lock") to have it working,
-> >   * but having "ep->mtx" will make the interface more scalable.
-> >   * Events that require holding "epmutex" are very rare, while for
-> >   * normal operations the epoll private "ep->mtx" will guarantee
-> > @@ -182,8 +182,6 @@ struct epitem {
-> >   * This structure is stored inside the "private_data" member of the file
-> >   * structure and represents the main data structure for the eventpoll
-> >   * interface.
-> > - *
-> > - * Access to it is protected by the lock inside wq.
-> >   */
-> >  struct eventpoll {
-> >  	/*
-> > @@ -203,13 +201,16 @@ struct eventpoll {
-> >  	/* List of ready file descriptors */
-> >  	struct list_head rdllist;
-> >  
-> > +	/* Lock which protects rdllist and ovflist */
-> > +	rwlock_t lock;
-> > +
-> >  	/* RB tree root used to store monitored fd structs */
-> >  	struct rb_root_cached rbr;
-> >  
-> >  	/*
-> >  	 * This is a single linked list that chains all the "struct epitem" that
-> >  	 * happened while transferring ready events to userspace w/out
-> > -	 * holding ->wq.lock.
-> > +	 * holding ->lock.
-> >  	 */
-> >  	struct epitem *ovflist;
-> >  
-> > @@ -697,17 +698,17 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >  	 * because we want the "sproc" callback to be able to do it
-> >  	 * in a lockless way.
-> >  	 */
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  	list_splice_init(&ep->rdllist, &txlist);
-> >  	ep->ovflist = NULL;
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	/*
-> >  	 * Now call the callback function.
-> >  	 */
-> >  	res = (*sproc)(ep, &txlist, priv);
-> >  
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  	/*
-> >  	 * During the time we spent inside the "sproc" callback, some
-> >  	 * other events might have been queued by the poll callback.
-> > @@ -722,7 +723,8 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >  		 * contain them, and the list_splice() below takes care of them.
-> >  		 */
-> >  		if (!ep_is_linked(epi)) {
-> > -			list_add_tail(&epi->rdllink, &ep->rdllist);
-> > +			/* Reverse ->ovflist, events should be in FIFO */
-> > +			list_add(&epi->rdllink, &ep->rdllist);
-> >  			ep_pm_stay_awake(epi);
-> >  		}
-> >  	}
-> > @@ -745,11 +747,11 @@ static __poll_t ep_scan_ready_list(struct eventpoll *ep,
-> >  		 * the ->poll() wait list (delayed after we release the lock).
-> >  		 */
-> >  		if (waitqueue_active(&ep->wq))
-> > -			wake_up_locked(&ep->wq);
-> > +			wake_up(&ep->wq);
-> >  		if (waitqueue_active(&ep->poll_wait))
-> >  			pwake++;
-> >  	}
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	if (!ep_locked)
-> >  		mutex_unlock(&ep->mtx);
-> > @@ -789,10 +791,10 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
-> >  
-> >  	rb_erase_cached(&epi->rbn, &ep->rbr);
-> >  
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  	if (ep_is_linked(epi))
-> >  		list_del_init(&epi->rdllink);
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	wakeup_source_unregister(ep_wakeup_source(epi));
-> >  	/*
-> > @@ -842,7 +844,7 @@ static void ep_free(struct eventpoll *ep)
-> >  	 * Walks through the whole tree by freeing each "struct epitem". At this
-> >  	 * point we are sure no poll callbacks will be lingering around, and also by
-> >  	 * holding "epmutex" we can be sure that no file cleanup code will hit
-> > -	 * us during this operation. So we can avoid the lock on "ep->wq.lock".
-> > +	 * us during this operation. So we can avoid the lock on "ep->lock".
-> >  	 * We do not need to lock ep->mtx, either, we only do it to prevent
-> >  	 * a lockdep warning.
-> >  	 */
-> > @@ -1023,6 +1025,7 @@ static int ep_alloc(struct eventpoll **pep)
-> >  		goto free_uid;
-> >  
-> >  	mutex_init(&ep->mtx);
-> > +	rwlock_init(&ep->lock);
-> >  	init_waitqueue_head(&ep->wq);
-> >  	init_waitqueue_head(&ep->poll_wait);
-> >  	INIT_LIST_HEAD(&ep->rdllist);
-> > @@ -1112,10 +1115,38 @@ struct file *get_epoll_tfile_raw_ptr(struct file *file, int tfd,
-> >  }
-> >  #endif /* CONFIG_CHECKPOINT_RESTORE */
-> >  
-> > +/*
-> > + * Adds a new entry to the tail of the list in a lockless way, i.e.
-> > + * multiple CPUs are allowed to call this function concurrently.
-> > + *
-> > + * Beware: it is necessary to prevent any other modifications of the
-> > + *         existing list until all changes are completed, in other words
-> > + *         concurrent list_add_tail_lockless() calls should be protected
-> > + *         with a read lock, where write lock acts as a barrier which
-> > + *         makes sure all list_add_tail_lockless() calls are fully
-> > + *         completed.
-> > + */
-> > +static inline void list_add_tail_lockless(struct list_head *new,
-> > +					  struct list_head *head)
-> > +{
-> > +	struct list_head *prev;
-> > +
-> > +	new->next = head;
-> > +	prev = xchg(&head->prev, new);
-> > +	prev->next = new;
-> > +	new->prev = prev;
-> > +}
-> > +
-> >  /*
-> >   * This is the callback that is passed to the wait queue wakeup
-> >   * mechanism. It is called by the stored file descriptors when they
-> >   * have events to report.
-> > + *
-> > + * This callback takes a read lock in order not to content with concurrent
-> > + * events from another file descriptors, thus all modifications to ->rdllist
-> > + * or ->ovflist are lockless.  Read lock is paired with the write lock from
-> > + * ep_scan_ready_list(), which stops all list modifications and guarantees
-> > + * that lists won't be corrupted.
-> >   */
-> >  static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, void *key)
-> >  {
-> > @@ -1126,7 +1157,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> >  	__poll_t pollflags = key_to_poll(key);
-> >  	int ewake = 0;
-> >  
-> > -	spin_lock_irqsave(&ep->wq.lock, flags);
-> > +	read_lock_irqsave(&ep->lock, flags);
-> >  
-> >  	ep_set_busy_poll_napi_id(epi);
-> >  
-> > @@ -1156,8 +1187,8 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> >  	 */
-> >  	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
-> >  		if (epi->next == EP_UNACTIVE_PTR) {
-> > -			epi->next = ep->ovflist;
-> > -			ep->ovflist = epi;
-> > +			/* Atomically exchange tail */
-> > +			epi->next = xchg(&ep->ovflist, epi);
+> Sean
 > 
-> This also relies on the fact that the same epi can't be added to the
-> list in parallel, because the wait queue doing the wakeup will have the
-> wait_queue_head lock. That was a little confusing for me b/c we only had
-> the read_lock() above.
+> From a31c18315830da40561db6443d3b90b8584d5232 Mon Sep 17 00:00:00 2001
+> From: Sean Young <sean@mess.org>
+> Date: Tue, 4 Dec 2018 09:59:10 +0000
+> Subject: [PATCH v3] media: dib7000p: Remove dead code
+> 
+> Clang warns that 'interleaving' is assigned to itself in this function.
+> 
+> drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
+> assigning value of variable of type 'int' to itself [-Wself-assign]
+>         interleaving = interleaving;
+>         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+> 1 warning generated.
+> 
+> Just remove the self-assign and leave existing code in place for now.
+> 
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Sean Young <sean@mess.org>
 
-I missed this as well.
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
 
-I was also concerned about "fly-by" wakeups where the to-be-awoken task
-never really goes to sleep, but it looks like tasks are unconditionally
-queued, which seems like it should avoid that problem.
-
-Please do some testing with artificial delays in the lockless queuing
-code, for example, via udelay() or similar.  If there are races, this
-would help force them to happen.
-
-							Thanx, Paul
-
-> >  			if (epi->ws) {
-> >  				/*
-> >  				 * Activate ep->ws since epi->ws may get
-> > @@ -1172,7 +1203,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> >  
-> >  	/* If this file is already in the ready list we exit soon */
-> >  	if (!ep_is_linked(epi)) {
-> > -		list_add_tail(&epi->rdllink, &ep->rdllist);
-> > +		list_add_tail_lockless(&epi->rdllink, &ep->rdllist);
-> >  		ep_pm_stay_awake_rcu(epi);
-> >  	}
+> ---
+>  drivers/media/dvb-frontends/dib7000p.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> same for this.
+> diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
+> index 58387860b62d..2818e8def1b3 100644
+> --- a/drivers/media/dvb-frontends/dib7000p.c
+> +++ b/drivers/media/dvb-frontends/dib7000p.c
+> @@ -1871,10 +1871,13 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
+>  		break;
+>  	}
+>  
+> -	interleaving = interleaving;
+> -
+>  	denom = bits_per_symbol * rate_num * fft_div * 384;
+>  
+> +	/*
+> +	 * FIXME: check if the math makes sense. If so, fill the
+> +	 * interleaving var.
+> +	 */
+> +
+>  	/* If calculus gets wrong, wait for 1s for the next stats */
+>  	if (!denom)
+>  		return 0;
+> -- 
+> 2.19.2
 > 
-> >  
-> > @@ -1197,13 +1228,13 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
-> >  				break;
-> >  			}
-> >  		}
-> > -		wake_up_locked(&ep->wq);
-> > +		wake_up(&ep->wq);
-> 
-> why the switch here to the locked() variant? Shouldn't the 'reader'
-> side, in this case which takes the rwlock for write see all updates in a
-> coherent state at this point?
-> 
-> >  	}
-> >  	if (waitqueue_active(&ep->poll_wait))
-> >  		pwake++;
-> >  
-> >  out_unlock:
-> > -	spin_unlock_irqrestore(&ep->wq.lock, flags);
-> > +	read_unlock_irqrestore(&ep->lock, flags);
-> >  
-> >  	/* We have to call this outside the lock */
-> >  	if (pwake)
-> > @@ -1489,7 +1520,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-> >  		goto error_remove_epi;
-> >  
-> >  	/* We have to drop the new item inside our item list to keep track of it */
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  
-> >  	/* record NAPI ID of new item if present */
-> >  	ep_set_busy_poll_napi_id(epi);
-> > @@ -1501,12 +1532,12 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-> >  
-> >  		/* Notify waiting tasks that events are available */
-> >  		if (waitqueue_active(&ep->wq))
-> > -			wake_up_locked(&ep->wq);
-> > +			wake_up(&ep->wq);
-> 
-> is this necessary to switch as well? Is this to make lockdep happy?
-> Looks like there are few more conversions too below...
-> 
-> Thanks,
-> 
-> -Jason
-> 
-> 
-> 
-> >  		if (waitqueue_active(&ep->poll_wait))
-> >  			pwake++;
-> >  	}
-> >  
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	atomic_long_inc(&ep->user->epoll_watches);
-> >  
-> > @@ -1532,10 +1563,10 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
-> >  	 * list, since that is used/cleaned only inside a section bound by "mtx".
-> >  	 * And ep_insert() is called with "mtx" held.
-> >  	 */
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  	if (ep_is_linked(epi))
-> >  		list_del_init(&epi->rdllink);
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	wakeup_source_unregister(ep_wakeup_source(epi));
-> >  
-> > @@ -1579,9 +1610,9 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
-> >  	 * 1) Flush epi changes above to other CPUs.  This ensures
-> >  	 *    we do not miss events from ep_poll_callback if an
-> >  	 *    event occurs immediately after we call f_op->poll().
-> > -	 *    We need this because we did not take ep->wq.lock while
-> > +	 *    We need this because we did not take ep->lock while
-> >  	 *    changing epi above (but ep_poll_callback does take
-> > -	 *    ep->wq.lock).
-> > +	 *    ep->lock).
-> >  	 *
-> >  	 * 2) We also need to ensure we do not miss _past_ events
-> >  	 *    when calling f_op->poll().  This barrier also
-> > @@ -1600,18 +1631,18 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
-> >  	 * list, push it inside.
-> >  	 */
-> >  	if (ep_item_poll(epi, &pt, 1)) {
-> > -		spin_lock_irq(&ep->wq.lock);
-> > +		write_lock_irq(&ep->lock);
-> >  		if (!ep_is_linked(epi)) {
-> >  			list_add_tail(&epi->rdllink, &ep->rdllist);
-> >  			ep_pm_stay_awake(epi);
-> >  
-> >  			/* Notify waiting tasks that events are available */
-> >  			if (waitqueue_active(&ep->wq))
-> > -				wake_up_locked(&ep->wq);
-> > +				wake_up(&ep->wq);
-> >  			if (waitqueue_active(&ep->poll_wait))
-> >  				pwake++;
-> >  		}
-> > -		spin_unlock_irq(&ep->wq.lock);
-> > +		write_unlock_irq(&ep->lock);
-> >  	}
-> >  
-> >  	/* We have to call this outside the lock */
-> > @@ -1764,7 +1795,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> >  		 * caller specified a non blocking operation.
-> >  		 */
-> >  		timed_out = 1;
-> > -		spin_lock_irq(&ep->wq.lock);
-> > +		write_lock_irq(&ep->lock);
-> >  		goto check_events;
-> >  	}
-> >  
-> > @@ -1773,7 +1804,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> >  	if (!ep_events_available(ep))
-> >  		ep_busy_loop(ep, timed_out);
-> >  
-> > -	spin_lock_irq(&ep->wq.lock);
-> > +	write_lock_irq(&ep->lock);
-> >  
-> >  	if (!ep_events_available(ep)) {
-> >  		/*
-> > @@ -1789,7 +1820,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> >  		 * ep_poll_callback() when events will become available.
-> >  		 */
-> >  		init_waitqueue_entry(&wait, current);
-> > -		__add_wait_queue_exclusive(&ep->wq, &wait);
-> > +		add_wait_queue_exclusive(&ep->wq, &wait);
-> >  
-> >  		for (;;) {
-> >  			/*
-> > @@ -1815,21 +1846,21 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> >  				break;
-> >  			}
-> >  
-> > -			spin_unlock_irq(&ep->wq.lock);
-> > +			write_unlock_irq(&ep->lock);
-> >  			if (!schedule_hrtimeout_range(to, slack, HRTIMER_MODE_ABS))
-> >  				timed_out = 1;
-> >  
-> > -			spin_lock_irq(&ep->wq.lock);
-> > +			write_lock_irq(&ep->lock);
-> >  		}
-> >  
-> > -		__remove_wait_queue(&ep->wq, &wait);
-> > +		remove_wait_queue(&ep->wq, &wait);
-> >  		__set_current_state(TASK_RUNNING);
-> >  	}
-> >  check_events:
-> >  	/* Is it worth to try to dig for events ? */
-> >  	eavail = ep_events_available(ep);
-> >  
-> > -	spin_unlock_irq(&ep->wq.lock);
-> > +	write_unlock_irq(&ep->lock);
-> >  
-> >  	/*
-> >  	 * Try to transfer events to user space. In case we get 0 events and
-> > 
-> 
-
