@@ -4,49 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CABC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C83E2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C38E2082D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:17:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mi/4uFQO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C83E2087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sngmoEFu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C38E2082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeLDLRL (ORCPT
+        id S1728153AbeLDLF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:17:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53332 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727706AbeLDLFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:31 -0500
+        id S1728132AbeLDLFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E5E62082D;
-        Tue,  4 Dec 2018 11:05:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B502E214DE;
+        Tue,  4 Dec 2018 11:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921531;
-        bh=vTuN7eTt47Ouztaz+SHyQFf8oB4JiJ6LYUDA6NbndAI=;
+        s=default; t=1543921523;
+        bh=ovSiYiymwV3SIO1P/PFsz7QWYYVB+j6Cbk8JUUy1okY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mi/4uFQOXKia6uyx5QQAcKA2ulYQ9sKZIuLsLuyNyGUVXiDnEw8EY+0kiBPdHDeSL
-         DZTSpY3THf3fx3ie0gQYTEv8JQ/JFRYYjnx3r2G0IwOgaZF/iObJgL9bcB2QxqNovw
-         YvKuz3KP3HK1LvgKRCWLkzb/EtdTTCVqoxpyiiw8=
+        b=sngmoEFuKjvhtxZxHMSCggIHdsfrZyYZpY5oPWaVJSlgEn2hP9snz6OQgFC5m+roM
+         iqwTnjE0Zwr3JCchqX3csfWo36MGFl1iQRxohqmSe2L37/myng6gfFNHcXLDpuHzeG
+         Gqu/dw/vaMthaPgZlJHgwkiGRv0Ao53NnD4XoV+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Pavel Popa <pashinho1990@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 062/146] virtio-net: fail XDP set if guest csum is negotiated
-Date:   Tue,  4 Dec 2018 11:49:08 +0100
-Message-Id: <20181204103729.332283309@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        kvm@vger.kernel.org, andrew.cooper3@citrix.com,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 069/146] x86/bugs: Add AMDs variant of SSB_NO
+Date:   Tue,  4 Dec 2018 11:49:15 +0100
+Message-Id: <20181204103729.615003937@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -65,39 +70,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Konrad Rzeszutek Wilk konrad.wilk@oracle.com
 
-[ Upstream commit 18ba58e1c234ea1a2d9835ac8c1735d965ce4640 ]
+commit 24809860012e0130fbafe536709e08a22b3e959e upstream
 
-We don't support partial csumed packet since its metadata will be lost
-or incorrect during XDP processing. So fail the XDP set if guest_csum
-feature is negotiated.
+The AMD document outlining the SSBD handling
+124441_AMD64_SpeculativeStoreBypassDisable_Whitepaper_final.pdf
+mentions that the CPUID 8000_0008.EBX[26] will mean that the
+speculative store bypass disable is no longer needed.
 
-Fixes: f600b6905015 ("virtio_net: Add XDP support")
-Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Pavel Popa <pashinho1990@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+A copy of this document is available at:
+    https://bugzilla.kernel.org/show_bug.cgi?id=199889
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: andrew.cooper3@citrix.com
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180601145921.9500-2-konrad.wilk@oracle.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpufeatures.h |    1 +
+ arch/x86/kernel/cpu/common.c       |    3 ++-
+ arch/x86/kvm/cpuid.c               |    2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1966,8 +1966,9 @@ static int virtnet_xdp_set(struct net_de
- 	    && (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO4) ||
- 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO6) ||
- 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_ECN) ||
--		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO))) {
--		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO, disable LRO first");
-+		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO) ||
-+		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))) {
-+		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO/CSUM, disable LRO/CSUM first");
- 		return -EOPNOTSUPP;
- 	}
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -285,6 +285,7 @@
+ #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
++#define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
  
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+ #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -958,7 +958,8 @@ static void __init cpu_set_bug_bits(stru
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 
+ 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
+-	   !(ia32_cap & ARCH_CAP_SSB_NO))
++	   !(ia32_cap & ARCH_CAP_SSB_NO) &&
++	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
+ 	if (x86_match_cpu(cpu_no_speculation))
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -367,7 +367,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD) | F(AMD_SSB_NO);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
 
 
