@@ -2,107 +2,151 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51022C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA869C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0887F20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:36:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0887F20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 7606020851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7606020851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbeLDVgU (ORCPT
+        id S1726192AbeLDVh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:36:20 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:47230 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725899AbeLDVgT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:36:19 -0500
-Received: (qmail 9122 invoked by uid 2102); 4 Dec 2018 16:36:18 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 4 Dec 2018 16:36:18 -0500
-Date:   Tue, 4 Dec 2018 16:36:18 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Kyle Williams <kdgwill@chromium.org>
-cc:     linux-usb@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Jack Stocker <jackstocker.93@gmail.com>,
-        =?UTF-8?Q?Michael_Niew=C3=B6hner?= <linux@mniewoehner.de>,
-        Nico Sneck <snecknico@gmail.com>,
-        Tim Anderson <tsa@biglakesoftware.com>,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] USB: quirks: add NO_LPM quirk for Logitech
- Flare|Meetup|Brio|Rally
-In-Reply-To: <CAAd214WBzcsFamzqkdTp0AYDRo1=Uq1=Z5fJhzkOZ6znVFo3MA@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1812041633580.1537-100000@iolanthe.rowland.org>
+        Tue, 4 Dec 2018 16:37:58 -0500
+Received: from mga04.intel.com ([192.55.52.120]:22876 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725899AbeLDVh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:37:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:37:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="98653382"
+Received: from ray.jf.intel.com (HELO [10.7.201.141]) ([10.7.201.141])
+  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 13:37:56 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
+ <20181204184919.GD2937@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
+Date:   Tue, 4 Dec 2018 13:37:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20181204184919.GD2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018, Kyle Williams wrote:
-
-> Description: Some USB device / host controller combinations seem to have
-> problems with Link Power management. In particular it is described that
-> the combination of certain Logitech devices and other powered media
-> devices such as the Atrus device causes 'not enough bandwidth for
-> new device state'error.
+On 12/4/18 10:49 AM, Jerome Glisse wrote:
+>> Also, could you add a simple, example program for how someone might use
+>> this?  I got lost in all the new sysfs and ioctl gunk.  Can you
+>> characterize how this would work with the *exiting* NUMA interfaces that
+>> we have?
+> That is the issue i can not expose device memory as NUMA node as
+> device memory is not cache coherent on AMD and Intel platform today.
 > 
-> This patch creates quirk entries for the tested Logitech device
-> indicating LPM should remain disabled for the device.
-> 
-> Signed-off-by: Kyle Williams <kdgwill@chromium.org>
-> ---
->  drivers/usb/core/quirks.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index 0690fcff0ea2..9403edee4797 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -246,6 +246,22 @@ static const struct usb_device_id usb_quirk_list[] = {
->         /* Logitech Harmony 700-series */
->         { USB_DEVICE(0x046d, 0xc122), .driver_info = USB_QUIRK_DELAY_INIT },
-> 
-> +       /* Logitech Flare */
-> +       { USB_DEVICE(0x046d, 0x0876), .driver_info = USB_QUIRK_NO_LPM },
+> More over in some case that memory is not visible at all by the CPU
+> which is not something you can express in the current NUMA node.
 
-This entry is out of order with the preceding entry.  And some of the 
-new entries below are out of order with each other (entries are 
-supposed to be sorted by Vendor ID, then Product ID).
+Yeah, our NUMA mechanisms are for managing memory that the kernel itself
+manages in the "normal" allocator and supports a full feature set on.
+That has a bunch of implications, like that the memory is cache coherent
+and accessible from everywhere.
 
-Also, perhaps instead of adding all these new entries, we should set 
-the NO_LPM quirk flag for all Logitech devices?
+The HMAT patches only comprehend this "normal" memory, which is why
+we're extending the existing /sys/devices/system/node infrastructure.
 
-Alan Stern
+This series has a much more aggressive goal, which is comprehending the
+connections of every memory-target to every memory-initiator, no matter
+who is managing the memory, who can access it, or what it can be used for.
 
-> +
-> +       /* Logitech Rally Camera */
-> +       { USB_DEVICE(0x046d, 0x0881), .driver_info = USB_QUIRK_NO_LPM },
-> +       { USB_DEVICE(0x046d, 0x0888), .driver_info = USB_QUIRK_NO_LPM },
-> +       { USB_DEVICE(0x046d, 0x0889), .driver_info = USB_QUIRK_NO_LPM },
-> +
-> +       /* Logitech Meetup */
-> +       { USB_DEVICE(0x046d, 0x0867), .driver_info = USB_QUIRK_NO_LPM },
-> +       { USB_DEVICE(0x046d, 0x0866), .driver_info = USB_QUIRK_NO_LPM },
-> +       { USB_DEVICE(0x046d, 0x086a), .driver_info = USB_QUIRK_NO_LPM },
-> +
-> +       /* Logitech Brio */
-> +       { USB_DEVICE(0x046d, 0x085e), .driver_info = USB_QUIRK_NO_LPM },
-> +
->         /* Philips PSC805 audio device */
->         { USB_DEVICE(0x0471, 0x0155), .driver_info = USB_QUIRK_RESET_RESUME
-> },
-> 
-> 
+Theoretically, HMS could be used for everything that we're doing with
+/sys/devices/system/node, as long as it's tied back into the existing
+NUMA infrastructure _somehow_.
 
+Right?
