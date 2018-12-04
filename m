@@ -2,49 +2,50 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371CAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC84C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014F920850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014F920850
+	by mail.kernel.org (Postfix) with ESMTP id AA60D20850
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA60D20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeLDVth (ORCPT
+        id S1726450AbeLDVtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:49:37 -0500
-Received: from mga03.intel.com ([134.134.136.65]:44474 "EHLO mga03.intel.com"
+        Tue, 4 Dec 2018 16:49:42 -0500
+Received: from mga06.intel.com ([134.134.136.31]:42572 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeLDVtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:49:36 -0500
+        id S1725895AbeLDVtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:49:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:49:36 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:49:41 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="107303699"
+   d="scan'208";a="98065580"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 13:49:36 -0800
-Subject: [PATCH v3 0/5] x86/mm: Drop usage of __flush_tlb_all() in
- kernel_physical_mapping_init()
+  by orsmga006.jf.intel.com with ESMTP; 04 Dec 2018 13:49:41 -0800
+Subject: [PATCH v3 1/5] generic/pgtable: Make {pmd,
+ pud}_same() unconditionally available
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     tglx@linutronix.de
 Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Dec 2018 13:37:01 -0800
-Message-ID: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
+        dave.hansen@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Dec 2018 13:37:06 -0800
+Message-ID: <154395942644.32119.10238934183949418128.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,72 +55,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v2 [1]:
-* Fix links in the changelogs to reference lkml.kernel.org instead of
-  lore.kernel.org (Peter)
-* Collect Acked-by's from Kirill and Peter.
-* Add more Cc's for patches 1 and 2.
-* Strengthen the lead-in comment for the set_p*_safe() helpers (Dave)
+In preparation for {pmd,pud}_same() to be used outside of transparent
+huge page code paths, make them unconditionally available. This enables
+them to be used in the definition of a new family of
+set_{pte,pmd,pud,p4d,pgd}_safe() helpers.
 
-[1]: https://lkml.org/lkml/2018/12/1/358
-
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
+ include/asm-generic/pgtable.h |   14 --------------
+ 1 file changed, 14 deletions(-)
 
->From patch 5:
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 359fb935ded6..eea50ef8b8cd 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -375,7 +375,6 @@ static inline int pte_unused(pte_t pte)
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMD_SAME
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+ {
+ 	return pmd_val(pmd_a) == pmd_val(pmd_b);
+@@ -385,19 +384,6 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
+ {
+ 	return pud_val(pud_a) == pud_val(pud_b);
+ }
+-#else /* CONFIG_TRANSPARENT_HUGEPAGE */
+-static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+-{
+-	BUILD_BUG();
+-	return 0;
+-}
+-
+-static inline int pud_same(pud_t pud_a, pud_t pud_b)
+-{
+-	BUILD_BUG();
+-	return 0;
+-}
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
+ 
+ #ifndef __HAVE_ARCH_DO_SWAP_PAGE
 
-    Commit f77084d96355 "x86/mm/pat: Disable preemption around
-    __flush_tlb_all()" addressed a case where __flush_tlb_all() is called
-    without preemption being disabled. It also left a warning to catch other
-    cases where preemption is not disabled. That warning triggers for the
-    memory hotplug path which is also used for persistent memory enabling:
-    
-     WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
-     RIP: 0010:__flush_tlb_all+0x1b/0x3a
-     [..]
-     Call Trace:
-      phys_pud_init+0x29c/0x2bb
-      kernel_physical_mapping_init+0xfc/0x219
-      init_memory_mapping+0x1a5/0x3b0
-      arch_add_memory+0x2c/0x50
-      devm_memremap_pages+0x3aa/0x610
-      pmem_attach_disk+0x585/0x700 [nd_pmem]
-    
-    Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-    and Dave confirmed the expectation for TLB flush is for modifying /
-    invalidating existing pte entries, but not initial population [2]. Drop
-    the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
-    expectation that this path is only ever populating empty entries for the
-    linear map. Note, at linear map teardown time there is a call to the
-    all-cpu flush_tlb_all() to invalidate the removed mappings.
-
-Additionally, Dave wanted some runtime assurances that
-kernel_physical_mapping_init() is only populating and not changing
-existing page table entries. Patches 1 - 4 are implementing a new
-set_pte() family of helpers for that purpose.
-
-Patch 5 is tagged for -stable because the false positive warning is now
-showing up on 4.19-stable kernels. Patches 1 - 4 are not tagged for
--stable, but if the sanity checking is needed please mark them as such.
-
-The hang that was observed while developing the sanity checking
-implementation was resolved by Peter's suggestion to not trigger when
-the same pte value is being rewritten.
-
----
-
-Dan Williams (5):
-      generic/pgtable: Make {pmd,pud}_same() unconditionally available
-      generic/pgtable: Introduce {p4d,pgd}_same()
-      generic/pgtable: Introduce set_pte_safe()
-      x86/mm: Validate kernel_physical_mapping_init() pte population
-      x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
-
-
- arch/x86/include/asm/pgalloc.h           |   27 ++++++++++++++
- arch/x86/mm/init_64.c                    |   30 ++++++----------
- include/asm-generic/5level-fixup.h       |    1 +
- include/asm-generic/pgtable-nop4d-hack.h |    1 +
- include/asm-generic/pgtable-nop4d.h      |    1 +
- include/asm-generic/pgtable-nopud.h      |    1 +
- include/asm-generic/pgtable.h            |   56 +++++++++++++++++++++++++-----
- 7 files changed, 90 insertions(+), 27 deletions(-)
