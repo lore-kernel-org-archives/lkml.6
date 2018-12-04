@@ -2,293 +2,1132 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777DCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A83C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E6BE208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oyMkbJX1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bGVpudX5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E6BE208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A2DE208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 06:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A2DE208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeLDGe6 (ORCPT
+        id S1726082AbeLDGfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 01:34:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38732 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeLDGe6 (ORCPT
+        Tue, 4 Dec 2018 01:35:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60829 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeLDGe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Dec 2018 01:34:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 29F7E60312; Tue,  4 Dec 2018 06:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543905296;
-        bh=59MIBGWbaukqrskIjiGYVrH6FXBqeGgQuQnnJ0zs6o4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oyMkbJX1+iNBp6SMZPX/nmnRnABcnbU+zKEv0CONgrK+St4RwtszgGhwwxBt1+C4k
-         OrIEAVwJ77s3bShlWRLakjxXPFUytjnns5vi3OdlVtQkAu8gBi8t0W4XBYiDIWCclj
-         8ejJ6dmPQ5ZqpF2dfoJbzHVwfZ5SdjtSgLFrRj+8=
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3BB7960312;
-        Tue,  4 Dec 2018 06:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543905295;
-        bh=59MIBGWbaukqrskIjiGYVrH6FXBqeGgQuQnnJ0zs6o4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bGVpudX5TEHvr/JtMU7cLccM9S8/mgKVfJHYWLZqv4TOkbO2r3y7jYzGUxLlgRIR5
-         g+KtpLfR9LwMRpXYIeaTd2lUptrDz1EJ3yLxxIDn7zVXF8I0ud8SsbCcSwgduAGzx+
-         d9j4PZifaklpci/olwKv9Y093n4eZ+vwa4bZGvp0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BB7960312
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qk1-f170.google.com with SMTP id a132so8981765qkg.1;
-        Mon, 03 Dec 2018 22:34:55 -0800 (PST)
-X-Gm-Message-State: AA+aEWY0XsEhRPcotvAjBhdifnNpp/wjnGZUq5xFvt/Pj1YCUPRKYK/P
-        8E6FEYTjMYGvXi3JYzWT1xjD7KIVbFAxPDsNusY=
-X-Google-Smtp-Source: AFSGD/Xe4kIFlBULthAKnu8MoiQYyuXeGkJjJ6gSV8IXz0TJqdTzNcqHrNjFbqlaglNfaU9SkdigTVCHuiitDDe4Fr4=
-X-Received: by 2002:ae9:ed51:: with SMTP id c78mr17252433qkg.85.1543905294461;
- Mon, 03 Dec 2018 22:34:54 -0800 (PST)
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB46YXgE757587
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 3 Dec 2018 22:34:33 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB46YWgR757583;
+        Mon, 3 Dec 2018 22:34:32 -0800
+Date:   Mon, 3 Dec 2018 22:34:32 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
+Message-ID: <tip-e188d24a382d609ec7ca6c1a00396202565b7831@git.kernel.org>
+Cc:     paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Reply-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+          tglx@linutronix.de, peterz@infradead.org
+In-Reply-To: <20181203230451.28921-2-paulmck@linux.ibm.com>
+References: <20181203230451.28921-2-paulmck@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] tools/memory-model: Add scripts to check github
+ litmus tests
+Git-Commit-ID: e188d24a382d609ec7ca6c1a00396202565b7831
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181201165348.24140-1-robdclark@gmail.com> <a29008a3-8eff-260d-5c93-9757a729f9e0@arm.com>
- <CAF6AEGvo0-oWNKcz6BEA8Eh250FL4rXaBVYXuJGBtshPk4jz+g@mail.gmail.com>
-In-Reply-To: <CAF6AEGvo0-oWNKcz6BEA8Eh250FL4rXaBVYXuJGBtshPk4jz+g@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 4 Dec 2018 12:04:42 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iH8x4ieK5QqrYcAnLALpQL4KC3E507KHurJJV1Gh1Z=Ng@mail.gmail.com>
-Message-ID: <CAFp+6iH8x4ieK5QqrYcAnLALpQL4KC3E507KHurJJV1Gh1Z=Ng@mail.gmail.com>
-Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, daniel@ffwll.ch,
-        frowand.list@gmail.com, David Airlie <airlied@linux.ie>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Doug Anderson <dianders@chromium.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>, Sean Paul <seanpaul@chromium.org>,
-        freedreno <freedreno@lists.freedesktop.org>, hch@lst.de,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 7:56 PM Rob Clark <robdclark@gmail.com> wrote:
->
-> On Mon, Dec 3, 2018 at 7:45 AM Robin Murphy <robin.murphy@arm.com> wrote:
-> >
-> > Hi Rob,
-> >
-> > On 01/12/2018 16:53, Rob Clark wrote:
-> > > This solves a problem we see with drm/msm, caused by getting
-> > > iommu_dma_ops while we attach our own domain and manage it directly at
-> > > the iommu API level:
-> > >
-> > >    [0000000000000038] user address but active_mm is swapper
-> > >    Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> > >    Modules linked in:
-> > >    CPU: 7 PID: 70 Comm: kworker/7:1 Tainted: G        W         4.19.3 #90
-> > >    Hardware name: xxx (DT)
-> > >    Workqueue: events deferred_probe_work_func
-> > >    pstate: 80c00009 (Nzcv daif +PAN +UAO)
-> > >    pc : iommu_dma_map_sg+0x7c/0x2c8
-> > >    lr : iommu_dma_map_sg+0x40/0x2c8
-> > >    sp : ffffff80095eb4f0
-> > >    x29: ffffff80095eb4f0 x28: 0000000000000000
-> > >    x27: ffffffc0f9431578 x26: 0000000000000000
-> > >    x25: 00000000ffffffff x24: 0000000000000003
-> > >    x23: 0000000000000001 x22: ffffffc0fa9ac010
-> > >    x21: 0000000000000000 x20: ffffffc0fab40980
-> > >    x19: ffffffc0fab40980 x18: 0000000000000003
-> > >    x17: 00000000000001c4 x16: 0000000000000007
-> > >    x15: 000000000000000e x14: ffffffffffffffff
-> > >    x13: ffff000000000000 x12: 0000000000000028
-> > >    x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
-> > >    x9 : 0000000000000000 x8 : ffffffc0fab409a0
-> > >    x7 : 0000000000000000 x6 : 0000000000000002
-> > >    x5 : 0000000100000000 x4 : 0000000000000000
-> > >    x3 : 0000000000000001 x2 : 0000000000000002
-> > >    x1 : ffffffc0f9431578 x0 : 0000000000000000
-> > >    Process kworker/7:1 (pid: 70, stack limit = 0x0000000017d08ffb)
-> > >    Call trace:
-> > >     iommu_dma_map_sg+0x7c/0x2c8
-> > >     __iommu_map_sg_attrs+0x70/0x84
-> > >     get_pages+0x170/0x1e8
-> > >     msm_gem_get_iova+0x8c/0x128
-> > >     _msm_gem_kernel_new+0x6c/0xc8
-> > >     msm_gem_kernel_new+0x4c/0x58
-> > >     dsi_tx_buf_alloc_6g+0x4c/0x8c
-> > >     msm_dsi_host_modeset_init+0xc8/0x108
-> > >     msm_dsi_modeset_init+0x54/0x18c
-> > >     _dpu_kms_drm_obj_init+0x430/0x474
-> > >     dpu_kms_hw_init+0x5f8/0x6b4
-> > >     msm_drm_bind+0x360/0x6c8
-> > >     try_to_bring_up_master.part.7+0x28/0x70
-> > >     component_master_add_with_match+0xe8/0x124
-> > >     msm_pdev_probe+0x294/0x2b4
-> > >     platform_drv_probe+0x58/0xa4
-> > >     really_probe+0x150/0x294
-> > >     driver_probe_device+0xac/0xe8
-> > >     __device_attach_driver+0xa4/0xb4
-> > >     bus_for_each_drv+0x98/0xc8
-> > >     __device_attach+0xac/0x12c
-> > >     device_initial_probe+0x24/0x30
-> > >     bus_probe_device+0x38/0x98
-> > >     deferred_probe_work_func+0x78/0xa4
-> > >     process_one_work+0x24c/0x3dc
-> > >     worker_thread+0x280/0x360
-> > >     kthread+0x134/0x13c
-> > >     ret_from_fork+0x10/0x18
-> > >    Code: d2800004 91000725 6b17039f 5400048a (f9401f40)
-> > >    ---[ end trace f22dda57f3648e2c ]---
-> > >    Kernel panic - not syncing: Fatal exception
-> > >    SMP: stopping secondary CPUs
-> > >    Kernel Offset: disabled
-> > >    CPU features: 0x0,22802a18
-> > >    Memory Limit: none
-> > >
-> > > The problem is that when drm/msm does it's own iommu_attach_device(),
-> > > now the domain returned by iommu_get_domain_for_dev() is drm/msm's
-> > > domain, and it doesn't have domain->iova_cookie.
-> >
-> > Does this crash still happen with 4.20-rc? Because as of 6af588fed391 it
-> > really shouldn't.
-> >
-> > > We kind of avoided this problem prior to sdm845/dpu because the iommu
-> > > was attached to the mdp node in dt, which is a child of the toplevel
-> > > mdss node (which corresponds to the dev passed in dma_map_sg()).  But
-> > > with sdm845, now the iommu is attached at the mdss level so we hit the
-> > > iommu_dma_ops in dma_map_sg().
-> > >
-> > > But auto allocating/attaching a domain before the driver is probed was
-> > > already a blocking problem for enabling per-context pagetables for the
-> > > GPU.  This problem is also now solved with this patch.
-> >
-> > s/solved/worked around/
-> >
-> > If you want a guarantee of actually getting a specific hardware context
-> > allocated for a given domain, there needs to be code in the IOMMU driver
-> > to understand and honour that. Implicitly depending on whatever happens
-> > to fall out of current driver behaviour on current systems is not a real
-> > solution.
-> >
-> > > Fixes: 97890ba9289c dma-mapping: detect and configure IOMMU in of_dma_configure
-> >
-> > That's rather misleading, since the crash described above depends on at
-> > least two other major changes which came long after that commit.
-> >
-> > It's not that I don't understand exactly what you want here - just that
-> > this commit message isn't a coherent justification for that ;)
-> >
-> > > Tested-by: Douglas Anderson <dianders@chromium.org>
-> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > ---
-> > > This is an alternative/replacement for [1].  What it lacks in elegance
-> > > it makes up for in practicality ;-)
-> > >
-> > > [1] https://patchwork.freedesktop.org/patch/264930/
-> > >
-> > >   drivers/of/device.c | 22 ++++++++++++++++++++++
-> > >   1 file changed, 22 insertions(+)
-> > >
-> > > diff --git a/drivers/of/device.c b/drivers/of/device.c
-> > > index 5957cd4fa262..15ffee00fb22 100644
-> > > --- a/drivers/of/device.c
-> > > +++ b/drivers/of/device.c
-> > > @@ -72,6 +72,14 @@ int of_device_add(struct platform_device *ofdev)
-> > >       return device_add(&ofdev->dev);
-> > >   }
-> > >
-> > > +static const struct of_device_id iommu_blacklist[] = {
-> > > +     { .compatible = "qcom,mdp4" },
-> > > +     { .compatible = "qcom,mdss" },
-> > > +     { .compatible = "qcom,sdm845-mdss" },
-> > > +     { .compatible = "qcom,adreno" },
-> > > +     {}
-> > > +};
-> > > +
-> > >   /**
-> > >    * of_dma_configure - Setup DMA configuration
-> > >    * @dev:    Device to apply DMA configuration
-> > > @@ -164,6 +172,20 @@ int of_dma_configure(struct device *dev, struct device_node *np, bool force_dma)
-> > >       dev_dbg(dev, "device is%sbehind an iommu\n",
-> > >               iommu ? " " : " not ");
-> > >
-> > > +     /*
-> > > +      * There is at least one case where the driver wants to directly
-> > > +      * manage the IOMMU, but if we end up with iommu dma_ops, that
-> > > +      * interferes with the drivers ability to use dma_map_sg() for
-> > > +      * cache operations.  Since we don't currently have a better
-> > > +      * solution, and this code runs before the driver is probed and
-> > > +      * has a chance to intervene, use a simple blacklist to avoid
-> > > +      * ending up with iommu dma_ops:
-> > > +      */
-> > > +     if (of_match_device(iommu_blacklist, dev)) {
-> > > +             dev_dbg(dev, "skipping iommu hookup\n");
-> > > +             iommu = NULL;
-> > > +     }
-> >
-> > Given that a default domain will already have been allocated by the time
-> > we get here, regardless of whether we pretend of_iommu_configure() did
-> > nothing, I'm puzzled as to how this change is 'solving' that aspect as
-> > claimed :/
->
-> Possibly I'm reading this wrong.. I thought it is not created until
-> arm_iommu_create_mapping()..
->
-> but hmm, I guess I was looking at the armv7 code.  Seems to be
-> different on arm64.. ugg..
->
-> > Is CONFIG_IOMMU_DEFAULT_PASSTHROUGH a sufficient workaround for msm at
-> > the moment, or do you have other devices which do actually want
-> > iommu_dma_ops?
->
-> I think there are at least a few other devices (venus, camera, maybe
-> some others that are not wired up yet?)
+Commit-ID:  e188d24a382d609ec7ca6c1a00396202565b7831
+Gitweb:     https://git.kernel.org/tip/e188d24a382d609ec7ca6c1a00396202565b7831
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Mon, 3 Dec 2018 15:04:50 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 4 Dec 2018 07:29:52 +0100
 
-Yes, for msm, the drm devices do not want the default DMA domain, whereas
-the V4L devices - video and camera rely completely on DMA iommu domain
-and use the dma mapping apis to manage things.
-So enabling CONFIG_IOMMU_DEFAULT_PASSTHROUGH for msm platforms
-is not the desired configuration.
-Moreover, we can't enable this config with upstream kernels anyways.
+tools/memory-model: Add scripts to check github litmus tests
 
-Thanks
-Vivek
+The https://github.com/paulmckrcu/litmus repository contains a large
+number of C-language litmus tests that include "Result:" comments
+predicting the verification result.  This commit adds a number of scripts
+that run tests on these litmus tests:
 
->
-> BR,
-> -R
->
-> >
-> > Robin.
-> >
-> > > +
-> > >       arch_setup_dma_ops(dev, dma_addr, size, iommu, coherent);
-> > >
-> > >       return 0;
-> > >
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+checkghlitmus.sh:
+	Runs all litmus tests in the https://github.com/paulmckrcu/litmus
+        archive that are C-language and that have "Result:" comment lines
+	documenting expected results, comparing the actual results to
+	those expected.  Clones the repository if it has not already
+	been cloned into the "tools/memory-model/litmus" directory.
 
+initlitmushist.sh
+	Run all litmus tests having no more than the specified number
+	of processes given a specified timeout, recording the results in
+	.litmus.out files.  Clones the repository if it has not already
+	been cloned into the "tools/memory-model/litmus" directory.
 
+newlitmushist.sh
+	For all new or updated litmus tests having no more than the
+	specified number of processes given a specified timeout, run
+	and record the results in .litmus.out files.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+checklitmushist.sh
+	Run all litmus tests having .litmus.out files from previous
+	initlitmushist.sh or newlitmushist.sh runs, comparing the
+	herd output to that of the original runs.
+
+The above scripts will run litmus tests concurrently, by default with
+one job per available CPU.  Giving any of these scripts the --help
+argument will cause them to print usage information.
+
+This commit also adds a number of helper scripts that are not intended
+to be invoked from the command line:
+
+cmplitmushist.sh: Compare the output of two different runs of the same
+	litmus test.
+
+judgelitmus.sh: Compare the output of a litmus test to its "Result:"
+	comment line.
+
+parseargs.sh: Parse command-line arguments.
+
+runlitmushist.sh: Run the litmus tests whose pathnames are provided one
+	per line on standard input.
+
+While in the area, this commit also makes the existing checklitmus.sh
+and checkalllitmus.sh scripts use parseargs.sh in order to provide a
+bit of uniformity.  In addition, per-litmus-test status output is directed
+to stdout, while end-of-test summary information is directed to stderr.
+Finally, the error flag standardizes on "!!!" to assist those familiar
+with rcutorture output.
+
+The defaults for the parseargs.sh arguments may be overridden by using
+environment variables: LKMM_DESTDIR for --destdir, LKMM_HERD_OPTIONS
+for --herdoptions, LKMM_JOBS for --jobs, LKMM_PROCS for --procs, and
+LKMM_TIMEOUT for --timeout.
+
+[ paulmck: History-check summary-line changes per Alan Stern feedback. ]
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akiyks@gmail.com
+Cc: boqun.feng@gmail.com
+Cc: dhowells@redhat.com
+Cc: j.alglave@ucl.ac.uk
+Cc: linux-arch@vger.kernel.org
+Cc: luc.maranget@inria.fr
+Cc: npiggin@gmail.com
+Cc: parri.andrea@gmail.com
+Cc: stern@rowland.harvard.edu
+Cc: will.deacon@arm.com
+Link: http://lkml.kernel.org/r/20181203230451.28921-2-paulmck@linux.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/memory-model/.gitignore                 |   1 +
+ tools/memory-model/README                     |   2 +
+ tools/memory-model/scripts/README             |  70 ++++++++++++++
+ tools/memory-model/scripts/checkalllitmus.sh  |  53 +++++------
+ tools/memory-model/scripts/checkghlitmus.sh   |  65 +++++++++++++
+ tools/memory-model/scripts/checklitmus.sh     |  74 +++------------
+ tools/memory-model/scripts/checklitmushist.sh |  60 ++++++++++++
+ tools/memory-model/scripts/cmplitmushist.sh   |  87 ++++++++++++++++++
+ tools/memory-model/scripts/initlitmushist.sh  |  68 ++++++++++++++
+ tools/memory-model/scripts/judgelitmus.sh     |  78 ++++++++++++++++
+ tools/memory-model/scripts/newlitmushist.sh   |  61 +++++++++++++
+ tools/memory-model/scripts/parseargs.sh       | 126 ++++++++++++++++++++++++++
+ tools/memory-model/scripts/runlitmushist.sh   |  87 ++++++++++++++++++
+ 13 files changed, 739 insertions(+), 93 deletions(-)
+
+diff --git a/tools/memory-model/.gitignore b/tools/memory-model/.gitignore
+new file mode 100644
+index 000000000000..b1d34c52f3c3
+--- /dev/null
++++ b/tools/memory-model/.gitignore
+@@ -0,0 +1 @@
++litmus
+diff --git a/tools/memory-model/README b/tools/memory-model/README
+index acf9077cffaa..0f2c366518c6 100644
+--- a/tools/memory-model/README
++++ b/tools/memory-model/README
+@@ -156,6 +156,8 @@ lock.cat
+ README
+ 	This file.
+ 
++scripts	Various scripts, see scripts/README.
++
+ 
+ ===========
+ LIMITATIONS
+diff --git a/tools/memory-model/scripts/README b/tools/memory-model/scripts/README
+new file mode 100644
+index 000000000000..29375a1fbbfa
+--- /dev/null
++++ b/tools/memory-model/scripts/README
+@@ -0,0 +1,70 @@
++			============
++			LKMM SCRIPTS
++			============
++
++
++These scripts are run from the tools/memory-model directory.
++
++checkalllitmus.sh
++
++	Run all litmus tests in the litmus-tests directory, checking
++	the results against the expected results recorded in the
++	"Result:" comment lines.
++
++checkghlitmus.sh
++
++	Run all litmus tests in the https://github.com/paulmckrcu/litmus
++	archive that are C-language and that have "Result:" comment lines
++	documenting expected results, comparing the actual results to
++	those expected.
++
++checklitmushist.sh
++
++	Run all litmus tests having .litmus.out files from previous
++	initlitmushist.sh or newlitmushist.sh runs, comparing the
++	herd output to that of the original runs.
++
++checklitmus.sh
++
++	Check a single litmus test against its "Result:" expected result.
++
++cmplitmushist.sh
++
++	Compare output from two different runs of the same litmus tests,
++	with the absolute pathnames of the tests to run provided one
++	name per line on standard input.  Not normally run manually,
++	provided instead for use by other scripts.
++
++initlitmushist.sh
++
++	Run all litmus tests having no more than the specified number
++	of processes given a specified timeout, recording the results
++	in .litmus.out files.
++
++judgelitmus.sh
++
++	Given a .litmus file and its .litmus.out herd output, check the
++	.litmus.out file against the .litmus file's "Result:" comment to
++	judge whether the test ran correctly.  Not normally run manually,
++	provided instead for use by other scripts.
++
++newlitmushist.sh
++
++	For all new or updated litmus tests having no more than the
++	specified number of processes given a specified timeout, run
++	and record the results in .litmus.out files.
++
++parseargs.sh
++
++	Parse command-line arguments.  Not normally run manually,
++	provided instead for use by other scripts.
++
++runlitmushist.sh
++
++	Run the litmus tests whose absolute pathnames are provided one
++	name per line on standard input.  Not normally run manually,
++	provided instead for use by other scripts.
++
++README
++
++	This file
+diff --git a/tools/memory-model/scripts/checkalllitmus.sh b/tools/memory-model/scripts/checkalllitmus.sh
+index ca528f9a24d4..b35fcd61ecf6 100755
+--- a/tools/memory-model/scripts/checkalllitmus.sh
++++ b/tools/memory-model/scripts/checkalllitmus.sh
+@@ -1,42 +1,27 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
+ #
+-# Run herd tests on all .litmus files in the specified directory (which
+-# defaults to litmus-tests) and check each file's result against a "Result:"
+-# comment within that litmus test.  If the verification result does not
+-# match that specified in the litmus test, this script prints an error
+-# message prefixed with "^^^".  It also outputs verification results to
+-# a file whose name is that of the specified litmus test, but with ".out"
+-# appended.
++# Run herd tests on all .litmus files in the litmus-tests directory
++# and check each file's result against a "Result:" comment within that
++# litmus test.  If the verification result does not match that specified
++# in the litmus test, this script prints an error message prefixed with
++# "^^^".  It also outputs verification results to a file whose name is
++# that of the specified litmus test, but with ".out" appended.
+ #
+ # Usage:
+-#	checkalllitmus.sh [ directory ]
++#	checkalllitmus.sh
+ #
+-# The LINUX_HERD_OPTIONS environment variable may be used to specify
+-# arguments to herd, whose default is defined by the checklitmus.sh script.
+-# Thus, one would normally run this in the directory containing the memory
+-# model, specifying the pathname of the litmus test to check.
++# Run this in the directory containing the memory model.
+ #
+ # This script makes no attempt to run the litmus tests concurrently.
+ #
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, you can access it online at
+-# http://www.gnu.org/licenses/gpl-2.0.html.
+-#
+ # Copyright IBM Corporation, 2018
+ #
+ # Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+ 
+-litmusdir=${1-litmus-tests}
++. scripts/parseargs.sh
++
++litmusdir=litmus-tests
+ if test -d "$litmusdir" -a -r "$litmusdir" -a -x "$litmusdir"
+ then
+ 	:
+@@ -45,6 +30,14 @@ else
+ 	exit 255
+ fi
+ 
++# Create any new directories that have appeared in the github litmus
++# repo since the last run.
++if test "$LKMM_DESTDIR" != "."
++then
++	find $litmusdir -type d -print |
++	( cd "$LKMM_DESTDIR"; sed -e 's/^/mkdir -p /' | sh )
++fi
++
+ # Find the checklitmus script.  If it is not where we expect it, then
+ # assume that the caller has the PATH environment variable set
+ # appropriately.
+@@ -57,7 +50,7 @@ fi
+ 
+ # Run the script on all the litmus tests in the specified directory
+ ret=0
+-for i in litmus-tests/*.litmus
++for i in $litmusdir/*.litmus
+ do
+ 	if ! $clscript $i
+ 	then
+@@ -66,8 +59,8 @@ do
+ done
+ if test "$ret" -ne 0
+ then
+-	echo " ^^^ VERIFICATION MISMATCHES"
++	echo " ^^^ VERIFICATION MISMATCHES" 1>&2
+ else
+-	echo All litmus tests verified as was expected.
++	echo All litmus tests verified as was expected. 1>&2
+ fi
+ exit $ret
+diff --git a/tools/memory-model/scripts/checkghlitmus.sh b/tools/memory-model/scripts/checkghlitmus.sh
+new file mode 100644
+index 000000000000..6589fbb6f653
+--- /dev/null
++++ b/tools/memory-model/scripts/checkghlitmus.sh
+@@ -0,0 +1,65 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Runs the C-language litmus tests having a maximum number of processes
++# to run, defaults to 6.
++#
++# sh checkghlitmus.sh
++#
++# Run from the Linux kernel tools/memory-model directory.  See the
++# parseargs.sh scripts for arguments.
++
++. scripts/parseargs.sh
++
++T=/tmp/checkghlitmus.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++# Clone the repository if it is not already present.
++if test -d litmus
++then
++	:
++else
++	git clone https://github.com/paulmckrcu/litmus
++	( cd litmus; git checkout origin/master )
++fi
++
++# Create any new directories that have appeared in the github litmus
++# repo since the last run.
++if test "$LKMM_DESTDIR" != "."
++then
++	find litmus -type d -print |
++	( cd "$LKMM_DESTDIR"; sed -e 's/^/mkdir -p /' | sh )
++fi
++
++# Create a list of the C-language litmus tests previously run.
++( cd $LKMM_DESTDIR; find litmus -name '*.litmus.out' -print ) |
++	sed -e 's/\.out$//' |
++	xargs -r egrep -l '^ \* Result: (Never|Sometimes|Always|DEADLOCK)' |
++	xargs -r grep -L "^P${LKMM_PROCS}"> $T/list-C-already
++
++# Create a list of C-language litmus tests with "Result:" commands and
++# no more than the specified number of processes.
++find litmus -name '*.litmus' -exec grep -l -m 1 "^C " {} \; > $T/list-C
++xargs < $T/list-C -r egrep -l '^ \* Result: (Never|Sometimes|Always|DEADLOCK)' > $T/list-C-result
++xargs < $T/list-C-result -r grep -L "^P${LKMM_PROCS}" > $T/list-C-result-short
++
++# Form list of tests without corresponding .litmus.out files
++sort $T/list-C-already $T/list-C-result-short | uniq -u > $T/list-C-needed
++
++# Run any needed tests.
++if scripts/runlitmushist.sh < $T/list-C-needed > $T/run.stdout 2> $T/run.stderr
++then
++	errs=
++else
++	errs=1
++fi
++
++sed < $T/list-C-result-short -e 's,^,scripts/judgelitmus.sh ,' |
++	sh > $T/judge.stdout 2> $T/judge.stderr
++
++if test -n "$errs"
++then
++	cat $T/run.stderr 1>&2
++fi
++grep '!!!' $T/judge.stdout
+diff --git a/tools/memory-model/scripts/checklitmus.sh b/tools/memory-model/scripts/checklitmus.sh
+index bf12a75c0719..dd08801a30b0 100755
+--- a/tools/memory-model/scripts/checklitmus.sh
++++ b/tools/memory-model/scripts/checklitmus.sh
+@@ -1,40 +1,24 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
+ #
+-# Run a herd test and check the result against a "Result:" comment within
+-# the litmus test.  If the verification result does not match that specified
+-# in the litmus test, this script prints an error message prefixed with
+-# "^^^" and exits with a non-zero status.  It also outputs verification
++# Run a herd test and invokes judgelitmus.sh to check the result against
++# a "Result:" comment within the litmus test.  It also outputs verification
+ # results to a file whose name is that of the specified litmus test, but
+ # with ".out" appended.
+ #
+ # Usage:
+ #	checklitmus.sh file.litmus
+ #
+-# The LINUX_HERD_OPTIONS environment variable may be used to specify
+-# arguments to herd, which default to "-conf linux-kernel.cfg".  Thus,
+-# one would normally run this in the directory containing the memory model,
+-# specifying the pathname of the litmus test to check.
+-#
+-# This program is free software; you can redistribute it and/or modify
+-# it under the terms of the GNU General Public License as published by
+-# the Free Software Foundation; either version 2 of the License, or
+-# (at your option) any later version.
+-#
+-# This program is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-# GNU General Public License for more details.
+-#
+-# You should have received a copy of the GNU General Public License
+-# along with this program; if not, you can access it online at
+-# http://www.gnu.org/licenses/gpl-2.0.html.
++# Run this in the directory containing the memory model, specifying the
++# pathname of the litmus test to check.  The caller is expected to have
++# properly set up the LKMM environment variables.
+ #
+ # Copyright IBM Corporation, 2018
+ #
+ # Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+ 
+ litmus=$1
+-herdoptions=${LINUX_HERD_OPTIONS--conf linux-kernel.cfg}
++herdoptions=${LKMM_HERD_OPTIONS--conf linux-kernel.cfg}
+ 
+ if test -f "$litmus" -a -r "$litmus"
+ then
+@@ -43,44 +27,8 @@ else
+ 	echo ' --- ' error: \"$litmus\" is not a readable file
+ 	exit 255
+ fi
+-if grep -q '^ \* Result: ' $litmus
+-then
+-	outcome=`grep -m 1 '^ \* Result: ' $litmus | awk '{ print $3 }'`
+-else
+-	outcome=specified
+-fi
+ 
+-echo Herd options: $herdoptions > $litmus.out
+-/usr/bin/time herd7 -o ~/tmp $herdoptions $litmus >> $litmus.out 2>&1
+-grep "Herd options:" $litmus.out
+-grep '^Observation' $litmus.out
+-if grep -q '^Observation' $litmus.out
+-then
+-	:
+-else
+-	cat $litmus.out
+-	echo ' ^^^ Verification error'
+-	echo ' ^^^ Verification error' >> $litmus.out 2>&1
+-	exit 255
+-fi
+-if test "$outcome" = DEADLOCK
+-then
+-	echo grep 3 and 4
+-	if grep '^Observation' $litmus.out | grep -q 'Never 0 0$'
+-	then
+-		ret=0
+-	else
+-		echo " ^^^ Unexpected non-$outcome verification"
+-		echo " ^^^ Unexpected non-$outcome verification" >> $litmus.out 2>&1
+-		ret=1
+-	fi
+-elif grep '^Observation' $litmus.out | grep -q $outcome || test "$outcome" = Maybe
+-then
+-	ret=0
+-else
+-	echo " ^^^ Unexpected non-$outcome verification"
+-	echo " ^^^ Unexpected non-$outcome verification" >> $litmus.out 2>&1
+-	ret=1
+-fi
+-tail -2 $litmus.out | head -1
+-exit $ret
++echo Herd options: $herdoptions > $LKMM_DESTDIR/$litmus.out
++/usr/bin/time $LKMM_TIMEOUT_CMD herd7 $herdoptions $litmus >> $LKMM_DESTDIR/$litmus.out 2>&1
++
++scripts/judgelitmus.sh $litmus
+diff --git a/tools/memory-model/scripts/checklitmushist.sh b/tools/memory-model/scripts/checklitmushist.sh
+new file mode 100644
+index 000000000000..1d210ffb7c8a
+--- /dev/null
++++ b/tools/memory-model/scripts/checklitmushist.sh
+@@ -0,0 +1,60 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Reruns the C-language litmus tests previously run that match the
++# specified criteria, and compares the result to that of the previous
++# runs from initlitmushist.sh and/or newlitmushist.sh.
++#
++# sh checklitmushist.sh
++#
++# Run from the Linux kernel tools/memory-model directory.
++# See scripts/parseargs.sh for list of arguments.
++#
++# Copyright IBM Corporation, 2018
++#
++# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
++
++. scripts/parseargs.sh
++
++T=/tmp/checklitmushist.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++if test -d litmus
++then
++	:
++else
++	echo Run scripts/initlitmushist.sh first, need litmus repo.
++	exit 1
++fi
++
++# Create the results directory and populate it with subdirectories.
++# The initial output is created here to avoid clobbering the output
++# generated earlier.
++mkdir $T/results
++find litmus -type d -print | ( cd $T/results; sed -e 's/^/mkdir -p /' | sh )
++
++# Create the list of litmus tests already run, then remove those that
++# are excluded by this run's --procs argument.
++( cd $LKMM_DESTDIR; find litmus -name '*.litmus.out' -print ) |
++	sed -e 's/\.out$//' |
++	xargs -r grep -L "^P${LKMM_PROCS}"> $T/list-C-already
++xargs < $T/list-C-already -r grep -L "^P${LKMM_PROCS}" > $T/list-C-short
++
++# Redirect output, run tests, then restore destination directory.
++destdir="$LKMM_DESTDIR"
++LKMM_DESTDIR=$T/results; export LKMM_DESTDIR
++scripts/runlitmushist.sh < $T/list-C-short > $T/runlitmushist.sh.out 2>&1
++LKMM_DESTDIR="$destdir"; export LKMM_DESTDIR
++
++# Move the newly generated .litmus.out files to .litmus.out.new files
++# in the destination directory.
++cdir=`pwd`
++ddir=`awk -v c="$cdir" -v d="$LKMM_DESTDIR" \
++	'END { if (d ~ /^\//) print d; else print c "/" d; }' < /dev/null`
++( cd $T/results; find litmus -type f -name '*.litmus.out' -print |
++  sed -e 's,^.*$,cp & '"$ddir"'/&.new,' | sh )
++
++sed < $T/list-C-short -e 's,^,'"$LKMM_DESTDIR/"',' |
++	sh scripts/cmplitmushist.sh
++exit $?
+diff --git a/tools/memory-model/scripts/cmplitmushist.sh b/tools/memory-model/scripts/cmplitmushist.sh
+new file mode 100644
+index 000000000000..0f498aeeccf5
+--- /dev/null
++++ b/tools/memory-model/scripts/cmplitmushist.sh
+@@ -0,0 +1,87 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Compares .out and .out.new files for each name on standard input,
++# one full pathname per line.  Outputs comparison results followed by
++# a summary.
++#
++# sh cmplitmushist.sh
++
++T=/tmp/cmplitmushist.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++# comparetest oldpath newpath
++perfect=0
++obsline=0
++noobsline=0
++obsresult=0
++badcompare=0
++comparetest () {
++	grep -v 'maxresident)k\|minor)pagefaults\|^Time' $1 > $T/oldout
++	grep -v 'maxresident)k\|minor)pagefaults\|^Time' $2 > $T/newout
++	if cmp -s $T/oldout $T/newout && grep -q '^Observation' $1
++	then
++		echo Exact output match: $2
++		perfect=`expr "$perfect" + 1`
++		return 0
++	fi
++
++	grep '^Observation' $1 > $T/oldout
++	grep '^Observation' $2 > $T/newout
++	if test -s $T/oldout -o -s $T/newout
++	then
++		if cmp -s $T/oldout $T/newout
++		then
++			echo Matching Observation result and counts: $2
++			obsline=`expr "$obsline" + 1`
++			return 0
++		fi
++	else
++		echo Missing Observation line "(e.g., herd7 timeout)": $2
++		noobsline=`expr "$noobsline" + 1`
++		return 0
++	fi
++
++	grep '^Observation' $1 | awk '{ print $3 }' > $T/oldout
++	grep '^Observation' $2 | awk '{ print $3 }' > $T/newout
++	if cmp -s $T/oldout $T/newout
++	then
++		echo Matching Observation Always/Sometimes/Never result: $2
++		obsresult=`expr "$obsresult" + 1`
++		return 0
++	fi
++	echo ' !!!' Result changed: $2
++	badcompare=`expr "$badcompare" + 1`
++	return 1
++}
++
++sed -e 's/^.*$/comparetest &.out &.out.new/' > $T/cmpscript
++. $T/cmpscript > $T/cmpscript.out
++cat $T/cmpscript.out
++
++echo ' ---' Summary: 1>&2
++grep '!!!' $T/cmpscript.out 1>&2
++if test "$perfect" -ne 0
++then
++	echo Exact output matches: $perfect 1>&2
++fi
++if test "$obsline" -ne 0
++then
++	echo Matching Observation result and counts: $obsline 1>&2
++fi
++if test "$noobsline" -ne 0
++then
++	echo Missing Observation line "(e.g., herd7 timeout)": $noobsline 1>&2
++fi
++if test "$obsresult" -ne 0
++then
++	echo Matching Observation Always/Sometimes/Never result: $obsresult 1>&2
++fi
++if test "$badcompare" -ne 0
++then
++	echo "!!!" Result changed: $badcompare 1>&2
++	exit 1
++fi
++
++exit 0
+diff --git a/tools/memory-model/scripts/initlitmushist.sh b/tools/memory-model/scripts/initlitmushist.sh
+new file mode 100644
+index 000000000000..956b6957484d
+--- /dev/null
++++ b/tools/memory-model/scripts/initlitmushist.sh
+@@ -0,0 +1,68 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Runs the C-language litmus tests matching the specified criteria.
++# Generates the output for each .litmus file into a corresponding
++# .litmus.out file, and does not judge the result.
++#
++# sh initlitmushist.sh
++#
++# Run from the Linux kernel tools/memory-model directory.
++# See scripts/parseargs.sh for list of arguments.
++#
++# This script can consume significant wallclock time and CPU, especially as
++# the value of --procs rises.  On a four-core (eight hardware threads)
++# 2.5GHz x86 with a one-minute per-run timeout:
++#
++# --procs wallclock CPU		timeouts	tests
++#	1 0m11.241s 0m1.086s           0	   19
++#	2 1m12.598s 2m8.459s           2	  393
++#	3 1m30.007s 6m2.479s           4	 2291
++#	4 3m26.042s 18m5.139s	       9	 3217
++#	5 4m26.661s 23m54.128s	      13	 3784
++#	6 4m41.900s 26m4.721s         13	 4352
++#	7 5m51.463s 35m50.868s        13	 4626
++#	8 10m5.235s 68m43.672s        34	 5117
++#	9 15m57.80s 105m58.101s       69	 5156
++#      10 16m14.13s 103m35.009s       69         5165
++#      20 27m48.55s 198m3.286s       156         5269
++#
++# Increasing the timeout on the 20-process run to five minutes increases
++# the runtime to about 90 minutes with the CPU time rising to about
++# 10 hours.  On the other hand, it decreases the number of timeouts to 101.
++#
++# Note that there are historical tests for which herd7 will fail
++# completely, for example, litmus/manual/atomic/C-unlock-wait-00.litmus
++# contains a call to spin_unlock_wait(), which no longer exists in either
++# the kernel or LKMM.
++
++. scripts/parseargs.sh
++
++T=/tmp/initlitmushist.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++if test -d litmus
++then
++	:
++else
++	git clone https://github.com/paulmckrcu/litmus
++	( cd litmus; git checkout origin/master )
++fi
++
++# Create any new directories that have appeared in the github litmus
++# repo since the last run.
++if test "$LKMM_DESTDIR" != "."
++then
++	find litmus -type d -print |
++	( cd "$LKMM_DESTDIR"; sed -e 's/^/mkdir -p /' | sh )
++fi
++
++# Create a list of the C-language litmus tests with no more than the
++# specified number of processes (per the --procs argument).
++find litmus -name '*.litmus' -exec grep -l -m 1 "^C " {} \; > $T/list-C
++xargs < $T/list-C -r grep -L "^P${LKMM_PROCS}" > $T/list-C-short
++
++scripts/runlitmushist.sh < $T/list-C-short
++
++exit 0
+diff --git a/tools/memory-model/scripts/judgelitmus.sh b/tools/memory-model/scripts/judgelitmus.sh
+new file mode 100644
+index 000000000000..0cc63875e395
+--- /dev/null
++++ b/tools/memory-model/scripts/judgelitmus.sh
+@@ -0,0 +1,78 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Given a .litmus test and the corresponding .litmus.out file, check
++# the .litmus.out file against the "Result:" comment to judge whether
++# the test ran correctly.
++#
++# Usage:
++#	judgelitmus.sh file.litmus
++#
++# Run this in the directory containing the memory model, specifying the
++# pathname of the litmus test to check.
++#
++# Copyright IBM Corporation, 2018
++#
++# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
++
++litmus=$1
++
++if test -f "$litmus" -a -r "$litmus"
++then
++	:
++else
++	echo ' --- ' error: \"$litmus\" is not a readable file
++	exit 255
++fi
++if test -f "$LKMM_DESTDIR/$litmus".out -a -r "$LKMM_DESTDIR/$litmus".out
++then
++	:
++else
++	echo ' --- ' error: \"$LKMM_DESTDIR/$litmus\".out is not a readable file
++	exit 255
++fi
++if grep -q '^ \* Result: ' $litmus
++then
++	outcome=`grep -m 1 '^ \* Result: ' $litmus | awk '{ print $3 }'`
++else
++	outcome=specified
++fi
++
++grep '^Observation' $LKMM_DESTDIR/$litmus.out
++if grep -q '^Observation' $LKMM_DESTDIR/$litmus.out
++then
++	:
++else
++	echo ' !!! Verification error' $litmus
++	if ! grep -q '!!!' $LKMM_DESTDIR/$litmus.out
++	then
++		echo ' !!! Verification error' >> $LKMM_DESTDIR/$litmus.out 2>&1
++	fi
++	exit 255
++fi
++if test "$outcome" = DEADLOCK
++then
++	if grep '^Observation' $LKMM_DESTDIR/$litmus.out | grep -q 'Never 0 0$'
++	then
++		ret=0
++	else
++		echo " !!! Unexpected non-$outcome verification" $litmus
++		if ! grep -q '!!!' $LKMM_DESTDIR/$litmus.out
++		then
++			echo " !!! Unexpected non-$outcome verification" >> $LKMM_DESTDIR/$litmus.out 2>&1
++		fi
++		ret=1
++	fi
++elif grep '^Observation' $LKMM_DESTDIR/$litmus.out | grep -q $outcome || test "$outcome" = Maybe
++then
++	ret=0
++else
++	echo " !!! Unexpected non-$outcome verification" $litmus
++	if ! grep -q '!!!' $LKMM_DESTDIR/$litmus.out
++	then
++		echo " !!! Unexpected non-$outcome verification" >> $LKMM_DESTDIR/$litmus.out 2>&1
++	fi
++	ret=1
++fi
++tail -2 $LKMM_DESTDIR/$litmus.out | head -1
++exit $ret
+diff --git a/tools/memory-model/scripts/newlitmushist.sh b/tools/memory-model/scripts/newlitmushist.sh
+new file mode 100644
+index 000000000000..991f8f814881
+--- /dev/null
++++ b/tools/memory-model/scripts/newlitmushist.sh
+@@ -0,0 +1,61 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Runs the C-language litmus tests matching the specified criteria
++# that do not already have a corresponding .litmus.out file, and does
++# not judge the result.
++#
++# sh newlitmushist.sh
++#
++# Run from the Linux kernel tools/memory-model directory.
++# See scripts/parseargs.sh for list of arguments.
++#
++# Copyright IBM Corporation, 2018
++#
++# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
++
++. scripts/parseargs.sh
++
++T=/tmp/newlitmushist.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++if test -d litmus
++then
++	:
++else
++	echo Run scripts/initlitmushist.sh first, need litmus repo.
++	exit 1
++fi
++
++# Create any new directories that have appeared in the github litmus
++# repo since the last run.
++if test "$LKMM_DESTDIR" != "."
++then
++	find litmus -type d -print |
++	( cd "$LKMM_DESTDIR"; sed -e 's/^/mkdir -p /' | sh )
++fi
++
++# Create a list of the C-language litmus tests previously run.
++( cd $LKMM_DESTDIR; find litmus -name '*.litmus.out' -print ) |
++	sed -e 's/\.out$//' |
++	xargs -r grep -L "^P${LKMM_PROCS}"> $T/list-C-already
++
++# Form full list of litmus tests with no more than the specified
++# number of processes (per the --procs argument).
++find litmus -name '*.litmus' -exec grep -l -m 1 "^C " {} \; > $T/list-C-all
++xargs < $T/list-C-all -r grep -L "^P${LKMM_PROCS}" > $T/list-C-short
++
++# Form list of new tests.  Note: This does not handle litmus-test deletion!
++sort $T/list-C-already $T/list-C-short | uniq -u > $T/list-C-new
++
++# Form list of litmus tests that have changed since the last run.
++sed < $T/list-C-short -e 's,^.*$,if test & -nt '"$LKMM_DESTDIR"'/&.out; then echo &; fi,' > $T/list-C-script
++sh $T/list-C-script > $T/list-C-newer
++
++# Merge the list of new and of updated litmus tests: These must be (re)run.
++sort -u $T/list-C-new $T/list-C-newer > $T/list-C-needed
++
++scripts/runlitmushist.sh < $T/list-C-needed
++
++exit 0
+diff --git a/tools/memory-model/scripts/parseargs.sh b/tools/memory-model/scripts/parseargs.sh
+new file mode 100644
+index 000000000000..96b307c8d64a
+--- /dev/null
++++ b/tools/memory-model/scripts/parseargs.sh
+@@ -0,0 +1,126 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0+
++#
++# the corresponding .litmus.out file, and does not judge the result.
++#
++# . scripts/parseargs.sh
++#
++# Include into other Linux kernel tools/memory-model scripts.
++#
++# Copyright IBM Corporation, 2018
++#
++# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
++
++T=/tmp/parseargs.sh.$$
++mkdir $T
++
++# Initialize one parameter: initparam name default
++initparam () {
++	echo if test -z '"$'$1'"' > $T/s
++	echo then >> $T/s
++	echo	$1='"'$2'"' >> $T/s
++	echo	export $1 >> $T/s
++	echo fi >> $T/s
++	echo $1_DEF='$'$1  >> $T/s
++	. $T/s
++}
++
++initparam LKMM_DESTDIR "."
++initparam LKMM_HERD_OPTIONS "-conf linux-kernel.cfg"
++initparam LKMM_JOBS `getconf _NPROCESSORS_ONLN`
++initparam LKMM_PROCS "3"
++initparam LKMM_TIMEOUT "1m"
++
++scriptname=$0
++
++usagehelp () {
++	echo "Usage $scriptname [ arguments ]"
++	echo "      --destdir path (place for .litmus.out, default by .litmus)"
++	echo "      --herdopts -conf linux-kernel.cfg ..."
++	echo "      --jobs N (number of jobs, default one per CPU)"
++	echo "      --procs N (litmus tests with at most this many processes)"
++	echo "      --timeout N (herd7 timeout (e.g., 10s, 1m, 2hr, 1d, '')"
++	echo "Defaults: --destdir '$LKMM_DESTDIR_DEF' --herdopts '$LKMM_HERD_OPTIONS_DEF' --jobs '$LKMM_JOBS_DEF' --procs '$LKMM_PROCS_DEF' --timeout '$LKMM_TIMEOUT_DEF'"
++	exit 1
++}
++
++usage () {
++	usagehelp 1>&2
++}
++
++# checkarg --argname argtype $# arg mustmatch cannotmatch
++checkarg () {
++	if test $3 -le 1
++	then
++		echo $1 needs argument $2 matching \"$5\"
++		usage
++	fi
++	if echo "$4" | grep -q -e "$5"
++	then
++		:
++	else
++		echo $1 $2 \"$4\" must match \"$5\"
++		usage
++	fi
++	if echo "$4" | grep -q -e "$6"
++	then
++		echo $1 $2 \"$4\" must not match \"$6\"
++		usage
++	fi
++}
++
++while test $# -gt 0
++do
++	case "$1" in
++	--destdir)
++		checkarg --destdir "(path to directory)" "$#" "$2" '.\+' '^--'
++		LKMM_DESTDIR="$2"
++		mkdir $LKMM_DESTDIR > /dev/null 2>&1
++		if ! test -e "$LKMM_DESTDIR"
++		then
++			echo "Cannot create directory --destdir '$LKMM_DESTDIR'"
++			usage
++		fi
++		if test -d "$LKMM_DESTDIR" -a -w "$LKMM_DESTDIR" -a -x "$LKMM_DESTDIR"
++		then
++			:
++		else
++			echo "Directory --destdir '$LKMM_DESTDIR' insufficient permissions to create files"
++			usage
++		fi
++		shift
++		;;
++	--herdopts|--herdopt)
++		checkarg --destdir "(herd options)" "$#" "$2" '.*' '^--'
++		LKMM_HERD_OPTIONS="$2"
++		shift
++		;;
++	--jobs|--job)
++		checkarg --jobs "(number)" "$#" "$2" '^[0-9]\+$' '^--'
++		LKMM_JOBS="$2"
++		shift
++		;;
++	--procs|--proc)
++		checkarg --procs "(number)" "$#" "$2" '^[0-9]\+$' '^--'
++		LKMM_PROCS="$2"
++		shift
++		;;
++	--timeout)
++		checkarg --timeout "(timeout spec)" "$#" "$2" '^\([0-9]\+[smhd]\?\|\)$' '^--'
++		LKMM_TIMEOUT="$2"
++		shift
++		;;
++	*)
++		echo Unknown argument $1
++		usage
++		;;
++	esac
++	shift
++done
++if test -z "$LKMM_TIMEOUT"
++then
++	LKMM_TIMEOUT_CMD=""; export LKMM_TIMEOUT_CMD
++else
++	LKMM_TIMEOUT_CMD="timeout $LKMM_TIMEOUT"; export LKMM_TIMEOUT_CMD
++fi
++rm -rf $T
+diff --git a/tools/memory-model/scripts/runlitmushist.sh b/tools/memory-model/scripts/runlitmushist.sh
+new file mode 100644
+index 000000000000..e507f5f933d5
+--- /dev/null
++++ b/tools/memory-model/scripts/runlitmushist.sh
+@@ -0,0 +1,87 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Runs the C-language litmus tests specified on standard input, using up
++# to the specified number of CPUs (defaulting to all of them) and placing
++# the results in the specified directory (defaulting to the same place
++# the litmus test came from).
++#
++# sh runlitmushist.sh
++#
++# Run from the Linux kernel tools/memory-model directory.
++# This script uses environment variables produced by parseargs.sh.
++#
++# Copyright IBM Corporation, 2018
++#
++# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
++
++T=/tmp/runlitmushist.sh.$$
++trap 'rm -rf $T' 0
++mkdir $T
++
++if test -d litmus
++then
++	:
++else
++	echo Directory \"litmus\" missing, aborting run.
++	exit 1
++fi
++
++# Prefixes for per-CPU scripts
++for ((i=0;i<$LKMM_JOBS;i++))
++do
++	echo dir="$LKMM_DESTDIR" > $T/$i.sh
++	echo T=$T >> $T/$i.sh
++	echo herdoptions=\"$LKMM_HERD_OPTIONS\" >> $T/$i.sh
++	cat << '___EOF___' >> $T/$i.sh
++	runtest () {
++		echo ' ... ' /usr/bin/time $LKMM_TIMEOUT_CMD herd7 $herdoptions $1 '>' $dir/$1.out '2>&1'
++		if /usr/bin/time $LKMM_TIMEOUT_CMD herd7 $herdoptions $1 > $dir/$1.out 2>&1
++		then
++			if ! grep -q '^Observation ' $dir/$1.out
++			then
++				echo ' !!! Herd failed, no Observation:' $1
++			fi
++		else
++			exitcode=$?
++			if test "$exitcode" -eq 124
++			then
++				exitmsg="timed out"
++			else
++				exitmsg="failed, exit code $exitcode"
++			fi
++			echo ' !!! Herd' ${exitmsg}: $1
++		fi
++	}
++___EOF___
++done
++
++awk -v q="'" -v b='\\' '
++{
++	print "echo `grep " q "^P[0-9]" b "+(" q " " $0 " | tail -1 | sed -e " q "s/^P" b "([0-9]" b "+" b ")(.*$/" b "1/" q "` " $0
++}' | bash |
++sort -k1n |
++awk -v ncpu=$LKMM_JOBS -v t=$T '
++{
++	print "runtest " $2 >> t "/" NR % ncpu ".sh";
++}
++
++END {
++	for (i = 0; i < ncpu; i++) {
++		print "sh " t "/" i ".sh > " t "/" i ".sh.out 2>&1 &";
++		close(t "/" i ".sh");
++	}
++	print "wait";
++}' | sh
++cat $T/*.sh.out
++if grep -q '!!!' $T/*.sh.out
++then
++	echo ' ---' Summary: 1>&2
++	grep '!!!' $T/*.sh.out 1>&2
++	nfail="`grep '!!!' $T/*.sh.out | wc -l`"
++	echo 'Number of failed herd runs (e.g., timeout): ' $nfail 1>&2
++	exit 1
++else
++	echo All runs completed successfully. 1>&2
++	exit 0
++fi
