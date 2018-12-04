@@ -2,102 +2,109 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DF5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF760C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC20206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:37:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJINNjOI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC20206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 99BE1206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 22:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BE1206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbeLDWhZ (ORCPT
+        id S1726322AbeLDWiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:37:25 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54738 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeLDWhZ (ORCPT
+        Tue, 4 Dec 2018 17:38:04 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46350 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbeLDWiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:37:25 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so18203811ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 14:37:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xOi69ish+ghyK7JjoNTHw9jzIHwlPxmIFC4vT6nlZOI=;
-        b=iJINNjOIX1s8KNzdHLIVkiN76uW+ahJqUFXWW6Kmw3waPJgCcn2e0xE0BLqQ1/2KTT
-         Ekd52GFW1GcdhkiJlb0OvOV7kKOgmKLMZFMCfiiQPiqSHYOZdNxBh6j0xecK3Uvznz+1
-         b0LWlyNx0Fl3ySmR/EjnGNEHiCil55zMRm1+OL1qfoqO0JAMgUm5Y8C8rrOQDaaqEDSn
-         chPN2eBnfhMRSJ9LJSBGldTzB8K2mw9+5FYuVuqlBscr4KFOJkT7sU8xmuPc8VswxmoB
-         8fdl9YQUvq3RLBtbLe+kOE/zAlRYqElMIexzq2a6dusEsw1m+Now7BxdrYaJY0PDzBqI
-         DcLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xOi69ish+ghyK7JjoNTHw9jzIHwlPxmIFC4vT6nlZOI=;
-        b=h+F5M8Mo1eUq+35MGfwDkxDU2lCgLs7EjA+xfJbuVwmstVhs6Mqrjq0rtBg935wTU2
-         YAElFhYSZbEjDvcxNKxY+Qool5x5B94YDFbJaoJ5B1/pslRF6FLRFvCxU21ub7iPdAz3
-         96c9q4iWwzc/yN6tL25DYHXJmGCjMFrzlQpdYTohNxqgraM9Qf22FYBKd9zHt7Fyq/xM
-         vQ24833yapFfGPN+764KA9h+El4M/ezq0yCvI6/ZPQpGrnWnVv9v1XCJaXdKs8hByQE6
-         C89jCtC/0TyukD8QBQv6eHC5H9siiLhSp7eoZEkZCMBf4iBefZumXWbAONrkUSxq+M3X
-         LUug==
-X-Gm-Message-State: AA+aEWYvjD/PRKrL7T6neqst3lLmsoZ0PveeFhFiGNEK/Mi75V4MqyGU
-        +dBHq5oR7tZaorj8nbELMDZ4gg==
-X-Google-Smtp-Source: AFSGD/UeNnlSm3ZnphgHZOKVpWWbdtyBpBZIAk+t7JJA5KCwWFeAOD8rOR3PCo9bg4qHSd2+CyOqug==
-X-Received: by 2002:a24:e302:: with SMTP id d2mr13379770ith.155.1543963044283;
-        Tue, 04 Dec 2018 14:37:24 -0800 (PST)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id r21sm6111390ita.27.2018.12.04.14.37.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 14:37:23 -0800 (PST)
-From:   Yu Zhao <yuzhao@google.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] iommu: fix amd_iommu=force_isolation
-Date:   Tue,  4 Dec 2018 15:37:16 -0700
-Message-Id: <20181204223716.214159-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 4 Dec 2018 17:38:03 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 925FE9FA;
+        Tue,  4 Dec 2018 22:38:01 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 14:37:59 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Dave Martin <Dave.Martin@arm.com>, Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
+        Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump
+ notification
+Message-Id: <20181204143759.fe24ee036a33000193339561@linux-foundation.org>
+In-Reply-To: <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+        <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+        <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+        <20181026082812.GA10581@redhat.com>
+        <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+        <20181029111804.GA24820@redhat.com>
+        <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+        <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com>
+        <20181128151911.GN3505@e103592.cambridge.arm.com>
+        <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU.
+On Wed, 28 Nov 2018 16:15:35 -0800 Enke Chen <enkechen@cisco.com> wrote:
 
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
+> Thanks for your comments. You have indeed missed some of the prior reviews
+> and discussions. But that is OK.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- drivers/iommu/amd_iommu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is why it is best to update the changelog in response to the
+review discussion - if person A was wondering about something then it
+is likely that person B will wonder about the same thing.  Take a
+reviewer's questioning as an indication that the changelog was lacking.
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 1167ff0416cf..3e4219e6cff0 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2195,7 +2195,8 @@ static int amd_iommu_add_device(struct device *dev)
- 
- 	BUG_ON(!dev_data);
- 
--	if (iommu_pass_through || dev_data->iommu_v2)
-+	if (iommu_pass_through ||
-+	    (!amd_iommu_force_isolation && dev_data->iommu_v2))
- 		iommu_request_dm_for_dev(dev);
- 
- 	/* Domains are initialized for this device - have a look what we ended up with */
--- 
-2.20.0.rc1.387.gf8505762e3-goog
+I'm not sure what to make of this patchset, really.  Oleg sounds
+unhappy and that's always a bad sign.  And signals are rather ugly
+things.  Oleg, can you please expand on your concerns?
+
+The arguments against using connector aren't very compelling.  Sure,
+connector is hard to use from shell scripts but so are signals?  And is
+there much of a usecase for managing these things with shell scripts
+anyway?
+
+Has an eventfd implementation been considered?
+
+I'm sure we've added other kernel->userspace comminication schemes, but
+I can't immediately recall them all :(
 
