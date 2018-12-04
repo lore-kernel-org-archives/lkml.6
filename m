@@ -2,103 +2,114 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB3CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82790C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E93214DE
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DB74214ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wzHyWHJY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E93214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tLgi0omK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="liko1LoJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB74214ED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbeLDHlM (ORCPT
+        id S1726065AbeLDHmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeLDHlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:41:12 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA91920834;
-        Tue,  4 Dec 2018 07:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543909271;
-        bh=8e+PiYl6JNqwdbz+QraRMLIChsn94/E1pgngDspvnmU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wzHyWHJYnjxjvRP30sjUFdBRLDekedMKwz/SEcwDgP5aBOz3jRxVHhSnQfWQmyRj7
-         XIhtt6ULYdfx0ZYvC7wIaJEZtYe2YZLnNLDV8SKqF6HUL8ZCBGRLi4SHWwVVgTNDxn
-         k5XHtCNYLZyZOhtBCExJ++RFiMVQnmovWdHxoKyA=
-Date:   Tue, 4 Dec 2018 08:41:09 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Stable <stable@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Juergen <juergen.lachmann@harman.com>
-Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
-Message-ID: <20181204074109.GA27141@kroah.com>
-References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
- <CADVatmP1h7GJJRVURkinwSM44Y4iooMP-U_7zew4V+zsMva4Vw@mail.gmail.com>
- <20181202143543.GE221015@sasha-vm>
- <1678636.EYQpd7BODG@blindfold>
- <e977dca6-60f0-ce5b-d116-30acf60058f9@ginzinger.com>
+        Tue, 4 Dec 2018 02:42:46 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44515 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725994AbeLDHmp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 02:42:45 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9088921F58;
+        Tue,  4 Dec 2018 02:42:44 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 04 Dec 2018 02:42:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=FUqZXK9QlSROIut/MRw1EB28oTS
+        ZtjAHgHhbXkfa3JY=; b=tLgi0omKYR2AhnvRAEVAtpU5fT82/zd60J08AT7LC6y
+        khTFH6OmBTnBT8jNurJUlG3zdx10Sm2S2QBpFHhZmUEM7tHR4TZ70bargKtkIkNM
+        7hEzYYDH+1aTTHViy33JbsQp32e8fKGJaeEklNCgnkwNQaFTrZvu3gzAL8l91mdE
+        rg4j/lVfcr7VMCMfW4K3m5cpRjQN9eFcYJ6AVyRiXqB38TJL1tnj+Fwp/YdfbY17
+        4EZ4pHKmCTlhnn4lJcG4TZjHZ4EoYcmRS/wDM364NgKCh9YdadLGHoB3il7cOTYs
+        z9K924DIHEP2Qdvo4FUXnMhF84LwMr+DkKYYfs5NfEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=FUqZXK
+        9QlSROIut/MRw1EB28oTSZtjAHgHhbXkfa3JY=; b=liko1LoJFKFIstDltFMgIH
+        ow7L7poKJ5+ofSMSQmimllLcGnlAapH80raYdqTGeoVsb42x/3+/K80pTuqAxNB/
+        VEki0ERBVnalEo1MU2KsH6ePW+OqiVw8bLwbe6eeNQJogRjheVSQCmS52hvv5ApI
+        gEHJDbp3hb9kll7eNjCoFMhTdZCEhdIw8DSenGLbvApRyJGVo9xhrZ2O9mbiKC/d
+        y3tGqYhr0NKaLKEkmBUmaeVVf470wxCEYR+jtvn6V2vSVw655qVf9+gcvqDW1Mqg
+        HzkJgNVNZz/SM4tYzxrLMXtazB+blj5Hx0s+R8UtYJObke8Yu0W0eaZ9DgqK486w
+        ==
+X-ME-Sender: <xms:8y8GXPl5i0El7ufV27VoRuSbDxcikPWLs2oV17grNlZbjAI1MpdRYA>
+X-ME-Proxy: <xmx:8y8GXLQk_2RQNE-6r0N62yarBPmXkIvrhRzp5E5I9rsP_YJHfe0OIw>
+    <xmx:8y8GXGx2dZ5qGRCO8XH0Pu_vLVqigFhMjMfPyhGjiiEntAIMr2JCwA>
+    <xmx:8y8GXHcCN_yq74TiD1Y-2XiFim93Ou0THTO6Wq8EvXWg8maikReLWg>
+    <xmx:8y8GXJP0Diih6_NPObkeYPjhE7igSh4oFYJ12EzwF-t3Lpk3YWH_xg>
+    <xmx:8y8GXCuFYfKQLZvG9fuMqGdmurZCTvJtCrQ7F3O13ZtmrCittdzxkg>
+    <xmx:9C8GXCQiL_Cybk_vYAxIwJw4RyN_ZR68hdV9z4DeMSRalKGo7TBqfw>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0B29DE450E;
+        Tue,  4 Dec 2018 02:42:42 -0500 (EST)
+Date:   Tue, 4 Dec 2018 08:42:41 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ char-misc.current tree
+Message-ID: <20181204074241.GB27141@kroah.com>
+References: <20181204153513.1e799336@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e977dca6-60f0-ce5b-d116-30acf60058f9@ginzinger.com>
+In-Reply-To: <20181204153513.1e799336@canb.auug.org.au>
 User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 08:39:16AM +0100, Martin Kepplinger wrote:
-> On 02.12.18 16:02, Richard Weinberger wrote:
-> > Sasha,
-> > 
-> > Am Sonntag, 2. Dezember 2018, 15:35:43 CET schrieb Sasha Levin:
-> > > On Sun, Dec 02, 2018 at 11:50:33AM +0000, Sudip Mukherjee wrote:
-> > > > > > Now queued up for 4.14.y, thanks.
-> > > > > 
-> > > > > can you *please* slow a little down?
-> > > > 
-> > > > True. It will really help if you can have some sort of fixed schedule
-> > > > for stable release, like maybe stablerc is ready on Thursday or Friday
-> > > > and release the stable on Monday. Having a weekend in stablerc will be
-> > > > helpful for people like me who only get the time in weekends for
-> > > > upstream or stable kernel.
-> > > 
-> > > Any sort of schedule will never work for everyone (for example, if it's
-> > > part of your paid job - you don't necessarily want to review stuff over
-> > > the weekend).
-> > 
-> > a schedule is not needed, but please give maintainers at least a chance
-> > to react on stable inclusion request.
-> > In this case Martin asked for inclusion on Monday and the patch was applied
-> > two days later.
+On Tue, Dec 04, 2018 at 03:35:13PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> True, especially when the maintainer is asked a question as part of the
-> patch.
+> Today's linux-next merge of the char-misc tree got a conflict in:
 > 
-> I've already had the feeling that we'd need the other patch too, but in this
-> case at least I should have searched for Fixes tags.
+>   drivers/hv/channel_mgmt.c
 > 
-> Greg, how about reminding people of Fixes tags in
-> Documentation/process/stable-kernel-rules.rst ?
+> between commit:
+> 
+>   37c2578c0c40 ("Drivers: hv: vmbus: Offload the handling of channels to two workqueues")
+> 
+> from the char-misc.current tree and commit:
+> 
+>   4d3c5c69191f ("Drivers: hv: vmbus: Remove the useless API vmbus_get_outgoing_channel()")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (I used the former version where they conflicted) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Reminding people how?  Patches to that file are always gladly accepted :)
+Yeah, this is a mess, I'll wait for the hyper-v developers to send me a
+fixup patch for handling this merge issue, as they know it is happening
+:(
 
 thanks,
 
