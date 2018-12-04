@@ -4,120 +4,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E136C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14EFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1425C2081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 992B32081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:45:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N4UGcs+/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1425C2081C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VqAv5J1o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992B32081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeLDPoM (ORCPT
+        id S1726859AbeLDPp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:44:12 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43016 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbeLDPoM (ORCPT
+        Tue, 4 Dec 2018 10:45:27 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33342 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbeLDPp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:44:12 -0500
-Received: by mail-io1-f67.google.com with SMTP id f10so8163110iop.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 07:44:11 -0800 (PST)
+        Tue, 4 Dec 2018 10:45:26 -0500
+Received: by mail-io1-f68.google.com with SMTP id t24so13995628ioi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 07:45:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ysPLc9vTvOK2EWdgx5z5B8rpOAQ2rRDlsvgkzpycaw8=;
-        b=N4UGcs+/DSnkP3WagcOlyvwyp+3jfVDf4juqsyWCUJK57+bsHYx1QOrtLC5uXpNFY5
-         FyzqbNVmLFspP1Bx1J6RDKpHj2m93YOrol20izkVajoLt9CL9fTMuDuDNuaubwJvDs+T
-         H/yC2yVpi/TN24A/mYFwSyNx1vyJDzqg1Cf/s=
+        bh=cOUYmVqM7lapaZ9KA66jWsVgjD9fs0gfbIMTvRz2Wtc=;
+        b=VqAv5J1oNCU7hCx5278Rvv/rjhF7ijV8zXoB/+x9AFzlxvXqJBQzO5ICnPdtXAQbAT
+         Ee3tx8ksKeKTR679KkStO8htgP+3aSwTqUmO7Y+XTllRvjFRBFAIngJEUXSwQEUtAcKH
+         8IfLsSsfScnyu13QZvguqr/d/q3X9OXBcMmic=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ysPLc9vTvOK2EWdgx5z5B8rpOAQ2rRDlsvgkzpycaw8=;
-        b=s89Er/QDaPqC3l8Wa4lRszouXj6o0AnR2wBIEiqa2gG3VVIj5n0QjQeCC+aG9N8b3U
-         mHL7AzG5XdMGh6BXSS7UzoBT/56Mf0Ny02FKYAei+WVK7B0sVe+iG9jY1B5AY9NisZ3q
-         Eg9QkW/99tnI6nA63aZH0E+dDtE1qKqulh9FnRYcMpDbSGHXwWghdzM4NciYfV52cGc9
-         EWGFGNhsUAZnM2cmnIS2Z9Zc7CPP1ThpNnyqwH0WYVBY4RlhrYFK0oyVoLmunOgo5xCM
-         6/CUMWfrQdTG161Xl3gSsRXyd3Rb8x9l+I30Uhi7BKV0eEOvOzM9owI82c+/AJ+q8szO
-         O+nA==
-X-Gm-Message-State: AA+aEWYoPpEQhn6dtz9JBe2GICbfJyFMk/YkNEUNrEprX8CIFi1LzaT9
-        Uszll5F3/AxEDvyKQAYZoMqFFOQUjKJBlDjn1Sfsjw==
-X-Google-Smtp-Source: AFSGD/Ul5FWR/FRau4x3UbtKp/pBT7awPU+Tyo3JTi6j7Rlrmtk4YHzzBFAeDIOxs4aIAJDIkfmoms1SM23YMzb5Oas=
-X-Received: by 2002:a6b:6b0d:: with SMTP id g13mr17121690ioc.18.1543938250444;
- Tue, 04 Dec 2018 07:44:10 -0800 (PST)
+        bh=cOUYmVqM7lapaZ9KA66jWsVgjD9fs0gfbIMTvRz2Wtc=;
+        b=SkFl2aPdZJB49NGXmUoTzIXxfkTZDeBFDmni/IfOdHiC0E5QTL5G34ib2xSXOAo2/q
+         8tg1ufbyk5Vw+BLFdSDDmWJ/YedNda+3BIcUWs+5g+3QXakCJkzpVAnSEgpJpu36VUmT
+         IamG1jtAugsjNbHfTyL6g7G0uiL+1/DkO8nSw4CxZIkFTPfEwiobdPydcSfA/zlIBW77
+         u9xU3iCXZ0VUfmnrv+lo2SGRUWd1m/TQdV8dJYn+W87FKAZKIPTNFteEMU1l9ZJgR6Vs
+         Q5A6QKMtcZRjyLJC7O5D6F8WLBfVmLezndvVUgw6m/GnijLXHVZeXVBo+0I6hGQaQXsO
+         i3Jg==
+X-Gm-Message-State: AA+aEWaZrwZ/DE1OW2uN8QmyVMaFHP6b/0u1aGdWzN0Dk37kPjnON7bX
+        kyOi4EfVr08qBr0ngBZjoq3BwG16oWfBULiRgTyrAw==
+X-Google-Smtp-Source: AFSGD/X413EQanwgeVJ4brZdBjy1F6YIHN6DWkMLxbz+kURI00M88Nur9yMRbmGWo4706uj8Uw2huWi9JSyLvGhjrn4=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr16939660iob.170.1543938325552;
+ Tue, 04 Dec 2018 07:45:25 -0800 (PST)
 MIME-Version: 1.0
-References: <1539102302-9057-1-git-send-email-thara.gopinath@linaro.org> <1539102302-9057-6-git-send-email-thara.gopinath@linaro.org>
-In-Reply-To: <1539102302-9057-6-git-send-email-thara.gopinath@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 4 Dec 2018 16:43:58 +0100
-Message-ID: <CAKfTPtB18Fh3neT7d6m0fgthE6Zo0am4i9WQ9OriD3FCuZgrRw@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/7] sched/fair: Enable CFS periodic tick to update
- thermal pressure
-To:     Thara Gopinath <thara.gopinath@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Amit Kachhap <amit.kachhap@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ionela Voinescu <ionela.voinescu@arm.com>
+References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+ <20181123221804.440-3-ard.biesheuvel@linaro.org> <20181130182629.GA16085@arm.com>
+ <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com> <20181203124930.GB25097@arm.com>
+In-Reply-To: <20181203124930.GB25097@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 4 Dec 2018 16:45:12 +0100
+Message-ID: <CAKv+Gu8svuTSOzg7wmmK70tRPgFqGvBh5BZR-V+43dMLvT1bJg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thara,
+On Mon, 3 Dec 2018 at 13:49, Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Fri, Nov 30, 2018 at 08:20:06PM +0100, Ard Biesheuvel wrote:
+> > On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
+> > >
+> > > On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
+> > > > The arm64 module region is a 128 MB region that is kept close to
+> > > > the core kernel, in order to ensure that relative branches are
+> > > > always in range. So using the same region for programs that do
+> > > > not have this restriction is wasteful, and preferably avoided.
+> > > >
+> > > > Now that the core BPF JIT code permits the alloc/free routines to
+> > > > be overridden, implement them by vmalloc()/vfree() calls from a
+> > > > dedicated 128 MB region set aside for BPF programs. This ensures
+> > > > that BPF programs are still in branching range of each other, which
+> > > > is something the JIT currently depends upon (and is not guaranteed
+> > > > when using module_alloc() on KASLR kernels like we do currently).
+> > > > It also ensures that placement of BPF programs does not correlate
+> > > > with the placement of the core kernel or modules, making it less
+> > > > likely that leaking the former will reveal the latter.
+> > > >
+> > > > This also solves an issue under KASAN, where shadow memory is
+> > > > needlessly allocated for all BPF programs (which don't require KASAN
+> > > > shadow pages since they are not KASAN instrumented)
+> > > >
+> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > > ---
+> > > >  arch/arm64/include/asm/memory.h |  5 ++++-
+> > > >  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+> > > >  2 files changed, 17 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> > > > index b96442960aea..ee20fc63899c 100644
+> > > > --- a/arch/arm64/include/asm/memory.h
+> > > > +++ b/arch/arm64/include/asm/memory.h
+> > > > @@ -62,8 +62,11 @@
+> > > >  #define PAGE_OFFSET          (UL(0xffffffffffffffff) - \
+> > > >       (UL(1) << (VA_BITS - 1)) + 1)
+> > > >  #define KIMAGE_VADDR         (MODULES_END)
+> > > > +#define BPF_JIT_REGION_START (VA_START + KASAN_SHADOW_SIZE)
+> > > > +#define BPF_JIT_REGION_SIZE  (SZ_128M)
+> > > > +#define BPF_JIT_REGION_END   (BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
+> > > >  #define MODULES_END          (MODULES_VADDR + MODULES_VSIZE)
+> > > > -#define MODULES_VADDR                (VA_START + KASAN_SHADOW_SIZE)
+> > > > +#define MODULES_VADDR                (BPF_JIT_REGION_END)
+> > > >  #define MODULES_VSIZE                (SZ_128M)
+> > > >  #define VMEMMAP_START                (PAGE_OFFSET - VMEMMAP_SIZE)
+> > > >  #define PCI_IO_END           (VMEMMAP_START - SZ_2M)
+> > > > diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> > > > index a6fdaea07c63..76c2ab40c02d 100644
+> > > > --- a/arch/arm64/net/bpf_jit_comp.c
+> > > > +++ b/arch/arm64/net/bpf_jit_comp.c
+> > > > @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+> > > >                                          tmp : orig_prog);
+> > > >       return prog;
+> > > >  }
+> > > > +
+> > > > +void *bpf_jit_alloc_exec(unsigned long size)
+> > > > +{
+> > > > +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
+> > > > +                                 BPF_JIT_REGION_END, GFP_KERNEL,
+> > > > +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> > > > +                                 __builtin_return_address(0));
+> > >
+> > > I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
+> >
+> > I think akpm already queued up that patch.
+> >
+> > > In the
+> > > meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
+> > > (although we'd need the size information...).
+> > >
+> >
+> > Not sure. What exactly would that achieve?
+>
+> I think the zero encoding is guaranteed to be undefined, so it would limit
+> the usefulness of any stale, executable TLB entries. However, we'd also need
+> cache maintenance to make that stuff visible to the I side, so it's probably
+> not worth it, especially if akpm has queued the stuff from Rich.
+>
+> Maybe just add an:
+>
+> /* FIXME: Remove this when VM_IMMEDIATE_UNMAP is supported */
+> #ifndef VM_IMMEDIATE_UNMAP
+> #define VM_IMMEDIATE_UNMAP      0
+> #endif
+>
+> so we remember to come back and sort this out? Up to you.
+>
 
-On Tue, 9 Oct 2018 at 18:25, Thara Gopinath <thara.gopinath@linaro.org> wrote:
->
-> Introduce support in CFS periodic tick to trigger the process of
-> computing average thermal pressure for a cpu.
->
-> Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
-> ---
->  kernel/sched/fair.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b39fb59..7deb1d0 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -21,6 +21,7 @@
->   *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
->   */
->  #include "sched.h"
-> +#include "thermal.h"
->
->  #include <trace/events/sched.h>
->
-> @@ -9557,6 +9558,8 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
->
->         if (static_branch_unlikely(&sched_numa_balancing))
->                 task_tick_numa(rq, curr);
-> +
-> +       update_periodic_maxcap(rq);
-
-You have to call update_periodic_maxcap() in update_blocked_averages() too
-Otherwise, the thermal pressure will not always be updated correctly
-for tickless system
-
->  }
->
->  /*
-> --
-> 2.1.4
->
+I'll just make a note to send out that patch once the definition lands via -akpm
