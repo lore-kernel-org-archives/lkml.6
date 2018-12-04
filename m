@@ -3,143 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2DCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274B2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C25E20878
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C25E20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E68EF2082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 21:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68EF2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbeLDVuE (ORCPT
+        id S1726591AbeLDVui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 16:50:04 -0500
-Received: from mga06.intel.com ([134.134.136.31]:42610 "EHLO mga06.intel.com"
+        Tue, 4 Dec 2018 16:50:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33568 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeLDVuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 16:50:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 13:50:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
-   d="scan'208";a="116050745"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Dec 2018 13:50:01 -0800
-Subject: [PATCH v3 5/5] x86/mm: Drop usage of __flush_tlb_all() in
- kernel_physical_mapping_init()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        dave.hansen@intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Dec 2018 13:37:27 -0800
-Message-ID: <154395944713.32119.15611079023837132638.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154395942121.32119.4039221126859656583.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1725875AbeLDVui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 16:50:38 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7527CC0740F2;
+        Tue,  4 Dec 2018 21:50:37 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D18B55D786;
+        Tue,  4 Dec 2018 21:50:35 +0000 (UTC)
+Subject: Re: [PATCH v2 21/24] locking/lockdep: Verify whether lock objects are
+ small enough to be used as class keys
+To:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com
+Cc:     peterz@infradead.org, tj@kernel.org, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>
+References: <20181204002833.55452-1-bvanassche@acm.org>
+ <20181204002833.55452-22-bvanassche@acm.org>
+ <8ae6bb3f-ab75-e6f2-adfa-8003366b7410@redhat.com>
+ <1543959553.185366.213.camel@acm.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <0fbedd8d-6eec-051d-b2fd-5246dc47b477@redhat.com>
+Date:   Tue, 4 Dec 2018 16:50:35 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1543959553.185366.213.camel@acm.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 04 Dec 2018 21:50:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f77084d96355 "x86/mm/pat: Disable preemption around
-__flush_tlb_all()" addressed a case where __flush_tlb_all() is called
-without preemption being disabled. It also left a warning to catch other
-cases where preemption is not disabled. That warning triggers for the
-memory hotplug path which is also used for persistent memory enabling:
+On 12/04/2018 04:39 PM, Bart Van Assche wrote:
+> On Tue, 2018-12-04 at 16:08 -0500, Waiman Long wrote:
+>> On 12/03/2018 07:28 PM, Bart Van Assche wrote:
+>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>> Cc: Waiman Long <longman@redhat.com>
+>>> Cc: Johannes Berg <johannes@sipsolutions.net>
+>>> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+>>> ---
+>>>  kernel/locking/lockdep.c | 9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+>>> index c936fce5b9d7..b4772e5fc176 100644
+>>> --- a/kernel/locking/lockdep.c
+>>> +++ b/kernel/locking/lockdep.c
+>>> @@ -727,6 +727,15 @@ static bool assign_lock_key(struct lockdep_map *lock)
+>>>  {
+>>>  	unsigned long can_addr, addr = (unsigned long)lock;
+>>>  
+>>> +	/*
+>>> +	 * lockdep_free_key_range() assumes that struct lock_class_key
+>>> +	 * objects do not overlap. Since we use the address of lock
+>>> +	 * objects as class key for static objects, check whether the
+>>> +	 * size of lock_class_key objects does not exceed the size of
+>>> +	 * the smallest lock object.
+>>> +	 */
+>>> +	BUILD_BUG_ON(sizeof(struct lock_class_key) > sizeof(raw_spinlock_t));
+>>> +
+>>>  	if (__is_kernel_percpu_address(addr, &can_addr))
+>>>  		lock->key = (void *)can_addr;
+>>>  	else if (__is_module_percpu_address(addr, &can_addr))
+>> I don't understand what this check is for. lock_class_key and spinlock
+>> are different objects. Their relative size shouldn't matter.
+> Hi Waiman,
+>
+> Peter asked me to add this check.
+>
+> Bart.
 
- WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
- RIP: 0010:__flush_tlb_all+0x1b/0x3a
- [..]
- Call Trace:
-  phys_pud_init+0x29c/0x2bb
-  kernel_physical_mapping_init+0xfc/0x219
-  init_memory_mapping+0x1a5/0x3b0
-  arch_add_memory+0x2c/0x50
-  devm_memremap_pages+0x3aa/0x610
-  pmem_attach_disk+0x585/0x700 [nd_pmem]
+I haven't finished reviewing all your patches yet. Maybe one of the
+subsequent patches requires this. If that is the case, you should move
+this patch after that.
 
-Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-and Dave confirmed the expectation for TLB flush is for modifying /
-invalidating existing pte entries, but not initial population [2]. Drop
-the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
-expectation that this path is only ever populating empty entries for the
-linear map. Note, at linear map teardown time there is a call to the
-all-cpu flush_tlb_all() to invalidate the removed mappings.
-
-[1]: https://lkml.kernel.org/r/9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net
-[2]: https://lkml.kernel.org/r/749919a4-cdb1-48a3-adb4-adb81a5fa0b5@intel.com
-
-Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: <stable@vger.kernel.org>
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/mm/init_64.c |    6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 3e25ac2793ef..484c1b92f078 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -584,7 +584,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 							   paddr_end,
- 							   page_size_mask,
- 							   prot);
--				__flush_tlb_all();
- 				continue;
- 			}
- 			/*
-@@ -627,7 +626,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 		pud_populate_safe(&init_mm, pud, pmd);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	update_page_count(PG_LEVEL_1G, pages);
- 
-@@ -668,7 +666,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 			paddr_last = phys_pud_init(pud, paddr,
- 					paddr_end,
- 					page_size_mask);
--			__flush_tlb_all();
- 			continue;
- 		}
- 
-@@ -680,7 +677,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 		p4d_populate_safe(&init_mm, p4d, pud);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	return paddr_last;
- }
-@@ -733,8 +729,6 @@ kernel_physical_mapping_init(unsigned long paddr_start,
- 	if (pgd_changed)
- 		sync_global_pgds(vaddr_start, vaddr_end - 1);
- 
--	__flush_tlb_all();
--
- 	return paddr_last;
- }
- 
+-Longman
 
