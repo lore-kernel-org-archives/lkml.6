@@ -2,112 +2,121 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE9DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0B0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC2F2082D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC2F2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 103A52087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:15:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBMZtyYD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103A52087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeLDLOg (ORCPT
+        id S1728173AbeLDLPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:14:36 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44537 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbeLDLOf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:14:35 -0500
-Received: from conf.hotelmediterraneo.com ([2.228.78.71] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gU8eq-0003Qh-Hb; Tue, 04 Dec 2018 12:14:28 +0100
-Date:   Tue, 4 Dec 2018 12:14:13 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 4.14 098/146] x86/process: Consolidate and simplify
- switch_to_xtra() code
-In-Reply-To: <20181204103730.767674414@linuxfoundation.org>
-Message-ID: <alpine.DEB.2.21.1812041213140.8181@nanos.tec.linutronix.de>
-References: <20181204103726.750894136@linuxfoundation.org> <20181204103730.767674414@linuxfoundation.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 4 Dec 2018 06:15:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727948AbeLDLGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:06:41 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0539D214DB;
+        Tue,  4 Dec 2018 11:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543921600;
+        bh=BhoyJdO7TekS9nzjhJDitloYspbXzAeRvpapVNWGoQs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NBMZtyYD0Kj90ovMxjCyasPpSDvJ+7fNXN4DArilN/+h6GDUF2sPHXYQxEJp3BFYi
+         X0QQcINN5myA+of1yCoOhFSO4xjtXX8kpFilAg9j00cjVkymrI9ogN/n6L0XBJCPXu
+         mqYUq2dEwDFnn8+riRu67nztigVUpXwdHcmkzwI8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Mario Forner <m.forner@be4energy.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.14 133/146] dmaengine: at_hdmac: fix memory leak in at_dma_xlate()
+Date:   Tue,  4 Dec 2018 11:50:19 +0100
+Message-Id: <20181204103732.177017889@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
+References: <20181204103726.750894136@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018, Greg Kroah-Hartman wrote:
-> --- a/arch/x86/kernel/process_32.c
-> +++ b/arch/x86/kernel/process_32.c
-> @@ -234,7 +234,6 @@ __switch_to(struct task_struct *prev_p,
->  	struct fpu *prev_fpu = &prev->fpu;
->  	struct fpu *next_fpu = &next->fpu;
->  	int cpu = smp_processor_id();
-> -	struct tss_struct *tss = &per_cpu(cpu_tss_rw, cpu);
->  
->  	/* never put a printk in __switch_to... printk() calls wake_up*() indirectly */
->  
-> @@ -266,12 +265,7 @@ __switch_to(struct task_struct *prev_p,
->  	if (get_kernel_rpl() && unlikely(prev->iopl != next->iopl))
->  		set_iopl_mask(next->iopl);
->  
-> -	/*
-> -	 * Now maybe handle debug registers and/or IO bitmaps
-> -	 */
-> -	if (unlikely(task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV ||
-> -		     task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT))
-> -		__switch_to_xtra(prev_p, next_p, tss);
-> +	switch_to_extra(prev_p, next_p);
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-This is missing the hunk below.
+------------------
 
-Thanks,
+From: Richard Genoud <richard.genoud@gmail.com>
 
-	tglx
+commit 98f5f932254b88ce828bc8e4d1642d14e5854caa upstream.
 
-8<------------------
+The leak was found when opening/closing a serial port a great number of
+time, increasing kmalloc-32 in slabinfo.
 
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 67cecc9a2b6f..c2df91eab573 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -59,6 +59,8 @@
- #include <asm/intel_rdt_sched.h>
- #include <asm/proto.h>
+Each time the port was opened, dma_request_slave_channel() was called.
+Then, in at_dma_xlate(), atslave was allocated with devm_kzalloc() and
+never freed. (Well, it was free at module unload, but that's not what we
+want).
+So, here, kzalloc is more suited for the job since it has to be freed in
+atc_free_chan_resources().
+
+Cc: stable@vger.kernel.org
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Reported-by: Mario Forner <m.forner@be4energy.com>
+Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/dma/at_hdmac.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -1641,6 +1641,12 @@ static void atc_free_chan_resources(stru
+ 	atchan->descs_allocated = 0;
+ 	atchan->status = 0;
  
-+#include "process.h"
++	/*
++	 * Free atslave allocated in at_dma_xlate()
++	 */
++	kfree(chan->private);
++	chan->private = NULL;
 +
- void __show_regs(struct pt_regs *regs, int all)
- {
- 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
+ 	dev_vdbg(chan2dev(chan), "free_chan_resources: done\n");
+ }
+ 
+@@ -1675,7 +1681,7 @@ static struct dma_chan *at_dma_xlate(str
+ 	dma_cap_zero(mask);
+ 	dma_cap_set(DMA_SLAVE, mask);
+ 
+-	atslave = devm_kzalloc(&dmac_pdev->dev, sizeof(*atslave), GFP_KERNEL);
++	atslave = kzalloc(sizeof(*atslave), GFP_KERNEL);
+ 	if (!atslave)
+ 		return NULL;
+ 
+
+
