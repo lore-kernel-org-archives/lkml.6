@@ -2,168 +2,222 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B1BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD88C04EB9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C60D20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fZ/PnAOT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C60D20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 5B9D42146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 01:07:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9D42146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeLDBFd (ORCPT
+        id S1726058AbeLDBHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:05:33 -0500
-Received: from ozlabs.org ([203.11.71.1]:53047 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbeLDBFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:05:33 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4383ZK65Lrz9sBQ;
-        Tue,  4 Dec 2018 12:05:29 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543885530;
-        bh=600Kp/Omey3kPRDfno+eRQx2v4svF/J4t4gnY8YWabM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fZ/PnAOTeiFRrDKXl0bpEmWJNsHd8md2SdnGCWrQSPfxe1cbEs5c8XIV6T3ctpJYR
-         ZvZfd3VLHYlCUSyJVPZbbhcpsCX4liM3O3fJxY0SKA7b89nPUpa8lwsZBxtRgGf9H2
-         PkXFCTF9GY2CPYbu6ue/Y/8inYXJ8t4PR1xYiLJl9RnrVJ+yaIsQGyJ+YK0jqVkKZ3
-         bOfgYkpdoBD9oynbeu2zxO1hE1jPmuiJGULIkUZr850/VTdeVQtU5kr6bEJsGyG2wa
-         yRzGy0uSHYfiNhHcwzN+AhqTz+nLjPL0+1NL1F7f40cYXDU8ixjp7a9d90mJ4KMfEQ
-         1XN935+8vROaQ==
-Date:   Tue, 4 Dec 2018 12:05:29 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Joe Stringer <joe@wand.net.nz>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <20181204120529.222e65c7@canb.auug.org.au>
+        Mon, 3 Dec 2018 20:07:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45421 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725943AbeLDBHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Dec 2018 20:07:20 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0C0905C853305;
+        Tue,  4 Dec 2018 09:07:17 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Tue, 4 Dec 2018
+ 09:07:09 +0800
+CC:     <wangbinghui@hisilicon.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH v1 08/12] usb: roles: Add usb role switch notifier.
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-9-chenyu56@huawei.com>
+ <20181203123824.GE24338@kuha.fi.intel.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <fd1e34c9-51f3-1cf7-61d2-3df56e2f2a70@huawei.com>
+Date:   Tue, 4 Dec 2018 09:07:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0qiwlbuaXAD=8/ujjDA16IF"; protocol="application/pgp-signature"
+In-Reply-To: <20181203123824.GE24338@kuha.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0qiwlbuaXAD=8/ujjDA16IF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the bpf-next tree got conflicts in:
+On 2018/12/3 20:38, Heikki Krogerus wrote:
+> On Mon, Dec 03, 2018 at 11:45:11AM +0800, Yu Chen wrote:
+>> This patch adds notifier for drivers want to be informed of the usb role switch.
+> 
+> I think in this case it would be good to explain a little for what we
+> need the notifier for.
+> 
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>> Cc: Hans de Goede <hdegoede@redhat.com>
+>> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> Cc: John Stultz <john.stultz@linaro.org>
+>> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+>>
+>> --
+>> v0:
+>> The patch is provided by Heikki Krogerus. I modified and test it
+>> on Hikey960 platform.
+> 
+> I don't think I actually made a "patch" for this. The "diff" I made
+> showing the idea does not count, so you should not sign off the patch
+> with my address.
+> 
+> In this case I believe something like "Suggested-by" should be used
+> instead of SoB tag:
+> 
+>         Suggested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> 
+> Side note: If this was from me, then there should be "from" line with
+> my address as well.
+> 
 
-  include/uapi/linux/bpf.h
+OK. Thanks！
+>> --
+>> ---
+>>  drivers/usb/common/roles.c | 20 +++++++++++++++++++-
+>>  include/linux/usb/role.h   | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 65 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/common/roles.c b/drivers/usb/common/roles.c
+>> index 0f48090c5c30..bfd7a988b64c 100644
+>> --- a/drivers/usb/common/roles.c
+>> +++ b/drivers/usb/common/roles.c
+>> @@ -21,6 +21,7 @@ struct usb_role_switch {
+>>  	struct device dev;
+>>  	struct mutex lock; /* device lock*/
+>>  	enum usb_role role;
+>> +	struct blocking_notifier_head nh;
+>>  
+>>  	/* From descriptor */
+>>  	struct device *usb2_port;
+>> @@ -50,8 +51,10 @@ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
+>>  	mutex_lock(&sw->lock);
+>>  
+>>  	ret = sw->set(sw->dev.parent, role);
+>> -	if (!ret)
+>> +	if (!ret) {
+>>  		sw->role = role;
+>> +		blocking_notifier_call_chain(&sw->nh, role, NULL);
+>> +	}
+>>  
+>>  	mutex_unlock(&sw->lock);
+>>  
+>> @@ -59,6 +62,20 @@ int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role)
+>>  }
+>>  EXPORT_SYMBOL_GPL(usb_role_switch_set_role);
+>>  
+>> +int usb_role_switch_register_notifier(struct usb_role_switch *sw,
+>> +				      struct notifier_block *nb)
+>> +{
+>> +	return blocking_notifier_chain_register(&sw->nh, nb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(usb_role_switch_register_notifier);
+>> +
+>> +int usb_role_switch_unregister_notifier(struct usb_role_switch *sw,
+>> +					struct notifier_block *nb)
+>> +{
+>> +	return blocking_notifier_chain_unregister(&sw->nh, nb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(usb_role_switch_unregister_notifier);
+>> +
+>>  /**
+>>   * usb_role_switch_get_role - Get the USB role for a switch
+>>   * @sw: USB role switch
+>> @@ -297,6 +314,7 @@ usb_role_switch_register(struct device *parent,
+>>  		return ERR_PTR(-ENOMEM);
+>>  
+>>  	mutex_init(&sw->lock);
+>> +	BLOCKING_INIT_NOTIFIER_HEAD(&sw->nh);
+>>  
+>>  	sw->allow_userspace_control = desc->allow_userspace_control;
+>>  	sw->usb2_port = desc->usb2_port;
+>> diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+>> index edc51be4a77c..c97d4be91ada 100644
+>> --- a/include/linux/usb/role.h
+>> +++ b/include/linux/usb/role.h
+>> @@ -40,6 +40,8 @@ struct usb_role_switch_desc {
+>>  	bool allow_userspace_control;
+>>  };
+>>  
+>> +
+>> +#if IS_ENABLED(CONFIG_USB_ROLE_SWITCH)
+>>  int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
+>>  enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
+>>  struct usb_role_switch *usb_role_switch_get(struct device *dev);
+>> @@ -49,5 +51,49 @@ struct usb_role_switch *
+>>  usb_role_switch_register(struct device *parent,
+>>  			 const struct usb_role_switch_desc *desc);
+>>  void usb_role_switch_unregister(struct usb_role_switch *sw);
+>> +int usb_role_switch_register_notifier(struct usb_role_switch *sw,
+>> +				      struct notifier_block *nb);
+>> +int usb_role_switch_unregister_notifier(struct usb_role_switch *sw,
+>> +					struct notifier_block *nb);
+>> +#else
+>> +static inline int usb_role_switch_set_role(struct usb_role_switch *sw,
+>> +		enum usb_role role)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static inline enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+>> +{
+>> +	return USB_ROLE_NONE;
+>> +}
+>> +
+>> +static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
+>> +{
+>> +	return ERR_PTR(-ENODEV);
+>> +}
+>> +
+>> +static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
+>> +
+>> +static inline struct usb_role_switch *
+>> +usb_role_switch_register(struct device *parent,
+>> +			 const struct usb_role_switch_desc *desc)
+>> +{
+>> +	return ERR_PTR(-ENODEV);
+>> +}
+>> +
+>> +static inline void usb_role_switch_unregister(struct usb_role_switch *sw) { }
+>> +
+>> +static int usb_role_switch_register_notifier(struct usb_role_switch *sw,
+>> +				      struct notifier_block *nb)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static int usb_role_switch_unregister_notifier(struct usb_role_switch *sw,
+>> +					struct notifier_block *nb)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +#endif
+>>  
+>>  #endif /* __LINUX_USB_ROLE_H */
+>> -- 
+>> 2.15.0-rc2
+> 
+> thanks,
+> 
 
-between commit:
-
-  d74286d2c25a ("bpf: Improve socket lookup reuseport documentation")
-
-from the bpf tree and commit:
-
-  90b1023f68c7 ("bpf: fix documentation for eBPF helpers")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/uapi/linux/bpf.h
-index ec8b40ff386e,572eb2d42768..000000000000
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@@ -2209,11 -2210,11 +2212,11 @@@ union bpf_attr=20
-   *		This helper is available only if the kernel was compiled with
-   *		**CONFIG_NET** configuration option.
-   *	Return
--  *		Pointer to *struct bpf_sock*, or NULL in case of failure.
--  *		For sockets with reuseport option, the *struct bpf_sock*
--  *		result is from reuse->socks[] using the hash of the tuple.
-+  *		A pointer to *struct bpf_sock*, or **NULL** in case of failure.
- - *		For sockets with reuseport option, **struct bpf_sock**
-++ *		For sockets with reuseport option, the **struct bpf_sock**
-+  *		return is from **reuse->socks**\ [] using hash of the packet.
-   *
- - * struct bpf_sock *bpf_sk_lookup_udp(void *ctx, struct bpf_sock_tuple *t=
-uple, u32 tuple_size, u32 netns, u64 flags)
- + * struct bpf_sock *bpf_sk_lookup_udp(void *ctx, struct bpf_sock_tuple *t=
-uple, u32 tuple_size, u64 netns, u64 flags)
-   *	Description
-   *		Look for UDP socket matching *tuple*, optionally in a child
-   *		network namespace *netns*. The return value must be checked,
-@@@ -2245,14 -2244,15 +2248,16 @@@
-   *		This helper is available only if the kernel was compiled with
-   *		**CONFIG_NET** configuration option.
-   *	Return
--  *		Pointer to *struct bpf_sock*, or NULL in case of failure.
--  *		For sockets with reuseport option, the *struct bpf_sock*
--  *		result is from reuse->socks[] using the hash of the tuple.
-+  *		A pointer to **struct bpf_sock**, or **NULL** in case of
- - *		failure. For sockets with reuseport option, **struct bpf_sock**
- - *		return is from **reuse->socks**\ [] using hash of the packet.
-++ *		failure. For sockets with reuseport option, the
-++ *		**struct bpf_sock** return is from **reuse->socks**\ []
-++ *		using hash of the packet.
-   *
--  * int bpf_sk_release(struct bpf_sock *sk)
-+  * int bpf_sk_release(struct bpf_sock *sock)
-   *	Description
--  *		Release the reference held by *sock*. *sock* must be a non-NULL
--  *		pointer that was returned from bpf_sk_lookup_xxx\ ().
-+  *		Release the reference held by *sock*. *sock* must be a
-+  *		non-**NULL** pointer that was returned from
-+  *		**bpf_sk_lookup_xxx**\ ().
-   *	Return
-   *		0 on success, or a negative error in case of failure.
-   *
-@@@ -2494,8 -2495,9 +2509,9 @@@ struct __sk_buff=20
-  	/* ... here. */
- =20
-  	__u32 data_meta;
- -	struct bpf_flow_keys *flow_keys;
- +	__bpf_md_ptr(struct bpf_flow_keys *, flow_keys);
-  	__u64 tstamp;
-+ 	__u32 wire_len;
-  };
- =20
-  struct bpf_tunnel_key {
-
---Sig_/0qiwlbuaXAD=8/ujjDA16IF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwF0tkACgkQAVBC80lX
-0Gy1Twf/XiYWV15vq6amV99G6gvuypSEAWDCrJ9MWQQ4Pm40S+S4LNdcHOcgEc3r
-Z0HCVcfxFVuvW3WUBvH+o6f0VKoiPUqXvQZpB7je6XfJdHzNQa4JdPbkBhtrTWu5
-+OIOvi+L/GrzemVkJZholLvmaIW0hztC3p5ycLScpp7cpRN3IqJ3uypMI/wMWcjr
-hiOGL1ZtpItmQF9vB/cxntTheUbkk3OtmmeppHKk+P/GFbm/652QFdOp0oDKszmR
-BewEvHQu6AMSg1okNSBV+kgTu6RcEPgLO3M0d98EGOOJy8eI+PZhykzfw4SyCwFg
-HoZqKacm81NON1+cihJyHDyINB0bYA==
-=ybMQ
------END PGP SIGNATURE-----
-
---Sig_/0qiwlbuaXAD=8/ujjDA16IF--
