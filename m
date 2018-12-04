@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1784AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600B6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE21B214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26028214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SolievR+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE21B214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="myXM9n1I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26028214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbeLDLBA (ORCPT
+        id S1727445AbeLDLBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:01:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46332 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:01:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbeLDLA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:57 -0500
+        id S1725910AbeLDLBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:01:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EB4C214C1;
-        Tue,  4 Dec 2018 11:00:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 658F22087F;
+        Tue,  4 Dec 2018 11:01:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921257;
-        bh=kiKN8juHzsOtpLvErzq1OqBEv5xMBxqSuBMzf0v/XLI=;
+        s=default; t=1543921264;
+        bh=ywzChOnqT3RfbB9tXiNGAC671Jm6Dn91pnw1DSomS6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SolievR+Yb0kpxVZHGkcRUi2enxgIWb2uJi57mv9434KbAAZ181u3Smw8VyHaHjE5
-         ik9ECp09bsg3sQMJtgVdpI8XvsZ320YFL2yOHn+6JuTZy7cj6V9BtACTT45KUr6JsY
-         prCeRr2QuI/dysikP4GuvWCGJEudJT8XmBURAfGU=
+        b=myXM9n1IDxd6jI7ed2T8u/j8LzbUR/3bJoFUkdK0pLmSQaqYqJHx0ftOJJRJ5/9Ia
+         uKPYxSKm7uTeHXCfBpXccs8kkwXKOO+DnzeeLIhqgEo6cwFltn8RXJF2QE89Yvgrx8
+         qeMdedTwe1r0f9/PltNiHesu8aSxiyeV2HBVv2Qk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 115/139] function_graph: Reverse the order of pushing the ret_stack and the callback
-Date:   Tue,  4 Dec 2018 11:49:56 +0100
-Message-Id: <20181204103655.349825042@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 118/139] ext2: fix potential use after free
+Date:   Tue,  4 Dec 2018 11:49:59 +0100
+Message-Id: <20181204103655.510462440@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -63,56 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 7c6ea35ef50810aa12ab26f21cb858d980881576 upstream.
+commit ecebf55d27a11538ea84aee0be643dd953f830d5 upstream.
 
-The function graph profiler uses the ret_stack to store the "subtime" and
-reuse it by nested functions and also on the return. But the current logic
-has the profiler callback called before the ret_stack is updated, and it is
-just modifying the ret_stack that will later be allocated (it's just lucky
-that the "subtime" is not touched when it is allocated).
+The function ext2_xattr_set calls brelse(bh) to drop the reference count
+of bh. After that, bh may be freed. However, following brelse(bh),
+it reads bh->b_data via macro HDR(bh). This may result in a
+use-after-free bug. This patch moves brelse(bh) after reading field.
 
-This could also cause a crash if we are at the end of the ret_stack when
-this happens.
-
-By reversing the order of the allocating the ret_stack and then calling the
-callbacks attached to a function being traced, the ret_stack entry is no
-longer used before it is allocated.
-
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+CC: stable@vger.kernel.org
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_functions_graph.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/ext2/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -188,15 +188,17 @@ int function_graph_enter(unsigned long r
- 	trace.func = func;
- 	trace.depth = ++current->curr_ret_depth;
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -612,9 +612,9 @@ skip_replace:
+ 	}
  
--	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace))
--		goto out;
--
- 	if (ftrace_push_return_trace(ret, func,
- 				     frame_pointer, retp))
- 		goto out;
+ cleanup:
+-	brelse(bh);
+ 	if (!(bh && header == HDR(bh)))
+ 		kfree(header);
++	brelse(bh);
+ 	up_write(&EXT2_I(inode)->xattr_sem);
  
-+	/* Only trace if the calling function expects to */
-+	if (!ftrace_graph_entry(&trace))
-+		goto out_ret;
-+
- 	return 0;
-+ out_ret:
-+	current->curr_ret_stack--;
-  out:
- 	current->curr_ret_depth--;
- 	return -EBUSY;
+ 	return error;
 
 
