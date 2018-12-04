@@ -2,83 +2,123 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1D1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E1AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1406220850
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC462146D
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 05:21:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="EF50p3Px"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1406220850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RNhmglQR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fCUQZjv6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC462146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeLDFVh (ORCPT
+        id S1726101AbeLDFVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 00:21:37 -0500
-Received: from imap.thunk.org ([74.207.234.97]:38996 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbeLDFVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 00:21:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=uH0pVhhZGg+tOvtwTgJDFt7mIdS7fh+YIZ57s1hC+RI=; b=EF50p3PxshfyfynqdbrPZFnAAK
-        Lcq3LdpZBLlld+GqDbDILM7YytSWSiY8ezl/9iqP05Dni8HAxfnUI5Xi+LVTkBkw8O6+hvuwi8AKs
-        T52twbnQxytt9K5h6T7lMgw7fSVCnHsSwmtBpxHMRDParl88mDOzF5sDKE4fgvkIFPBk=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gU39E-0008MT-Ay; Tue, 04 Dec 2018 05:21:28 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 437477A47E0; Tue,  4 Dec 2018 00:21:27 -0500 (EST)
-Date:   Tue, 4 Dec 2018 00:21:27 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Colin King <colin.king@canonical.com>, Jan Kara <jack@suse.com>,
-        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jbd2: clean up indentation issue, replace spaces with tab
-Message-ID: <20181204052127.GF4981@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Colin King <colin.king@canonical.com>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181123164053.19193-1-colin.king@canonical.com>
- <20181126135632.GA25835@quack2.suse.cz>
+        Tue, 4 Dec 2018 00:21:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48066 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeLDFVf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 00:21:35 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 21D50602FE; Tue,  4 Dec 2018 05:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543900894;
+        bh=KdTOLsjFtsn/TH+5xJwK76c5eKRbOLim7lKAUW4OIRs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RNhmglQRxe8NCvFvEwNvzfubRRU2nU5oIb6O4tLL7ClMdfQXgYzcI6vCZzPI6kjGA
+         r3k2PM4VBScYWTwsWazaQcKcjnUMQnBtoNqtdLJzuRrETn70GG2QzxtHVrduv/eFp/
+         QDcbXRpZWbaNoMHWynx5of6qjBW4ydl1rMRt7Qf8=
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 77706602F4;
+        Tue,  4 Dec 2018 05:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543900893;
+        bh=KdTOLsjFtsn/TH+5xJwK76c5eKRbOLim7lKAUW4OIRs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fCUQZjv6ZOJ/KmpScBfDIbhXQNDt0zOkMUK1/5ChDQIfHtXkilQ/xEDHNPSs2w/W9
+         5i9nFv4izyCY/ArMa870xG02fdJYuSbqr3uoRcmctftAcrym864ZGotoKoyMMWQ64q
+         s10kEc1kINPm+b90mgIWrfhDkqayxpMl5AU/4L70=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 77706602F4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     robh@kernel.org, viresh.kumar@linaro.org, sboyd@kernel.org,
+        andy.gross@linaro.org, ulf.hansson@linaro.org,
+        collinsd@codeaurora.org, mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v5 1/8] dt-bindings: opp: Introduce qcom-opp bindings
+Date:   Tue,  4 Dec 2018 10:51:12 +0530
+Message-Id: <20181204052119.806-2-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181204052119.806-1-rnayak@codeaurora.org>
+References: <20181204052119.806-1-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126135632.GA25835@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:56:32PM +0100, Jan Kara wrote:
-> On Fri 23-11-18 16:40:53, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > There is a statement that is indented with spaces, replace it with
-> > a tab.
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> Looks good. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+On Qualcomm Technologies, Inc. platforms, an OPP node needs
+to describe an additional level/corner value that is then communicated
+to a remote microprocessor by the CPU, which then takes some
+actions (like adjusting voltage values across various rails)
+based on the value passed.
 
-Thanks, applied.
+Describe these bindings in the qcom-opp bindings document.
 
-						- Ted
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ .../devicetree/bindings/opp/qcom-opp.txt      | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
+
+diff --git a/Documentation/devicetree/bindings/opp/qcom-opp.txt b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+new file mode 100644
+index 000000000000..db4d970c7ec7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/opp/qcom-opp.txt
+@@ -0,0 +1,25 @@
++Qualcomm OPP bindings to descibe OPP nodes with corner/level values
++
++OPP tables for devices on Qualcomm platforms require an additional
++platform specific corner/level value to be specified.
++This value is passed on to the RPM (Resource Power Manager) by
++the CPU, which then takes the necessary actions to set a voltage
++rail to an appropriate voltage based on the value passed.
++
++The bindings are based on top of the operating-points-v2 bindings
++described in Documentation/devicetree/bindings/opp/opp.txt
++Additional properties are described below.
++
++* OPP Table Node
++
++Required properties:
++- compatible: Allow OPPs to express their compatibility. It should be:
++  "operating-points-v2-qcom-level"
++
++* OPP Node
++
++Required properties:
++- qcom,level: On Qualcomm platforms an OPP node can describe a positive value
++representing a corner/level that's communicated with a remote microprocessor
++(usually called the RPM) which then translates it into a certain voltage on
++a voltage rail.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
