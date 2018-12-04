@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217F6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232DDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD20D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:34:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD20D2081B
+	by mail.kernel.org (Postfix) with ESMTP id DAF942082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:35:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF942082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeLDPev (ORCPT
+        id S1726886AbeLDPfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:34:51 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38828 "EHLO mail.bootlin.com"
+        Tue, 4 Dec 2018 10:35:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38927 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbeLDPev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:34:51 -0500
+        id S1725910AbeLDPfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 10:35:21 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 64D3020E21; Tue,  4 Dec 2018 16:34:47 +0100 (CET)
+        id 5549C20A63; Tue,  4 Dec 2018 16:35:17 +0100 (CET)
 Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2191320A5F;
-        Tue,  4 Dec 2018 16:34:37 +0100 (CET)
-Date:   Tue, 4 Dec 2018 16:34:37 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id E0B0020E25;
+        Tue,  4 Dec 2018 16:34:50 +0100 (CET)
+Date:   Tue, 4 Dec 2018 16:34:50 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     dri-devel@lists.freedesktop.org,
@@ -37,16 +37,16 @@ Cc:     dri-devel@lists.freedesktop.org,
         Sean Paul <sean@poorly.run>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v3 14/21] drm/sun4i: layer: Add tiled modifier support
- and helper
-Message-ID: <20181204153437.rbqcaamghq7ok2f6@flea>
+Subject: Re: [PATCH v3 15/21] drm/sun4i: drv: Allow framebuffer modifiers in
+ mode config
+Message-ID: <20181204153450.xjlkanhukmil4crt@flea>
 References: <20181204142218.16284-1-paul.kocialkowski@bootlin.com>
- <20181204142218.16284-15-paul.kocialkowski@bootlin.com>
+ <20181204142218.16284-16-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ulhdzh3nxfvnecmb"
+        protocol="application/pgp-signature"; boundary="saoay6kewinuneo2"
 Content-Disposition: inline
-In-Reply-To: <20181204142218.16284-15-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20181204142218.16284-16-paul.kocialkowski@bootlin.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,18 +54,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ulhdzh3nxfvnecmb
+--saoay6kewinuneo2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 04, 2018 at 03:22:11PM +0100, Paul Kocialkowski wrote:
-> This introduces a list of supported modifiers for the driver, that
-> includes the Allwinner tiled modifier, as well as a format_mod_supported
-> callback.
->=20
-> The callback uses both the backend and frontend helpers to indicate
-> per-format modifier support (including for the linear modifier).
+On Tue, Dec 04, 2018 at 03:22:12PM +0100, Paul Kocialkowski wrote:
+> This is the final step to indicate to the core that our driver
+> supports framebuffer modifiers.
 >=20
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
@@ -78,15 +74,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---ulhdzh3nxfvnecmb
+--saoay6kewinuneo2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAaejQAKCRDj7w1vZxhR
-xeOhAQDlIapLw8rB+8oybOHKOPBucWazxCBIBmd40fGa6AhkAAD/R94hnP8fmjCF
-GKqJa0Xbi4CHNspH8mbVW2s0rltsuQk=
-=ak/L
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAaemgAKCRDj7w1vZxhR
+xXw7AP9Zw4N3M5PnZTDuP/PYe8bIRmaYV1ws2C5Hbu27m18W4wEA8UPlWhtcGPEx
+e7hkNJgTQhFhg7FPrygYrW6CdaO75QM=
+=BLBu
 -----END PGP SIGNATURE-----
 
---ulhdzh3nxfvnecmb--
+--saoay6kewinuneo2--
