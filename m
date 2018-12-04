@@ -2,148 +2,93 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8E5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB57C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A58F206B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:35:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A58F206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A8962206B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 23:36:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="C9yVQ0Of"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8962206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeLDXfY (ORCPT
+        id S1726577AbeLDXg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 18:35:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725875AbeLDXfY (ORCPT
+        Tue, 4 Dec 2018 18:36:26 -0500
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:41558 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeLDXg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 18:35:24 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB4NUM6w026040
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 18:35:23 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p5yg2hayj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:35:22 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Tue, 4 Dec 2018 23:35:22 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 4 Dec 2018 23:35:17 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB4NZGdl24314094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Dec 2018 23:35:16 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD520C6055;
-        Tue,  4 Dec 2018 23:35:16 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BF6CC605A;
-        Tue,  4 Dec 2018 23:35:12 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.142.32])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue,  4 Dec 2018 23:35:12 +0000 (GMT)
-References: <20181116200712.14154-1-bauerman@linux.ibm.com> <alpine.LRH.2.21.1812050855270.22148@namei.org>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI\, Takahiro" <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v8 00/14] Appended signatures support for IMA appraisal
-In-reply-to: <alpine.LRH.2.21.1812050855270.22148@namei.org>
-Date:   Tue, 04 Dec 2018 21:35:07 -0200
+        Tue, 4 Dec 2018 18:36:26 -0500
+Received: by mail-pf1-f171.google.com with SMTP id b7so9004108pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 15:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=J8W6G8wiC+Bf49Cl/7FpgmNUuDAPGO3OR5gkvGfaxDU=;
+        b=C9yVQ0Of/+fEBvuFBEgt3vD4dRfLGR0SGYfLp0urS/nkns7zTZEbzAlLCoMpgWPAYy
+         8lAVP6FOSac0qCx0YUGr8ccLoAfx4/rh3AnCF8pR8kYoKDja7qrMpPAQfK/oxto3gmjL
+         LIw7wm/yZ3icDo8Qewx4l6YfpLQj9WgIwAPAFRfvdRPeMjciYXVeJSMCxXhqkJAyhs0N
+         KYkFx8rffM1k7gMNyy2gOyQOYEZZy3v0OsXDuTz+MityiLN1vXs+B4K1zPcHgq/zwxot
+         VADGRnHSQK6xuCpkLe4iJv0VCLYp0mDMtkcNIXVlsDOsuV7Qw51V2d3E8XoXGRRDzQ3s
+         6D+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=J8W6G8wiC+Bf49Cl/7FpgmNUuDAPGO3OR5gkvGfaxDU=;
+        b=P3skQFBXYmOTKA6BtKO1Ya+JgfRcxHVFxdsbR+uSIH830yRocKO0/h9/BYeSu/vvV0
+         0L+YzevNB6Zx11vj955UIQ7y4EZ4FBzNb+RU3PiGb5XiADHGFyKZ6jFjJZ4qHpJ7lifK
+         kRUnZL3FFN0ETUInYjaFbYtOJCUJWzF6LpCK1GQJgNgVPtMTIoV89/6AjbVGTARPTnAB
+         rySGBPI3b9ku2zqy8JEuh2QBzp50wRjdA1ioH/jVAXtwB2emzgQ+vH/tyxLsk5BBOmtI
+         0Xk9I9hlXnEClKL8ywZtmEELXXrqydlECcf2Sqea5erfCXU0Bf16tol7YeiPfJQT3TXi
+         YljQ==
+X-Gm-Message-State: AA+aEWbl++2H90ynb2fTzLhJ6ZxGUEQ5YxXISA6L/9eRx5TbJiKWQGtA
+        2JxKbBxFqv9ZX/zw292PY0bNRA==
+X-Google-Smtp-Source: AFSGD/XOrS8nWPkP4rsy5eNT5jiuLtFIkgku5aQ6HhTPgEfrW2K4Wv4yJby5cR6f+/4Dou4rQTn5Ig==
+X-Received: by 2002:a65:514c:: with SMTP id g12mr18328790pgq.169.1543966585069;
+        Tue, 04 Dec 2018 15:36:25 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id t5sm27788513pfb.60.2018.12.04.15.36.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 15:36:24 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson-axg: remove alternate xtal
+In-Reply-To: <20181129165451.21446-1-jbrunet@baylibre.com>
+References: <20181129165451.21446-1-jbrunet@baylibre.com>
+Date:   Tue, 04 Dec 2018 15:36:22 -0800
+Message-ID: <7h5zw8dfux.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18120423-0016-0000-0000-0000095F714E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010172; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127061; UDB=6.00585382; IPR=6.00907195;
- MB=3.00024448; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-04 23:35:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120423-0017-0000-0000-0000414B0F40
-Message-Id: <87k1ko50ic.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-04_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812040202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Hello James,
-
-Thanks for you interest in these patches.
-
-James Morris <jmorris@namei.org> writes:
-
-> On Fri, 16 Nov 2018, Thiago Jung Bauermann wrote:
+> There is actually no alternate xtal on any of the axg board I have
+> seen so far. The 32k is actually generated internally, deriving from
+> the 24MHz main xtal.
 >
->> On the OpenPOWER platform, secure boot and trusted boot are being
->> implemented using IMA for taking measurements and verifying signatures.
->> Since the kernel image on Power servers is an ELF binary, kernels are
->> signed using the scripts/sign-file tool and thus use the same signature
->> format as signed kernel modules.
->>
->> This patch series adds support in IMA for verifying those signatures.
+> Amlogic SoC also have the option to provide the 32k reference externally,
+> through one of the AO pads, but no platform is using this ATM.
 >
-> Are you saying you use IMA to verify kernels during boot?  From a Linux
-> bootloader?
+> Fixes: 5e395e146667 ("ARM64: dts: meson-axg: add an 32K alt aoclk")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Yes to both. OpenPOWER machines have embedded in their firmware a Linux
-kernel and initramfs to use as bootloader, using Petitboot. kexec is
-used to load the OS and boot it.
+Queued for v4.21 (branch: v4.21/dt64)
 
->> It adds flexibility to OpenPOWER secure boot, because it allows it to boot
->> kernels with the signature appended to them as well as kernels where the
->> signature is stored in the IMA extended attribute.
->
-> Just to clarify, with these patches, IMA will be able to verify the
-> native form of signed kernel modules?
+Thanks,
 
-That wasn't my use case to develop the patches, but I just tested and it
-works.
-
-I just had to make a slight modification: there's a whitelist of IMA
-hooks that are allowed to use the module signature format (in the
-ima_hook_supports_modsig function), and I had to add MODULE_CHECK to it.
-The next version of the patches will have this change.
-
-The only difference is that IMA looks for a valid key in the IMA
-keyring, while the CONFIG_MODULE_SIG code looks for the module signing
-key in the builtin and secondary trusted keyrings.
-
-> i.e. without xattrs at all, and
-> this will work with existing signed modules?
-
-No xattrs at all, and yes.
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
-
+Kevin
