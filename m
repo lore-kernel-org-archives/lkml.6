@@ -2,159 +2,184 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FC1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66760C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4C0920851
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C0920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A67220851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:31:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xQWPzJ/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A67220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeLDLa7 (ORCPT
+        id S1726551AbeLDK4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:30:59 -0500
-Received: from mx.socionext.com ([202.248.49.38]:7851 "EHLO mx.socionext.com"
+        Tue, 4 Dec 2018 05:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbeLDLa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:30:57 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 04 Dec 2018 20:30:55 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 70D3460062;
-        Tue,  4 Dec 2018 20:30:55 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 4 Dec 2018 20:30:55 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B8C3A4036C;
-        Tue,  4 Dec 2018 20:30:54 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 9156B120304;
-        Tue,  4 Dec 2018 20:30:54 +0900 (JST)
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
- description
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
- <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
- <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
-Date:   Tue, 4 Dec 2018 20:30:53 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        id S1726519AbeLDK4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:56:39 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A36A2087F;
+        Tue,  4 Dec 2018 10:56:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543920997;
+        bh=5xKEH5D0anEv59Kh/nUAfHw/V73MZoSFQgOkEjg/1vw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xQWPzJ/6QFJg5wi/Qii8AOOaS/2bjNnPt/S2RszyxfcNkYKgZZejyxvtYv+ImLR7u
+         VWpTBPEBsvn3uaXEocFO8vCEsvhftSk5xLeSbFaV9rwWcwaAqkKZLgZQn4F1qW48RG
+         qMqy3GaO43EweI+2xXKLxLsF51L/UcWKgXvl/fyQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 008/139] mm/khugepaged: collapse_shmem() without freezing new_page
+Date:   Tue,  4 Dec 2018 11:48:09 +0100
+Message-Id: <20181204103650.325542785@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
+References: <20181204103649.950154335@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-On 2018/12/04 0:49, Rob Herring wrote:
-> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi,
->>
->> On 2018/11/30 17:16, Stephen Boyd wrote:
->>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
->>>> On 2018/11/28 11:01, Stephen Boyd wrote:
->>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
->>>>>>     create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..f5d906c
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>> @@ -0,0 +1,12 @@
->>>>>> +Socionext M10V SMP trampoline driver binding
->>>>>> +
->>>>>> +This is a driver to wait for sub-cores while boot process.
->>>>>> +
->>>>>> +- compatible: should be "socionext,smp-trampoline"
->>>>>> +- reg: should be <0x4C000100 0x100>
->>>>>> +
->>>>>> +EXAMPLE
->>>>>> +       trampoline: trampoline@0x4C000100 {
->>>>> Drop the 0x part of unit addresses.
->>>>
->>>> Okay.
->>>>
->>>>
->>>>>> +               compatible = "socionext,smp-trampoline";
->>>>>> +               reg = <0x4C000100 0x100>;
->>>>> Looks like a software construct, which we wouldn't want to put into DT
->>>>> this way. DT doesn't describe drivers.
->>>> We would like to use this node only getting the address of the
->>>> trampoline area
->>>> in which sub-cores wait.  (They have finished to go to this area in previous
->>>> bootloader process.)
->>>
->>> Is this area part of memory, or a special SRAM? If it's part of memory,
->>> I would expect this node to be under the reserved-memory node and
->>> pointed to by some other node that uses this region. Could even be the
->>> CPU nodes.
->>
->> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
->> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
->> BTW, sorry, the trampoline address of this example is simply wrong.  We
->> were going to use a part of the SRAM from the beginning.
->>
->>>
->>>>
->>>> So should we embed the constant value in source codes instead of getting
->>>> from
->>>> DT because the address is constant at the moment? Or is there other
->>>> approach?
->>>>
->>>
->>> If it's constant then that also works. Why does it need to come from DT
->>> at all then?
->>
->> We think it is not good to embed constant value in driver codes and do
->> not have another way...
->> Are there better ways?
-> 
-> If this is just memory, can you use the standard spin-table binding in
-> the DT spec? There are some requirements like 64-bit values even on
-> 32-bit machines (though this gets violated).
+------------------
 
-The spin-table seems to be used on only 64-bit arch. Have it ever worked 
-on 32-bit machine?
-And I would like not to use it because avoid violation.
+commit 87c460a0bded56195b5eb497d44709777ef7b415 upstream.
 
-Thanks
-Sugaya Taichi
+khugepaged's collapse_shmem() does almost all of its work, to assemble
+the huge new_page from 512 scattered old pages, with the new_page's
+refcount frozen to 0 (and refcounts of all old pages so far also frozen
+to 0).  Including shmem_getpage() to read in any which were out on swap,
+memory reclaim if necessary to allocate their intermediate pages, and
+copying over all the data from old to new.
+
+Imagine the frozen refcount as a spinlock held, but without any lock
+debugging to highlight the abuse: it's not good, and under serious load
+heads into lockups - speculative getters of the page are not expecting
+to spin while khugepaged is rescheduled.
+
+One can get a little further under load by hacking around elsewhere; but
+fortunately, freezing the new_page turns out to have been entirely
+unnecessary, with no hacks needed elsewhere.
+
+The huge new_page lock is already held throughout, and guards all its
+subpages as they are brought one by one into the page cache tree; and
+anything reading the data in that page, without the lock, before it has
+been marked PageUptodate, would already be in the wrong.  So simply
+eliminate the freezing of the new_page.
+
+Each of the old pages remains frozen with refcount 0 after it has been
+replaced by a new_page subpage in the page cache tree, until they are
+all unfrozen on success or failure: just as before.  They could be
+unfrozen sooner, but cause no problem once no longer visible to
+find_get_entry(), filemap_map_pages() and other speculative lookups.
+
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261527570.2275@eggly.anvils
+Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: <stable@vger.kernel.org>	[4.8+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ mm/khugepaged.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index d0a347e6fd08..e2b13c04626e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1287,7 +1287,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+  * collapse_shmem - collapse small tmpfs/shmem pages into huge one.
+  *
+  * Basic scheme is simple, details are more complex:
+- *  - allocate and freeze a new huge page;
++ *  - allocate and lock a new huge page;
+  *  - scan over radix tree replacing old pages the new one
+  *    + swap in pages if necessary;
+  *    + fill in gaps;
+@@ -1295,11 +1295,11 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
+  *  - if replacing succeed:
+  *    + copy data over;
+  *    + free old pages;
+- *    + unfreeze huge page;
++ *    + unlock huge page;
+  *  - if replacing failed;
+  *    + put all pages back and unfreeze them;
+  *    + restore gaps in the radix-tree;
+- *    + free huge page;
++ *    + unlock and free huge page;
+  */
+ static void collapse_shmem(struct mm_struct *mm,
+ 		struct address_space *mapping, pgoff_t start,
+@@ -1334,13 +1334,11 @@ static void collapse_shmem(struct mm_struct *mm,
+ 	__SetPageSwapBacked(new_page);
+ 	new_page->index = start;
+ 	new_page->mapping = mapping;
+-	BUG_ON(!page_ref_freeze(new_page, 1));
+ 
+ 	/*
+-	 * At this point the new_page is 'frozen' (page_count() is zero), locked
+-	 * and not up-to-date. It's safe to insert it into radix tree, because
+-	 * nobody would be able to map it or use it in other way until we
+-	 * unfreeze it.
++	 * At this point the new_page is locked and not up-to-date.
++	 * It's safe to insert it into the page cache, because nobody would
++	 * be able to map it or use it in another way until we unlock it.
+ 	 */
+ 
+ 	index = start;
+@@ -1517,9 +1515,8 @@ static void collapse_shmem(struct mm_struct *mm,
+ 			index++;
+ 		}
+ 
+-		/* Everything is ready, let's unfreeze the new_page */
+ 		SetPageUptodate(new_page);
+-		page_ref_unfreeze(new_page, HPAGE_PMD_NR);
++		page_ref_add(new_page, HPAGE_PMD_NR - 1);
+ 		set_page_dirty(new_page);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, true);
+ 		lru_cache_add_anon(new_page);
+@@ -1566,8 +1563,6 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		VM_BUG_ON(nr_none);
+ 		xa_unlock_irq(&mapping->i_pages);
+ 
+-		/* Unfreeze new_page, caller would take care about freeing it */
+-		page_ref_unfreeze(new_page, 1);
+ 		mem_cgroup_cancel_charge(new_page, memcg, true);
+ 		new_page->mapping = NULL;
+ 	}
+-- 
+2.17.1
 
 
-> 
-> Rob
-> 
 
