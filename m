@@ -2,126 +2,81 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F63C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A029CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD962081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:07:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbVhzyWI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD962081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A0F22082B
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A0F22082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbeLDSH3 (ORCPT
+        id S1725945AbeLDSJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:07:29 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37739 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeLDSH3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:07:29 -0500
-Received: by mail-yw1-f66.google.com with SMTP id h193so7354557ywc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:07:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P7Q+6Q7EQjFQY2Xk7dt5+mUPd/Z6udMs7VDUul38GiA=;
-        b=bbVhzyWIY8kUQeSTevtql7ECZm5YFj1+oHdNuuaWPu2Lt4+YuwyCtXs+Y2yrkhCMtP
-         g+Odg3xrPj27rE+JCE4oRyCyWMLQTxHckyX8Qvcjl+fqnlxi368OXyzD7PXymIqqc/CC
-         Wu2m8CBfn9e5XP4Gt6lttWEpS3qBII1ntA8g8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P7Q+6Q7EQjFQY2Xk7dt5+mUPd/Z6udMs7VDUul38GiA=;
-        b=rz47kIzcGQ2doh5wBzO7MkrexZEIb3lfVnc+uZk7T7PZ8DViKYstVn2OLWz6Tg6xxU
-         xb6DUWqShondfcnHYMjtezHd48NcoHcTdnknvDf32iU+J+OJSLzi9iJD5Y3bEnpuHEA4
-         RsSktzMs3hZFDCvkXQxiIxY7tCVSBxef9Uj0jCE9EA6oPZquIy26IDpDJvEjk+kX2uPI
-         7SoSvNQ/fFeHp+soDjv7e/hMHH3iZsEaxfLSzclueOfQr+BxF8lRHNODBSfYgs2nYdnk
-         lfCNAX+HrVBeEWKYQ7ADqA5dyXwnadzqi/68YNcbJXJNbZY6cci1CcLZjwfU6Bh+6VJn
-         +mRA==
-X-Gm-Message-State: AA+aEWamz/R2UFQ0EWCAN8R+DXujZril9YXGZ9EWEe+bqLrLJ3Xk3h4z
-        e/aIGFozuHXMD/Ml/ustdclXyQzP0phzlteyrx4bGA==
-X-Google-Smtp-Source: AFSGD/X3ZJmtgoo/0zrkgdqIjthFj0b3FkfEkhHvcMS7KUaNUvJU82dTfaBIEhj0Pu1xoMDbfzIt433J+IntVoMk+SM=
-X-Received: by 2002:a81:9b8e:: with SMTP id s136mr20423301ywg.85.1543946848163;
- Tue, 04 Dec 2018 10:07:28 -0800 (PST)
+        Tue, 4 Dec 2018 13:09:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38440 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbeLDSJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:09:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD485A78;
+        Tue,  4 Dec 2018 10:09:22 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD2453F59C;
+        Tue,  4 Dec 2018 10:09:20 -0800 (PST)
+Date:   Tue, 4 Dec 2018 18:09:18 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        daniel.thompson@linaro.org, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        joel@joelfernandes.org, Dave Martin <dave.martin@arm.com>
+Subject: Re: [PATCH v6 21/24] arm64: Handle serror in NMI context
+Message-ID: <20181204180917.GE19210@arrakis.emea.arm.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-22-git-send-email-julien.thierry@arm.com>
 MIME-Version: 1.0
-References: <20181130150956.27620-1-anders.roxell@linaro.org>
- <20181203192228.GC29028@arm.com> <CAK8P3a2gekEqUuvsC-_+ijhiqqff2bK-s2wQfkjn7z-HtNnMDQ@mail.gmail.com>
- <20181204005012.11f73df9@vmware.local.home> <20181204111242.GA32596@arm.com> <20181204122627.225befaa@vmware.local.home>
-In-Reply-To: <20181204122627.225befaa@vmware.local.home>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Tue, 4 Dec 2018 19:07:16 +0100
-Message-ID: <CADYN=9K+On_Qbd_4a+C=59tffWiLF9YwACF4kXyTtDU1mazxjA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: ftrace: add cond_resched() to func ftrace_make_(call|nop)
-To:     rostedt@goodmis.org
-Cc:     Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        mingo@redhat.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542023835-21446-22-git-send-email-julien.thierry@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 at 18:26, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Tue, 4 Dec 2018 11:12:43 +0000
-> Will Deacon <will.deacon@arm.com> wrote:
->
-> > > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > > index 8ef9fc226037..42e89397778b 100644
-> > > --- a/kernel/trace/ftrace.c
-> > > +++ b/kernel/trace/ftrace.c
-> > > @@ -2393,11 +2393,14 @@ void __weak ftrace_replace_code(int enable)
-> > >  {
-> > >     struct dyn_ftrace *rec;
-> > >     struct ftrace_page *pg;
-> > > +   bool schedulable;
-> > >     int failed;
-> > >
-> > >     if (unlikely(ftrace_disabled))
-> > >             return;
-> > >
-> > > +   schedulable = !irqs_disabled() & !preempt_count();
-> >
-> > Looks suspiciously like a bitwise preemptible() to me!
->
-> Ah, thanks. Yeah, that should have been &&. But what did you expect.
-> I didn't even compile this ;-)
->
-> >
-> > > +
-> > >     do_for_each_ftrace_rec(pg, rec) {
-> > >
-> > >             if (rec->flags & FTRACE_FL_DISABLED)
-> > > @@ -2409,6 +2412,8 @@ void __weak ftrace_replace_code(int enable)
-> > >                     /* Stop processing */
-> > >                     return;
-> > >             }
-> > > +           if (schedulable)
-> > > +                   cond_resched();
-> > >     } while_for_each_ftrace_rec();
-> > >  }
-> >
-> > If this solves the problem in core code, them I'm all for it. Otherwise, I
-> > was thinking of rolling our own ftrace_replace_code() for arm64, but that's
-> > going to involve a fair amount of duplication.
-> >
->
-> If it does, then I'll add it. Or take a patch for it ;-)
+On Mon, Nov 12, 2018 at 11:57:12AM +0000, Julien Thierry wrote:
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 5f4d9ac..66344cd 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -897,13 +897,17 @@ bool arm64_is_fatal_ras_serror(struct pt_regs *regs, unsigned int esr)
+>  
+>  asmlinkage void do_serror(struct pt_regs *regs, unsigned int esr)
+>  {
+> -	nmi_enter();
+> +	const bool was_in_nmi = in_nmi();
+> +
+> +	if (!was_in_nmi)
+> +		nmi_enter();
+>  
+>  	/* non-RAS errors are not containable */
+>  	if (!arm64_is_ras_serror(esr) || arm64_is_fatal_ras_serror(regs, esr))
+>  		arm64_serror_panic(regs, esr);
+>  
+> -	nmi_exit();
+> +	if (!was_in_nmi)
+> +		nmi_exit();
+>  }
 
-I tested your patch. it worked.
+Do we actually need nmi_enter/exit in the outer do_serror() function?
+Could we just move it to arm64_serror_panic()?
 
-I'll send a patch shortly.
-
-Cheers,
-Anders
+-- 
+Catalin
