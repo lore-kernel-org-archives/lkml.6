@@ -2,169 +2,166 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E0EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350732081C
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D8092081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 13:32:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cHHQbr3M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350732081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpmubcok"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8092081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbeLDNcX (ORCPT
+        id S1726451AbeLDNcz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:32:23 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37880 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeLDNcX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:32:23 -0500
-Received: by mail-it1-f193.google.com with SMTP id b5so14383893iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 05:32:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fZ52Zx/KCfQfQv21h5YNtPxuM09B4zF9M/ZuuyDoMrQ=;
-        b=cHHQbr3Mmns6BUJ03hUGsrgk7GRKkG6Von1EliWGWTqBXlvfyOwXM2TcedI0YUsskS
-         VYUTvu8sUJVjnuQE+Du3QnulF9lmjI2VyV0KDbSOYQaKbVcTpnqVOBtuRplOI2vnOVbV
-         PpoS92cfzrjV9LV7xqw+b4q+n/ckrkmGHzeiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fZ52Zx/KCfQfQv21h5YNtPxuM09B4zF9M/ZuuyDoMrQ=;
-        b=NKyzF8B7IIxL2CHCF376TqqY2B0f9cbT4iHW+JnJ20xr9y5E2uXyDR2zxOq73/CHrv
-         Q32f2ralF492BkaE2QLmHleIR5Z49bNeC3vICZqXvDXZEFzggohd7oj65E9XYZcyUzXn
-         6XsylNbGqs6U1u6LFS00bW5r/9qXAinVfzz2rT8HuWv/DHW24ed4K8MZAHgn75XlwI9F
-         VDvMWTV9rhM0RNfX7KubsDI3dkfyUcDEmbX2o08NyhipOs7g4bbLgw4TfxC/EDqg7CaR
-         pBZMUZYjGFyVoE+OdjH+h1ABI4pmljNJJy5ILYXRXVKirc7hBGSipsdeIKAaI53yxZln
-         EtXQ==
-X-Gm-Message-State: AA+aEWbYRYK0ms7QD8hWkk2DWL58bvQK5+N8HHZ3DJOWTmvrLEHlBFLz
-        shZYPjbZlFxTb88alET23KJVCDRhiT/6yuTTIakMAA==
-X-Google-Smtp-Source: AFSGD/Vyz5Dob3rk694nj8Nf4wxqhzJyVj9FoqYO8dzY5j6+Lmt5e1Uo8L66POWXo7oeEbsL7fvP6hftsIBYa8syTGg=
-X-Received: by 2002:a24:710:: with SMTP id f16mr10278314itf.121.1543930342005;
- Tue, 04 Dec 2018 05:32:22 -0800 (PST)
+        Tue, 4 Dec 2018 08:32:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726151AbeLDNcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 08:32:54 -0500
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5056B20851;
+        Tue,  4 Dec 2018 13:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543930373;
+        bh=sBFcr+Jb62B48Hwe1h8iPAD26K2EHQzJ9SUJepkarjA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kpmubcokEvNZiAPDAgfqFP6gCoI+6KbzxfoQ4SwiZvNwM0q5aLMmDW2g0ZAq1Vt42
+         6hGAnaYHK3D1zjQCtNqzm5jUsYG4amSrI30bt2jvB/9GRqXIswScvvb82o6eKPPZLt
+         SvMAq4HzzlqjYXjmBOwt5FjVuxYAQrQlrBLYnWis=
+Received: by mail-qk1-f175.google.com with SMTP id m5so9545546qka.9;
+        Tue, 04 Dec 2018 05:32:53 -0800 (PST)
+X-Gm-Message-State: AA+aEWYb/+Zs5ati2G93m1pm93Vc8IHVaLnbCWmwcuGR34lMMaNtTJUE
+        NnnF27OnT71Rqc+F2vTEwzaSi2D6H4C1ByVgOA==
+X-Google-Smtp-Source: AFSGD/VMrJg6doU0xFmV7V+hms34CTpTPhPJPLZU6kGzHVDcmsr4VzsC++J9376JDB1j2bVVFVMqPXZls0uYhEkqGcg=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr18998224qkg.147.1543930372509;
+ Tue, 04 Dec 2018 05:32:52 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
- <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
- <20181127210542.GA2599@redhat.com> <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
- <20181128170302.GA12405@redhat.com> <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
- <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
- <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov> <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
- <6b125e8e-413f-f8e6-c7ae-50f7235c8960@tycho.nsa.gov> <CAJfpegv6y56k1-Tewu-Pu3x1W75LL6qYB6Hb6=n+2BJoNfEigA@mail.gmail.com>
- <c993dba4-5129-7f04-2724-a82a1f1cafa3@tycho.nsa.gov> <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
-In-Reply-To: <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 4 Dec 2018 14:32:09 +0100
-Message-ID: <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
-Subject: Re: overlayfs access checks on underlying layers
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+ <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com> <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+ <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com> <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
+ <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
+In-Reply-To: <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 4 Dec 2018 07:32:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline description
+To:     sugaya.taichi@socionext.com
+Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:16 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
+<sugaya.taichi@socionext.com> wrote:
 >
-> On 11/29/18 4:03 PM, Stephen Smalley wrote:
-> > On 11/29/18 2:47 PM, Miklos Szeredi wrote:
-> >> On Thu, Nov 29, 2018 at 5:14 PM Stephen Smalley <sds@tycho.nsa.gov>
-> >> wrote:
-> >>
-> >>> Possibly I misunderstood you, but I don't think we want to copy-up on
-> >>> permission denial, as that would still allow the mounter to read/write
-> >>> special files or execute regular files to which it would normally be
-> >>> denied access, because the copy would inherit the context specified by
-> >>> the mounter in the context mount case.  It still represents an
-> >>> escalation of privilege for the mounter.  In contrast, the copy-up on
-> >>> write behavior does not allow the mounter to do anything it could not do
-> >>> already (i.e. read from the lower, write to the upper).
-> >>
-> >> Let's get this straight:  when file is copied up, it inherits label
-> >> from context=, not from label of lower file?
-> >
-> > That's correct.  The overlay inodes are all assigned the label from the
-> > context= mount option, and so are any upper inodes created through the
-> > overlay.  At least that's my understanding of how it is supposed to
-> > work.  The original use case was for containers with the lower dir
-> > labeled with a context that is read-only to the container context and
-> > using a context that is writable by the container context for the
-> > context= mount.
-> >
-> >> Next question: permission to change metadata is tied to permission to
-> >> open?  Is it possible that open is denied, but metadata can be
-> >> changed?
-> >
-> > There is no metadata change occurring here. The overlay, upper, and
-> > lower inodes all keep their labels intact for their lifetime (both
-> > overlay and upper always have the context= label; upper has whatever its
->                                                    ^^lower^^
+> Hi
 >
-> > original label was), unless explicitly relabeled by some process.  And
-> > when viewed through the overlay, the file always has the label specified
-> > via context=, even before the copy-up.
-
-Okay.
-
-> >
-> >> DAC model allows this: metadata change is tied to ownership, not mode
-> >> bits.   And different capability flag.
+> On 2018/12/04 0:49, Rob Herring wrote:
+> > On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
+> > <sugaya.taichi@socionext.com> wrote:
 > >>
-> >> If the same is true for MAC, then the pre-v4.20-rc1 is already
-> >> susceptible to the privilege escalation you describe, right?
+> >> Hi,
+> >>
+> >> On 2018/11/30 17:16, Stephen Boyd wrote:
+> >>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
+> >>>> On 2018/11/28 11:01, Stephen Boyd wrote:
+> >>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+> >>>>>>     create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+> >>>>>>
+> >>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+> >>>>>> new file mode 100644
+> >>>>>> index 0000000..f5d906c
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+> >>>>>> @@ -0,0 +1,12 @@
+> >>>>>> +Socionext M10V SMP trampoline driver binding
+> >>>>>> +
+> >>>>>> +This is a driver to wait for sub-cores while boot process.
+> >>>>>> +
+> >>>>>> +- compatible: should be "socionext,smp-trampoline"
+> >>>>>> +- reg: should be <0x4C000100 0x100>
+> >>>>>> +
+> >>>>>> +EXAMPLE
+> >>>>>> +       trampoline: trampoline@0x4C000100 {
+> >>>>> Drop the 0x part of unit addresses.
+> >>>>
+> >>>> Okay.
+> >>>>
+> >>>>
+> >>>>>> +               compatible = "socionext,smp-trampoline";
+> >>>>>> +               reg = <0x4C000100 0x100>;
+> >>>>> Looks like a software construct, which we wouldn't want to put into DT
+> >>>>> this way. DT doesn't describe drivers.
+> >>>> We would like to use this node only getting the address of the
+> >>>> trampoline area
+> >>>> in which sub-cores wait.  (They have finished to go to this area in previous
+> >>>> bootloader process.)
+> >>>
+> >>> Is this area part of memory, or a special SRAM? If it's part of memory,
+> >>> I would expect this node to be under the reserved-memory node and
+> >>> pointed to by some other node that uses this region. Could even be the
+> >>> CPU nodes.
+> >>
+> >> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
+> >> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
+> >> BTW, sorry, the trampoline address of this example is simply wrong.  We
+> >> were going to use a part of the SRAM from the beginning.
+> >>
+> >>>
+> >>>>
+> >>>> So should we embed the constant value in source codes instead of getting
+> >>>> from
+> >>>> DT because the address is constant at the moment? Or is there other
+> >>>> approach?
+> >>>>
+> >>>
+> >>> If it's constant then that also works. Why does it need to come from DT
+> >>> at all then?
+> >>
+> >> We think it is not good to embed constant value in driver codes and do
+> >> not have another way...
+> >> Are there better ways?
 > >
-> > Actually, I guess there wouldn't be a privilege escalation if you
-> > checked the mounter's ability to create the new file upon copy-up, and
-> > checked the mounter's access to the upper inode label upon the
-> > subsequent read, write, or execute access.  Then we'd typically block
-> > the ability to create the device file and we'd block the ability to
-> > execute files with the label from context=.
-> >
-> > But copy-up of special files seems undesirable for other reasons (e.g.
-> > requiring mounters to be allowed to create device nodes just to permit
-> > client's to read/write them, possible implications for nodev/noexec,
-> > implications for socket and fifo files).
+> > If this is just memory, can you use the standard spin-table binding in
+> > the DT spec? There are some requirements like 64-bit values even on
+> > 32-bit machines (though this gets violated).
+>
+> The spin-table seems to be used on only 64-bit arch. Have it ever worked
+> on 32-bit machine?
 
-I think you missed my point: opening a device file or executing an
-executable wouldn't normally require copy-up.   If
+Yes.
 
- -  permission is granted on overlay to task, and
- -  permission is granted on lower layer to mounter,
+> And I would like not to use it because avoid violation.
 
-then copy-up wouldn't be performed.
+The issue now that I remember is cpu-release-addr is defined to always
+be a 64-bit value while some platforms made it a 32-bit value.
+'cpu-release-addr' is also used for some other enable-methods.
 
-My proposed sequence would be
-
-a) check task's creds against overlay inode, fail -> return fail, otherwise:
-b) check mounter's creds against lower inode, success -> return
-success, otherwise:
-c) copy up inode, fail -> return fail, otherwise
-d) check mounter's creds against upper inode, return result.
-
-So, unlike write access to regular files, write access to special
-files don't necessarily result in copy-up.
-
-You say this is an escalation of privilege, but I don't get it how.
-As DWalsh points out downthread, if mounter cannot create device
-files, then the copy-up will simply fail.  If mounter can create
-device files, then this is not an escalation of privilege for the
-mounter.
-
-Thanks,
-Miklos
+Rob
