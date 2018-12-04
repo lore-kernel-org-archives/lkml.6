@@ -2,132 +2,139 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE75C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EA7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E881720834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1664A2081C
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 18:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wlFopwh3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E881720834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g1mvFI/9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1664A2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbeLDS4W (ORCPT
+        id S1726139AbeLDS51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:56:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725864AbeLDS4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:56:19 -0500
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A13B20851
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Dec 2018 18:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543949778;
-        bh=iFtxg6LhjYpm8Evo/ahI8Rptn8CtMFv3JwG6zzvPXHk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wlFopwh3m9VtTIjsbQ850FdexYr8m8osKTWxvMxNBVgBVEdtQZBa83brClWrPWftH
-         njiXTqsfNBt8iK2kXRbze8fhaHbFLT/NddiA8lWArPEefXNrBJ84o7BG3yIa6oqzFa
-         PJnVS/WVMCtwgBQ3ckR3ZHC3xFpHf8MTFfADQVC0=
-Received: by mail-wm1-f41.google.com with SMTP id y139so10695217wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:56:17 -0800 (PST)
-X-Gm-Message-State: AA+aEWZLkZaS05hGHy98rLu95pSeeLEMIs08lKIhvlUHUOOfBTWxP7ON
-        Dq03zH/lKjKKkmCEYaedtBy+lfFvpBiIXXbXnj5iWA==
-X-Google-Smtp-Source: AFSGD/U7ltAUEqFB4kL1WdgJ0lnl3xIw3hk+FWLdUr0eiqg57Clxl/ae69uFWmAZyKLHd1ql0HpeXLEr69T8HmR02/s=
-X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr2740811wme.108.1543949776480;
- Tue, 04 Dec 2018 10:56:16 -0800 (PST)
+        Tue, 4 Dec 2018 13:57:27 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42148 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDS51 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:57:27 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so15930705lja.9
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 10:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3wbry1vAtwQoQni0nW/CjPanigsxOs4bM0fWbB931q8=;
+        b=g1mvFI/9EuLZyhJfujUUAkxvSupb1qTzMigfwziKVaHJcg0akDHSLvLAWq9f1A3Zi5
+         /hXBrPSy+wzGa1Cik01wckNDlUREvpQoNysruZEkjWU9xq4XL9JwYFwq7XGNC2eY2PzI
+         vf/OX/Rc7TEW/lsmuR1TnAlTwy8Rv1mKCoGq8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=3wbry1vAtwQoQni0nW/CjPanigsxOs4bM0fWbB931q8=;
+        b=Ofuqr6n6X26cKjUoSeF77hwtfC+pkmGlVpq/zTaB5rCYrKwX+InOQUoa8pI0kyzqyu
+         QZSeF1wJpwgTpNoac0MDGJ81TVOP1YKUFsSCRufbjuNn05nDBsiPFrTON5lJtBKnf1sx
+         b5mNVwRAWxI2SmzY8NjVyoWxQOpP/Tta8Ssxjsf5vA0zXg7U8pslS+7pPo2sGlIbH9Nl
+         to1IUReJf8vhNdDbwmO63yMdbS0DKGUhaIeoF4+R021pZ/+IMXVyjmbgrVD9CgQlo4+r
+         N2ORXQXtDnkBWSYGyTr5+XjzFN+UWIOx6LH9+NRGZRbXr/a4mYj0gIG6uy9Hr/x3cx2Q
+         2Gcw==
+X-Gm-Message-State: AA+aEWaLbtaAQMXYnoQsSy44C3HZyzyJ09Dyz2dRbB3qrzb/rAD5fyk0
+        HTQ4mQniqU05e6MpO1KatWS4iw==
+X-Google-Smtp-Source: AFSGD/XLeQnB66LBZmvCAh5YfQRK3B7oR0wI7xWzT5cbY4VOy6EEtAI1GtYInrtSgZodJUjD1BTuUw==
+X-Received: by 2002:a2e:9ad0:: with SMTP id p16-v6mr14783467ljj.102.1543949845129;
+        Tue, 04 Dec 2018 10:57:25 -0800 (PST)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id g17sm3115960lfg.78.2018.12.04.10.57.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 10:57:24 -0800 (PST)
+Date:   Tue, 4 Dec 2018 20:57:22 +0200
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     davem@davemloft.net, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@mellanox.com, andrew@lunn.ch
+Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for
+ uc and mc address lists
+Message-ID: <20181204185720.GI23230@khorivan>
+Mail-Followup-To: Florian Fainelli <f.fainelli@gmail.com>,
+        davem@davemloft.net, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@mellanox.com, andrew@lunn.ch
+References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
+ <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
+ <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
+ <20181203235119.GF23230@khorivan>
+ <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
 MIME-Version: 1.0
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
-In-Reply-To: <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Dec 2018 10:56:03 -0800
-X-Gmail-Original-Message-ID: <CALCETrXvddt148fncMJqpjK98uatiK-44knYFWU0-ytf8X+iog@mail.gmail.com>
-Message-ID: <CALCETrXvddt148fncMJqpjK98uatiK-44knYFWU0-ytf8X+iog@mail.gmail.com>
-Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, jeyu@kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 5:43 PM Nadav Amit <nadav.amit@gmail.com> wrote:
+On Mon, Dec 03, 2018 at 03:57:03PM -0800, Florian Fainelli wrote:
+>On 12/3/18 3:51 PM, Ivan Khoronzhuk wrote:
+>> On Mon, Dec 03, 2018 at 02:17:00PM -0800, Florian Fainelli wrote:
+>>> On 12/3/18 10:40 AM, Ivan Khoronzhuk wrote:
+>>>> Update vlan mc and uc addresses with VID tag while propagating address
+>>>> set to lower devices, do this only if address is not synched. It allows
+>>>> on end driver level to distinguish address belonging to vlans.
+>>>
+>>> Underlying driver for the real device would be able to properly identify
+>>> that you are attempting to add an address to a virtual device, which
+>>> happens to be of VLAN kind so I am really not sure this is the right
+>>> approach here.
+>>>
+>>> From there, it seems to me that we have two situations:
+>>>
+>>> - each of your network devices expose VLAN devices directly on top of
+>>> the real device, in which case your driver should support
+>>> ndo_vlan_rx_add_vid and ndo_vlan_rx_kill_vid to know when VLAN devices
+>>> are create and maintain a VLAN device to VID correspondence if it needs
+>>> to when being called while setting the addresses
+>>>
+>>> - you are setting up a bridge that is VLAN aware on one of your bridge
+>>> ports, and there you can use switchdev to learn about such events and
+>>> know about both addresses as well as VIDs that must be programmed into
+>>> your real device
+>> No limits to have any "middle" device between real end device and
+>> virtual one, not only a bridge, but also other kind. And as it's generic
+>> change, it should cover all such cases, the simplest example is:
+>> real_dev/macvlan/vlan.
 >
-> > On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@intel.com=
-> wrote:
-> >
-> > Since vfree will lazily flush the TLB, but not lazily free the underlyi=
-ng pages,
-> > it often leaves stale TLB entries to freed pages that could get re-used=
-. This is
-> > undesirable for cases where the memory being freed has special permissi=
-ons such
-> > as executable.
->
-> So I am trying to finish my patch-set for preventing transient W+X mappin=
-gs
-> from taking space, by handling kprobes & ftrace that I missed (thanks aga=
-in for
-> pointing it out).
->
-> But all of the sudden, I don=E2=80=99t understand why we have the problem=
- that this
-> (your) patch-set deals with at all. We already change the mappings to mak=
-e
-> the memory writable before freeing the memory, so why can=E2=80=99t we ma=
-ke it
-> non-executable at the same time? Actually, why do we make the module memo=
-ry,
-> including its data executable before freeing it???
->
+>It is not generic if the additional information is a VLAN ID, that
+>construct does not apply to all types of virtual devices, that is part
+>of my issue with the extra VID that is being added. If this was a void *
+>priv and any virtual device could pass up/down information that might be
+>more acceptable.
 
-All the code you're looking at is IMO a very awkward and possibly
-incorrect of doing what's actually necessary: putting the direct map
-the way it wants to be.
+You mean to create smth like common struct pinned to "an address" and
+pass information not only like vid, but in parallel what ever user wanted.
+Even if pass vlan device pointer it still considered like an address
+continuation and same sync method is used w/o modification. And here vid
+is considered as part of address, by a big account address+vid it's a
+separate address, same happens with the pointer, address+pointer it's
+still separate address.
 
-Can't we shove this entirely mess into vunmap?  Have a flag (as part
-of vmalloc like in Rick's patch or as a flag passed to a vfree variant
-directly) that makes the vunmap code that frees the underlying pages
-also reset their permissions?
+I was thinking also about pinned list of vlans to the address, but in
+this case this information also has to be synced by members of device chain,
+because it can be modified on any device level and it looks not very friendly,
+and at the end address space has addresses with pinned lists of vlans with
+their pointers. But keeping this stuff in sync is not simplest decision.
 
-Right now, we muck with set_memory_rw() and set_memory_nx(), which
-both have very awkward (and inconsistent with each other!) semantics
-when called on vmalloc memory.  And they have their own flushes, which
-is inefficient.  Maybe the right solution is for vunmap to remove the
-vmap area PTEs, call into a function like set_memory_rw() that resets
-the direct maps to their default permissions *without* flushing, and
-then to do a single flush for everything.  Or, even better, to cause
-the change_page_attr code to do the flush and also to flush the vmap
-area all at once so that very small free operations can flush single
-pages instead of flushing globally.
+
+-- 
+Regards,
+Ivan Khoronzhuk
