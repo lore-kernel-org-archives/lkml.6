@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDBAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CBAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151892087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F06BA214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhe1/Yag"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151892087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3suQxIj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F06BA214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeLDLAd (ORCPT
+        id S1727350AbeLDLAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45744 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbeLDLA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:29 -0500
+        id S1727335AbeLDLAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0054F2087F;
-        Tue,  4 Dec 2018 11:00:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 511AB2146D;
+        Tue,  4 Dec 2018 11:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921228;
-        bh=SD8ewxyqnCW6QSTI3FRkwJKErbc1Px5MPs+uoV8V6hc=;
+        s=default; t=1543921233;
+        bh=mCmAhycXXVIhxTXsqRESiXMjdlWpB6flC42AL7rkYF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhe1/YagMR8Z1M/laXvvlfh4pbpSgyA1AJ3XrF8I5jnVl8j4KaWGxky5Bg0xmm4qO
-         TDsRAU82JTEzL6lSJ/rT7cMbpAhda+bTZ4cgiRAzGTyscgpxmP42qIDmbcOXF+nEIc
-         dxM7BwfeHpEfwFcy3XRsEqBzaAzfU7YriaKm/2OQ=
+        b=I3suQxIjDAV8b9/Vo69fv0fvk1TywuGLGzIhCprg+JsOHdx5CS4HOJa7cZ/jrbxC/
+         toXWYPykjFa9Y1WdkMesohad7IB09kCuS8alXPP0vdktQwIfyz6y1lm3ipRvAfjIWP
+         UYMRObbzHWtWJwfOTtwFTWLU8MaOxaWtOCy8P6oM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 113/139] function_graph: Have profiler use curr_ret_stack and not depth
-Date:   Tue,  4 Dec 2018 11:49:54 +0100
-Message-Id: <20181204103655.266906477@linuxfoundation.org>
+        stable@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.19 132/139] Revert "usb: dwc3: gadget: skip Set/Clear Halt when invalid"
+Date:   Tue,  4 Dec 2018 11:50:13 +0100
+Message-Id: <20181204103656.233951541@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,48 +62,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-commit b1b35f2e218a5b57d03bbc3b0667d5064570dc60 upstream.
+commit 38317f5c0f2faae5110854f36edad810f841d62f upstream.
 
-The profiler uses trace->depth to find its entry on the ret_stack, but the
-depth may not match the actual location of where its entry is (if an
-interrupt were to preempt the processing of the profiler for another
-function, the depth and the curr_ret_stack will be different).
+This reverts commit ffb80fc672c3a7b6afd0cefcb1524fb99917b2f3.
 
-Have it use the curr_ret_stack as the index to find its ret_stack entry
-instead of using the depth variable, as that is no longer guaranteed to be
-the same.
+Turns out that commit is wrong. Host controllers are allowed to use
+Clear Feature HALT as means to sync data toggle between host and
+periperal.
 
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ftrace.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/dwc3/gadget.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -817,7 +817,7 @@ function_profile_call(unsigned long ip,
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- static int profile_graph_entry(struct ftrace_graph_ent *trace)
- {
--	int index = trace->depth;
-+	int index = current->curr_ret_stack;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1461,9 +1461,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
+ 		unsigned transfer_in_flight;
+ 		unsigned started;
  
- 	function_profile_call(trace->func, 0, NULL, NULL);
+-		if (dep->flags & DWC3_EP_STALL)
+-			return 0;
+-
+ 		if (dep->number > 1)
+ 			trb = dwc3_ep_prev_trb(dep, dep->trb_enqueue);
+ 		else
+@@ -1485,8 +1482,6 @@ int __dwc3_gadget_ep_set_halt(struct dwc
+ 		else
+ 			dep->flags |= DWC3_EP_STALL;
+ 	} else {
+-		if (!(dep->flags & DWC3_EP_STALL))
+-			return 0;
  
-@@ -852,7 +852,7 @@ static void profile_graph_return(struct
- 	if (!fgraph_graph_time) {
- 		int index;
- 
--		index = trace->depth;
-+		index = current->curr_ret_stack;
- 
- 		/* Append this call time to the parent time to subtract */
- 		if (index)
+ 		ret = dwc3_send_clear_stall_ep_cmd(dep);
+ 		if (ret)
 
 
