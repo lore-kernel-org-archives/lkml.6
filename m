@@ -2,252 +2,177 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09C6C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A300C208A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:13:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A300C208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 9FFBE208A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 07:16:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFBE208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbeLDHNw (ORCPT
+        id S1726056AbeLDHQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:13:52 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:50822 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeLDHNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:13:52 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 1BF749E56305E933D000;
-        Tue,  4 Dec 2018 15:13:47 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB47DMnf044952;
-        Tue, 4 Dec 2018 15:13:22 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120415133648-14629679 ;
-          Tue, 4 Dec 2018 15:13:36 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     boris.ostrovsky@oracle.com
-Cc:     jgross@suse.com, sstabellini@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, wang.yi59@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Subject: [PATCH v5] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock
-Date:   Tue, 4 Dec 2018 15:15:57 +0800
-Message-Id: <1543907757-21647-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-04 15:13:36,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-04 15:13:18,
-        Serialize complete at 2018-12-04 15:13:18
-X-MAIL: mse01.zte.com.cn wB47DMnf044952
+        Tue, 4 Dec 2018 02:16:03 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:33420 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeLDHQD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 02:16:03 -0500
+Received: by mail-io1-f71.google.com with SMTP id a6so16750906iok.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Dec 2018 23:16:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CsIJszjfKZj5PR91NnucQVIRnH6pXJ2HkBm/mWJ8uSg=;
+        b=b+ibx1NjdXDTPhNb7eyvusiKsX3GfTTtHMDPF/zCaqkIXuVuP9f0e2l5GQtIXtbRgi
+         +FX6jaQWSUTfWcArDwHfIzFlBwnLyzLD/zt4ZpfeF5ogSXzmLJvoMm7uOWJCw1VPdRh0
+         wGHxGLJZMYKWyhuacu7upN8P7ZZsLIs804tmzNyffSJXjnUJqJWSIOqLiOnUIR/Rv+HC
+         Cvmm9F97zmkiwrW2rbndwnKukFb3dqxJc4IJbXZbXnMomIxuMPKDKE1QdOxn7okZn2rP
+         KDKoEz0RZI9iAUMSOGTxs0FlFA4WfeSkfL8ZL5a4zyGoZs3MHKaaRfcVo98y7T/rig6j
+         l29w==
+X-Gm-Message-State: AA+aEWbsG4QBgqJlSkCYJ1GVUIG3R7sMex5v0DcYlyAKESQShvU6OUvE
+        Krul/3dtu0r6H6cKuvrQX26liFchU7X7DPquGOQVM2eL+NsB
+X-Google-Smtp-Source: AFSGD/UNKUzofDDmdcTULYqmk9jBbSkArTl/tzvZEvgrcXNyNFHKJMIN7so3pZg0kf7l2Im0vsH6nHy8v5Enhjhe0HVCD32Ju5YP
+MIME-Version: 1.0
+X-Received: by 2002:a24:4597:: with SMTP id c23mr9165394itd.20.1543907762132;
+ Mon, 03 Dec 2018 23:16:02 -0800 (PST)
+Date:   Mon, 03 Dec 2018 23:16:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ba65b0057c2d09a1@google.com>
+Subject: general protection fault in kvm_arch_vcpu_ioctl_run
+From:   syzbot <syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com>
+To:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is that we call this with a spin lock held.
-The call tree is:
-pvcalls_front_accept() holds bedata->socket_lock.
-    -> create_active()
-        -> __get_free_pages() uses GFP_KERNEL
+Hello,
 
-The create_active() function is only called from pvcalls_front_accept()
-with a spin_lock held, The allocation is not allowed to sleep and
-GFP_KERNEL is not sufficient.
+syzbot found the following crash on:
 
-This issue was detected by using the Coccinelle software.
+HEAD commit:    4b78317679c4 Merge branch 'x86-pti-for-linus' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e979f5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4602730af4f872ef
+dashboard link: https://syzkaller.appspot.com/bug?extid=39810e6c400efadfef71
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-v2: Add a function doing the allocations which is called
-    outside the lock and passing the allocated data to
-    create_active().
+Unfortunately, I don't have any reproducer for this crash yet.
 
-v3: Use the matching deallocators i.e., free_page()
-    and free_pages(), respectively.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com
 
-v4: It would be better to pre-populate map (struct sock_mapping),
-    rather than introducing one more new struct.
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 14932 Comm: syz-executor0 Not tainted 4.20.0-rc4+ #138
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7449 [inline]
+RIP: 0010:vcpu_enter_guest arch/x86/kvm/x86.c:7602 [inline]
+RIP: 0010:vcpu_run arch/x86/kvm/x86.c:7874 [inline]
+RIP: 0010:kvm_arch_vcpu_ioctl_run+0x5296/0x7320 arch/x86/kvm/x86.c:8074
+Code: 03 00 00 48 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 b4 1e 00 00 49 8b  
+9f e0 03 00 00 48 8d bb 88 00 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00  
+0f 85 8a 1e 00 00 48 8b 9b 88 00 00 00 48 8d bb d8
+RSP: 0018:ffff88818b0bf530 EFLAGS: 00010206
+RAX: 0000000000000011 RBX: 0000000000000000 RCX: ffffc9001302b000
+RDX: 00000000000000cf RSI: ffffffff81103a68 RDI: 0000000000000088
+RBP: ffff88818b0bf8d0 R08: ffff8881bfe8e0c0 R09: 0000000000000008
+R10: 0000000000000028 R11: ffffffff810feb0f R12: dffffc0000000000
+R13: 0000000000000000 R14: ffffc90007ddfdb8 R15: ffff888188a18400
+FS:  00007ff919977700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc94713c518 CR3: 00000001cdea0000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  kvm_vcpu_ioctl+0x5c8/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2596
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ff919976c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000005
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff9199776d4
+R13: 00000000004c034e R14: 00000000004d0d60 R15: 00000000ffffffff
+Modules linked in:
+kobject: 'loop5' (000000004f26f0d5): kobject_uevent_env
+kobject: 'loop5' (000000004f26f0d5): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+kobject: 'loop1' (0000000010db8550): kobject_uevent_env
+kobject: 'loop1' (0000000010db8550): fill_kobj_path: path  
+= '/devices/virtual/block/loop1'
+kobject: 'loop3' (00000000941a4e7a): kobject_uevent_env
+kobject: 'loop3' (00000000941a4e7a): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+---[ end trace d7fab4e7c1a70214 ]---
+RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7449 [inline]
+RIP: 0010:vcpu_enter_guest arch/x86/kvm/x86.c:7602 [inline]
+RIP: 0010:vcpu_run arch/x86/kvm/x86.c:7874 [inline]
+RIP: 0010:kvm_arch_vcpu_ioctl_run+0x5296/0x7320 arch/x86/kvm/x86.c:8074
+Code: 03 00 00 48 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 b4 1e 00 00 49 8b  
+9f e0 03 00 00 48 8d bb 88 00 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00  
+0f 85 8a 1e 00 00 48 8b 9b 88 00 00 00 48 8d bb d8
+kobject: 'loop4' (000000004a89aba1): kobject_uevent_env
+kobject: 'loop4' (000000004a89aba1): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000704d7e59): kobject_uevent_env
+kobject: 'loop2' (00000000704d7e59): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+kobject: 'loop4' (000000004a89aba1): kobject_uevent_env
+kobject: 'loop4' (000000004a89aba1): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'loop2' (00000000704d7e59): kobject_uevent_env
+RSP: 0018:ffff88818b0bf530 EFLAGS: 00010206
+RAX: 0000000000000011 RBX: 0000000000000000 RCX: ffffc9001302b000
+kobject: 'loop2' (00000000704d7e59): fill_kobj_path: path  
+= '/devices/virtual/block/loop2'
+RDX: 00000000000000cf RSI: ffffffff81103a68 RDI: 0000000000000088
+RBP: ffff88818b0bf8d0 R08: ffff8881bfe8e0c0 R09: 0000000000000008
+R10: 0000000000000028 R11: ffffffff810feb0f R12: dffffc0000000000
+R13: 0000000000000000 R14: ffffc90007ddfdb8 R15: ffff888188a18400
+FS:  00007ff919977700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+kobject: 'loop3' (00000000941a4e7a): kobject_uevent_env
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 00000001cdea0000 CR4: 00000000001426e0
+kobject: 'loop3' (00000000941a4e7a): fill_kobj_path: path  
+= '/devices/virtual/block/loop3'
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'loop5' (000000004f26f0d5): kobject_uevent_env
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'loop5' (000000004f26f0d5): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
 
-v5: Since allocating the data outside of this call it should also
-    be freed outside, when create_active() fails.
-    Move kzalloc(sizeof(*map2), GFP_ATOMIC) outside spinlock and
-    use GFP_KERNEL instead.
 
-Suggested-by: Juergen Gross <jgross@suse.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
 ---
- drivers/xen/pvcalls-front.c | 83 +++++++++++++++++++++++++++----------
- 1 file changed, 61 insertions(+), 22 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 77224d8f3e6f..5fd764a7b879 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -335,6 +335,41 @@ int pvcalls_front_socket(struct socket *sock)
- 	return ret;
- }
- 
-+static void free_active_ring(struct sock_mapping *map)
-+{
-+	free_pages((unsigned long)map->active.data.in,
-+			map->active.ring->ring_order);
-+	free_page((unsigned long)map->active.ring);
-+}
-+
-+static int alloc_active_ring(struct sock_mapping *map)
-+{
-+	void *bytes;
-+
-+	map->active.ring = NULL;
-+	map->active.data.in = NULL;
-+	map->active.ring = (struct pvcalls_data_intf *)
-+		get_zeroed_page(GFP_KERNEL);
-+	if (!map->active.ring)
-+		goto out;
-+
-+	map->active.ring->ring_order = PVCALLS_RING_ORDER;
-+	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-+					PVCALLS_RING_ORDER);
-+	if (!bytes)
-+		goto out;
-+
-+	map->active.data.in = bytes;
-+	map->active.data.out = bytes +
-+		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-+
-+	return 0;
-+
-+out:
-+	free_active_ring(map);
-+	return -ENOMEM;
-+}
-+
- static int create_active(struct sock_mapping *map, int *evtchn)
- {
- 	void *bytes;
-@@ -343,15 +378,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- 	*evtchn = -1;
- 	init_waitqueue_head(&map->active.inflight_conn_req);
- 
--	map->active.ring = (struct pvcalls_data_intf *)
--		__get_free_page(GFP_KERNEL | __GFP_ZERO);
--	if (map->active.ring == NULL)
--		goto out_error;
--	map->active.ring->ring_order = PVCALLS_RING_ORDER;
--	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
--					PVCALLS_RING_ORDER);
--	if (bytes == NULL)
--		goto out_error;
-+	bytes = map->active.data.in;
- 	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
- 		map->active.ring->ref[i] = gnttab_grant_foreign_access(
- 			pvcalls_front_dev->otherend_id,
-@@ -361,10 +388,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- 		pvcalls_front_dev->otherend_id,
- 		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
- 
--	map->active.data.in = bytes;
--	map->active.data.out = bytes +
--		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
--
- 	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
- 	if (ret)
- 		goto out_error;
-@@ -385,8 +408,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- out_error:
- 	if (*evtchn >= 0)
- 		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
--	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
--	free_page((unsigned long)map->active.ring);
- 	return ret;
- }
- 
-@@ -406,17 +427,24 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
- 		return PTR_ERR(map);
- 
- 	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
-+	ret = alloc_active_ring(map);
-+	if (ret < 0) {
-+		pvcalls_exit_sock(sock);
-+		return ret;
-+	}
- 
- 	spin_lock(&bedata->socket_lock);
- 	ret = get_request(bedata, &req_id);
- 	if (ret < 0) {
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
- 	ret = create_active(map, &evtchn);
- 	if (ret < 0) {
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
-@@ -780,25 +808,36 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
- 		}
- 	}
- 
--	spin_lock(&bedata->socket_lock);
--	ret = get_request(bedata, &req_id);
--	if (ret < 0) {
-+	map2 = kzalloc(sizeof(*map2), GFP_KERNEL);
-+	if (map2 == NULL) {
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
--		spin_unlock(&bedata->socket_lock);
-+		pvcalls_exit_sock(sock);
-+		return -ENOMEM;
-+	}
-+	ret = alloc_active_ring(map2);
-+	if (ret < 0) {
-+		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
-+				(void *)&map->passive.flags);
-+		kfree(map2);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
--	map2 = kzalloc(sizeof(*map2), GFP_ATOMIC);
--	if (map2 == NULL) {
-+	spin_lock(&bedata->socket_lock);
-+	ret = get_request(bedata, &req_id);
-+	if (ret < 0) {
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map2);
-+		kfree(map2);
- 		pvcalls_exit_sock(sock);
--		return -ENOMEM;
-+		return ret;
- 	}
-+
- 	ret = create_active(map2, &evtchn);
- 	if (ret < 0) {
-+		free_active_ring(map2);
- 		kfree(map2);
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
--- 
-2.19.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
