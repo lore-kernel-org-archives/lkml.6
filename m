@@ -4,47 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D744AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168B2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992BA214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF0CC214DB
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eU+smFmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992BA214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mW591jeX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF0CC214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeLDLAp (ORCPT
+        id S1727383AbeLDLAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:00:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45934 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbeLDLAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:00:40 -0500
+        id S1726901AbeLDLAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:00:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A6002146D;
-        Tue,  4 Dec 2018 11:00:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BD6B2087F;
+        Tue,  4 Dec 2018 11:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921238;
-        bh=ebiBTEj/7u9Wo/LDJy2vQ6vA+RmmpxjaOsDPW+ZkyjA=;
+        s=default; t=1543921243;
+        bh=YzD9QSP4BREwBC0Y5hdYlgDkWlNy+KzwW5fkm1LSo9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eU+smFmM5iHNcNuZRXBA2yyLwQDq+08ELFKRY0YiJbKg6Z2J6mOHNZIZMv9Kne/iy
-         mcONEyxkEiZrX9T/UlrefJqUO1hWWX3QK2MmPCstD49FCn4/GNRkHS0aZ6bTpSpF7N
-         QWpcrV/mUUB0goRV/mvsNWIhYvTOUhk0O//Q8LSM=
+        b=mW591jeXYkATROs0hmrLrz6aer+udjsiLaL6JBKJSg67zI8m5pZfxAFx/KnvCu4W6
+         StW+Bv7WEH5YNBBhn5uRCpaw9mweG/qt47uX637JTfO3nY2BvTtxHHs1mZXfCxFjXu
+         rbAtCP8hV4lMqKRWqjxFIwRMNEdZXUwPoygKg7wc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <martin@martingkelly.com>,
-        Denis Ciocca <denis.ciocca@st.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 134/139] iio:st_magn: Fix enable device after trigger
-Date:   Tue,  4 Dec 2018 11:50:15 +0100
-Message-Id: <20181204103656.330234585@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 136/139] mm: cleancache: fix corruption on missed inode invalidation
+Date:   Tue,  4 Dec 2018 11:50:17 +0100
+Message-Id: <20181204103656.442578056@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -63,78 +71,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <martin@martingkelly.com>
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
 
-commit fe5192ac81ad0d4dfe1395d11f393f0513c15f7f upstream.
+commit 6ff38bd40230af35e446239396e5fc8ebd6a5248 upstream.
 
-Currently, we enable the device before we enable the device trigger. At
-high frequencies, this can cause interrupts that don't yet have a poll
-function associated with them and are thus treated as spurious. At high
-frequencies with level interrupts, this can even cause an interrupt storm
-of repeated spurious interrupts (~100,000 on my Beagleboard with the
-LSM9DS1 magnetometer). If these repeat too much, the interrupt will get
-disabled and the device will stop functioning.
+If all pages are deleted from the mapping by memory reclaim and also
+moved to the cleancache:
 
-To prevent these problems, enable the device prior to enabling the device
-trigger, and disable the divec prior to disabling the trigger. This means
-there's no window of time during which the device creates interrupts but we
-have no trigger to answer them.
+__delete_from_page_cache
+  (no shadow case)
+  unaccount_page_cache_page
+    cleancache_put_page
+  page_cache_delete
+    mapping->nrpages -= nr
+    (nrpages becomes 0)
 
-Fixes: 90efe055629 ("iio: st_sensors: harden interrupt handling")
-Signed-off-by: Martin Kelly <martin@martingkelly.com>
-Tested-by: Denis Ciocca <denis.ciocca@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+We don't clean the cleancache for an inode after final file truncation
+(removal).
+
+truncate_inode_pages_final
+  check (nrpages || nrexceptional) is false
+    no truncate_inode_pages
+      no cleancache_invalidate_inode(mapping)
+
+These way when reading the new file created with same inode we may get
+these trash leftover pages from cleancache and see wrong data instead of
+the contents of the new file.
+
+Fix it by always doing truncate_inode_pages which is already ready for
+nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
+
+[akpm@linux-foundation.org: add comment, per Jan]
+Link: http://lkml.kernel.org/r/20181112095734.17979-1-ptikhomirov@virtuozzo.com
+Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/magnetometer/st_magn_buffer.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ mm/truncate.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/magnetometer/st_magn_buffer.c
-+++ b/drivers/iio/magnetometer/st_magn_buffer.c
-@@ -30,11 +30,6 @@ int st_magn_trig_set_state(struct iio_tr
- 	return st_sensors_set_dataready_irq(indio_dev, state);
- }
- 
--static int st_magn_buffer_preenable(struct iio_dev *indio_dev)
--{
--	return st_sensors_set_enable(indio_dev, true);
--}
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -520,9 +520,13 @@ void truncate_inode_pages_final(struct a
+ 		 */
+ 		xa_lock_irq(&mapping->i_pages);
+ 		xa_unlock_irq(&mapping->i_pages);
 -
- static int st_magn_buffer_postenable(struct iio_dev *indio_dev)
- {
- 	int err;
-@@ -50,7 +45,7 @@ static int st_magn_buffer_postenable(str
- 	if (err < 0)
- 		goto st_magn_buffer_postenable_error;
- 
--	return err;
-+	return st_sensors_set_enable(indio_dev, true);
- 
- st_magn_buffer_postenable_error:
- 	kfree(mdata->buffer_data);
-@@ -63,11 +58,11 @@ static int st_magn_buffer_predisable(str
- 	int err;
- 	struct st_sensor_data *mdata = iio_priv(indio_dev);
- 
--	err = iio_triggered_buffer_predisable(indio_dev);
-+	err = st_sensors_set_enable(indio_dev, false);
- 	if (err < 0)
- 		goto st_magn_buffer_predisable_error;
- 
--	err = st_sensors_set_enable(indio_dev, false);
-+	err = iio_triggered_buffer_predisable(indio_dev);
- 
- st_magn_buffer_predisable_error:
- 	kfree(mdata->buffer_data);
-@@ -75,7 +70,6 @@ st_magn_buffer_predisable_error:
+-		truncate_inode_pages(mapping, 0);
+ 	}
++
++	/*
++	 * Cleancache needs notification even if there are no pages or shadow
++	 * entries.
++	 */
++	truncate_inode_pages(mapping, 0);
  }
+ EXPORT_SYMBOL(truncate_inode_pages_final);
  
- static const struct iio_buffer_setup_ops st_magn_buffer_setup_ops = {
--	.preenable = &st_magn_buffer_preenable,
- 	.postenable = &st_magn_buffer_postenable,
- 	.predisable = &st_magn_buffer_predisable,
- };
 
 
