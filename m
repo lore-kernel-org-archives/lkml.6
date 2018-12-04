@@ -7,62 +7,47 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D8EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1112C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63440214C1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CC31214D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9tHWG+D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63440214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/ItR6a+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC31214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbeLDK5s (ORCPT
+        id S1726849AbeLDK5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41838 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:57:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbeLDK5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:57:46 -0500
+        id S1726382AbeLDK5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:57:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DBC52087F;
-        Tue,  4 Dec 2018 10:57:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B656E2146D;
+        Tue,  4 Dec 2018 10:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921064;
-        bh=5J0Ya1O2/H1U6NGHKVn2whSgrnRy4LgL72KBt/j/wcU=;
+        s=default; t=1543921067;
+        bh=46VBUqWgoLtTRV+CO4Ke7u1zTn6JuBfAbxegj+VMh+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K9tHWG+DYnmo3O9ymUQNiD16RGllyCOZJr253xSyFYcmOrKxI4g7kogbgqgup1EDJ
-         hGpaT8R3oOyXxOTJ58do7NYxqHh44fO+LemO4D8YGmUoMACL7ipVAWj7c3x6DLSfUq
-         h3YdQoIq27eTRwDTxNWlFn0gTDYLSTLgMtCZ3DDE=
+        b=m/ItR6a+2khgwWCzPGAXe/xPqG3t4pJxO+ybo/G9Sd2FbMytbZQnNqwTlS1pt9jTG
+         11pFvrj/Gmt2pZm2UQrNc+PIjM2F44m5ZASnP2nBhkLRCkHDxWYza7fUXWlgKmbMBo
+         7ttsHDKvMpmQCgOEgzh5YdkIjr3x/+MccvOhtGxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.19 039/139] x86/speculation: Reorganize speculation control MSRs update
-Date:   Tue,  4 Dec 2018 11:48:40 +0100
-Message-Id: <20181204103651.589363082@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a8ef68d71211ba264f56@syzkaller.appspotmail.com,
+        Mark Kanda <mark.kanda@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 066/139] KVM: x86: Fix kernel info-leak in KVM_HC_CLOCK_PAIRING hypercall
+Date:   Tue,  4 Dec 2018 11:49:07 +0100
+Message-Id: <20181204103652.761525392@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -81,114 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Chen tim.c.chen@linux.intel.com
+From: Liran Alon <liran.alon@oracle.com>
 
-commit 01daf56875ee0cd50ed496a09b20eb369b45dfa5 upstream
+commit bcbfbd8ec21096027f1ee13ce6c185e8175166f6 upstream.
 
-The logic to detect whether there's a change in the previous and next
-task's flag relevant to update speculation control MSRs is spread out
-across multiple functions.
+kvm_pv_clock_pairing() allocates local var
+"struct kvm_clock_pairing clock_pairing" on stack and initializes
+all it's fields besides padding (clock_pairing.pad[]).
 
-Consolidate all checks needed for updating speculation control MSRs into
-the new __speculation_ctrl_update() helper function.
+Because clock_pairing var is written completely (including padding)
+to guest memory, failure to init struct padding results in kernel
+info-leak.
 
-This makes it easy to pick the right speculation control MSR and the bits
-in MSR_IA32_SPEC_CTRL that need updating based on TIF flags changes.
+Fix the issue by making sure to also init the padding with zeroes.
 
-Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
+Fixes: 55dd00a73a51 ("KVM: x86: add KVM_HC_CLOCK_PAIRING hypercall")
+Reported-by: syzbot+a8ef68d71211ba264f56@syzkaller.appspotmail.com
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185004.151077005@linutronix.de
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/process.c |   42 +++++++++++++++++++++++++++---------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
 
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -395,27 +395,40 @@ static __always_inline void amd_set_ssb_
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
+---
+ arch/x86/kvm/x86.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6788,6 +6788,7 @@ static int kvm_pv_clock_pairing(struct k
+ 	clock_pairing.nsec = ts.tv_nsec;
+ 	clock_pairing.tsc = kvm_read_l1_tsc(vcpu, cycle);
+ 	clock_pairing.flags = 0;
++	memset(&clock_pairing.pad, 0, sizeof(clock_pairing.pad));
  
--static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
-+/*
-+ * Update the MSRs managing speculation control, during context switch.
-+ *
-+ * tifp: Previous task's thread flags
-+ * tifn: Next task's thread flags
-+ */
-+static __always_inline void __speculation_ctrl_update(unsigned long tifp,
-+						      unsigned long tifn)
- {
--	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
-+	u64 msr = x86_spec_ctrl_base;
-+	bool updmsr = false;
- 
--	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
--}
-+	/* If TIF_SSBD is different, select the proper mitigation method */
-+	if ((tifp ^ tifn) & _TIF_SSBD) {
-+		if (static_cpu_has(X86_FEATURE_VIRT_SSBD)) {
-+			amd_set_ssb_virt_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD)) {
-+			amd_set_core_ssb_state(tifn);
-+		} else if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
-+			   static_cpu_has(X86_FEATURE_AMD_SSBD)) {
-+			msr |= ssbd_tif_to_spec_ctrl(tifn);
-+			updmsr  = true;
-+		}
-+	}
- 
--static __always_inline void __speculation_ctrl_update(unsigned long tifn)
--{
--	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
--		amd_set_ssb_virt_state(tifn);
--	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
--		amd_set_core_ssb_state(tifn);
--	else
--		spec_ctrl_update_msr(tifn);
-+	if (updmsr)
-+		wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
- void speculation_ctrl_update(unsigned long tif)
- {
-+	/* Forced update. Make sure all relevant TIF flags are different */
- 	preempt_disable();
--	__speculation_ctrl_update(tif);
-+	__speculation_ctrl_update(~tif, tif);
- 	preempt_enable();
- }
- 
-@@ -451,8 +464,7 @@ void __switch_to_xtra(struct task_struct
- 	if ((tifp ^ tifn) & _TIF_NOCPUID)
- 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
- 
--	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculation_ctrl_update(tifn);
-+	__speculation_ctrl_update(tifp, tifn);
- }
- 
- /*
+ 	ret = 0;
+ 	if (kvm_write_guest(vcpu->kvm, paddr, &clock_pairing,
 
 
