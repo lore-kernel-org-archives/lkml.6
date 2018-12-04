@@ -2,132 +2,110 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE26C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D56BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617CB2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06E0214DA
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:59:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHKuavhB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617CB2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEFBBI4j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06E0214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbeLDK7L (ORCPT
+        id S1727105AbeLDK7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726395AbeLDK7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DA9420878;
-        Tue,  4 Dec 2018 10:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921145;
-        bh=Otkclb+QcbCvkVUa9dq/BC19nECr3Efghy3FUhMYg0s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HHKuavhBhRi04XOVO7waYQZT8k5kUXqC0kTjzgzFrYHcyRAsLPNAGMet8roYSuiPk
-         ZooofTVWtWYiDVuO7s1CutNGcRxXiuSJdMZ9IGYUfZSIvqHx1brFdTPTUlPdHpMYUk
-         fkACySy/gqfsVBx2Xj3WJNkR0gjHOYzZLxfz0ZWI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 098/139] function_graph: Create function_graph_enter() to consolidate architecture code
-Date:   Tue,  4 Dec 2018 11:49:39 +0100
-Message-Id: <20181204103654.446058411@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
-References: <20181204103649.950154335@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 4 Dec 2018 05:59:16 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40379 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeLDK7O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:14 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so8026388pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 02:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kLMyn07eWuFNccovBcYb76ynW+lFnhZe6SryOKDeUuo=;
+        b=ZEFBBI4j2LiOoCdRDZ3MtDrPPN8swirJomj4QzNXxtDFUMMcFj3LWu+FC8ocF5McmV
+         h7J4xo85Ctnr0TW2jQ1pbaAkjdIYKzx25XeTUiD6Q260/P/42z9aBke/G2oOQ9d50cMX
+         UMCdDCh6n5BJ0JCVq0ti8GEqOfMuI1OEnoo9ElqFwVieptp79FpgZSZHDHUjhv9olyAV
+         Q9vCc9dR3lC+fv01e7Hugq8NMFQvJvees+IWw+gUHoqwSoDl09LeJatxBSHAwYi7Qqxu
+         ht/raGDApQYasH+4RZYFWdaUeOK/1RZxaVlNvnVL7GCwdYAEFElrflXydaNasQYut5Ur
+         5k0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kLMyn07eWuFNccovBcYb76ynW+lFnhZe6SryOKDeUuo=;
+        b=K4KN8dMVzW25a2P5G6c1HfZk9JeZmm4IIWLw/U932eKWYdC4nMPW85t6VvrV1J3lPd
+         PIZb++8cdmz/3d1hlEBBOHIeZ9ijTG7fIwIRqggMY3aJpsUON7O0rUHQmdwefj259sxp
+         r9vxG2yJ2OdwE/YigqMY5xhckVc9vim8Eb6ZFHWRIdDcF4wo+zX86IuNmCKRCeqB2gT5
+         kvJ2GIftrA61pIydycC1snCwT+Cx9KJDK5071bOJjojR5Xm+BcoSdMyvr6BWHuhNPq3Z
+         3LCbNnRYDB6efkXqUB8D1JFNcsbJIfYU4MxGRVVBrHOCipvfDfnLq33mcluj4XPgbgs3
+         tO8g==
+X-Gm-Message-State: AA+aEWZJcNRtY9hHe0R9ygCdnIcTz/TC7Mcapj9+MLhMRLVJyCoXTYtc
+        KWJdGe7epybQ7JGK4TezjsbCSJwk
+X-Google-Smtp-Source: AFSGD/WfPjzArBVPMN3aCS/OqQ6e21TwX27sAga91V/SnymO87M+/oxXP/el+dFrBb2FUOlAHjgGYQ==
+X-Received: by 2002:aa7:8497:: with SMTP id u23mr19451478pfn.220.1543921153165;
+        Tue, 04 Dec 2018 02:59:13 -0800 (PST)
+Received: from localhost ([175.223.44.178])
+        by smtp.gmail.com with ESMTPSA id 79sm17491555pge.66.2018.12.04.02.59.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 02:59:11 -0800 (PST)
+Date:   Tue, 4 Dec 2018 19:59:08 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: don't unconditionally shortcut print_time()
+Message-ID: <20181204105908.GC530@jagdpanzerIV>
+References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181129141921.djeumz723fr7pasn@pathway.suse.cz>
+ <201811300226.wAU2Q2JG060388@www262.sakura.ne.jp>
+ <20181130123027.cyqfi2k34nh2gjmx@pathway.suse.cz>
+ <02b4ce85-c1e5-6601-e3a7-cecfbd5298dc@i-love.sakura.ne.jp>
+ <8634f952-7a14-055d-943c-d219ab5d8c1b@i-love.sakura.ne.jp>
+ <1c1de4f8-f08e-37e5-2438-47ab985d476e@i-love.sakura.ne.jp>
+ <20181204025614.GC7580@jagdpanzerIV>
+ <555af37c-b9e0-f940-cb73-a78eba2d4944@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <555af37c-b9e0-f940-cb73-a78eba2d4944@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On (12/04/18 19:06), Tetsuo Handa wrote:
+> On 2018/12/04 11:56, Sergey Senozhatsky wrote:
+> > Can we please have something better than 'f'?
+>
+> OK. To pass 80 column limit, one line increased. ;-)
 
-------------------
+Ah, so that was the reason :)
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[..]
 
-commit 8114865ff82e200b383e46821c25cb0625b842b5 upstream.
+> To close this race, get a snapshot value of printk_time and pass it to
+> SYSLOG_ACTION_READ, SYSLOG_ACTION_READ_ALL, SYSLOG_ACTION_SIZE_UNREAD and
+> kmsg_dump_get_buffer().
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Acked-by: Petr Mladek <pmladek@suse.com>
 
-Currently all the architectures do basically the same thing in preparing the
-function graph tracer on entry to a function. This code can be pulled into a
-generic location and then this will allow the function graph tracer to be
-fixed, as well as extended.
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Create a new function graph helper function_graph_enter() that will call the
-hook function (ftrace_graph_entry) and the shadow stack operation
-(ftrace_push_return_trace), and remove the need of the architecture code to
-manage the shadow stack.
-
-This is needed to prepare for a fix of a design bug on how the curr_ret_stack
-is used.
-
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- include/linux/ftrace.h               |    3 +++
- kernel/trace/trace_functions_graph.c |   16 ++++++++++++++++
- 2 files changed, 19 insertions(+)
-
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -779,6 +779,9 @@ extern void return_to_handler(void);
- extern int
- ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
- 			 unsigned long frame_pointer, unsigned long *retp);
-+extern int
-+function_graph_enter(unsigned long ret, unsigned long func,
-+		     unsigned long frame_pointer, unsigned long *retp);
- 
- unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
- 				    unsigned long ret, unsigned long *retp);
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -182,6 +182,22 @@ ftrace_push_return_trace(unsigned long r
- 	return 0;
- }
- 
-+int function_graph_enter(unsigned long ret, unsigned long func,
-+			 unsigned long frame_pointer, unsigned long *retp)
-+{
-+	struct ftrace_graph_ent trace;
-+
-+	trace.func = func;
-+	trace.depth = current->curr_ret_stack + 1;
-+
-+	/* Only trace if the calling function expects to */
-+	if (!ftrace_graph_entry(&trace))
-+		return -EBUSY;
-+
-+	return ftrace_push_return_trace(ret, func, &trace.depth,
-+					frame_pointer, retp);
-+}
-+
- /* Retrieve a function return address to the trace stack on thread info.*/
- static void
- ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
-
-
+	-ss
