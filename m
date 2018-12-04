@@ -2,97 +2,116 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE281C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE91C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82021206B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:37:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mrm9kC3H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82021206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 07C37208E7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 16:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C37208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbeLDQhG (ORCPT
+        id S1727007AbeLDQi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:37:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44072 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbeLDQhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:37:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so8466816pfh.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 08:37:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=E3Vue+GYHhxlBh/4CTCsLMymNzd62WD3fIT5gcFNc70=;
-        b=mrm9kC3HC6VPHGzlpDgOtKH+ykfzjd8wrdqmu4PdvJ5PhGHFS09fqqyxR9a1SRYpGl
-         Jc4Bqs4xjimMIQ4o5WlhVXzx/mN7hjzXWk8xWJvBEkHPzCnZ1P+ZRf7ZyFYq5sdkjuTC
-         3PiBnTPPFoCH4S51y0OU9l7Eu4KSkw3jMXtDk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=E3Vue+GYHhxlBh/4CTCsLMymNzd62WD3fIT5gcFNc70=;
-        b=thhquZYZ+KyWsuxSTWK5nbU/o3NOuut+F1wozniz4L8ITiUXh0YMf+ltCw0fdIcQuY
-         91g/QQYDdQIjwuABkv5KNp8qcYVcvpEUFoVcGBAhyDlJT01rvVn0wr/0+f41nkVFESlX
-         Yeh8LC3ONWM4fEimUD75leuvSUS1FuLdJcSLFOx/HPo+A2/a2lN7Wr7VcaDW/QWNXY9L
-         Y2AxAzkFRZpmQNaxrvxpKjA5xIP9CbAuFh+3iryxHwqAI3rh8NX/JT62wlMvTXN8qH0Q
-         9PpRmLU78E/KxiKtOIxJOluMmqhUq8dGlxWtKVHoivNcak0G/++s7hXQJfftAd7guZrl
-         A1Ag==
-X-Gm-Message-State: AA+aEWbUGSWMSKVsnniHdrHZ9pb9nn/x8XIdZxIHhTXmIGUlbXScFfTt
-        OJUn+ix7EoqugwxqQ+kEV3cRdA==
-X-Google-Smtp-Source: AFSGD/VGAIE7ncxFKKGOfSfmR/PpT5xPyzLhXZS7kIpEfsAMFhGmzCS7bV6aUEupypHeVgxr4Hu9mg==
-X-Received: by 2002:a62:37c3:: with SMTP id e186mr21253696pfa.251.1543941425532;
-        Tue, 04 Dec 2018 08:37:05 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id c13sm24532685pfo.121.2018.12.04.08.37.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 08:37:04 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 4 Dec 2018 11:38:58 -0500
+Received: from mga06.intel.com ([134.134.136.31]:7130 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeLDQi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:38:58 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 08:38:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,314,1539673200"; 
+   d="scan'208";a="115902335"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 04 Dec 2018 08:38:52 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gUDik-0003jU-02; Tue, 04 Dec 2018 18:38:50 +0200
+Date:   Tue, 4 Dec 2018 18:38:49 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Joe Perches <joe@perches.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 02/21] lib/vsprintf: Print time and date in human
+ readable format via %pt
+Message-ID: <20181204163849.GE10650@smile.fi.intel.com>
+References: <20181129105956.25933-1-andriy.shevchenko@linux.intel.com>
+ <20181129105956.25933-3-andriy.shevchenko@linux.intel.com>
+ <20181204133028.xkdnc5bqtqlnb3zu@pathway.suse.cz>
+ <20181204161242.GD10650@smile.fi.intel.com>
+ <CAMuHMdUXQX=Y6K5XZok38W75KSBM+5PNRMKMhavNG_JtbxoNAw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181201005254.139908-2-mka@chromium.org>
-Cc:     Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-References: <20181201005254.139908-1-mka@chromium.org>
- <20181201005254.139908-2-mka@chromium.org>
-Message-ID: <154394142383.88331.5951120294209155140@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 1/8] dt-bindings: msm/dsi: Add ref clock for PHYs
-Date:   Tue, 04 Dec 2018 08:37:03 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUXQX=Y6K5XZok38W75KSBM+5PNRMKMhavNG_JtbxoNAw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Kaehlcke (2018-11-30 16:52:47)
-> Allow the PHY drivers to get the ref clock from the DT.
-> =
+On Tue, Dec 04, 2018 at 05:16:58PM +0100, Geert Uytterhoeven wrote:
+> On Tue, Dec 4, 2018 at 5:12 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Dec 04, 2018 at 02:30:28PM +0100, Petr Mladek wrote:
+> > > On Thu 2018-11-29 12:59:40, Andy Shevchenko wrote:
+> > > > There are users which print time and date represented by content of
+> > > > struct rtc_time in human readable format.
+> > > >
+> > > > Instead of open coding that each time introduce %ptR[dt][r] specifier.
+> >
+> > > > +static void __init
+> > > > +struct_rtc_time(void)
+> > > > +{
+> > > > +}
+> > >
+> > > Just by chance, do you have any plans to add the test code? ;-)
+> > >
+> > > I understand that you did now want to spend time on it before
+> > > the real change was accepted.
+> >
+> > You see, there were several iterations with no consensus on everything:
+> > specifier format changed 3 times, for example.
+> >
+> > But it might be good idea to eventually add couple simple tests at some point.
+> >
+> > Is it a show stopper?
+> 
+> Can the user trigger formatting, and exploit a bug in the formatting code?
 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
+Might happen, it's a software at the end.
+Do we need to revisit all formatting specifiers right now?
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+In any case, to be productive out of this discussion, I would like to gather
+test cases you want to see.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
