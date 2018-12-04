@@ -2,115 +2,104 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6C8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4CDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A46206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FECA206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 15:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0hXyPnI9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A46206B7
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="P0CNRjdX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FECA206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeLDPJL (ORCPT
+        id S1726656AbeLDPKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 10:09:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57026 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeLDPJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:09:10 -0500
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BC6214DA;
-        Tue,  4 Dec 2018 15:09:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543936149;
-        bh=+0MI/8EOCqbI1qFoWjATuKQrFBYgzbVNInZxkwwjqEM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0hXyPnI9maJyqcmzB6tMN4pIULVnhwcNY4dEKGfbJxU1GFyu/FoWh7TzessGN03cZ
-         s/rGuYd11D1t1GeUI0SOQwFVIOJlnCSH2FrdqhPNho5g/tLINU/kkTfPDLdepWZRDC
-         GmnQOyJlSCRF9CMIS6hXfsXK//Ld8wZn6+P3moGM=
-Received: by mail-qk1-f177.google.com with SMTP id d19so9792120qkg.5;
-        Tue, 04 Dec 2018 07:09:09 -0800 (PST)
-X-Gm-Message-State: AA+aEWY9sHymcanqU2SOR8zn5A3GxE49uOhLPlJrZng/RUcP/6H7yxTg
-        E7/LPQRcgDoQF4E/wqC3b0ybjwr0vTDvYjOqlA==
-X-Google-Smtp-Source: AFSGD/VUggFDQVcQ6qA6a8K2W5gIb5rqDIXHwIpEuSzH4QIaox5BhRGzLSfFb7Q1X7Odc6q1CLQrY+AToiydWVRNR2k=
-X-Received: by 2002:a37:5686:: with SMTP id k128mr17892902qkb.29.1543936148619;
- Tue, 04 Dec 2018 07:09:08 -0800 (PST)
+        Tue, 4 Dec 2018 10:10:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39872 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbeLDPKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 10:10:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1x+InGfy+R+JKyg18Jez/GqAMNx8TbwgBoRZ07sXDXY=; b=P0CNRjdX02l/PUg/RZeaCIkUI
+        UrOexDN/m4FYbmWt9Nsa8DrBsxy3YlxPkXi3ZuxtJHuMT37f6xTtg8APpVtmYUVO28V/LsEzx3baT
+        bWEJfNP+vO7DLU/wFvfGe3L4cFjm2U59/rtmiAoxw1pIBQOoTW6CNsO7fluaKUnYKOHI8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gUCKh-0007XZ-8E; Tue, 04 Dec 2018 15:09:55 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B144111251E3; Tue,  4 Dec 2018 15:09:54 +0000 (GMT)
+Date:   Tue, 4 Dec 2018 15:09:54 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        Olliver Schinagl <oliver@schinagl.nl>
+Subject: Re: [PATCH 06/14] regulator: axp20x: add software based soft_start
+ for AXP209 LDO3
+Message-ID: <20181204150954.GC6809@sirena.org.uk>
+References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
+ <41cb1b4dac3a15595c89fa962b78d3f68f370021.1543245984.git-series.plaes@plaes.org>
+ <20181127093619.72ensythkx2mhdf5@flea>
+ <20181204133144.eqd3dk3jgqm4fbk4@plaes.org>
 MIME-Version: 1.0
-References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-27-robh@kernel.org>
- <20181204144822.uqonsto45u7ysdu5@verge.net.au> <CAMuHMdV5brJyAmP0Bj7Bp7wruLNM1tSWkj_AyN5HCx4vdg-nrg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV5brJyAmP0Bj7Bp7wruLNM1tSWkj_AyN5HCx4vdg-nrg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 4 Dec 2018 09:08:57 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJX9eb58piavQayXM5j5GXxsGxmy93m5oRKtghMFvkhuA@mail.gmail.com>
-Message-ID: <CAL_JsqJX9eb58piavQayXM5j5GXxsGxmy93m5oRKtghMFvkhuA@mail.gmail.com>
-Subject: Re: [PATCH v2 26/34] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
+Content-Disposition: inline
+In-Reply-To: <20181204133144.eqd3dk3jgqm4fbk4@plaes.org>
+X-Cookie: The sum of the Universe is zero.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 8:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Simon,
->
-> On Tue, Dec 4, 2018 at 3:48 PM Simon Horman <horms@verge.net.au> wrote:
-> > On Mon, Dec 03, 2018 at 03:32:15PM -0600, Rob Herring wrote:
-> > > Convert Renesas SoC bindings to DT schema format using json-schema.
-> > >
-> > > Cc: Simon Horman <horms@verge.net.au>
-> > > Cc: Magnus Damm <magnus.damm@gmail.com>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: linux-renesas-soc@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  .../devicetree/bindings/arm/shmobile.txt      | 151 ------------
-> > >  .../devicetree/bindings/arm/shmobile.yaml     | 218 ++++++++++++++++++
-> > >  2 files changed, 218 insertions(+), 151 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
-> >
-> > Hi Rob,
-> >
-> > what is this based on? I get a conflict when applying the .txt change
-> > and if I knew the base for this patch it would be rather easy to work
-> > out what has changed.
 
-4.20-rc2
+--qjNfmADvan18RZcF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >
-> > Also, should we do an s/shmobile.txt/shmobile.yaml/ in MAINTAINERS?
+On Tue, Dec 04, 2018 at 01:31:44PM +0000, Priit Laes wrote:
 
-Yes. Though it was pointed out that get_maintainers.pl can pull emails
-out of this file. We'd need to get that to work by default though.
+> Yes, makes sense. Although, should we then also distinguish between
+> regulators which support soft-start in hardware and devices which emulate
+> it by delay, like in this case?
 
-> Probably even s/shmobile.yaml/renesas.yaml/, while at it?
+Drivers should not be emulating soft start, if they need a ramp delay
+they should set that in their descriptor and let the framework do it.
 
-Sure, if that's what you all want.
+--qjNfmADvan18RZcF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Rob
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwGmMEACgkQJNaLcl1U
+h9CpFQf/SOm+w6bfzdiV1mRAj1uTKpc8/3V/4pVfrGTWO1zcbprN9Bhwx/eucEeR
+hNTs3C6ApYsMW3cYqgbc/FhcNvsTCF4dLs73wkRpTOYV011dtkvJfnyFJZ0gD1ko
+R+G/vg+PO7DAogzZVPbU2/LezobGagpma578ucZVUdesyv4PVOx6RB4Llg07sfIn
+NFGEMfRjjOziJpg24raKgigiZBx54Cz9q7e0b19pJAeYl+Xb1I05QNN2C66Vf853
+ZdLfvbyC+4ucB02jZmydtJqf1YYG58KwcI+2wcx4CCYxzbC7pP3yVGfUxlzLxZjR
+0+ZWUI+2xKFwR1VBuHpWQJ9whgroQg==
+=cKg0
+-----END PGP SIGNATURE-----
+
+--qjNfmADvan18RZcF--
