@@ -2,181 +2,99 @@ Return-Path: <SRS0=p5KC=ON=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 194F8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE4AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC18520834
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC18520834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F3CC20851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:45:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="HXaQnP5Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F3CC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeLDKkl (ORCPT
+        id S1726125AbeLDKph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:40:41 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:37149 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbeLDKkl (ORCPT
+        Tue, 4 Dec 2018 05:45:37 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40164 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDKph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:40:41 -0500
-Received: from [10.18.29.147] (10.18.29.147) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 4 Dec 2018
- 18:40:55 +0800
-Subject: Re: [PATCH v6 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
- controller driver
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Rob Herring <robh@kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <1542876836-191355-1-git-send-email-hanjie.lin@amlogic.com>
- <1542876836-191355-3-git-send-email-hanjie.lin@amlogic.com>
- <20181203164150.GA11855@e107981-ln.cambridge.arm.com>
- <20181203225731.GE207198@google.com>
-From:   Hanjie Lin <hanjie.lin@amlogic.com>
-Message-ID: <1bc8f5bd-6f69-4867-89ca-e5a611da9136@amlogic.com>
-Date:   Tue, 4 Dec 2018 18:40:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181203225731.GE207198@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.147]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+        Tue, 4 Dec 2018 05:45:37 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so8009956pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 02:45:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=lw9dv8XtfZcbn7EFOqB9w5nPQid5fHNBwj4EA4pjoCI=;
+        b=HXaQnP5Qh3ow5wxkyC0HHl3isat0FQe6KyrGS3hp5h2rVEVJYqBMVZb+eW71IbAi5t
+         sGsmiY+SZ3Ds+vahPolmRRuw1RgLLVJ9f7IaxGwwLbw7QvgFrm52CKZ68AXDrgwHQeA4
+         WGM4uQ/U4qzoVi9AlR3ZTqvMkzP0Rca9D+nlgMtsc0/KVoLqkOcV4mVOuTJwsLzEuMZa
+         aQRojEOx/lDmz9oz1qTULL9pJ04bRKMrNZfLWyFztfm/YZWvvTPZb3Ax0GCYG4O4/Jve
+         tSgZmn5lDrwo8kYjH5fHbjtWM3drGHsigDFr271ZbnyYmMFAs9J+afBa77sLe41bPB9d
+         TqFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lw9dv8XtfZcbn7EFOqB9w5nPQid5fHNBwj4EA4pjoCI=;
+        b=E92byhfPoZsiqbORTGjm1kAhR0zjUg0TMWj4IVbQuMq8LbsZtDYL11zjLFkNee7mUH
+         deY7DnT0ZgD0SJET7oipIwuf+2cmymsa7yz40O7iu6Y48T7ag7tntX+7qjQZIxEfmh+i
+         SegIM3oVcJzDU6fUUaErDmeGWaATxXjLAyRkQwzJvuydz5s4+3B98RB+DNxN2+bTMjS+
+         azbHz5oyga7N3DGjj2YHYhdyBb1+Apyt4HSRm19uXPmGFWwa2wpxLUKoVoEO2jfJrGdg
+         cvOPDwrmMTxHby8VHjmptv74WLaNeK/XsRSiXSgLuax6rqyRXK1qcts6PxQFF4eqsGc+
+         SSiw==
+X-Gm-Message-State: AA+aEWbRbT0mJOCYjtT9rfB9+hXJgy1xibC40bzeAAMLEnUk1GOGWzS7
+        wpkP8G0WlokWvXl3656ylzsW5w==
+X-Google-Smtp-Source: AFSGD/VWLw+81cALEKeJeVhuXT2s0lnov+7mGExOsyEKWPIIzXzan6QNeE3rORL7IIxprQguLCNdig==
+X-Received: by 2002:a62:cf84:: with SMTP id b126mr19345510pfg.98.1543920336142;
+        Tue, 04 Dec 2018 02:45:36 -0800 (PST)
+Received: from anup-ubuntu64.qualcomm.com ([106.51.23.39])
+        by smtp.googlemail.com with ESMTPSA id s37sm19034734pgm.19.2018.12.04.02.45.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 02:45:35 -0800 (PST)
+From:   Anup Patel <anup@brainfault.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anup Patel <anup@brainfault.org>
+Subject: [PATCH v2 0/2] Provide sched_clock for riscv_timer
+Date:   Tue,  4 Dec 2018 15:59:50 +0530
+Message-Id: <20181204102952.21297-1-anup@brainfault.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset extends riscv_timer to provide sched_clock using generic
+sched_clock framework.
 
+The patchset is tested on QEMU virt machine. It is based on Linux-4.20-rc5
+and can be found at riscv_sched_clock_v2 branch of:
+https://github.com/avpatel/linux.git
 
-On 2018/12/4 6:57, Bjorn Helgaas wrote:
-> On Mon, Dec 03, 2018 at 04:41:50PM +0000, Lorenzo Pieralisi wrote:
->> On Thu, Nov 22, 2018 at 04:53:54PM +0800, Hanjie Lin wrote:
->>
->> [...]
->>
->>> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
->>> +				  u32 *val)
->>> +{
->>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>> +
->>> +	/*
->>> +	 * there is a bug of MESON AXG pcie controller that software can not
->>> +	 * programe PCI_CLASS_DEVICE register, so we must return a fake right
->>> +	 * value to ensure driver could probe successfully.
->>> +	 */
->>> +	if (where == PCI_CLASS_REVISION) {
->>> +		*val = readl(pci->dbi_base + PCI_CLASS_REVISION);
->>> +		/* keep revision id */
->>> +		*val &= PCI_CLASS_REVISION_MASK;
->>> +		*val |= PCI_CLASS_BRIDGE_PCI << 16;
->>> +		return PCIBIOS_SUCCESSFUL;
->>> +	}
->>
->> As I said before, this looks broken. If this code (or other drivers with
->> the same broken assumptions, eg dwc/pcie-qcom.c) carries out a, say,
->> byte sized config access of eg PCI_CLASS_DEVICE you will get junk out of
->> it according to your comment above.
->>
->> I would like to pick Bjorn's brain on this to see what we can really do
->> to fix this (and other) drivers.
-> 
->   - Check to see whether you're reading anything in the 32-bit dword at
->     offset 0x08.
-> 
->   - Do the 32-bit readl().
-> 
->   - Insert the correct Sub-Class and Base Class code (you also throw
->     away the Programming Interface; not sure why that is)
-> 
->   - If you're reading something smaller than 32 bits, mask & shift as
->     needed.  pci_bridge_emul_conf_read() does something similar that
->     you might be able to copy.
-> 
-> Out of curiosity, what code depends on PCI_CLASS_BRIDGE_PCI?  There
-> are several places in the kernel that currently depend on it, but I
-> think several of them *should* be checking dev->hdr_type to identify a
-> type 1 header instead.
-> 
-> Bjorn
-> 
-> .
-> 
+Changes since v1:
+ - Added patch to select GENERIC_SCHED_CLOCK for RISC-V
+ - Kconfig RISCV_TIMER depends on GENERIC_SCHED_CLOCK
 
-Yes, it would be broken in particular scenes(eg: read 1 or 2 bytes from 0xa/PCI_CLASS_DEVICE)
-that I didn't considered.
- 
-As your suggestion, I consider some code below may help this issue:
-1, First call dw_pcie_read() help to read 1/2/4 bytes from register,
-   request all other *size* bytes will return error and dw_pcie_read()
-   will also check register alignment.
- 
-2, If dw_pcie_read() return success and *where* is 0x8/PCI_CLASS_DEVICE or 0xa/PCI_CLASS_REVISION,
-   we may need to correct class code.
-   As PCI_CLASS_REVISION is two-bytes register, so only when read 4 bytes from 0x8/PCI_CLASS_DEVICE
-   or read 2 bytes from 0xa/PCI_CLASS_REVISION we should correct the class code.
- 
-ps: read 1 byte from 0xa/PCI_CLASS_REVISION or 0xb will get incorrect value.
+Anup Patel (2):
+  RISC-V: Select GENERIC_SCHED_CLOCK for clocksource drivers
+  clocksource: riscv_timer: Provide sched_clock
 
-static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
-                u32 *val)
-{
-        struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-        int ret;
+ arch/riscv/Kconfig                | 1 +
+ drivers/clocksource/Kconfig       | 2 +-
+ drivers/clocksource/riscv_timer.c | 9 +++++++++
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-        ret = dw_pcie_read(pci->dbi_base + where, size, val);
-        if (ret != PCIBIOS_SUCCESSFUL)
-                return ret;
+-- 
+2.17.1
 
-        /*
-        * there is a bug of MESON AXG pcie controller that software can not
-        * programe PCI_CLASS_DEVICE register, so we must return a fake right
-        * value to ensure driver could probe successfully.
-        */
-        if (where == PCI_CLASS_REVISION && size == 4)
-                *val = (PCI_CLASS_BRIDGE_PCI << 16) | (*val & 0xffff);
-        else if (where == PCI_CLASS_DEVICE && size == 2)
-                *val = PCI_CLASS_BRIDGE_PCI;
-
-        return PCIBIOS_SUCCESSFUL;
-}
-
-3, We must ensure class is PCI_CLASS_BRIDGE_PCI except right hdr_type,
-   or pci_setup_device() will get failed: 
-
-   ...
-   class = pci_class(dev);
-   dev->revision = class & 0xff;
-   dev->class = class >> 8; /* upper 3 bytes */ 
-   ....
-   switch (dev->hdr_type) { /* header type */
-   ... 
-   case PCI_HEADER_TYPE_BRIDGE: /* bridge header */
-      if (class != PCI_CLASS_BRIDGE_PCI)  /* class must be PCI_CLASS_BRIDGE_PCI  */
-         goto bad; 
-
-
-thanks.
-
-hanjie
