@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98DDEC04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42583C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD932146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F5020851
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:27:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hyw+1jS7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD932146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqjxS+Jy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09F5020851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeLDL1o (ORCPT
+        id S1727246AbeLDL1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:27:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43790 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:27:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbeLDK7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:59:08 -0500
+        id S1726478AbeLDK7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:59:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3C3C20878;
-        Tue,  4 Dec 2018 10:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2AE820878;
+        Tue,  4 Dec 2018 10:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921148;
-        bh=dqMrdYDBaAcZkxFnsx1RiALqPWEHC2M0qerNBzCbwHQ=;
+        s=default; t=1543921140;
+        bh=RMqPb0/uLSaMd3RqDPGy7ypNKVCnuNFx2P/MfFax3fA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hyw+1jS7BuDLfV17y7u95HF7+t5GzPn1RjFxnGLT6g9JnncZpcVI+cFhU219y/aTl
-         WxnnwIHcftnBSoh8J5Bs3KAob3l3xC+ru/aHflBaIqutjkMLPSJe8NQcGRDxqZrtu8
-         FJfO8ZJHTmAeZ5y1K1YPi6h5qxuEGjhnVKMf5cyE=
+        b=eqjxS+Jy9NnaPvbvgMozHBfGAxVKBN1X7zSp3x8wig+mdeKTodiU/2xIz5779tPFO
+         500VyrmlysMIna5p/noGRPkoVCs5eMVmqH9/wDK8XKgYwcHab2DWnlbz+g50NJrj1x
+         vR3Uk/1/1aUKGb7I7dTZN8f81UvH26SkpIL3jVdk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, stable@kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 099/139] ARM: function_graph: Simplify with function_graph_enter()
-Date:   Tue,  4 Dec 2018 11:49:40 +0100
-Message-Id: <20181204103654.523899144@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 096/139] ALSA: hda/realtek - fix the pop noise on headphone for lenovo laptops
+Date:   Tue,  4 Dec 2018 11:49:37 +0100
+Message-Id: <20181204103654.341269777@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -64,66 +63,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit f1f5b14afd7cce39e6a9b25c685e1ea34c231096 upstream.
+commit c4cfcf6f4297c9256b53790bacbbbd6901fef468 upstream.
 
-The function_graph_enter() function does the work of calling the function
-graph hook function and the management of the shadow stack, simplifying the
-work done in the architecture dependent prepare_ftrace_return().
+We have several Lenovo laptops with the codec alc285, when playing
+sound via headphone, we can hear click/pop noise in the headphone,
+if we let the headphone share the DAC of NID 0x2 with the speaker,
+the noise disappears.
 
-Have ARM use the new code, and remove the shadow stack management as well as
-having to set up the trace structure.
+The Lenovo laptops here include P52, P72, X1 yoda2 and X1 carbon.
 
-This is needed to prepare for a fix of a design bug on how the curr_ret_stack
-is used.
+I have tried to set preferred_dacs and override_conn, but neither of
+them worked. Thanks for Kailang, he told me to invalidate the NID 0x3
+through override_wcaps.
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+BugLink: https://bugs.launchpad.net/bugs/1805079
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/kernel/ftrace.c |   17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+ sound/pci/hda/patch_realtek.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/arm/kernel/ftrace.c
-+++ b/arch/arm/kernel/ftrace.c
-@@ -227,9 +227,7 @@ void prepare_ftrace_return(unsigned long
- 			   unsigned long frame_pointer)
- {
- 	unsigned long return_hooker = (unsigned long) &return_to_handler;
--	struct ftrace_graph_ent trace;
- 	unsigned long old;
--	int err;
- 
- 	if (unlikely(atomic_read(&current->tracing_graph_pause)))
- 		return;
-@@ -237,21 +235,8 @@ void prepare_ftrace_return(unsigned long
- 	old = *parent;
- 	*parent = return_hooker;
- 
--	trace.func = self_addr;
--	trace.depth = current->curr_ret_stack + 1;
--
--	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace)) {
-+	if (function_graph_enter(old, self_addr, frame_pointer, NULL))
- 		*parent = old;
--		return;
--	}
--
--	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
--				       frame_pointer, NULL);
--	if (err == -EBUSY) {
--		*parent = old;
--		return;
--	}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5361,6 +5361,16 @@ static void alc274_fixup_bind_dacs(struc
+ 	spec->gen.preferred_dacs = preferred_pairs;
  }
  
- #ifdef CONFIG_DYNAMIC_FTRACE
++/* The DAC of NID 0x3 will introduce click/pop noise on headphones, so invalidate it */
++static void alc285_fixup_invalidate_dacs(struct hda_codec *codec,
++			      const struct hda_fixup *fix, int action)
++{
++	if (action != HDA_FIXUP_ACT_PRE_PROBE)
++		return;
++
++	snd_hda_override_wcaps(codec, 0x03, 0);
++}
++
+ /* for hda_fixup_thinkpad_acpi() */
+ #include "thinkpad_helper.c"
+ 
+@@ -5498,6 +5508,7 @@ enum {
+ 	ALC255_FIXUP_DELL_HEADSET_MIC,
+ 	ALC295_FIXUP_HP_X360,
+ 	ALC221_FIXUP_HP_HEADSET_MIC,
++	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6365,6 +6376,10 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
++	[ALC285_FIXUP_LENOVO_HEADPHONE_NOISE] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc285_fixup_invalidate_dacs,
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7038,6 +7053,11 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60130},
+ 		{0x19, 0x03a11020},
+ 		{0x21, 0x0321101f}),
++	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
++		{0x12, 0x90a60130},
++		{0x14, 0x90170110},
++		{0x19, 0x04a11040},
++		{0x21, 0x04211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0288, 0x1028, "Dell", ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60120},
+ 		{0x14, 0x90170110},
 
 
