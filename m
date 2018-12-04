@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA79C04EBF
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10804C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9BD421508
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81A9214ED
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:02:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTBasTAw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BD421508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="akwQIwfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81A9214ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeLDLCS (ORCPT
+        id S1727615AbeLDLCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:02:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:02:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbeLDLCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:02:10 -0500
+        id S1727258AbeLDLCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:02:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C156214DB;
-        Tue,  4 Dec 2018 11:02:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E76DE214DA;
+        Tue,  4 Dec 2018 11:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921329;
-        bh=tpVRgvEDRRBHA/fbwUNg4r4hyYsncQwPgNmYbL4nagE=;
+        s=default; t=1543921337;
+        bh=cfHN5+y0rUPilxoxQ1gHEHYID0tg10RXz5nZ+kVQczU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YTBasTAwpI/u/GebyImEBxQmXLpd3saM3p6BaTig2i+d4tLUBAOz+7RPL8b27joe8
-         q3bY/dbNTIEaWG3KJyVIJUYkRcrK56PAnRlhoO3m2y6engzWJMpkHNnIPUcOy5BY4n
-         ltGd2w+c5HCBsOyACz1YzVilPOgdZNjLUOHKj+ZE=
+        b=akwQIwfxgn+hu41xD/ocGHWwVtRIgU1JY3nMJhaWRnBZdOu0vTPEzTHnD7AKmw4KM
+         IaYYfDxszkjPBiS2z+Lq5oK3xN+LesYRyQNEIzp23MLt4xxU/NnbmBTDSG2efjzZLq
+         D1PHuZgG62JZ8D920y7KC60m1gMuS2qA7ZU3NKLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Vakul Garg <vakul.garg@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 008/146] mm/khugepaged: minor reorderings in collapse_shmem()
-Date:   Tue,  4 Dec 2018 11:48:14 +0100
-Message-Id: <20181204103727.119838214@linuxfoundation.org>
+Subject: [PATCH 4.14 025/146] net/tls: Fixed return value when tls_complete_pending_work() fails
+Date:   Tue,  4 Dec 2018 11:48:31 +0100
+Message-Id: <20181204103727.845368602@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -69,232 +65,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 042a30824871fa3149b0127009074b75cc25863c upstream.
+commit 150085791afb8054e11d2e080d4b9cd755dd7f69 upstream.
 
-Several cleanups in collapse_shmem(): most of which probably do not
-really matter, beyond doing things in a more familiar and reassuring
-order.  Simplify the failure gotos in the main loop, and on success
-update stats while interrupts still disabled from the last iteration.
+In tls_sw_sendmsg() and tls_sw_sendpage(), the variable 'ret' has
+been set to return value of tls_complete_pending_work(). This allows
+return of proper error code if tls_complete_pending_work() fails.
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1811261526400.2275@eggly.anvils
-Fixes: f3f0e1d2150b2 ("khugepaged: add support of collapse for tmpfs/shmem pages")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: <stable@vger.kernel.org>	[4.8+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Vakul Garg <vakul.garg@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 4.14: adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/khugepaged.c | 73 ++++++++++++++++++++-----------------------------
- 1 file changed, 30 insertions(+), 43 deletions(-)
+ net/tls/tls_sw.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index f535dbe3f9f5..0eac4344477a 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1333,13 +1333,12 @@ static void collapse_shmem(struct mm_struct *mm,
- 		goto out;
- 	}
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index 5996fb5756e1..d18d4a478e4f 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -388,7 +388,7 @@ int tls_sw_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+ {
+ 	struct tls_context *tls_ctx = tls_get_ctx(sk);
+ 	struct tls_sw_context *ctx = tls_sw_ctx(tls_ctx);
+-	int ret = 0;
++	int ret;
+ 	int required_size;
+ 	long timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
+ 	bool eor = !(msg->msg_flags & MSG_MORE);
+@@ -403,7 +403,8 @@ int tls_sw_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
  
-+	__SetPageLocked(new_page);
-+	__SetPageSwapBacked(new_page);
- 	new_page->index = start;
- 	new_page->mapping = mapping;
--	__SetPageSwapBacked(new_page);
--	__SetPageLocked(new_page);
- 	BUG_ON(!page_ref_freeze(new_page, 1));
+ 	lock_sock(sk);
  
--
- 	/*
- 	 * At this point the new_page is 'frozen' (page_count() is zero), locked
- 	 * and not up-to-date. It's safe to insert it into radix tree, because
-@@ -1368,13 +1367,13 @@ static void collapse_shmem(struct mm_struct *mm,
- 		 */
- 		if (n && !shmem_charge(mapping->host, n)) {
- 			result = SCAN_FAIL;
--			break;
-+			goto tree_locked;
- 		}
--		nr_none += n;
- 		for (; index < min(iter.index, end); index++) {
- 			radix_tree_insert(&mapping->page_tree, index,
- 					new_page + (index % HPAGE_PMD_NR));
- 		}
-+		nr_none += n;
+-	if (tls_complete_pending_work(sk, tls_ctx, msg->msg_flags, &timeo))
++	ret = tls_complete_pending_work(sk, tls_ctx, msg->msg_flags, &timeo);
++	if (ret)
+ 		goto send_end;
  
- 		/* We are done. */
- 		if (index >= end)
-@@ -1390,12 +1389,12 @@ static void collapse_shmem(struct mm_struct *mm,
- 				result = SCAN_FAIL;
- 				goto tree_unlocked;
- 			}
--			spin_lock_irq(&mapping->tree_lock);
- 		} else if (trylock_page(page)) {
- 			get_page(page);
-+			spin_unlock_irq(&mapping->tree_lock);
- 		} else {
- 			result = SCAN_PAGE_LOCK;
--			break;
-+			goto tree_locked;
- 		}
+ 	if (unlikely(msg->msg_controllen)) {
+@@ -539,7 +540,7 @@ int tls_sw_sendpage(struct sock *sk, struct page *page,
+ {
+ 	struct tls_context *tls_ctx = tls_get_ctx(sk);
+ 	struct tls_sw_context *ctx = tls_sw_ctx(tls_ctx);
+-	int ret = 0;
++	int ret;
+ 	long timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
+ 	bool eor;
+ 	size_t orig_size = size;
+@@ -559,7 +560,8 @@ int tls_sw_sendpage(struct sock *sk, struct page *page,
  
- 		/*
-@@ -1410,11 +1409,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 			result = SCAN_TRUNCATED;
- 			goto out_unlock;
- 		}
--		spin_unlock_irq(&mapping->tree_lock);
+ 	sk_clear_bit(SOCKWQ_ASYNC_NOSPACE, sk);
  
- 		if (isolate_lru_page(page)) {
- 			result = SCAN_DEL_PAGE_LRU;
--			goto out_isolate_failed;
-+			goto out_unlock;
- 		}
+-	if (tls_complete_pending_work(sk, tls_ctx, flags, &timeo))
++	ret = tls_complete_pending_work(sk, tls_ctx, flags, &timeo);
++	if (ret)
+ 		goto sendpage_end;
  
- 		if (page_mapped(page))
-@@ -1436,7 +1434,9 @@ static void collapse_shmem(struct mm_struct *mm,
- 		 */
- 		if (!page_ref_freeze(page, 3)) {
- 			result = SCAN_PAGE_COUNT;
--			goto out_lru;
-+			spin_unlock_irq(&mapping->tree_lock);
-+			putback_lru_page(page);
-+			goto out_unlock;
- 		}
- 
- 		/*
-@@ -1452,17 +1452,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 		slot = radix_tree_iter_resume(slot, &iter);
- 		index++;
- 		continue;
--out_lru:
--		spin_unlock_irq(&mapping->tree_lock);
--		putback_lru_page(page);
--out_isolate_failed:
--		unlock_page(page);
--		put_page(page);
--		goto tree_unlocked;
- out_unlock:
- 		unlock_page(page);
- 		put_page(page);
--		break;
-+		goto tree_unlocked;
- 	}
- 
- 	/*
-@@ -1470,7 +1463,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 	 * This code only triggers if there's nothing in radix tree
- 	 * beyond 'end'.
- 	 */
--	if (result == SCAN_SUCCEED && index < end) {
-+	if (index < end) {
- 		int n = end - index;
- 
- 		/* Stop if extent has been truncated, and is now empty */
-@@ -1482,7 +1475,6 @@ static void collapse_shmem(struct mm_struct *mm,
- 			result = SCAN_FAIL;
- 			goto tree_locked;
- 		}
--
- 		for (; index < end; index++) {
- 			radix_tree_insert(&mapping->page_tree, index,
- 					new_page + (index % HPAGE_PMD_NR));
-@@ -1490,14 +1482,19 @@ static void collapse_shmem(struct mm_struct *mm,
- 		nr_none += n;
- 	}
- 
-+	__inc_node_page_state(new_page, NR_SHMEM_THPS);
-+	if (nr_none) {
-+		struct zone *zone = page_zone(new_page);
-+
-+		__mod_node_page_state(zone->zone_pgdat, NR_FILE_PAGES, nr_none);
-+		__mod_node_page_state(zone->zone_pgdat, NR_SHMEM, nr_none);
-+	}
-+
- tree_locked:
- 	spin_unlock_irq(&mapping->tree_lock);
- tree_unlocked:
- 
- 	if (result == SCAN_SUCCEED) {
--		unsigned long flags;
--		struct zone *zone = page_zone(new_page);
--
- 		/*
- 		 * Replacing old pages with new one has succeed, now we need to
- 		 * copy the content and free old pages.
-@@ -1511,11 +1508,11 @@ static void collapse_shmem(struct mm_struct *mm,
- 			copy_highpage(new_page + (page->index % HPAGE_PMD_NR),
- 					page);
- 			list_del(&page->lru);
--			unlock_page(page);
--			page_ref_unfreeze(page, 1);
- 			page->mapping = NULL;
-+			page_ref_unfreeze(page, 1);
- 			ClearPageActive(page);
- 			ClearPageUnevictable(page);
-+			unlock_page(page);
- 			put_page(page);
- 			index++;
- 		}
-@@ -1524,28 +1521,17 @@ static void collapse_shmem(struct mm_struct *mm,
- 			index++;
- 		}
- 
--		local_irq_save(flags);
--		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--		if (nr_none) {
--			__mod_node_page_state(zone->zone_pgdat, NR_FILE_PAGES, nr_none);
--			__mod_node_page_state(zone->zone_pgdat, NR_SHMEM, nr_none);
--		}
--		local_irq_restore(flags);
--
--		/*
--		 * Remove pte page tables, so we can re-faulti
--		 * the page as huge.
--		 */
--		retract_page_tables(mapping, start);
--
- 		/* Everything is ready, let's unfreeze the new_page */
--		set_page_dirty(new_page);
- 		SetPageUptodate(new_page);
- 		page_ref_unfreeze(new_page, HPAGE_PMD_NR);
-+		set_page_dirty(new_page);
- 		mem_cgroup_commit_charge(new_page, memcg, false, true);
- 		lru_cache_add_anon(new_page);
--		unlock_page(new_page);
- 
-+		/*
-+		 * Remove pte page tables, so we can re-fault the page as huge.
-+		 */
-+		retract_page_tables(mapping, start);
- 		*hpage = NULL;
- 	} else {
- 		/* Something went wrong: rollback changes to the radix-tree */
-@@ -1578,8 +1564,8 @@ static void collapse_shmem(struct mm_struct *mm,
- 						slot, page);
- 			slot = radix_tree_iter_resume(slot, &iter);
- 			spin_unlock_irq(&mapping->tree_lock);
--			putback_lru_page(page);
- 			unlock_page(page);
-+			putback_lru_page(page);
- 			spin_lock_irq(&mapping->tree_lock);
- 		}
- 		VM_BUG_ON(nr_none);
-@@ -1588,9 +1574,10 @@ static void collapse_shmem(struct mm_struct *mm,
- 		/* Unfreeze new_page, caller would take care about freeing it */
- 		page_ref_unfreeze(new_page, 1);
- 		mem_cgroup_cancel_charge(new_page, memcg, true);
--		unlock_page(new_page);
- 		new_page->mapping = NULL;
- 	}
-+
-+	unlock_page(new_page);
- out:
- 	VM_BUG_ON(!list_empty(&pagelist));
- 	/* TODO: tracepoints */
+ 	/* Call the sk_stream functions to manage the sndbuf mem. */
 -- 
 2.17.1
 
