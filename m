@@ -4,65 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26F9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950D1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA872146D
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AC4C21508
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 11:05:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M757qr0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA872146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAaXau2s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC4C21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeLDLFi (ORCPT
+        id S1728191AbeLDLFl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:05:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53420 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 06:05:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728170AbeLDLFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 06:05:34 -0500
+        id S1727074AbeLDLFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 06:05:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E68FD2087F;
-        Tue,  4 Dec 2018 11:05:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFE642082D;
+        Tue,  4 Dec 2018 11:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543921533;
-        bh=shU/AQRdgrlv1/qtYhDPuji0CIutP1gLLBSK3JC3QMI=;
+        s=default; t=1543921536;
+        bh=fGyiWWcBC0kGEuK5wj4CtbrqRlvE1XR1iyGKRWZSZCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M757qr0SAkq8TGG1X7YED+6WmIqxNQjiBhceulbStZRUN/haqWUnfwhBcapLVVss9
-         nqvqYSo8k9WJSwBzXq6fMN5j0wgZZugxQYKMho6T5o/eWdUlxdc5mLwGnlr7396RPV
-         JhcKrS2+KZigcwfRRdHvK8WAG5jR6UvfV1bl2kGE=
+        b=EAaXau2sZc+CMzay8tiraYA2oGLlv0CwO6dyrOzWEX45AnzcndROkt5SSQVPbV8ZA
+         tu8aMWWHh3Pm6Lg623bHzDmpNOrHhqjSxJ6GAsVjfJN56HcgL8DYXTFwmJ1Um5MKns
+         QPi7r3YG6z4PfmQKIw63pGV52hRsdpOnWh4laRDI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.14 101/146] ptrace: Remove unused ptrace_may_access_sched() and MODE_IBRS
-Date:   Tue,  4 Dec 2018 11:49:47 +0100
-Message-Id: <20181204103730.884011797@linuxfoundation.org>
+        stable@vger.kernel.org, Neel Natu <neelnatu@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 110/146] kvm: svm: Ensure an IBPB on all affected CPUs when freeing a vmcb
+Date:   Tue,  4 Dec 2018 11:49:56 +0100
+Message-Id: <20181204103731.249460818@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103726.750894136@linuxfoundation.org>
 References: <20181204103726.750894136@linuxfoundation.org>
@@ -81,109 +64,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner tglx@linutronix.de
+From: Jim Mattson <jmattson@google.com>
 
-commit 46f7ecb1e7359f183f5bbd1e08b90e10e52164f9 upstream
+commit fd65d3142f734bc4376053c8d75670041903134d upstream.
 
-The IBPB control code in x86 removed the usage. Remove the functionality
-which was introduced for this.
+Previously, we only called indirect_branch_prediction_barrier on the
+logical CPU that freed a vmcb. This function should be called on all
+logical CPUs that last loaded the vmcb in question.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Casey Schaufler <casey.schaufler@intel.com>
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Jon Masters <jcm@redhat.com>
-Cc: Waiman Long <longman9394@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Stewart <david.c.stewart@intel.com>
-Cc: Kees Cook <keescook@chromium.org>
+Fixes: 15d45071523d ("KVM/x86: Add IBPB support")
+Reported-by: Neel Natu <neelnatu@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181125185005.559149393@linutronix.de
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/ptrace.h |   17 -----------------
- kernel/ptrace.c        |   10 ----------
- 2 files changed, 27 deletions(-)
 
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -64,15 +64,12 @@ extern void exit_ptrace(struct task_stru
- #define PTRACE_MODE_NOAUDIT	0x04
- #define PTRACE_MODE_FSCREDS	0x08
- #define PTRACE_MODE_REALCREDS	0x10
--#define PTRACE_MODE_SCHED	0x20
--#define PTRACE_MODE_IBPB	0x40
- 
- /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
- #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
- #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
--#define PTRACE_MODE_SPEC_IBPB (PTRACE_MODE_ATTACH_REALCREDS | PTRACE_MODE_IBPB)
- 
- /**
-  * ptrace_may_access - check whether the caller is permitted to access
-@@ -90,20 +87,6 @@ extern void exit_ptrace(struct task_stru
-  */
- extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
- 
--/**
-- * ptrace_may_access - check whether the caller is permitted to access
-- * a target task.
-- * @task: target task
-- * @mode: selects type of access and caller credentials
-- *
-- * Returns true on success, false on denial.
-- *
-- * Similar to ptrace_may_access(). Only to be called from context switch
-- * code. Does not call into audit and the regular LSM hooks due to locking
-- * constraints.
-- */
--extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
--
- static inline int ptrace_reparented(struct task_struct *child)
- {
- 	return !same_thread_group(child->real_parent, child->parent);
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -261,9 +261,6 @@ static int ptrace_check_attach(struct ta
- 
- static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
- {
--	if (mode & PTRACE_MODE_SCHED)
--		return false;
--
- 	if (mode & PTRACE_MODE_NOAUDIT)
- 		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
- 	else
-@@ -331,16 +328,9 @@ ok:
- 	     !ptrace_has_cap(mm->user_ns, mode)))
- 	    return -EPERM;
- 
--	if (mode & PTRACE_MODE_SCHED)
--		return 0;
- 	return security_ptrace_access_check(task, mode);
+---
+ arch/x86/kvm/svm.c |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1733,21 +1733,31 @@ out:
+ 	return ERR_PTR(err);
  }
  
--bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
--{
--	return __ptrace_may_access(task, mode | PTRACE_MODE_SCHED);
--}
--
- bool ptrace_may_access(struct task_struct *task, unsigned int mode)
++static void svm_clear_current_vmcb(struct vmcb *vmcb)
++{
++	int i;
++
++	for_each_online_cpu(i)
++		cmpxchg(&per_cpu(svm_data, i)->current_vmcb, vmcb, NULL);
++}
++
+ static void svm_free_vcpu(struct kvm_vcpu *vcpu)
  {
- 	int err;
+ 	struct vcpu_svm *svm = to_svm(vcpu);
+ 
++	/*
++	 * The vmcb page can be recycled, causing a false negative in
++	 * svm_vcpu_load(). So, ensure that no logical CPU has this
++	 * vmcb page recorded as its current vmcb.
++	 */
++	svm_clear_current_vmcb(svm->vmcb);
++
+ 	__free_page(pfn_to_page(__sme_clr(svm->vmcb_pa) >> PAGE_SHIFT));
+ 	__free_pages(virt_to_page(svm->msrpm), MSRPM_ALLOC_ORDER);
+ 	__free_page(virt_to_page(svm->nested.hsave));
+ 	__free_pages(virt_to_page(svm->nested.msrpm), MSRPM_ALLOC_ORDER);
+ 	kvm_vcpu_uninit(vcpu);
+ 	kmem_cache_free(kvm_vcpu_cache, svm);
+-	/*
+-	 * The vmcb page can be recycled, causing a false negative in
+-	 * svm_vcpu_load(). So do a full IBPB now.
+-	 */
+-	indirect_branch_prediction_barrier();
+ }
+ 
+ static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
 
