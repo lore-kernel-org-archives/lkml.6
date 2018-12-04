@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF004C04EB8
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6501C214F1
-	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29D45214DE
+	for <linux-kernel@archiver.kernel.org>; Tue,  4 Dec 2018 10:56:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRQMHUTP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6501C214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H00PwhP7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D45214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeLDK4Q (ORCPT
+        id S1726465AbeLDK4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 05:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39368 "EHLO mail.kernel.org"
+        Tue, 4 Dec 2018 05:56:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeLDK4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 05:56:13 -0500
+        id S1726440AbeLDK4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 05:56:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B6A2214E0;
-        Tue,  4 Dec 2018 10:56:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 126FA2146D;
+        Tue,  4 Dec 2018 10:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543920973;
-        bh=snsz46gomAVnQS/Jap3ESWcxcwYAN9r7BtDuW+dhXTo=;
+        s=default; t=1543920975;
+        bh=2pyVjl05kj8qShDhe+i54CHApb52RhFWD1nnXTFGa94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRQMHUTPphvQs/HWYV6yS/fCViQzeg80mWoAr9NzjcBGXW82jLIsTzxiKnRtAj49G
-         YaKFpAXkZRNyTFKcd/Dk5ndyoOeKXbfv7EnVvC6WV4xH3FdhAK01YOg3PbH/QungZX
-         Gn/ILHdqNtRymhC2ni1bpFvPOe7LsJVsEHog2Ph0=
+        b=H00PwhP7ux5c8Ur28xpaG5bOObUUXoJ0r2/diC1WMiq1UWLUR7aDF6cb8tIPFi6yv
+         NiDgfkO9ic1q7DbP+0HkMF8QYXoEsJ9hme1eIKqXKfcVBfATeL1gbGJH1gvGPtGxVX
+         AOI5fNGTEQOWgGwmiE9JqemQy9LOPHazLhsAasS8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         Borislav Petkov <bp@suse.de>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wang YanQing <udknight@gmail.com>, dhaval.giani@oracle.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         srinivas.eeda@oracle.com
-Subject: [PATCH 4.19 030/139] x86/speculation: Add RETPOLINE_AMD support to the inline asm CALL_NOSPEC variant
-Date:   Tue,  4 Dec 2018 11:48:31 +0100
-Message-Id: <20181204103651.217503073@linuxfoundation.org>
+Subject: [PATCH 4.19 031/139] x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
+Date:   Tue,  4 Dec 2018 11:48:32 +0100
+Message-Id: <20181204103651.263926410@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204103649.950154335@linuxfoundation.org>
 References: <20181204103649.950154335@linuxfoundation.org>
@@ -73,73 +75,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhenzhong Duan zhenzhong.duan@oracle.com
 
-commit 0cbb76d6285794f30953bfa3ab831714b59dd700 upstream
+commit 4cd24de3a0980bf3100c9dcb08ef65ca7c31af48 upstream
 
-..so that they match their asm counterpart.
+Since retpoline capable compilers are widely available, make
+CONFIG_RETPOLINE hard depend on the compiler capability.
 
-Add the missing ANNOTATE_NOSPEC_ALTERNATIVE in CALL_NOSPEC, while at it.
+Break the build when CONFIG_RETPOLINE is enabled and the compiler does not
+support it. Emit an error message in that case:
 
+ "arch/x86/Makefile:226: *** You are building kernel with non-retpoline
+  compiler, please update your compiler..  Stop."
+
+[dwmw: Fail the build with non-retpoline compiler]
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wang YanQing <udknight@gmail.com>
-Cc: dhaval.giani@oracle.com
-Cc: srinivas.eeda@oracle.com
-Link: http://lkml.kernel.org/r/c3975665-173e-4d70-8dee-06c926ac26ee@default
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: <srinivas.eeda@oracle.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/cca0cb20-f9e2-4094-840b-fb0f8810cd34@default
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/nospec-branch.h |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/x86/Kconfig                     |    4 ----
+ arch/x86/Makefile                    |    5 +++--
+ arch/x86/include/asm/nospec-branch.h |   10 ++++++----
+ arch/x86/kernel/cpu/bugs.c           |    2 +-
+ scripts/Makefile.build               |    2 --
+ 5 files changed, 10 insertions(+), 13 deletions(-)
 
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -441,10 +441,6 @@ config RETPOLINE
+ 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
+ 	  support for full protection. The kernel may run slower.
+ 
+-	  Without compiler support, at least indirect branches in assembler
+-	  code are eliminated. Since this includes the syscall entry path,
+-	  it is not entirely pointless.
+-
+ config INTEL_RDT
+ 	bool "Intel Resource Director Technology support"
+ 	default n
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -223,9 +223,10 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
+ 
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+-  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS) -DRETPOLINE
++ifeq ($(RETPOLINE_CFLAGS),)
++  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+ endif
++  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+ endif
+ 
+ archscripts: scripts_basic
 --- a/arch/x86/include/asm/nospec-branch.h
 +++ b/arch/x86/include/asm/nospec-branch.h
-@@ -170,11 +170,15 @@
+@@ -162,11 +162,12 @@
+ 	_ASM_PTR " 999b\n\t"					\
+ 	".popsection\n\t"
+ 
+-#if defined(CONFIG_X86_64) && defined(RETPOLINE)
++#ifdef CONFIG_RETPOLINE
++#ifdef CONFIG_X86_64
+ 
+ /*
+- * Since the inline asm uses the %V modifier which is only in newer GCC,
+- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
++ * Inline asm uses the %V modifier which is only in newer GCC
++ * which is ensured when CONFIG_RETPOLINE is defined.
   */
  # define CALL_NOSPEC						\
  	ANNOTATE_NOSPEC_ALTERNATIVE				\
--	ALTERNATIVE(						\
-+	ALTERNATIVE_2(						\
- 	ANNOTATE_RETPOLINE_SAFE					\
- 	"call *%[thunk_target]\n",				\
- 	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
--	X86_FEATURE_RETPOLINE)
-+	X86_FEATURE_RETPOLINE,					\
-+	"lfence;\n"						\
-+	ANNOTATE_RETPOLINE_SAFE					\
-+	"call *%[thunk_target]\n",				\
-+	X86_FEATURE_RETPOLINE_AMD)
+@@ -181,7 +182,7 @@
+ 	X86_FEATURE_RETPOLINE_AMD)
  # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
  
- #elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
-@@ -184,7 +188,8 @@
-  * here, anyway.
-  */
- # define CALL_NOSPEC						\
--	ALTERNATIVE(						\
-+	ANNOTATE_NOSPEC_ALTERNATIVE				\
-+	ALTERNATIVE_2(						\
- 	ANNOTATE_RETPOLINE_SAFE					\
- 	"call *%[thunk_target]\n",				\
- 	"       jmp    904f;\n"					\
-@@ -199,7 +204,11 @@
- 	"       ret;\n"						\
- 	"       .align 16\n"					\
- 	"904:	call   901b;\n",				\
--	X86_FEATURE_RETPOLINE)
-+	X86_FEATURE_RETPOLINE,					\
-+	"lfence;\n"						\
-+	ANNOTATE_RETPOLINE_SAFE					\
-+	"call *%[thunk_target]\n",				\
-+	X86_FEATURE_RETPOLINE_AMD)
+-#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
++#else /* CONFIG_X86_32 */
+ /*
+  * For i386 we use the original ret-equivalent retpoline, because
+  * otherwise we'll run out of registers. We don't care about CET
+@@ -211,6 +212,7 @@
+ 	X86_FEATURE_RETPOLINE_AMD)
  
  # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
++#endif
  #else /* No retpoline for C / inline asm */
+ # define CALL_NOSPEC "call *%[thunk_target]\n"
+ # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure
+ 
+ static inline bool retp_compiler(void)
+ {
+-	return __is_defined(RETPOLINE);
++	return __is_defined(CONFIG_RETPOLINE);
+ }
+ 
+ static inline bool match_option(const char *arg, int arglen, const char *opt)
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -248,10 +248,8 @@ ifdef CONFIG_GCOV_KERNEL
+ objtool_args += --no-unreachable
+ endif
+ ifdef CONFIG_RETPOLINE
+-ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args += --retpoline
+ endif
+-endif
+ 
+ 
+ ifdef CONFIG_MODVERSIONS
 
 
