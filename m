@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0604BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F413AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6FB42133F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B597A20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x/gA4Szy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FB42133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fq+LX2sK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B597A20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbeLEJoA (ORCPT
+        id S1728614AbeLEJoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:44:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48578 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbeLEJn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:43:58 -0500
+        id S1727882AbeLEJoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:02 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B83720878;
-        Wed,  5 Dec 2018 09:43:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEEB72087F;
+        Wed,  5 Dec 2018 09:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003037;
-        bh=AEiYBnLeLCRKd65wPxauWAf1zR3bwxbO5t6Mj0KHlzc=;
+        s=default; t=1544003041;
+        bh=ARJuzMKmWH3ZH8xiWVIKkvg9lz4vDEJ90b+h7eGoaKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x/gA4SzyfXb2x8AoDA9v57jfSU1IQRLxRPi7HJn9bUXfaRIttwQhKHtJWJ7V/XWaP
-         P0bZVjt8TZA6nYbopBLYI9Opa4VL+psgO6YKnAmsV75x0f7XUdueWjyuyr55hSvQ0N
-         Z10xAlM4pfmRAdXctjvDNknPh1V920QdBTsYbRMg=
+        b=fq+LX2sKXPapMCwsyx9cE4dYhQqRPV4Hia7xU7jRl7sGqZsyu6FERhIZGk1IWS+cv
+         a61IHU5PwldDqLL/1XOcIyR9Od0rw4dj/M4QSyfW83FyBjw30vFPDn0dkQpH8MCXvh
+         acJp/TnTypdw7p9AmIA6eTFBgUA73mdT73bfbPoA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 10/69] hwmon (ina2xx) Fix NULL id pointer in probe()
-Date:   Wed,  5 Dec 2018 04:41:48 -0500
-Message-Id: <20181205094247.6556-10-sashal@kernel.org>
+Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
+Subject: [PATCH AUTOSEL 4.14 11/69] ASoC: wm_adsp: Fix dma-unsafe read of scratch registers
+Date:   Wed,  5 Dec 2018 04:41:49 -0500
+Message-Id: <20181205094247.6556-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,68 +53,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-[ Upstream commit 70df9ebbd82c794ddfbb49d45b337f18d5588dc2 ]
+[ Upstream commit 20e00db2f59bdddf8a8e241473ef8be94631d3ae ]
 
-When using DT configurations, the id pointer might turn out to
-be NULL. Then the driver encounters NULL pointer access:
+Stack memory isn't DMA-safe so it isn't safe to use either
+regmap_raw_read or regmap_bulk_read to read into stack memory.
 
-  Unable to handle kernel read from unreadable memory at vaddr 00000018
-  [...]
-  PC is at ina2xx_probe+0x114/0x200
-  LR is at ina2xx_probe+0x10c/0x200
-  [...]
-  Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+The two functions to read the scratch registers were using
+stack memory and regmap_raw_read. It's not worth allocating
+memory just for this trivial read, and it isn't time-critical.
+A simple regmap_read for each register is sufficient.
 
-The reason is that i2c core returns the id pointer by matching
-id_table with client->name, while the client->name is actually
-using the name from the first string in the DT compatible list,
-not the best one. So i2c core would fail to match the id_table
-if the best matched compatible string isn't the first one, and
-then would return a NULL id pointer.
-
-This probably should be fixed in i2c core. But it doesn't hurt
-to make the driver robust. So this patch fixes it by using the
-"chip" that's added to unify both DT and non-DT configurations.
-
-Additionally, since id pointer could be null, so as id->name:
-  ina2xx 10-0047: power monitor (null) (Rshunt = 1000 uOhm)
-  ina2xx 10-0048: power monitor (null) (Rshunt = 10000 uOhm)
-
-So this patch also fixes NULL name pointer, using client->name
-to play safe and to align with hwmon->name.
-
-Fixes: bd0ddd4d0883 ("hwmon: (ina2xx) Add OF device ID table")
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/ina2xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wm_adsp.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-index 71d3445ba869..c2252cf452f5 100644
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -491,7 +491,7 @@ static int ina2xx_probe(struct i2c_client *client,
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index 989d093abda7..67330b6ab204 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -787,38 +787,41 @@ static unsigned int wm_adsp_region_to_reg(struct wm_adsp_region const *mem,
+ 
+ static void wm_adsp2_show_fw_status(struct wm_adsp *dsp)
+ {
+-	u16 scratch[4];
++	unsigned int scratch[4];
++	unsigned int addr = dsp->base + ADSP2_SCRATCH0;
++	unsigned int i;
+ 	int ret;
+ 
+-	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2_SCRATCH0,
+-				scratch, sizeof(scratch));
+-	if (ret) {
+-		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
+-		return;
++	for (i = 0; i < ARRAY_SIZE(scratch); ++i) {
++		ret = regmap_read(dsp->regmap, addr + i, &scratch[i]);
++		if (ret) {
++			adsp_err(dsp, "Failed to read SCRATCH%u: %d\n", i, ret);
++			return;
++		}
  	}
  
- 	data->groups[group++] = &ina2xx_group;
--	if (id->driver_data == ina226)
-+	if (chip == ina226)
- 		data->groups[group++] = &ina226_group;
- 
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
-@@ -500,7 +500,7 @@ static int ina2xx_probe(struct i2c_client *client,
- 		return PTR_ERR(hwmon_dev);
- 
- 	dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
--		 id->name, data->rshunt);
-+		 client->name, data->rshunt);
- 
- 	return 0;
+ 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
+-		 be16_to_cpu(scratch[0]),
+-		 be16_to_cpu(scratch[1]),
+-		 be16_to_cpu(scratch[2]),
+-		 be16_to_cpu(scratch[3]));
++		 scratch[0], scratch[1], scratch[2], scratch[3]);
  }
+ 
+ static void wm_adsp2v2_show_fw_status(struct wm_adsp *dsp)
+ {
+-	u32 scratch[2];
++	unsigned int scratch[2];
+ 	int ret;
+ 
+-	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
+-			      scratch, sizeof(scratch));
+-
++	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
++			  &scratch[0]);
+ 	if (ret) {
+-		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
++		adsp_err(dsp, "Failed to read SCRATCH0_1: %d\n", ret);
+ 		return;
+ 	}
+ 
+-	scratch[0] = be32_to_cpu(scratch[0]);
+-	scratch[1] = be32_to_cpu(scratch[1]);
++	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH2_3,
++			  &scratch[1]);
++	if (ret) {
++		adsp_err(dsp, "Failed to read SCRATCH2_3: %d\n", ret);
++		return;
++	}
+ 
+ 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
+ 		 scratch[0] & 0xFFFF,
 -- 
 2.17.1
 
