@@ -2,119 +2,159 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD652C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6813AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9792082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1482720989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wODCqL8E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9792082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="D2EHHQ0u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1482720989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeLELzG (ORCPT
+        id S1727556AbeLEL7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:55:06 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40680 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbeLELzG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:55:06 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5BsdaI022321;
-        Wed, 5 Dec 2018 05:54:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544010879;
-        bh=zTcwsen6dKsqpjvuZUQeAi9Vv+N6Ocpxs6kGW7Ru/84=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=wODCqL8E3W0FicJHzdXw4PQWiSpXuXk9BNUkKrO97CeslBfizs3PAHxqM1Xy2OYdz
-         37KOFTEgJCC+fAlQjB4+9BmJEv2dskEjjaQpgPUPySfcRyjBistrUtad7xoTO9KZC6
-         gbwJU3yh/LyytVK5V4BgnHUzzsVPOX3iucCnJ/yU=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5Bsd9R106778
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 05:54:39 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
- Dec 2018 05:54:39 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 5 Dec 2018 05:54:39 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5BsYgD000992;
-        Wed, 5 Dec 2018 05:54:35 -0600
-Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        Wed, 5 Dec 2018 06:59:22 -0500
+Received: from mail-eopbgr60049.outbound.protection.outlook.com ([40.107.6.49]:21472
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726961AbeLEL7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:59:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dxUpn8AEYzOWqh2ga7PogRMQL+ctmt15UB9sEX+ZVSU=;
+ b=D2EHHQ0uoimJz4B7O7mJmQ/le4q3q46pFN6ybvlt6RguzfkcBSCVfJ4uUQNLJKlq2FiBeyII6OSBn0ZHBtFKU67qmzkIfikZrQdy9daMJb7uDMG8bM8XRAxEWmPfdz+vdb3vkopgZErS91GK3lMM82ZU0T+YpAwDmDQVnpW4Kak=
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
+ AM0PR08MB3924.eurprd08.prod.outlook.com (20.178.118.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Wed, 5 Dec 2018 11:59:17 +0000
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::60f0:87d9:8edf:bee2]) by AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::60f0:87d9:8edf:bee2%3]) with mapi id 15.20.1404.019; Wed, 5 Dec 2018
+ 11:59:17 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <20181203101937.7b01a0ad@bbrezillon>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
-Date:   Wed, 5 Dec 2018 17:25:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181203101937.7b01a0ad@bbrezillon>
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
+Thread-Topic: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
+Thread-Index: AQHUjIQcOEi83N47a0KC43klt9WEnaVwCtqA
+Date:   Wed, 5 Dec 2018 11:59:17 +0000
+Message-ID: <20181205115915.aakaiqpjxs62b3xl@DESKTOP-E1NTVVP.localdomain>
+References: <20181205101635.7696-1-james.qian.wang@arm.com>
+ <20181205101635.7696-10-james.qian.wang@arm.com>
+In-Reply-To: <20181205101635.7696-10-james.qian.wang@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716-849-147d51-dirty
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: LO2P265CA0273.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::21) To AM0PR08MB3025.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Brian.Starkey@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:EQvJEldEJZyVGAzcvODvQxaBswdweIR5ffZTS4KKgIfxJ8N/yCo2dk+3XDlJGyK5Hkp7I1c1D5va7YeFzXDdWU6eIwTTJxlSdqp2I/w9LMiX0O7PoAHKTxoRA5Ld+2Tv8eLKU0CmVPoYsyFTftKxbWS8sPuQ+NszVzLivQqYlNmk7rKxAzCZ3MC+kLvJx9XSh/yosEKXcsn/nf4loikzzwvFmfcJRudLkVn8LmxXw54AXhUCUWf1eu+Q7f5j87xVl/xCIkALumfYRg7MPGrplHOPyElvQ6MehqAkwdEiAu784xYi8Puh/jTq5HCu5D9sCCwbJ8QyGSvmK0Ws9MNQbHavuMf5n51x3ugch8EiokLCuuGvf0L2eEq+meCpoO/bbWk03vT50FuXqipmYkmhxlXKTWQS9JI7VbrjeJ4oatvHH54WKSln1/Kwv5/z/PEq4v8WkfSsjLneCRPmNQ6MUA==;5:7qqqsgKV0mfpDGn3R3FTnaJW7+ujFgSyKnMVry36dA3OMQ0YcSUA3o20KEN8f6UYvfpI0Mv2DvB+IvYyBQu8ndXadSnC5uOIO1SQvcCR0XP7Aqv+YtA/oKO4EElMOMSnScK261CmESg+QeR4koYZykRGfNwyR3sk08t8gDfeHOg=;7:yBhiPv3VcUXvZDRGOrrjiH4uDZZDsaTpAO2Z2OI55JxABpTyJWZiU6FHDb9wrhKD5otQg0m7hzc0e/OpeUdVpKWKtCf4ERtIVyORXntI0IM2IFVueo26b8xRWgl1BuH7BzPtPTy/xT06qJbvKiBkgg==
+x-ms-office365-filtering-correlation-id: e9852273-8521-4a00-8156-08d65aa914ff
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3924;
+x-ms-traffictypediagnostic: AM0PR08MB3924:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB3924D6252EB7498E2F8005B2F0A80@AM0PR08MB3924.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3924;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3924;
+x-forefront-prvs: 08770259B4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(396003)(376002)(39860400002)(199004)(189003)(446003)(71200400001)(11346002)(71190400001)(6512007)(8936002)(316002)(25786009)(476003)(106356001)(58126008)(54906003)(53936002)(110136005)(6636002)(256004)(2906002)(486006)(5660300001)(44832011)(4326008)(14454004)(81166006)(81156014)(8676002)(14444005)(86362001)(6436002)(102836004)(26005)(97736004)(6506007)(386003)(305945005)(52116002)(186003)(7736002)(33896004)(66066001)(76176011)(68736007)(99286004)(6116002)(6486002)(3846002)(478600001)(1076002)(6246003)(72206003)(9686003)(229853002)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: WiL+jy/0mLJrfks8o6m/0Pb5TLifD0usvuOGY/eINY3RzePl+KY8qzurcGbwDGoWInLIBcZ84LMdEGicnA0fk6yN9BJufLQxO5OTzDKcr/Udk9H1ZdfNA4oi1XXrH6Wik4jlKF3p9+j4F06W7NEjjP3BKqFb5Ctcrs8KgicGVXn61/PVX403wsobjAWID255bWxNjCqTY3qBsGf/ImMnGQoIcQHYQT/TXs9M7wNF2zO+Z1Vq9Ch6qQVjKXNWX8GiVOTUoMlyALTDMUG7wmMOTZPGjUWsDUmLmafrtGIiDwh4emtpkzDQq4UpPBQx13i3odwXHc+VaMIfTfm5r5oVJFmjWkP0BxPDioajrm7NDvk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F7016A140BE2924AA5426A73569320C1@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9852273-8521-4a00-8156-08d65aa914ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 11:59:17.0647
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3924
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Hi James,
 
-On 03/12/18 2:49 PM, Boris Brezillon wrote:
-> Hi Mark,
-> 
-> On Mon, 3 Dec 2018 08:39:00 +0000
-> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> 
->>
->> Yogesh Gaur (7):
->>   spi: add support for octal mode I/O data transfer
->>   spi: spi-mem: add support for octal mode I/O data transfer
-> 
-> Can you take those 2 patches in your tree for 4.21/5.0?
-> 
+On Wed, Dec 05, 2018 at 10:20:13AM +0000, james qian wang (Arm Technology C=
+hina) wrote:
+> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 254b7b267731..9e44c2c2e234 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1132,6 +1132,14 @@ S:	Supported
+>  F:	drivers/gpu/drm/arm/
+>  F:	Documentation/devicetree/bindings/display/arm,malidp.txt
+> =20
+> +ARM KOMEDA DRM-KMS DRIVER
 
->>   mtd: spi-nor: add opcodes for octal Read/Write commands
->>   mtd: spi-nor: add octal read flag for flash mt35xu512aba
+The list is meant to be in alphabetical order, so I think this entry
+should be before the MALI-DP one.
 
-Could you consider merging these two patches alone for v4.21?
-These can be applied independent of other patches in the series and
-would allow supporting OSPI flash at SPI NOR level with Cadence QSPI driver.
+Perhaps we should make the Mali-DP "F:" rule more specific too. At
+the moment any changes under display/komeda will match that too (so
+Liviu and myself are returned by get_maintainer.pl for Komeda
+patches).
 
->>   mtd: m25p80: add support of octal mode I/O transfer
->>   spi: nxp-fspi: add octal mode flag bit for octal support
-> 
-> I'll queue these ones after 4.21-rc1/5.0-rc1 is out (which means
-> they'll appear in 4.22/5.1).
-> 
->>   arm64: dts: lx2160a: update fspi node
+> +M:	James (Qian) Wang <james.qian.wang@arm.com>
+> +M:	Mali DP Maintainers <malidp@foss.arm.com>
+> +S:	Supported
+> +F:	drivers/gpu/drm/arm/display/komeda
 
--- 
-Regards
-Vignesh
+This one should have a trailing slash to include the directory tree.
+
+Cheers,
+-Brian
+
+> +F:	Documentation/devicetree/bindings/display/arm/arm,komeda.txt
+> +F:	Documentation/gpu/komeda-kms.rst
+> +
+>  ARM MFM AND FLOPPY DRIVERS
+>  M:	Ian Molton <spyro@f2s.com>
+>  S:	Maintained
+> --=20
+> 2.17.1
+>=20
