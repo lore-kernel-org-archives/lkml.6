@@ -2,140 +2,77 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4FEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB29C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB71D20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:05:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB71D20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E8A712082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jbjpx/rL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A712082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbeLERF3 (ORCPT
+        id S1728058AbeLERGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:05:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39244 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727436AbeLERF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:05:29 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF023356F5;
-        Wed,  5 Dec 2018 17:05:28 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 88F7751F02;
-        Wed,  5 Dec 2018 17:05:27 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 18:05:26 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf, tools: Support srccode output
-Message-ID: <20181205170526.GB3836@krava>
-References: <20181204001848.24769-1-andi@firstfloor.org>
- <20181205122838.GH2950@krava>
- <20181205165430.GA13522@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205165430.GA13522@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 05 Dec 2018 17:05:29 +0000 (UTC)
+        Wed, 5 Dec 2018 12:06:23 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:38482 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727195AbeLERGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:06:23 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id C7F7424E0607;
+        Wed,  5 Dec 2018 09:06:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544029582; bh=OC0of18FgcdO5fHsK9VsjVhGocB8GGXqcmRcGn7d1Eo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jbjpx/rLrgNe4YCX4z1sacKa/HU809ZqlX+TDYdI/hNsLDW+6ViRJqDnW7rFOu+qk
+         tu4XH49RZ9NSv6Gk4JeHA77L3VijmRwTeYw8/I1UVhK8GCE1KlMqUNT/pHo9oIjkUk
+         c0+KmNUYvegGAfKonNpalA1w0iN4AzAAt0lbJtNG9wUUcrr50/qUY+mBePEL+b1prg
+         w2aaVbU0chszi4EtuTiorma2Fagmm/hdG76dX04p8VQhgGreiGIuV8jRku3x3jdZY6
+         cQRvAlTw24SEuSAkobkoYkDMtoLg48905Qq729fylDa6OXj//2HHB6biSqqm5SdzgK
+         Qu7eDs+/d6aLg==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 344935896;
+        Wed,  5 Dec 2018 09:06:19 -0800 (PST)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 0/5] introduce Kernel PMU events support
+Date:   Wed,  5 Dec 2018 20:06:04 +0300
+Message-Id: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 01:54:30PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Dec 05, 2018 at 01:28:38PM +0100, Jiri Olsa escreveu:
-> > On Mon, Dec 03, 2018 at 04:18:48PM -0800, Andi Kleen wrote:
-> > > From: Andi Kleen <ak@linux.intel.com>
-> > > 
-> > > When looking at PT or brstackinsn traces with perf script
-> > > it can be very useful to see the source code. This adds a simple
-> > > facility to print them with perf script, if the information
-> > > is available through dwarf
-> > > 
-> > > % perf record ...
-> > > % perf script -F insn,ip,sym,srccode
-> > > ...
-> > > 
-> > >           4004c6 main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004c6 main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004cd main
-> > > 5               for (i = 0; i < 10000000; i++)
-> > >            4004b3 main
-> > > 6                       v++;
-> > > 
-> > > % perf record -b ...
-> > > % perf script -F insn,ip,sym,srccode,brstackinsn
-> > > 
-> > > ...
-> > >        main+22:
-> > >         0000000000400543        insn: e8 ca ff ff ff            # PRED
-> > > |18                     f1();
-> > >         f1:
-> > >         0000000000400512        insn: 55
-> > > |10       {
-> > >         0000000000400513        insn: 48 89 e5
-> > >         0000000000400516        insn: b8 00 00 00 00
-> > > |11             f2();
-> > >         000000000040051b        insn: e8 d6 ff ff ff            # PRED
-> > >         f2:
-> > >         00000000004004f6        insn: 55
-> > > |5        {
-> > >         00000000004004f7        insn: 48 89 e5
-> > >         00000000004004fa        insn: 8b 05 2c 0b 20 00
-> > > |6              c = a / b;
-> > >         0000000000400500        insn: 8b 0d 2a 0b 20 00
-> > >         0000000000400506        insn: 99
-> > >         0000000000400507        insn: f7 f9
-> > >         0000000000400509        insn: 89 05 29 0b 20 00
-> > >         000000000040050f        insn: 90
-> > > |7        }
-> > >         0000000000400510        insn: 5d
-> > >         0000000000400511        insn: c3                        # PRED
-> > >         f1+14:
-> > >         0000000000400520        insn: b8 00 00 00 00
-> > > |12             f2();
-> > >         0000000000400525        insn: e8 cc ff ff ff            # PRED
-> > >         f2:
-> > >         00000000004004f6        insn: 55
-> > > |5        {
-> > >         00000000004004f7        insn: 48 89 e5
-> > >         00000000004004fa        insn: 8b 05 2c 0b 20 00
-> > > |6              c = a / b;
-> > > 
-> > > Not supported for callchains currently, would need some
-> > > layout changes there.
-> > 
-> > nice, works nicely, especialy with --xed
-> 
-> The above seems to imply you actually tested it, was that the case? Can
-> you please provide me the exact 'perf record' line you used, that is
-> lacking in Andi's original commit log message?
+Introduce Kernel PMU events support and refactor ARC-specific perf code. 
 
-yep..
+Eugeniy Paltsev (5):
+  ARC: perf: trivial code cleanup
+  ARC: perf: introduce Kernel PMU events support
+  ARC: perf: fix of kernel data types using
+  ARC: perf: fix description comment
+  ARC: perf: remove useless ifdefs
 
-  # ./perf record -e intel_pt//u -- ./perf
+ arch/arc/kernel/perf_event.c | 179 ++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 141 insertions(+), 38 deletions(-)
 
-jirka
+-- 
+2.14.5
+
