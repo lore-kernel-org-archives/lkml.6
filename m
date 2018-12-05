@@ -2,177 +2,166 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58520C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5866C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA1020850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:15:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA1020850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A3B4420851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B4420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeLELPL (ORCPT
+        id S1727478AbeLELQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:15:11 -0500
-Received: from mail-eopbgr40051.outbound.protection.outlook.com ([40.107.4.51]:27328
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Wed, 5 Dec 2018 06:16:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58090 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727142AbeLELPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:15:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eJYLu2Tjv7jQE1JNifDPeQJdXHS5dSl2xOHClMnQao0=;
- b=E9ocwzJwyDt9QUjfpBpdoN+WuvRCWYOkUeFUJfXweTIrN7L0wgfCiUSpDlkM1qFC8EEIQ+GJyDsc6VY5pG4Dk9YiU3bwMETSntrfqqMsGdMFrunLXzM3ZTfaj9dQ3sxiTRVIQ0NYk5gsbbuRsQ1b/gHW2E6MpawafECiFFgHiy0=
-Received: from DB6PR0802MB2551.eurprd08.prod.outlook.com (10.172.251.149) by
- DB6PR0802MB2422.eurprd08.prod.outlook.com (10.172.250.151) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Wed, 5 Dec 2018 11:15:07 +0000
-Received: from DB6PR0802MB2551.eurprd08.prod.outlook.com
- ([fe80::74e9:75ef:69d9:d10b]) by DB6PR0802MB2551.eurprd08.prod.outlook.com
- ([fe80::74e9:75ef:69d9:d10b%6]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
- 11:15:07 +0000
-From:   Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] drm/arm: Delete redundant CONFIG_DRM_ARM
-Thread-Topic: [PATCH v1] drm/arm: Delete redundant CONFIG_DRM_ARM
-Thread-Index: AQHUjExrupzxTQVxfESmoukk40rkGKVv/vQA
-Date:   Wed, 5 Dec 2018 11:15:06 +0000
-Message-ID: <20181205111506.GA5567@e114479-lin.cambridge.arm.com>
-References: <20181205034011.29103-1-james.qian.wang@arm.com>
-In-Reply-To: <20181205034011.29103-1-james.qian.wang@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0319.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::19) To DB6PR0802MB2551.eurprd08.prod.outlook.com
- (2603:10a6:4:a1::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexandru-Cosmin.Gheorghe@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [217.140.106.52]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0802MB2422;6:2yQJPT/JpFbN9jInAQUky9b0MwPlxM8rAaNaA+Uw+6M+yENXQNABl9ZxCYaAQb5HY2RnzW2yQKXBvjwedx+3AvztYQ0HHTo2E5QYZmEZWkHAPqZ1HiQ7vTdkkjL2TpUzZf0z4U4OrnM44k62EghvNOeAkPbQW0AK3ju7JHcbJkjegVesggWMMCPm2P1+D9QVBCAnDWKB0m1KIyLEwkoXMvc2aT63m3xa7WwhNLQ1pCvUF4lYvbk/go7zinW0lAxjEwqGqRtyf+7U5aeLWyuu1UjE3f4zegKxspeoh2Gy36Mp76rivxzrySvk1/qj/8QTk7uOp256g2tfZAIAO7TZtx9v4ga/wVL3qZ7HB6RcoopJJWD4futyUlWBUOeZS9m6bkc6+Md8JkujvKGtISkMBtvvGzTDOznUFVrUvh+jJVwcMWuoIWRIpHTzmw/AYK2V2gy2jz4v/5rvocCtFkAkfw==;5:aAUOkhPfHxYukubT4aDdLdi+WcbXHPhLGSgRwEK8dCcn2fTG58cv09MiRzdxH+DEB4okmU9dmAXcDAifPs0WW0Urbmp5EMbY34k/IPQ7DTfi3HAFaFEY4kPsL56p714iUjiwDMjCNvQJMT2Pa1PvYoINmaLnGinuO/7LL1A6WxE=;7:sNuj0O2tNb7hU8gDbuNUawzZMCZ99fO9YnZ2EiD39SOj6+qjnn0zXUdbssBKQ5pbdtLxpmvx8gYg8KUe7UzUPAoQRs0LaXgx4NCP51QQM8jm8vyENLhBbo0m+HH4/+X1G0sJf5V1OQfqF2XQ9UHgWw==
-x-ms-office365-filtering-correlation-id: 5208947b-6872-4ed3-378c-08d65aa2e963
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB6PR0802MB2422;
-x-ms-traffictypediagnostic: DB6PR0802MB2422:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0802MB2422BD883E4F7E10953B900EBCA80@DB6PR0802MB2422.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB6PR0802MB2422;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0802MB2422;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(366004)(199004)(189003)(33656002)(6436002)(7736002)(8676002)(25786009)(486006)(5660300001)(11346002)(476003)(81156014)(71200400001)(81166006)(446003)(26005)(102836004)(2906002)(6246003)(14454004)(4326008)(6862004)(8936002)(305945005)(6512007)(53936002)(229853002)(3846002)(6116002)(6486002)(478600001)(52116002)(6636002)(186003)(97736004)(76176011)(1076002)(106356001)(68736007)(99286004)(105586002)(316002)(54906003)(66066001)(71190400001)(14444005)(256004)(72206003)(86362001)(386003)(6506007)(575784001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2422;H:DB6PR0802MB2551.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: gfznXAsqRnzHCLh3B1fE9z7fc4ZO2rBUdlrpNwS+lOcUpPpCkWy9bcRtVaZrUlmqi1H3mwNqepu5iUAe9zKaTQIbWITyRUwRINzvrdzUSMuhckd33tIm6SWCzWF36Xg3LfzHgWqCq4KzrOoqsV/0XDW0/L/CglzR9F/XU0Z7xdRdHe/4CCSz1uC3ktqtnUDFTDKgx42TXOgWYlSoMBXOKindMUsGczdbzwF6/d1kld/Uw/cFdFb0zh+HQR+kdMssKcjszFRWz7ne1J/Le82PrqBXEhhKfv5iH567nZvq8/yjFi8CARpVvHwASP940HctSiTSWWmzbpdz40rqFphQYyUE+qfzqxg4GphamsaZxfY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2A99B7F1BF0D114F9C1C5C991742949D@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726918AbeLELQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:16:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73962AE3D;
+        Wed,  5 Dec 2018 11:16:46 +0000 (UTC)
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5208947b-6872-4ed3-378c-08d65aa2e963
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 11:15:06.9111
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2422
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 05 Dec 2018 12:16:46 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
+ ep_poll_callback() contention
+In-Reply-To: <45bce871-edfd-c402-acde-2e57e80cc522@akamai.com>
+References: <20181203110237.14787-1-rpenyaev@suse.de>
+ <45bce871-edfd-c402-acde-2e57e80cc522@akamai.com>
+Message-ID: <38cc83144a2ec332dead4e21214ea068@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On 2018-12-04 18:23, Jason Baron wrote:
+> On 12/3/18 6:02 AM, Roman Penyaev wrote:
 
-On Wed, Dec 05, 2018 at 03:41:35AM +0000, james qian wang (Arm Technology C=
-hina) wrote:
-> Delete redundant CONFIG_DRM_ARM, and add a menu "ARM devices" to subclass
-> ARM device drivers.
->=20
-> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
+[...]
 
-Reviewed-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
+>> 
+>>  	ep_set_busy_poll_napi_id(epi);
+>> 
+>> @@ -1156,8 +1187,8 @@ static int ep_poll_callback(wait_queue_entry_t 
+>> *wait, unsigned mode, int sync, v
+>>  	 */
+>>  	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
+>>  		if (epi->next == EP_UNACTIVE_PTR) {
+>> -			epi->next = ep->ovflist;
+>> -			ep->ovflist = epi;
+>> +			/* Atomically exchange tail */
+>> +			epi->next = xchg(&ep->ovflist, epi);
+> 
+> This also relies on the fact that the same epi can't be added to the
+> list in parallel, because the wait queue doing the wakeup will have the
+> wait_queue_head lock. That was a little confusing for me b/c we only 
+> had
+> the read_lock() above.
 
-> ---
->  drivers/gpu/drm/Makefile    |  2 +-
->  drivers/gpu/drm/arm/Kconfig | 10 ++++------
->  2 files changed, 5 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index 1fafc2f8e8f9..0df0a5a4cc82 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -51,7 +51,7 @@ obj-$(CONFIG_DRM_DEBUG_SELFTEST) +=3D selftests/
->  obj-$(CONFIG_DRM)	+=3D drm.o
->  obj-$(CONFIG_DRM_MIPI_DSI) +=3D drm_mipi_dsi.o
->  obj-$(CONFIG_DRM_PANEL_ORIENTATION_QUIRKS) +=3D drm_panel_orientation_qu=
-irks.o
-> -obj-$(CONFIG_DRM_ARM)	+=3D arm/
-> +obj-y			+=3D arm/
->  obj-$(CONFIG_DRM_TTM)	+=3D ttm/
->  obj-$(CONFIG_DRM_SCHED)	+=3D scheduler/
->  obj-$(CONFIG_DRM_TDFX)	+=3D tdfx/
-> diff --git a/drivers/gpu/drm/arm/Kconfig b/drivers/gpu/drm/arm/Kconfig
-> index 9a18e1bd57b4..f9f7761cb2f4 100644
-> --- a/drivers/gpu/drm/arm/Kconfig
-> +++ b/drivers/gpu/drm/arm/Kconfig
-> @@ -1,13 +1,10 @@
-> -config DRM_ARM
-> -	bool
-> -	help
-> -	  Choose this option to select drivers for ARM's devices
-> +# SPDX-License-Identifier: GPL-2.0
-> +menu "ARM devices"
-> =20
->  config DRM_HDLCD
->  	tristate "ARM HDLCD"
->  	depends on DRM && OF && (ARM || ARM64)
->  	depends on COMMON_CLK
-> -	select DRM_ARM
->  	select DRM_KMS_HELPER
->  	select DRM_KMS_CMA_HELPER
->  	help
-> @@ -29,7 +26,6 @@ config DRM_MALI_DISPLAY
->  	tristate "ARM Mali Display Processor"
->  	depends on DRM && OF && (ARM || ARM64)
->  	depends on COMMON_CLK
-> -	select DRM_ARM
->  	select DRM_KMS_HELPER
->  	select DRM_KMS_CMA_HELPER
->  	select DRM_GEM_CMA_HELPER
-> @@ -40,3 +36,5 @@ config DRM_MALI_DISPLAY
->  	  of the hardware.
-> =20
->  	  If compiled as a module it will be called mali-dp.
-> +
-> +endmenu
-> --=20
-> 2.17.1
+Yes, that is indeed not obvious path, but wq is locked by 
+wake_up_*_poll()
+call or caller of wake_up_locked_poll() has to be sure wq.lock is taken.
 
---=20
-Cheers,
-Alex G
+I'll add an explicit comment here, thanks for pointing out.
+
+> 
+>>  			if (epi->ws) {
+>>  				/*
+>>  				 * Activate ep->ws since epi->ws may get
+>> @@ -1172,7 +1203,7 @@ static int ep_poll_callback(wait_queue_entry_t 
+>> *wait, unsigned mode, int sync, v
+>> 
+>>  	/* If this file is already in the ready list we exit soon */
+>>  	if (!ep_is_linked(epi)) {
+>> -		list_add_tail(&epi->rdllink, &ep->rdllist);
+>> +		list_add_tail_lockless(&epi->rdllink, &ep->rdllist);
+>>  		ep_pm_stay_awake_rcu(epi);
+>>  	}
+> 
+> same for this.
+
+... and an explicit comment here.
+
+> 
+>> 
+>> @@ -1197,13 +1228,13 @@ static int ep_poll_callback(wait_queue_entry_t 
+>> *wait, unsigned mode, int sync, v
+>>  				break;
+>>  			}
+>>  		}
+>> -		wake_up_locked(&ep->wq);
+>> +		wake_up(&ep->wq);
+> 
+> why the switch here to the locked() variant? Shouldn't the 'reader'
+> side, in this case which takes the rwlock for write see all updates in 
+> a
+> coherent state at this point?
+
+lockdep inside __wake_up_common expects wq_head->lock is taken, and
+seems this is not a good idea to leave wq naked on wake up path,
+when several CPUs can enter wake function.  Although 
+default_wake_function
+is protected by spinlock inside try_to_wake_up(), but for example
+autoremove_wake_function() can't be called concurrently for the same wq
+(it removes wq entry from the list).  Also in case of bookmarks
+__wake_up_common adds an entry to the list, thus can't be called without
+any locks.
+
+I understand you concern and you are right saying that read side sees
+wq entries as stable, but that will work only if __wake_up_common does
+not modify anything, that is seems true now, but of course it is
+too scary to rely on that in the future.
+
+> 
+>>  	}
+>>  	if (waitqueue_active(&ep->poll_wait))
+>>  		pwake++;
+>> 
+>>  out_unlock:
+>> -	spin_unlock_irqrestore(&ep->wq.lock, flags);
+>> +	read_unlock_irqrestore(&ep->lock, flags);
+>> 
+>>  	/* We have to call this outside the lock */
+>>  	if (pwake)
+>> @@ -1489,7 +1520,7 @@ static int ep_insert(struct eventpoll *ep, const 
+>> struct epoll_event *event,
+>>  		goto error_remove_epi;
+>> 
+>>  	/* We have to drop the new item inside our item list to keep track 
+>> of it */
+>> -	spin_lock_irq(&ep->wq.lock);
+>> +	write_lock_irq(&ep->lock);
+>> 
+>>  	/* record NAPI ID of new item if present */
+>>  	ep_set_busy_poll_napi_id(epi);
+>> @@ -1501,12 +1532,12 @@ static int ep_insert(struct eventpoll *ep, 
+>> const struct epoll_event *event,
+>> 
+>>  		/* Notify waiting tasks that events are available */
+>>  		if (waitqueue_active(&ep->wq))
+>> -			wake_up_locked(&ep->wq);
+>> +			wake_up(&ep->wq);
+> 
+> is this necessary to switch as well? Is this to make lockdep happy?
+> Looks like there are few more conversions too below...
+
+Yes, necessary, wq.lock should be taken.
+
+--
+Roman
+
