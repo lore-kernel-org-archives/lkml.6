@@ -2,220 +2,157 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01227C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B3DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF9420850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:41:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="bTZ1PuyI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF9420850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+	by mail.kernel.org (Postfix) with ESMTP id 4EC5520850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:44:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC5520850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeLEQlM (ORCPT
+        id S1727610AbeLEQop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:41:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53350 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbeLEQlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:41:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y1so13901037wmi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 08:41:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=t+ERgg1eaXTOvL5+/CW0FYWcnkQTv0amFM+Fl+3L5lY=;
-        b=bTZ1PuyIEars8s6JsZlDa2fPUrterySMr5HC/5XF78LRKmFM0XNdaJNeyrapviMB8p
-         Gmf/JbLE5QP4qEy7JNisdDPKJocYilsOnNHybm0zaNikGJ8D4Gb+dKP3LaLAp/tMuoKg
-         Ni7DBIoEvJx03P3vLPQBRpluNJi+5sOJVJ1V19xzyNUzXdGBfeUjBaeGGbKLLPV8Zz5z
-         l3xPu4E+Be53eIRzzmOuJDu+yQOBV8sn4i5gEMYh18u07G5WE9Bd1wZntQOgnqfBkN+u
-         ChstHKc2s89/1Tg/ufzbb+r65GDO4VnQm/o2MNi+qxcnHhGDgWG4gu3PJD28jmbBk6+O
-         09BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=t+ERgg1eaXTOvL5+/CW0FYWcnkQTv0amFM+Fl+3L5lY=;
-        b=I3fDU5fg0t8JXBIkHTPAQHSyPmu/hO2akVbPXalMkSAqoh/XQLRwiKQO5Z/1/NZm3c
-         tPpTghThM8+kopnCg/kfep7RKIXTwI3IYSpFnjWpIRv0T8Pv8PMpfvcWXZ8rzVps3AG0
-         D+gZCTqHwL96WMn8SgTknOwhUBWFIhpy4avbMN5YoopzclgXKtlstTjZMrMTIWto29DZ
-         kRkHYIzNOOBdCerLg+c4Jfl1IOEHTBcYSUbHa9wGe7DXUKkZC1cRRZlh53u/FLL36/Ru
-         gDOL9Mh9Z1FyCp+vpOLhVjrWfWDBMaWJvZmzwM8BTb/Kc3hHJ7o/5ucdh64lV7D0tl/F
-         6PFA==
-X-Gm-Message-State: AA+aEWbtpuoyoZsKI5unFdg5FQZRQn2Ii5FMM5ltlVkGlttSb67GpBjc
-        KNrlyyfHwfqYObm+9UbTgW57fg==
-X-Google-Smtp-Source: AFSGD/USBcuZD0Tyg2nUHTmL6eTOJrZnwV6r68TLqqC2D+h6px2QOy9j2wV960Q0V+TW3rNAFtpQSw==
-X-Received: by 2002:a1c:f605:: with SMTP id w5mr17319304wmc.116.1544028068331;
-        Wed, 05 Dec 2018 08:41:08 -0800 (PST)
-Received: from [173.194.76.108] ([149.199.62.131])
-        by smtp.gmail.com with ESMTPSA id v1sm23454177wrw.90.2018.12.05.08.41.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 08:41:07 -0800 (PST)
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot
- images
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Michal Simek <monstr@monstr.eu>
+        Wed, 5 Dec 2018 11:44:45 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61770 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbeLEQoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:44:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 08:44:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
+   d="scan'208";a="116235252"
+Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
+  by orsmga001.jf.intel.com with ESMTP; 05 Dec 2018 08:44:43 -0800
+To:     the arch/x86 maintainers <x86@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
- 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
- RmzhqoTJlA==
-Message-ID: <dd726c23-7c37-2b38-5b9f-a4edc391511d@monstr.eu>
-Date:   Wed, 5 Dec 2018 17:41:01 +0100
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Subject: [GIT PULL] x86: remove Intel MPX
+Message-ID: <7de5232f-4bc1-5c85-00d5-cb646462577f@intel.com>
+Date:   Wed, 5 Dec 2018 08:44:43 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="svNOVL13q6FxCdhSHHW6hgLU8MdLu4uy6"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---svNOVL13q6FxCdhSHHW6hgLU8MdLu4uy6
-Content-Type: multipart/mixed; boundary="MSVYFBXQIqseltohcSuoSjzf0VJrIOtDM";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Message-ID: <dd726c23-7c37-2b38-5b9f-a4edc391511d@monstr.eu>
-Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot
- images
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+Hi x86 maintainers,
 
---MSVYFBXQIqseltohcSuoSjzf0VJrIOtDM
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Please pull from:
 
-On 03. 12. 18 8:50, Masahiro Yamada wrote:
-> This patch set fixes various issues in microblaze Makefiles.
->=20
-> BTW, "simpleImage.<dt>" works like a phony target to generate the
-> following four images, where the first three are just aliases.
->=20
->  - arch/microblaze/boot/simpleImage.<dt>:
->          identical to arch/microblaze/boot/linux.bin
+ 	git://git.kernel.org/pub/scm/linux/kernel/git/daveh/x86-mpx.git mpx-remove
 
-It is not - fdt section should be empty.
-simpleImage has this section filled.
+There is only one commit, removing the Intel MPX implementation from the
+tree.  The benefits of keeping the feature in the tree are not worth the
+ongoing maintenance cost.
 
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.unstrip:
->          identical to vmlinux
+I updated this branch for 4.20-rc4 and it has passed all of the normal
+0-day compile tests.
 
-The same here with filled section.
+--
 
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.ub:
->          identical to arch/microblaze/boot/linux.bin.ub
-
-as above.
-
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.strip:
->          stripped vmlinux
-
-And this is there because unstrip version is quite huge and for early
-issues you need to know only some symbols that's why debugger is not
-overflow with stuff which none needs.
-Maybe this is not an issue now but that strip version is used a lot.
-
-
->=20
-> I am not sure how much useful those copies are,
-> but, I tried my best to keep the same behavior.
->=20
-> IMHO, I guess DTB=3D<dt> would be more sensible,
-> but it is up to Michal.
-
-What do you mean by this exactly?
-
-Definitely thanks for looking at this.
-Michal
-
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
-
-
-
---MSVYFBXQIqseltohcSuoSjzf0VJrIOtDM--
-
---svNOVL13q6FxCdhSHHW6hgLU8MdLu4uy6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlwH/54ACgkQykllyylKDCEAqgCfR9/DxCsXl6NlRGgU9JZ31euK
-5zoAn17ir1wuoX67oPoeL52wjTf5mTXt
-=jAbi
------END PGP SIGNATURE-----
-
---svNOVL13q6FxCdhSHHW6hgLU8MdLu4uy6--
+ Documentation/x86/intel_mpx.txt             |  244 ----
+ arch/x86/Kconfig                            |   28 -
+ arch/x86/include/asm/bugs.h                 |    6 -
+ arch/x86/include/asm/disabled-features.h    |    8 +-
+ arch/x86/include/asm/fpu/xstate.h           |    4 +-
+ arch/x86/include/asm/mmu.h                  |    4 -
+ arch/x86/include/asm/mmu_context.h          |   31 -
+ arch/x86/include/asm/mpx.h                  |  115 --
+ arch/x86/include/asm/processor.h            |   18 -
+ arch/x86/include/asm/trace/mpx.h            |  134 ---
+ arch/x86/kernel/cpu/common.c                |   18 -
+ arch/x86/kernel/cpu/cpuid-deps.c            |    1 -
+ arch/x86/kernel/cpu/intel.c                 |   37 -
+ arch/x86/kernel/fpu/xstate.c                |    6 +-
+ arch/x86/kernel/setup.c                     |    2 -
+ arch/x86/kernel/sys_x86_64.c                |    9 -
+ arch/x86/kernel/traps.c                     |   74 --
+ arch/x86/kvm/cpuid.c                        |   13 +-
+ arch/x86/kvm/cpuid.h                        |    1 -
+ arch/x86/kvm/svm.c                          |    6 -
+ arch/x86/kvm/vmx.c                          |   60 +-
+ arch/x86/kvm/x86.c                          |   25 -
+ arch/x86/kvm/x86.h                          |    3 +-
+ arch/x86/mm/Makefile                        |    1 -
+ arch/x86/mm/hugetlbpage.c                   |    5 -
+ arch/x86/mm/mpx.c                           |  936 ----------------
+ fs/exec.c                                   |    1 -
+ include/asm-generic/mm_hooks.h              |   11 -
+ include/uapi/linux/prctl.h                  |    2 +-
+ kernel/sys.c                                |   13 +-
+ mm/mmap.c                                   |    6 -
+ tools/testing/selftests/x86/mpx-debug.h     |   15 -
+ tools/testing/selftests/x86/mpx-dig.c       |  499 ---------
+ tools/testing/selftests/x86/mpx-hw.h        |  124 --
+ tools/testing/selftests/x86/mpx-mini-test.c | 1616 --------------------
+ tools/testing/selftests/x86/mpx-mm.h        |   10 -
+ 36 files changed, 13 insertions(+), 4073 deletions(-)
+ delete mode 100644 Documentation/x86/intel_mpx.txt
+ delete mode 100644 arch/x86/include/asm/mpx.h
+ delete mode 100644 arch/x86/include/asm/trace/mpx.h
+ delete mode 100644 arch/x86/mm/mpx.c
+ delete mode 100644 tools/testing/selftests/x86/mpx-debug.h
+ delete mode 100644 tools/testing/selftests/x86/mpx-dig.c
+ delete mode 100644 tools/testing/selftests/x86/mpx-hw.h
+ delete mode 100644 tools/testing/selftests/x86/mpx-mini-test.c
+ delete mode 100644 tools/testing/selftests/x86/mpx-mm.h
