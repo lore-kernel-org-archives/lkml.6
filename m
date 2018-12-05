@@ -4,70 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85B8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF8BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E98C20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D25B20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544039582;
-	bh=A9rNbHY21aQeNhxIiOVKGTW70d/7z3NVx5Z9kF3KMlY=;
+	s=default; t=1544039584;
+	bh=n5nO0GlMPGxWAMka812VGVtEl/U3xUlUTe7QRuD4bQk=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=OTekEGMLR2T7LMQayqfoHOHbtnNMuJg5byMogVehoO+Mli4vdNb5fJSor14GNbO9q
-	 gb+GK+e8M2k0p3/bKIQrD042zcSnPoriSp7ARpQ7DAVLeLSBpvq7B8G2af1mpEPJRa
-	 poAsXT6f/+6Foj6ACspp1oQ/rP2SKqzSX6pIr3cs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E98C20850
+	b=TPLWW5GyL3QZ8N92P1ooUx+xx9B2D/9GWIZ5PLFtdCBMSt0CLDs/Gc4mxP3zcQjot
+	 BYFf9URg81JcZnLP8SAuAo/bbvNGhtfVyHow5/twix3SDMJ7ICOxhc/Mu25JMTLG7A
+	 uG7dJQwddI8eAR69+xJbaXphh+1f8/Ci8uL4KO0w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D25B20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbeLETvK (ORCPT
+        id S1729005AbeLETxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:51:10 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39790 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728683AbeLETvG (ORCPT
+        Wed, 5 Dec 2018 14:53:03 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37455 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728736AbeLETvK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:51:06 -0500
-Received: by mail-ot1-f65.google.com with SMTP id n8so15941943otl.6;
-        Wed, 05 Dec 2018 11:51:06 -0800 (PST)
+        Wed, 5 Dec 2018 14:51:10 -0500
+Received: by mail-oi1-f195.google.com with SMTP id y23so18657580oia.4;
+        Wed, 05 Dec 2018 11:51:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=X3XSi5wbaDANKBZ4iC2gvXZdeAkU6Sim0nb7Xgvxqsk=;
-        b=oVIJbtBc24/vo2ZKiMTa5OzSWH2BALchwGiuIcL0jjLxfPBQqZcOUZgfMz5T/53xys
-         T6LBeeapRJCeP/4vKwrrhMU+W2hMigj3Fibw/Ga32BLulijMWsjYLIDzterHpr1p/TxL
-         HlcWeDbdg4CyWho0Mi8zuLOgrngDPcFacdXlTHXu2F1V5wO7YNnIGkeS1SHHg5wPN7FC
-         0wzlrnJh9hUnGDPcrB0fOg9356wzXLjkPKjWt/4i3zxgLA5mPlYjvvRS7dGHoiBuoIK4
-         csSzTxzZsevtDNJtIJEBtgMaz648vjPdIqmvO972sdtrCuxENr9cj3s6pAqOdrU88r3i
-         fSWg==
-X-Gm-Message-State: AA+aEWaXqumikRFVqONQRt1aAOF1ysS9x7XEF7aVJkFYvol2ByAsS9Hs
-        eeDR3DeGTOdF9OEm1IM5cwiu0Ns=
-X-Google-Smtp-Source: AFSGD/UB41pgHe8dTBsflceYYXFytEPMA15A/8a40ESLAHuFWz9OxcRFVy1I08sppWvp3ejTrzy5dA==
-X-Received: by 2002:a9d:12d:: with SMTP id 42mr15586588otu.352.1544039465403;
-        Wed, 05 Dec 2018 11:51:05 -0800 (PST)
+        bh=64JnrfkdMgu2EPsvD7FnBPzsb1bi6pVhE4y3hEeScxc=;
+        b=mqjDfWdVbSw45pQziyZXy2CgJWYzD0ANgBTFYhbPCITKaMXsx8NJ/9nIHHqIzwlJ9V
+         U0uOCiMFO7LYxY8LePnuvCXcElCE5d7UMhWSxiasOiWl7BBWTPVUj1o8L9RFLZzQodCy
+         vgvxOoqVb4DpOizAPdTexV0RHp8bnzBfOuuNXMMZTx0YaKVpRFmyyfN0Z5z0/jXCzNhr
+         AOasw0QvzNhKbtpExMpqPnDOjRFYNvXMxaTCUuI3Qexwwv/cEoLluzvbYXSS+/A3SHVX
+         iNps5A8Og3CN2Rg5curDngsWHCVk/tCa2/hU5VHDKO+1V71HKKyJW4bKuDjE02jUUaE4
+         xh/Q==
+X-Gm-Message-State: AA+aEWb2yYzPgnOmgbEU7If7VyqOj59w58g7Dx2+F2P2QR4zmMWt1TEw
+        zVfMHi4TJcKvpXB1dlnSFUUISLk=
+X-Google-Smtp-Source: AFSGD/W/EwhKzUtm1rBCuJBtyUCihNFA3awqJp1TXimm1xKv2T1MnxZ+AgBUJEFdllwDhZA0hL5bFg==
+X-Received: by 2002:aca:aad8:: with SMTP id t207mr14705306oie.90.1544039468996;
+        Wed, 05 Dec 2018 11:51:08 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.04
+        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 11:51:04 -0800 (PST)
+        Wed, 05 Dec 2018 11:51:08 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Benoit Parrot <bparrot@ti.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] media: Use of_node_name_eq for node name comparisons
-Date:   Wed,  5 Dec 2018 13:50:29 -0600
-Message-Id: <20181205195050.4759-13-robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Wingman Kwok <w-kwok2@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: [PATCH] net: Use of_node_name_eq for node name comparisons
+Date:   Wed,  5 Dec 2018 13:50:32 -0600
+Message-Id: <20181205195050.4759-16-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -79,125 +75,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Convert string compares of DT node names to use of_node_name_eq helper
 instead. This removes direct access to the node name pointer.
 
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Benoit Parrot <bparrot@ti.com>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-media@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
+For instances using of_node_cmp, this has the side effect of now using
+case sensitive comparisons. This should not matter for any FDT based
+system which all of these are.
+
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Wingman Kwok <w-kwok2@ti.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/platform/exynos4-is/media-dev.c | 12 ++++++------
- drivers/media/platform/ti-vpe/cal.c           |  4 ++--
- drivers/media/platform/xilinx/xilinx-tpg.c    |  2 +-
- drivers/media/v4l2-core/v4l2-fwnode.c         |  6 ++----
- 4 files changed, 11 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/amd/sunlance.c      | 4 ++--
+ drivers/net/ethernet/freescale/gianfar.c | 4 ++--
+ drivers/net/ethernet/sun/sunhme.c        | 2 +-
+ drivers/net/ethernet/ti/cpsw.c           | 4 ++--
+ drivers/net/ethernet/ti/netcp_ethss.c    | 4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 870501b0f351..ced14af56606 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -445,7 +445,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	 */
- 	np = of_get_parent(rem);
+diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
+index b4fc0ed5bce8..91c9140d2a52 100644
+--- a/drivers/net/ethernet/amd/sunlance.c
++++ b/drivers/net/ethernet/amd/sunlance.c
+@@ -1486,9 +1486,9 @@ static int sunlance_sbus_probe(struct platform_device *op)
+ 	struct device_node *parent_dp = parent->dev.of_node;
+ 	int err;
  
--	if (np && !of_node_cmp(np->name, "i2c-isp"))
-+	if (of_node_name_eq(np, "i2c-isp"))
- 		pd->fimc_bus_type = FIMC_BUS_TYPE_ISP_WRITEBACK;
- 	else
- 		pd->fimc_bus_type = pd->sensor_bus_type;
-@@ -495,7 +495,7 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
- 	for_each_available_child_of_node(parent, node) {
- 		struct device_node *port;
+-	if (!strcmp(parent_dp->name, "ledma")) {
++	if (of_node_name_eq(parent_dp, "ledma")) {
+ 		err = sparc_lance_probe_one(op, parent, NULL);
+-	} else if (!strcmp(parent_dp->name, "lebuffer")) {
++	} else if (of_node_name_eq(parent_dp, "lebuffer")) {
+ 		err = sparc_lance_probe_one(op, NULL, parent);
+ 	} else
+ 		err = sparc_lance_probe_one(op, NULL, NULL);
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index 3c8da1a18ba0..7b5f08725b5b 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -720,7 +720,7 @@ static int gfar_of_group_count(struct device_node *np)
+ 	int num = 0;
  
--		if (of_node_cmp(node->name, "csis"))
-+		if (!of_node_name_eq(node, "csis"))
+ 	for_each_available_child_of_node(np, child)
+-		if (!of_node_cmp(child->name, "queue-group"))
++		if (of_node_name_eq(child, "queue-group"))
+ 			num++;
+ 
+ 	return num;
+@@ -838,7 +838,7 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
+ 	/* Parse and initialize group specific information */
+ 	if (priv->mode == MQ_MG_MODE) {
+ 		for_each_available_child_of_node(np, child) {
+-			if (of_node_cmp(child->name, "queue-group"))
++			if (!of_node_name_eq(child, "queue-group"))
+ 				continue;
+ 
+ 			err = gfar_parse_group(child, priv, model);
+diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
+index 863fd602fd33..ff641cf30a4e 100644
+--- a/drivers/net/ethernet/sun/sunhme.c
++++ b/drivers/net/ethernet/sun/sunhme.c
+@@ -2691,7 +2691,7 @@ static int happy_meal_sbus_probe_one(struct platform_device *op, int is_qfe)
+ 	sbus_dp = op->dev.parent->of_node;
+ 
+ 	/* We can match PCI devices too, do not accept those here. */
+-	if (strcmp(sbus_dp->name, "sbus") && strcmp(sbus_dp->name, "sbi"))
++	if (!of_node_name_eq(sbus_dp, "sbus") && !of_node_name_eq(sbus_dp, "sbi"))
+ 		return err;
+ 
+ 	if (is_qfe) {
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index 500f7ed8c58c..aeb599f230ab 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -3144,7 +3144,7 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
+ 		const __be32 *parp;
+ 
+ 		/* This is no slave child node, continue */
+-		if (strcmp(slave_node->name, "slave"))
++		if (!of_node_name_eq(slave_node, "slave"))
  			continue;
- 		/* The csis node can have only port subnode. */
- 		port = of_get_next_child(node, NULL);
-@@ -720,13 +720,13 @@ static int fimc_md_register_platform_entities(struct fimc_md *fmd,
+ 
+ 		slave_data->phy_node = of_parse_phandle(slave_node,
+@@ -3240,7 +3240,7 @@ static void cpsw_remove_dt(struct platform_device *pdev)
+ 	for_each_available_child_of_node(node, slave_node) {
+ 		struct cpsw_slave_data *slave_data = &data->slave_data[i];
+ 
+-		if (strcmp(slave_node->name, "slave"))
++		if (!of_node_name_eq(slave_node, "slave"))
  			continue;
  
- 		/* If driver of any entity isn't ready try all again later. */
--		if (!strcmp(node->name, CSIS_OF_NODE_NAME))
-+		if (of_node_name_eq(node, CSIS_OF_NODE_NAME))
- 			plat_entity = IDX_CSIS;
--		else if	(!strcmp(node->name, FIMC_IS_OF_NODE_NAME))
-+		else if	(of_node_name_eq(node, FIMC_IS_OF_NODE_NAME))
- 			plat_entity = IDX_IS_ISP;
--		else if (!strcmp(node->name, FIMC_LITE_OF_NODE_NAME))
-+		else if (of_node_name_eq(node, FIMC_LITE_OF_NODE_NAME))
- 			plat_entity = IDX_FLITE;
--		else if	(!strcmp(node->name, FIMC_OF_NODE_NAME) &&
-+		else if	(of_node_name_eq(node, FIMC_OF_NODE_NAME) &&
- 			 !of_property_read_bool(node, "samsung,lcd-wb"))
- 			plat_entity = IDX_FIMC;
- 
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index 95a093f41905..fc3c212b96e1 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1615,7 +1615,7 @@ of_get_next_port(const struct device_node *parent,
- 				return NULL;
- 			}
- 			prev = port;
--		} while (of_node_cmp(port->name, "port") != 0);
-+		} while (!of_node_name_eq(port, "port"));
+ 		if (of_phy_is_fixed_link(slave_node))
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 0397ccb6597e..bfde91ca5df7 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -3621,7 +3621,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 		return -EINVAL;
  	}
  
- 	return port;
-@@ -1635,7 +1635,7 @@ of_get_next_endpoint(const struct device_node *parent,
- 		if (!ep)
- 			return NULL;
- 		prev = ep;
--	} while (of_node_cmp(ep->name, "endpoint") != 0);
-+	} while (!of_node_name_eq(ep, "endpoint"));
+-	if (!strcmp(node->name, "gbe")) {
++	if (of_node_name_eq(node, "gbe")) {
+ 		ret = get_gbe_resource_version(gbe_dev, node);
+ 		if (ret)
+ 			return ret;
+@@ -3635,7 +3635,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 		else
+ 			ret = -ENODEV;
  
- 	return ep;
- }
-diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
-index 851d20dcd550..ce686b8d6cff 100644
---- a/drivers/media/platform/xilinx/xilinx-tpg.c
-+++ b/drivers/media/platform/xilinx/xilinx-tpg.c
-@@ -725,7 +725,7 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
- 		const struct xvip_video_format *format;
- 		struct device_node *endpoint;
- 
--		if (!port->name || of_node_cmp(port->name, "port"))
-+		if (!of_node_name_eq(port, "port"))
- 			continue;
- 
- 		format = xvip_of_get_format(port);
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 218f0da0ce76..849326241b17 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -564,8 +564,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
- 	fwnode = fwnode_get_parent(__fwnode);
- 	fwnode_property_read_u32(fwnode, port_prop, &link->local_port);
- 	fwnode = fwnode_get_next_parent(fwnode);
--	if (is_of_node(fwnode) &&
--	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
-+	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
- 		fwnode = fwnode_get_next_parent(fwnode);
- 	link->local_node = fwnode;
- 
-@@ -578,8 +577,7 @@ int v4l2_fwnode_parse_link(struct fwnode_handle *__fwnode,
- 	fwnode = fwnode_get_parent(fwnode);
- 	fwnode_property_read_u32(fwnode, port_prop, &link->remote_port);
- 	fwnode = fwnode_get_next_parent(fwnode);
--	if (is_of_node(fwnode) &&
--	    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
-+	if (is_of_node(fwnode) && of_node_name_eq(to_of_node(fwnode), "ports"))
- 		fwnode = fwnode_get_next_parent(fwnode);
- 	link->remote_node = fwnode;
- 
+-	} else if (!strcmp(node->name, "xgbe")) {
++	} else if (of_node_name_eq(node, "xgbe")) {
+ 		ret = set_xgbe_ethss10_priv(gbe_dev, node);
+ 		if (ret)
+ 			return ret;
 -- 
 2.19.1
 
