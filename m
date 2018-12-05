@@ -3,212 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013EAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6368C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCED520851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCED520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 8825F2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8825F2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbeLEMYW (ORCPT
+        id S1727770AbeLEMY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:24:22 -0500
-Received: from ozlabs.org ([203.11.71.1]:47929 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbeLEMYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:24:22 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 438yb60yPcz9s8J;
-        Wed,  5 Dec 2018 23:24:17 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Arnd Bergmann <arnd@arndb.de>, firoz.khan@linaro.org
-Cc:     y2038@lists.linaro.org, linux-arch@vger.kernel.org,
-        deepa.kernel@gmail.com, Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: split compat syscall table out from native table
-In-Reply-To: <20181204212340.3915309-1-arnd@arndb.de>
-References: <CAK8P3a2SP0eX50NoFKaM2N85mgSejToQkD9ZOE_7V_RT__BCvg@mail.gmail.com> <20181204212340.3915309-1-arnd@arndb.de>
-Date:   Wed, 05 Dec 2018 23:24:16 +1100
-Message-ID: <87pnugkvpr.fsf@concordia.ellerman.id.au>
+        Wed, 5 Dec 2018 07:24:26 -0500
+Received: from www62.your-server.de ([213.133.104.62]:47064 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeLEMYX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:24:23 -0500
+Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gUWDz-0003Xb-Gp; Wed, 05 Dec 2018 13:24:19 +0100
+Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gUWDz-000842-8q; Wed, 05 Dec 2018 13:24:19 +0100
+Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+ <20181123221804.440-3-ard.biesheuvel@linaro.org>
+ <20181130182629.GA16085@arm.com>
+ <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com>
+ <20181203124930.GB25097@arm.com>
+ <CAKv+Gu8svuTSOzg7wmmK70tRPgFqGvBh5BZR-V+43dMLvT1bJg@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <12954298-de06-349e-6df2-c218e5bf09a3@iogearbox.net>
+Date:   Wed, 5 Dec 2018 13:24:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAKv+Gu8svuTSOzg7wmmK70tRPgFqGvBh5BZR-V+43dMLvT1bJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25179/Tue Dec  4 15:18:37 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+Hi Will,
 
-> PowerPC uses a syscall table with native and compat calls interleaved,
-> which is a slightly simpler way to define two matching tables.
->
-> As we move to having the tables generated, that advantage is no longer
-> important, but the interleaved table gets in the way of using the
-> same scripts as on the other architectures.
->
-> Split out a new compat_sys_call_table symbol that contains all the
-> compat calls, and leave the main table for the native calls, to more
-> closely match the method we use everywhere else.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> This is completely untested, it's just for illustration and to
-> get comments about whether this is a good idea.
+On 12/04/2018 04:45 PM, Ard Biesheuvel wrote:
+> On Mon, 3 Dec 2018 at 13:49, Will Deacon <will.deacon@arm.com> wrote:
+>> On Fri, Nov 30, 2018 at 08:20:06PM +0100, Ard Biesheuvel wrote:
+>>> On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
+>>>> On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
+>>>>> The arm64 module region is a 128 MB region that is kept close to
+>>>>> the core kernel, in order to ensure that relative branches are
+>>>>> always in range. So using the same region for programs that do
+>>>>> not have this restriction is wasteful, and preferably avoided.
+>>>>>
+>>>>> Now that the core BPF JIT code permits the alloc/free routines to
+>>>>> be overridden, implement them by vmalloc()/vfree() calls from a
+>>>>> dedicated 128 MB region set aside for BPF programs. This ensures
+>>>>> that BPF programs are still in branching range of each other, which
+>>>>> is something the JIT currently depends upon (and is not guaranteed
+>>>>> when using module_alloc() on KASLR kernels like we do currently).
+>>>>> It also ensures that placement of BPF programs does not correlate
+>>>>> with the placement of the core kernel or modules, making it less
+>>>>> likely that leaking the former will reveal the latter.
+>>>>>
+>>>>> This also solves an issue under KASAN, where shadow memory is
+>>>>> needlessly allocated for all BPF programs (which don't require KASAN
+>>>>> shadow pages since they are not KASAN instrumented)
+>>>>>
+>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>>> ---
+>>>>>  arch/arm64/include/asm/memory.h |  5 ++++-
+>>>>>  arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+>>>>>  2 files changed, 17 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+>>>>> index b96442960aea..ee20fc63899c 100644
+>>>>> --- a/arch/arm64/include/asm/memory.h
+>>>>> +++ b/arch/arm64/include/asm/memory.h
+>>>>> @@ -62,8 +62,11 @@
+>>>>>  #define PAGE_OFFSET          (UL(0xffffffffffffffff) - \
+>>>>>       (UL(1) << (VA_BITS - 1)) + 1)
+>>>>>  #define KIMAGE_VADDR         (MODULES_END)
+>>>>> +#define BPF_JIT_REGION_START (VA_START + KASAN_SHADOW_SIZE)
+>>>>> +#define BPF_JIT_REGION_SIZE  (SZ_128M)
+>>>>> +#define BPF_JIT_REGION_END   (BPF_JIT_REGION_START + BPF_JIT_REGION_SIZE)
+>>>>>  #define MODULES_END          (MODULES_VADDR + MODULES_VSIZE)
+>>>>> -#define MODULES_VADDR                (VA_START + KASAN_SHADOW_SIZE)
+>>>>> +#define MODULES_VADDR                (BPF_JIT_REGION_END)
+>>>>>  #define MODULES_VSIZE                (SZ_128M)
+>>>>>  #define VMEMMAP_START                (PAGE_OFFSET - VMEMMAP_SIZE)
+>>>>>  #define PCI_IO_END           (VMEMMAP_START - SZ_2M)
+>>>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+>>>>> index a6fdaea07c63..76c2ab40c02d 100644
+>>>>> --- a/arch/arm64/net/bpf_jit_comp.c
+>>>>> +++ b/arch/arm64/net/bpf_jit_comp.c
+>>>>> @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+>>>>>                                          tmp : orig_prog);
+>>>>>       return prog;
+>>>>>  }
+>>>>> +
+>>>>> +void *bpf_jit_alloc_exec(unsigned long size)
+>>>>> +{
+>>>>> +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
+>>>>> +                                 BPF_JIT_REGION_END, GFP_KERNEL,
+>>>>> +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+>>>>> +                                 __builtin_return_address(0));
+>>>>
+>>>> I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
+>>>
+>>> I think akpm already queued up that patch.
+>>>
+>>>> In the
+>>>> meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
+>>>> (although we'd need the size information...).
+>>>>
+>>>
+>>> Not sure. What exactly would that achieve?
+>>
+>> I think the zero encoding is guaranteed to be undefined, so it would limit
+>> the usefulness of any stale, executable TLB entries. However, we'd also need
+>> cache maintenance to make that stuff visible to the I side, so it's probably
+>> not worth it, especially if akpm has queued the stuff from Rich.
+>>
+>> Maybe just add an:
+>>
+>> /* FIXME: Remove this when VM_IMMEDIATE_UNMAP is supported */
+>> #ifndef VM_IMMEDIATE_UNMAP
+>> #define VM_IMMEDIATE_UNMAP      0
+>> #endif
+>>
+>> so we remember to come back and sort this out? Up to you.
+> 
+> I'll just make a note to send out that patch once the definition lands via -akpm
 
-Seems like a good idea to me.
+Could I get an ACK from you for this patch, then I'd take the series into bpf-next.
 
-The code's not much more complicated, in fact it's probably clearer
-except for the extra macros.
-
-It's more cache efficient too, though it probably doesn't really matter.
-
-cheers
-
-> Firoz, can you try to get this working?
-> ---
->  arch/powerpc/include/asm/syscall.h |  3 +--
->  arch/powerpc/kernel/entry_64.S     |  7 ++++--
->  arch/powerpc/kernel/systbl.S       | 37 ++++++++++++++++++++++++------
->  arch/powerpc/kernel/vdso.c         |  7 ++++--
->  4 files changed, 41 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
-> index ab9f3f0a8637..1a0e7a8b1c81 100644
-> --- a/arch/powerpc/include/asm/syscall.h
-> +++ b/arch/powerpc/include/asm/syscall.h
-> @@ -18,9 +18,8 @@
->  #include <linux/thread_info.h>
->  
->  /* ftrace syscalls requires exporting the sys_call_table */
-> -#ifdef CONFIG_FTRACE_SYSCALLS
->  extern const unsigned long sys_call_table[];
-> -#endif /* CONFIG_FTRACE_SYSCALLS */
-> +extern const unsigned long compat_sys_call_table[];
->  
->  static inline int syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
->  {
-> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-> index 7b1693adff2a..5574d92646f1 100644
-> --- a/arch/powerpc/kernel/entry_64.S
-> +++ b/arch/powerpc/kernel/entry_64.S
-> @@ -54,6 +54,9 @@
->  SYS_CALL_TABLE:
->  	.tc sys_call_table[TC],sys_call_table
->  
-> +COMPAT_SYS_CALL_TABLE:
-> +	.tc compat_sys_call_table[TC],compat_sys_call_table
-> +
->  /* This value is used to mark exception frames on the stack. */
->  exception_marker:
->  	.tc	ID_EXC_MARKER[TC],STACK_FRAME_REGS_MARKER
-> @@ -173,7 +176,7 @@ system_call:			/* label this so stack traces look sane */
->  	ld	r11,SYS_CALL_TABLE@toc(2)
->  	andis.	r10,r10,_TIF_32BIT@h
->  	beq	15f
-> -	addi	r11,r11,8	/* use 32-bit syscall entries */
-> +	ld	r11,COMPAT_SYS_CALL_TABLE@toc(2)
->  	clrldi	r3,r3,32
->  	clrldi	r4,r4,32
->  	clrldi	r5,r5,32
-> @@ -181,7 +184,7 @@ system_call:			/* label this so stack traces look sane */
->  	clrldi	r7,r7,32
->  	clrldi	r8,r8,32
->  15:
-> -	slwi	r0,r0,4
-> +	slwi	r0,r0,3
->  
->  	barrier_nospec_asm
->  	/*
-> diff --git a/arch/powerpc/kernel/systbl.S b/arch/powerpc/kernel/systbl.S
-> index 919a32746ede..883b8e36964c 100644
-> --- a/arch/powerpc/kernel/systbl.S
-> +++ b/arch/powerpc/kernel/systbl.S
-> @@ -17,13 +17,13 @@
->  #include <asm/ppc_asm.h>
->  
->  #ifdef CONFIG_PPC64
-> -#define SYSCALL(func)		.8byte	DOTSYM(sys_##func),DOTSYM(sys_##func)
-> -#define COMPAT_SYS(func)	.8byte	DOTSYM(sys_##func),DOTSYM(compat_sys_##func)
-> -#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func),DOTSYM(ppc_##func)
-> -#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall),DOTSYM(sys_ni_syscall)
-> -#define SYS32ONLY(func)		.8byte	DOTSYM(sys_ni_syscall),DOTSYM(compat_sys_##func)
-> -#define PPC64ONLY(func)		.8byte	DOTSYM(ppc_##func),DOTSYM(sys_ni_syscall)
-> -#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f),DOTSYM(f3264)
-> +#define SYSCALL(func)		.8byte	DOTSYM(sys_##func)
-> +#define COMPAT_SYS(func)	.8byte	DOTSYM(sys_##func)
-> +#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func)
-> +#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall)
-> +#define SYS32ONLY(func)		.8byte	DOTSYM(sys_ni_syscall)
-> +#define PPC64ONLY(func)		.8byte	DOTSYM(ppc_##func)
-> +#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f)
->  #else
->  #define SYSCALL(func)		.long	sys_##func
->  #define COMPAT_SYS(func)	.long	sys_##func
-> @@ -48,3 +48,26 @@
->  sys_call_table:
->  
->  #include <asm/systbl.h>
-> +
-> +#undef SYSCALL
-> +#undef COMPAT_SYS
-> +#undef PPC_SYS
-> +#undef OLDSYS
-> +#undef SYS32ONLY
-> +#undef PPC64ONLY
-> +#undef SYSX
-> +
-> +#ifdef CONFIG_COMPAT
-> +#define SYSCALL(func)		.8byte	DOTSYM(sys_##func)
-> +#define COMPAT_SYS(func)	.8byte	DOTSYM(compat_sys_##func)
-> +#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func)
-> +#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall)
-> +#define SYS32ONLY(func)		.8byte	DOTSYM(compat_sys_##func)
-> +#define PPC64ONLY(func)		.8byte	DOTSYM(sys_ni_syscall)
-> +#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f3264)
-> +
-> +.globl compat_sys_call_table
-> +compat_sys_call_table:
-> +
-> +#include <asm/systbl.h>
-> +#endif
-> diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-> index 65b3bdb99f0b..7725a9714736 100644
-> --- a/arch/powerpc/kernel/vdso.c
-> +++ b/arch/powerpc/kernel/vdso.c
-> @@ -671,15 +671,18 @@ static void __init vdso_setup_syscall_map(void)
->  {
->  	unsigned int i;
->  	extern unsigned long *sys_call_table;
-> +#ifdef CONFIG_PPC64
-> +	extern unsigned long *compat_sys_call_table;
-> +#endif
->  	extern unsigned long sys_ni_syscall;
->  
->  
->  	for (i = 0; i < NR_syscalls; i++) {
->  #ifdef CONFIG_PPC64
-> -		if (sys_call_table[i*2] != sys_ni_syscall)
-> +		if (sys_call_table[i] != sys_ni_syscall)
->  			vdso_data->syscall_map_64[i >> 5] |=
->  				0x80000000UL >> (i & 0x1f);
-> -		if (sys_call_table[i*2+1] != sys_ni_syscall)
-> +		if (compat_sys_call_table[i] != sys_ni_syscall)
->  			vdso_data->syscall_map_32[i >> 5] |=
->  				0x80000000UL >> (i & 0x1f);
->  #else /* CONFIG_PPC64 */
-> -- 
-> 2.18.0
+Thanks,
+Daniel
