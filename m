@@ -2,144 +2,132 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17598C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C5BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F4420850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A50DE206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:34:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JSF4rfgQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3F4420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Q6JeIOvZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A50DE206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeLEGcx (ORCPT
+        id S1727068AbeLEGeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:32:53 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39380 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeLEGcw (ORCPT
+        Wed, 5 Dec 2018 01:34:07 -0500
+Received: from rcdn-iport-5.cisco.com ([173.37.86.76]:35363 "EHLO
+        rcdn-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeLEGeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:32:52 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181205063251euoutp0222fa30ae4737f00a6b92507bc51f7eb9~tXCdotmU_1298512985euoutp02T;
-        Wed,  5 Dec 2018 06:32:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181205063251euoutp0222fa30ae4737f00a6b92507bc51f7eb9~tXCdotmU_1298512985euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543991571;
-        bh=DVHpxsFPg5jF8utUvYDed61sdmGaeauogjzwq/Mmqxw=;
-        h=From:To:Subject:Date:In-reply-to:References:From;
-        b=JSF4rfgQPaQLt6xt/0iem4jPH7PIUyddEEXaQu9XfT4AO6Z2P4HiyC5r4tVuEE4Tr
-         ACQZ73rusRRVv44zVHggVj8F2xh8JitO0PMagzeNDxyb4YHNEWSIPPFr+icsAfOs73
-         MskGDD/TQSMVypoB7/pZDIMUU/lLohqwZoEoBOMo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181205063250eucas1p121752ad829bb30352fa512e9bb87e800~tXCc8ivm_1609916099eucas1p1g;
-        Wed,  5 Dec 2018 06:32:50 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id AE.41.04294.211770C5; Wed,  5
-        Dec 2018 06:32:50 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181205063250eucas1p1819de50c3030fb60a704656be878fff2~tXCcNpj0x1627616276eucas1p1N;
-        Wed,  5 Dec 2018 06:32:50 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-8e-5c077112c2f5
-Received: from eusync3.samsung.com ( [203.254.199.213]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F0.C7.04284.111770C5; Wed,  5
-        Dec 2018 06:32:50 +0000 (GMT)
-Received: from localhost.localdomain ([10.88.100.192]) by
-        eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PJ900CCM3I7V060@eusync3.samsung.com>;
-        Wed, 05 Dec 2018 06:32:49 +0000 (GMT)
-From:   Jungseung Lee <js07.lee@samsung.com>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        js07.lee@samsung.com, js07.lee@gmail.com
-Subject: [RFC PATCH 2/2] mtd: spi-nor: support lock/unlock for a few Micron
- chips
-Date:   Wed, 05 Dec 2018 15:32:20 +0900
-Message-id: <20181205063220.22279-2-js07.lee@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-reply-to: <20181205063220.22279-1-js07.lee@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsWy7djP87pChewxBm3X5Cz2nepnsThyYS2z
-        xcSVk5kt/s55x2Tx6OZvVovLu+awWexuWsZucXTPPWaLyTvfMDpwesxbU+2xc9Zddo/NK7Q8
-        Ni+p97g5r9Cjb8sqRo/Pm+QC2KO4bFJSczLLUov07RK4Mt78msNesJavor13BlMD4x3uLkZO
-        DgkBE4nvhzqZuxi5OIQEVjBKvJt5hBXC+cwoceD4WhaYqp3bHzFBJJYxStzY3cIO4fxjlFgz
-        o5MRpIpNQEvixu9NYO0iAnuZJP6dOMAOkhAWCJZoaV3OBmKzCKhKzHuziwnE5hWwlDjf9gZq
-        hbzE6g0HmEFsTgEriTVt/YwggyQEJrBJ7Di5BWgqB5DjIrHyQDREvbDEq+Nb2CFsGYnOjoNM
-        EHaxxM6VE9khelsYJR4tXwJVZCzx7u1asAXMAnwSk7ZNZ4aYySvR0SYEUeIhcfrsLmhg9DJK
-        fNz3hH0Co8QCRoZVjOKppcW56anFRnmp5XrFibnFpXnpesn5uZsYgbF4+t/xLzsYd/1JOsQo
-        wMGoxMMrMYUtRog1say4MvcQowQHs5II7wob9hgh3pTEyqrUovz4otKc1OJDjNIcLErivNUM
-        D6KFBNITS1KzU1MLUotgskwcnFINjA7TFn2eM182NDapY3Ng3U+H+JnV3UULFNzP3Dwx955E
-        b+JipXkrWu+0T/wX9vPrB8X1PbfSbYw0nrlU1M968mnm/X9FDVF/JqQxnpezLnR7E7c/87Su
-        otVkXtnKljWL++fPneGv+Lr08ye2m/90GueqZOYUCk7knPxh1mSHoBcXnRX4JhrcWqTEUpyR
-        aKjFXFScCADpRIrWwQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupiluLIzCtJLcpLzFFi42I5/e/4VV2hQvYYg/4Ai32n+lksjlxYy2wx
-        ceVkZou/c94xWTy6+ZvV4vKuOWwWu5uWsVsc3XOP2WLyzjeMDpwe89ZUe+ycdZfdY/MKLY/N
-        S+o9bs4r9OjbsorR4/MmuQD2KC6blNSczLLUIn27BK6MN7/msBes5ato753B1MB4h7uLkZND
-        QsBEYuf2R0wgtpDAEkaJ5tv1XYxcQHYDk8TF3ifsIAk2AS2JG783sYIkRAT2MkkcPTWbDSQh
-        LBAs0dK6HMxmEVCVmPdmF9gkXgFLifNtb1ggNshLrN5wgBnE5hSwkljT1s8Isc1S4tfmZawT
-        GLkXMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAyhbcd+bt7BeGlj8CFGAQ5GJR5eySls
-        MUKsiWXFlbmHGCU4mJVEeFfYsMcI8aYkVlalFuXHF5XmpBYfYpTmYFES5z1vUBklJJCeWJKa
-        nZpakFoEk2Xi4JRqYNQU7M74tfXH48CJfDcPp2jXP3l01GP+/hnZIVHqplMmirD/qvT8FftR
-        k6l18s0W8eDJlxbPlM883/5GxGCpzaq52lGu9cxnNB4Ynn2afXleMZfx2oKuf7VP86ZI/K9K
-        5GvxX9aUvmnnm0ML+crl+eaZP9/aK7w0udj4C7tGzqFPRwWnMuX8yVJiKc5INNRiLipOBACV
-        4GrTHQIAAA==
-X-CMS-MailID: 20181205063250eucas1p1819de50c3030fb60a704656be878fff2
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181205063250eucas1p1819de50c3030fb60a704656be878fff2
-References: <20181205063220.22279-1-js07.lee@samsung.com>
-        <CGME20181205063250eucas1p1819de50c3030fb60a704656be878fff2@eucas1p1.samsung.com>
+        Wed, 5 Dec 2018 01:34:07 -0500
+X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 01:34:06 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=2710; q=dns/txt; s=iport;
+  t=1543991646; x=1545201246;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=9aGH8LE+95x6txChuToa2qXVT0ZxSJwarg/VXGNOARk=;
+  b=Q6JeIOvZFMHD+ufww2PliqZ7CCJW3tzoUO5xE8FsleJB4xoHTPCCi6KI
+   uWhykKsnoVWku0os1gcg+e09Wkgi9YBm83jDd69hGM+cK8WyKDsK8BWkA
+   KbRdtF5cd+jKMgUp7K9Tz/5HP+aDfuHu2hBFpBQO+oPGWK++Y7MhCI+fX
+   o=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ADAAAucAdc/4sNJK1kGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAQGBUQQBAQEBAQsBggOBaCcKg2+IGY12JYkSjjoUgWYLAQG?=
+ =?us-ascii?q?EbAIXgnQiNAkNAQMBAQIBAQJtKIU9AQUjEUUQAgEIGAICJgICAh8RFRACBAE?=
+ =?us-ascii?q?NBYMhgWoDFaR4gS+EAgGEAA2CHIELixMXgUA/gTgME4JMgleCEi+CbTGCJgK?=
+ =?us-ascii?q?JKIdYjyEuCQKOEYMuGJEsLIhdhXSJVQIRFIEnHziBVXAVZQGCQYInF41mATZ?=
+ =?us-ascii?q?BMYsPgR8BAQ?=
+X-IronPort-AV: E=Sophos;i="5.56,317,1539648000"; 
+   d="scan'208";a="273501594"
+Received: from alln-core-6.cisco.com ([173.36.13.139])
+  by rcdn-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 06:30:57 +0000
+Received: from XCH-ALN-014.cisco.com (xch-aln-014.cisco.com [173.36.7.24])
+        by alln-core-6.cisco.com (8.15.2/8.15.2) with ESMTPS id wB56UvFG003798
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 5 Dec 2018 06:30:57 GMT
+Received: from xch-aln-003.cisco.com (173.36.7.13) by XCH-ALN-014.cisco.com
+ (173.36.7.24) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 5 Dec
+ 2018 00:30:57 -0600
+Received: from xch-aln-003.cisco.com ([173.36.7.13]) by XCH-ALN-003.cisco.com
+ ([173.36.7.13]) with mapi id 15.00.1395.000; Wed, 5 Dec 2018 00:30:56 -0600
+From:   "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>
+To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        "Satish Kharat (satishkh)" <satishkh@cisco.com>,
+        "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC:     Souptick Joarder <jrdr.linux@gmail.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Subject: Re: [PATCH v2] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+Thread-Topic: [PATCH v2] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+Thread-Index: AQHUfDq2aTJBVdtYakmW9VN5ceo/AKVd4fgAgBIyt4D//5l8AA==
+Date:   Wed, 5 Dec 2018 06:30:56 +0000
+Message-ID: <12CB1ACA-CE7D-4534-87D2-CBD96E301D9A@cisco.com>
+References: <5bec5342.1c69fb81.b02fa.ace9@mx.google.com>
+ <CAJr6mf1d=tviauDfd4Hq_750mGiypheUxHhQEv_tsdR_TrTkNA@mail.gmail.com>
+ <CAJr6mf1wqNq02e89U85u=h1Ge0MSzAOk+wQc9q_gWurEZzWZUw@mail.gmail.com>
+In-Reply-To: <CAJr6mf1wqNq02e89U85u=h1Ge0MSzAOk+wQc9q_gWurEZzWZUw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/f.22.0.170515
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.24.34.134]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <18DD16CDF211CB4C91FFB7E71A082844@emea.cisco.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Outbound-SMTP-Client: 173.36.7.24, xch-aln-014.cisco.com
+X-Outbound-Node: alln-core-6.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Micron models are known to have lock/unlock support,
-and that also support 4bit block protection bit (bp0-3).
-
-This patch support lock/unlock feature on the flash.
-
-Tested on w25q512ax3. The Other is modified following the datasheet.
-
-Signed-off-by: Jungseung Lee <js07.lee@samsung.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index c261d8f7bef4..25d2abb842c0 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1438,8 +1438,16 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
- 	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
--	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
--	{ "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
-+	{
-+		"n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024,
-+			SECT_4K | USE_FSR | SPI_NOR_QUAD_READ |
-+			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_HAS_BP3)
-+	},
-+	{
-+		"n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024,
-+			SECT_4K | USE_FSR | SPI_NOR_QUAD_READ |
-+			SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_HAS_BP3)
-+	},
- 	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
- 	{ "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
- 	{ "mt25qu02g",   INFO(0x20bb22, 0, 64 * 1024, 4096, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
--- 
-2.17.1
-
+TG9va3MgZ29vZC4gQXBvbG9naXplIGZvciB0aGUgZGVsYXkgaW4gYWNrbm93bGVkZ2luZyB0aGUg
+cGF0Y2guDQoNCkFja2VkLWJ5OiAgIFNlc2lkaGFyIEJhZGRlbGEgICAgPHNlYmFkZGVsQGNpc2Nv
+LmNvbT4NCg0KDQpPbiAxMi80LzE4LCA4OjM3IFBNLCAiU2FieWFzYWNoaSBHdXB0YSIgPHNhYnlh
+c2FjaGkubGludXhAZ21haWwuY29tPiB3cm90ZToNCg0KICAgIE9uIEZyaSwgTm92IDIzLCAyMDE4
+IGF0IDg6MTMgUE0gU2FieWFzYWNoaSBHdXB0YQ0KICAgIDxzYWJ5YXNhY2hpLmxpbnV4QGdtYWls
+LmNvbT4gd3JvdGU6DQogICAgPg0KICAgID4gT24gV2VkLCBOb3YgMTQsIDIwMTggYXQgMTA6MjQg
+UE0gU2FieWFzYWNoaSBHdXB0YQ0KICAgID4gPHNhYnlhc2FjaGkubGludXhAZ21haWwuY29tPiB3
+cm90ZToNCiAgICA+ID4NCiAgICA+ID4gUmVwbGFjZWQgdm1hbGxvYyArIG1lbXNldCB3aXRoIHZ6
+YWxsb2MNCiAgICA+ID4NCiAgICA+ID4gU2lnbmVkLW9mZi1ieTogU2FieWFzYWNoaSBHdXB0YSA8
+c2FieWFzYWNoaS5saW51eEBnbWFpbC5jb20+DQogICAgPg0KICAgID4gQW55IGNvbW1lbnQgb24g
+dGhpcyBwYXRjaD8NCiAgICANCiAgICBBbnkgY29tbWVudCBvbiB0aGlzIHBhdGNoPw0KICAgIA0K
+ICAgID4NCiAgICA+ID4gLS0tDQogICAgPiA+IHYyOiBSZW1vdmVkIGFkZGl0aW9uYWwgYnJhY2Vz
+DQogICAgPiA+DQogICAgPiA+ICBkcml2ZXJzL3Njc2kvZm5pYy9mbmljX3RyYWNlLmMgfCAzICst
+LQ0KICAgID4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9ucygt
+KQ0KICAgID4gPg0KICAgID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zY3NpL2ZuaWMvZm5pY190
+cmFjZS5jIGIvZHJpdmVycy9zY3NpL2ZuaWMvZm5pY190cmFjZS5jDQogICAgPiA+IGluZGV4IDgy
+NzE3ODUuLmJmMGZkMmEgMTAwNjQ0DQogICAgPiA+IC0tLSBhL2RyaXZlcnMvc2NzaS9mbmljL2Zu
+aWNfdHJhY2UuYw0KICAgID4gPiArKysgYi9kcml2ZXJzL3Njc2kvZm5pYy9mbmljX3RyYWNlLmMN
+CiAgICA+ID4gQEAgLTQ2OCwxNCArNDY4LDEzIEBAIGludCBmbmljX3RyYWNlX2J1Zl9pbml0KHZv
+aWQpDQogICAgPiA+ICAgICAgICAgZm5pY19tYXhfdHJhY2VfZW50cmllcyA9ICh0cmFjZV9tYXhf
+cGFnZXMgKiBQQUdFX1NJWkUpLw0KICAgID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBGTklDX0VOVFJZX1NJWkVfQllURVM7DQogICAgPiA+DQogICAgPiA+IC0g
+ICAgICAgZm5pY190cmFjZV9idWZfcCA9ICh1bnNpZ25lZCBsb25nKXZtYWxsb2MoKHRyYWNlX21h
+eF9wYWdlcyAqIFBBR0VfU0laRSkpOw0KICAgID4gPiArICAgICAgIGZuaWNfdHJhY2VfYnVmX3Ag
+PSAodW5zaWduZWQgbG9uZyl2emFsbG9jKHRyYWNlX21heF9wYWdlcyAqIFBBR0VfU0laRSk7DQog
+ICAgPiA+ICAgICAgICAgaWYgKCFmbmljX3RyYWNlX2J1Zl9wKSB7DQogICAgPiA+ICAgICAgICAg
+ICAgICAgICBwcmludGsoS0VSTl9FUlIgUEZYICJGYWlsZWQgdG8gYWxsb2NhdGUgbWVtb3J5ICIN
+CiAgICA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJmb3IgZm5pY190cmFj
+ZV9idWZfcFxuIik7DQogICAgPiA+ICAgICAgICAgICAgICAgICBlcnIgPSAtRU5PTUVNOw0KICAg
+ID4gPiAgICAgICAgICAgICAgICAgZ290byBlcnJfZm5pY190cmFjZV9idWZfaW5pdDsNCiAgICA+
+ID4gICAgICAgICB9DQogICAgPiA+IC0gICAgICAgbWVtc2V0KCh2b2lkICopZm5pY190cmFjZV9i
+dWZfcCwgMCwgKHRyYWNlX21heF9wYWdlcyAqIFBBR0VfU0laRSkpOw0KICAgID4gPg0KICAgID4g
+PiAgICAgICAgIGZuaWNfdHJhY2VfZW50cmllcy5wYWdlX29mZnNldCA9DQogICAgPiA+ICAgICAg
+ICAgICAgICAgICB2bWFsbG9jKGFycmF5X3NpemUoZm5pY19tYXhfdHJhY2VfZW50cmllcywNCiAg
+ICA+ID4gLS0NCiAgICA+ID4gMi43LjQNCiAgICA+ID4NCiAgICANCg0K
