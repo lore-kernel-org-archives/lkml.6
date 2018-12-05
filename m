@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248AEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A23EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE553206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41446214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4TsEiG8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE553206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ycUYEQO4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41446214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbeLEKHH (ORCPT
+        id S1728050AbeLEJks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:07:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:40:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728822AbeLEJlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:00 -0500
+        id S1728745AbeLEJkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:40:42 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5B882084C;
-        Wed,  5 Dec 2018 09:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16E942084C;
+        Wed,  5 Dec 2018 09:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002860;
-        bh=JAN29/KFpKsDaCkiQLyC9yTIRecNGXcNSk+IRCHRiKI=;
+        s=default; t=1544002841;
+        bh=l7UYJOdWHDChpfF+5PkyyBxi3l0A+iPgMALblCDnIBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n4TsEiG8tTh9mpUDNpXcvd1G9RZ4xgCT78bZKABJ1d0q6brPFzk3xvrpwFZANRPvW
-         DSRFCSY6lWITcqJBRSrfa2L5sXPceBZ1QtHOAOzfexbz8xA8WFtVGhDeUlOfWcsYoo
-         GnIW2FsBHaJTTFKrYVYJCmnaRkJfJ9aNsSlXXLYA=
+        b=ycUYEQO4/UmcFbZzZ1WmukF+nPuTlJ0mEMFdzdwHrj3hWh4XZwkxuUWJ/zLMoQ+H5
+         Ao6BBUYwhRbVzXB8kHbbB1Tm7h0BauonEedflCE4jxc2bKq6PPcZzD9jYoJCcndfY1
+         9I+OKH15Y26SZzVVQX71PwP+j4n/eRow3N6AUmiU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hui Wang <hui.wang@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 090/123] ALSA: usb-audio: Add vendor and product name for Dell WD19 Dock
-Date:   Wed,  5 Dec 2018 04:35:22 -0500
-Message-Id: <20181205093555.5386-90-sashal@kernel.org>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 084/123] net: phy: add workaround for issue where PHY driver doesn't bind to the device
+Date:   Wed,  5 Dec 2018 04:35:16 -0500
+Message-Id: <20181205093555.5386-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,41 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 8159a6a4a7d2a092d5375f695ecfca22b4562b5f ]
+[ Upstream commit c85ddecae6e5e82ca3ae6f20c63f1d865e2ff5ea ]
 
-Like the Dell WD15 Dock, the WD19 Dock (0bda:402e) doens't provide
-useful string for the vendor and product names too. In order to share
-the UCM with WD15, here we keep the profile_name same as the WD15.
+After switching the r8169 driver to use phylib some user reported that
+their network is broken. This was caused by the genphy PHY driver being
+used instead of the dedicated PHY driver for the RTL8211B. Users
+reported that loading the Realtek PHY driver module upfront fixes the
+issue. See also this mail thread:
+https://marc.info/?t=154279781800003&r=1&w=2
+The issue is quite weird and the root cause seems to be somewhere in
+the base driver core. The patch works around the issue and may be
+removed once the actual issue is fixed.
 
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The Fixes tag refers to the first reported occurrence of the issue.
+The issue itself may have been existing much longer and it may affect
+users of other network chips as well. Users typically will recognize
+this issue only if their PHY stops working when being used with the
+genphy driver.
+
+Fixes: f1e911d5d0df ("r8169: add basic phylib support")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/quirks-table.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/phy/phy_device.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index 08aa78007020..1c73b9ed44a6 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3387,5 +3387,15 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
- 		.ifnum = QUIRK_NO_INTERFACE
- 	}
- },
-+/* Dell WD19 Dock */
-+{
-+	USB_DEVICE(0x0bda, 0x402e),
-+	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
-+		.vendor_name = "Dell",
-+		.product_name = "WD19 Dock",
-+		.profile_name = "Dell-WD15-Dock",
-+		.ifnum = QUIRK_NO_INTERFACE
-+	}
-+},
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 19ab8a7d1e48..733e35b7c4bb 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1930,6 +1930,14 @@ int phy_driver_register(struct phy_driver *new_driver, struct module *owner)
+ 	new_driver->mdiodrv.driver.remove = phy_remove;
+ 	new_driver->mdiodrv.driver.owner = owner;
  
- #undef USB_DEVICE_VENDOR_SPEC
++	/* The following works around an issue where the PHY driver doesn't bind
++	 * to the device, resulting in the genphy driver being used instead of
++	 * the dedicated driver. The root cause of the issue isn't known yet
++	 * and seems to be in the base driver core. Once this is fixed we may
++	 * remove this workaround.
++	 */
++	new_driver->mdiodrv.driver.probe_type = PROBE_FORCE_SYNCHRONOUS;
++
+ 	retval = driver_register(&new_driver->mdiodrv.driver);
+ 	if (retval) {
+ 		pr_err("%s: Error %d in registering driver\n",
 -- 
 2.17.1
 
