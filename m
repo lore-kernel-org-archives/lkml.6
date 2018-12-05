@@ -2,204 +2,183 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4F6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE1CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE032082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:39:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE032082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D1AA20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="KkkSYMj/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1AA20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbeLEVjJ (ORCPT
+        id S1728288AbeLEVmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:39:09 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42545 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbeLEVjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:39:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 13:39:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,319,1539673200"; 
-   d="scan'208";a="127447741"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 05 Dec 2018 13:39:06 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 05 Dec 2018 23:39:05 +0200
-Date:   Wed, 5 Dec 2018 23:39:05 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: Re: [PATCH 4.19 044/110] drm/i915: Disable LP3 watermarks on all SNB
- machines
-Message-ID: <20181205213905.GW9144@intel.com>
-References: <20181129135921.231283053@linuxfoundation.org>
- <20181129135923.048859299@linuxfoundation.org>
+        Wed, 5 Dec 2018 16:42:17 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34489 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbeLEVmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 16:42:16 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 17so9630945pgg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:42:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GDA9IS9KuEbvp5VG+ipNOhTx0wcWjrEBq6HsEjF2Obg=;
+        b=KkkSYMj/PuWMKaDJWWDcZSIzU94s5KReSCgynKrEr6fnHjAnJwixiAs0uAgINtZBvm
+         o/L8lHZBnIi6QFT3s28pHp8nM7eThiQe6fMSYMZ2UP43W2AAPhZDA9sVm5WUvcYztXhT
+         Nlb3rYl+2IayOd3DL9gdAXDAvZFjtFb7dhpzvlSw1R3VNdDWCYXDtheI23Atl0iKU5ds
+         QqmmJnwmQMqTxpCSNNGyCvs3lJCtHI35BmokXrpuOpdAzHo0zLSU/EOpTHY0WN+tXNR5
+         z3gqw5CLXncSlPlKixTwND6z080e9p5qHiQ1qubsDKu6Zs4aiqD/6pGPPx3HnfeYiOYU
+         VsWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GDA9IS9KuEbvp5VG+ipNOhTx0wcWjrEBq6HsEjF2Obg=;
+        b=XvCfsw6CrbdAfzm/qTH2OxJ2Ww0NsDXLlAOk7R/dXSMcpg8EnVhS9tFvNTRQT8p74l
+         FforrS7pRHWuFlOtaUvpgvOgpNjGhalwgqhFd52UaQOxOFAdWphaosVRCym46i7HBWGj
+         iaAawmroUev+tyipOXSJZSPw+079kNDYHyHQxGRfRz+ZaX0enefeey7DUJuWoxanf9Gt
+         0xOkEqnxez3DHwnfgh9Uinly7TlIYJVb9gVp1rZKL157I/6SHzDpysHrNLC4Y69624Sr
+         5Devcr73FnsDGJ4H5H27gPZvw59XSMTPe/Kp60gjR35WCmFexGAmrk7kuLODKzvGqhcm
+         1soQ==
+X-Gm-Message-State: AA+aEWZz0VTuhpLXFSVS6oLO4FL3a5fdFk29BGH8ADo0BgLE21reQzeU
+        Mgc2WVLobnC+es/hYGFE+Rl9ug==
+X-Google-Smtp-Source: AFSGD/Xt71J3h3o7MT1d5ocNchRDNpVPXcyRFoXInYDEkv2nX20fv2rBBxL9Bd1B9s20hDfkLLwWVg==
+X-Received: by 2002:a65:64c8:: with SMTP id t8mr21622832pgv.31.1544046135551;
+        Wed, 05 Dec 2018 13:42:15 -0800 (PST)
+Received: from brauner.io ([130.195.55.139])
+        by smtp.gmail.com with ESMTPSA id t3sm20881167pgv.31.2018.12.05.13.42.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 13:42:14 -0800 (PST)
+Date:   Wed, 5 Dec 2018 22:42:06 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tkjos@android.com, maco@android.com, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, kilobyte@angband.pl,
+        darrick.wong@oracle.com, chouryzhou@tencent.com,
+        david@fromorbit.com, arve@android.com, joel@joelfernandes.org,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] binder: implement binderfs
+Message-ID: <20181205214203.cwcvsqe6ndu4e3vv@brauner.io>
+References: <20181204131239.15158-1-christian@brauner.io>
+ <20181205200145.GA25230@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181129135923.048859299@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181205200145.GA25230@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 03:12:15PM +0100, Greg Kroah-Hartman wrote:
-> 4.19-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Dec 05, 2018 at 09:01:45PM +0100, Greg KH wrote:
+> On Tue, Dec 04, 2018 at 02:12:39PM +0100, Christian Brauner wrote:
+> > As discussed at Linux Plumbers Conference 2018 in Vancouver [1] this is the
+> > implementation of binderfs. If you want to skip reading and just see how it
+> > works, please go to [2].
+> 
+> First off, thanks for doing this so quickly.  I think the overall idea
+> and implementation is great, I just have some minor issues with the user
+> api:
 
-This one apparently introduces some annoying dmesg errors:
-[    3.487895] [drm:intel_print_wm_latency [i915]] *ERROR* Primary WM3 latency not provided
-[    3.487926] [drm:intel_print_wm_latency [i915]] *ERROR* Sprite WM3 latency not provided
-[    3.487955] [drm:intel_print_wm_latency [i915]] *ERROR* Cursor WM3 latency not provided
-
-To silence those please also backport
-commit 274dba1ae8ff ("drm/i915: Downgrade Gen9 Plane WM latency error")
+Thanks! :)
 
 > 
-> ------------------
+> > /* binder-control */
+> > Each new binderfs instance comes with a binder-control device. No other
+> > devices will be present at first. The binder-control device can be used to
+> > dynamically allocate binder devices. All requests operate on the binderfs
+> > mount the binder-control device resides in:
+> > - BINDER_CTL_ADD
+> >   Allocate a new binder device.
+> > Assuming a new instance of binderfs has been mounted at /dev/binderfs via
+> > mount -t binderfs binderfs /dev/binderfs. Then a request to create a new
+> > binder device can be made via:
+> > 
+> > struct binderfs_device device = {0};
+> > int fd = open("/dev/binderfs/binder-control", O_RDWR);
+> > ioctl(fd, BINDER_CTL_ADD, &device);
+> > 
+> > The struct binderfs_device will be used to return the major and minor
+> > number, as well as the index used as the new name for the device.
+> > Binderfs devices can simply be removed via unlink().
 > 
-> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> 
-> commit 21556350ade3cb5d7afecc8b3544e56431d21695 upstream.
-> 
-> I have a Thinkpad X220 Tablet in my hands that is losing vblank
-> interrupts whenever LP3 watermarks are used.
-> 
-> If I nudge the latency value written to the WM3 register just
-> by one in either direction the problem disappears. That to me
-> suggests that the punit will not enter the corrsponding
-> powersave mode (MPLL shutdown IIRC) unless the latency value
-> in the register matches exactly what we read from SSKPD. Ie.
-> it's not really a latency value but rather just a cookie
-> by which the punit can identify the desired power saving state.
-> On HSW/BDW this was changed such that we actually just write
-> the WM level number into those bits, which makes much more
-> sense given the observed behaviour.
-> 
-> We could try to handle this by disallowing LP3 watermarks
-> only when vblank interrupts are enabled but we'd first have
-> to prove that only vblank interrupts are affected, which
-> seems unlikely. Also we can't grab the wm mutex from the
-> vblank enable/disable hooks because those are called with
-> various spinlocks held. Thus we'd have to redesigne the
-> watermark locking. So to play it safe and keep the code
-> simple we simply disable LP3 watermarks on all SNB machines.
-> 
-> To do that we simply zero out the latency values for
-> watermark level 3, and we adjust the watermark computation
-> to check for that. The behaviour now matches that of the
-> g4x/vlv/skl wm code in the presence of a zeroed latency
-> value.
-> 
-> v2: s/USHRT_MAX/U32_MAX/ for consistency with the types (Chris)
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Acked-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=101269
-> Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103713
-> Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Link: https://patchwork.freedesktop.org/patch/msgid/20181114173440.6730-1-ville.syrjala@linux.intel.com
-> (cherry picked from commit 03981c6ebec4fc7056b9b45f847393aeac90d060)
-> Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  drivers/gpu/drm/i915/intel_pm.c |   41 +++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 40 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/gpu/drm/i915/intel_pm.c
-> +++ b/drivers/gpu/drm/i915/intel_pm.c
-> @@ -2492,6 +2492,9 @@ static uint32_t ilk_compute_pri_wm(const
->  	uint32_t method1, method2;
->  	int cpp;
->  
-> +	if (mem_value == 0)
-> +		return U32_MAX;
-> +
->  	if (!intel_wm_plane_visible(cstate, pstate))
->  		return 0;
->  
-> @@ -2521,6 +2524,9 @@ static uint32_t ilk_compute_spr_wm(const
->  	uint32_t method1, method2;
->  	int cpp;
->  
-> +	if (mem_value == 0)
-> +		return U32_MAX;
-> +
->  	if (!intel_wm_plane_visible(cstate, pstate))
->  		return 0;
->  
-> @@ -2544,6 +2550,9 @@ static uint32_t ilk_compute_cur_wm(const
->  {
->  	int cpp;
->  
-> +	if (mem_value == 0)
-> +		return U32_MAX;
-> +
->  	if (!intel_wm_plane_visible(cstate, pstate))
->  		return 0;
->  
-> @@ -2998,6 +3007,34 @@ static void snb_wm_latency_quirk(struct
->  	intel_print_wm_latency(dev_priv, "Cursor", dev_priv->wm.cur_latency);
->  }
->  
-> +static void snb_wm_lp3_irq_quirk(struct drm_i915_private *dev_priv)
-> +{
-> +	/*
-> +	 * On some SNB machines (Thinkpad X220 Tablet at least)
-> +	 * LP3 usage can cause vblank interrupts to be lost.
-> +	 * The DEIIR bit will go high but it looks like the CPU
-> +	 * never gets interrupted.
-> +	 *
-> +	 * It's not clear whether other interrupt source could
-> +	 * be affected or if this is somehow limited to vblank
-> +	 * interrupts only. To play it safe we disable LP3
-> +	 * watermarks entirely.
-> +	 */
-> +	if (dev_priv->wm.pri_latency[3] == 0 &&
-> +	    dev_priv->wm.spr_latency[3] == 0 &&
-> +	    dev_priv->wm.cur_latency[3] == 0)
-> +		return;
-> +
-> +	dev_priv->wm.pri_latency[3] = 0;
-> +	dev_priv->wm.spr_latency[3] = 0;
-> +	dev_priv->wm.cur_latency[3] = 0;
-> +
-> +	DRM_DEBUG_KMS("LP3 watermarks disabled due to potential for lost interrupts\n");
-> +	intel_print_wm_latency(dev_priv, "Primary", dev_priv->wm.pri_latency);
-> +	intel_print_wm_latency(dev_priv, "Sprite", dev_priv->wm.spr_latency);
-> +	intel_print_wm_latency(dev_priv, "Cursor", dev_priv->wm.cur_latency);
-> +}
-> +
->  static void ilk_setup_wm_latency(struct drm_i915_private *dev_priv)
->  {
->  	intel_read_wm_latency(dev_priv, dev_priv->wm.pri_latency);
-> @@ -3014,8 +3051,10 @@ static void ilk_setup_wm_latency(struct
->  	intel_print_wm_latency(dev_priv, "Sprite", dev_priv->wm.spr_latency);
->  	intel_print_wm_latency(dev_priv, "Cursor", dev_priv->wm.cur_latency);
->  
-> -	if (IS_GEN6(dev_priv))
-> +	if (IS_GEN6(dev_priv)) {
->  		snb_wm_latency_quirk(dev_priv);
-> +		snb_wm_lp3_irq_quirk(dev_priv);
-> +	}
->  }
->  
->  static void skl_setup_wm_latency(struct drm_i915_private *dev_priv)
-> 
+> I think you should provide a name in the BINDER_CTL_ADD command.  That
+> way you can easily emulate the existing binder queues, and it saves you
+> a create/rename sequence that you will be forced to do otherwise.  Why
+> not do it just in a single command?
 
--- 
-Ville Syrjälä
-Intel
+Sounds reasonable. How do you feel about capping the name length at 255
+bytes aka the standard Linux file name length (e.g. xfs, ext4 etc.)?
+
+#define BINDERFS_NAME_MAX 255
+
+struct binderfs_device {
+        char name[BINDERFS_NAME_MAX + 1];
+	__u32 major;
+	__u32 minor;
+}
+
+> 
+> That way also you don't need to care about the major/minor number at
+> all.  Userspace should never need to worry about that, use a name,
+> that's the best thing.  Also, it allows you to drop the use of the idr,
+> making the kernel code simpler overall.
+> 
+> > /* Implementation details */
+> > - When binderfs is registered as a new filesystem it will dynamically
+> >   allocate a new major number. The allocated major number will be returned
+> >   in struct binderfs_device when a new binder device is allocated.
+> 
+> Why does userspace care about major/minor numbers at all?  You should
+
+Userspace cares for the sake of the devices cgroup which operates on
+device numnbers to restrict access to devices. Since binderfs doesn't
+have a static major number returning that information is helpful.
+One example is a managining process sharing a binderfs mounts between
+multiple ipc+mount namespaces via bind-mounts to avoid having separate
+binderfs mounts. If the managing process only wants to grant access to binder0
+and no other device for a given ipc+mnt namespace combination then it
+can use the devices cgroup but for that it needs to know the major and
+minor number.
+
+> just be able to deal with the binder "names", that's all that userspace
+> uses normally as you are not calling mknod() yourself.
+> 
+> >   Minor numbers that have been given out are tracked in a global idr struct
+> >   that is capped at BINDERFS_MAX_MINOR. The minor number tracker is
+> >   protected by a global mutex. This is the only point of contention between
+> >   binderfs mounts.
+> 
+> I doubt this will be any real contention given that setting up / tearing
+> down binder mounts is going to be rare, right?  Well, hopefully, who
+> knows with some container systems...
+
+Yeah, it's very unlikely. Device allocation is a rare event that is
+basically done once for most interesting use-cases. If one cares so much
+about performance bind-mounts + device cgroup restrictions are possible
+solution to this problem.
+
+> 
+> > - The naming scheme for binder devices is binder%d. Each binderfs mount
+> >   starts numbering of new binder devices at 0 up to n. The indeces used in
+> >   constructing the name are tracked in a struct idr that is per-binderfs
+> >   super block.
+> 
+> Again, let userspace pick the name, as you will have to rename it anyway
+> to get userspace to work properly with it.
+> 
+> I'll stop repeating myself now :)
+
+Thanks for the feedback! :)
+
+Christian
