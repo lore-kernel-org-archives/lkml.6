@@ -2,303 +2,265 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBEFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61924C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8056214DA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:16:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="CeM10h0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8056214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id 18356206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544048437;
+	bh=VQoqSaVMZFDthQAo7eBJd3roUYPT88/va0T3vvGe+EY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=cxkGbZ50zetQ0feisvcIMPrUFy4GZcB3grhdqNFkmIiIig6zi5F/Nu5gvS/J6sWzK
+	 XvZQcysDjejsFMlSpFekouL+xaPWwAfMpnb8LTbXgTyF+olSm1AEtXOojWh1kKD+63
+	 sSOcyDBWaMnelG/3Yoade0GWKyNuLt7N/rSdjjN8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18356206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbeLEWQZ (ORCPT
+        id S1728134AbeLEWUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:16:25 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:52502 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbeLEWQY (ORCPT
+        Wed, 5 Dec 2018 17:20:35 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43225 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbeLEWUf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:16:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bsSaAMtwr+45q3a68kABZNi0Fa2kMSt3ZgqNY295MFM=; b=CeM10h0S8JU+V9fxWEXt+HCqX
-        NaeCFo0CAThl8I8gakTuetDh/amkdrdRYwVngMvwwZJgcRrReBli5x6O9cAK4bewn1FNhQIRjYAqk
-        3I8hbsNOoSSvgQ5sL18HspiEoRc9GQImNqv2TSgsDHWWU/rIUTrDmGf311QROiDsiUdVQ=;
-Received: from p5dcc3ed6.dip0.t-ipconnect.de ([93.204.62.214] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gUfSu-00069j-Sq; Wed, 05 Dec 2018 23:16:20 +0100
-Date:   Wed, 5 Dec 2018 23:15:30 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH 2/5] gnss: sirf: power on logic for devices without
- wakeup signal
-Message-ID: <20181205231530.2fe6bc33@aktux>
-In-Reply-To: <20181205150116.GF15689@localhost>
-References: <20181118215801.12280-1-andreas@kemnade.info>
-        <20181118215801.12280-3-andreas@kemnade.info>
-        <20181205150116.GF15689@localhost>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 5 Dec 2018 17:20:35 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a11so20173720otr.10;
+        Wed, 05 Dec 2018 14:20:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HhPdi+y+PxZsxr2Dncydj46LHKsX2ak15vIhUv+lItc=;
+        b=sibTYiIkAROwQw8WZM+f7nMm90v50d5ujJVxIjlcDO1p5XvP4sjtuJ+WLmLhlsXtZ0
+         MlI9s6GQ2t6rGb2sDaAYLboblcyGcn466PJzQVDYywrzntyYotzntJ5tFHaDVvEBI9Nx
+         51ap7+zLjHafRgoxGDo7CmYJHZOt6M8KfXtYNhrTuCnI7G1wSb6z8YIP+ByX3wNERItO
+         iyXicyTOoFKQ6PdFPu9vLMw6aILbmbfsD4wSnHgKt2evEbpSovZ2+4lQtm9RzUrqSm23
+         zrY3NZw3tLjr6aGcCB2NXj9A9+svdF9Q+9R4wbCMyEyhXH/zpV0YcPQyjuTHYTMU79A1
+         0XIw==
+X-Gm-Message-State: AA+aEWaWJNHt3boOGdjuYm/PjV6YqFM9DPPx8X/UWgG0Qyr4acdtLdCG
+        FAXrPR/DGYet5ooRvdztnw==
+X-Google-Smtp-Source: AFSGD/UDpDV5DZVv/lre9oa+tGgJpJxtDhScU/QWJV2juRAyPI5q2oqBsYJDLG4sQUTHudV1y5dZow==
+X-Received: by 2002:a9d:72e:: with SMTP id 43mr17153105ote.207.1544048433869;
+        Wed, 05 Dec 2018 14:20:33 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t8sm8925706otp.69.2018.12.05.14.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 14:20:32 -0800 (PST)
+Date:   Wed, 5 Dec 2018 16:20:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jolly Shah <JOLLYS@xilinx.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Nava kishore Manne <navam@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
+Message-ID: <20181205222032.GA810@bogus>
+References: <1542412619-387-1-git-send-email-jollys@xilinx.com>
+ <20181204220612.GA640@bogus>
+ <SN4PR0201MB3536E825E836337D1535B812B8A80@SN4PR0201MB3536.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JRj.6il/9mwX=/cOns4r66X"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN4PR0201MB3536E825E836337D1535B812B8A80@SN4PR0201MB3536.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JRj.6il/9mwX=/cOns4r66X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 05, 2018 at 08:29:36PM +0000, Jolly Shah wrote:
+> Hi Rob,
+> 
+> Thanks for the review. Please find my responses inline.
 
-On Wed, 5 Dec 2018 16:01:16 +0100
-Johan Hovold <johan@kernel.org> wrote:
+You need to fix your mail client to wrap lines.
+ 
+> Thanks,
+> Jolly Shah
+> 
+> > -----Original Message-----
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: Tuesday, December 04, 2018 2:06 PM
+> > To: Jolly Shah <JOLLYS@xilinx.com>
+> > Cc: mark.rutland@arm.com; Michal Simek <michals@xilinx.com>; Rajan Vaja
+> > <RAJANV@xilinx.com>; Nava kishore Manne <navam@xilinx.com>; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > devicetree@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>
+> > Subject: Re: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
+> > 
+> > On Fri, Nov 16, 2018 at 03:56:50PM -0800, Jolly Shah wrote:
+> > > Base firmware node and clock child node binding are part of mainline kernel.
+> > This patchset adds documentation to describe rest of the firmware child node
+> > bindings.
+> > > Complete firmware DT node example is shown below for ease of
+> > understanding:
+> > 
+> > Shouldn't there be a fpga mgr node too? Called pcap IIRC.
+> > 
+> [Jolly] As you suggested, we only added child nodes if the 
+> sub-functions have their own resources (clks, irqs, etc.). FPGA doesn't 
+> have any resources so not added . Firmware driver would still register 
+> it as mfd device to instantiate the driver.
 
-> On Sun, Nov 18, 2018 at 10:57:58PM +0100, Andreas Kemnade wrote:
-> > Some Wi2Wi devices do not have a wakeup output, so device state can
-> > only be indirectly detected by looking whether there is communitcation
-> > over the serial lines.
-> > Additionally it checks for the initial state of the device during
-> > probing to ensure it is off.
-> > Timeout values need to be increased, because the reaction on serial line
-> > is slower and are in line  with previous patches by
-> > Neil Brown <neilb@suse.de> and  H. Nikolaus Schaller <hns@goldelico.com=
->.
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  drivers/gnss/sirf.c | 97 +++++++++++++++++++++++++++++++++++----------=
---------
-> >  1 file changed, 65 insertions(+), 32 deletions(-)
-> >=20
-> > diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-> > index b5efbb062316..6a0e5c0a2d62 100644
-> > --- a/drivers/gnss/sirf.c
-> > +++ b/drivers/gnss/sirf.c
-> > @@ -22,8 +22,8 @@
-> > =20
-> >  #define SIRF_BOOT_DELAY			500
-> >  #define SIRF_ON_OFF_PULSE_TIME		100
-> > -#define SIRF_ACTIVATE_TIMEOUT		200
-> > -#define SIRF_HIBERNATE_TIMEOUT		200
-> > +#define SIRF_ACTIVATE_TIMEOUT		1000
-> > +#define SIRF_HIBERNATE_TIMEOUT		1000 =20
->=20
-> We shouldn't increase the timeouts for the general case where we have
-> wakeup connected.
->=20
-Well, in most times they are not hit in the general case, only once
-if the internal state is not in sync.
-But I can add a second pair of defines with more refined defines.
+Okay, but won't their need to be child devices for 
 
-> >  struct sirf_data {
-> >  	struct gnss_device *gdev;
-> > @@ -45,26 +45,14 @@ static int sirf_open(struct gnss_device *gdev)
-> >  	int ret;
-> > =20
-> >  	data->opened =3D true;
-> > -	ret =3D serdev_device_open(serdev);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	serdev_device_set_baudrate(serdev, data->speed);
-> > -	serdev_device_set_flow_control(serdev, false); =20
->=20
-> And also here, I think we shouldn't change the general case (wakeup
-> connected) unnecessarily. Currently user space can request the receiver
-> to remain powered, while not keeping the port open unnecessarily.
->=20
-Yes, that usecase makes sense. There is even no need to keep that
-device opened in the no-wakeup case. If I just open the serdev
-during state change, code will probably be cleaner.
 
-> > =20
-> >  	ret =3D pm_runtime_get_sync(&serdev->dev);
-> >  	if (ret < 0) {
-> >  		dev_err(&gdev->dev, "failed to runtime resume: %d\n", ret);
-> >  		pm_runtime_put_noidle(&serdev->dev);
-> >  		data->opened =3D false;
-> > -		goto err_close;
-> >  	}
-> > =20
-> > -	return 0;
-> > -
-> > -err_close:
-> > -	serdev_device_close(serdev);
-> > -
-> >  	return ret;
-> >  }
-> > =20
-> > @@ -73,8 +61,6 @@ static void sirf_close(struct gnss_device *gdev)
-> >  	struct sirf_data *data =3D gnss_get_drvdata(gdev);
-> >  	struct serdev_device *serdev =3D data->serdev;
-> > =20
-> > -	serdev_device_close(serdev);
-> > -
-> >  	pm_runtime_put(&serdev->dev);
-> >  	data->opened =3D false;
-> >  }
-> > @@ -109,6 +95,11 @@ static int sirf_receive_buf(struct serdev_device *s=
-erdev,
-> >  	struct sirf_data *data =3D serdev_device_get_drvdata(serdev);
-> >  	struct gnss_device *gdev =3D data->gdev;
-> > =20
-> > +	if ((!data->wakeup) && (!data->active)) { =20
->=20
-> You have superfluous parenthesis like the above throughout the series.
->=20
-OK, will reduce them.
+> 
+> > >
+> > > firmware {
+> > > 	zynqmp_firmware: zynqmp-firmware {
+> > > 		compatible = "xlnx,zynqmp-firmware";
+> > > 		method = "smc";
+> > > 		#power-domain-cells = <1>;
+> > > 		#reset-cells = <1>;
+> > >
+> > > 		zynqmp_clk: clock-controller {
+> > > 			#clock-cells = <1>;
+> > > 			compatible = "xlnx,zynqmp-clk";
+> > > 			clocks = <&pss_ref_clk>, <&video_clk>,
+> > <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
+> > > 			clock-names = "pss_ref_clk", "video_clk",
+> > "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
+> > > 		};
+> > >
+> > > 		zynqmp_power: zynqmp-power {
+> > > 			compatible = "xlnx,zynqmp-power";
+> > > 			interrupts = <0 35 4>;
+> > > 		};
+> > >
+> > > 		nvmem_firmware {
+> > > 			compatible = "xlnx,zynqmp-nvmem-fw";
+> > > 			#address-cells = <1>;
+> > > 			#size-cells = <1>;
+> > >
+> > > 			/* Data cells */
+> > > 			soc_revision: soc_revision {
+> > > 				reg = <0x0 0x4>;
+> > > 			};
+> > > 		};
+> > >
+> > > 		afi0: afi0 {
+> > > 			compatible = "xlnx,afi-fpga";
+> > > 			config-afi = <0 2>, <1 1>, <2 1>;
+> > > 		};
+> > >
+> > > 		qspi: spi@ff0f0000 {
+> > 
+> > Why is this under firmware node?
+> [Jolly] Qspi is a user of eemi API provided by firmware node to 
+> perform privileged register writes. Alternatively, we can keep such 
+> user nodes outside of firmware node and keep nodes which firmware is 
+> provider for like clock, reset, pins and power.
+> Please suggest.
 
-> > +		data->active =3D 1; =20
->=20
-> active is bool, so use "true".
->=20
-> > +		wake_up_interruptible(&data->power_wait);
-> > +	}
-> > +
-> >  	/*
-> >  	 * we might come here everytime when runtime is resumed
-> >  	 * and data is received. Two cases are possible
-> > @@ -149,6 +140,25 @@ static int sirf_wait_for_power_state(struct sirf_d=
-ata *data, bool active,
-> >  {
-> >  	int ret;
-> > =20
-> > +	/* no wakeup pin, success condition is that
-> > +	 * no byte comes in in the period
-> > +	 */ =20
->=20
-> Multiline comment style needs to be fixed throughout. Also use sentence
-> case and periods where appropriate.
->
-OK. maybe I did believe too much in checkpatch.pl. It likes this patch.
-I thought it would moan about such basic things.
+Child nodes of the firmware should be providers, not consumers (of the 
+firmware). If you had a firmware interface to that provided a SPI 
+interface, then it would be here. But just having a special mechanism to 
+access the registers. 
 
-> > +	if ((!data->wakeup) && (!active) && (data->active)) {
-> > +		/* some bytes might come, so sleep a bit first */
-> > +		msleep(timeout); =20
->=20
-> This changes the semantics of the functions and effectively doubles the
-> requested timeout.
->
-So maybe I should sort this block out into a properly-named function
-with properly named constants?
-The logic is to give the device some time first to calm down. And then
-check for some time if it is really down.
-=20
-> > +		data->active =3D false;
-> > +		ret =3D wait_event_interruptible_timeout(data->power_wait,
-> > +			data->active =3D=3D true, msecs_to_jiffies(timeout));
-> > +
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		/* we are still getting woken up -> timeout */
-> > +		if (ret > 0)
-> > +			return -ETIMEDOUT;
-> > +		return 0;
-> > +	}
-> > +
-> >  	ret =3D wait_event_interruptible_timeout(data->power_wait,
-> >  			data->active =3D=3D active, msecs_to_jiffies(timeout));
-> >  	if (ret < 0)
-> > @@ -203,21 +213,48 @@ static int sirf_set_active(struct sirf_data *data=
-, bool active)
-> >  static int sirf_runtime_suspend(struct device *dev)
-> >  {
-> >  	struct sirf_data *data =3D dev_get_drvdata(dev);
-> > +	int ret;
-> > =20
-> >  	if (!data->on_off)
-> >  		return regulator_disable(data->vcc); =20
->=20
-[..] minor  style issues ... will fix, still wondering
-why checkpatch does not complain. Just saved the patch again  and
-checked.
-> > +
-> > +	/* we should close it anyways, so the following receptions
-> > +	 * will not run into the empty
-> > +	 */ =20
->=20
-> Not sure what you mean here, please rephrase.
->=20
-If the serdev is closed, nothing will be sent to a probably
-not-existing-anymore gnss device.
-> > +	serdev_device_close(data->serdev);
-> > +	return 0;
-> >  }
-> > =20
+> > 
+> > > 			compatible = "xlnx,zynqmp-qspi-1.0";
 
-[...] more minor style issues
->=20
-> > +	ret =3D sirf_set_active(data, true);
-> > +
-> > +	if (!ret)
-> > +		return 0; =20
->=20
-> Add an error label instead, and return 0 unconditionally in the success
-> path.
->=20
-Ok, makes sense.
+If this same block works with unprivileged accesses, then you will need 
+some way to distinguish that.
 
-> > =20
-> > -	return sirf_set_active(data, true);
-> > +	if (!data->on_off)
-> > +		regulator_disable(data->vcc);
-> > +err_close_serdev:
-> > +	serdev_device_close(data->serdev);
-> > +	return ret;
-> >  }
-> > =20
-> >  static int __maybe_unused sirf_suspend(struct device *dev)
-> > @@ -311,18 +348,6 @@ static int sirf_probe(struct serdev_device *serdev)
-> >  	if (data->on_off) {
-> >  		data->wakeup =3D devm_gpiod_get_optional(dev, "sirf,wakeup",
-> >  				GPIOD_IN);
-> > -		if (IS_ERR(data->wakeup))
-> > -			goto err_put_device; =20
->=20
-> You still want to check for errors here.
->=20
-Yes, I should only ignore NULL here..
+> > > 			clock-names = "ref_clk", "pclk";
+> > > 			clocks = <&misc_clk &misc_clk>;
+> > > 			interrupts = <0 15 4>;
+> > > 			interrupt-parent = <&gic>;
+> > > 			num-cs = <1>;
+> > > 			reg = <0x0 0xff0f0000 0x1000>,<0x0 0xc0000000
+> > 0x8000000>;
+> > > 		};
+> > >
+> > > 		serdes: zynqmp_phy@fd400000 {
+> > 
+> > And this?
+> 
+> [Jolly] Same as above.
+> 
+> > 
+> > > 			compatible = "xlnx,zynqmp-psgtr";
+> > > 			status = "okay";
+> > > 			reg = <0x0 0xfd400000 0x0 0x40000>, <0x0 0xfd3d0000
+> > 0x0 0x1000>,
+> > > 				<0x0 0xff5e0000 0x0 0x1000>;
+> > > 			reg-names = "serdes", "siou", "lpd";
+> > >
+> > > 			lane0: lane@0 {
+> > > 				#phy-cells = <4>;
+> > > 			};
+> > > 			lane1: lane@1 {
+> > > 				#phy-cells = <4>;
+> > > 			};
+> > > 			lane2: lane@2 {
+> > > 				#phy-cells = <4>;
+> > > 			};
+> > > 			lane3: lane@3 {
+> > > 				#phy-cells = <4>;
+> > > 			};
+> > > 		};
+> > >
+> > > 		pinctrl_uart1_default: uart1-default {
+> > 
+> > This goes under a pinctrl node.
+> [Jolly] Pincontrol node is not added as it doesn't have any 
+> resources. As I understand, you suggest to still add pincontrol node 
+> and this under pincontrol node.
 
-Regards,
-Andreas
+These nodes are resources, so yes you should have a child here.
+> 
+> > 
+> > > 			mux {
+> > > 				groups = "uart0_4_grp";
+> > > 				function = "uart0";
+> > > 			};
+> > >
+> > > 			conf {
+> > > 				groups = "uart0_4_grp";
+> > > 				slew-rate = <SLEW_RATE_SLOW>;
+> > > 				io-standard = <IO_STANDARD_LVCMOS18>;
+> > > 			};
+> > >
+> > > 			conf-rx {
+> > > 				pins = "MIO18";
+> > > 				bias-high-impedance;
+> > > 			};
+> > >
+> > > 			conf-tx {
+> > > 				pins = "MIO19";
+> > > 				bias-disable;
+> > > 				schmitt-cmos = <PIN_INPUT_TYPE_CMOS>;
+> > > 			};
+> > > 		};
+> > > 		zynqmp-r5-remoteproc@0 {
+> > 
+> > Wrong unit-address and this doesn't belong here.
+> [Jolly]  Again as it is one of the user of firmware APIs, its kept 
+> here. Alternatively, we can keep such user nodes outside of firmware 
+> node and keep nodes which firmware is provider for like clock, reset, 
+> pins and power.
+> Please suggest.
 
---Sig_/JRj.6il/9mwX=/cOns4r66X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Yes, it should be outside this.
 
------BEGIN PGP SIGNATURE-----
+> > 
+> > > 			compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+> > 
+> > 'remoteproc' is what the h/w block is called?
+> 
+> [Jolly] The hw block is called rpu. 
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwITgIACgkQfb1qx03i
-kySJUQ/5AdVvvxGirQE7iWN0tVCXCeF/A/QR1mBOQwy9ilDcqZg5OFsDKTKMOIsC
-54xSCJOBiUEcRIZPXTD/ugtfH7nDKysMrB6hdsXmOoZnpcxtQD1CZLoe/hROl1nd
-A5R+KWzWdY+UG+MdPibkDfjodKLkPPSQu+oP1nWe9+Pi5zCuJa2ry6vAHO+kRaHx
-UgNrDfLizPOM3ECmAshD41E/AECISuaVSldp6ABqlF8v4llPoCDrpI4e8z0U8guU
-Y37YJ49B0NnfOXQZvLcHE2ItniJS8vrA4IVrZ0F2DhRyicuNqboV4sw416OCth9h
-XyKVcU9LpmQ+E16bT7Sjby2BlKv64KR+r/OAuvHVlHL1E1Q7leWPwzMnkv3rADRb
-TbLF9/cOelCcmQztlCX7bGIJAY72cc6yXOhWJ75qK1LPLxJoY7AL3Hibgx2czgPK
-rvzKwAJKcJeaIwM3GDVeI9mtp5jqrXHg0jl6RvOlqRL99LknVoB58iRaP364LItd
-UitseSNl50T1kKA3BM4Gf3MFnlsva0KIweLeX+r/vhbGHs/BKHt4GKPWbV+cMXic
-YsoX3c34NqK7AJFJS4dPlF4+8nV43rOWssYcQTrg0+jWfll2cjaxVN0Lz++jJVbK
-P3+FHWt+t5Lrs8T5vSaXI3lBhNkMsY4cy/ei5wmcaTW8RSGfnhQ=
-=eumg
------END PGP SIGNATURE-----
+Then call it that in the DT.
 
---Sig_/JRj.6il/9mwX=/cOns4r66X--
+Rob
