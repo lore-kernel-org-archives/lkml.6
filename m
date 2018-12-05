@@ -6,110 +6,128 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1EDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB9BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8332082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8332082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A2402082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:02:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2402082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbeLEVBK (ORCPT
+        id S1728571AbeLEVCd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:01:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58404 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728156AbeLEVBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:01:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E4906AFE4;
-        Wed,  5 Dec 2018 21:01:05 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Date:   Thu, 06 Dec 2018 08:00:58 +1100
-Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Documentation: convert path-lookup from markdown to resturctured text
-In-Reply-To: <20181205124644.3f8a452a@lwn.net>
-References: <87k1l9dgx9.fsf@notabene.neil.brown.name> <87sgzc7v50.fsf@notabene.neil.brown.name> <20181205124644.3f8a452a@lwn.net>
-Message-ID: <87woonelit.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Wed, 5 Dec 2018 16:02:33 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:48500 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728356AbeLEVCd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 16:02:33 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F1DE.dip0.t-ipconnect.de [79.249.241.222])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 2513CCF35D;
+        Wed,  5 Dec 2018 22:10:07 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [PATCH] Bluetooth: hci_bcm: Handle specific unknown packets after
+ firmware loading
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181205194538.8074-1-pawel.mikolaj.chmiel@gmail.com>
+Date:   Wed, 5 Dec 2018 22:02:30 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Bakker <xc-racer2@live.ca>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <BBB949C2-B1CB-478E-9BBF-E39FCA7271EF@holtmann.org>
+References: <20181205194538.8074-1-pawel.mikolaj.chmiel@gmail.com>
+To:     =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Pawel,
 
-On Wed, Dec 05 2018, Jonathan Corbet wrote:
+> The Broadcom controller on aries S5PV210 boards sends out a couple of
+> unknown packets after the firmware is loaded.  This will cause
+> logging of errors such as:
+> 	Bluetooth: hci0: Frame reassembly failed (-84)
+> 
+> This is probably also the case with other boards, as there are related
+> Android userspace patches for custom ROMs such as
+> https://review.lineageos.org/#/c/LineageOS/android_system_bt/+/142721/
+> Since this appears to be intended behaviour, treated them as diagnostic
+> packets.
+> 
+> Note that this is another variant of commit 01d5e44ace8a 
+> ("Bluetooth: hci_bcm: Handle empty packet after firmware loading")
+> 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+> drivers/bluetooth/hci_bcm.c | 32 +++++++++++++++++++++++++++-----
+> 1 file changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+> index ddbd8c6a0ceb..ae271836dc26 100644
+> --- a/drivers/bluetooth/hci_bcm.c
+> +++ b/drivers/bluetooth/hci_bcm.c
+> @@ -51,6 +51,12 @@
+> #define BCM_LM_DIAG_PKT 0x07
+> #define BCM_LM_DIAG_SIZE 63
+> 
+> +#define BCM_UNKNOWN_PKT 0x31
+> +#define BCM_UNKNOWN_SIZE 0
+> +
+> +#define BCM_UNKNOWN2_PKT 0x34
+> +#define BCM_UNKNOWN2_SIZE 0
+> +
 
-> On Wed, 05 Dec 2018 10:02:51 +1100
-> NeilBrown <neilb@suse.com> wrote:
->
->> This allows the document to be integrated with the main documentation
->> tree.
->> Changes include:
->> - rename from .md to .rst
->> - use `` for code, not single `
->> - use correct sub-section marking
->> - fix indented blocks, both code and non-code
->> - fix external-link markup
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->
-> Looks good at a first glance, but I have one question...
->
->>  Documentation/filesystems/index.rst                |   2 +
->>  .../{path-lookup.md =3D> path-lookup.rst}            | 875 +++++++++++-=
----------
->>  2 files changed, 448 insertions(+), 429 deletions(-)
->>  rename Documentation/filesystems/{path-lookup.md =3D> path-lookup.rst} =
-(59%)
->>=20
->> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesys=
-tems/index.rst
->> index 46d1b1be3a51..3c0f441a9536 100644
->> --- a/Documentation/filesystems/index.rst
->> +++ b/Documentation/filesystems/index.rst
->> @@ -359,3 +359,5 @@ encryption of files and directories.
->>      :maxdepth: 2
->>=20=20
->>      fscrypt
->> +
->> +.. include::  path-lookup.rst
->
-> Is there a reason you used "include" rather than just adding it to the
-> TOC tree with the rest?
+lets use BCM_TYPE49_ and BCM_TYPE52_
 
-Simple.  I didn't know what I was doing, and so randomly made changes until
-the result seemed acceptable - then I stopped.  If there is a better
-way, feel free to tweak that when applying.
+> #define BCM_AUTOSUSPEND_DELAY	5000 /* default autosleep delay */
+> 
+> /**
+> @@ -561,12 +567,28 @@ static int bcm_setup(struct hci_uart *hu)
+> 	.lsize = 0, \
+> 	.maxlen = BCM_NULL_SIZE
+> 
+> +#define BCM_RECV_UNKNOWN \
+> +	.type = BCM_UNKNOWN_PKT, \
+> +	.hlen = BCM_UNKNOWN_SIZE, \
+> +	.loff = 0, \
+> +	.lsize = 0, \
+> +	.maxlen = BCM_UNKNOWN_SIZE
+> +
+> +#define BCM_RECV_UNKNOWN2 \
+> +	.type = BCM_UNKNOWN2_PKT, \
+> +	.hlen = BCM_UNKNOWN2_SIZE, \
+> +	.loff = 0, \
+> +	.lsize = 0, \
+> +	.maxlen = BCM_UNKNOWN2_SIZE
 
-Thanks,
-NeilBrown
+Same here, BCM_RECV_TYPE49 and BCM_RECV_TYPE52.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> static const struct h4_recv_pkt bcm_recv_pkts[] = {
+> -	{ H4_RECV_ACL,      .recv = hci_recv_frame },
+> -	{ H4_RECV_SCO,      .recv = hci_recv_frame },
+> -	{ H4_RECV_EVENT,    .recv = hci_recv_frame },
+> -	{ BCM_RECV_LM_DIAG, .recv = hci_recv_diag  },
+> -	{ BCM_RECV_NULL,    .recv = hci_recv_diag  },
+> +	{ H4_RECV_ACL,       .recv = hci_recv_frame },
+> +	{ H4_RECV_SCO,       .recv = hci_recv_frame },
+> +	{ H4_RECV_EVENT,     .recv = hci_recv_frame },
+> +	{ BCM_RECV_LM_DIAG,  .recv = hci_recv_diag  },
+> +	{ BCM_RECV_NULL,     .recv = hci_recv_diag  },
+> +	{ BCM_RECV_UNKNOWN,  .recv = hci_recv_diag  },
+> +	{ BCM_RECV_UNKNOWN2, .recv = hci_recv_diag  },
+> };
+> 
+> static int bcm_recv(struct hci_uart *hu, const void *data, int count)
 
------BEGIN PGP SIGNATURE-----
+Regards
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwIPIoACgkQOeye3VZi
-gbmOuRAAphLwAwpqMrOx5FjVzmI5fe7P245acp0qETdojbIiZAvgbch4WFdIpiBY
-rB8NAd7gWoh96T/YFO+DnuZdP+V/CMrsWswcGxGp4QWZlB/nXmM8e/uAzZ4v6LAB
-bycspvt40p1Ubafck1FlNxxO6axtsqTvmdidVHWzUUjTc5q+k65bOWSP3/nNmIpD
-CZV2Val+RnkcS/ZbbwtM1dkowrLOWNV1dn7qNIKo1xC3QX/vA7QOtnjLgHZBeTQY
-ywUgiKOcvJQgpQ9cBzUyz3JxnXr+D6EobThA7qAceEeU10D80cSuzYOcDeH6Xj7A
-FvYUbic+t7PXTrxTYDHopCb3Ejck7JbxwQtvE5s6w2YR7qeVSDonDs/MCyAmbM/C
-xar0VVCfGUQDkRRvwcXsHHQ8Iqku4cqx9hoT2TxKXvf67bPEY77HXo0iyL3NMj/J
-sqcKKYh/pHDvKVLAd14NcFRFPYXdonQZQW1PfBY3pWgiiUiGWZ9wf330iq6ZM8GP
-bXW55JaGVQStpFwnyuA4IEjxqgsj5993Uwb+2zlqHVBMbelwR9RtFFiMs1UbCdDP
-gX397BtDqcBnW8qStK6AQWTQhQOqZQ2iEXIA+j5IUpr+Jj81kVn5yrAI0TK7tj4s
-F/3ByfUn37q+zMdTFM4bc++//VeRWp0rkukiY5NdGZmKE8FyHR0=
-=XcmR
------END PGP SIGNATURE-----
---=-=-=--
+Marcel
+
