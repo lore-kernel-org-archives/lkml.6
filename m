@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074BCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40097C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9DA20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0573A2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0kfYbWA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9DA20879
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOTzTxhS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0573A2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbeLEJkL (ORCPT
+        id S1728620AbeLEJkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:40:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44370 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:40:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbeLEJkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:40:09 -0500
+        id S1727006AbeLEJkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:40:14 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A4152084C;
-        Wed,  5 Dec 2018 09:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEBDF2084C;
+        Wed,  5 Dec 2018 09:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002808;
-        bh=LeTFRI4vJ2y7oEI14y9B9N6ZpfoZ29or4D0xxeMJf9M=;
+        s=default; t=1544002813;
+        bh=oUI70Ms2Jf8K2An2Y/Cwyfz59lT4TrkJdc3gPhZlRyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t0kfYbWAGBvxvy8CzJGX8uUXQlP1kduQs25t41AWtZnDaWD057gd9oqR7mobTFBQj
-         zbkXZI9KYjR4TShYQGzLvQib1rDlMJbATvJpwSjnzmEwvK/BbLnQL1FKXqkPHUdefH
-         Bd7O41WNo3+rg2nnrRBm8CgO9Fqea1Zi9ZggRU3E=
+        b=KOTzTxhSYHA/00dFpX+ddReyEKFXeHzS0IIN7jsKe0SqrCpszGEHBZVWZq62BlSgJ
+         DDVgLqSbBcpm/uEKD+69Y66pgcyjfDequwyfTgYyKLYg+avv4MpU4VDg6TsG6aYQTi
+         d38eR4whdt/O0oYnMH7lNX2B2JowyNnqELXQmHMM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 073/123] thunderbolt: Prevent root port runtime suspend during NVM upgrade
-Date:   Wed,  5 Dec 2018 04:35:05 -0500
-Message-Id: <20181205093555.5386-73-sashal@kernel.org>
+Cc:     Alin Nastac <alin.nastac@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 075/123] netfilter: ipv6: Preserve link scope traffic original oif
+Date:   Wed,  5 Dec 2018 04:35:07 -0500
+Message-Id: <20181205093555.5386-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,94 +55,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Alin Nastac <alin.nastac@gmail.com>
 
-[ Upstream commit 1830b6eeda1fed42d85f2388f79c926331a9b2d0 ]
+[ Upstream commit 508b09046c0f21678652fb66fd1e9959d55591d2 ]
 
-During NVM upgrade process the host router is hot-removed for a short
-while. During this time it is possible that the root port is moved into
-D3cold which would be fine if the root port could trigger PME on itself.
-However, many systems actually do not implement it so what happens is
-that the root port goes into D3cold and never wakes up unless userspace
-does PCI config space access, such as running 'lscpi'.
+When ip6_route_me_harder is invoked, it resets outgoing interface of:
+  - link-local scoped packets sent by neighbor discovery
+  - multicast packets sent by MLD host
+  - multicast packets send by MLD proxy daemon that sets outgoing
+    interface through IPV6_PKTINFO ipi6_ifindex
 
-For this reason we explicitly prevent the root port from runtime
-suspending during NVM upgrade.
+Link-local and multicast packets must keep their original oif after
+ip6_route_me_harder is called.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alin Nastac <alin.nastac@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/switch.c | 40 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+ net/ipv6/netfilter.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 7442bc4c6433..dd9ae6f5d19c 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -864,6 +864,30 @@ static ssize_t key_store(struct device *dev, struct device_attribute *attr,
- }
- static DEVICE_ATTR(key, 0600, key_show, key_store);
- 
-+static void nvm_authenticate_start(struct tb_switch *sw)
-+{
-+	struct pci_dev *root_port;
-+
-+	/*
-+	 * During host router NVM upgrade we should not allow root port to
-+	 * go into D3cold because some root ports cannot trigger PME
-+	 * itself. To be on the safe side keep the root port in D0 during
-+	 * the whole upgrade process.
-+	 */
-+	root_port = pci_find_pcie_root_port(sw->tb->nhi->pdev);
-+	if (root_port)
-+		pm_runtime_get_noresume(&root_port->dev);
-+}
-+
-+static void nvm_authenticate_complete(struct tb_switch *sw)
-+{
-+	struct pci_dev *root_port;
-+
-+	root_port = pci_find_pcie_root_port(sw->tb->nhi->pdev);
-+	if (root_port)
-+		pm_runtime_put(&root_port->dev);
-+}
-+
- static ssize_t nvm_authenticate_show(struct device *dev,
- 	struct device_attribute *attr, char *buf)
- {
-@@ -913,10 +937,18 @@ static ssize_t nvm_authenticate_store(struct device *dev,
- 
- 		sw->nvm->authenticating = true;
- 
--		if (!tb_route(sw))
-+		if (!tb_route(sw)) {
-+			/*
-+			 * Keep root port from suspending as long as the
-+			 * NVM upgrade process is running.
-+			 */
-+			nvm_authenticate_start(sw);
- 			ret = nvm_authenticate_host(sw);
--		else
-+			if (ret)
-+				nvm_authenticate_complete(sw);
-+		} else {
- 			ret = nvm_authenticate_device(sw);
-+		}
- 		pm_runtime_mark_last_busy(&sw->dev);
- 		pm_runtime_put_autosuspend(&sw->dev);
- 	}
-@@ -1336,6 +1368,10 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
- 	if (ret <= 0)
- 		return ret;
- 
-+	/* Now we can allow root port to suspend again */
-+	if (!tb_route(sw))
-+		nvm_authenticate_complete(sw);
-+
- 	if (status) {
- 		tb_sw_info(sw, "switch flash authentication failed\n");
- 		tb_switch_set_uuid(sw);
+diff --git a/net/ipv6/netfilter.c b/net/ipv6/netfilter.c
+index 5ae8e1c51079..8b075f0bc351 100644
+--- a/net/ipv6/netfilter.c
++++ b/net/ipv6/netfilter.c
+@@ -24,7 +24,8 @@ int ip6_route_me_harder(struct net *net, struct sk_buff *skb)
+ 	unsigned int hh_len;
+ 	struct dst_entry *dst;
+ 	struct flowi6 fl6 = {
+-		.flowi6_oif = sk ? sk->sk_bound_dev_if : 0,
++		.flowi6_oif = sk && sk->sk_bound_dev_if ? sk->sk_bound_dev_if :
++			rt6_need_strict(&iph->daddr) ? skb_dst(skb)->dev->ifindex : 0,
+ 		.flowi6_mark = skb->mark,
+ 		.flowi6_uid = sock_net_uid(net, sk),
+ 		.daddr = iph->daddr,
 -- 
 2.17.1
 
