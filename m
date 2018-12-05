@@ -2,112 +2,201 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16A1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A4EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7205820850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7205820850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C34CA20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="16r5cu0X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34CA20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbeLEJhB (ORCPT
+        id S1727896AbeLEJhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:37:01 -0500
-Received: from mga06.intel.com ([134.134.136.31]:57528 "EHLO mga06.intel.com"
+        Wed, 5 Dec 2018 04:37:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727773AbeLEJg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:36:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 01:36:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="scan'208";a="104989232"
-Received: from mylly.fi.intel.com (HELO [10.237.72.59]) ([10.237.72.59])
-  by fmsmga007.fm.intel.com with ESMTP; 05 Dec 2018 01:36:53 -0800
-Subject: Re: [PATCH] USB: serial: console: fix reported terminal settings
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        Florian Zumbiehl <florz@florz.de>
-References: <20181204155904.GC18087@localhost>
- <20181204160036.24625-1-johan@kernel.org> <20181204161518.GA17941@kroah.com>
- <20181204163155.GD18087@localhost>
-From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <4e395eb4-739a-05df-e14d-e32f9cfefdd3@linux.intel.com>
-Date:   Wed, 5 Dec 2018 11:36:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181204163155.GD18087@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727744AbeLEJhL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:11 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBAAF2084C;
+        Wed,  5 Dec 2018 09:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002630;
+        bh=7jp+KQqMyN88jArhI3CpP5sxci8kxUJS3W7papPm7gM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=16r5cu0XKDbnaSJ7LcpG8oqVHIEl8jAG3666c2etWRTbi2WB+/LZhoNvbmrRq0SNV
+         OFEm3qzafDSfyHxE+LzO2Zw3yUvTk0ShYQcDuMzFYRVAo10BVvMkSkQNKyadMAaR1d
+         38FLxM9erDqdTEiq7a1e+1fgiiHgJWd6+uMjJb3E=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 021/123] selftests: add script to stress-test nft packet path vs. control plane
+Date:   Wed,  5 Dec 2018 04:34:13 -0500
+Message-Id: <20181205093555.5386-21-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 6:31 PM, Johan Hovold wrote:
-> On Tue, Dec 04, 2018 at 05:15:18PM +0100, Greg Kroah-Hartman wrote:
->> On Tue, Dec 04, 2018 at 05:00:36PM +0100, Johan Hovold wrote:
->>> The USB-serial console implementation has never reported the actual
->>> terminal settings used. Despite storing the corresponding cflags in its
->>> struct console, this was never honoured on later tty open() where the
->>> tty termios would be left initialised to the driver defaults.
->>>
->>> Unlike the serial console implementation, the USB-serial code calls
->>> subdriver open() already at console setup. While calling set_termios()
->>> before open() looks like it could work for some USB-serial drivers,
->>> others definitely do not expect this, so modelling this after serial
->>> core is going to be intrusive, if at all possible.
->>>
->>> Instead, use a (renamed) tty helper to save the termios data used at
->>> console setup, so that the tty termios reflects the actual terminal
->>> settings after a subsequent tty open().
->>>
->>> Note that the calls to tty_init_termios() (tty_driver_install()) and
->>> tty_save_termios() are serialised using the disconnect mutex.
->>>
->>> This specifically fixes a regression that was triggered by a recent
->>> change adding software flow control to the pl2303 driver: a getty trying
->>> to disable flow control while leaving the baud rate unchanged would now
->>> also set the baud rate to the driver default (prior to the flow-control
->>> change this had been a noop).
->>>
->>> Fixes: 7041d9c3f01b ("USB: serial: pl2303: add support for tx xon/xoff flow control")
->>> Cc: stable <stable@vger.kernel.org>	# 4.18
->>> Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
->>> Cc: Florian Zumbiehl <florz@florz.de>
->>> Signed-off-by: Johan Hovold <johan@kernel.org>
->>> ---
->>>   drivers/tty/tty_io.c         | 11 +++++++++--
->>>   drivers/usb/serial/console.c |  2 +-
->>>   include/linux/tty.h          |  1 +
->>>   3 files changed, 11 insertions(+), 3 deletions(-)
->>
->> Ah, messy :)
->>
->> Want me to take this through my tty tree?
-> 
-> If you prefer. I was planning on including this in a USB-serial pull
-> request for -rc6 since it fixes a user-reported regression, but perhaps
-> taking this through your tty-linus branch (which already holds a console
-> fix) is easier/faster.
-> 
-> We should wait for Jarkko to confirm that this fixes the problem he
-> reported first, though.
-> 
-Great, this fixed the issue for both pl2303 based adapters I reported.
+From: Florian Westphal <fw@strlen.de>
 
-Tested on top of 0072a0c14d5b ("Merge tag 'media/v4.20-4' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media")
+[ Upstream commit 25d8bcedbf4329895dbaf9dd67baa6f18dad918c ]
 
-Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Start flood ping for each cpu while loading/flushing rulesets to make
+sure we do not access already-free'd rules from nf_tables evaluation loop.
+
+Also add this to TARGETS so 'make run_tests' in selftest dir runs it
+automatically.
+
+This would have caught the bug fixed in previous change
+("netfilter: nf_tables: do not skip inactive chains during generation update")
+sooner.
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/Makefile              |  1 +
+ tools/testing/selftests/netfilter/Makefile    |  6 ++
+ tools/testing/selftests/netfilter/config      |  2 +
+ .../selftests/netfilter/nft_trans_stress.sh   | 78 +++++++++++++++++++
+ 4 files changed, 87 insertions(+)
+ create mode 100644 tools/testing/selftests/netfilter/Makefile
+ create mode 100644 tools/testing/selftests/netfilter/config
+ create mode 100755 tools/testing/selftests/netfilter/nft_trans_stress.sh
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index f1fe492c8e17..f0017c831e57 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -24,6 +24,7 @@ TARGETS += memory-hotplug
+ TARGETS += mount
+ TARGETS += mqueue
+ TARGETS += net
++TARGETS += netfilter
+ TARGETS += nsfs
+ TARGETS += powerpc
+ TARGETS += proc
+diff --git a/tools/testing/selftests/netfilter/Makefile b/tools/testing/selftests/netfilter/Makefile
+new file mode 100644
+index 000000000000..47ed6cef93fb
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for netfilter selftests
++
++TEST_PROGS := nft_trans_stress.sh
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/netfilter/config b/tools/testing/selftests/netfilter/config
+new file mode 100644
+index 000000000000..1017313e41a8
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/config
+@@ -0,0 +1,2 @@
++CONFIG_NET_NS=y
++NF_TABLES_INET=y
+diff --git a/tools/testing/selftests/netfilter/nft_trans_stress.sh b/tools/testing/selftests/netfilter/nft_trans_stress.sh
+new file mode 100755
+index 000000000000..f1affd12c4b1
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/nft_trans_stress.sh
+@@ -0,0 +1,78 @@
++#!/bin/bash
++#
++# This test is for stress-testing the nf_tables config plane path vs.
++# packet path processing: Make sure we never release rules that are
++# still visible to other cpus.
++#
++# set -e
++
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++testns=testns1
++tables="foo bar baz quux"
++
++nft --version > /dev/null 2>&1
++if [ $? -ne 0 ];then
++	echo "SKIP: Could not run test without nft tool"
++	exit $ksft_skip
++fi
++
++ip -Version > /dev/null 2>&1
++if [ $? -ne 0 ];then
++	echo "SKIP: Could not run test without ip tool"
++	exit $ksft_skip
++fi
++
++tmp=$(mktemp)
++
++for table in $tables; do
++	echo add table inet "$table" >> "$tmp"
++	echo flush table inet "$table" >> "$tmp"
++
++	echo "add chain inet $table INPUT { type filter hook input priority 0; }" >> "$tmp"
++	echo "add chain inet $table OUTPUT { type filter hook output priority 0; }" >> "$tmp"
++	for c in $(seq 1 400); do
++		chain=$(printf "chain%03u" "$c")
++		echo "add chain inet $table $chain" >> "$tmp"
++	done
++
++	for c in $(seq 1 400); do
++		chain=$(printf "chain%03u" "$c")
++		for BASE in INPUT OUTPUT; do
++			echo "add rule inet $table $BASE counter jump $chain" >> "$tmp"
++		done
++		echo "add rule inet $table $chain counter return" >> "$tmp"
++	done
++done
++
++ip netns add "$testns"
++ip -netns "$testns" link set lo up
++
++lscpu | grep ^CPU\(s\): | ( read cpu cpunum ;
++cpunum=$((cpunum-1))
++for i in $(seq 0 $cpunum);do
++	mask=$(printf 0x%x $((1<<$i)))
++        ip netns exec "$testns" taskset $mask ping -4 127.0.0.1 -fq > /dev/null &
++        ip netns exec "$testns" taskset $mask ping -6 ::1 -fq > /dev/null &
++done)
++
++sleep 1
++
++for i in $(seq 1 10) ; do ip netns exec "$testns" nft -f "$tmp" & done
++
++for table in $tables;do
++	randsleep=$((RANDOM%10))
++	sleep $randsleep
++	ip netns exec "$testns" nft delete table inet $table 2>/dev/null
++done
++
++randsleep=$((RANDOM%10))
++sleep $randsleep
++
++pkill -9 ping
++
++wait
++
++rm -f "$tmp"
++ip netns del "$testns"
+-- 
+2.17.1
+
