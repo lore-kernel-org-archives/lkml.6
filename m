@@ -2,87 +2,78 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBAD8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378A0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FB720879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:38:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FB720879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTP id F022520850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:38:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F022520850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeLEQii (ORCPT
+        id S1728051AbeLEQin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:38:38 -0500
-Received: from emh07.mail.saunalahti.fi ([62.142.5.117]:39474 "EHLO
-        emh07.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeLEQih (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:38:37 -0500
-X-Greylist: delayed 666 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 11:38:36 EST
-Received: from toshiba (85-76-49-126-nat.elisa-mobile.fi [85.76.49.126])
-        by emh07.mail.saunalahti.fi (Postfix) with ESMTP id 91951B00BE;
-        Wed,  5 Dec 2018 18:27:28 +0200 (EET)
-Message-ID: <5C07FC30.43601034@users.sourceforge.net>
-Date:   Wed, 05 Dec 2018 18:26:24 +0200
-From:   Jari Ruusu <jariruusu@users.sourceforge.net>
+        Wed, 5 Dec 2018 11:38:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbeLEQim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:38:42 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D2D3437E8E;
+        Wed,  5 Dec 2018 16:38:41 +0000 (UTC)
+Received: from krava (unknown [10.43.17.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B2CCA60E3F;
+        Wed,  5 Dec 2018 16:38:39 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 17:38:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Vince Weaver <vincent.weaver@maine.edu>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: perf: perf_fuzzer triggers GPF in perf_prepare_sample
+Message-ID: <20181205163838.GA3836@krava>
+References: <alpine.DEB.2.21.1812041039220.19558@macbook-air>
+ <20181205124538.GA19343@krava>
 MIME-Version: 1.0
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        " Radim =?iso-8859-1?Q?Kr=3Fm=E1=3F?=" <rkrcmar@redhat.com>,
-        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>
-Subject: Re: [PATCH 4.14 121/146] x86/fpu: Disable bottom halves while loading 
- FPU registers
-References: <20181204103726.750894136@linuxfoundation.org> <20181204103731.697870447@linuxfoundation.org>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20181205124538.GA19343@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 05 Dec 2018 16:38:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman wrote:
-> commit 68239654acafe6aad5a3c1dc7237e60accfebc03 upstream.
+On Wed, Dec 05, 2018 at 01:45:38PM +0100, Jiri Olsa wrote:
+> On Tue, Dec 04, 2018 at 10:54:55AM -0500, Vince Weaver wrote:
+> > Hello,
+> > 
+> > I was able to trigger another oops with the perf_fuzzer with current git.
+> > 
+> > This is 4.20-rc5 after the fix for the very similar oops I previously 
+> > reported got committed.
+> > 
+> > It seems to be pointing to the same location in the source as 
+> > before, I guess maybe triggered a different way?
 > 
-> The sequence
+> nice.. yep, looks the same
 > 
->   fpu->initialized = 1;         /* step A */
->   preempt_disable();            /* step B */
->   fpu__restore(fpu);
->   preempt_enable();
+> > 
+> > Unfortunately this crash is not easily reproducible like the last one was.
 > 
-> in __fpu__restore_sig() is racy in regard to a context switch.
+> will check
 
-That same race appears to be present in older kernel branches also.
-The context is sligthly different, so the patch for 4.14 does not
-apply cleanly to older kernels. For 4.9 branch, this edit works:
+what model are hitting this on?
 
-    s/fpu->initialized/fpu->fpstate_active/
-
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -342,10 +342,10 @@ static int __fpu__restore_sig(void __use
- 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
- 		}
- 
-+		local_bh_disable();
- 		fpu->fpstate_active = 1;
--		preempt_disable();
- 		fpu__restore(fpu);
--		preempt_enable();
-+		local_bh_enable();
- 
- 		return err;
- 	} else {
+jirka
