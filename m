@@ -2,108 +2,602 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709BAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE96206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DB92084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:02:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfuNyqeb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE96206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p9XetDgC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13DB92084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbeLEPBz (ORCPT
+        id S1727925AbeLEPCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:01:55 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36388 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLEPBz (ORCPT
+        Wed, 5 Dec 2018 10:02:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37038 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbeLEPCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:01:55 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a16so14967575lfg.3;
-        Wed, 05 Dec 2018 07:01:53 -0800 (PST)
+        Wed, 5 Dec 2018 10:02:23 -0500
+Received: by mail-wm1-f65.google.com with SMTP id g67so13180123wmd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 07:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=isRiqPCBdM++CXDodzTILbM+ZbN8hBo9KQXma/rxdW4=;
-        b=DfuNyqeb6Z28CAb9PUVzksC4Lb5W3A7MM9j+6X7K6BN5hAEd3gp6L91mXuOqULk6vW
-         7kyiTlsz9cSAHOaCsXDpsgn7MC68+ktvb8upajbnl3zYrfQy5CyshgKfqIO6w56JTQZK
-         L04jONKTapOz67h+944DvqqY3SO21MkOo5ftgtWi60vk/rCf2D0W/lmcVb4ShICwd0gM
-         aPe4tnoXH31oR0vx2g8WUcR9ND6xUcn8OPX1XFMRMzT8V2tmlxztmHtb5B/p+EhGbWwQ
-         SrGS9nIKLn+7u1imYIom6qc+ByFDTtVVwRCOUlNl0rBDUMZ7eQNiLKQO1wvIEGqEEI+L
-         Axjw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bGynSR3sym+42cUjytHoZSlzy93vn4mANzjgbQsDTOo=;
+        b=p9XetDgCdaVhMdo1jK2CzAvH5FJM21AThj5j87ziZEWQUuB07NRiJOwHiwP3lcSljv
+         INZwVs13IVoJu3XlApN35cTcC5bI5Wxihxx8DsIJyOFHb/bQcdGka09kYCVwtWAcKb44
+         vOfPI05WxPOVimyR4rBN/iw4JtsLp4Ok0mZ0KfRCDrBbylDMlYQXQfOFTcS66yOnVx9/
+         Rav8+4gHa596sb9vyZQhyiiRZRgFzrAwV9QZQvKwbiCVAxBzYtCTzxWYBbUI7i/1q2oE
+         2F9otTbr5ou9lHVdiAJZq/A3e2fHSF6Av/UHsYp3edNKIKtgYgKSphNRxEgf6K5zR3xM
+         2IrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=isRiqPCBdM++CXDodzTILbM+ZbN8hBo9KQXma/rxdW4=;
-        b=jN7p/JZvhnDv7whKpDwROngSXF4PwO3B3Nrpcfa9BT0xaqQUkodaEFl8T/CnSnY+GL
-         6nTJVIAoPZNpeAh+ShfjPbDATwmWaSMMI9qwxqsunSqS0vRedHhNOuf9eyqQs9rSyAoF
-         0k/P1WrIeVCmYHnf6tXYdL5FYBknAY/CgPnBIejdNyzdJYUjVxUEkmo9nX30aeBV9DO5
-         t0GoofEarxKwbRS5ubzqK6cmmP3n8SkEzB3BE5xdOkJC3NTfA6K/JbydkHwpU/uzx8dy
-         Zaf3XbI8O3N07TGH1EXiX0juqKWM/t1EawZ5IA2hIVcc6gG8b1G6F97PVu93zZjD3IJv
-         wRLw==
-X-Gm-Message-State: AA+aEWYcnKn1AUknvJeLAOKv/f57reJFjNMZC/u0oL7LpUT/2QbqzI4S
-        Ze+2wqLlF6MgxXhtJy2B7Uk=
-X-Google-Smtp-Source: AFSGD/XA0ElFp0jL7mOaoCHMdVu2qWB83mCBaUv7PQwchlTBGTLeQ4/0BA0va7XVOoVO+Iu7nBuUgw==
-X-Received: by 2002:a19:2c92:: with SMTP id s140mr14165909lfs.42.1544022112997;
-        Wed, 05 Dec 2018 07:01:52 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id s127sm3685517lfe.8.2018.12.05.07.01.51
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bGynSR3sym+42cUjytHoZSlzy93vn4mANzjgbQsDTOo=;
+        b=CYsCoweSeiKF98Eu2BCmifvCju35rkVAMkoAt1owoMfY4LVFIqpy9Ry1SeAJ4znyRc
+         GOBUQB2XO52JEZ1RDmyv+MbWi/bQEnGNxIr8jaoE3cYyMX7mE/gQ3m/B/7zqFuOQo4WT
+         QzJWX1lnBpHAUAVcsa2FiAFKIwFjsIbPaHHaBWOlxRdW8ePmRM1yNpch2mdQxynFIQ4T
+         vS7DKf/nkAjXr7umud4cAQCEY/yeZxK/bRo5nko9Sfz9qgnjvkHr2aKuD+IQe1rVeTbH
+         180Cc9xLroZEPspurul4j1Mp3wY2Rp8MPIewXqLDG7Aex0uDrhWeb8aoNQcutPGylZtx
+         gwzA==
+X-Gm-Message-State: AA+aEWYxo6d4fRbHf/zcdzi3sdimfN+zJpK1yOuEkUP+gh6trWNugA/i
+        ihIJ3JirXrd4XuDyKt0Q/x8DT5rI663buQ==
+X-Google-Smtp-Source: AFSGD/Xs1EGYO/g+89ctnehdvG4hBXCRYt7qj9svVDPGauGDnQLkj34luOr+ZqzGo5SvLeeuSJNZ4A==
+X-Received: by 2002:a1c:b4e:: with SMTP id 75mr2628907wml.143.1544022139214;
+        Wed, 05 Dec 2018 07:02:19 -0800 (PST)
+Received: from ?IPv6:2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67? ([2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67])
+        by smtp.gmail.com with ESMTPSA id j8sm18291226wmd.0.2018.12.05.07.02.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 07:01:52 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUYgU-0003zu-Qx; Wed, 05 Dec 2018 16:01:54 +0100
-Date:   Wed, 5 Dec 2018 16:01:54 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH 3/5] dt-bindings: gnss: add w2sg0004 compatible string
-Message-ID: <20181205150154.GG15689@localhost>
-References: <20181118215801.12280-1-andreas@kemnade.info>
- <20181118215801.12280-4-andreas@kemnade.info>
+        Wed, 05 Dec 2018 07:02:18 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] rtc: support for the Amlogic Meson RTC
+To:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+        alexandre.belloni@bootlin.com, a.zummo@towertech.it
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ccaione@baylibre.com
+References: <20181202220847.24364-1-martin.blumenstingl@googlemail.com>
+ <20181202220847.24364-3-martin.blumenstingl@googlemail.com>
+ <85aa8e12-0bca-6432-e1a8-0faceff1dd5e@codethink.co.uk>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <c762577e-9759-f871-33c5-e88667a298c5@baylibre.com>
+Date:   Wed, 5 Dec 2018 16:02:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118215801.12280-4-andreas@kemnade.info>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <85aa8e12-0bca-6432-e1a8-0faceff1dd5e@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 10:57:59PM +0100, Andreas Kemnade wrote:
-> Add w2sg0004 compatible string since devices without wakeup
-> pins are now supported.
+Hi Ben,
+
+On 05/12/2018 14:36, Ben Dooks wrote:
+> On 02/12/2018 22:08, Martin Blumenstingl wrote:
+>> Add support for the RTC block on the 32-bit Amlogic Meson6, Meson8,
+>> Meson8b and Meson8m2 SoCs.
+>>
+>> The RTC is split in to two parts, which are both managed by this driver:
+>> - the AHB front end
+>> - and a simple serial connection to the actual registers
+>>
+>> The RTC_COUNTER register which holds the time is 32-bits wide.
+>>
+>> There are four 32-bit wide (in total: 16 bytes) "regmem" registers which
+>> are exposed using nvmem. On Amlogic's 3.10 kernel this is used to store
+>> data which needs to survive a suspend / resume cycle.
+>>
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>> [resurrected Ben's patches after 2 years]
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Just checking if the change of author is deliberate?
+> not sure how to do >1 author on patches like this.
+
+Martin has been very explicit about that in the cover letter :
+https://patchwork.kernel.org/cover/10708427/
+
+Neil
+
 > 
-> diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> index 648d183cdb77..1be7597ae884 100644
-> --- a/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> +++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> @@ -14,6 +14,7 @@ Required properties:
->  			"linx,r4"
->  			"wi2wi,w2sg0008i"
->  			"wi2wi,w2sg0084i"
-> +			"wi2wi,w2sg0004"
+>> ---
+>>   drivers/rtc/Kconfig     |  11 ++
+>>   drivers/rtc/Makefile    |   1 +
+>>   drivers/rtc/rtc-meson.c | 409 ++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 421 insertions(+)
+>>   create mode 100644 drivers/rtc/rtc-meson.c
+>>
+>> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+>> index a819ef07b7ec..d5d0e3affdc6 100644
+>> --- a/drivers/rtc/Kconfig
+>> +++ b/drivers/rtc/Kconfig
+>> @@ -1285,6 +1285,17 @@ config RTC_DRV_IMXDI
+>>          This driver can also be built as a module, if so, the module
+>>          will be called "rtc-imxdi".
+>>   +config RTC_DRV_MESON
+>> +    tristate "Amlogic Meson RTC"
+>> +    depends on (ARM && ARCH_MESON) || COMPILE_TEST
+>> +    select REGMAP_MMIO
+>> +    help
+>> +       Support for the RTC block on the Amlogic Meson6, Meson8, Meson8b
+>> +       and Meson8m2 SoCs.
+>> +
+>> +       This driver can also be built as a module, if so, the module
+>> +       will be called "rtc-meson".
+>> +
+>>   config RTC_DRV_OMAP
+>>       tristate "TI OMAP Real Time Clock"
+>>       depends on ARCH_OMAP || ARCH_DAVINCI || COMPILE_TEST
+>> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+>> index 290c1730fb0a..3b088e75149d 100644
+>> --- a/drivers/rtc/Makefile
+>> +++ b/drivers/rtc/Makefile
+>> @@ -99,6 +99,7 @@ obj-$(CONFIG_RTC_DRV_MAX8997)    += rtc-max8997.o
+>>   obj-$(CONFIG_RTC_DRV_MAX8998)    += rtc-max8998.o
+>>   obj-$(CONFIG_RTC_DRV_MC13XXX)    += rtc-mc13xxx.o
+>>   obj-$(CONFIG_RTC_DRV_MCP795)    += rtc-mcp795.o
+>> +obj-$(CONFIG_RTC_DRV_MESON)    += rtc-meson.o
+>>   obj-$(CONFIG_RTC_DRV_MOXART)    += rtc-moxart.o
+>>   obj-$(CONFIG_RTC_DRV_MPC5121)    += rtc-mpc5121.o
+>>   obj-$(CONFIG_RTC_DRV_MSM6242)    += rtc-msm6242.o
+>> diff --git a/drivers/rtc/rtc-meson.c b/drivers/rtc/rtc-meson.c
+>> new file mode 100644
+>> index 000000000000..09d6849b804a
+>> --- /dev/null
+>> +++ b/drivers/rtc/rtc-meson.c
+>> @@ -0,0 +1,409 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * RTC driver for the interal RTC block in the Amlogic Meson6, Meson8,
+>> + * Meson8b and Meson8m2 SoCs.
+>> + *
+>> + * The RTC is split in to two parts, the AHB front end and a simple serial
+>> + * connection to the actual registers. This driver manages both parts.
+>> + *
+>> + * Copyright (c) 2018 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> + * Copyright (c) 2015 Ben Dooks <ben.dooks@codethink.co.uk> for Codethink Ltd
+>> + * Based on origin by Carlo Caione <carlo@endlessm.com>
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/nvmem-provider.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/regulator/consumer.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/rtc.h>
+>> +
+>> +/* registers accessed from cpu bus */
+>> +#define RTC_ADDR0                0x00
+>> +    #define RTC_ADDR0_LINE_SCLK        BIT(0)
+>> +    #define RTC_ADDR0_LINE_SEN        BIT(1)
+>> +    #define RTC_ADDR0_LINE_SDI        BIT(2)
+>> +    #define RTC_ADDR0_START_SER        BIT(17)
+>> +    #define RTC_ADDR0_WAIT_SER        BIT(22)
+>> +    #define RTC_ADDR0_DATA            GENMASK(31, 24)
+>> +
+>> +#define RTC_ADDR1                0x04
+>> +    #define RTC_ADDR1_SDO            BIT(0)
+>> +    #define RTC_ADDR1_S_READY        BIT(1)
+>> +
+>> +#define RTC_ADDR2                0x08
+>> +#define RTC_ADDR3                0x0c
+>> +
+>> +#define RTC_REG4                0x10
+>> +    #define RTC_REG4_STATIC_VALUE        GENMASK(7, 0)
+>> +
+>> +/* rtc registers accessed via rtc-serial interface */
+>> +#define RTC_COUNTER        (0)
+>> +#define RTC_SEC_ADJ        (2)
+>> +#define RTC_REGMEM_0        (4)
+>> +#define RTC_REGMEM_1        (5)
+>> +#define RTC_REGMEM_2        (6)
+>> +#define RTC_REGMEM_3        (7)
+>> +
+>> +#define RTC_ADDR_BITS        (3)    /* number of address bits to send */
+>> +#define RTC_DATA_BITS        (32)    /* number of data bits to tx/rx */
+>> +
+>> +#define MESON_STATIC_BIAS_CUR    (0x5 << 1)
+>> +#define MESON_STATIC_VOLTAGE    (0x3 << 11)
+>> +#define MESON_STATIC_DEFAULT    (MESON_STATIC_BIAS_CUR | MESON_STATIC_VOLTAGE)
+>> +
+>> +struct meson_rtc {
+>> +    struct rtc_device    *rtc;        /* rtc device we created */
+>> +    struct device        *dev;        /* device we bound from */
+>> +    struct reset_control    *reset;        /* reset source */
+>> +    struct regulator    *vdd;        /* voltage input */
+>> +    struct regmap        *peripheral;    /* peripheral registers */
+>> +    struct regmap        *serial;    /* serial registers */
+>> +};
+>> +
+>> +static const struct regmap_config meson_rtc_peripheral_regmap_config = {
+>> +    .name        = "peripheral-registers",
+>> +    .reg_bits    = 8,
+>> +    .val_bits    = 32,
+>> +    .reg_stride    = 4,
+>> +    .max_register    = RTC_REG4,
+>> +    .fast_io    = true,
+>> +};
+>> +
+>> +/* RTC front-end serialiser controls */
+>> +
+>> +static void meson_rtc_sclk_pulse(struct meson_rtc *rtc)
+>> +{
+>> +    udelay(5);
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SCLK, 0);
+>> +    udelay(5);
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SCLK,
+>> +               RTC_ADDR0_LINE_SCLK);
+>> +}
+>> +
+>> +static void meson_rtc_send_bit(struct meson_rtc *rtc, unsigned int bit)
+>> +{
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SDI,
+>> +               bit ? RTC_ADDR0_LINE_SDI : 0);
+>> +    meson_rtc_sclk_pulse(rtc);
+>> +}
+>> +
+>> +static void meson_rtc_send_bits(struct meson_rtc *rtc, u32 data,
+>> +                unsigned int nr)
+>> +{
+>> +    u32 bit = 1 << (nr - 1);
+>> +
+>> +    while (bit) {
+>> +        meson_rtc_send_bit(rtc, data & bit);
+>> +        bit >>= 1;
+>> +    }
+>> +}
+>> +
+>> +static void meson_rtc_set_dir(struct meson_rtc *rtc, u32 mode)
+>> +{
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SEN, 0);
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SDI, 0);
+>> +    meson_rtc_send_bit(rtc, mode);
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SDI, 0);
+>> +}
+>> +
+>> +static u32 meson_rtc_get_data(struct meson_rtc *rtc)
+>> +{
+>> +    u32 tmp, val = 0;
+>> +    int bit;
+>> +
+>> +    for (bit = 0; bit < RTC_DATA_BITS; bit++) {
+>> +        meson_rtc_sclk_pulse(rtc);
+>> +        val <<= 1;
+>> +
+>> +        regmap_read(rtc->peripheral, RTC_ADDR1, &tmp);
+>> +        val |= tmp & RTC_ADDR1_SDO;
+>> +    }
+>> +
+>> +    return val;
+>> +}
+>> +
+>> +static int meson_rtc_get_bus(struct meson_rtc *rtc)
+>> +{
+>> +    int ret, retries = 3;
+>> +    u32 val;
+>> +
+>> +    /* prepare bus for transfers, set all lines low */
+>> +    val = RTC_ADDR0_LINE_SDI | RTC_ADDR0_LINE_SEN | RTC_ADDR0_LINE_SCLK;
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, val, 0);
+>> +
+>> +    for (retries = 0; retries < 3; retries++) {
+>> +        /* wait for the bus to be ready */
+>> +        if (!regmap_read_poll_timeout(rtc->peripheral, RTC_ADDR1, val,
+>> +                          val & RTC_ADDR1_S_READY, 10,
+>> +                          10000))
+>> +            return 0;
+>> +
+>> +        dev_warn(rtc->dev, "failed to get bus, resetting RTC\n");
+>> +
+>> +        ret = reset_control_reset(rtc->reset);
+>> +        if (ret)
+>> +            return ret;
+>> +    }
+>> +
+>> +    dev_err(rtc->dev, "bus is not ready\n");
+>> +    return -ETIMEDOUT;
+>> +}
+>> +
+>> +static int meson_rtc_serial_bus_reg_read(void *context, unsigned int reg,
+>> +                     unsigned int *data)
+>> +{
+>> +    struct meson_rtc *rtc = context;
+>> +    int ret;
+>> +
+>> +    ret = meson_rtc_get_bus(rtc);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SEN,
+>> +               RTC_ADDR0_LINE_SEN);
+>> +    meson_rtc_send_bits(rtc, reg, RTC_ADDR_BITS);
+>> +    meson_rtc_set_dir(rtc, 0);
+>> +    *data = meson_rtc_get_data(rtc);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int meson_rtc_serial_bus_reg_write(void *context, unsigned int reg,
+>> +                      unsigned int data)
+>> +{
+>> +    struct meson_rtc *rtc = context;
+>> +    int ret;
+>> +
+>> +    ret = meson_rtc_get_bus(rtc);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0, RTC_ADDR0_LINE_SEN,
+>> +               RTC_ADDR0_LINE_SEN);
+>> +    meson_rtc_send_bits(rtc, data, RTC_DATA_BITS);
+>> +    meson_rtc_send_bits(rtc, reg, RTC_ADDR_BITS);
+>> +    meson_rtc_set_dir(rtc, 1);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct regmap_bus meson_rtc_serial_bus = {
+>> +    .reg_read    = meson_rtc_serial_bus_reg_read,
+>> +    .reg_write    = meson_rtc_serial_bus_reg_write,
+>> +};
+>> +
+>> +static const struct regmap_config meson_rtc_serial_regmap_config = {
+>> +    .name        = "serial-registers",
+>> +    .reg_bits    = 4,
+>> +    .reg_stride    = 1,
+>> +    .val_bits    = 32,
+>> +    .max_register    = RTC_REGMEM_3,
+>> +    .fast_io    = false,
+>> +};
+>> +
+>> +static int meson_rtc_write_static(struct meson_rtc *rtc, u32 data)
+>> +{
+>> +    u32 tmp;
+>> +
+>> +    regmap_write(rtc->peripheral, RTC_REG4,
+>> +             FIELD_PREP(RTC_REG4_STATIC_VALUE, (data >> 8)));
+>> +
+>> +    /* write the static value and start the auto serializer */
+>> +    tmp = FIELD_PREP(RTC_ADDR0_DATA, (data & 0xff)) | RTC_ADDR0_START_SER;
+>> +    regmap_update_bits(rtc->peripheral, RTC_ADDR0,
+>> +               RTC_ADDR0_DATA | RTC_ADDR0_START_SER, tmp);
+>> +
+>> +    /* wait for the auto serializer to complete */
+>> +    return regmap_read_poll_timeout(rtc->peripheral, RTC_REG4, tmp,
+>> +                    !(tmp & RTC_ADDR0_WAIT_SER), 10,
+>> +                    10000);
+>> +}
+>> +
+>> +/* RTC interface layer functions */
+>> +
+>> +static int meson_rtc_gettime(struct device *dev, struct rtc_time *tm)
+>> +{
+>> +    struct meson_rtc *rtc = dev_get_drvdata(dev);
+>> +    u32 time;
+>> +    int ret;
+>> +
+>> +    ret = regmap_read(rtc->serial, RTC_COUNTER, &time);
+>> +    if (!ret)
+>> +        rtc_time64_to_tm(time, tm);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int meson_rtc_settime(struct device *dev, struct rtc_time *tm)
+>> +{
+>> +    struct meson_rtc *rtc = dev_get_drvdata(dev);
+>> +
+>> +    return regmap_write(rtc->serial, RTC_COUNTER, rtc_tm_to_time64(tm));
+>> +}
+>> +
+>> +static const struct rtc_class_ops meson_rtc_ops = {
+>> +    .read_time    = meson_rtc_gettime,
+>> +    .set_time    = meson_rtc_settime,
+>> +};
+>> +
+>> +/* NVMEM interface layer functions */
+>> +
+>> +static int meson_rtc_regmem_read(void *context, unsigned int offset,
+>> +                 void *buf, size_t bytes)
+>> +{
+>> +    struct meson_rtc *rtc = context;
+>> +    unsigned int read_offset, read_size;
+>> +
+>> +    read_offset = RTC_REGMEM_0 + (offset / 4);
+>> +    read_size = bytes / 4;
+>> +
+>> +    return regmap_bulk_read(rtc->serial, read_offset, buf, read_size);
+>> +}
+>> +
+>> +static int meson_rtc_regmem_write(void *context, unsigned int offset,
+>> +                  void *buf, size_t bytes)
+>> +{
+>> +    struct meson_rtc *rtc = context;
+>> +    unsigned int write_offset, write_size;
+>> +
+>> +    write_offset = RTC_REGMEM_0 + (offset / 4);
+>> +    write_size = bytes / 4;
+>> +
+>> +    return regmap_bulk_write(rtc->serial, write_offset, buf, write_size);
+>> +}
+>> +
+>> +static int meson_rtc_probe(struct platform_device *pdev)
+>> +{
+>> +    struct nvmem_config meson_rtc_nvmem_config = {
+>> +        .name = "meson-rtc-regmem",
+>> +        .word_size = 4,
+>> +        .stride = 4,
+>> +        .size = SZ_16,
+>> +        .reg_read = meson_rtc_regmem_read,
+>> +        .reg_write = meson_rtc_regmem_write,
+>> +    };
+>> +    struct device *dev = &pdev->dev;
+>> +    struct meson_rtc *rtc;
+>> +    struct resource *res;
+>> +    void __iomem *base;
+>> +    int ret;
+>> +    u32 tm;
+>> +
+>> +    rtc = devm_kzalloc(dev, sizeof(struct meson_rtc), GFP_KERNEL);
+>> +    if (!rtc)
+>> +        return -ENOMEM;
+>> +
+>> +    rtc->rtc = devm_rtc_allocate_device(dev);
+>> +    if (IS_ERR(rtc->rtc))
+>> +        return PTR_ERR(rtc->rtc);
+>> +
+>> +    platform_set_drvdata(pdev, rtc);
+>> +
+>> +    rtc->dev = dev;
+>> +
+>> +    rtc->rtc->ops = &meson_rtc_ops;
+>> +    rtc->rtc->range_max = U32_MAX;
+>> +
+>> +    res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +    base = devm_ioremap_resource(dev, res);
+>> +    if (IS_ERR(base))
+>> +        return PTR_ERR(base);
+>> +
+>> +    rtc->peripheral = devm_regmap_init_mmio(dev, base,
+>> +                    &meson_rtc_peripheral_regmap_config);
+>> +    if (IS_ERR(rtc->peripheral)) {
+>> +        dev_err(dev, "failed to create peripheral regmap\n");
+>> +        return PTR_ERR(rtc->peripheral);
+>> +    }
+>> +
+>> +    rtc->reset = devm_reset_control_get(dev, NULL);
+>> +    if (IS_ERR(rtc->reset)) {
+>> +        dev_err(dev, "missing reset line\n");
+>> +        return PTR_ERR(rtc->reset);
+>> +    }
+>> +
+>> +    rtc->vdd = devm_regulator_get(dev, "vdd");
+>> +    if (IS_ERR(rtc->vdd)) {
+>> +        dev_err(dev, "failed to get the vdd-supply\n");
+>> +        return PTR_ERR(rtc->vdd);
+>> +    }
+>> +
+>> +    ret = regulator_enable(rtc->vdd);
+>> +    if (ret) {
+>> +        dev_err(dev, "failed to enable vdd-supply\n");
+>> +        return ret;
+>> +    }
+>> +
+>> +    ret = meson_rtc_write_static(rtc, MESON_STATIC_DEFAULT);
+>> +    if (ret) {
+>> +        dev_err(dev, "failed to set static values\n");
+>> +        goto out_disable_vdd;
+>> +    }
+>> +
+>> +    rtc->serial = devm_regmap_init(dev, &meson_rtc_serial_bus, rtc,
+>> +                       &meson_rtc_serial_regmap_config);
+>> +    if (IS_ERR(rtc->serial)) {
+>> +        dev_err(dev, "failed to create serial regmap\n");
+>> +        ret = PTR_ERR(rtc->serial);
+>> +        goto out_disable_vdd;
+>> +    }
+>> +
+>> +    /*
+>> +     * check if we can read RTC counter, if not then the RTC is probably
+>> +     * not functional. If it isn't probably best to not bind.
+>> +     */
+>> +    ret = regmap_read(rtc->serial, RTC_COUNTER, &tm);
+>> +    if (ret) {
+>> +        dev_err(dev, "cannot read RTC counter, RTC not functional\n");
+>> +        goto out_disable_vdd;
+>> +    }
+>> +
+>> +    meson_rtc_nvmem_config.priv = rtc;
+>> +    ret = rtc_nvmem_register(rtc->rtc, &meson_rtc_nvmem_config);
+>> +    if (ret)
+>> +        goto out_disable_vdd;
+>> +
+>> +    ret = rtc_register_device(rtc->rtc);
+>> +    if (ret)
+>> +        goto out_unregister_nvmem;
+>> +
+>> +    return 0;
+>> +
+>> +out_unregister_nvmem:
+>> +    rtc_nvmem_unregister(rtc->rtc);
+>> +
+>> +out_disable_vdd:
+>> +    regulator_disable(rtc->vdd);
+>> +    return ret;
+>> +}
+>> +
+>> +static const struct of_device_id meson_rtc_dt_match[] = {
+>> +    { .compatible = "amlogic,meson6-rtc", },
+>> +    { .compatible = "amlogic,meson8-rtc", },
+>> +    { .compatible = "amlogic,meson8b-rtc", },
+>> +    { .compatible = "amlogic,meson8m2-rtc", },
+>> +    { },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, meson_rtc_dt_match);
+>> +
+>> +static struct platform_driver meson_rtc_driver = {
+>> +    .probe        = meson_rtc_probe,
+>> +    .driver        = {
+>> +        .name    = "meson-rtc",
+>> +        .of_match_table    = of_match_ptr(meson_rtc_dt_match),
+>> +    },
+>> +};
+>> +module_platform_driver(meson_rtc_driver);
+>> +
+>> +MODULE_DESCRIPTION("Amlogic Meson RTC Driver");
+>> +MODULE_AUTHOR("Ben Dooks <ben.doosk@codethink.co.uk>");
+>> +MODULE_AUTHOR("Martin Blumenstingl <martin.blumenstingl@googlemail.com>");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_ALIAS("platform:meson-rtc");
+>>
+> 
+> 
 
-Please keep the entries sorted.
-
->  
->  - vcc-supply	: Main voltage regulator (pin name: 3V3_IN, VCC, VDD)
-
-Johan
