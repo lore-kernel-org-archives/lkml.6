@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28558C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9F0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D827320851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0450C20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXElLbtf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D827320851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f93hZEb+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0450C20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbeLEJhT (ORCPT
+        id S1727938AbeLEJhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:37:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39886 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:37:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727744AbeLEJhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:17 -0500
+        id S1727915AbeLEJhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:21 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89A9F2084C;
-        Wed,  5 Dec 2018 09:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFC5B20878;
+        Wed,  5 Dec 2018 09:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002637;
-        bh=kf2JOeyFFgXIux2G09VVP+PMV0fhqA6L2U6Zja5Rr+g=;
+        s=default; t=1544002640;
+        bh=fR1OsdXVCo6WqjfPn/BMfsRtPMLRaI1Dr4auTYHE7MM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXElLbtfiwzHL3riL12O/F9tTp02I6jGrG3xfIL7+ArGT8rzxIUJRreGwjqBirIYb
-         SyxOQqTe4yAD2f3NDEtpyIllZaDqSrkr4K5tnWDM+GY/dDtmgE50+/OJ8GXyZgYPhR
-         KaZenAJuN2MGD0XAE5E0Rzmwi/IxKnODlkRiO4g0=
+        b=f93hZEb+C/7bbtkz0ivvw341p26trblrP7WReVkwWQ+FEH4j6pr2/IrG/rF7NjLKS
+         gvbnO0+UgFpzd2UEMjjQjgAc4TJLsqEwej+8ZjojeRAUVKWHqzBwG09/T9qOuwu4F8
+         Gj8a+/VYtYKfPz7jlWahn9V4GPzV0aGMtzoXDs0k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@kernel.org>, Adam Lee <leeadamrobert@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 022/123] perf tools: Fix crash on synthesizing the unit
-Date:   Wed,  5 Dec 2018 04:34:14 -0500
-Message-Id: <20181205093555.5386-22-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 023/123] netfilter: xt_RATEEST: remove netns exit routine
+Date:   Wed,  5 Dec 2018 04:34:15 -0500
+Message-Id: <20181205093555.5386-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -56,73 +55,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit fb50c09e923870a358d68b0d58891bd145b8d7c7 ]
+[ Upstream commit 0fbcc5b568edab7d848b7c7fa66d44ffbd4133c0 ]
 
-Adam reported a record command crash for simple session like:
+xt_rateest_net_exit() was added to check whether rules are flushed
+successfully. but ->net_exit() callback is called earlier than
+->destroy() callback.
+So that ->net_exit() callback can't check that.
 
-  $ perf record -e cpu-clock ls
+test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 iptables -t mangle -I PREROUTING -p udp \
+	   --dport 1111 -j RATEEST --rateest-name ap \
+	   --rateest-interval 250ms --rateest-ewma 0.5s
+   %ip netns del vm1
 
-with following backtrace:
+splat looks like:
+[  668.813518] WARNING: CPU: 0 PID: 87 at net/netfilter/xt_RATEEST.c:210 xt_rateest_net_exit+0x210/0x340 [xt_RATEEST]
+[  668.813518] Modules linked in: xt_RATEEST xt_tcpudp iptable_mangle bpfilter ip_tables x_tables
+[  668.813518] CPU: 0 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc7+ #21
+[  668.813518] Workqueue: netns cleanup_net
+[  668.813518] RIP: 0010:xt_rateest_net_exit+0x210/0x340 [xt_RATEEST]
+[  668.813518] Code: 00 48 8b 85 30 ff ff ff 4c 8b 23 80 38 00 0f 85 24 01 00 00 48 8b 85 30 ff ff ff 4d 85 e4 4c 89 a5 58 ff ff ff c6 00 f8 74 b2 <0f> 0b 48 83 c3 08 4c 39 f3 75 b0 48 b8 00 00 00 00 00 fc ff df 49
+[  668.813518] RSP: 0018:ffff8801156c73f8 EFLAGS: 00010282
+[  668.813518] RAX: ffffed0022ad8e85 RBX: ffff880118928e98 RCX: 5db8012a00000000
+[  668.813518] RDX: ffff8801156c7428 RSI: 00000000cb1d185f RDI: ffff880115663b74
+[  668.813518] RBP: ffff8801156c74d0 R08: ffff8801156633c0 R09: 1ffff100236440be
+[  668.813518] R10: 0000000000000001 R11: ffffed002367d852 R12: ffff880115142b08
+[  668.813518] R13: 1ffff10022ad8e81 R14: ffff880118928ea8 R15: dffffc0000000000
+[  668.813518] FS:  0000000000000000(0000) GS:ffff88011b200000(0000) knlGS:0000000000000000
+[  668.813518] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  668.813518] CR2: 0000563aa69f4f28 CR3: 0000000105a16000 CR4: 00000000001006f0
+[  668.813518] Call Trace:
+[  668.813518]  ? unregister_netdevice_many+0xe0/0xe0
+[  668.813518]  ? xt_rateest_net_init+0x2c0/0x2c0 [xt_RATEEST]
+[  668.813518]  ? default_device_exit+0x1ca/0x270
+[  668.813518]  ? remove_proc_entry+0x1cd/0x390
+[  668.813518]  ? dev_change_net_namespace+0xd00/0xd00
+[  668.813518]  ? __init_waitqueue_head+0x130/0x130
+[  668.813518]  ops_exit_list.isra.10+0x94/0x140
+[  668.813518]  cleanup_net+0x45b/0x900
+[  668.813518]  ? net_drop_ns+0x110/0x110
+[  668.813518]  ? swapgs_restore_regs_and_return_to_usermode+0x3c/0x80
+[  668.813518]  ? save_trace+0x300/0x300
+[  668.813518]  ? lock_acquire+0x196/0x470
+[  668.813518]  ? lock_acquire+0x196/0x470
+[  668.813518]  ? process_one_work+0xb60/0x1de0
+[  668.813518]  ? _raw_spin_unlock_irq+0x29/0x40
+[  668.813518]  ? _raw_spin_unlock_irq+0x29/0x40
+[  668.813518]  ? __lock_acquire+0x4500/0x4500
+[  668.813518]  ? __lock_is_held+0xb4/0x140
+[  668.813518]  process_one_work+0xc13/0x1de0
+[  668.813518]  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
+[  668.813518]  ? set_load_weight+0x270/0x270
+[ ... ]
 
-  Program received signal SIGSEGV, Segmentation fault.
-  3543            ev = event_update_event__new(size + 1, PERF_EVENT_UPDATE__UNIT, evsel->id[0]);
-  (gdb) bt
-  #0  perf_event__synthesize_event_update_unit
-  #1  0x000000000051e469 in perf_event__synthesize_extra_attr
-  #2  0x00000000004445cb in record__synthesize
-  #3  0x0000000000444bc5 in __cmd_record
-  ...
-
-We synthesize an update event that needs to touch the evsel id array,
-which is not defined at that time. Fix this by forcing the id allocation
-for events with their unit defined.
-
-Reflecting possible read_format ID bit in the attr tests.
-
-Reported-by: Yongxin Liu <yongxin.liu@outlook.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adam Lee <leeadamrobert@gmail.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201477
-Fixes: bfd8f72c2778 ("perf record: Synthesize unit/scale/... in event update")
-Link: http://lkml.kernel.org/r/20181112130012.5424-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 3427b2ab63fa ("netfilter: make xt_rateest hash table per net")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/attr/base-record | 2 +-
- tools/perf/util/evsel.c           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/xt_RATEEST.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/tools/perf/tests/attr/base-record b/tools/perf/tests/attr/base-record
-index 37940665f736..efd0157b9d22 100644
---- a/tools/perf/tests/attr/base-record
-+++ b/tools/perf/tests/attr/base-record
-@@ -9,7 +9,7 @@ size=112
- config=0
- sample_period=*
- sample_type=263
--read_format=0
-+read_format=0|4
- disabled=1
- inherit=1
- pinned=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 03a72310315f..e7dbdcc8d465 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1088,7 +1088,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 		attr->exclude_user   = 1;
- 	}
+diff --git a/net/netfilter/xt_RATEEST.c b/net/netfilter/xt_RATEEST.c
+index dec843cadf46..9e05c86ba5c4 100644
+--- a/net/netfilter/xt_RATEEST.c
++++ b/net/netfilter/xt_RATEEST.c
+@@ -201,18 +201,8 @@ static __net_init int xt_rateest_net_init(struct net *net)
+ 	return 0;
+ }
  
--	if (evsel->own_cpus)
-+	if (evsel->own_cpus || evsel->unit)
- 		evsel->attr.read_format |= PERF_FORMAT_ID;
- 
- 	/*
+-static void __net_exit xt_rateest_net_exit(struct net *net)
+-{
+-	struct xt_rateest_net *xn = net_generic(net, xt_rateest_id);
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(xn->hash); i++)
+-		WARN_ON_ONCE(!hlist_empty(&xn->hash[i]));
+-}
+-
+ static struct pernet_operations xt_rateest_net_ops = {
+ 	.init = xt_rateest_net_init,
+-	.exit = xt_rateest_net_exit,
+ 	.id   = &xt_rateest_id,
+ 	.size = sizeof(struct xt_rateest_net),
+ };
 -- 
 2.17.1
 
