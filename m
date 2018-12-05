@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A963BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CB6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D430214F1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB077214F1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pU2n4fUT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D430214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g22DLIFD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB077214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbeLEJzd (ORCPT
+        id S1730105AbeLEJzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:55:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33916 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:55:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729926AbeLEJzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:55:31 -0500
+        id S1729995AbeLEJzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:55:33 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8DED20989;
-        Wed,  5 Dec 2018 09:55:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63F7220661;
+        Wed,  5 Dec 2018 09:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003730;
-        bh=59hMZ2j6fHP4wt/IIm4b90TxCfdjVSI2N/sP+3QRNJs=;
+        s=default; t=1544003733;
+        bh=eHP0HQ+EF6MmSWj9H37qXKHUQCq/JdTfPOVMz5nWSh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pU2n4fUTiMXnnNDcnxeCgCjSlX0P2aXSfu0Zia3YvJL8C5wbiY7/xVDM3iu7Tq9qc
-         1mzfppirALMFF+P4tuFUcgEL8K70XCSw2yalwc5dloLwTFNUPseLt6dPjR0goTtnYr
-         iZU4mPJdR9m/MNl5QBYF8prE02H2mj0q40Oqrc9E=
+        b=g22DLIFD2agg6724TmNU24jdJ0aSUmbyLwOiG94E+RaJ1cs4B233spX8Sy4bb4VsG
+         JDUTMrl15cgSKjvMQTUN4IejN1VI5aDynIux8fOQGNC4d6nk6usjiZzBEJPAMbGXAw
+         QmzFX8vVWR2y4X+ztffjvPhBVZDQzoiFj9x8s8RY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 04/26] s390/cpum_cf: Reject request for sampling in event initialization
-Date:   Wed,  5 Dec 2018 04:54:08 -0500
-Message-Id: <20181205095430.8019-4-sashal@kernel.org>
+Cc:     Huacai Chen <chenhc@lemote.com>, Yao Wang <wangyao@lemote.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 05/26] hwmon: (w83795) temp4_type has writable permission
+Date:   Wed,  5 Dec 2018 04:54:09 -0500
+Message-Id: <20181205095430.8019-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -52,113 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
+[ Upstream commit 09aaf6813cfca4c18034fda7a43e68763f34abb1 ]
 
-On s390 command perf top fails
-[root@s35lp76 perf] # ./perf top -F100000  --stdio
-   Error:
-   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
-   	Try 'perf stat'
-[root@s35lp76 perf] #
+Both datasheet and comments of store_temp_mode() tell us that temp1~4_type
+is writable, so fix it.
 
-Using event -e rb0000 works as designed.  Event rb0000 is the event
-number of the sampling facility for basic sampling.
-
-During system start up the following PMUs are installed in the kernel's
-PMU list (from head to tail):
-   cpum_cf --> s390 PMU counter facility device driver
-   cpum_sf --> s390 PMU sampling facility device driver
-   uprobe
-   kprobe
-   tracepoint
-   task_clock
-   cpu_clock
-
-Perf top executes following functions and calls perf_event_open(2) system
-call with different parameters many times:
-
-cmd_top
---> __cmd_top
-    --> perf_evlist__add_default
-        --> __perf_evlist__add_default
-            --> perf_evlist__new_cycles (creates event type:0 (HW)
-			    		config 0 (CPU_CYCLES)
-	        --> perf_event_attr__set_max_precise_ip
-		    Uses perf_event_open(2) to detect correct
-		    precise_ip level. Fails 3 times on s390 which is ok.
-
-Then functions cmd_top
---> __cmd_top
-    --> perf_top__start_counters
-        -->perf_evlist__config
-	   --> perf_can_comm_exec
-               --> perf_probe_api
-	           This functions test support for the following events:
-		   "cycles:u", "instructions:u", "cpu-clock:u" using
-		   --> perf_do_probe_api
-		       --> perf_event_open_cloexec
-		           Test the close on exec flag support with
-			   perf_event_open(2).
-	               perf_do_probe_api returns true if the event is
-		       supported.
-		       The function returns true because event cpu-clock is
-		       supported by the PMU cpu_clock.
-	               This is achieved by many calls to perf_event_open(2).
-
-Function perf_top__start_counters now calls perf_evsel__open() for every
-event, which is the default event cpu_cycles (config:0) and type HARDWARE
-(type:0) which a predfined frequence of 4000.
-
-Given the above order of the PMU list, the PMU cpum_cf gets called first
-and returns 0, which indicates support for this sampling. The event is
-fully allocated in the function perf_event_open (file kernel/event/core.c
-near line 10521 and the following check fails:
-
-        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
-		                 NULL, NULL, cgroup_fd);
-	if (IS_ERR(event)) {
-		err = PTR_ERR(event);
-		goto err_cred;
-	}
-
-        if (is_sampling_event(event)) {
-		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
-			err = -EOPNOTSUPP;
-			goto err_alloc;
-		}
-	}
-
-The check for the interrupt capabilities fails and the system call
-perf_event_open() returns -EOPNOTSUPP (-95).
-
-Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
-This allows common kernel code in the perf_event_open() system call to
-test the next PMU in above list.
-
-Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Yao Wang <wangyao@lemote.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Fixes: 39deb6993e7c (" hwmon: (w83795) Simplify temperature sensor type handling")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_cf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hwmon/w83795.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-index 56fdad479115..2cf1483246b6 100644
---- a/arch/s390/kernel/perf_cpum_cf.c
-+++ b/arch/s390/kernel/perf_cpum_cf.c
-@@ -338,6 +338,8 @@ static int __hw_perf_event_init(struct perf_event *event)
- 		break;
- 
- 	case PERF_TYPE_HARDWARE:
-+		if (is_sampling_event(event))	/* No sampling support */
-+			return -ENOENT;
- 		ev = attr->config;
- 		/* Count user space (problem-state) only */
- 		if (!attr->exclude_user && attr->exclude_kernel) {
+diff --git a/drivers/hwmon/w83795.c b/drivers/hwmon/w83795.c
+index 21894131190f..9b838fff7e4d 100644
+--- a/drivers/hwmon/w83795.c
++++ b/drivers/hwmon/w83795.c
+@@ -1693,7 +1693,7 @@ store_sf_setup(struct device *dev, struct device_attribute *attr,
+  * somewhere else in the code
+  */
+ #define SENSOR_ATTR_TEMP(index) {					\
+-	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 4 ? S_IWUSR : 0), \
++	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 5 ? S_IWUSR : 0), \
+ 		show_temp_mode, store_temp_mode, NOT_USED, index - 1),	\
+ 	SENSOR_ATTR_2(temp##index##_input, S_IRUGO, show_temp,		\
+ 		NULL, TEMP_READ, index - 1),				\
 -- 
 2.17.1
 
