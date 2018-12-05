@@ -4,65 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836DBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CFDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD1A20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6F720850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544039536;
-	bh=ZPK7ykcKTB3XYMFI6ryEK5KIQ9kgYzfLHFhzXTHrs14=;
+	s=default; t=1544039546;
+	bh=QpSSSS46jOV4pBcX30PB3sx5Ekr4YQ/buwkC7AAVRmA=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=RefttR6k0gkCc8KeUzGO+tbUR8/H8EJMTkHscPYMny0vUDL7gUZhq0DxwnmIkmV2m
-	 xjKcGszPMshiCzHpFvehbeygu9Dydo3u9VpE9360aT8OzHX85K+PDkO8i2nEg4BH+P
-	 ucbd9w0X7r6AczfB6IuEdXX0PQpdoXfTHJ/1INbQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD1A20850
+	b=QzkLPgmbq/wcilcItpCJvIPnRLzsxc0jsl5heE4m3kX4XG5r5EhTq078V65MbbAYa
+	 ue5wnKPTVKbNjqEaXHXj9cIlp8BJoJpX+0KvhGHLoFGnYbQH348xp3ieMpKUbfCZ4b
+	 srLOj7zoJEwa2DtR0xnBVK0HfsxjXMCT0SktKLNk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6F720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeLETwO (ORCPT
+        id S1728979AbeLETwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:52:14 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44291 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbeLETvV (ORCPT
+        Wed, 5 Dec 2018 14:52:24 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33916 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728814AbeLETvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:51:21 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f18so19782086otl.11;
-        Wed, 05 Dec 2018 11:51:21 -0800 (PST)
+        Wed, 5 Dec 2018 14:51:20 -0500
+Received: by mail-oi1-f196.google.com with SMTP id h25so18672694oig.1;
+        Wed, 05 Dec 2018 11:51:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=MMVAItaPQNomVIDd3mLLrLoJgcsDQny2bzxp0CMIwjk=;
-        b=RlNZoPd3/BFVl6EvI5SKMpjCp+oW5YXMbFyjQ3hmWEQKEp6oqQjwTVevQbZvUSGmhB
-         C4c7OHH8MwklUOlFtCAhtf+crhCIw3zVhfs/ycIBr3PBouqckbA2mUShYmjIT086HC+r
-         S/qGsoXPWquRlHiB2ujunk3sjUzxByJ3GcnViDBmxm6tbML9jxDtVEk9nzw9QPUQU2/e
-         17iLeDmuhTfkTSvsWCrnqY1ql7a1K1QnZxkMjV+0YV3WLTq2gZfSLJiVYYd5uW0L986h
-         t9B448RBDNYD+QBV4eHY0l/3V3UPNrMsBGfHMWpTeflwg0dw81LqITbvKOzPaokPv4Dq
-         NLzw==
-X-Gm-Message-State: AA+aEWbYuS9n9BchE1LF8Zt8zvKkysAdhKFnKjBvkXhZIQWeVsZqrh65
-        QtV9fDlt8OBEr7NxkWz5XoKx6/qdTA==
-X-Google-Smtp-Source: AFSGD/Wkks8ZlwhzX1ZfK3GNF5iT8KhLbG4sAVBmHIc7IP2OU35nIP1Xaq9y2dQJ4CCi0iE0IalSkw==
-X-Received: by 2002:a9d:7b42:: with SMTP id f2mr14871732oto.184.1544039480615;
-        Wed, 05 Dec 2018 11:51:20 -0800 (PST)
+        bh=P6eIG0/5LHUZfO4VXf+cpIcy6s1WeTN8+4j6CIdmGr8=;
+        b=GTkUikNvdSd+pnZclrNqPR+iFT/iria7kAt7VMmQ+PIMKltr2maZPp8t7RH3TFFIts
+         QO0i/gVDywlHz1t2Jz8AlSa6B3D1zRtxZB0XRCFeaSORJnMkFqNbTO3jotWeGAYySB2K
+         2PZhdFUJUPNL44BigfAhFAXlgjaWP01FxEP5NUMYEaiTiyNfy5xv8x+J/PGMPEd+ojLk
+         wtGwFplrhmBvsS9KbZOi+dtfmoETn8X3HOwfgITI8vA1Z5IJS+jggTDMJ3TAjgujn2fT
+         QHGoEmd8sL8VDwq1CxQuJC7dvi2DTKqPEPPLWltzSo3q2mkb3Mqtbzpe2aINxSaicr9+
+         ioeA==
+X-Gm-Message-State: AA+aEWbrZvoMCf+HaefUU1ddjOBy1m6RAAHvsh0jLL/Hth3jy5sVU8P4
+        8QDTqg1Wr5g0D7XE+yEuWAxwaX4=
+X-Google-Smtp-Source: AFSGD/V22DIg0leC4I1ensmRkeVqbXA3yhry+TAIgeb25Z6bHsJj+GonYZdJvZdPIEscjWxAW5WU6w==
+X-Received: by 2002:aca:d09d:: with SMTP id j29mr14590108oiy.262.1544039479527;
+        Wed, 05 Dec 2018 11:51:19 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.19
+        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 11:51:20 -0800 (PST)
+        Wed, 05 Dec 2018 11:51:18 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: [PATCH] staging: media: imx: Use of_node_name_eq for node name comparisons
-Date:   Wed,  5 Dec 2018 13:50:42 -0600
-Message-Id: <20181205195050.4759-26-robh@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [PATCH] SPI: Use of_node_name_eq for node name comparisons
+Date:   Wed,  5 Dec 2018 13:50:41 -0600
+Message-Id: <20181205195050.4759-25-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,34 +69,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Convert string compares of DT node names to use of_node_name_eq helper
 instead. This removes direct access to the node name pointer.
 
-For instances using of_node_cmp, this has the side effect of now using
-case sensitive comparisons. This should not matter for any FDT based
-system which this is.
-
-Cc: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-media@vger.kernel.org
-Cc: devel@driverdev.osuosl.org
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/staging/media/imx/imx-media-of.c | 2 +-
+ drivers/spi/spi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-of.c b/drivers/staging/media/imx/imx-media-of.c
-index b2e840f96c50..a01327f6e045 100644
---- a/drivers/staging/media/imx/imx-media-of.c
-+++ b/drivers/staging/media/imx/imx-media-of.c
-@@ -162,7 +162,7 @@ int imx_media_create_csi_of_links(struct imx_media_dev *imxmd,
- 		fwnode_property_read_u32(fwnode, "reg", &link.remote_port);
- 		fwnode = fwnode_get_next_parent(fwnode);
- 		if (is_of_node(fwnode) &&
--		    of_node_cmp(to_of_node(fwnode)->name, "ports") == 0)
-+		    of_node_name_eq(to_of_node(fwnode), "ports"))
- 			fwnode = fwnode_get_next_parent(fwnode);
- 		link.remote_node = fwnode;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 6ca59406b0b7..d27b6b0dee43 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1644,7 +1644,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
+ 	}
  
+ 	if (spi_controller_is_slave(ctlr)) {
+-		if (strcmp(nc->name, "slave")) {
++		if (!of_node_name_eq(nc, "slave")) {
+ 			dev_err(&ctlr->dev, "%pOF is not called 'slave'\n",
+ 				nc);
+ 			return -EINVAL;
 -- 
 2.19.1
 
