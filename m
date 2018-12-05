@@ -2,146 +2,89 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D34C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD13C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C05206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C05206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9701B206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9701B206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeLEPhR convert rfc822-to-8bit (ORCPT
+        id S1727842AbeLEPia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:37:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49998 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 10:38:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58799 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbeLEPhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:37:16 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B896B3082143;
-        Wed,  5 Dec 2018 15:37:15 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 817DE612A7;
-        Wed,  5 Dec 2018 15:37:14 +0000 (UTC)
-Subject: Re: [PATCH 0/2] locking/lockdep: Track number of zapped classes &
- report abuse
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-References: <1543531297-18349-1-git-send-email-longman@redhat.com>
- <20181129224836.GI11632@hirez.programming.kicks-ass.net>
- <0c6c14e0-2c85-d4b7-bfa6-345cfae0d8b2@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <44b51e88-acf8-0bd4-1f85-3b8e7ca76bd7@redhat.com>
-Date:   Wed, 5 Dec 2018 10:37:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727349AbeLEPi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:38:29 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C8C6420A35; Wed,  5 Dec 2018 16:38:27 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7F69B20726;
+        Wed,  5 Dec 2018 16:38:17 +0100 (CET)
+Date:   Wed, 5 Dec 2018 16:38:17 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v4 06/22] drm/sun4i: Move the BT.601 CSC coefficients to
+ the frontend
+Message-ID: <20181205153817.yrqkyzalfj4zpn5m@flea>
+References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
+ <20181205083703.21488-7-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <0c6c14e0-2c85-d4b7-bfa6-345cfae0d8b2@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 05 Dec 2018 15:37:15 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vaddcdistcgzryzd"
+Content-Disposition: inline
+In-Reply-To: <20181205083703.21488-7-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/2018 09:38 AM, Waiman Long wrote:
-> On 11/29/2018 05:48 PM, Peter Zijlstra wrote:
->> On Thu, Nov 29, 2018 at 05:41:35PM -0500, Waiman Long wrote:
->>> When a kernel module is repeatedly load and unload, it will eventually
->>> exhaust the lockdep entries resulting in a bug message. This is a use
->>> case that the current lockdep code cannot support.
->>>
->>> This patchset tracks the number of zapped classes and print a warning if
->>> too many lockdep entries are wasted because of too many module unloading.
->>> For example,
->>>
->>> [ 2490.651531] BUG: MAX_LOCKDEP_KEYS too low!
->>> [ 2490.669925] turning off the locking correctness validator.
->>> [ 2490.669925] Please attach the output of /proc/lock_stat to the bug report
->>> [ 2490.669926] ========================================================
->>> [ 2490.669927] WARNING: 6499 out of 8191 locks have been destroyed
->>> [ 2490.669927] through kernel module unload operations.
->>> [ 2490.669928] The corresponding lockdep entries are not reusable.
->>> [ 2490.669928] The system might have run out of lockdep entries because
->>> [ 2490.669929] of repeated kernel module load and unload operations.
->>> [ 2490.669929] Lockdep cannot support this particular use case.
->>> [ 2490.669930] --------------------------------------------------------
->> Have a look here:
->>
->>   https://lkml.kernel.org/r/20181128234325.110011-1-bvanassche@acm.org
-> Thanks for the pointer, I will take a look at that.
->
-> Cheers,
-> Longman
->
-I have finished reviewing Bart's v2 patch. It enables the reuse of
-lock_classes[] and list_entries[] entries. However, the stack_trace[],
-lock_chains[] and chain_hlocks[] entries will still be exhausted over
-time. So it doesn't completely solve the issue that I am looking at.
 
-As a side note, an alternative way of solving the workqueue lockdep
-problem may be to mark the lockdep key as special that it will hash the
-actual lock address as part of the key so that each unique lock of the
-same key will have its own unique lock class. That may be able to fix
-the issue as well. Just a thought.
+--vaddcdistcgzryzd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Longman
+On Wed, Dec 05, 2018 at 09:36:47AM +0100, Paul Kocialkowski wrote:
+> Both the backend and the frontend need the BT.601 CSC coefficients for
+> YUV to RGB conversion. Since the backend has a dependency on the
+> frontend (and not the other way round), move the coefficients there
+> so that both can access them without having to duplicate them.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--vaddcdistcgzryzd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAfw6QAKCRDj7w1vZxhR
+xdpCAQDN8jtbKSvST3HdPxVLm62blamECkdVV/HU0QieY585WgEA8X3EYIFbaFP6
+IcVhrFNhZCjA9lZOx0fSucFj7uLK7AE=
+=E4db
+-----END PGP SIGNATURE-----
+
+--vaddcdistcgzryzd--
