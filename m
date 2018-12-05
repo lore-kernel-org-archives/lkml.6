@@ -2,149 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED070C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2D4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF35420834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF35420834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id AF20A20834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h10BkWVf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF20A20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeLEBPY (ORCPT
+        id S1726871AbeLEBPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:15:24 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:56348 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725979AbeLEBPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:15:24 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gULmR-0003oX-QU; Tue, 04 Dec 2018 18:15:12 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
+        Tue, 4 Dec 2018 20:15:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46588 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLEBPa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:15:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8C7AtVLvFgHkPyGpij5DZEVSdOmgP6KLNjlDNxpPBpM=; b=h10BkWVfeC+Ckdgrek4LvKnww
+        xgBhdxl7jJoitU7l3eXsUR41wQu9nvhxODjJoKZ1cjNgSYvEHHabCZ//uIStHabGg6cnoRnyDTP5J
+        kneMvN2/36pA6AYFUXE3PqqavkqAeQaJcFn0OdfHIYjamLfkRiSOaHZHCIvuLTeY7sqvoBZZHmcD8
+        uhZlZNFpiHh0zd8fE5JOJuT6u7DxnFzEXK3IQYjcgJew5R56CMJMuK/nQ86gnEaimQwYOQ6xbKa/L
+        aaBSFCCENXa+4REjwjzKuV2evuS6b67lew05bNODdTwt1wrBWWaFFyKF1pFRx7a6q/SbUx0ZRhVQM
+        ZArhHOe8A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gULma-0003p9-55; Wed, 05 Dec 2018 01:15:20 +0000
+Date:   Tue, 4 Dec 2018 17:15:19 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
+        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <20181204185725.GE2937@redhat.com>
- <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
- <20181204192221.GG2937@redhat.com>
- <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
- <20181204201347.GK2937@redhat.com>
- <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
- <20181204205902.GM2937@redhat.com>
- <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
- <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
-Date:   Tue, 4 Dec 2018 18:15:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181205011519.GV10377@bombadil.infradead.org>
+References: <20181204001720.26138-1-jhubbard@nvidia.com>
+ <20181204001720.26138-2-jhubbard@nvidia.com>
+ <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
+ <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
+ <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
+ <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20181204235630.GQ2937@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-12-04 4:56 p.m., Jerome Glisse wrote:
-> One example i have is 4 nodes (CPU socket) each nodes with 8 GPUs and
-> two 8 GPUs node connected through each other with fast mesh (ie each
-> GPU can peer to peer to each other at the same bandwidth). Then this
-> 2 blocks are connected to the other block through a share link.
+On Tue, Dec 04, 2018 at 04:58:01PM -0800, John Hubbard wrote:
+> On 12/4/18 3:03 PM, Dan Williams wrote:
+> > Except the LRU fields are already in use for ZONE_DEVICE pages... how
+> > does this proposal interact with those?
 > 
-> So it looks like:
->     SOCKET0----SOCKET1-----SOCKET2----SOCKET3
->     |          |           |          |
->     S0-GPU0====S1-GPU0     S2-GPU0====S1-GPU0
->     ||     \\//            ||     \\//
->     ||     //\\            ||     //\\
->     ...    ====...    -----...    ====...
->     ||     \\//            ||     \\//
->     ||     //\\            ||     //\\
->     S0-GPU7====S1-GPU7     S2-GPU7====S3-GPU7
-
-Well the existing NUMA node stuff tells userspace which GPU belongs to
-which socket (every device in sysfs already has a numa_node attribute).
-And if that's not good enough we should work to improve how that works
-for all devices. This problem isn't specific to GPUS or devices with
-memory and seems rather orthogonal to an API to bind to device memory.
-
-> How the above example would looks like ? I fail to see how to do it
-> inside current sysfs. Maybe by creating multiple virtual device for
-> each of the inter-connect ? So something like
+> Very badly: page->pgmap and page->hmm_data both get corrupted. Is there an entire
+> use case I'm missing: calling get_user_pages() on ZONE_DEVICE pages? Said another
+> way: is it reasonable to disallow calling get_user_pages() on ZONE_DEVICE pages?
 > 
-> link0 -> device:00 which itself has S0-GPU0 ... S0-GPU7 has child
-> link1 -> device:01 which itself has S1-GPU0 ... S1-GPU7 has child
-> link2 -> device:02 which itself has S2-GPU0 ... S2-GPU7 has child
-> link3 -> device:03 which itself has S3-GPU0 ... S3-GPU7 has child
+> If we have to support get_user_pages() on ZONE_DEVICE pages, then the whole 
+> LRU field approach is unusable.
 
-I think the "links" between GPUs themselves would be a bus. In the same
-way a NUMA node is a bus. Each device in sysfs would then need a
-directory or something to describe what "link bus(es)" they are a part
-of. Though there are other ways to do this: a GPU driver could simply
-create symlinks to other GPUs inside a "neighbours" directory under the
-device path or something like that.
+We just need to rearrange ZONE_DEVICE pages.  Please excuse the whitespace
+damage:
 
-The point is that this seems like it is specific to GPUs and could
-easily be solved in the GPU community without any new universal concepts
-or big APIs.
++++ b/include/linux/mm_types.h
+@@ -151,10 +151,12 @@ struct page {
+ #endif
+                };
+                struct {        /* ZONE_DEVICE pages */
++                       unsigned long _zd_pad_2;        /* LRU */
++                       unsigned long _zd_pad_3;        /* LRU */
++                       unsigned long _zd_pad_1;        /* uses mapping */
+                        /** @pgmap: Points to the hosting device page map. */
+                        struct dev_pagemap *pgmap;
+                        unsigned long hmm_data;
+-                       unsigned long _zd_pad_1;        /* uses mapping */
+                };
+ 
+                /** @rcu_head: You can use this to free a page by RCU. */
 
-And for applications that need topology information, a lot of it is
-already there, we just need to fill in the gaps with small changes that
-would be much less controversial. Then if you want to create a libhms
-(or whatever) to help applications parse this information out of
-existing sysfs that would make sense.
-
-> My proposal is to do HMS behind staging for a while and also avoid
-> any disruption to existing code path. See with people living on the
-> bleeding edge if they get interested in that informations. If not then
-> i can strip down my thing to the bare minimum which is about device
-> memory.
-
-This isn't my area or decision to make, but it seemed to me like this is
-not what staging is for. Staging is for introducing *drivers* that
-aren't up to the Kernel's quality level and they all reside under the
-drivers/staging path. It's not meant to introduce experimental APIs
-around the kernel that might be revoked at anytime.
-
-DAX introduced itself by marking the config option as EXPERIMENTAL and
-printing warnings to dmesg when someone tries to use it. But, to my
-knowledge, DAX also wasn't creating APIs with the intention of changing
-or revoking them -- it was introducing features using largely existing
-APIs that had many broken corner cases.
-
-Do you know of any precedents where big APIs were introduced and then
-later revoked or radically changed like you are proposing to do?
-
-Logan
-
-
-
+You don't use page->private or page->index, do you Dan?
