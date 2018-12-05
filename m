@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E81C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261C6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74CFC20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFEDC20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR/Ckern"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74CFC20878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9lu7zEv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEDC20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeLEJh0 (ORCPT
+        id S1727992AbeLEJha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:37:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40118 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:37:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727915AbeLEJhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:24 -0500
+        id S1727465AbeLEJh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:26 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7AA42087F;
-        Wed,  5 Dec 2018 09:37:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD78F20851;
+        Wed,  5 Dec 2018 09:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002643;
-        bh=BNSDBlsMvn2kmIl4wOba8fLdKfLlglPZ5HkS0X0bHLw=;
+        s=default; t=1544002645;
+        bh=8n9pOsPALW4x0HRAPMdV9g21piozEH/y5MLOltzUH9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KR/CkernaSsLUjg74A77YeZF0nIb5kpVvK86gg5jcEE0yYWlFBjoyWpdStR3L3Y+N
-         zmD4M69iq2HSWgnBuLzDtWpkOsYoA2YbCgrjNnygTyU1xVmU4aZvxv6TOoA5MrZW8b
-         B+oLlP6YA58uRZkrT/AwVBF3t39yXoY6JX7jYeL4=
+        b=S9lu7zEvqQ7khrvOxPd5ytzncJulu/v7N7fbxmK/TUsLCmIfjUWtxbVCJEacLkdMA
+         J9u/A9s2VBvPzCE8VcivOeFlAepnXvW+5lcNU//VPhbMj6D4zyRLuosAmaqNn3Hban
+         USEdPm347q70pzN4qTOKmY21uL+vELsTwW5ZMMSM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 024/123] netfilter: nf_tables: fix use-after-free when deleting compat expressions
-Date:   Wed,  5 Dec 2018 04:34:16 -0500
-Message-Id: <20181205093555.5386-24-sashal@kernel.org>
+Cc:     Eric Farman <farman@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 025/123] s390/cio: Fix cleanup of pfn_array alloc failure
+Date:   Wed,  5 Dec 2018 04:34:17 -0500
+Message-Id: <20181205093555.5386-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -55,77 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Farman <farman@linux.ibm.com>
 
-[ Upstream commit 29e3880109e357fdc607b4393f8308cef6af9413 ]
+[ Upstream commit 806212f91c874b24cf9eb4a9f180323671b6c5ed ]
 
-nft_compat ops do not have static storage duration, unlike all other
-expressions.
+If pfn_array_alloc fails somehow, we need to release the pfn_array_table
+that was malloc'd earlier.
 
-When nf_tables_expr_destroy() returns, expr->ops might have been
-free'd already, so we need to store next address before calling
-expression destructor.
-
-For same reason, we can't deref match pointer after nft_xt_put().
-
-This can be easily reproduced by adding msleep() before
-nft_match_destroy() returns.
-
-Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
-Reported-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Eric Farman <farman@linux.ibm.com>
+Message-Id: <20181109023937.96105-2-farman@linux.ibm.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 5 +++--
- net/netfilter/nft_compat.c    | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/s390/cio/vfio_ccw_cp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 4c016b49fe2b..06ed55cef962 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2432,7 +2432,7 @@ static int nf_tables_getrule(struct net *net, struct sock *nlsk,
- static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 				   struct nft_rule *rule)
- {
--	struct nft_expr *expr;
-+	struct nft_expr *expr, *next;
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index fd77e46eb3b2..ef5ab45d94b3 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -528,7 +528,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
  
- 	lockdep_assert_held(&ctx->net->nft.commit_mutex);
- 	/*
-@@ -2441,8 +2441,9 @@ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 	 */
- 	expr = nft_expr_first(rule);
- 	while (expr != nft_expr_last(rule) && expr->ops) {
-+		next = nft_expr_next(expr);
- 		nf_tables_expr_destroy(ctx, expr);
--		expr = nft_expr_next(expr);
-+		expr = next;
- 	}
- 	kfree(rule);
- }
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index ad2fe6a7e47d..29d6fc73caf9 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -501,6 +501,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		    void *info)
- {
- 	struct xt_match *match = expr->ops->data;
-+	struct module *me = match->me;
- 	struct xt_mtdtor_param par;
+ 	ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev, ccw->cda, ccw->count);
+ 	if (ret < 0)
+-		goto out_init;
++		goto out_unpin;
  
- 	par.net = ctx->net;
-@@ -511,7 +512,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		par.match->destroy(&par);
- 
- 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
--		module_put(match->me);
-+		module_put(me);
- }
- 
- static void
+ 	/* Translate this direct ccw to a idal ccw. */
+ 	idaws = kcalloc(ret, sizeof(*idaws), GFP_DMA | GFP_KERNEL);
 -- 
 2.17.1
 
