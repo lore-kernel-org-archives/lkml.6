@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6860DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E8AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FE72087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8132087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2gTVww0w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FE72087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xTSMl0KW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8132087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbeLEJpE (ORCPT
+        id S1729363AbeLEJpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49758 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:45:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729316AbeLEJpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:01 -0500
+        id S1729030AbeLEJpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:10 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73E4320878;
-        Wed,  5 Dec 2018 09:44:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBDF72087F;
+        Wed,  5 Dec 2018 09:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003101;
-        bh=AIYCJcFrBGFFi5kLaFV+FKNx8eKjqz68akWmt1JUeeQ=;
+        s=default; t=1544003110;
+        bh=+71XqT/kHNtNtv25Xq4+IPsd8KD1z3DXcGFneNtV45s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2gTVww0wDxiikQ2vrRNPu/jImKrvh4jduOZ70I8C2/sbGt/v1Isyyug8q4kitYgWL
-         GB5198gw77QTVD1v6FV4S4srzed1mFDc+rJbkRKAhiH+XM6C8YwtqVDmd+JlhXEblT
-         il6JIgzHZWlBXt0Btxj7rrzpWcIDHlLAPLcT3zAs=
+        b=xTSMl0KW+rLr9Dob30WOhf1KcVMkSkIxMYUIb3L2VKfDzVw95Y6eXDdrxH22uGV7J
+         fzd6IF9wH9ePW3Ecq79GAbJyE6UlgiVJQJ4xaDoi4HoXtP56FLCNZr7jIsJjAxiq8h
+         +Vg3Tr59psACT71aoT+7yeQK7beaPC8hkAtL34Qk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 30/69] ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
-Date:   Wed,  5 Dec 2018 04:42:08 -0500
-Message-Id: <20181205094247.6556-30-sashal@kernel.org>
+Cc:     Xin Long <lucien.xin@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: [PATCH AUTOSEL 4.14 33/69] ipvs: call ip_vs_dst_notifier earlier than ipv6_dev_notf
+Date:   Wed,  5 Dec 2018 04:42:11 -0500
+Message-Id: <20181205094247.6556-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,63 +55,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit ffdcc3638c58d55a6fa68b6e5dfd4fb4109652eb ]
+[ Upstream commit 2a31e4bd9ad255ee40809b5c798c4b1c2b09703b ]
 
-We need to block sleep states which would require longer time to leave than
-the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without overrun.
+ip_vs_dst_event is supposed to clean up all dst used in ipvs'
+destinations when a net dev is going down. But it works only
+when the dst's dev is the same as the dev from the event.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Now with the same priority but late registration,
+ip_vs_dst_notifier is always called later than ipv6_dev_notf
+where the dst's dev is set to lo for NETDEV_DOWN event.
+
+As the dst's dev lo is not the same as the dev from the event
+in ip_vs_dst_event, ip_vs_dst_notifier doesn't actually work.
+Also as these dst have to wait for dest_trash_timer to clean
+them up. It would cause some non-permanent kernel warnings:
+
+  unregister_netdevice: waiting for br0 to become free. Usage count = 3
+
+To fix it, call ip_vs_dst_notifier earlier than ipv6_dev_notf
+by increasing its priority to ADDRCONF_NOTIFY_PRIORITY + 5.
+
+Note that for ipv4 route fib_netdev_notifier doesn't set dst's
+dev to lo in NETDEV_DOWN event, so this fix is only needed when
+IP_VS_IPV6 is defined.
+
+Fixes: 7a4f0761fce3 ("IPVS: init and cleanup restructuring")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-dmic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/netfilter/ipvs/ip_vs_ctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
-index 09db2aec12a3..776e809a8aab 100644
---- a/sound/soc/omap/omap-dmic.c
-+++ b/sound/soc/omap/omap-dmic.c
-@@ -48,6 +48,8 @@ struct omap_dmic {
- 	struct device *dev;
- 	void __iomem *io_base;
- 	struct clk *fclk;
-+	struct pm_qos_request pm_qos_req;
-+	int latency;
- 	int fclk_freq;
- 	int out_freq;
- 	int clk_div;
-@@ -124,6 +126,8 @@ static void omap_dmic_dai_shutdown(struct snd_pcm_substream *substream,
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 327ebe786eeb..2f45c3ce77ef 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -4012,6 +4012,9 @@ static void __net_exit ip_vs_control_net_cleanup_sysctl(struct netns_ipvs *ipvs)
  
- 	mutex_lock(&dmic->mutex);
+ static struct notifier_block ip_vs_dst_notifier = {
+ 	.notifier_call = ip_vs_dst_event,
++#ifdef CONFIG_IP_VS_IPV6
++	.priority = ADDRCONF_NOTIFY_PRIORITY + 5,
++#endif
+ };
  
-+	pm_qos_remove_request(&dmic->pm_qos_req);
-+
- 	if (!dai->active)
- 		dmic->active = 0;
- 
-@@ -226,6 +230,8 @@ static int omap_dmic_dai_hw_params(struct snd_pcm_substream *substream,
- 	/* packet size is threshold * channels */
- 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
- 	dma_data->maxburst = dmic->threshold * channels;
-+	dmic->latency = (OMAP_DMIC_THRES_MAX - dmic->threshold) * USEC_PER_SEC /
-+			params_rate(params);
- 
- 	return 0;
- }
-@@ -236,6 +242,9 @@ static int omap_dmic_dai_prepare(struct snd_pcm_substream *substream,
- 	struct omap_dmic *dmic = snd_soc_dai_get_drvdata(dai);
- 	u32 ctrl;
- 
-+	if (pm_qos_request_active(&dmic->pm_qos_req))
-+		pm_qos_update_request(&dmic->pm_qos_req, dmic->latency);
-+
- 	/* Configure uplink threshold */
- 	omap_dmic_write(dmic, OMAP_DMIC_FIFO_CTRL_REG, dmic->threshold);
- 
+ int __net_init ip_vs_control_net_init(struct netns_ipvs *ipvs)
 -- 
 2.17.1
 
