@@ -2,84 +2,124 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 956F5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7570C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C2C208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:32:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C172082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:36:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e5WuUOt3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C2C208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFrAqxFW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C172082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeLEVcJ (ORCPT
+        id S1728302AbeLEVgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:32:09 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38196 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLEVcJ (ORCPT
+        Wed, 5 Dec 2018 16:36:51 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40502 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLEVgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:32:09 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p86so15869863lfg.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:32:07 -0800 (PST)
+        Wed, 5 Dec 2018 16:36:50 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so18302785edx.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tLGOhqMGRGCWc/JDJ01mEG+LxCdHe4SROFCfZtS3Q0E=;
-        b=e5WuUOt3QyUAL7hubAQfQPdKSp+zDMuEGqthSLQfDogZiBoj2TiDurNN66+Yk6lZLA
-         x119K1auOeydjKVinjVHh0bQAyioGjuxCKtxapwgXzjjXJ7WsWdktzeN9+j6qNlzEJ3o
-         3hs5r8922BHop7ofKtfFukef2m3VqwoeOFCHU=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=+sjIeKW3FYcMFqeagTauYO4NZrxG10uwKgi88/M3S1w=;
+        b=iFrAqxFWD5Bkb/ClWLF+v1m6w5iCcXLJs8Sr4GsAIP2ZHOhyvijb8ZWFlmroLSDZBa
+         r8uwfXkHZkR2KwNLr639mVVesyMLEUZCLQT0IHIDvKd4Rcal+nn74pGgknYsLLK7hU5f
+         wYWK8+221oUMkTFVK8XsJzctk5arE+Vm0AByZeJp/VUyrJP4rt/04NtcOCkoTaFcoFYu
+         Ey4K1WKvsXStRX4+L1hYa0zpFmnK8FbYIcD67lKV8UlQhX/7VXx+Icy7oft26VKXfDvq
+         Ufv2HHVnVttht8HV/KqtoRU25Zw9urpRTKxh9+io/Iul9NXlWq7vjvKGQW3K6GrIm8Wm
+         xScg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tLGOhqMGRGCWc/JDJ01mEG+LxCdHe4SROFCfZtS3Q0E=;
-        b=AMhIsRsAXVQKg2h5mQNtjtc1y9E3UFWeIYRCveD0GhXzsDiLvu2H1ga3JC9HyEOIXB
-         F5tNb6NWQykK4pxmMuvkddVTtrpJ+hWFsqwiHGBkj5tePEf5B6BzWso0YkJcDbbIiYQA
-         qmYw5/bfI7EdGrLPL5PHEvPYho5ejK0C+Rfx6DByaVnYmkYeVOPuZXW+0XLwrryoB1Js
-         nUHsgs2/ZSlS6k/u6YXB7emFo7C+P+AFI04rwqvXCNN5PtOuqn0L8h/5ObONR6qOQc16
-         pGiPQ4aBXoqyWfVTwprcN4+bHLuHS3/7qi33Sk9ZDN9EgePfIcRWQNaz576/y7FCCxsx
-         JXDw==
-X-Gm-Message-State: AA+aEWbU5sIF98sSPIAbu8K816YxCEdXtmqC6A2NPF763ODB+nqxHHkT
-        mFHhcDFgPD+1CAE/PyhgfG1o2bo7NHXzb2JxVwWokg==
-X-Google-Smtp-Source: AFSGD/WqzBRRt068RVHHdG/tQI9HUPFJr72FYTmMvo0aLpcMLOHCWykZd16oCoQKGQ3qZ0TR/ZiYf2p1BJ13rJ39Vec=
-X-Received: by 2002:a19:41c4:: with SMTP id o187mr16084716lfa.32.1544045526945;
- Wed, 05 Dec 2018 13:32:06 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=+sjIeKW3FYcMFqeagTauYO4NZrxG10uwKgi88/M3S1w=;
+        b=J7QWn2jyO+Vg355XqwfL15U0vSAhqf+rbDXEJXXRYC1NNMz3fGdeYxxpHeY5oAKg4F
+         tBsSdVBHomgJZpLeGYl/Er8EYNvVImrUjyjRvyV4NWGJC39Q3P14n3aKK6Vm7lImWVfr
+         icJEYwExRVRtdV0uUv5xpKOZE1YGp95GiV+2snF7jxyG1shc1JlG1pQnqOqeAycfkl4o
+         bt8A4xSPs5BAxbeyUCq75HFF5QMRtIIY2Iixa9asoTee6VleLsFlZzX2+l2UlbAIlLPh
+         zHyq9MSol6QQhovbgrln2kTA6GXjwZRW9ABugGvbMC2Ob8hyrS2rWjCZmnYTRYBIGpmt
+         69Uw==
+X-Gm-Message-State: AA+aEWZ1+6EJ3fGPtKXsHlfRpfT1n1TEJfexngGeM/fJtYcp+jY3Ivhg
+        h3YLg21p+iV/BwTtAh5Ao8x06fQI
+X-Google-Smtp-Source: AFSGD/WkAd8ul/OFT3EGjlDoRVry4jF0u+YJb3NXwftyhaIkp9g01eePSmdbpOX4cnYCNwGRo0ibSA==
+X-Received: by 2002:a17:906:6308:: with SMTP id p8-v6mr19910299ejk.100.1544045808658;
+        Wed, 05 Dec 2018 13:36:48 -0800 (PST)
+Received: from dell.be.48ers.dk (d51a5bc31.access.telenet.be. [81.165.188.49])
+        by smtp.gmail.com with ESMTPSA id e35sm5763234eda.13.2018.12.05.13.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 13:36:47 -0800 (PST)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peter@korsgaard.com>)
+        id 1gUeqc-000405-UZ; Wed, 05 Dec 2018 22:36:46 +0100
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Jean Delvare <jdelvare@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "firmware: dmi_scan: Use lowercase letters for UUID"
+References: <20181205211351.5309-1-peter@korsgaard.com>
+Date:   Wed, 05 Dec 2018 22:36:46 +0100
+In-Reply-To: <20181205211351.5309-1-peter@korsgaard.com> (Peter Korsgaard's
+        message of "Wed, 5 Dec 2018 22:13:51 +0100")
+Message-ID: <87mupjzmdt.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-3-thierry.reding@gmail.com>
-In-Reply-To: <20181129170312.23625-3-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 5 Dec 2018 22:31:55 +0100
-Message-ID: <CACRpkdbRswRmMWFGuB6pMWeUVdB6=rxqC-o4ytv1VhK-2yjWDg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] genirq: Export irq_chip_set_wake_parent()
-To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>>>>> "Peter" == Peter Korsgaard <peter@korsgaard.com> writes:
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Interrupt controllers in a hierarchy want to use this function to
-> propogate ->irq_set_wake() operations to their parent domains.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+ > This reverts commit 712ff25450bd01366301eef81c33e865d901e7b7.
+ > The output of dmi_save_uuid() is exposed to user space as
+ > /sys/devices/virtual/dmi/id/*_uuid, so this breaks backwards compatibility,
+ > E.G.  I have systems that include the content of dmi/id/product_uuid as part
+ > of the keyphrase for cryptsetup luksOpen.
 
-Tglx/Marc: is this change OK? (ACK?)
+ > As the change was purely cosmetical, revert it to fix such breakage.
 
-Yours,
-Linus Walleij
+ > Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+
+Sorry, this should have had a:
+
+Cc: stable@vger.kernel.org
+
+As 4.19 is affected. Jean, can you add that when committing?
+
+
+> ---
+ >  drivers/firmware/dmi_scan.c | 4 ++--
+ >  1 file changed, 2 insertions(+), 2 deletions(-)
+
+ > diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+ > index 099d83e4e910..2ed51651565f 100644
+ > --- a/drivers/firmware/dmi_scan.c
+ > +++ b/drivers/firmware/dmi_scan.c
+ > @@ -211,9 +211,9 @@ static void __init dmi_save_uuid(const struct dmi_header *dm, int slot,
+ >  	 * says that this is the defacto standard.
+ >  	 */
+ >  	if (dmi_ver >= 0x020600)
+ > -		sprintf(s, "%pUl", d);
+ > +		sprintf(s, "%pUL", d);
+ >  	else
+ > -		sprintf(s, "%pUb", d);
+ > +		sprintf(s, "%pUB", d);
+ 
+ >  	dmi_ident[slot] = s;
+ >  }
+ > -- 
+ > 2.11.0
+
+
+-- 
+Bye, Peter Korsgaard
