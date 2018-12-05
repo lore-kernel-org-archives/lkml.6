@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFE9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A50C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 906932084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8BF320892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqgPYYdc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906932084C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdVkJdAI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BF320892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbeLERDW (ORCPT
+        id S1728330AbeLERDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:03:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35290 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbeLERDM (ORCPT
+        Wed, 5 Dec 2018 12:03:23 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46723 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728205AbeLERDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:03:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so20494356wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:11 -0800 (PST)
+        Wed, 5 Dec 2018 12:03:10 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so20453422wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=c0fAXjK7WtwNwNfHFkEE0JGYb445E4L0ysb3AhH6CYc=;
-        b=eqgPYYdcTv0/CT2W+sz91rQK0jypmQEmW4AMvT098zCm/Y1LYiaRd09G/QqhoWYFwO
-         BQ4KAab4vgqtMVvpX+vOVqxanBSsMAQU/nFOYnuAl6o0TT+Trao/59J6C5dTr5ll54Id
-         Az6tDahAYduFJEkdORigRe26DYXKvXMGQBneT2yUbWzxmJMnLZJoyErQSWoIQBd2B752
-         S7I1GwWeYvXrOOFO3KFgZuxJY/jGPuXUmts1/yunqgdP0O/k33LXN4/jJOVZnMFoG6st
-         lZVV1dCqJnHTt5zH+hIe6Yl7F8a1xid3pCfZHYMBcnLyQnHO4DCLF2nqfvc6Daw8u3ky
-         5CnA==
+        bh=5LTEPkcdVnTAqu65MYYOLnK3h5SVxK49vkPbhiWIePU=;
+        b=FdVkJdAIF3w3cKRacaZMVvE6QSmDB6jy4Gq5E8rrXYcPMvjdKSKIEvzI79KtIBZb3b
+         MU+l9CFOgZKDrugc6WUMsOlE2u42Zfz5pszOFDWOpu2yrepQZspeondrG/dYNL5hZ6D9
+         BLt/K4VxUwT0oTdFIjYH2xpgcN+ygvgoI+HIGBUF3X4WKmd9xcsmu+c6BDXpVzNlYzn5
+         eStzI+qx/fY3SUDmwWSqFMHwIZLC8ZjqUGX40m6s9kDvpt2Zvzy1t/YugRm2s2zuk9R5
+         2/+IJxsCE+97HUN6CeJUtNjzWzIgyJbsUKfsqm6NwJbqT3WF6YUclD/uj8weSkFqtPgB
+         3z9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=c0fAXjK7WtwNwNfHFkEE0JGYb445E4L0ysb3AhH6CYc=;
-        b=DffZiIfueMjy4iLhQ1yh2m58DgFsEo5yHuKjkmI2jzU9BxtxFghOXtrY2AQKKqrSJB
-         7Rn4z4I7YMi2NlECsbPZBMWmXeJ46493D84R8hlYVObZqcZcKtQd053bt6oUFxkajhcC
-         RBPS19lIF2+hMZi0ir3HANqh+2n+pKVyFR2c/XRANfwHo3A3/nicYdsj+8Uim/dJHmFX
-         SWIUkuaNC9eXfVnhhvzGtNhnHkx44A7NnI3DwJ19dalrsytkVCM2AiNOMcpIM+IGUIKl
-         ktIFjJVCYG4q8dYKzr3mq2DWkbmivLhuV5BpcRcv/BBdUb0pxFJGrcWZq9s0mEa00QLx
-         ojYQ==
-X-Gm-Message-State: AA+aEWa2armGuCmnq7+dePmsR4eCRjDW8NRl8kuHfG8+BSVQiJBzTypK
-        rqLwg5FxGF9f+KEzfPF+hPE=
-X-Google-Smtp-Source: AFSGD/U8+DdLuqVKxPiVwZjRPvMeZuwJOfPRBR8+LleknL5Tfm6yMufVzIHNfQHlnVB8ggpaxhTTJA==
-X-Received: by 2002:adf:b592:: with SMTP id c18mr22135754wre.89.1544029390678;
-        Wed, 05 Dec 2018 09:03:10 -0800 (PST)
+        bh=5LTEPkcdVnTAqu65MYYOLnK3h5SVxK49vkPbhiWIePU=;
+        b=Vg3HGcf5/EcAuRlmIa2tcdFVJGNx0t3v8tHlMg99XQBs0IV8j/vl2Zms/bLUH7QeKI
+         BxbJOaH/qsegjJQdLDqtGC96qLOf7tzcdFMSkwtTgJ1rSw38mzFeOio8D665O3VYkm//
+         hlJVjc9p/25JBx1oecKd73+nx7V5LyzzfujoWmpHjj9vDZ45P1Ds6T5AFc58Pu+r1SYj
+         UUgVkrE5SpWiZ5M/h5TBGEmhOhiyD1uOKl6AC6GZqz5xhxVil/fMcKpqW4JrvHpyFwxp
+         AAkfopRnB11i0UuKZZj/XH6nGv9m4kCe48UlX/YtmLqsgPXjSng0vsCT0gOg+mwE52gn
+         EiLg==
+X-Gm-Message-State: AA+aEWY/K9ojNbWVlRpNtd/ELMK6cRek9YmNsrIgEEME2WDzc9pan2xJ
+        Y7xeoJrw0ZmdaUrchI3jEnk=
+X-Google-Smtp-Source: AFSGD/WwDBP6N2LsLVQdYg1/XjhlZRrrtVnqLHJjsXdZbRvgfsDabc5l/cSCpm1xK7IVDwEeDS39iA==
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr21578420wrq.5.1544029388860;
+        Wed, 05 Dec 2018 09:03:08 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.03.09
+        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.03.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 09:03:10 -0800 (PST)
+        Wed, 05 Dec 2018 09:03:08 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 12/12] staging: rtl8188eu: remove unused code in rtw_cmd.c
-Date:   Wed,  5 Dec 2018 18:02:47 +0100
-Message-Id: <20181205170247.5401-12-straube.linux@gmail.com>
+Subject: [PATCH 10/12] staging: rtl8188eu: correct indentation in update_wireless_mode()
+Date:   Wed,  5 Dec 2018 18:02:45 +0100
+Message-Id: <20181205170247.5401-10-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205170247.5401-1-straube.linux@gmail.com>
 References: <20181205170247.5401-1-straube.linux@gmail.com>
@@ -76,78 +76,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused/commented code in rtw_cmd.c.
+Correct indentation in update_wireless_mode() to clear a checkpatch
+warning. WARNING: Statements should start on a tabstop
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_cmd.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
-index e3e46f7ac834..f9cdd1da8add 100644
---- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
-@@ -215,8 +215,6 @@ int rtw_cmd_thread(void *context)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 7af3dd910c93..42b9974fab8a 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -1442,7 +1442,7 @@ void update_wireless_mode(struct adapter *padapter)
  
- 	/*  free all cmd_obj resources */
- 	while ((pcmd = rtw_dequeue_cmd(&pcmdpriv->cmd_queue))) {
--		/* DBG_88E("%s: leaving... drop cmdcode:%u\n", __func__, pcmd->cmdcode); */
--
- 		rtw_free_cmd_obj(pcmd);
- 	}
+ 	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+ 		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
+-	 else
++	else
+ 		update_mgnt_tx_rate(padapter, IEEE80211_OFDM_RATE_6MB);
+ }
  
-@@ -259,7 +257,6 @@ u8 rtw_sitesurvey_cmd(struct adapter  *padapter, struct ndis_802_11_ssid *ssid,
- 
- 	init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, _SiteSurvey_CMD_);
- 
--	/* psurveyPara->bsslimit = 48; */
- 	psurveyPara->scan_mode = pmlmepriv->scan_mode;
- 
- 	/* prepare ssid list */
-@@ -660,9 +657,6 @@ u8 rtw_addbareq_cmd(struct adapter *padapter, u8 tid, u8 *addr)
- 
- 	init_h2fwcmd_w_parm_no_rsp(ph2c, paddbareq_parm, _AddBAReq_CMD_);
- 
--	/* DBG_88E("rtw_addbareq_cmd, tid =%d\n", tid); */
--
--	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
- 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
- 
- exit:
-@@ -696,7 +690,6 @@ u8 rtw_dynamic_chk_wk_cmd(struct adapter *padapter)
- 
- 	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, _Set_Drv_Extra_CMD_);
- 
--	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
- 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
- exit:
- 	return res;
-@@ -862,7 +855,6 @@ static void lps_ctrl_wk_hdl(struct adapter *padapter, u8 lps_ctrl_type)
- 		rtw_hal_set_hwreg(padapter, HW_VAR_H2C_FW_JOINBSSRPT, (u8 *)(&mstatus));
- 		break;
- 	case LPS_CTRL_SPECIAL_PACKET:
--		/* DBG_88E("LPS_CTRL_SPECIAL_PACKET\n"); */
- 		pwrpriv->DelayLPSLastTimeStamp = jiffies;
- 		LPS_Leave(padapter);
- 		break;
-@@ -879,7 +871,6 @@ u8 rtw_lps_ctrl_wk_cmd(struct adapter *padapter, u8 lps_ctrl_type, u8 enqueue)
- 	struct cmd_obj	*ph2c;
- 	struct drvextra_cmd_parm	*pdrvextra_cmd_parm;
- 	struct cmd_priv	*pcmdpriv = &padapter->cmdpriv;
--	/* struct pwrctrl_priv *pwrctrlpriv = &padapter->pwrctrlpriv; */
- 	u8	res = _SUCCESS;
- 
- 	if (enqueue) {
-@@ -1029,9 +1020,6 @@ static void rtw_chk_hi_queue_hdl(struct adapter *padapter)
- 	if (psta_bmc->sleepq_len == 0) {
- 		u8 val = 0;
- 
--		/* while ((rtw_read32(padapter, 0x414)&0x00ffff00)!= 0) */
--		/* while ((rtw_read32(padapter, 0x414)&0x0000ff00)!= 0) */
--
- 		rtw_hal_get_hwreg(padapter, HW_VAR_CHK_HI_QUEUE_EMPTY, &val);
- 
- 		while (!val) {
 -- 
 2.19.2
 
