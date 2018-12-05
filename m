@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831DCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62687C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41922214DA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6952133F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAKw8SDK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41922214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eou9bMvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6952133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbeLEJtk (ORCPT
+        id S1729586AbeLEJtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55742 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729539AbeLEJtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:49:35 -0500
+        id S1729253AbeLEJtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:49:42 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 222F1213A2;
-        Wed,  5 Dec 2018 09:49:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4364214C1;
+        Wed,  5 Dec 2018 09:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003375;
-        bh=fhYSQKZHYJ+Sc56gxHARqWhH+DNtWwlKdVvga9+WY5M=;
+        s=default; t=1544003381;
+        bh=x8O9zkSRHe6K4p3Ddk+te8U1FacdDlttpbd3UrnDRpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oAKw8SDKBokpC7VImeXZ72x8R9WTKUWICAl2JKRoUU/u9bZCnTQpx2/KY6bJQCAva
-         yAiDossdbEjguLUzgBMiJcA5kCfKWOukV59XVWoZMTOSw+0/ynpel8Sy5lWBpL3U6D
-         1l0/r46KH27cULhuI309F0p2j/u0fuU/lODAs1dc=
+        b=Eou9bMvWh3JWnzGcyXTK6mklYaaXsjrTVixnI9tc0TeLFel63Bux2FoHXj+vyMehO
+         hhqlNFycF13NhaPCOAM6OSy9/eQEeawPuu4tz6N5jAZgxq1JjVB59kIhZFYVYSNz5F
+         NLG+WqAisbhjCaMM78BTH77n65H57fDOSpkcHHhM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Artem Savkov <asavkov@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 13/45] objtool: Fix segfault in .cold detection with -ffunction-sections
-Date:   Wed,  5 Dec 2018 04:46:34 -0500
-Message-Id: <20181205094706.7225-13-sashal@kernel.org>
+Cc:     Majd Dibbiny <majd@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 15/45] RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
+Date:   Wed,  5 Dec 2018 04:46:36 -0500
+Message-Id: <20181205094706.7225-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -56,76 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artem Savkov <asavkov@redhat.com>
+From: Majd Dibbiny <majd@mellanox.com>
 
-[ Upstream commit 22566c1603030f0a036ad564634b064ad1a55db2 ]
+[ Upstream commit 074fca3a18e7e1e0d4d7dcc9d7badc43b90232f4 ]
 
-Because find_symbol_by_name() traverses the same lists as
-read_symbols(), changing sym->name in place without copying it affects
-the result of find_symbol_by_name().  In the case where a ".cold"
-function precedes its parent in sec->symbol_list, it can result in a
-function being considered a parent of itself. This leads to function
-length being set to 0 and other consequent side-effects including a
-segfault in add_switch_table().  The effects of this bug are only
-visible when building with -ffunction-sections in KCFLAGS.
+Currently, for IB_WR_LOCAL_INV WR, when the next fence is None, the
+current fence will be SMALL instead of Normal Fence.
 
-Fix by copying the search string instead of modifying it in place.
+Without this patch krping doesn't work on CX-5 devices and throws
+following error:
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Link: http://lkml.kernel.org/r/910abd6b5a4945130fd44f787c24e07b9e07c8da.1542736240.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The error messages are from CX5 driver are: (from server side)
+[ 710.434014] mlx5_0:dump_cqe:278:(pid 2712): dump error cqe
+[ 710.434016] 00000000 00000000 00000000 00000000
+[ 710.434016] 00000000 00000000 00000000 00000000
+[ 710.434017] 00000000 00000000 00000000 00000000
+[ 710.434018] 00000000 93003204 100000b8 000524d2
+[ 710.434019] krping: cq completion failed with wr_id 0 status 4 opcode 128 vender_err 32
+
+Fixed the logic to set the correct fence type.
+
+Fixes: 6e8484c5cf07 ("RDMA/mlx5: set UMR wqe fence according to HCA cap")
+Signed-off-by: Majd Dibbiny <majd@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/elf.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 3616d626991e..dd4ed7c3c062 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -31,6 +31,8 @@
- #include "elf.h"
- #include "warn.h"
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index f8f7a2191b98..f89489b28575 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -3888,17 +3888,18 @@ int mlx5_ib_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
+ 			goto out;
+ 		}
  
-+#define MAX_NAME_LEN 128
-+
- struct section *find_section_by_name(struct elf *elf, const char *name)
- {
- 	struct section *sec;
-@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
- 	/* Create parent/child links for any cold subfunctions */
- 	list_for_each_entry(sec, &elf->sections, list) {
- 		list_for_each_entry(sym, &sec->symbol_list, list) {
-+			char pname[MAX_NAME_LEN + 1];
-+			size_t pnamelen;
- 			if (sym->type != STT_FUNC)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
-@@ -305,9 +309,16 @@ static int read_symbols(struct elf *elf)
- 			if (!coldstr)
- 				continue;
- 
--			coldstr[0] = '\0';
--			pfunc = find_symbol_by_name(elf, sym->name);
--			coldstr[0] = '.';
-+			pnamelen = coldstr - sym->name;
-+			if (pnamelen > MAX_NAME_LEN) {
-+				WARN("%s(): parent function name exceeds maximum length of %d characters",
-+				     sym->name, MAX_NAME_LEN);
-+				return -1;
+-		if (wr->opcode == IB_WR_LOCAL_INV ||
+-		    wr->opcode == IB_WR_REG_MR) {
++		if (wr->opcode == IB_WR_REG_MR) {
+ 			fence = dev->umr_fence;
+ 			next_fence = MLX5_FENCE_MODE_INITIATOR_SMALL;
+-		} else if (wr->send_flags & IB_SEND_FENCE) {
+-			if (qp->next_fence)
+-				fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
+-			else
+-				fence = MLX5_FENCE_MODE_FENCE;
+-		} else {
+-			fence = qp->next_fence;
++		} else  {
++			if (wr->send_flags & IB_SEND_FENCE) {
++				if (qp->next_fence)
++					fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
++				else
++					fence = MLX5_FENCE_MODE_FENCE;
++			} else {
++				fence = qp->next_fence;
 +			}
-+
-+			strncpy(pname, sym->name, pnamelen);
-+			pname[pnamelen] = '\0';
-+			pfunc = find_symbol_by_name(elf, pname);
+ 		}
  
- 			if (!pfunc) {
- 				WARN("%s(): can't find parent function",
+ 		switch (ibqp->qp_type) {
 -- 
 2.17.1
 
