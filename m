@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF68C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F41C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E9B620879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEE3920878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJMw2ZQ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9B620879
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTxzoqrW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE3920878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeLEJje (ORCPT
+        id S1728473AbeLEJjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:39:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43636 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:39:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728448AbeLEJj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:39:28 -0500
+        id S1728456AbeLEJjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:39:35 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89A2120989;
-        Wed,  5 Dec 2018 09:39:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE4AB2084C;
+        Wed,  5 Dec 2018 09:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002767;
-        bh=Lh/519ka5g01VOsfoANvz5ysL6Mh6qOz0UWVicSgXTE=;
+        s=default; t=1544002773;
+        bh=Vd3X+inIlMX5Jen4/M4H7Qrm51IaslpuPMF5pJ/sGhg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MJMw2ZQ9sqXVRx3hdyMZfoGO4gJD+ds6JN7Hd+7wOJEBKeQAkDRuIV1iDM1i7Xaa2
-         fbjHjnsz1PsOUHl4aBm5KCc39PTCgFbQigBgG8Y1Rb6f7L200gSlYWZvv+IKQGPO+m
-         YwUPS7gVwynA22yHLvsAysJtZVbmTB28ah1M4PE8=
+        b=ZTxzoqrWWyZn6jCUXQkZgVgWVlyQZerN2ZFfCNMWthp2/DP9GQ/DOTJb6tPBOI9ZW
+         bM2Wv1glCJYpA/mOzOmJFFtKzXWcbAla0ozWmyz+XtKQ9D3A7Xd6wLKHfv8tFky3De
+         7t59kNm1EP+G9K/SGLP8wYD33aDb51VwtZKp1SDA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 062/123] ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
-Date:   Wed,  5 Dec 2018 04:34:54 -0500
-Message-Id: <20181205093555.5386-62-sashal@kernel.org>
+Cc:     Yixian Liu <liuyixian@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 064/123] RDMA/hns: Bugfix pbl configuration for rereg mr
+Date:   Wed,  5 Dec 2018 04:34:56 -0500
+Message-Id: <20181205093555.5386-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,63 +53,226 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Yixian Liu <liuyixian@huawei.com>
 
-[ Upstream commit ffdcc3638c58d55a6fa68b6e5dfd4fb4109652eb ]
+[ Upstream commit ca088320a02537f36c243ac21794525d8eabb3bd ]
 
-We need to block sleep states which would require longer time to leave than
-the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without overrun.
+Current hns driver assigned the first two PBL page addresses from previous
+registered MR to the hardware when reregister MR changing the memory
+locations occurred. This will lead to PBL addressing error as the PBL has
+already been released. This patch fixes this wrong assignment by using the
+page address from new allocated PBL.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: a2c80b7b4119 ("RDMA/hns: Add rereg mr support for hip08")
+Signed-off-by: Yixian Liu <liuyixian@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-dmic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 128 ++++++++++-----------
+ 1 file changed, 60 insertions(+), 68 deletions(-)
 
-diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
-index fe966272bd0c..cba9645b6487 100644
---- a/sound/soc/omap/omap-dmic.c
-+++ b/sound/soc/omap/omap-dmic.c
-@@ -48,6 +48,8 @@ struct omap_dmic {
- 	struct device *dev;
- 	void __iomem *io_base;
- 	struct clk *fclk;
-+	struct pm_qos_request pm_qos_req;
-+	int latency;
- 	int fclk_freq;
- 	int out_freq;
- 	int clk_div;
-@@ -124,6 +126,8 @@ static void omap_dmic_dai_shutdown(struct snd_pcm_substream *substream,
- 
- 	mutex_lock(&dmic->mutex);
- 
-+	pm_qos_remove_request(&dmic->pm_qos_req);
-+
- 	if (!dai->active)
- 		dmic->active = 0;
- 
-@@ -228,6 +232,8 @@ static int omap_dmic_dai_hw_params(struct snd_pcm_substream *substream,
- 	/* packet size is threshold * channels */
- 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
- 	dma_data->maxburst = dmic->threshold * channels;
-+	dmic->latency = (OMAP_DMIC_THRES_MAX - dmic->threshold) * USEC_PER_SEC /
-+			params_rate(params);
- 
- 	return 0;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 0218c0f8c2a7..a442b29e7611 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -1661,10 +1661,9 @@ static int hns_roce_v2_set_mac(struct hns_roce_dev *hr_dev, u8 phy_port,
+ 	return hns_roce_cmq_send(hr_dev, &desc, 1);
  }
-@@ -238,6 +244,9 @@ static int omap_dmic_dai_prepare(struct snd_pcm_substream *substream,
- 	struct omap_dmic *dmic = snd_soc_dai_get_drvdata(dai);
- 	u32 ctrl;
  
-+	if (pm_qos_request_active(&dmic->pm_qos_req))
-+		pm_qos_update_request(&dmic->pm_qos_req, dmic->latency);
+-static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
+-				  unsigned long mtpt_idx)
++static int set_mtpt_pbl(struct hns_roce_v2_mpt_entry *mpt_entry,
++			struct hns_roce_mr *mr)
+ {
+-	struct hns_roce_v2_mpt_entry *mpt_entry;
+ 	struct scatterlist *sg;
+ 	u64 page_addr;
+ 	u64 *pages;
+@@ -1672,6 +1671,53 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
+ 	int len;
+ 	int entry;
+ 
++	mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
++	mpt_entry->pbl_ba_l = cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
++	roce_set_field(mpt_entry->byte_48_mode_ba,
++		       V2_MPT_BYTE_48_PBL_BA_H_M, V2_MPT_BYTE_48_PBL_BA_H_S,
++		       upper_32_bits(mr->pbl_ba >> 3));
 +
- 	/* Configure uplink threshold */
- 	omap_dmic_write(dmic, OMAP_DMIC_FIFO_CTRL_REG, dmic->threshold);
++	pages = (u64 *)__get_free_page(GFP_KERNEL);
++	if (!pages)
++		return -ENOMEM;
++
++	i = 0;
++	for_each_sg(mr->umem->sg_head.sgl, sg, mr->umem->nmap, entry) {
++		len = sg_dma_len(sg) >> PAGE_SHIFT;
++		for (j = 0; j < len; ++j) {
++			page_addr = sg_dma_address(sg) +
++				(j << mr->umem->page_shift);
++			pages[i] = page_addr >> 6;
++			/* Record the first 2 entry directly to MTPT table */
++			if (i >= HNS_ROCE_V2_MAX_INNER_MTPT_NUM - 1)
++				goto found;
++			i++;
++		}
++	}
++found:
++	mpt_entry->pa0_l = cpu_to_le32(lower_32_bits(pages[0]));
++	roce_set_field(mpt_entry->byte_56_pa0_h, V2_MPT_BYTE_56_PA0_H_M,
++		       V2_MPT_BYTE_56_PA0_H_S, upper_32_bits(pages[0]));
++
++	mpt_entry->pa1_l = cpu_to_le32(lower_32_bits(pages[1]));
++	roce_set_field(mpt_entry->byte_64_buf_pa1, V2_MPT_BYTE_64_PA1_H_M,
++		       V2_MPT_BYTE_64_PA1_H_S, upper_32_bits(pages[1]));
++	roce_set_field(mpt_entry->byte_64_buf_pa1,
++		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_M,
++		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_S,
++		       mr->pbl_buf_pg_sz + PG_SHIFT_OFFSET);
++
++	free_page((unsigned long)pages);
++
++	return 0;
++}
++
++static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
++				  unsigned long mtpt_idx)
++{
++	struct hns_roce_v2_mpt_entry *mpt_entry;
++	int ret;
++
+ 	mpt_entry = mb_buf;
+ 	memset(mpt_entry, 0, sizeof(*mpt_entry));
  
+@@ -1686,7 +1732,6 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
+ 		       mr->pbl_ba_pg_sz + PG_SHIFT_OFFSET);
+ 	roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_PD_M,
+ 		       V2_MPT_BYTE_4_PD_S, mr->pd);
+-	mpt_entry->byte_4_pd_hop_st = cpu_to_le32(mpt_entry->byte_4_pd_hop_st);
+ 
+ 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RA_EN_S, 0);
+ 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_R_INV_EN_S, 1);
+@@ -1700,13 +1745,11 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
+ 		     (mr->access & IB_ACCESS_REMOTE_WRITE ? 1 : 0));
+ 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_LW_EN_S,
+ 		     (mr->access & IB_ACCESS_LOCAL_WRITE ? 1 : 0));
+-	mpt_entry->byte_8_mw_cnt_en = cpu_to_le32(mpt_entry->byte_8_mw_cnt_en);
+ 
+ 	roce_set_bit(mpt_entry->byte_12_mw_pa, V2_MPT_BYTE_12_PA_S,
+ 		     mr->type == MR_TYPE_MR ? 0 : 1);
+ 	roce_set_bit(mpt_entry->byte_12_mw_pa, V2_MPT_BYTE_12_INNER_PA_VLD_S,
+ 		     1);
+-	mpt_entry->byte_12_mw_pa = cpu_to_le32(mpt_entry->byte_12_mw_pa);
+ 
+ 	mpt_entry->len_l = cpu_to_le32(lower_32_bits(mr->size));
+ 	mpt_entry->len_h = cpu_to_le32(upper_32_bits(mr->size));
+@@ -1717,53 +1760,9 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
+ 	if (mr->type == MR_TYPE_DMA)
+ 		return 0;
+ 
+-	mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
+-
+-	mpt_entry->pbl_ba_l = cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
+-	roce_set_field(mpt_entry->byte_48_mode_ba, V2_MPT_BYTE_48_PBL_BA_H_M,
+-		       V2_MPT_BYTE_48_PBL_BA_H_S,
+-		       upper_32_bits(mr->pbl_ba >> 3));
+-	mpt_entry->byte_48_mode_ba = cpu_to_le32(mpt_entry->byte_48_mode_ba);
+-
+-	pages = (u64 *)__get_free_page(GFP_KERNEL);
+-	if (!pages)
+-		return -ENOMEM;
+-
+-	i = 0;
+-	for_each_sg(mr->umem->sg_head.sgl, sg, mr->umem->nmap, entry) {
+-		len = sg_dma_len(sg) >> PAGE_SHIFT;
+-		for (j = 0; j < len; ++j) {
+-			page_addr = sg_dma_address(sg) +
+-				    (j << mr->umem->page_shift);
+-			pages[i] = page_addr >> 6;
+-
+-			/* Record the first 2 entry directly to MTPT table */
+-			if (i >= HNS_ROCE_V2_MAX_INNER_MTPT_NUM - 1)
+-				goto found;
+-			i++;
+-		}
+-	}
++	ret = set_mtpt_pbl(mpt_entry, mr);
+ 
+-found:
+-	mpt_entry->pa0_l = cpu_to_le32(lower_32_bits(pages[0]));
+-	roce_set_field(mpt_entry->byte_56_pa0_h, V2_MPT_BYTE_56_PA0_H_M,
+-		       V2_MPT_BYTE_56_PA0_H_S,
+-		       upper_32_bits(pages[0]));
+-	mpt_entry->byte_56_pa0_h = cpu_to_le32(mpt_entry->byte_56_pa0_h);
+-
+-	mpt_entry->pa1_l = cpu_to_le32(lower_32_bits(pages[1]));
+-	roce_set_field(mpt_entry->byte_64_buf_pa1, V2_MPT_BYTE_64_PA1_H_M,
+-		       V2_MPT_BYTE_64_PA1_H_S, upper_32_bits(pages[1]));
+-
+-	free_page((unsigned long)pages);
+-
+-	roce_set_field(mpt_entry->byte_64_buf_pa1,
+-		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_M,
+-		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_S,
+-		       mr->pbl_buf_pg_sz + PG_SHIFT_OFFSET);
+-	mpt_entry->byte_64_buf_pa1 = cpu_to_le32(mpt_entry->byte_64_buf_pa1);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
+@@ -1772,6 +1771,7 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
+ 					u64 size, void *mb_buf)
+ {
+ 	struct hns_roce_v2_mpt_entry *mpt_entry = mb_buf;
++	int ret = 0;
+ 
+ 	if (flags & IB_MR_REREG_PD) {
+ 		roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_PD_M,
+@@ -1784,14 +1784,14 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
+ 			     V2_MPT_BYTE_8_BIND_EN_S,
+ 			     (mr_access_flags & IB_ACCESS_MW_BIND ? 1 : 0));
+ 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en,
+-			   V2_MPT_BYTE_8_ATOMIC_EN_S,
+-			   (mr_access_flags & IB_ACCESS_REMOTE_ATOMIC ? 1 : 0));
++			     V2_MPT_BYTE_8_ATOMIC_EN_S,
++			     mr_access_flags & IB_ACCESS_REMOTE_ATOMIC ? 1 : 0);
+ 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RR_EN_S,
+-			     (mr_access_flags & IB_ACCESS_REMOTE_READ ? 1 : 0));
++			     mr_access_flags & IB_ACCESS_REMOTE_READ ? 1 : 0);
+ 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RW_EN_S,
+-			    (mr_access_flags & IB_ACCESS_REMOTE_WRITE ? 1 : 0));
++			     mr_access_flags & IB_ACCESS_REMOTE_WRITE ? 1 : 0);
+ 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_LW_EN_S,
+-			     (mr_access_flags & IB_ACCESS_LOCAL_WRITE ? 1 : 0));
++			     mr_access_flags & IB_ACCESS_LOCAL_WRITE ? 1 : 0);
+ 	}
+ 
+ 	if (flags & IB_MR_REREG_TRANS) {
+@@ -1800,21 +1800,13 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
+ 		mpt_entry->len_l = cpu_to_le32(lower_32_bits(size));
+ 		mpt_entry->len_h = cpu_to_le32(upper_32_bits(size));
+ 
+-		mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
+-		mpt_entry->pbl_ba_l =
+-				cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
+-		roce_set_field(mpt_entry->byte_48_mode_ba,
+-			       V2_MPT_BYTE_48_PBL_BA_H_M,
+-			       V2_MPT_BYTE_48_PBL_BA_H_S,
+-			       upper_32_bits(mr->pbl_ba >> 3));
+-		mpt_entry->byte_48_mode_ba =
+-				cpu_to_le32(mpt_entry->byte_48_mode_ba);
+-
+ 		mr->iova = iova;
+ 		mr->size = size;
++
++		ret = set_mtpt_pbl(mpt_entry, mr);
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static void *get_cqe_v2(struct hns_roce_cq *hr_cq, int n)
 -- 
 2.17.1
 
