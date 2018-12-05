@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F092C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CB7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D1321508
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7551421508
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1+WxYp+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D1321508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="POyjYyoR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7551421508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbeLEJzz (ORCPT
+        id S1730194AbeLEJ4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:55:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:56:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbeLEJzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:55:52 -0500
+        id S1729796AbeLEJz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:55:57 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2521214F1;
-        Wed,  5 Dec 2018 09:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A164A20661;
+        Wed,  5 Dec 2018 09:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003751;
-        bh=wvZRnCWjNk3ockfXy6s+VVwLcgODztS0bVzOzNITOVI=;
+        s=default; t=1544003756;
+        bh=Dz8RKukvdE4rv5SWs9I/DNKu7/1fwkBDp16fE5t4aeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K1+WxYp+2f/ok9EZKrbYIfQ7ybHe4Jtxwkldn+8kvOK1FRVKgOhc0/Xr33g+o5pbD
-         vQqSrW4AX5IwQzufAH02QFLLALCj4tWSJ9NfB8Qlqku36jBOYist1/HHDwF4aSa87d
-         RNzb3aDEfhRsFaqzdEkfe4sRJf4/IevaOGuUq0po=
+        b=POyjYyoRIQi/xYQedutG7Wo/ijBNsQy66iE4gR0GjactJdy6Hb8mNovcEn52NElal
+         91fT9RcJBUDahO3Uz71eSgEFgIlLTjdeQ3Dr46xzW0r/tMhCGLnnxmhip9aKs5L+R4
+         OWcM+VoQfIuoloOj0Ot1qi4FzAoe+HF3HrSQPn4U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 10/26] exportfs: do not read dentry after free
-Date:   Wed,  5 Dec 2018 04:54:14 -0500
-Message-Id: <20181205095430.8019-10-sashal@kernel.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 11/26] USB: omap_udc: use devm_request_irq()
+Date:   Wed,  5 Dec 2018 04:54:15 -0500
+Message-Id: <20181205095430.8019-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -51,40 +53,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit 2084ac6c505a58f7efdec13eba633c6aaa085ca5 ]
+[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
 
-The function dentry_connected calls dput(dentry) to drop the previously
-acquired reference to dentry. In this case, dentry can be released.
-After that, IS_ROOT(dentry) checks the condition
-(dentry == dentry->d_parent), which may result in a use-after-free bug.
-This patch directly compares dentry with its parent obtained before
-dropping the reference.
+The current code fails to release the third irq on the error path
+(observed by reading the code), and we get also multiple WARNs with
+failing gadget drivers due to duplicate IRQ releases. Fix by using
+devm_request_irq().
 
-Fixes: a056cc8934c("exportfs: stop retrying once we race with
-rename/remove")
-
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exportfs/expfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index a3aa6baad1a1..d4dcf3cc076a 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -76,7 +76,7 @@ static bool dentry_connected(struct dentry *dentry)
- 		struct dentry *parent = dget_parent(dentry);
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index dcdfea46003b..b1f64608c373 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2865,8 +2865,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 		udc->clr_halt = UDC_RESET_EP;
  
- 		dput(dentry);
--		if (IS_ROOT(dentry)) {
-+		if (dentry == parent) {
- 			dput(parent);
- 			return false;
- 		}
+ 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
+-	status = request_irq(pdev->resource[1].start, omap_udc_irq,
+-			0, driver_name, udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
++				  omap_udc_irq, 0, driver_name, udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[1].start, status);
+@@ -2874,20 +2874,20 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* USB "non-iso" IRQ (PIO for all but ep0) */
+-	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
+-			0, "omap_udc pio", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
++				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[2].start, status);
+-		goto cleanup2;
++		goto cleanup1;
+ 	}
+ #ifdef	USE_ISO
+-	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
+-			0, "omap_udc iso", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
++				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[3].start, status);
+-		goto cleanup3;
++		goto cleanup1;
+ 	}
+ #endif
+ 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
+@@ -2900,22 +2900,11 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	create_proc_file();
+ 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+ 			omap_udc_release);
+-	if (status)
+-		goto cleanup4;
+-
+-	return 0;
++	if (!status)
++		return 0;
+ 
+-cleanup4:
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-cleanup3:
+-	free_irq(pdev->resource[2].start, udc);
+-#endif
+-
+-cleanup2:
+-	free_irq(pdev->resource[1].start, udc);
+-
+ cleanup1:
+ 	kfree(udc);
+ 	udc = NULL;
+@@ -2959,12 +2948,6 @@ static int omap_udc_remove(struct platform_device *pdev)
+ 
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-	free_irq(pdev->resource[3].start, udc);
+-#endif
+-	free_irq(pdev->resource[2].start, udc);
+-	free_irq(pdev->resource[1].start, udc);
+-
+ 	if (udc->dc_clk) {
+ 		if (udc->clk_requested)
+ 			omap_udc_enable_clock(0);
 -- 
 2.17.1
 
