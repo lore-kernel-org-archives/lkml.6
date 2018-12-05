@@ -2,96 +2,252 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F37DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7CFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8CEB21508
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62054214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4KGmR0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8CEB21508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfuVCp6x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62054214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbeLEKD0 (ORCPT
+        id S1729277AbeLEJor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:03:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49952 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729028AbeLEJpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:07 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729255AbeLEJoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:44 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D985020989;
-        Wed,  5 Dec 2018 09:45:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B199620878;
+        Wed,  5 Dec 2018 09:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003107;
-        bh=OXUpOqT3uGU6ArZpK9lbj7l+Dy91UIEfIa2EphBkwOI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i4KGmR0ibYm922Be0Jtvlt7cgLjZzwz/gSyIXyApOPbm6RzXr4yEUZ8kAG/JufGJ7
-         XA6wjB4RoSI01BPYSPw/Se91nlYm6bifozhuVGIGyHSsw5A6WHNM2iYrEsQpLABhr0
-         AuouSG+snG1HqF9rRHJ6Z1Y3QYuKXiGyJkiWbUmw=
-Date:   Wed, 5 Dec 2018 10:45:05 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 000/146] 4.14.86-stable review
-Message-ID: <20181205094505.GB8980@kroah.com>
-References: <20181204103726.750894136@linuxfoundation.org>
- <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2c49480-12c4-83a9-94ec-a8bfc50728d4@nvidia.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+        s=default; t=1544003083;
+        bh=oVPcbOkRqpplonFQJRl86+UVAF0DwyeiHOFxCdJsuok=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OfuVCp6xwVJrl2hCI6fw0bQpdWdAUFJFfU+aAtRlWpBzEQQ9ZY+8BTn3POOb8gJ1/
+         irVB8Gk4RBy5iKI+s+8Y/ZVA/YlZSL2m0TIXCWFHBxUWffL5mfchvxAZ0hOTnVd6he
+         QxMK06aEwqwAnJ8utEMOvCg84DJv5O9a7rEbQFu0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Robbie Ko <robbieko@synology.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 24/69] Btrfs: send, fix infinite loop due to directory rename dependencies
+Date:   Wed,  5 Dec 2018 04:42:02 -0500
+Message-Id: <20181205094247.6556-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
+References: <20181205094247.6556-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:31:45AM +0000, Jon Hunter wrote:
-> 
-> On 04/12/2018 10:48, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.86 release.
-> > There are 146 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu Dec  6 10:36:52 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.86-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v4.14:
->     8 builds:	8 pass, 0 fail
->     16 boots:	16 pass, 0 fail
->     14 tests:	14 pass, 0 fail
-> 
-> Linux version:	4.14.86-rc2-ga5c883b
-> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+From: Robbie Ko <robbieko@synology.com>
 
-Great, thanks for testing these and letting me know.
+[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
 
-greg k-h
+When doing an incremental send, due to the need of delaying directory move
+(rename) operations we can end up in infinite loop at
+apply_children_dir_moves().
+
+An example scenario that triggers this problem is described below, where
+directory names correspond to the numbers of their respective inodes.
+
+Parent snapshot:
+
+ .
+ |--- 261/
+       |--- 271/
+             |--- 266/
+                   |--- 259/
+                   |--- 260/
+                   |     |--- 267
+                   |
+                   |--- 264/
+                   |     |--- 258/
+                   |           |--- 257/
+                   |
+                   |--- 265/
+                   |--- 268/
+                   |--- 269/
+                   |     |--- 262/
+                   |
+                   |--- 270/
+                   |--- 272/
+                   |     |--- 263/
+                   |     |--- 275/
+                   |
+                   |--- 274/
+                         |--- 273/
+
+Send snapshot:
+
+ .
+ |-- 275/
+      |-- 274/
+           |-- 273/
+                |-- 262/
+                     |-- 269/
+                          |-- 258/
+                               |-- 271/
+                                    |-- 268/
+                                         |-- 267/
+                                              |-- 270/
+                                                   |-- 259/
+                                                   |    |-- 265/
+                                                   |
+                                                   |-- 272/
+                                                        |-- 257/
+                                                             |-- 260/
+                                                             |-- 264/
+                                                                  |-- 263/
+                                                                       |-- 261/
+                                                                            |-- 266/
+
+When processing inode 257 we delay its move (rename) operation because its
+new parent in the send snapshot, inode 272, was not yet processed. Then
+when processing inode 272, we delay the move operation for that inode
+because inode 274 is its ancestor in the send snapshot. Finally we delay
+the move operation for inode 274 when processing it because inode 275 is
+its new parent in the send snapshot and was not yet moved.
+
+When finishing processing inode 275, we start to do the move operations
+that were previously delayed (at apply_children_dir_moves()), resulting in
+the following iterations:
+
+1) We issue the move operation for inode 274;
+
+2) Because inode 262 depended on the move operation of inode 274 (it was
+   delayed because 274 is its ancestor in the send snapshot), we issue the
+   move operation for inode 262;
+
+3) We issue the move operation for inode 272, because it was delayed by
+   inode 274 too (ancestor of 272 in the send snapshot);
+
+4) We issue the move operation for inode 269 (it was delayed by 262);
+
+5) We issue the move operation for inode 257 (it was delayed by 272);
+
+6) We issue the move operation for inode 260 (it was delayed by 272);
+
+7) We issue the move operation for inode 258 (it was delayed by 269);
+
+8) We issue the move operation for inode 264 (it was delayed by 257);
+
+9) We issue the move operation for inode 271 (it was delayed by 258);
+
+10) We issue the move operation for inode 263 (it was delayed by 264);
+
+11) We issue the move operation for inode 268 (it was delayed by 271);
+
+12) We verify if we can issue the move operation for inode 270 (it was
+    delayed by 271). We detect a path loop in the current state, because
+    inode 267 needs to be moved first before we can issue the move
+    operation for inode 270. So we delay again the move operation for
+    inode 270, this time we will attempt to do it after inode 267 is
+    moved;
+
+13) We issue the move operation for inode 261 (it was delayed by 263);
+
+14) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 263). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12);
+
+15) We issue the move operation for inode 267 (it was delayed by 268);
+
+16) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 270). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12). So here we added
+    again the same delayed move operation that we added in step 14;
+
+17) We attempt again to see if we can issue the move operation for inode
+    266, and as in step 16, we realize we can not due to a path loop in
+    the current state due to a dependency on inode 270. Again we delay
+    inode's 266 rename to happen after inode's 270 move operation, adding
+    the same dependency to the empty stack that we did in steps 14 and 16.
+    The next iteration will pick the same move dependency on the stack
+    (the only entry) and realize again there is still a path loop and then
+    again the same dependency to the stack, over and over, resulting in
+    an infinite loop.
+
+So fix this by preventing adding the same move dependency entries to the
+stack by removing each pending move record from the red black tree of
+pending moves. This way the next call to get_pending_dir_moves() will
+not return anything for the current parent inode.
+
+A test case for fstests, with this reproducer, follows soon.
+
+Signed-off-by: Robbie Ko <robbieko@synology.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[Wrote changelog with example and more clear explanation]
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/btrfs/send.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index baf5a4cd7ffc..3f22af96d63b 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3354,7 +3354,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
+ 	kfree(m);
+ }
+ 
+-static void tail_append_pending_moves(struct pending_dir_move *moves,
++static void tail_append_pending_moves(struct send_ctx *sctx,
++				      struct pending_dir_move *moves,
+ 				      struct list_head *stack)
+ {
+ 	if (list_empty(&moves->list)) {
+@@ -3365,6 +3366,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
+ 		list_add_tail(&moves->list, stack);
+ 		list_splice_tail(&list, stack);
+ 	}
++	if (!RB_EMPTY_NODE(&moves->node)) {
++		rb_erase(&moves->node, &sctx->pending_dir_moves);
++		RB_CLEAR_NODE(&moves->node);
++	}
+ }
+ 
+ static int apply_children_dir_moves(struct send_ctx *sctx)
+@@ -3379,7 +3384,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 		return 0;
+ 
+ 	INIT_LIST_HEAD(&stack);
+-	tail_append_pending_moves(pm, &stack);
++	tail_append_pending_moves(sctx, pm, &stack);
+ 
+ 	while (!list_empty(&stack)) {
+ 		pm = list_first_entry(&stack, struct pending_dir_move, list);
+@@ -3390,7 +3395,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 			goto out;
+ 		pm = get_pending_dir_moves(sctx, parent_ino);
+ 		if (pm)
+-			tail_append_pending_moves(pm, &stack);
++			tail_append_pending_moves(sctx, pm, &stack);
+ 	}
+ 	return 0;
+ 
+-- 
+2.17.1
+
