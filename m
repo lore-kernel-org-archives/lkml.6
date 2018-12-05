@@ -7,62 +7,65 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EF7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3979BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F6520850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E82B7208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544039522;
-	bh=v0WQAzdCSL7/Ici8Fmlg3gUuInDumjG16oHH8vnXEMo=;
+	s=default; t=1544039530;
+	bh=M/K/lXqw6mHydL5RfB1iRndKNKWrunMARh1biek/G8c=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=v49FqWqlrjo46dPnR5D2t21mNSertILpStx15fdrhe+m/Q5/38/LYGio74cRamXpf
-	 xx6L5//h9iBxj5SfwhIBuz9T5TOZj60liND0jAput7XT38iJiiBmAiIPLnJuOdGaqN
-	 +4FqZZ0z7CVPRE+0Ldt0RRTF4MqgXGT6WYNRTr08=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F6520850
+	b=IdcTy0i0T6cKaNFPjF0W7LkaXbx09yge81B8anUYVphSPAybITK9eRGY071+oSr2s
+	 exU3HbG62ucu8XkcK/tX7oA3kjena/n8JPrvWCDpjdBuVObxxcAVmY+YZ98BygmvkU
+	 qqakku2dMoNPC+NoyMakYfZgocVyDZkoSY+fsDvM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82B7208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbeLETwB (ORCPT
+        id S1728955AbeLETwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:52:01 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40337 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728838AbeLETvY (ORCPT
+        Wed, 5 Dec 2018 14:52:08 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34694 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbeLETvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:51:24 -0500
-Received: by mail-oi1-f193.google.com with SMTP id t204so18616815oie.7;
-        Wed, 05 Dec 2018 11:51:23 -0800 (PST)
+        Wed, 5 Dec 2018 14:51:23 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t5so19858380otk.1;
+        Wed, 05 Dec 2018 11:51:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JCXdYlnAt2HdHVZalF+fwjEn668jWlLT5LjFiqstols=;
-        b=WtpNqB/SDH0liYKR45jaWN3x1fZANuH2xvbz+zNDXhSRAkJULSeVLYw9a6agMlot4g
-         lz3uwgAPIjq6sU86TYIYHFlMOA+uq9deP09STPcoV/nR6WFA6RVssvfPC5KXA42Yl4Qx
-         zXQMh519Wr0hoeMrRQBUSg91MF/B7YnWEcRjZM6YVD372DwkWcGfHoDmPOMBth89qIYe
-         mREG9lwp8zCNoB8oBEi5m/DLGPJLPOIBfM8j71DF8tX4dkMOxH9LvFz5g68vr5V83RHW
-         SPqgc0MXqRkEIc6O1Kv9NxWUOs7dZRDGMHUtjww4nD2qT10aMsZ7O9D4JMv6GcD9Esqo
-         ikXA==
-X-Gm-Message-State: AA+aEWZgYLNKseIzicYFG++r3RQd27kmuVZSdItS6FdV0zzwR5SrIINv
-        4XfYo9XxcjaL88pNnikBnda6hBYACQ==
-X-Google-Smtp-Source: AFSGD/W6YA1YDCRuDZ+g49HJkJtNXQ5G0y4DAPjyI8KFIX4SoaOOmN4tKzhOm0vsvWPneHC8VsbXcA==
-X-Received: by 2002:aca:e495:: with SMTP id b143mr14757328oih.286.1544039483012;
-        Wed, 05 Dec 2018 11:51:23 -0800 (PST)
+        bh=sl5w3TVJ+wE3vPiBwLh392ShItBJGNo7vWury6PkKf8=;
+        b=D1fzw/zKBlrzvkMeDBMoteCwB0m7Jg3PZ5+GjDwMpH08VM+YuwgOv3MEyJVfYrzp1H
+         ZF3CD0QDIyF0wd9a8qmMeLfL8XiH4fljqBbhNZhyWiFa6lhOq8Xg1LVdlnZVYIgdQ3Qb
+         /6In07RtrKOGSmOdvYBd8bQcTZdNv9a5dTR1+wynZxXQItAZN51qeM9GYdTAisgZIt9P
+         0576f0fwE5YE04HFCRFATbsXszlctMvSab3tea0QN5Jl/2yN1j1SuFF9LWd+o/J32tiv
+         8pvyhOAPTWIJkhjA03g3iCTloVodAgF6M894wGxExJMqWd0izpdm6xDCo5RTWgXpMnb1
+         k6ug==
+X-Gm-Message-State: AA+aEWaOjFHgrHWzg53wRkchdgPrfkDyYJHs1SuXg5xELTrUVrViwq6K
+        4HbzSIawHM2LIAFQn4hHZXxZlG6aFA==
+X-Google-Smtp-Source: AFSGD/XJEhm0daE9rARarhesB/fYxVEV3Dg1SVhUur15fRBEWdS9UsL72dAXg1SJBm6p51u3D3E/NA==
+X-Received: by 2002:a9d:4201:: with SMTP id q1mr14968194ote.126.1544039481659;
+        Wed, 05 Dec 2018 11:51:21 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.21
+        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 11:51:22 -0800 (PST)
+        Wed, 05 Dec 2018 11:51:21 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH] video/backlight: Use of_node_name_eq for node name comparisons
-Date:   Wed,  5 Dec 2018 13:50:44 -0600
-Message-Id: <20181205195050.4759-28-robh@kernel.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: [PATCH] tty: Use of_node_name_{eq,prefix} for node name comparisons
+Date:   Wed,  5 Dec 2018 13:50:43 -0600
+Message-Id: <20181205195050.4759-27-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,34 +77,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Convert string compares of DT node names to use of_node_name_eq helper
 instead. This removes direct access to the node name pointer.
 
-For instances using of_node_cmp, this has the side effect of now using
-case sensitive comparisons. This should not matter for any FDT based
-system which this is.
+For hvc, the code can also be simplified by using of_stdout pointer
+instead of searching again for the stdout node.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-serial@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/video/backlight/88pm860x_bl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/hvc/hvc_opal.c      |  2 +-
+ drivers/tty/hvc/hvc_vio.c       | 11 +----------
+ drivers/tty/serial/pmac_zilog.c |  4 ++--
+ drivers/tty/serial/suncore.c    |  8 ++++----
+ drivers/tty/serial/sunsu.c      |  4 ++--
+ 5 files changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/video/backlight/88pm860x_bl.c b/drivers/video/backlight/88pm860x_bl.c
-index 6d8dc2c77520..51e0c4be08df 100644
---- a/drivers/video/backlight/88pm860x_bl.c
-+++ b/drivers/video/backlight/88pm860x_bl.c
-@@ -174,7 +174,7 @@ static int pm860x_backlight_dt_init(struct platform_device *pdev,
- 		return -ENODEV;
- 	}
- 	for_each_child_of_node(nproot, np) {
--		if (!of_node_cmp(np->name, name)) {
-+		if (of_node_name_eq(np, name)) {
- 			of_property_read_u32(np, "marvell,88pm860x-iset",
- 					     &iset);
- 			data->iset = PM8606_WLED_CURRENT(iset);
+diff --git a/drivers/tty/hvc/hvc_opal.c b/drivers/tty/hvc/hvc_opal.c
+index 77baf895108f..c66412566efc 100644
+--- a/drivers/tty/hvc/hvc_opal.c
++++ b/drivers/tty/hvc/hvc_opal.c
+@@ -353,7 +353,7 @@ void __init hvc_opal_init_early(void)
+ 		if (!opal)
+ 			return;
+ 		for_each_child_of_node(opal, np) {
+-			if (!strcmp(np->name, "serial")) {
++			if (of_node_name_eq(np, "serial")) {
+ 				stdout_node = np;
+ 				break;
+ 			}
+diff --git a/drivers/tty/hvc/hvc_vio.c b/drivers/tty/hvc/hvc_vio.c
+index 59eaa620bf13..6de6d4a1a221 100644
+--- a/drivers/tty/hvc/hvc_vio.c
++++ b/drivers/tty/hvc/hvc_vio.c
+@@ -371,20 +371,11 @@ device_initcall(hvc_vio_init); /* after drivers/tty/hvc/hvc_console.c */
+ void __init hvc_vio_init_early(void)
+ {
+ 	const __be32 *termno;
+-	const char *name;
+ 	const struct hv_ops *ops;
+ 
+ 	/* find the boot console from /chosen/stdout */
+-	if (!of_stdout)
+-		return;
+-	name = of_get_property(of_stdout, "name", NULL);
+-	if (!name) {
+-		printk(KERN_WARNING "stdout node missing 'name' property!\n");
+-		return;
+-	}
+-
+ 	/* Check if it's a virtual terminal */
+-	if (strncmp(name, "vty", 3) != 0)
++	if (!of_node_name_prefix(of_stdout, "vty"))
+ 		return;
+ 	termno = of_get_property(of_stdout, "reg", NULL);
+ 	if (termno == NULL)
+diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
+index a9d40988e1c8..bcb5bf70534e 100644
+--- a/drivers/tty/serial/pmac_zilog.c
++++ b/drivers/tty/serial/pmac_zilog.c
+@@ -1648,9 +1648,9 @@ static int __init pmz_probe(void)
+ 		 */
+ 		node_a = node_b = NULL;
+ 		for (np = NULL; (np = of_get_next_child(node_p, np)) != NULL;) {
+-			if (strncmp(np->name, "ch-a", 4) == 0)
++			if (of_node_name_prefix(np, "ch-a"))
+ 				node_a = of_node_get(np);
+-			else if (strncmp(np->name, "ch-b", 4) == 0)
++			else if (of_node_name_prefix(np, "ch-b"))
+ 				node_b = of_node_get(np);
+ 		}
+ 		if (!node_a && !node_b) {
+diff --git a/drivers/tty/serial/suncore.c b/drivers/tty/serial/suncore.c
+index 70a4ea4eaa6e..661e8b151366 100644
+--- a/drivers/tty/serial/suncore.c
++++ b/drivers/tty/serial/suncore.c
+@@ -89,14 +89,14 @@ void sunserial_console_termios(struct console *con, struct device_node *uart_dp)
+ 	int baud, bits, stop, cflag;
+ 	char parity;
+ 
+-	if (!strcmp(uart_dp->name, "rsc") ||
+-	    !strcmp(uart_dp->name, "rsc-console") ||
+-	    !strcmp(uart_dp->name, "rsc-control")) {
++	if (of_node_name_eq(uart_dp, "rsc") ||
++	    of_node_name_eq(uart_dp, "rsc-console") ||
++	    of_node_name_eq(uart_dp, "rsc-control")) {
+ 		mode = of_get_property(uart_dp,
+ 				       "ssp-console-modes", NULL);
+ 		if (!mode)
+ 			mode = "115200,8,n,1,-";
+-	} else if (!strcmp(uart_dp->name, "lom-console")) {
++	} else if (of_node_name_eq(uart_dp, "lom-console")) {
+ 		mode = "9600,8,n,1,-";
+ 	} else {
+ 		struct device_node *dp;
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 6cf3e9b0728f..8ed60ccd45fb 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1482,8 +1482,8 @@ static int su_probe(struct platform_device *op)
+ 	up->port.ops = &sunsu_pops;
+ 
+ 	ignore_line = false;
+-	if (!strcmp(dp->name, "rsc-console") ||
+-	    !strcmp(dp->name, "lom-console"))
++	if (of_node_name_eq(dp, "rsc-console") ||
++	    of_node_name_eq(dp, "lom-console"))
+ 		ignore_line = true;
+ 
+ 	sunserial_console_match(SUNSU_CONSOLE(), dp,
 -- 
 2.19.1
 
