@@ -2,167 +2,117 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D171AC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7142C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987B9206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B06120878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ghvx7Srz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 987B9206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBi8dKY1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B06120878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbeLEFs7 (ORCPT
+        id S1727096AbeLEFtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 00:48:59 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36582 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbeLEFs6 (ORCPT
+        Wed, 5 Dec 2018 00:49:47 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36302 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbeLEFtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 00:48:58 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so9523694plo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 21:48:58 -0800 (PST)
+        Wed, 5 Dec 2018 00:49:47 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so15973330edb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 21:49:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vWhAhLkOVslUb8AGYpRlcTEDGRqYlnK33vbjofTVSKg=;
-        b=Ghvx7SrzrvOWt9iw9+n5jZ87Tl7UOaD02HoAC3peGH3KyiLo3niR48nxltOOoNpikP
-         AXmdTlvLOzKrhtYVVs6NFLm5qNAqhe/Pw0Xcp6dwMzbyvMW5RPBAcWGEnKb508AfoBlt
-         iwIXiQWvM4l59LTcMGKwE6VDaNtnpp7RulPmg=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NrqlGatGK9YWYP95JatWcvRkypUfQHeO7cDiS5LHNcA=;
+        b=BBi8dKY1MWqPViUyXV5LIuj9009UFj/amW5TyTPI2g8olZFi6gw5Jp2sxS8pJOCtUy
+         dCptci7fWhyaFvDW0lRQeIzgpTvYen2HIyTlyYlPwXUSzg5CW1SMvXe4kGhy4tvGrFoi
+         t40FTXiplCSytp8qRDxSWOFSJ4l9gwNSZ6gcwl+qyo7Et3Di+IUdkvsgkNf718HKP6Wc
+         NB+Nyag9cSxXfutfRqol4N7o62vOyEedrv8gdX6YHsPWsxhZAakbQBz26dD3K0eh7nra
+         jSVDh+i+25ytu3hdGN2xiWucGxz9qEUv3ZE4Bllwq7E/KWHTzLO7nqj7y7PfRBtaT1ii
+         oC0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vWhAhLkOVslUb8AGYpRlcTEDGRqYlnK33vbjofTVSKg=;
-        b=FYYr90GUDAVM8unaqO1SDPZqmECFRPAaRgFHW9/9E+EPDldY5ByTZ2PYCLuB75VD9F
-         Ovu4qw954Kwyoj5XPbsX1+i9L2XS8VToisFVC7FsJMNZMPY2MHdx/QldIXTejooItabl
-         Bge/EidRJm92rJv8pLZmV+SL+nGS2yoUGKJV6eC7Dk9KG9Tf5xGhyoTUIogNPA5sB8Yw
-         L8wTLhdc1QtuDSZg2XcqtSoliVDL9nZzVbtHnuVfso1pCkBzShLvuSfiIYFGTfhzLIen
-         u8PwafYKHmhDaVgslw3lRAxGrCdWnAaT3g4pkZyXnXGGQvzTo4sL+hU/uIn0wqXxVz0b
-         uGbw==
-X-Gm-Message-State: AA+aEWb0y3VzB1phJkVeUdzBpw3KmSx0XHLwUtFJ78mIwyxdjEXKLbiw
-        aquajq54Tvl1IQcAOXL2wTsX8g==
-X-Google-Smtp-Source: AFSGD/VxTWcri7yQ/slMRzGNhZW0Xvh/a+9X/iz/yVfMl1irVge09KKfwpdURxLUulLz9sebxIBWHQ==
-X-Received: by 2002:a17:902:2468:: with SMTP id m37mr4041699plg.314.1543988938116;
-        Tue, 04 Dec 2018 21:48:58 -0800 (PST)
-Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:f659:7f17:ea11:4e8e])
-        by smtp.gmail.com with ESMTPSA id 4sm30806513pfq.10.2018.12.04.21.48.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 21:48:57 -0800 (PST)
-From:   Nicolas Boichat <drinkcat@chromium.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
-        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v4 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory, and improve debugging
-Date:   Wed,  5 Dec 2018 13:48:28 +0800
-Message-Id: <20181205054828.183476-4-drinkcat@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-In-Reply-To: <20181205054828.183476-1-drinkcat@chromium.org>
-References: <20181205054828.183476-1-drinkcat@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NrqlGatGK9YWYP95JatWcvRkypUfQHeO7cDiS5LHNcA=;
+        b=k3I0zi+fUcdY/JnVHdxdUg0W/j5aaxyfoH332LxpHNyVhiiJAc3Nk0PprQ7/uVXbM3
+         Ke8iSwgQQTV0CU5GeDKvMM/uEowm81JBilyQl2MWkD8rYdgNuRS1sXLOVSCR/EAEJtg9
+         CrnfjbGfeFGELOnb1Us0Mx5peyZ3Tl0TndYdYYzGG9JbtI0UF8G/+qoTygbURGcgm5nf
+         AgmZKVh1t1wK/rKUnXGMlsCd5lJGRcYNVaj8r3w+BnO6D33s70/B1csmHB/EahquvxIk
+         VF5gBJjPr2RBatM20CVtvt1qw5BuIlSJITUZfxIyyZQHABEZp1JekujVCmG568VphkSW
+         nYhw==
+X-Gm-Message-State: AA+aEWYdH9Mwujb53EUW+58lhmXoy6MtlgdnoWTmT0pjXxgB5VoTdJzy
+        9x6ywxkupN0by49aw5s2j/+KQo/Ysetj8RqCcg==
+X-Google-Smtp-Source: AFSGD/VE+eKadByrcOyM7unoyTWL5i+huPCABfbk/hGBpG9EA7OjMgrcEQxHZ/g7LJVn4k8guKtc3IIhJOFiYyw1AgY=
+X-Received: by 2002:aa7:cf88:: with SMTP id z8mr20563201edx.208.1543988985509;
+ Tue, 04 Dec 2018 21:49:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
+ <alpine.DEB.2.21.1812031946140.97328@chino.kir.corp.google.com> <CAFgQCTsikqQERh2MgsrupdVzp0TyF4dDQPjJkN9g3DTq4DB9hw@mail.gmail.com>
+In-Reply-To: <CAFgQCTsikqQERh2MgsrupdVzp0TyF4dDQPjJkN9g3DTq4DB9hw@mail.gmail.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 5 Dec 2018 13:49:34 +0800
+Message-ID: <CAFgQCTttgfuPJZHqGDSF5hLpLWDm2+_+UiyK+ScKgxs6qD-KCQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     David Rientjes <rientjes@google.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IOMMUs using ARMv7 short-descriptor format require page tables
-(level 1 and 2) to be allocated within the first 4GB of RAM, even
-on 64-bit systems.
+On Tue, Dec 4, 2018 at 3:16 PM Pingfan Liu <kernelfans@gmail.com> wrote:
+>
+> On Tue, Dec 4, 2018 at 11:53 AM David Rientjes <rientjes@google.com> wrote:
+> >
+> > On Tue, 4 Dec 2018, Pingfan Liu wrote:
+> >
+> > > diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> > > index 76f8db0..8324953 100644
+> > > --- a/include/linux/gfp.h
+> > > +++ b/include/linux/gfp.h
+> > > @@ -453,6 +453,8 @@ static inline int gfp_zonelist(gfp_t flags)
+> > >   */
+> > >  static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+> > >  {
+> > > +     if (unlikely(!node_online(nid)))
+> > > +             nid = first_online_node;
+> > >       return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
+> > >  }
+> > >
+> >
+> > So we're passing the node id from dev_to_node() to kmalloc which
+> > interprets that as the preferred node and then does node_zonelist() to
+> > find the zonelist at allocation time.
+> >
+> > What happens if we fix this in alloc_dr()?  Does anything else cause
+> > problems?
+> >
+> I think it is better to fix it mm, since it can protect any new
+> similar bug in future. While fixing in alloc_dr() just work at present
+>
+> > And rather than using first_online_node, would next_online_node() work?
+> >
+> What is the gain? Is it for memory pressure on node0?
+>
+Maybe I got your point now.  Do you try to give a cheap assumption on
+nearest neigh of this node?
 
-For level 1/2 pages, ensure GFP_DMA32 is used if CONFIG_ZONE_DMA32
-is defined (e.g. on arm64 platforms).
-
-For level 2 pages, allocate a slab cache in SLAB_CACHE_DMA32.
-
-Also, print an error when the physical address does not fit in
-32-bit, to make debugging easier in the future.
-
-Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
-Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
----
-
-Changes since v2:
- - Commit message
-
-(v3 used the page_frag approach)
-
- drivers/iommu/io-pgtable-arm-v7s.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-index 445c3bde04800c..996f7b6d00b44a 100644
---- a/drivers/iommu/io-pgtable-arm-v7s.c
-+++ b/drivers/iommu/io-pgtable-arm-v7s.c
-@@ -161,6 +161,14 @@
- 
- #define ARM_V7S_TCR_PD1			BIT(5)
- 
-+#ifdef CONFIG_ZONE_DMA32
-+#define ARM_V7S_TABLE_GFP_DMA GFP_DMA32
-+#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA32
-+#else
-+#define ARM_V7S_TABLE_GFP_DMA GFP_DMA
-+#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA
-+#endif
-+
- typedef u32 arm_v7s_iopte;
- 
- static bool selftest_running;
-@@ -198,13 +206,17 @@ static void *__arm_v7s_alloc_table(int lvl, gfp_t gfp,
- 	void *table = NULL;
- 
- 	if (lvl == 1)
--		table = (void *)__get_dma_pages(__GFP_ZERO, get_order(size));
-+		table = (void *)__get_free_pages(
-+			__GFP_ZERO | ARM_V7S_TABLE_GFP_DMA, get_order(size));
- 	else if (lvl == 2)
--		table = kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA);
-+		table = kmem_cache_zalloc(data->l2_tables,
-+					  gfp | ARM_V7S_TABLE_GFP_DMA);
- 	phys = virt_to_phys(table);
--	if (phys != (arm_v7s_iopte)phys)
-+	if (phys != (arm_v7s_iopte)phys) {
- 		/* Doesn't fit in PTE */
-+		dev_err(dev, "Page table does not fit in PTE: %pa", &phys);
- 		goto out_free;
-+	}
- 	if (table && !(cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA)) {
- 		dma = dma_map_single(dev, table, size, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, dma))
-@@ -737,7 +749,7 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
- 	data->l2_tables = kmem_cache_create("io-pgtable_armv7s_l2",
- 					    ARM_V7S_TABLE_SIZE(2),
- 					    ARM_V7S_TABLE_SIZE(2),
--					    SLAB_CACHE_DMA, NULL);
-+					    ARM_V7S_TABLE_SLAB_CACHE, NULL);
- 	if (!data->l2_tables)
- 		goto out_free_data;
- 
--- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+Thanks,
+Pingfan
