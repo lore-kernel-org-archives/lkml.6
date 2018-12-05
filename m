@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0ACC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20F0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56BF20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:13:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D44206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:14:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+p18QLs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56BF20659
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnO1Uh+R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1D44206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeLEJgp (ORCPT
+        id S1727580AbeLEJgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:36:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38822 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:36:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbeLEJgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:36:40 -0500
+        id S1727527AbeLEJgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:36:18 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 734122084C;
-        Wed,  5 Dec 2018 09:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ABFA20850;
+        Wed,  5 Dec 2018 09:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002600;
-        bh=yjNlL2FoLQbG+m0P1sxh2bkCdfq1pIixvqTUi6yqTa4=;
+        s=default; t=1544002577;
+        bh=F/JuTopHfKY0BMHxqEx58wDTMyovheJvcxZcsPh11vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f+p18QLspmK2NDJBm3aNMpmgEt4NXZVI5PkjKuNp43O1yWbbvYOH9mbE5QNFKxqk+
-         REkmY2NpQW8h/X6WR7nIJKVqB0Pfg1F/6maicJX2H9f4m9PEMRGLcDRj6lNCiaT6+M
-         FqNtS9qxJ+xASqZlrzSD9lhhYWLk8990faql1PPk=
+        b=FnO1Uh+RTp/16ZTbAkGxlvAiG3nPuZN7YHNGRah5enKwO9m3pqdLNu8ILSaTiDnAe
+         kpl+mfE2mW5R0IWexcCahYw8i2ohw0NU9oVyWGLlgR8yzQMpRhAK6/fojQweZ4eBoi
+         GfDqz37IDrxf3w61GrucOn0k0kMMO27IoUhNr7Kg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Quentin Monnet <quentin.monnet@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 013/123] tools: bpftool: prevent infinite loop in get_fdinfo()
-Date:   Wed,  5 Dec 2018 04:34:05 -0500
-Message-Id: <20181205093555.5386-13-sashal@kernel.org>
+Cc:     Rohit kumar <rohitkr@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 005/123] ASoC: qdsp6: q6afe: Fix wrong MI2S SD line mask
+Date:   Wed,  5 Dec 2018 04:33:57 -0500
+Message-Id: <20181205093555.5386-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,39 +53,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quentin Monnet <quentin.monnet@netronome.com>
+From: Rohit kumar <rohitkr@codeaurora.org>
 
-[ Upstream commit 53909030aa29bffe1f8490df62176c2375135652 ]
+[ Upstream commit 112b57fa737445b2361be332ce8cc0fd3e2b994e ]
 
-Function getline() returns -1 on failure to read a line, thus creating
-an infinite loop in get_fdinfo() if the key is not found. Fix it by
-calling the function only as long as we get a strictly positive return
-value.
+SD line mask for MI2S starts from BIT 0 instead of BIT 1.
+Fix all bit mask for MI2S SD lines.
 
-Found by copying the code for a key which is not always present...
-
-Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6afe.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/bpf/bpftool/common.c b/tools/bpf/bpftool/common.c
-index b3a0709ea7ed..fcaf00621102 100644
---- a/tools/bpf/bpftool/common.c
-+++ b/tools/bpf/bpftool/common.c
-@@ -304,7 +304,7 @@ char *get_fdinfo(int fd, const char *key)
- 		return NULL;
- 	}
- 
--	while ((n = getline(&line, &line_n, fdi))) {
-+	while ((n = getline(&line, &line_n, fdi)) > 0) {
- 		char *value;
- 		int len;
- 
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 000775b4bba8..829b5e987b2a 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -49,14 +49,14 @@
+ #define AFE_PORT_I2S_SD1		0x2
+ #define AFE_PORT_I2S_SD2		0x3
+ #define AFE_PORT_I2S_SD3		0x4
+-#define AFE_PORT_I2S_SD0_MASK		BIT(0x1)
+-#define AFE_PORT_I2S_SD1_MASK		BIT(0x2)
+-#define AFE_PORT_I2S_SD2_MASK		BIT(0x3)
+-#define AFE_PORT_I2S_SD3_MASK		BIT(0x4)
+-#define AFE_PORT_I2S_SD0_1_MASK		GENMASK(2, 1)
+-#define AFE_PORT_I2S_SD2_3_MASK		GENMASK(4, 3)
+-#define AFE_PORT_I2S_SD0_1_2_MASK	GENMASK(3, 1)
+-#define AFE_PORT_I2S_SD0_1_2_3_MASK	GENMASK(4, 1)
++#define AFE_PORT_I2S_SD0_MASK		BIT(0x0)
++#define AFE_PORT_I2S_SD1_MASK		BIT(0x1)
++#define AFE_PORT_I2S_SD2_MASK		BIT(0x2)
++#define AFE_PORT_I2S_SD3_MASK		BIT(0x3)
++#define AFE_PORT_I2S_SD0_1_MASK		GENMASK(1, 0)
++#define AFE_PORT_I2S_SD2_3_MASK		GENMASK(3, 2)
++#define AFE_PORT_I2S_SD0_1_2_MASK	GENMASK(2, 0)
++#define AFE_PORT_I2S_SD0_1_2_3_MASK	GENMASK(3, 0)
+ #define AFE_PORT_I2S_QUAD01		0x5
+ #define AFE_PORT_I2S_QUAD23		0x6
+ #define AFE_PORT_I2S_6CHS		0x7
 -- 
 2.17.1
 
