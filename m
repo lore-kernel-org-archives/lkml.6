@@ -2,86 +2,130 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 500B2C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8457C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1557620892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:46:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1557620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 98CDA20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:47:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CDA20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbeLETqw (ORCPT
+        id S1728477AbeLETrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:46:52 -0500
-Received: from ms.lwn.net ([45.79.88.28]:47864 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbeLETqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:46:51 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 75478316;
-        Wed,  5 Dec 2018 19:46:49 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 12:46:44 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     NeilBrown <neilb@suse.com>
-Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Documentation: convert path-lookup from markdown to
- resturctured text
-Message-ID: <20181205124644.3f8a452a@lwn.net>
-In-Reply-To: <87sgzc7v50.fsf@notabene.neil.brown.name>
-References: <87k1l9dgx9.fsf@notabene.neil.brown.name>
-        <87sgzc7v50.fsf@notabene.neil.brown.name>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 5 Dec 2018 14:47:05 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:38395 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbeLETrF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:47:05 -0500
+Received: by mail-io1-f72.google.com with SMTP id v8so9328389ioq.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:47:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=YVa/OlWOiplg4fXyE2Kfv28NP4lYPOJQNhiJnwTXdXA=;
+        b=Zt7f17Yx3UpLwSP5bWcalmS6uEKs3k2jISyS0wDpiDS1hBBQVlxcwUOtTD2ce01r95
+         F/Shcxa4E6b6hHe/7s4Lh8J0M8/WqfzGvrevpW9Nd9lBDpnm3nMsVRPupR11Pml/e5Wo
+         fNnfNTxhEjAVRvo7QlM0nOhGOZf5WrnSGF7yagMLUn/aShdch5TSg9VH3Htbxxcn9uOq
+         jULkhHqWjOZlkjYE5YW1aPrEw1q3pSO8cNV02Kaz64m3VsvDw/1vOCDZF/dEkCKgkp4D
+         Cs+ermAeSueg181nbZZI6QX0mZOG5g1qkbSf7uO4l+vVAq7Eum5f+4+ZYKuhxzCFRgZO
+         0mRA==
+X-Gm-Message-State: AA+aEWb21iHPLzggX0fenoqnHSdtlUQMcub8d7/iNQ/4jgByS1u3kxvo
+        6uQPzyComrNDqjTRsUBf1fXXz2z/fwdXhhuux0Fvl/UcZl16
+X-Google-Smtp-Source: AFSGD/WDwZARPztAQzTSPNrYMD5KoACvC1QZ3cT/4R6bpQz1ThtDddK5ayJd/vHkOrZLoSn9/SjnYDf8jTE1OlSSuBob9gKRP+hp
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:9143:: with SMTP id b3mr20032495jag.25.1544039223784;
+ Wed, 05 Dec 2018 11:47:03 -0800 (PST)
+Date:   Wed, 05 Dec 2018 11:47:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000073fd73057c4ba52f@google.com>
+Subject: WARNING: refcount bug in blk_mq_free_request
+From:   syzbot <syzbot+5476726e7cb6a2d59bce@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Dec 2018 10:02:51 +1100
-NeilBrown <neilb@suse.com> wrote:
+Hello,
 
-> This allows the document to be integrated with the main documentation
-> tree.
-> Changes include:
-> - rename from .md to .rst
-> - use `` for code, not single `
-> - use correct sub-section marking
-> - fix indented blocks, both code and non-code
-> - fix external-link markup
-> 
-> Signed-off-by: NeilBrown <neilb@suse.com>
+syzbot found the following crash on:
 
-Looks good at a first glance, but I have one question...
+HEAD commit:    60b548237fed Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13dab87d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c94f9f0c0363db4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5476726e7cb6a2d59bce
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
->  Documentation/filesystems/index.rst                |   2 +
->  .../{path-lookup.md => path-lookup.rst}            | 875 +++++++++++----------
->  2 files changed, 448 insertions(+), 429 deletions(-)
->  rename Documentation/filesystems/{path-lookup.md => path-lookup.rst} (59%)
-> 
-> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-> index 46d1b1be3a51..3c0f441a9536 100644
-> --- a/Documentation/filesystems/index.rst
-> +++ b/Documentation/filesystems/index.rst
-> @@ -359,3 +359,5 @@ encryption of files and directories.
->      :maxdepth: 2
->  
->      fscrypt
-> +
-> +.. include::  path-lookup.rst
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Is there a reason you used "include" rather than just adding it to the
-TOC tree with the rest?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5476726e7cb6a2d59bce@syzkaller.appspotmail.com
 
-Thanks,
+Buffer I/O error on dev nbd0, logical block 2, async page read
+block nbd0: Connection timed out, retrying (0/3 alive)
+  nbd0: unable to read partition table
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 1 PID: 2551 at lib/refcount.c:187  
+refcount_sub_and_test_checked+0x2c9/0x310 lib/refcount.c:187
+Kernel panic - not syncing: panic_on_warn set ...
+nbd0: partition table beyond EOD, truncated
+CPU: 1 PID: 2551 Comm: kworker/1:2H Not tainted 4.20.0-rc4+ #134
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: kblockd blk_mq_run_work_fn
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:refcount_sub_and_test_checked+0x2c9/0x310 lib/refcount.c:187
+Code: 89 de e8 9a 13 ed fd 84 db 74 07 31 db e9 4d ff ff ff e8 ba 12 ed fd  
+48 c7 c7 e0 b1 60 88 c6 05 93 46 80 06 01 e8 f7 72 b6 fd <0f> 0b 31 db e9  
+2c ff ff ff 48 89 cf e8 46 66 30 fe e9 41 fe ff ff
+RSP: 0018:ffff8881b1aeec00 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+RBP: ffff8881b1aeece8 R08: ffff8881c142c440 R09: ffffed103b5e3ef8
+R10: ffffed103b5e3ef8 R11: ffff8881daf1f7c7 R12: ffff8881d175aed8
+R13: 00000000ffffffff R14: ffff8881b1aeecc0 R15: 1ffff1103635ddb3
+  refcount_dec_and_test_checked+0x1a/0x20 lib/refcount.c:212
+  blk_mq_free_request+0x643/0x900 block/blk-mq.c:517
+  __blk_mq_end_request block/blk-mq.c:542 [inline]
+  blk_mq_end_request+0x2a4/0x490 block/blk-mq.c:551
+  blk_mq_dispatch_rq_list+0x132d/0x2500 block/blk-mq.c:1210
+  blk_mq_do_dispatch_sched+0x25b/0x580 block/blk-mq-sched.c:107
+  blk_mq_sched_dispatch_requests+0x62d/0x9b0 block/blk-mq-sched.c:203
+  __blk_mq_run_hw_queue+0x199/0x2e0 block/blk-mq.c:1314
+  blk_mq_run_work_fn+0x51/0x70 block/blk-mq.c:1547
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-jon
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
