@@ -2,136 +2,88 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3C9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D69F6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE6F20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE6F20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 95A462082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="D3C3U5Ge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A462082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeLERO5 (ORCPT
+        id S1728093AbeLERPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:14:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:59410 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbeLERO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:14:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 166C8A78;
-        Wed,  5 Dec 2018 09:14:56 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1DA23F575;
-        Wed,  5 Dec 2018 09:14:54 -0800 (PST)
-Subject: Re: [PATCH v2 1/7] arm64: capabilities: Merge entries for
- ARM64_WORKAROUND_CLEAN_CACHE
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        vladimir.murzin@arm.com, Andre Przywara <andre.przywara@arm.com>
-References: <1543598286-2663-1-git-send-email-suzuki.poulose@arm.com>
- <1543598286-2663-2-git-send-email-suzuki.poulose@arm.com>
- <20181205150252.GB16171@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <b61f749d-9d65-fb76-74b5-b999fecad42b@arm.com>
-Date:   Wed, 5 Dec 2018 17:14:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181205150252.GB16171@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 5 Dec 2018 12:15:47 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:52172 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727475AbeLERPq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:15:46 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 881EC10C0ACD;
+        Wed,  5 Dec 2018 09:15:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544030146; bh=Q7i0vP4op/czna0dHpGbxZhRG+D2TI9I9KW2YwD83dA=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=D3C3U5GeWyyZeW5bLh9yKY/z5+5xTEems1KWS+9JwySl2qVrejnJFHWiN+OgbHiud
+         HnpQvThCiyyqp+h+fIik8Q0ccgjr1/69rFkQwC8+MiBkhqfTJUuXv5CNyKq8lx08/G
+         2M1FX2NSgEJBn0xoB4qRzwYAVDuKUuAupPpOx4gnZpQkHIp+ID//kLvyp2Sq6J5N15
+         918fzyJI/mptSZHpWTDmM98Ig1irI7qSmWVitFmDqy+9sfXoUIBywbFZqSsXPjZJzd
+         0w2Vro/r7/AIrPjJA6eb2HQlTpPEfW1ltC1utzrnZos+u5HeNUEW4tqwsQwYavPvnE
+         wxVy/4OYEE9aw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 710E35817;
+        Wed,  5 Dec 2018 09:15:46 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000;
+ Wed, 5 Dec 2018 09:15:46 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 3/5] ARC: perf: fix of kernel data types using
+Thread-Topic: [PATCH 3/5] ARC: perf: fix of kernel data types using
+Thread-Index: AQHUjLzhlRR+XbBr/0msXgnUICyTug==
+Date:   Wed, 5 Dec 2018 17:15:45 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641B931@US01WEMBX2.internal.synopsys.com>
+References: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
+ <20181205170609.18690-4-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/12/2018 15:02, Will Deacon wrote:
-> On Fri, Nov 30, 2018 at 05:18:00PM +0000, Suzuki K Poulose wrote:
->> We have two entries for ARM64_WORKAROUND_CLEAN_CACHE capability :
->>
->> 1) ARM Errata 826319, 827319, 824069, 819472 on A53 r0p[012]
->> 2) ARM Errata 819472 on A53 r0p[01]
->>
->> Both have the same work around. Merge these entries to avoid
->> duplicate entries for a single capability. Add a new Kconfig
->> entry to control the "capability" entry to make it easier
->> to handle combinations of the CONFIGs.
->>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Andre Przywara <andre.przywara@arm.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   arch/arm64/Kconfig               |  7 +++++++
->>   arch/arm64/include/asm/cputype.h |  1 +
->>   arch/arm64/kernel/cpu_errata.c   | 28 ++++++++++++++++------------
->>   3 files changed, 24 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 787d785..ad69e15 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -313,9 +313,13 @@ menu "Kernel Features"
->>   
->>   menu "ARM errata workarounds via the alternatives framework"
->>   
->> +config ARM64_WORKAROUND_CLEAN_CACHE
->> +	def_bool n
->> +
->>   config ARM64_ERRATUM_826319
->>   	bool "Cortex-A53: 826319: System might deadlock if a write cannot complete until read data is accepted"
->>   	default y
->> +	select ARM64_WORKAROUND_CLEAN_CACHE
->>   	help
->>   	  This option adds an alternative code sequence to work around ARM
->>   	  erratum 826319 on Cortex-A53 parts up to r0p2 with an AMBA 4 ACE or
->> @@ -337,6 +341,7 @@ config ARM64_ERRATUM_826319
->>   config ARM64_ERRATUM_827319
->>   	bool "Cortex-A53: 827319: Data cache clean instructions might cause overlapping transactions to the interconnect"
->>   	default y
->> +	select ARM64_WORKAROUND_CLEAN_CACHE
->>   	help
->>   	  This option adds an alternative code sequence to work around ARM
->>   	  erratum 827319 on Cortex-A53 parts up to r0p2 with an AMBA 5 CHI
->> @@ -358,6 +363,7 @@ config ARM64_ERRATUM_827319
->>   config ARM64_ERRATUM_824069
->>   	bool "Cortex-A53: 824069: Cache line might not be marked as clean after a CleanShared snoop"
->>   	default y
->> +	select ARM64_WORKAROUND_CLEAN_CACHE
->>   	help
->>   	  This option adds an alternative code sequence to work around ARM
->>   	  erratum 824069 on Cortex-A53 parts up to r0p2 when it is connected
->> @@ -380,6 +386,7 @@ config ARM64_ERRATUM_824069
->>   config ARM64_ERRATUM_819472
->>   	bool "Cortex-A53: 819472: Store exclusive instructions might cause data corruption"
->>   	default y
->> +	select ARM64_WORKAROUND_CLEAN_CACHE
->>   	help
->>   	  This option adds an alternative code sequence to work around ARM
->>   	  erratum 819472 on Cortex-A53 parts up to r0p1 with an L2 cache
->> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
->> index 12f93e4d..2e26375 100644
->> --- a/arch/arm64/include/asm/cputype.h
->> +++ b/arch/arm64/include/asm/cputype.h
->> @@ -151,6 +151,7 @@ struct midr_range {
->>   		.rv_max = MIDR_CPU_VAR_REV(v_max, r_max),	\
->>   	}
->>   
->> +#define MIDR_REV_RANGE(m, v, r_min, r_max) MIDR_RANGE(m, v, r_min, v, r_max)
-> 
-> What's the point of this macro?
-
-That can be used to specify a set of MIDRs which has the same "variant" but a
-range of "revisions". This is used for the A53 errata and also for the Cavium
-errata in the following patch.
-
-Suzuki
+On 12/5/18 9:06 AM, Eugeniy Paltsev wrote:=0A=
+> Use u32, u64, s64 instead of uint32_t, uint64_t, int64_t=0A=
+>=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+=0A=
+=0A=
+Maybe squash this into trivial cleanups 1/5 ?=0A=
+=0A=
+Acked-by: Vineet Gupta <vgupta@synopsys.com>=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
