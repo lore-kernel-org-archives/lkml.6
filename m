@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934C9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBA5C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62FE8206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FE8206B7
+	by mail.kernel.org (Postfix) with ESMTP id 99F9E206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F9E206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeLEIhm (ORCPT
+        id S1727352AbeLEIhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:37:42 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36158 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:37:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36177 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeLEIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:37:38 -0500
+        id S1727305AbeLEIhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:37:47 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 14B32207BF; Wed,  5 Dec 2018 09:37:36 +0100 (CET)
+        id BBB9C20E35; Wed,  5 Dec 2018 09:37:45 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B3E6520828;
+        by mail.bootlin.com (Postfix) with ESMTPSA id EC65D2087D;
         Wed,  5 Dec 2018 09:37:25 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 02/22] drm/fourcc: Add format info helpers for checking YUV sub-sampling
-Date:   Wed,  5 Dec 2018 09:36:43 +0100
-Message-Id: <20181205083703.21488-3-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 03/22] drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422 check
+Date:   Wed,  5 Dec 2018 09:36:44 +0100
+Message-Id: <20181205083703.21488-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,102 +50,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display engine drivers often need to distinguish between different types of
-YUV sub-sampling. This introduces helpers to check for common sub-sampling
-ratios in their commonly-used denomination from the DRM format info.
+Checking for the number of planes is not sufficient to en ensure that
+the format is a packed YUV422.
+
+Use explicit fourcc helpers for the check instead.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_backend.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index 01cd353d9302..b3d9d88ab290 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
- 	return info->is_yuv && info->num_planes == 3;
- }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 9e9255ee59cd..bbadc2ab9f4d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -245,7 +245,8 @@ static int sun4i_backend_update_yuv_format(struct sun4i_backend *backend,
+ 			   SUN4I_BACKEND_ATTCTL_REG0_LAY_YUVEN);
  
-+/**
-+ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
-+ * YUV format with 4:1:0 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:0
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
-+ * YUV format with 4:1:1 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:1
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
-+ * YUV format with 4:2:0 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:0
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
-+ * YUV format with 4:2:2 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:2
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
-+}
-+
-+/**
-+ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
-+ * YUV format with 4:4:4 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:4:4
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
-+}
-+
- const struct drm_format_info *__drm_format_info(u32 format);
- const struct drm_format_info *drm_format_info(u32 format);
- const struct drm_format_info *
+ 	/* TODO: Add support for the multi-planar YUV formats */
+-	if (format->num_planes == 1)
++	if (drm_format_info_is_yuv_packed(format) &&
++	    drm_format_info_is_yuv_sampling_422(format))
+ 		val |= SUN4I_BACKEND_IYUVCTL_FBFMT_PACKED_YUV422;
+ 	else
+ 		DRM_DEBUG_DRIVER("Unsupported YUV format (0x%x)\n", fmt);
 -- 
 2.19.2
 
