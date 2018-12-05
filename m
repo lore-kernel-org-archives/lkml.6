@@ -2,109 +2,132 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5306C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF80C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79CB02054F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF9772054F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:43:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH/NkyfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79CB02054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUYFPLPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9772054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbeLEXlg (ORCPT
+        id S1727989AbeLEXm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:41:36 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39706 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbeLEXlf (ORCPT
+        Wed, 5 Dec 2018 18:42:59 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45248 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeLEXm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:41:35 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so16077293lfh.6;
-        Wed, 05 Dec 2018 15:41:33 -0800 (PST)
+        Wed, 5 Dec 2018 18:42:59 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 32so20337655ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:42:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qNKe+5KxT/esz0I+cZXkh1aeiS+WfwyvdIf8Ds443Ac=;
-        b=lH/NkyfYlV6q7it4rU9iNpD0l0zr+ghZJWIOhvHhrBbngGyOj8EhG+C6Duw/8ExAz9
-         9zmv/FofnZI2v0PmOr1Su0vZDF/nysz1bTLTAqu6y5Vl6jEMyoiWXjt0btg5UPpEofdY
-         C8kToHQvhTX6Sqwk89COIGrOKB22x2w7JxK81SHYWO4Sm/sFRv9Yrv8GLgBc91q/pOa2
-         puO5gALgwQioEH1V6AzrtsODjafsqY2I4uG0oLkAYSdp0oyRM9Qy2WFoNuZn5UU7ERqc
-         cMO35cNH2jYHD2R1rc97XolI50LFGeKYY2DDb/GxjNzRVmZYUGKWtLT/tUXLcuVx2bVr
-         9voQ==
+        bh=ILTDFbnKcrSbI/WOEOfgYOAsJJ/q92nb0Ki7PHqDm4c=;
+        b=CUYFPLPnLvA7Y5BGp17YgnKx5e4b6OX2bXL+WGKSm3KAyKi7nAYMdlCvj4N+laipSe
+         8H260LRWs3dDuhYUQi5hp4K0QJmG7ZSgbyrHFMPJf+upLgsfJC3rkVxqhCuTZFd+hYFD
+         3dy6ngOp7+Y97nR40MTG5gQDk78bpi0HSSJzW6eG//BGWt9TiwgeWLxQG7qzWQNyJwW5
+         hRsim8VeFtPmVZQoqDFrbNkkvWt9/x40bbi9GLbfLvJ/c91ZORM5jBC0NtRGxLRla/aE
+         iteAghzeATzNPgcW8+xNz3l5ddTGw3veo/gDTs+Pph/cm2gm4sInt4cFJzyyhqaR0Xfl
+         3xeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qNKe+5KxT/esz0I+cZXkh1aeiS+WfwyvdIf8Ds443Ac=;
-        b=QF/256YT639VwOIy1o/ulSVpc/RoS2yWveMWbr04WdSrTs2sDDZJRUvfGzb4VddncC
-         ZeL+yE6irNMEam5uC3dNyW7ccCoFUhyXnQ2htyNVOV5Hv3l3adMSwbTG6nnVH6ZJnm6h
-         ye9UnxIr53Nak60Kn3P2kWId3AKEOZGg2eZdUVofxBvZqdBF5WMd4YFZlnSNDk4OxLcS
-         NvCOMzIwLsdlC7MESUBFbV10zkLlhwdPzrRfurKJGXtfyNmXRbXnqLfAStWLRbZpZPMx
-         5CIKPoZn+uagOV4ENsaBzyTulI2+wzDnHGNxTaxhp/jFXUigKQLVZMfMKrlTYINdLjmo
-         GP+A==
-X-Gm-Message-State: AA+aEWaW1UVFGHcF0M4JnC9OPQPNTBAl6xmyssu2zAE/gSTOa+jC9th+
-        ZFL2IYIncRfVLNz1rWW6E7LlschOtiaOWsLwU+o=
-X-Google-Smtp-Source: AFSGD/W5MmOVTo8TQq+2HBiNymKCZPp2wLasc6xtW8qHTSX3UDtD8fxfag/nwkIu82NESWwSjznSeqc7tErgCcIvuTU=
-X-Received: by 2002:a19:26ce:: with SMTP id m197mr15083019lfm.23.1544053292925;
- Wed, 05 Dec 2018 15:41:32 -0800 (PST)
+        bh=ILTDFbnKcrSbI/WOEOfgYOAsJJ/q92nb0Ki7PHqDm4c=;
+        b=t0o96AxUDUv/9en6lxvurnQ1xMcnLeAs16kv+rEwenfTNLNAwJSOiFeOx0iwyI1TRk
+         bEN2L1CKS4XdXq3QEKRyy8oeUpbmvBSOd06OXKZPECXtily3d9DsYjr9x29D5YEWQLcQ
+         dnUsiT0+N+vPUXXmsjUXZT1IZlOO9/Ja9nIC165vZm4zxqK51s4CWcRkFIK2GCJ2rYzy
+         RTkt7Ec9aSIArF/Keg0UeA91hVTLF7s+VY1CpuzNRkLO6MkM3ic+JG2KmHu018JEGbSL
+         RMCV4v9siq/MYWi8FLqYpUOegW6Q5ZkBuGEcG+WmxldN8Qv4Dz1d+19CGG/BNKPCKTaT
+         V0Ig==
+X-Gm-Message-State: AA+aEWaG72XFaTfirOqRFaTn3iqFyJbF0gOm8I8bVemgPPAX0BonsTqN
+        4O8gR2mfpCO3SzUJ+JXCTA4u8h5CzhPR8+G88NPsJg==
+X-Google-Smtp-Source: AFSGD/VcGuZqItDIdSb9ej3wWzfLI/Y13oXdBNaj2MnIO2Y9T3kpxYWMyfO55rfFj0W7LF3N3bstxuPcJ5nqP7BdgyM=
+X-Received: by 2002:a9d:3ac:: with SMTP id f41mr15878232otf.98.1544053377755;
+ Wed, 05 Dec 2018 15:42:57 -0800 (PST)
 MIME-Version: 1.0
-References: <CAChUvXNO_8Frw1igaEAHSxmdtTy7MJVm8W1NpUqZ6tFD0hXwhA@mail.gmail.com>
- <0BF2A47F-7F33-4E4D-A566-23AF2F4CCD52@theinkpens.com> <CAChUvXMVHxhawLFPFzz_0+iFxjQ+dRwpTsCGo95oc8Y+7a-2DQ@mail.gmail.com>
- <AM0PR04MB3971FBCF6CB23BE778D39EED9AD80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXPCfwfHrntJHWpsydYZE=P692Axd0pFE+GjZCXtx1fgog@mail.gmail.com>
- <CAChUvXMWZ-LYyqnczM-bt9cDP0r1XT+F1dcYuRHiVcx=QR7_Jw@mail.gmail.com>
- <AM0PR04MB3971768EA5D50D7045B462619AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXN8rZqxBaV2qbdR8uymsmZAk_Jnc2kxSUf+kBf76QHV9A@mail.gmail.com>
- <AM0PR04MB3971FFCCDAF29E7DF0F0EE159AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNz=XR37EeVRJFnF195BGgjPgCeFv6nbjR3yV2_mQwxBQ@mail.gmail.com>
- <20181128234415.GH16830@zn.tnic> <CAChUvXPgntzMbAhcg8y2HJyyZWwaqNPe66efmpfyHLgN1JSW_w@mail.gmail.com>
- <AM0PR04MB3971D326D037CFB2497B1A559AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNxcpHDOn1Rkxwp8VbuN5-k08JfrgwdbN95uvMWVh1Rwg@mail.gmail.com>
- <AM0PR04MB3971DE1C9A0B3D6C938CBADD9AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNSGosbBbiBh-MF8FsnKpL3jMaS-fr_BzQAjEcPCWi7Ew@mail.gmail.com> <AM0PR04MB39717D1017A161D54940486D9AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB39717D1017A161D54940486D9AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
-From:   Tracy Smith <tlsmith3777@gmail.com>
-Date:   Wed, 5 Dec 2018 17:41:20 -0600
-Message-ID: <CAChUvXOgUiQLAuTBAhYzkc2C-FN=BLbYo2fdKLkMZKOJW7gF+g@mail.gmail.com>
-Subject: Layerscape UE detected and no EDAC panic
-To:     york.sun@nxp.com
-Cc:     bp@alien8.de, linux-edac@vger.kernel.org,
-        util-linux@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-18-brendanhiggins@google.com> <CAL_Jsq+09Kx7yMBC_Jw45QGmk6U_fp4N6HOZDwYrM4tWw+_dOA@mail.gmail.com>
+ <18814973-8f0a-4647-a097-fcc3dc0b3cd3@infradead.org> <CAFd5g475RK9v9X4qxmXwuHiPMOs05WrZAw6EJWNdVoAHQWguFQ@mail.gmail.com>
+ <CAL_JsqL_PivQbrJFEusdKAy-2EQtKL3OHbmyYSK9bzuTOQegqA@mail.gmail.com>
+In-Reply-To: <CAL_JsqL_PivQbrJFEusdKAy-2EQtKL3OHbmyYSK9bzuTOQegqA@mail.gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 5 Dec 2018 15:42:46 -0800
+Message-ID: <CAFd5g45-HGytAPTx7OQD8B0oAdLncDGSMMTyHCTtyobeUJ15AQ@mail.gmail.com>
+Subject: Re: [RFC v3 17/19] of: unittest: migrate tests to run on KUnit
+To:     Rob Herring <robh@kernel.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, mcgrof@kernel.org,
+        shuah@kernel.org, Joel Stanley <joel@jms.id.au>,
+        mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, dan.j.williams@intel.com,
+        linux-nvdimm@lists.01.org, kieran.bingham@ideasonboard.com,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I can't help you on that. I never tried to force errors by grounding the
-> signals. You have read the driver. Do you see panic? The idea is to
-> report the error and let upper layer to decide what to do. Sometimes
-> limping forward is better than reset or panic. Again, it is not driver's
-> responsibility.
+On Tue, Dec 4, 2018 at 5:41 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Dec 3, 2018 at 6:14 PM Brendan Higgins
+> <brendanhiggins@google.com> wrote:
+> >
+> > On Thu, Nov 29, 2018 at 4:40 PM Randy Dunlap <rdunlap@infradead.org> wrote:
+> > >
+> > > On 11/28/18 12:56 PM, Rob Herring wrote:
+> > > >> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> > > >> index ad3fcad4d75b8..f309399deac20 100644
+> > > >> --- a/drivers/of/Kconfig
+> > > >> +++ b/drivers/of/Kconfig
+> > > >> @@ -15,6 +15,7 @@ if OF
+> > > >>  config OF_UNITTEST
+> > > >>         bool "Device Tree runtime unit tests"
+> > > >>         depends on !SPARC
+> > > >> +       depends on KUNIT
+> > > > Unless KUNIT has depends, better to be a select here.
+> > >
+> > > That's just style or taste.  I would prefer to use depends
+> > > instead of select, but that's also just my preference.
+> >
+> > I prefer depends too, but Rob is the maintainer here.
+>
+> Well, we should be consistent, not the follow the whims of each maintainer.
 
-Thanks for the clarification York. Yes there is panic code in the EDAC
-upper layer, but no panic occurred.  A UE was printed on the serial
-console, and the layerscape board reset.
+Sorry, I don't think that came out the way I meant it. I don't really
+think we are consistent on this point across the kernel, and I don't
+feel very strongly about the point, so I was just looking to follow
+the path of least resistance. (I also just assumed Rob would keep us
+consistent within drivers/of/.)
 
-The reason it did not panic is because edac_mc_panic_on_ue has to be
-set at runtime. Just validated this will cause a panic when set. No
-memory UE should reset the board, so this was caused because of
-grounding the data line and an issue with how I'm testing for a UE not
-related to a UE itself.
+I figure if we are running unit tests from the test runner script or
+from an automated system, you won't be hunting for dependencies for a
+single test every time you want to run a test, so select doesn't make
+it easier to configure in most imagined use cases.
 
-echo "1" > /sys/module/edac_core/parameters/edac_mc_panic_on_ue this
-is the way to force a panic on a UE error.
+KUNIT hypothetically should not depend on anything, so select should
+be safe to use.
 
-MODULE_PARM_DESC(edac_mc_panic_on_ue, "Panic on uncorrected error: 0=off 1=on");
-
-So, this is validated. Produced a UE and was able to avoid a panic and
-I was able to induce a panic on a UE.  I'm satisfied with this. thanks
-again!!
+On the other hand, if we end up being wrong on this point and KUnit
+gains widespread adoption, I would prefer not to be in a position
+where I have to change a bunch of configs all over the kernel because
+this example got copied and pasted.
