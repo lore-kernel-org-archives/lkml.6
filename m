@@ -2,153 +2,104 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EDFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FF2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684302081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B7AB2081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jd2XerM9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684302081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="fB+lNBqq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7AB2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbeLEC6m (ORCPT
+        id S1726863AbeLEC6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:58:42 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35787 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeLEC6m (ORCPT
+        Tue, 4 Dec 2018 21:58:51 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38150 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEC6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:58:42 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so18072292wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:58:41 -0800 (PST)
+        Tue, 4 Dec 2018 21:58:51 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so9242996pfi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:58:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JtHvc1wKR8UzHTWCRtECIwbWEcC9WmtTV1sPBssAB/8=;
-        b=jd2XerM9WriBcE6UWG5K+DgtOKnCM5pYBNbTHSuHJZt7/xbuBc2ndhYzORMnpLFOkY
-         sjHBYAboFCueFIbGZy38z6mkZ8CDt1/3b24ZjbtyoAFhRH9Ci3aO1bBR3o0krWw/us/R
-         Y0bXKhiKav/++dV38NcUYRTuUK5ATnRZOf6PQ=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JOUY7c2Uvay4l5W0HFTSaetsFBVms6zdryQecubImNA=;
+        b=fB+lNBqqQ/hb5g+9Nbc7C4RTlzt93A3AoESpCI47+IfshGedEtaLtAZlOL2VvM0Rp9
+         oDfvmisw+Wd2tftkp0zC1iLqvfClXK1PKP15Y9+/bSKFukiyaqRXmbwl1BzK57DCENII
+         zdlCZWEBDAcgqjmXziT0kbOnNH9LgO5dfkL2r7A36tnUb8Y2E/yE/L6gV6/Co7xejpiP
+         NGy80WyilN/BpJxphHUr/in3Sh6QLBmP09HzDEqFJtA7UV6HtDeLfL4euiNh0usLhTti
+         fCfAsljfn/dwmDdVpG6U41lhKgLOPyrGDZ7hEweL+qAvT8VwsuQ3NN+8I5JXdgDNhtZ5
+         6Uaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JtHvc1wKR8UzHTWCRtECIwbWEcC9WmtTV1sPBssAB/8=;
-        b=LIbw7oLyUagNJwZ4guK0Zdj6fhM0gkBUYLTsBtMN2092vub4oVAwACoXHRgNGxPzyv
-         zJZZn0mKtUEZLLeQIkrUzrvuXxd7colAoa3o19bz89AwuOzbg8ghlDAyD6LRPiEhdrP4
-         fUxXwBsMGL4dimYWzHrbZbOHIGTIpLKcM9IKZ8yiMIu/2RI1+EgV9TofYt0TSaEVaDr3
-         YKMsNu6G0Jzu/T6zG5g4zuu/EQJyxq7fI7lPvByl4pZPAyW6I52qqqYkuIzYVeF/ExdC
-         Nrcrss82d05A5R/VrlvbjXhr5XXi8RoSznabESQvEJUIOwrzYFOK3YJDOvH5chSqTE9E
-         5jBA==
-X-Gm-Message-State: AA+aEWbJKmffPt4yaEG0phBvILNNV22jH62bJPcMooUIoHicwxbJkcGm
-        yq1+JaJ1ztWiAIIsiTPOxLSObQ==
-X-Google-Smtp-Source: AFSGD/UYNE+Z9Y+lPzomXCXMPB4q8JvtSTdyv/YDAGH96l05K0+ArBt+APEwc4U1f9R3ikyIpNAjgQ==
-X-Received: by 2002:adf:c612:: with SMTP id n18mr19396951wrg.174.1543978720427;
-        Tue, 04 Dec 2018 18:58:40 -0800 (PST)
-Received: from leoy-ThinkPad-X240s ([209.250.228.18])
-        by smtp.gmail.com with ESMTPSA id t6sm16910200wru.11.2018.12.04.18.58.36
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JOUY7c2Uvay4l5W0HFTSaetsFBVms6zdryQecubImNA=;
+        b=UwuYNAdHKQ/Ki9rkYi3bP7V9XNT3BkVyOBsMh2m6yIip7f7LdQY2UyGd+WQFZceQZ/
+         AAIqOcy6KAnkE3BxUXfJupXVTyMdiLY0aadEGsxpxe2PuNouz43Oy661Ia2lPn8EAO83
+         jlUKCwYeeHPHeU/ZI5HPVBbrXUjJe14wyDEJz7pGP+CaPh4upxc92pn1bhTzuxWztatP
+         juKN6gvYhQUf293DNgL0Q6A98/jQTC5eveYSwR6fmv/E9cIY4g8Qw+S/V87Da9SvcdXG
+         gbpkn/ZR670hh9SLptETwdRyZPsHIULnJDaaZHerhqo9nC+GABzS7m3fwAIuGIr41JLh
+         ksUw==
+X-Gm-Message-State: AA+aEWbYbvdXrOVgDnZAXZt55jsfoR4vfDnTWsBU40qHZiFiJX/nfvMJ
+        aMX2ZO9qlKmhV1tSS74XhP/zCQdUydA=
+X-Google-Smtp-Source: AFSGD/VAEyeKyZGWnIA7ksjgOwq9LKXPRt9zpX32Ujjl/iylu8HTrO9MxGHyJ4qTUg6fZMyeC6kjuQ==
+X-Received: by 2002:aa7:8354:: with SMTP id z20mr22318844pfm.81.1543978729706;
+        Tue, 04 Dec 2018 18:58:49 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id o13sm27533895pfk.57.2018.12.04.18.58.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 18:58:39 -0800 (PST)
-Date:   Wed, 5 Dec 2018 10:58:32 +0800
-From:   leo.yan@linaro.org
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Al Grant <Al.Grant@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v1 2/5] perf cs-etm: Avoid stale branch samples when
- flush packet
-Message-ID: <20181205025832.GA13305@leoy-ThinkPad-X240s>
-References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
- <1541912383-19915-3-git-send-email-leo.yan@linaro.org>
- <20181116230511.GB25258@xps15>
+        Tue, 04 Dec 2018 18:58:48 -0800 (PST)
+Subject: Re: [PATCH V8 0/3] blk-mq: refactor code of issue request directly
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1542251558-10517-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <88fe68c6-886c-1328-009a-9c7c5fa4ebc9@kernel.dk>
+Date:   Tue, 4 Dec 2018 19:58:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116230511.GB25258@xps15>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+In-Reply-To: <1542251558-10517-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 04:05:11PM -0700, Mathieu Poirier wrote:
-
-[...]
-
-> > -static int cs_etm__flush(struct cs_etm_queue *etmq)
-> > +static int cs_etm__flush(struct cs_etm_queue *etmq, bool new_packet)
-> >  {
-> >  	int err = 0;
-> >  	struct cs_etm_auxtrace *etm = etmq->etm;
-> > @@ -989,6 +989,20 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
-> >  
-> >  	}
-> >  
-> > +	/*
-> > +	 * If 'new_packet' is false, this time call has no a new packet
-> > +	 * coming and 'etmq->packet' contains the stale packet which is
-> > +	 * set at the previous time with packets swapping.  In this case
-> > +	 * this function is invoked only for flushing branch stack at
-> > +	 * the end of buffer handling.
-> > +	 *
-> > +	 * Simply to say, branch samples should be generated when every
-> > +	 * time receive one new packet; otherwise, directly bail out to
-> > +	 * avoid generate branch sample with stale packet.
-> > +	 */
-> > +	if (!new_packet)
-> > +		return 0;
-> > +
-> >  	if (etm->sample_branches &&
-> >  	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-> >  		err = cs_etm__synth_branch_sample(etmq);
-> > @@ -1075,7 +1089,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
-> >  					 * Discontinuity in trace, flush
-> >  					 * previous branch stack
-> >  					 */
-> > -					cs_etm__flush(etmq);
-> > +					cs_etm__flush(etmq, true);
-> >  					break;
-> >  				case CS_ETM_EMPTY:
-> >  					/*
-> > @@ -1092,7 +1106,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
-> >  
-> >  		if (err == 0)
-> >  			/* Flush any remaining branch stack entries */
-> > -			err = cs_etm__flush(etmq);
-> > +			err = cs_etm__flush(etmq, false);
+On 11/14/18 8:12 PM, Jianchao Wang wrote:
+> Hi Jens
 > 
-> I understand what you're doing and it will yield the correct results.  What I'm
-> not sure about is if we wouldn't be better off splitting cs_etm__flush()
-> in order to reduce the complexity of the main decoding loop.  That is rename
-> cs_etm__flush() to something like cs_etm__trace_on() and spin off a new
-> cs_etm__end_block().  
+> Please consider this patchset for 4.21.
+> It refactors the code of issue request directly to unify the interface
+> and make the code clearer and more readable.
 > 
-> It does introduce a little bit of code duplication but I think we'd win in terms
-> of readability and flexibility.
+> The 1st patch refactors the code of issue request directly to unify the
+> helper interface which could handle all the cases.
+> 
+> The 2nd patch make blk_mq_sched_insert_requests issue requests directly
+> with 'bypass' false, then it needn't to handle the non-issued requests
+> any more.
+> 
+> The 3rd patch replace and kill the blk_mq_request_issue_directly.
 
-Sorry for long delay, Mathieu.
+I'd love to get this queued up, the direct dispatch path is a mess and
+it's even now been known to cause corruptions... I'm going to queue
+up the direct dispatch fix shortly, and apply it to for-4.21/block
+as well. Any chance you can respin this on top after that?
 
-Agree with the idea of splitting cs_etm__flush() into two functions.
-Will spin patch for new version.
+-- 
+Jens Axboe
 
-Thanks,
-Leo Yan
-
-> >  	}
-> >  
-> >  	return err;
-> > -- 
-> > 2.7.4
-> > 
