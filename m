@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6614C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1511BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CCE20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE73520850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeUBdh5q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CCE20850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ff/UOUwD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE73520850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbeLEJlw (ORCPT
+        id S1729022AbeLEJmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46330 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:42:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728990AbeLEJlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:49 -0500
+        id S1728284AbeLEJlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:51 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B8892084C;
-        Wed,  5 Dec 2018 09:41:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77A2D20851;
+        Wed,  5 Dec 2018 09:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002908;
-        bh=Wm7im0A1HDlNmjT3CCf4t2+2Dk5MCR1Uli3DbwbAowg=;
+        s=default; t=1544002911;
+        bh=YDluNSaqG5S/nevKiqWAWOfO//XcOLcurySYWaauXYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KeUBdh5qOxaS/f6waCB84HXcNwW3xACtIvFh0RuHvmPVWJImZ3S29nPIoQv53gtFw
-         gqYtAY8xepex7sJkLJ50/3/bagIxZLI/MDhQBYZN4Us2pAODKT0YOSc/PLBkUF3d2h
-         XGv4rOGRqnqF24OJtkgbwjbbt5DmXrLWcCONSqO8=
+        b=ff/UOUwDxQEOVa3c/7iuXb/JpKZ+lUeb5TRqdAWH7MdoIj41iJGtIz9dktDuhyWId
+         RutfTu2K4kmA/Svbvyt/Uj4hBtOJgvAQHeeRPygt1YKQVLEMbcPuzPo6FCDRBtjWDF
+         80vGtADkh/ae02HPzTlyI/MGLlOGnqbwCNIOtqP4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 108/123] fscache, cachefiles: remove redundant variable 'cache'
-Date:   Wed,  5 Dec 2018 04:35:40 -0500
-Message-Id: <20181205093555.5386-108-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>,
+        linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 109/123] nvme: warn when finding multi-port subsystems without multipathing enabled
+Date:   Wed,  5 Dec 2018 04:35:41 -0500
+Message-Id: <20181205093555.5386-109-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,39 +52,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+[ Upstream commit 14a1336e6fff47dd1028b484d6c802105c58e2ee ]
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+Without CONFIG_NVME_MULTIPATH enabled a multi-port subsystem might
+show up as invididual devices and cause problems, warn about it.
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/nvme/host/nvme.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index db233588a69a..8a577409d030 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -968,11 +968,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- 	__releases(&object->fscache.cookie->lock)
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index bb4a2003c097..60220de2db52 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -537,6 +537,9 @@ static inline void nvme_mpath_check_last_path(struct nvme_ns *ns)
+ static inline int nvme_mpath_init(struct nvme_ctrl *ctrl,
+ 		struct nvme_id_ctrl *id)
  {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
- 
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
- 
- 	_enter("%p,{%lu}", object, page->index);
- 
++	if (ctrl->subsys->cmic & (1 << 3))
++		dev_warn(ctrl->device,
++"Please enable CONFIG_NVME_MULTIPATH for full support of multi-port devices.\n");
+ 	return 0;
+ }
+ static inline void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
 -- 
 2.17.1
 
