@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBA5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA92DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F9E206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99F9E206B7
+	by mail.kernel.org (Postfix) with ESMTP id A78F7206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78F7206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeLEIhs (ORCPT
+        id S1727379AbeLEIhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:37:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36177 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:37:52 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36206 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727305AbeLEIhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727309AbeLEIhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 03:37:47 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BBB9C20E35; Wed,  5 Dec 2018 09:37:45 +0100 (CET)
+        id ED7DE20E36; Wed,  5 Dec 2018 09:37:45 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EC65D2087D;
-        Wed,  5 Dec 2018 09:37:25 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6C9E420A58;
+        Wed,  5 Dec 2018 09:37:26 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 03/22] drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422 check
-Date:   Wed,  5 Dec 2018 09:36:44 +0100
-Message-Id: <20181205083703.21488-4-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 05/22] drm/sun4i: frontend: Determine input format based on colorspace
+Date:   Wed,  5 Dec 2018 09:36:46 +0100
+Message-Id: <20181205083703.21488-6-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,31 +50,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking for the number of planes is not sufficient to en ensure that
-the format is a packed YUV422.
+Since all the RGB input formats have the same value for the DATA_FMT
+field of the INPUT_FMT register, we can group them when the format is
+known to be RGB. Here, we assume that a non-YUV format is RGB, because
+the hardware does not support any other colorspace than RGB and YUV.
 
-Use explicit fourcc helpers for the check instead.
+Use the DRM format info structure to check whether the format uses a
+YUV colorspace.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index 9e9255ee59cd..bbadc2ab9f4d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -245,7 +245,8 @@ static int sun4i_backend_update_yuv_format(struct sun4i_backend *backend,
- 			   SUN4I_BACKEND_ATTCTL_REG0_LAY_YUVEN);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index dd5af3019099..7c7a5ea0cf58 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -108,14 +108,12 @@ static int
+ sun4i_frontend_drm_format_to_input_fmt(const struct drm_format_info *format,
+ 				       u32 *val)
+ {
+-	switch (format->format) {
+-	case DRM_FORMAT_XRGB8888:
++	if (!format->is_yuv)
+ 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
+-		return 0;
+-
+-	default:
++	else
+ 		return -EINVAL;
+-	}
++
++	return 0;
+ }
  
- 	/* TODO: Add support for the multi-planar YUV formats */
--	if (format->num_planes == 1)
-+	if (drm_format_info_is_yuv_packed(format) &&
-+	    drm_format_info_is_yuv_sampling_422(format))
- 		val |= SUN4I_BACKEND_IYUVCTL_FBFMT_PACKED_YUV422;
- 	else
- 		DRM_DEBUG_DRIVER("Unsupported YUV format (0x%x)\n", fmt);
+ static int
 -- 
 2.19.2
 
