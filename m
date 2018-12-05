@@ -2,168 +2,100 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92B7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D593C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DDFF20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30011213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544042562;
-	bh=56xfK0f4Jt74vV+P9zWL3U/Bkp/4KRIX7RZj0NEPRr0=;
-	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=01flRPcFYJ3AXLSTn+8KdcM3kVFAPJu5/3YawfLxUZdBCord/hHxRb64UHzYC0UOL
-	 m+DN1+3uTTR6XGstapFjzN5PJ+xfI+P2JyjzyJgA4TPSTfNAzWb3mxLH6J7e7sWV2Y
-	 zdbZOEp03OxxkhIuvE0j7vcefkIolfLlXLVB9Lyc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DDFF20850
+	s=default; t=1544042572;
+	bh=+pNzHB3PKcNBoN8mDtlxAuhSxNxHq7elljOmLW/EOYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VTXwfGAy66aAy/Ieh6fsl26/1+NOOIOfqKx2tYXg2Sum1yK0/ks7BzXh5cYgDSOaV
+	 2tYKHfEZtbxeU5zuhO6NJHVx8ugAV74JA4Iewi0bGEFkgLixk/4uguLBvfZ4+MuoWb
+	 wIY/r2hqw76GXMvBL9HYWXjY1abgL1TpwSI6WvvY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30011213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeLEUml (ORCPT
+        id S1728608AbeLEUmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:42:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728138AbeLEUmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:42:37 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F7DB20850;
-        Wed,  5 Dec 2018 20:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544042556;
-        bh=56xfK0f4Jt74vV+P9zWL3U/Bkp/4KRIX7RZj0NEPRr0=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=MVdjBsO1hVkzpxirhypwazW4HjjQKAJKXwRrZu/mcqwA22pBB2uIh5p5MJ/QV8Ayc
-         fQHZYj8nE8Z2guy8DHNw+MEsrtINut/GAkRbgZgEh0BDb+J9lfXNyJbLDQ6ZLy609P
-         cwBkwHuoPrHWgrDIp+UAMsGGT6Nyjx7ceshKPU2Y=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 5 Dec 2018 15:42:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55904 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727257AbeLEUmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:42:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8A2A2AEE5;
+        Wed,  5 Dec 2018 20:42:48 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 21:42:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Subject: Re: [mm PATCH v6 6/7] mm: Add reserved flag setting to set_page_links
+Message-ID: <20181205204247.GY1286@dhcp22.suse.cz>
+References: <154361452447.7497.1348692079883153517.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <154361479877.7497.2824031260670152276.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <20181205172225.GT1286@dhcp22.suse.cz>
+ <19c9f0fe83a857d5858c386a08ca2ddeba7cf27b.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Tali Perry <tali.perry1@gmail.com>, avifishman70@gmail.com,
-        brendanhiggins@google.com, mturquette@baylibre.com,
-        tmaimon77@gmail.com, venture@google.com, yuenn@google.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181205194702.257430-3-tali.perry1@gmail.com>
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-References: <20181205194702.257430-1-tali.perry1@gmail.com>
- <20181205194702.257430-3-tali.perry1@gmail.com>
-Message-ID: <154404255553.88331.5492676494542176052@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 1/1] clk: npcm: get fixed input clks from DT
-Date:   Wed, 05 Dec 2018 12:42:35 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19c9f0fe83a857d5858c386a08ca2ddeba7cf27b.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tali Perry (2018-12-05 11:47:02)
-> ---
+On Wed 05-12-18 09:55:17, Alexander Duyck wrote:
+> On Wed, 2018-12-05 at 18:22 +0100, Michal Hocko wrote:
+> > On Fri 30-11-18 13:53:18, Alexander Duyck wrote:
+> > > Modify the set_page_links function to include the setting of the reserved
+> > > flag via a simple AND and OR operation. The motivation for this is the fact
+> > > that the existing __set_bit call still seems to have effects on performance
+> > > as replacing the call with the AND and OR can reduce initialization time.
+> > > 
+> > > Looking over the assembly code before and after the change the main
+> > > difference between the two is that the reserved bit is stored in a value
+> > > that is generated outside of the main initialization loop and is then
+> > > written with the other flags field values in one write to the page->flags
+> > > value. Previously the generated value was written and then then a btsq
+> > > instruction was issued.
+> > > 
+> > > On my x86_64 test system with 3TB of persistent memory per node I saw the
+> > > persistent memory initialization time on average drop from 23.49s to
+> > > 19.12s per node.
+> > 
+> > I have tried to explain why the whole reserved bit doesn't make much
+> > sense in this code several times already. You keep ignoring that and
+> > that is highly annoying. Especially when you add a tricky code to
+> > optimize something that is not really needed.
+> > 
+> > Based on that I am not going to waste my time on other patches in this
+> > series to review and give feedback which might be ignored again.
+> 
+> I got your explanation. However Andrew had already applied the patches
+> and I had some outstanding issues in them that needed to be addressed.
+> So I thought it best to send out this set of patches with those fixes
+> before the code in mm became too stale. I am still working on what to
+> do about the Reserved bit, and plan to submit it as a follow-up set.
 
-No commit text? No Signed-off-by?
-
-Sorry, I don't understand what this patch is for or what's going on.
-
->  drivers/clk/clk-npcm7xx.c | 64 +++++++++++++++++++++++++++++++++++++++--=
-------
->  1 file changed, 53 insertions(+), 11 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-> index 27a86b7a34db..25f8ccaa3d2f 100644
-> --- a/drivers/clk/clk-npcm7xx.c
-> +++ b/drivers/clk/clk-npcm7xx.c
-> @@ -8,17 +8,23 @@
->   */
->  =
-
->  #include <linux/module.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/device.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> +#include <linux/rational.h>
->  #include <linux/bitfield.h>
-> -
->  #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
->  =
-
-> +
-
-I don't get it. Please don't send random whitespace changes in a patch.
-
->  struct npcm7xx_clk_pll {
->         struct clk_hw   hw;
->         void __iomem    *pllcon;
-> @@ -44,7 +50,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct=
- clk_hw *hw,
->         u64 ret;
->  =
-
->         if (parent_rate =3D=3D 0) {
-> -               pr_err("%s: parent rate is zero", __func__);
-> +               pr_err("%s: parent rate is zero. reg=3D%s\n", __func__,
-> +                      hw->init->name);
-
-Why do we care?
-
->                 return 0;
->         }
->  =
-
-> @@ -544,12 +552,14 @@ static void __init npcm7xx_clk_init(struct device_n=
-ode *clk_np)
->         void __iomem *clk_base;
->         struct resource res;
->         struct clk_hw *hw;
-> +       struct clk *clk;
->         int ret;
->         int i;
->  =
-
-> +       clk_base =3D NULL;
->         ret =3D of_address_to_resource(clk_np, 0, &res);
->         if (ret) {
-> -               pr_err("%pOFn: failed to get resource, ret %d\n", clk_np,
-> +               pr_err("%s: failed to get resource, ret %d\n", clk_np->na=
-me,
->                         ret);
->                 return;
->         }
-
-Drop this change as it's making things worse.
-
-> @@ -558,9 +568,10 @@ static void __init npcm7xx_clk_init(struct device_no=
-de *clk_np)
->         if (!clk_base)
->                 goto npcm7xx_init_error;
->  =
-
-> -       npcm7xx_clk_data =3D kzalloc(struct_size(npcm7xx_clk_data, hws,
-> -                                  NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
-> -       if (!npcm7xx_clk_data)
-> +       npcm7xx_clk_data =3D kzalloc(sizeof(*npcm7xx_clk_data->hws) *
-> +               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL=
-);
-> +
-> +       if (!npcm7xx_clk_data->hws)
->                 goto npcm7xx_init_np_err;
->  =
-
->         npcm7xx_clk_data->num =3D NPCM7XX_NUM_CLOCKS;
-
-Drop this hunk.
-
+From my experience Andrew can drop patches between different versions of
+the patchset. Things can change a lot while they are in mmotm and under
+the discussion.
+-- 
+Michal Hocko
+SUSE Labs
