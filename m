@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F413AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00C9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B597A20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6592C20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fq+LX2sK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B597A20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+17TuSW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6592C20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbeLEJoE (ORCPT
+        id S1729171AbeLEJoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:44:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48646 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbeLEJoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:44:02 -0500
+        id S1727882AbeLEJoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:06 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEEB72087F;
-        Wed,  5 Dec 2018 09:43:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A0932087F;
+        Wed,  5 Dec 2018 09:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003041;
-        bh=ARJuzMKmWH3ZH8xiWVIKkvg9lz4vDEJ90b+h7eGoaKs=;
+        s=default; t=1544003045;
+        bh=xxNqbesU+P5/Dx+HXj16j5/MnI7DxuAXxsewxZWMm7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fq+LX2sKXPapMCwsyx9cE4dYhQqRPV4Hia7xU7jRl7sGqZsyu6FERhIZGk1IWS+cv
-         a61IHU5PwldDqLL/1XOcIyR9Od0rw4dj/M4QSyfW83FyBjw30vFPDn0dkQpH8MCXvh
-         acJp/TnTypdw7p9AmIA6eTFBgUA73mdT73bfbPoA=
+        b=s+17TuSWLcYWEzH2GdpRQ0hw5NLGTXhEY1R7FH37oMdSlZv6El6EyIDDjml/4yIIP
+         6t8VEOYiqnhU1kqHObq6+XQGO3mlmyQZgOF0vISv3qVusjMdKYeI4m/Yvuz2dIo7Dz
+         PDIbx9s+kP1pTADkLieu01qUwAtIoGaB/9aR52b8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.14 11/69] ASoC: wm_adsp: Fix dma-unsafe read of scratch registers
-Date:   Wed,  5 Dec 2018 04:41:49 -0500
-Message-Id: <20181205094247.6556-11-sashal@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 12/69] s390/cpum_cf: Reject request for sampling in event initialization
+Date:   Wed,  5 Dec 2018 04:41:50 -0500
+Message-Id: <20181205094247.6556-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,88 +52,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 20e00db2f59bdddf8a8e241473ef8be94631d3ae ]
+[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
 
-Stack memory isn't DMA-safe so it isn't safe to use either
-regmap_raw_read or regmap_bulk_read to read into stack memory.
+On s390 command perf top fails
+[root@s35lp76 perf] # ./perf top -F100000  --stdio
+   Error:
+   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
+   	Try 'perf stat'
+[root@s35lp76 perf] #
 
-The two functions to read the scratch registers were using
-stack memory and regmap_raw_read. It's not worth allocating
-memory just for this trivial read, and it isn't time-critical.
-A simple regmap_read for each register is sufficient.
+Using event -e rb0000 works as designed.  Event rb0000 is the event
+number of the sampling facility for basic sampling.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+During system start up the following PMUs are installed in the kernel's
+PMU list (from head to tail):
+   cpum_cf --> s390 PMU counter facility device driver
+   cpum_sf --> s390 PMU sampling facility device driver
+   uprobe
+   kprobe
+   tracepoint
+   task_clock
+   cpu_clock
+
+Perf top executes following functions and calls perf_event_open(2) system
+call with different parameters many times:
+
+cmd_top
+--> __cmd_top
+    --> perf_evlist__add_default
+        --> __perf_evlist__add_default
+            --> perf_evlist__new_cycles (creates event type:0 (HW)
+			    		config 0 (CPU_CYCLES)
+	        --> perf_event_attr__set_max_precise_ip
+		    Uses perf_event_open(2) to detect correct
+		    precise_ip level. Fails 3 times on s390 which is ok.
+
+Then functions cmd_top
+--> __cmd_top
+    --> perf_top__start_counters
+        -->perf_evlist__config
+	   --> perf_can_comm_exec
+               --> perf_probe_api
+	           This functions test support for the following events:
+		   "cycles:u", "instructions:u", "cpu-clock:u" using
+		   --> perf_do_probe_api
+		       --> perf_event_open_cloexec
+		           Test the close on exec flag support with
+			   perf_event_open(2).
+	               perf_do_probe_api returns true if the event is
+		       supported.
+		       The function returns true because event cpu-clock is
+		       supported by the PMU cpu_clock.
+	               This is achieved by many calls to perf_event_open(2).
+
+Function perf_top__start_counters now calls perf_evsel__open() for every
+event, which is the default event cpu_cycles (config:0) and type HARDWARE
+(type:0) which a predfined frequence of 4000.
+
+Given the above order of the PMU list, the PMU cpum_cf gets called first
+and returns 0, which indicates support for this sampling. The event is
+fully allocated in the function perf_event_open (file kernel/event/core.c
+near line 10521 and the following check fails:
+
+        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
+		                 NULL, NULL, cgroup_fd);
+	if (IS_ERR(event)) {
+		err = PTR_ERR(event);
+		goto err_cred;
+	}
+
+        if (is_sampling_event(event)) {
+		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+			err = -EOPNOTSUPP;
+			goto err_alloc;
+		}
+	}
+
+The check for the interrupt capabilities fails and the system call
+perf_event_open() returns -EOPNOTSUPP (-95).
+
+Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
+This allows common kernel code in the perf_event_open() system call to
+test the next PMU in above list.
+
+Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm_adsp.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ arch/s390/kernel/perf_cpum_cf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 989d093abda7..67330b6ab204 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -787,38 +787,41 @@ static unsigned int wm_adsp_region_to_reg(struct wm_adsp_region const *mem,
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 61e91fee8467..edf6a61f0a64 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -349,6 +349,8 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		break;
  
- static void wm_adsp2_show_fw_status(struct wm_adsp *dsp)
- {
--	u16 scratch[4];
-+	unsigned int scratch[4];
-+	unsigned int addr = dsp->base + ADSP2_SCRATCH0;
-+	unsigned int i;
- 	int ret;
- 
--	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2_SCRATCH0,
--				scratch, sizeof(scratch));
--	if (ret) {
--		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
--		return;
-+	for (i = 0; i < ARRAY_SIZE(scratch); ++i) {
-+		ret = regmap_read(dsp->regmap, addr + i, &scratch[i]);
-+		if (ret) {
-+			adsp_err(dsp, "Failed to read SCRATCH%u: %d\n", i, ret);
-+			return;
-+		}
- 	}
- 
- 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
--		 be16_to_cpu(scratch[0]),
--		 be16_to_cpu(scratch[1]),
--		 be16_to_cpu(scratch[2]),
--		 be16_to_cpu(scratch[3]));
-+		 scratch[0], scratch[1], scratch[2], scratch[3]);
- }
- 
- static void wm_adsp2v2_show_fw_status(struct wm_adsp *dsp)
- {
--	u32 scratch[2];
-+	unsigned int scratch[2];
- 	int ret;
- 
--	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
--			      scratch, sizeof(scratch));
--
-+	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
-+			  &scratch[0]);
- 	if (ret) {
--		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
-+		adsp_err(dsp, "Failed to read SCRATCH0_1: %d\n", ret);
- 		return;
- 	}
- 
--	scratch[0] = be32_to_cpu(scratch[0]);
--	scratch[1] = be32_to_cpu(scratch[1]);
-+	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH2_3,
-+			  &scratch[1]);
-+	if (ret) {
-+		adsp_err(dsp, "Failed to read SCRATCH2_3: %d\n", ret);
-+		return;
-+	}
- 
- 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
- 		 scratch[0] & 0xFFFF,
+ 	case PERF_TYPE_HARDWARE:
++		if (is_sampling_event(event))	/* No sampling support */
++			return -ENOENT;
+ 		ev = attr->config;
+ 		/* Count user space (problem-state) only */
+ 		if (!attr->exclude_user && attr->exclude_kernel) {
 -- 
 2.17.1
 
