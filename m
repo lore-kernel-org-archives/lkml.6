@@ -2,187 +2,133 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4B7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E2FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A926220878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EF8E20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:37:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQYUvzFg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A926220878
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIHfsf+m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EF8E20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbeLESgM (ORCPT
+        id S1728055AbeLESg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:36:12 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40742 "EHLO
+        Wed, 5 Dec 2018 13:36:58 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55951 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeLESgM (ORCPT
+        with ESMTP id S1727523AbeLESg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:36:12 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q26so13906151wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:36:10 -0800 (PST)
+        Wed, 5 Dec 2018 13:36:58 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y139so14266691wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:36:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QdeLinFVWlRffPPHpnfEES3zo4hzZSLEoEYwaiieWlQ=;
-        b=DQYUvzFgyT9aIMFj52X9fYmF9+HFOk16vU7bA+zH4ECEepnWIA6P9Daffin6+eJea/
-         CYtYRNRwCbPUkura2R2TU3RO4VmT9CrYIMYzQpunfJsCLMx9ur1cHpfNiGSNDozLm6uh
-         huSa0YPv92BQpTD9e/W493VH8KuWNEzjczfOQetHO7NoGLgUwPq/hFfjzncd1XyW5U3b
-         E41jMakN5zx89o3U+pIPOYSEp7V7Ct1j/QV2feNjUR5VhOT3z/udXxbMONoJe7Vi+kHK
-         /9hv0/Mp1xCFQGRzgJrXF7D8KSP1dhAi5SDokyp76JH9gLI3QTJ2H9neOW7Uev/JSEZe
-         fQnA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SlcixkDg39GCe2yH6nHy2lFv3vD2jjZEP3UwtHVHMmY=;
+        b=jIHfsf+mmVq3mkigjVbWqb07tZZx5BLfZlPqEea0FJJ60ka4pVqBWJrJaPCJqOjPVe
+         F4f5MscgG5MVGd3qgzEJbfgM4GV6woeU3BGUyu8uMDwRFMuH4uJJxKxV3Ocgzc7GUN6O
+         VgbpOt86QWyBfXoyTdvU1bJNf8xdVdbZUb1HQrZxwiReX5B6DPm1aSAauOKCxasBiYzd
+         aswFqkCoVRXf6FL8F7YqiZm8EC97WPPioBZTfb9KPmX3ZQ0NtPkYufr1Kno1zYOEsDly
+         /ySaIx8ckrtnc5UevGPm+zIvP62p+lQu7+wfAT6NvBumW92Zv/YNRGaI1vUKjGdH38YD
+         ueEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QdeLinFVWlRffPPHpnfEES3zo4hzZSLEoEYwaiieWlQ=;
-        b=YaxyQukJlgtcDyQy6KMHGCoA2//FjuOuqrCEXc3GpYQI8yQmXnPW5f4eAFDe5d6/yN
-         0Hs6bWwEUyPJusqBv5nFImA4rDgq4Xrzch+a9Q5soEILjpbHY/w1FQwIwJb2V8iQi0/w
-         qvrFuh5K9AtQLsK1UXjRjjtbcVy7T+y2ye08oyZcBwThSaIHZgtwAbXukPHcLSL5x13m
-         GWoSE5yAiC8jySVJCmOS8R6BGb9gJ9Wa8Q3PjNTkbSDuh5EKf2GNdeIzA4qoCr+EpYor
-         ktZTJHrLJ9ZkT0godNSOg8UZ5RnfgnafOxQ1KFGFa5PbnZfYGEBWRYgeI01gPEcgIxKP
-         zQ2g==
-X-Gm-Message-State: AA+aEWbxg5F3DQ+NhObLy2GCL5G7gnCwXjuyVhw/OvIxgOLqiQK6WJx9
-        Nd1DLjUQSyzwsQWUBw2TdYFtphf98Uw=
-X-Google-Smtp-Source: AFSGD/VdnihbwcrWWNsq+TpV00iIjO/2MKYax/+IfJcMzBjitTLGR5ORcnMu5mgwVKxjwyjn4nMDRg==
-X-Received: by 2002:a1c:96ce:: with SMTP id y197mr17695633wmd.36.1544034969401;
-        Wed, 05 Dec 2018 10:36:09 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id h16sm31801534wrb.62.2018.12.05.10.36.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 10:36:08 -0800 (PST)
-Date:   Wed, 5 Dec 2018 11:36:06 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH 2/2] ARM: Wrap '--pic-veneer' with ld-option
-Message-ID: <20181205183606.GA7274@flashbox>
-References: <20181205014213.943-1-natechancellor@gmail.com>
- <20181205014213.943-2-natechancellor@gmail.com>
- <CAKv+Gu-N9j5X4WoFDbQrzeOCfBaNm6ujXe_fAruusE_kWdj8iQ@mail.gmail.com>
- <20181205080645.GA11936@flashbox>
- <CAKv+Gu9Nq51Fj_14MYS6MEm0VPHOJB1CBFkCHmyC8Wt0=NWpRg@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SlcixkDg39GCe2yH6nHy2lFv3vD2jjZEP3UwtHVHMmY=;
+        b=C7GrkSAXds97VT+4iXuRWPU29iVgVOUSOWazUawD60l4nEWFFHJifalUmxm8vnftHr
+         ZnJ02eqNb4tZVrYxPCdr+MPtGQhfsE7nt3C0dc2jlUhgT+YPyKlSxb9+2wyJz9DkgNlH
+         tIHKXDrU9cBDzVSr9Q1QQoPCyrueBaHcZXS620byDzMPfYe7BSiuaMdZRUZe/Y5CP9rl
+         jaLF+0xrz4q8v8xYMTuFv8lzQsASsg9kAzupWbbphk43InKYJVA4Tb1hkNGSIOvuFL/u
+         jMWtBam9f7YfmV1FLKhKPhj8YN+iuV7a6oJflMbZiH8CICz89dorZXam8tqInwxSOyRu
+         rt4Q==
+X-Gm-Message-State: AA+aEWbqenK6FFfBEFb0PrCONkNv4C3Q0+8gq7DAdUKgJ3nb9LkzUoFX
+        AENANXDRl73ajtBvl99d1sAVYiNE
+X-Google-Smtp-Source: AFSGD/WW4/G6x6c+eI5JzIqt+aWUohy/ONGlI06+yM0mBoRtkriyqjDr5Wxkw/Z3yI6n97WWi7Lr0g==
+X-Received: by 2002:a1c:cbc7:: with SMTP id b190mr18176917wmg.13.1544035016017;
+        Wed, 05 Dec 2018 10:36:56 -0800 (PST)
+Received: from ?IPv6:2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba? ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id s9sm19622604wrw.26.2018.12.05.10.36.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 10:36:55 -0800 (PST)
+Subject: Re: [PATCH 10/12] staging: rtl8188eu: correct indentation in
+ update_wireless_mode()
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20181205170247.5401-1-straube.linux@gmail.com>
+ <20181205170247.5401-10-straube.linux@gmail.com>
+ <3799b30191f457cfec945ccc0b91bccf6dd7c63c.camel@perches.com>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <829c7d0b-22ce-cb47-89a5-e6398508a841@gmail.com>
+Date:   Wed, 5 Dec 2018 19:36:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9Nq51Fj_14MYS6MEm0VPHOJB1CBFkCHmyC8Wt0=NWpRg@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <3799b30191f457cfec945ccc0b91bccf6dd7c63c.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:09:56AM +0100, Ard Biesheuvel wrote:
-> (+ Arnd)
+On 12/5/18 6:37 PM, Joe Perches wrote:
+> On Wed, 2018-12-05 at 18:02 +0100, Michael Straube wrote:
+>> Correct indentation in update_wireless_mode() to clear a checkpatch
+>> warning. WARNING: Statements should start on a tabstop
+> []
+>> diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+> []
+>> @@ -1442,7 +1442,7 @@ void update_wireless_mode(struct adapter *padapter)
+>>   
+>>   	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+>>   		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
+>> -	 else
+>> +	else
+>>   		update_mgnt_tx_rate(padapter, IEEE80211_OFDM_RATE_6MB);
+>>   }
+> .
+> gcc generally emits smaller code by using a single
+> call and a ternary.
+
+Good to know, thank you.
+
 > 
-> On Wed, 5 Dec 2018 at 09:06, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> >
-> > On Wed, Dec 05, 2018 at 08:37:05AM +0100, Ard Biesheuvel wrote:
-> > > On Wed, 5 Dec 2018 at 02:42, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> > > >
-> > > > This flag is not supported by lld:
-> > > >
-> > > >     ld.lld: error: unknown argument: --pic-veneer
-> > > >
-> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > >
-> > > Hi Nate,
-> > >
-> > > Does this mean ld.lld is guaranteed to produce position independent
-> > > veneers if you build kernels that are bigger than the typical range of
-> > > a relative branch?
-> > >
-> >
-> > Hi Ard,
-> >
-> > Honestly, I'm not quite sure. I saw your commit that introduced this
-> > flag and I wasn't quite sure what to make of it for lld. What
-> > configuration would I use to verify and what would I check for?
-> >
+> $ size drivers/staging/rtl8188eu/core/rtw_wlan_util.o*
+>     text	   data	    bss	    dec	    hex	filename
+>    14974	     36	      0	  15010	   3aa2	drivers/staging/rtl8188eu/core/rtw_wlan_util.o.new
+>    14990	     36	      0	  15026	   3ab2	drivers/staging/rtl8188eu/core/rtw_wlan_util.o.old
+> ---
+>   drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> Try building allyesconfig, and check the resulting binary for veneers
-> (which have 'veneer' in the symbol name, at least when ld.bfd emits
-> them). These veneers should not take the [virtual] address of the
-> branch target directly, but take a PC relative offset (as in the
-> example in the commit log of that patch you are referring to)
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+> index 24918223499b..acad30f53f5d 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+> @@ -1440,10 +1440,9 @@ void update_wireless_mode(struct adapter *padapter)
+>   
+>   	rtw_hal_set_hwreg(padapter, HW_VAR_RESP_SIFS,  (u8 *)&SIFS_Timer);
+>   
+> -	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+> -		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
+> -	 else
+> -		update_mgnt_tx_rate(padapter, IEEE80211_OFDM_RATE_6MB);
+> +	update_mgnt_tx_rate(padapter,
+> +			    pmlmeext->cur_wireless_mode & WIRELESS_11B ?
+> +			    IEEE80211_CCK_RATE_1MB : IEEE80211_OFDM_RATE_6MB);
+>   }
+>   
+>   void update_bmc_sta_support_rate(struct adapter *padapter, u32 mac_id)
 > 
-
-Alright, compiling with allyesconfig is a little rough at the moment
-(bug reports I will file in due time) but I was able to do it. Here's
-the disassembly specifically for the functions you had in your commit,
-my assembly knowledge is pretty much non-existent unfortunately so I am
-not sure what to make of it (it doesn't look like there is a virtual
-address for pc in that mix?). I am happy to provide any more information
-that is needed.
-
-c03030cc <__enable_mmu>:
-c03030cc:	e3c00002 	bic	r0, r0, #2
-c03030d0:	e3c00b02 	bic	r0, r0, #2048	; 0x800
-c03030d4:	e3c00a01 	bic	r0, r0, #4096	; 0x1000
-c03030d8:	e3a05051 	mov	r5, #81	; 0x51
-c03030dc:	ee035f10 	mcr	15, 0, r5, cr3, cr0, {0}
-c03030e0:	ee024f10 	mcr	15, 0, r4, cr2, cr0, {0}
-c03030e4:	eafff3c5 	b	c0300000 <__turn_mmu_on>
-c03030e8:	e320f000 	nop	{0}
-c03030ec:	e320f000 	nop	{0}
-c03030f0:	e320f000 	nop	{0}
-c03030f4:	e320f000 	nop	{0}
-c03030f8:	e320f000 	nop	{0}
-c03030fc:	e320f000 	nop	{0}
-
-c0300000 <__turn_mmu_on>:
-c0300000:	e1a00000 	nop			; (mov r0, r0)
-c0300004:	ee070f95 	mcr	15, 0, r0, cr7, cr5, {4}
-c0300008:	ee010f10 	mcr	15, 0, r0, cr1, cr0, {0}
-c030000c:	ee103f10 	mrc	15, 0, r3, cr0, cr0, {0}
-c0300010:	ee070f95 	mcr	15, 0, r0, cr7, cr5, {4}
-c0300014:	e1a03003 	mov	r3, r3
-c0300018:	e1a0300d 	mov	r3, sp
-c030001c:	e1a0f003 	mov	pc, r3
-
-Thanks,
-Nathan
-
-> > Additionally, I have filed an LLVM bug for the lld developers to
-> > check and see if this is a flag they should support:
-> >
-> > https://bugs.llvm.org/show_bug.cgi?id=39886
-> >
-> > Thanks for the quick reply,
-> > Nathan
-> >
-> > > > ---
-> > > >  arch/arm/Makefile | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> > > > index e2a0baf36766..4fab2aa29570 100644
-> > > > --- a/arch/arm/Makefile
-> > > > +++ b/arch/arm/Makefile
-> > > > @@ -10,7 +10,7 @@
-> > > >  #
-> > > >  # Copyright (C) 1995-2001 by Russell King
-> > > >
-> > > > -LDFLAGS_vmlinux        := --no-undefined -X --pic-veneer
-> > > > +LDFLAGS_vmlinux        := --no-undefined -X $(call ld-option,--pic-veneer)
-> > > >  ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
-> > > >  LDFLAGS_vmlinux        += --be8
-> > > >  KBUILD_LDFLAGS_MODULE  += --be8
-> > > > --
-> > > > 2.20.0.rc1
-> > > >
+> 
