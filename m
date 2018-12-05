@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C6FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0994DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7614A2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE9420851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ykfz44k5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7614A2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="StkcTSho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE9420851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeLEJh4 (ORCPT
+        id S1728111AbeLEJh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:37:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41080 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:37:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728081AbeLEJhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:52 -0500
+        id S1728088AbeLEJhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:54 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 260932084C;
-        Wed,  5 Dec 2018 09:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB5F20878;
+        Wed,  5 Dec 2018 09:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002671;
-        bh=KNLWIAAPk4snaLjPyIZNZDuWo/lI3N06Yerb4mlKGAc=;
+        s=default; t=1544002673;
+        bh=7TAv3BEhQUImrS54FI4uJjqkcaA/ExCze+STKhXYgVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ykfz44k5wmZvrclP2kEXbUcOve9fuD5DY+UJok3aMzEzTb0PJMN/feVUyw1lTIBSC
-         qBwaYr/lmrgv9ls+lmtWfvQVI1t+wd0knXf0T6InjdZLij2ZYRFIziupQW216//+Ix
-         CnbN5SEuQ3nSJxAtgqOyhFEtvhjUfefxYCR9qHk4=
+        b=StkcTShoaNxftYD/Z06Z7tmRe6xptUlS5OBtHK/Z9vDyXMrUn0rWJZin+T+ULd2Fe
+         S0+URmFFAlxlXbcnvi6cOovdPhoulnDRgumN+Xox4wA0IOJSwzano5BAW7GFjncYOh
+         xQxufMBoNPYCeo2qdObf9BIyekUyGb/No8GfEy7M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 033/123] s390/cpum_cf: Reject request for sampling in event initialization
-Date:   Wed,  5 Dec 2018 04:34:25 -0500
-Message-Id: <20181205093555.5386-33-sashal@kernel.org>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 034/123] hwmon: (ina2xx) Fix current value calculation
+Date:   Wed,  5 Dec 2018 04:34:26 -0500
+Message-Id: <20181205093555.5386-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,113 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
+[ Upstream commit 38cd989ee38c16388cde89db5b734f9d55b905f9 ]
 
-On s390 command perf top fails
-[root@s35lp76 perf] # ./perf top -F100000  --stdio
-   Error:
-   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
-   	Try 'perf stat'
-[root@s35lp76 perf] #
+The current register (04h) has a sign bit at MSB. The comments
+for this calculation also mention that it's a signed register.
 
-Using event -e rb0000 works as designed.  Event rb0000 is the event
-number of the sampling facility for basic sampling.
+However, the regval is unsigned type so result of calculation
+turns out to be an incorrect value when current is negative.
 
-During system start up the following PMUs are installed in the kernel's
-PMU list (from head to tail):
-   cpum_cf --> s390 PMU counter facility device driver
-   cpum_sf --> s390 PMU sampling facility device driver
-   uprobe
-   kprobe
-   tracepoint
-   task_clock
-   cpu_clock
+This patch simply fixes this by adding a casting to s16.
 
-Perf top executes following functions and calls perf_event_open(2) system
-call with different parameters many times:
-
-cmd_top
---> __cmd_top
-    --> perf_evlist__add_default
-        --> __perf_evlist__add_default
-            --> perf_evlist__new_cycles (creates event type:0 (HW)
-			    		config 0 (CPU_CYCLES)
-	        --> perf_event_attr__set_max_precise_ip
-		    Uses perf_event_open(2) to detect correct
-		    precise_ip level. Fails 3 times on s390 which is ok.
-
-Then functions cmd_top
---> __cmd_top
-    --> perf_top__start_counters
-        -->perf_evlist__config
-	   --> perf_can_comm_exec
-               --> perf_probe_api
-	           This functions test support for the following events:
-		   "cycles:u", "instructions:u", "cpu-clock:u" using
-		   --> perf_do_probe_api
-		       --> perf_event_open_cloexec
-		           Test the close on exec flag support with
-			   perf_event_open(2).
-	               perf_do_probe_api returns true if the event is
-		       supported.
-		       The function returns true because event cpu-clock is
-		       supported by the PMU cpu_clock.
-	               This is achieved by many calls to perf_event_open(2).
-
-Function perf_top__start_counters now calls perf_evsel__open() for every
-event, which is the default event cpu_cycles (config:0) and type HARDWARE
-(type:0) which a predfined frequence of 4000.
-
-Given the above order of the PMU list, the PMU cpum_cf gets called first
-and returns 0, which indicates support for this sampling. The event is
-fully allocated in the function perf_event_open (file kernel/event/core.c
-near line 10521 and the following check fails:
-
-        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
-		                 NULL, NULL, cgroup_fd);
-	if (IS_ERR(event)) {
-		err = PTR_ERR(event);
-		goto err_cred;
-	}
-
-        if (is_sampling_event(event)) {
-		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
-			err = -EOPNOTSUPP;
-			goto err_alloc;
-		}
-	}
-
-The check for the interrupt capabilities fails and the system call
-perf_event_open() returns -EOPNOTSUPP (-95).
-
-Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
-This allows common kernel code in the perf_event_open() system call to
-test the next PMU in above list.
-
-Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 5d389b125186c ("hwmon: (ina2xx) Make calibration register value fixed")
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_cf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hwmon/ina2xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-index 74091fd3101e..d5523adeddbf 100644
---- a/arch/s390/kernel/perf_cpum_cf.c
-+++ b/arch/s390/kernel/perf_cpum_cf.c
-@@ -346,6 +346,8 @@ static int __hw_perf_event_init(struct perf_event *event)
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index c2252cf452f5..07ee19573b3f 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -274,7 +274,7 @@ static int ina2xx_get_value(struct ina2xx_data *data, u8 reg,
  		break;
- 
- 	case PERF_TYPE_HARDWARE:
-+		if (is_sampling_event(event))	/* No sampling support */
-+			return -ENOENT;
- 		ev = attr->config;
- 		/* Count user space (problem-state) only */
- 		if (!attr->exclude_user && attr->exclude_kernel) {
+ 	case INA2XX_CURRENT:
+ 		/* signed register, result in mA */
+-		val = regval * data->current_lsb_uA;
++		val = (s16)regval * data->current_lsb_uA;
+ 		val = DIV_ROUND_CLOSEST(val, 1000);
+ 		break;
+ 	case INA2XX_CALIBRATION:
 -- 
 2.17.1
 
