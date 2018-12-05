@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7803BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4D1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2FA206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB71214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZEgC7If"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2FA206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3uWyqyC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB71214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbeLEKJ0 (ORCPT
+        id S1728640AbeLEKJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:09:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43696 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 05:09:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbeLEJjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:39:31 -0500
+        id S1728422AbeLEJjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:39:22 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6685C2087F;
-        Wed,  5 Dec 2018 09:39:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20CBC2084C;
+        Wed,  5 Dec 2018 09:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002770;
-        bh=81qnUx3ifvTCmj7hUNVSIosxjrXKfzLmxqnb3GdJrIk=;
+        s=default; t=1544002761;
+        bh=iJ0QUcNc8sooKP1qf8ciQ8Ee88g9vq9YGY+eczv6zAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZEgC7IfSMHhKbMMQ9QyLQp/EEZ1vl2y6BkjD7ospyxnY+VgSWpfMleL3zFqKZSnp
-         uD43HV9mcEt/ZXrheQ3dYqwg61sMlIvzMdj/dM4+kFyF6gXcA9XOmgYof2LNV9Lh4j
-         Tjl3fHPFkdErJk8eXJXZ4ZGpFv1p/DWzJzu3+cmw=
+        b=m3uWyqyCvgPoAgomOML9fQGBTx2qxlxFvdb+4hsoc2//5d67lj4CbRnwL5t08AyDO
+         CVL8WL1TGWKClKc1Ig+jpFwNReyANF97rO6UYYKscX1HLRHuKNa9O2Sbc8Vzi+6EBB
+         1QshNo8uOjv9BF3AN/uIXVEKtJyJzfNUQ7xnGcuc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 063/123] exportfs: do not read dentry after free
-Date:   Wed,  5 Dec 2018 04:34:55 -0500
-Message-Id: <20181205093555.5386-63-sashal@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 060/123] ASoC: omap-mcbsp: Fix latency value calculation for pm_qos
+Date:   Wed,  5 Dec 2018 04:34:52 -0500
+Message-Id: <20181205093555.5386-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,40 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 2084ac6c505a58f7efdec13eba633c6aaa085ca5 ]
+[ Upstream commit dd2f52d8991af9fe0928d59ec502ba52be7bc38d ]
 
-The function dentry_connected calls dput(dentry) to drop the previously
-acquired reference to dentry. In this case, dentry can be released.
-After that, IS_ROOT(dentry) checks the condition
-(dentry == dentry->d_parent), which may result in a use-after-free bug.
-This patch directly compares dentry with its parent obtained before
-dropping the reference.
+The latency number is in usec for the pm_qos. Correct the calculation to
+give us the time in usec
 
-Fixes: a056cc8934c("exportfs: stop retrying once we race with
-rename/remove")
-
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exportfs/expfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/omap/omap-mcbsp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 645158dc33f1..63707abcbeb3 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -77,7 +77,7 @@ static bool dentry_connected(struct dentry *dentry)
- 		struct dentry *parent = dget_parent(dentry);
- 
- 		dput(dentry);
--		if (IS_ROOT(dentry)) {
-+		if (dentry == parent) {
- 			dput(parent);
- 			return false;
+diff --git a/sound/soc/omap/omap-mcbsp.c b/sound/soc/omap/omap-mcbsp.c
+index d0ebb6b9bfac..2d6decbfc99e 100644
+--- a/sound/soc/omap/omap-mcbsp.c
++++ b/sound/soc/omap/omap-mcbsp.c
+@@ -308,9 +308,9 @@ static int omap_mcbsp_dai_hw_params(struct snd_pcm_substream *substream,
+ 			pkt_size = channels;
  		}
+ 
+-		latency = ((((buffer_size - pkt_size) / channels) * 1000)
+-				 / (params->rate_num / params->rate_den));
+-
++		latency = (buffer_size - pkt_size) / channels;
++		latency = latency * USEC_PER_SEC /
++			  (params->rate_num / params->rate_den);
+ 		mcbsp->latency[substream->stream] = latency;
+ 
+ 		omap_mcbsp_set_threshold(substream, pkt_size);
 -- 
 2.17.1
 
