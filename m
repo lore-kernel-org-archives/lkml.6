@@ -2,236 +2,307 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889EFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639FFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED8320659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED8320659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FD7920672
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD7920672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeLEKmR (ORCPT
+        id S1727437AbeLEKmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:42:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51964 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbeLEKmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:42:15 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0DC9C3082AFD;
-        Wed,  5 Dec 2018 10:42:14 +0000 (UTC)
-Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 35B262B89D;
-        Wed,  5 Dec 2018 10:42:12 +0000 (UTC)
-Subject: Re: [PATCH] mm, page_alloc: Drop uneeded __meminit and __meminitdata
-To:     Oscar Salvador <osalvador@suse.de>, akpm@linux-foundation.org
-Cc:     mhocko@suse.com, pavel.tatashin@microsoft.com, vbabka@suse.cz,
-        alexander.h.duyck@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181204111507.4808-1-osalvador@suse.de>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <35894e57-0429-77a2-a61b-0beb4a285ccb@redhat.com>
-Date:   Wed, 5 Dec 2018 11:42:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 5 Dec 2018 05:42:33 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:34689 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbeLEKmd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:42:33 -0500
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wB5AgU8U044251;
+        Wed, 5 Dec 2018 19:42:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Wed, 05 Dec 2018 19:42:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wB5AgNFb044039
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 5 Dec 2018 19:42:29 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
+ <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+ <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+ <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+Date:   Wed, 5 Dec 2018 19:42:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181204111507.4808-1-osalvador@suse.de>
+In-Reply-To: <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 05 Dec 2018 10:42:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.12.18 12:15, Oscar Salvador wrote:
-> Since commit 03e85f9d5f1 ("mm/page_alloc: Introduce free_area_init_core_hotplug"),
-> some functions changed to only be called during system initialization.
-> In concret, free_area_init_node and and the functions that hang from it.
+On 2018/12/05 0:27, Petr Mladek wrote:
+> On Tue 2018-12-04 06:10:40, Tetsuo Handa wrote:
+>> On 2018/12/04 0:06, Petr Mladek wrote:
+>>>> If we modify print_time(), I think that the leading spaces inserted by "%5lu"
+>>>> makes little sense, for "%5lu" is too small for systems with uptime >= 1.16 days
+>>>> and parsers after all cannot assume fixed length for the timestamp field. Then,
+>>>> we could change from "%5lu.%06lu" to "%lu.%06lu" so that parsers (like /bin/awk)
+>>>> can get prefix part using white spaces as a delimiter.
+>>>
+>>> My primary concern was a human readability. The different header columns
+>>> are separated by brackets and the message itself is separated by the space.
+>>
+>> PID_MAX_LIMIT is 4194304, which can take up to 10 bytes if [T%u] is used.
 > 
-> Also, some variables are no longer used after the system has gone
-> through initialization.
-> So this could be considered as a late clean-up for that patch.
+> 4194304 is the worst case. I would use the same approach as with the
+> timestamp seconds. It uses 5 characters as the minimum. But it might
+> eventully get bigger.
 > 
-> This patch changes the functions from __meminit to __init, and
-> the variables from __meminitdata to __initdata.
-> 
-> In return, we get some KBs back:
-> 
-> Before:
-> Freeing unused kernel image memory: 2472K
-> 
-> After:
-> Freeing unused kernel image memory: 2480K
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  mm/page_alloc.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index fee5e9bad0dd..94e16eba162c 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -266,18 +266,18 @@ int watermark_boost_factor __read_mostly = 15000;
->  int watermark_scale_factor = 10;
->  int fragment_stall_order __read_mostly = (PAGE_ALLOC_COSTLY_ORDER + 1);
->  
-> -static unsigned long nr_kernel_pages __meminitdata;
-> -static unsigned long nr_all_pages __meminitdata;
-> -static unsigned long dma_reserve __meminitdata;
-> +static unsigned long nr_kernel_pages __initdata;
-> +static unsigned long nr_all_pages __initdata;
-> +static unsigned long dma_reserve __initdata;
->  
->  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
-> -static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __meminitdata;
-> -static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __meminitdata;
-> +static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __initdata;
-> +static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __initdata;
->  static unsigned long required_kernelcore __initdata;
->  static unsigned long required_kernelcore_percent __initdata;
->  static unsigned long required_movablecore __initdata;
->  static unsigned long required_movablecore_percent __initdata;
-> -static unsigned long zone_movable_pfn[MAX_NUMNODES] __meminitdata;
-> +static unsigned long zone_movable_pfn[MAX_NUMNODES] __initdata;
->  static bool mirrored_kernelcore __meminitdata;
->  
->  /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
-> @@ -6211,7 +6211,7 @@ void __init sparse_memory_present_with_active_regions(int nid)
->   * with no available memory, a warning is printed and the start and end
->   * PFNs will be 0.
->   */
-> -void __meminit get_pfn_range_for_nid(unsigned int nid,
-> +void __init get_pfn_range_for_nid(unsigned int nid,
->  			unsigned long *start_pfn, unsigned long *end_pfn)
->  {
->  	unsigned long this_start_pfn, this_end_pfn;
-> @@ -6260,7 +6260,7 @@ static void __init find_usable_zone_for_movable(void)
->   * highest usable zone for ZONE_MOVABLE. This preserves the assumption that
->   * zones within a node are in order of monotonic increases memory addresses
->   */
-> -static void __meminit adjust_zone_range_for_zone_movable(int nid,
-> +static void __init adjust_zone_range_for_zone_movable(int nid,
->  					unsigned long zone_type,
->  					unsigned long node_start_pfn,
->  					unsigned long node_end_pfn,
-> @@ -6291,7 +6291,7 @@ static void __meminit adjust_zone_range_for_zone_movable(int nid,
->   * Return the number of pages a zone spans in a node, including holes
->   * present_pages = zone_spanned_pages_in_node() - zone_absent_pages_in_node()
->   */
-> -static unsigned long __meminit zone_spanned_pages_in_node(int nid,
-> +static unsigned long __init zone_spanned_pages_in_node(int nid,
->  					unsigned long zone_type,
->  					unsigned long node_start_pfn,
->  					unsigned long node_end_pfn,
-> @@ -6326,7 +6326,7 @@ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
->   * Return the number of holes in a range on a node. If nid is MAX_NUMNODES,
->   * then all holes in the requested range will be accounted for.
->   */
-> -unsigned long __meminit __absent_pages_in_range(int nid,
-> +unsigned long __init __absent_pages_in_range(int nid,
->  				unsigned long range_start_pfn,
->  				unsigned long range_end_pfn)
->  {
-> @@ -6356,7 +6356,7 @@ unsigned long __init absent_pages_in_range(unsigned long start_pfn,
->  }
->  
->  /* Return the number of page frames in holes in a zone on a node */
-> -static unsigned long __meminit zone_absent_pages_in_node(int nid,
-> +static unsigned long __init zone_absent_pages_in_node(int nid,
->  					unsigned long zone_type,
->  					unsigned long node_start_pfn,
->  					unsigned long node_end_pfn,
-> @@ -6408,7 +6408,7 @@ static unsigned long __meminit zone_absent_pages_in_node(int nid,
->  }
->  
->  #else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
-> -static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
-> +static inline unsigned long __init zone_spanned_pages_in_node(int nid,
->  					unsigned long zone_type,
->  					unsigned long node_start_pfn,
->  					unsigned long node_end_pfn,
-> @@ -6427,7 +6427,7 @@ static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
->  	return zones_size[zone_type];
->  }
->  
-> -static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
-> +static inline unsigned long __init zone_absent_pages_in_node(int nid,
->  						unsigned long zone_type,
->  						unsigned long node_start_pfn,
->  						unsigned long node_end_pfn,
-> @@ -6441,7 +6441,7 @@ static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
->  
->  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
->  
-> -static void __meminit calculate_node_totalpages(struct pglist_data *pgdat,
-> +static void __init calculate_node_totalpages(struct pglist_data *pgdat,
->  						unsigned long node_start_pfn,
->  						unsigned long node_end_pfn,
->  						unsigned long *zones_size,
+> IMHO, [T%5u] looks like a reasonable default.
 > 
 
-I am in general a friend of fixing up parameter alignment.
+While "%5lu.%06lu" for uptime does not decrease over time (and hence changing
+to "%lu.%06lu" does not cause wavy output), "[%6s]" for T$thread_id will cause
+wavy output after PID reached 100000. Isn't it hard to parse after all?
 
-Apart from that, looks good to me.
+From 22a5c966651095d12ab1572f6d35dc86d5671ea5 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 5 Dec 2018 16:53:08 +0900
+Subject: [PATCH v3] printk: Add caller information to printk() output.
 
+Sometimes we want to print a series of printk() messages to consoles
+without being disturbed by concurrent printk() from interrupts and/or
+other threads. But we can't enforce printk() callers to use their local
+buffers because we need to ask them to make too much changes. Also, even
+buffering up to one line inside printk() might cause failing to emit
+an important clue under critical situation.
+
+Therefore, instead of trying to help buffering, let's try to help
+reconstructing messages by saving caller information as of calling
+log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
+upon printing to consoles.
+
+Some examples for console output:
+
+  [    1.222773][    T1] x86: Booting SMP configuration:
+  [    2.779635][    T1] pci 0000:00:01.0: PCI bridge to [bus 01]
+  [    5.069193][  T268] Fusion MPT base driver 3.04.20
+  [    9.316504][    C2] random: fast init done
+  [   13.413336][ T3355] Initialized host personality
+
+Some examples for /dev/kmsg output:
+
+  6,496,1222773,-,from=T1;x86: Booting SMP configuration:
+  6,968,2779635,-,from=T1;pci 0000:00:01.0: PCI bridge to [bus 01]
+   SUBSYSTEM=pci
+   DEVICE=+pci:0000:00:01.0
+  6,1353,5069193,-,from=T268;Fusion MPT base driver 3.04.20
+  5,1526,9316504,-,from=C2;random: fast init done
+  6,1575,13413336,-,from=T3355;Initialized host personality
+
+# Not yet signed-off in order to silence build-bot error reports.
+---
+ kernel/printk/printk.c | 82 +++++++++++++++++++++++++++++++++-----------------
+ lib/Kconfig.debug      | 17 +++++++++++
+ 2 files changed, 71 insertions(+), 28 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 4f18472..f9812f6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -356,6 +356,9 @@ struct printk_log {
+ 	u8 facility;		/* syslog facility */
+ 	u8 flags:5;		/* internal record flags */
+ 	u8 level:3;		/* syslog level */
++#ifdef CONFIG_PRINTK_FROM
++	u32 from_id;            /* thread id or processor id */
++#endif
+ }
+ #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+ __packed __aligned(4)
+@@ -422,8 +425,14 @@ __packed __aligned(4)
+ static u64 clear_seq;
+ static u32 clear_idx;
+ 
++#ifdef CONFIG_PRINTK_FROM
++#define PREFIX_FROM_MAX		16
++#define PREFIX_MAX		(32 + PREFIX_FROM_MAX)
++#define LOG_LINE_MAX		(1024 - 32)
++#else
+ #define PREFIX_MAX		32
+ #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
++#endif
+ 
+ #define LOG_LEVEL(v)		((v) & 0x07)
+ #define LOG_FACILITY(v)		((v) >> 3 & 0xff)
+@@ -625,6 +634,12 @@ static int log_store(int facility, int level,
+ 		msg->ts_nsec = ts_nsec;
+ 	else
+ 		msg->ts_nsec = local_clock();
++#ifdef CONFIG_PRINTK_FROM
++	if (in_task())
++		msg->from_id = task_pid_nr(current);
++	else
++		msg->from_id = 0x80000000 + raw_smp_processor_id();
++#endif
+ 	memset(log_dict(msg) + dict_len, 0, pad_len);
+ 	msg->len = size;
+ 
+@@ -688,12 +703,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ 				    struct printk_log *msg, u64 seq)
+ {
+ 	u64 ts_usec = msg->ts_nsec;
++	char from[18];
++#ifdef CONFIG_PRINTK_FROM
++	u32 id = msg->from_id;
++
++	snprintf(from, sizeof(from), ",from=%c%u",
++		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++#else
++	from[0] = '\0';
++#endif
+ 
+ 	do_div(ts_usec, 1000);
+ 
+-	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
+-		       (msg->facility << 3) | msg->level, seq, ts_usec,
+-		       msg->flags & LOG_CONT ? 'c' : '-');
++	return scnprintf(buf, size, "%u,%llu,%llu,%c%s;",
++			 (msg->facility << 3) | msg->level, seq, ts_usec,
++			 msg->flags & LOG_CONT ? 'c' : '-', from);
+ }
+ 
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+@@ -1038,6 +1062,9 @@ void log_buf_vmcoreinfo_setup(void)
+ 	VMCOREINFO_OFFSET(printk_log, len);
+ 	VMCOREINFO_OFFSET(printk_log, text_len);
+ 	VMCOREINFO_OFFSET(printk_log, dict_len);
++#ifdef CONFIG_PRINTK_FROM
++	VMCOREINFO_OFFSET(printk_log, from_id);
++#endif
+ }
+ #endif
+ 
+@@ -1227,39 +1254,38 @@ static inline void boot_delay_msec(int level)
+ static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
+ module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
+ 
+-static size_t print_time(u64 ts, char *buf)
+-{
+-	unsigned long rem_nsec = do_div(ts, 1000000000);
+-
+-	if (!buf)
+-		return snprintf(NULL, 0, "[%5lu.000000] ", (unsigned long)ts);
+-
+-	return sprintf(buf, "[%5lu.%06lu] ",
+-		       (unsigned long)ts, rem_nsec / 1000);
+-}
+-
+ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 			   bool time, char *buf)
+ {
+ 	size_t len = 0;
+-	unsigned int prefix = (msg->facility << 3) | msg->level;
++	char tmp[PREFIX_MAX];
+ 
++	if (!buf)
++		buf = tmp;
+ 	if (syslog) {
+-		if (buf) {
+-			len += sprintf(buf, "<%u>", prefix);
+-		} else {
+-			len += 3;
+-			if (prefix > 999)
+-				len += 3;
+-			else if (prefix > 99)
+-				len += 2;
+-			else if (prefix > 9)
+-				len++;
+-		}
++		unsigned int prefix = (msg->facility << 3) | msg->level;
++
++		len += sprintf(buf, "<%u>", prefix);
++	}
++	if (time) {
++		u64 ts = msg->ts_nsec;
++		unsigned long rem_nsec = do_div(ts, 1000000000);
++
++		len += sprintf(buf + len, "[%5lu.%06lu]", (unsigned long)ts,
++			       rem_nsec / 1000);
+ 	}
++#ifdef CONFIG_PRINTK_FROM
++	{
++		u32 id = msg->from_id;
++		char from[12];
+ 
+-	if (time)
+-		len += print_time(msg->ts_nsec, buf ? buf + len : NULL);
++		snprintf(from, sizeof(from), "%c%u",
++			 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++		len += sprintf(buf + len, "[%6s]", from);
++	}
++#endif
++	if (IS_ENABLED(CONFIG_PRINTK_FROM) || time)
++		buf[len++] = ' ';
+ 	return len;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index d312188..a403e11 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -17,6 +17,23 @@ config PRINTK_TIME
+ 	  The behavior is also controlled by the kernel command line
+ 	  parameter printk.time=1. See Documentation/admin-guide/kernel-parameters.rst
+ 
++config PRINTK_FROM
++	bool "Show caller information on printks"
++	depends on PRINTK
++	help
++	  Selecting this option causes "thread id" (if in task context) or
++	  "processor id" (if not in task context) of the printk() messages
++	  to be added.
++
++	  This option is intended for environments where multiple threads
++	  concurrently call printk() for many times, for it is difficult to
++	  interpret without knowing where these lines (or sometimes individual
++	  line which was divided into multiple lines due to race) came from.
++
++	  Since this is currently an experimental functionality which might be
++	  changed/reverted in the future, there is no option to enable/disable
++	  at the kernel command line parameter or sysfs interface.
++
+ config CONSOLE_LOGLEVEL_DEFAULT
+ 	int "Default console loglevel (1-15)"
+ 	range 1 15
 -- 
+1.8.3.1
 
-Thanks,
-
-David / dhildenb
