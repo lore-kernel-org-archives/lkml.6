@@ -2,133 +2,209 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013B9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2768CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1BC3214E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1BC3214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3CA206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Id+BhgQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3CA206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728378AbeLEKLD (ORCPT
+        id S1728383AbeLEKLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:11:03 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44760 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbeLEJiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:38:09 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f18so18005192otl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 01:38:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SMSq+9IexiUAXwjqwSKEoQCdcR2ED4AOzXA2Wi0hNPU=;
-        b=dlSn4ZB8TtmabA+srEOkIH8y98QZm6cy2sYQyDeeMUHAVLKsTC5nbwPMQDOLyB8fFC
-         pqo25PkxDsA5yXeTa8udz1oxLwn2W0Hn24q0u4+ihCr7Px5hqy/0Rb9+mLDVZOqIKtsN
-         ChylHQ2244jUipPnxXeU4PfACG5E/BvYwXsRI8o3WO1HDLVvxcNlKYBujkdrfUC+u/Up
-         siSImLBBK1xLcKyXIS/p1TrXAyQpFGrXoAyDg0W+gQmOWGAzC5s7h/x+2IG2KF/xw2Hx
-         erneSb+e2lhI1D7xz1EWwIsvMVMlyFFjQ0olXvLkzm7iBqYsBKioBMPXCxmOTT2mowcs
-         d+ig==
-X-Gm-Message-State: AA+aEWbelxv2bvaCHjRHCAv8c7bRpfoOM3th13Fl8BIgZq2L/H4M+o9f
-        Jk6S/Z60Jy7UyJ/LUNEk5q16BrssCL0bgffJ6EbDvzHc
-X-Google-Smtp-Source: AFSGD/USzg0FgcmYZnrB3CswE5DFfWi+BssbmwDC9OZHf1iuj2KlhKCVrmFnSONuWfXv0W9RJ+ggeB0EPz0NQjl7pl8=
-X-Received: by 2002:a9d:60cf:: with SMTP id b15mr14342785otk.144.1544002688115;
- Wed, 05 Dec 2018 01:38:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127115246.00967523@canb.auug.org.au> <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au> <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
- <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
- <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com> <20181203215639.GV2217@ZenIV.linux.org.uk>
-In-Reply-To: <20181203215639.GV2217@ZenIV.linux.org.uk>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 5 Dec 2018 10:37:56 +0100
-Message-ID: <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 05:11:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728096AbeLEJh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:57 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5466D20850;
+        Wed,  5 Dec 2018 09:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002676;
+        bh=Jt4w9/WL3BNnlvX1kWyVTI89wbX77IbIJ5zf9WB/cik=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1Id+BhgQ/PD8CjkgR5tcC537S7Zqx3DVPRMhQL0GrYXl2ypPyVF2GX/aA5EWEEroG
+         3eUiiHKAdVyCsyVuLrzuCI1h3xWZ21Mtm+ihrXGphNNjndQMAmA7BaJkW7iRqqvOit
+         sHQ64cMVRu7fOf9EF9VZn8TT4mQDK76hIVogsUE0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 035/123] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
+Date:   Wed,  5 Dec 2018 04:34:27 -0500
+Message-Id: <20181205093555.5386-35-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 10:56 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Mon, Dec 03, 2018 at 11:12:59AM +0100, Ondrej Mosnacek wrote:
->
-> > I think I figured out what's the problem. NFS still creates the
-> > submount via the old vfs_submount() call, which calls
-> > vfs_kern_mount(), which creates an fs_context with
-> > FS_CONTEXT_FOR_USER_MOUNT because FS_CONTEXT_FOR_SUBMOUNT needs the
-> > mountpoint dentry reference and there is currently no way to pass that
-> > to vfs_kern_mount(). This is further complicated by the fact that
-> > vfs_submount() accepts only a const reference to the mountpoint, while
-> > vfs_new_fs_context() expects a non-const one...
-> >
-> > I think all users of the old vfs_submount call should be converted to
-> > the new API before the VFS changes are merged into mainline, otherwise
-> > they will break the SELinux submount fix. We could work around it in
-> > the SELinux hook by checking the fc->sb_flags[_mask] for SB_SUBMOUNT,
-> > but I guess that would be a hack.
->
-> Could you take a look at vfs.git#Q28?  There's still a massive reshuffling
-> going on, so there will be more branches; this one is the latest at the
-> moment.
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-I just tested the Q28 branch rebased onto a recent Fedora rawhide
-kernel (4.20.0-0.rc5.git0.1) and that code seems to be working fine.
-The submount test failed with Q28 and succeeds with Q28+fix, as
-expected. Also, the overlay tests failures are gone now (except for
-the 4 known failures from GH issue #43, since I had to rebase onto
-4.20-rcX).
+[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
 
-This is the commit that I used as the SELinux submount fix:
-https://gitlab.com/omos/linux-public/commit/47922f9c70a83008388b836c285f94c40da1af2b
+The machine driver fails to probe in next-20181113 with:
 
-Kernel builds:
-Unfixed Q28:  https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/833311/
-Fixed Q28:  https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/833312/
+[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
+[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
+...
+[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
+[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
+[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
+[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
 
-Selinux-testsuite reports:
-=== Q28 ===
-Test Summary Report
--------------------
-overlay/test              (Wstat: 1024 Tests: 119 Failed: 4)
-  Failed tests:  81, 83, 107, 112
-  Non-zero exit status: 4
-submount/test             (Wstat: 256 Tests: 2 Failed: 1)
-  Failed test:  2
-  Non-zero exit status: 1
-Files=54, Tests=615, 117 wallclock secs ( 0.20 usr  0.04 sys +  1.64
-cusr  1.29 csys =  3.17 CPU)
-Result: FAIL
-Failed 2/54 test programs. 5/615 subtests failed.
+Bisect pointed to a merge commit:
+first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
 
-=== Q28 + FIX ===
-Test Summary Report
--------------------
-overlay/test              (Wstat: 1024 Tests: 119 Failed: 4)
-  Failed tests:  81, 83, 107, 112
-  Non-zero exit status: 4
-Files=54, Tests=615, 117 wallclock secs ( 0.22 usr  0.05 sys +  1.54
-cusr  1.37 csys =  3.18 CPU)
-Result: FAIL
-Failed 1/54 test programs. 4/615 subtests failed.
+and a diff between a working kernel does not reveal anything which would
+explain the change in behavior.
 
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+Further investigation showed that on the second try of loading fails
+because the dai_link->platform is no longer NULL and it might be pointing
+to uninitialized memory.
+
+The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
+abe_twl6040 struct, which is dynamically allocated every time the driver
+probes.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
+ 1 file changed, 29 insertions(+), 38 deletions(-)
+
+diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
+index d5ae9eb8c756..fed45b41f9d3 100644
+--- a/sound/soc/omap/omap-abe-twl6040.c
++++ b/sound/soc/omap/omap-abe-twl6040.c
+@@ -36,6 +36,8 @@
+ #include "../codecs/twl6040.h"
+ 
+ struct abe_twl6040 {
++	struct snd_soc_card card;
++	struct snd_soc_dai_link dai_links[2];
+ 	int	jack_detection;	/* board can detect jack events */
+ 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
+ };
+@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
+ 				ARRAY_SIZE(dmic_audio_map));
+ }
+ 
+-/* Digital audio interface glue - connects codec <--> CPU */
+-static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
+-	{
+-		.name = "TWL6040",
+-		.stream_name = "TWL6040",
+-		.codec_dai_name = "twl6040-legacy",
+-		.codec_name = "twl6040-codec",
+-		.init = omap_abe_twl6040_init,
+-		.ops = &omap_abe_ops,
+-	},
+-	{
+-		.name = "DMIC",
+-		.stream_name = "DMIC Capture",
+-		.codec_dai_name = "dmic-hifi",
+-		.codec_name = "dmic-codec",
+-		.init = omap_abe_dmic_init,
+-		.ops = &omap_abe_dmic_ops,
+-	},
+-};
+-
+-/* Audio machine driver */
+-static struct snd_soc_card omap_abe_card = {
+-	.owner = THIS_MODULE,
+-
+-	.dapm_widgets = twl6040_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
+-	.dapm_routes = audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(audio_map),
+-};
+-
+ static int omap_abe_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+-	struct snd_soc_card *card = &omap_abe_card;
++	struct snd_soc_card *card;
+ 	struct device_node *dai_node;
+ 	struct abe_twl6040 *priv;
+ 	int num_links = 0;
+@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	card->dev = &pdev->dev;
+-
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
+ 	if (priv == NULL)
+ 		return -ENOMEM;
+ 
++	card = &priv->card;
++	card->dev = &pdev->dev;
++	card->owner = THIS_MODULE;
++	card->dapm_widgets = twl6040_dapm_widgets;
++	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
++	card->dapm_routes = audio_map;
++	card->num_dapm_routes = ARRAY_SIZE(audio_map);
++
+ 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
+ 		dev_err(&pdev->dev, "Card name is not provided\n");
+ 		return -ENODEV;
+@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "McPDM node is not provided\n");
+ 		return -EINVAL;
+ 	}
+-	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
+-	abe_twl6040_dai_links[0].platform_of_node = dai_node;
++
++	priv->dai_links[0].name = "DMIC";
++	priv->dai_links[0].stream_name = "TWL6040";
++	priv->dai_links[0].cpu_of_node = dai_node;
++	priv->dai_links[0].platform_of_node = dai_node;
++	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
++	priv->dai_links[0].codec_name = "twl6040-codec";
++	priv->dai_links[0].init = omap_abe_twl6040_init;
++	priv->dai_links[0].ops = &omap_abe_ops;
+ 
+ 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
+ 	if (dai_node) {
+ 		num_links = 2;
+-		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
+-		abe_twl6040_dai_links[1].platform_of_node = dai_node;
++		priv->dai_links[1].name = "TWL6040";
++		priv->dai_links[1].stream_name = "DMIC Capture";
++		priv->dai_links[1].cpu_of_node = dai_node;
++		priv->dai_links[1].platform_of_node = dai_node;
++		priv->dai_links[1].codec_dai_name = "dmic-hifi";
++		priv->dai_links[1].codec_name = "dmic-codec";
++		priv->dai_links[1].init = omap_abe_dmic_init;
++		priv->dai_links[1].ops = &omap_abe_dmic_ops;
+ 	} else {
+ 		num_links = 1;
+ 	}
+@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	card->dai_link = abe_twl6040_dai_links;
++	card->dai_link = priv->dai_links;
+ 	card->num_links = num_links;
+ 
+ 	snd_soc_card_set_drvdata(card, priv);
+-- 
+2.17.1
+
