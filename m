@@ -2,108 +2,151 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2D4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D18C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF20A20834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h10BkWVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF20A20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 952E220834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952E220834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbeLEBPb (ORCPT
+        id S1726879AbeLEBP5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:15:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46588 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeLEBPa (ORCPT
+        Tue, 4 Dec 2018 20:15:57 -0500
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:53950 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLEBP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:15:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8C7AtVLvFgHkPyGpij5DZEVSdOmgP6KLNjlDNxpPBpM=; b=h10BkWVfeC+Ckdgrek4LvKnww
-        xgBhdxl7jJoitU7l3eXsUR41wQu9nvhxODjJoKZ1cjNgSYvEHHabCZ//uIStHabGg6cnoRnyDTP5J
-        kneMvN2/36pA6AYFUXE3PqqavkqAeQaJcFn0OdfHIYjamLfkRiSOaHZHCIvuLTeY7sqvoBZZHmcD8
-        uhZlZNFpiHh0zd8fE5JOJuT6u7DxnFzEXK3IQYjcgJew5R56CMJMuK/nQ86gnEaimQwYOQ6xbKa/L
-        aaBSFCCENXa+4REjwjzKuV2evuS6b67lew05bNODdTwt1wrBWWaFFyKF1pFRx7a6q/SbUx0ZRhVQM
-        ZArhHOe8A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gULma-0003p9-55; Wed, 05 Dec 2018 01:15:20 +0000
-Date:   Tue, 4 Dec 2018 17:15:19 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
+        Tue, 4 Dec 2018 20:15:57 -0500
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wB51Fgso011331
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 5 Dec 2018 10:15:42 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB51Fexv022286;
+        Wed, 5 Dec 2018 10:15:40 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB51Dl8s001086;
+        Wed, 5 Dec 2018 10:15:40 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-338604; Wed, 5 Dec 2018 10:14:32 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Wed, 5
+ Dec 2018 10:14:31 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Oscar Salvador <OSalvador@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181205011519.GV10377@bombadil.infradead.org>
-References: <20181204001720.26138-1-jhubbard@nvidia.com>
- <20181204001720.26138-2-jhubbard@nvidia.com>
- <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
- <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
- <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
- <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
+        Dan Williams <dan.j.williams@gmail.com>,
+        "Pavel Tatashin" <pasha.tatashin@soleen.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
+ be offlined
+Thread-Topic: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages
+ to be offlined
+Thread-Index: AQHUiu9tY5+24nB+PkGyMm7atS1YiqVtlyQAgAAYWwCAAAZUgIAABumAgAEGRAA=
+Date:   Wed, 5 Dec 2018 01:14:31 +0000
+Message-ID: <20181205011430.GA1799@hori1.linux.bs1.fc.nec.co.jp>
+References: <20181203100309.14784-1-mhocko@kernel.org>
+ <20181204072116.GA24446@hori1.linux.bs1.fc.nec.co.jp>
+ <20181204081801.GA1286@dhcp22.suse.cz>
+ <20181204091104.GA3788@hori1.linux.bs1.fc.nec.co.jp>
+ <20181204093549.GE1286@dhcp22.suse.cz>
+In-Reply-To: <20181204093549.GE1286@dhcp22.suse.cz>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <2E7FED23529EF7448EA29C5F842CE83C@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 04:58:01PM -0800, John Hubbard wrote:
-> On 12/4/18 3:03 PM, Dan Williams wrote:
-> > Except the LRU fields are already in use for ZONE_DEVICE pages... how
-> > does this proposal interact with those?
+On Tue, Dec 04, 2018 at 10:35:49AM +0100, Michal Hocko wrote:
+> On Tue 04-12-18 09:11:05, Naoya Horiguchi wrote:
+> > On Tue, Dec 04, 2018 at 09:48:26AM +0100, Michal Hocko wrote:
+> > > On Tue 04-12-18 07:21:16, Naoya Horiguchi wrote:
+> > > > On Mon, Dec 03, 2018 at 11:03:09AM +0100, Michal Hocko wrote:
+> > > > > From: Michal Hocko <mhocko@suse.com>
+> > > > > 
+> > > > > We have received a bug report that an injected MCE about faulty memory
+> > > > > prevents memory offline to succeed. The underlying reason is that the
+> > > > > HWPoison page has an elevated reference count and the migration keeps
+> > > > > failing. There are two problems with that. First of all it is dubious
+> > > > > to migrate the poisoned page because we know that accessing that memory
+> > > > > is possible to fail. Secondly it doesn't make any sense to migrate a
+> > > > > potentially broken content and preserve the memory corruption over to a
+> > > > > new location.
+> > > > > 
+> > > > > Oscar has found out that it is the elevated reference count from
+> > > > > memory_failure that is confusing the offlining path. HWPoisoned pages
+> > > > > are isolated from the LRU list but __offline_pages might still try to
+> > > > > migrate them if there is any preceding migrateable pages in the pfn
+> > > > > range. Such a migration would fail due to the reference count but
+> > > > > the migration code would put it back on the LRU list. This is quite
+> > > > > wrong in itself but it would also make scan_movable_pages stumble over
+> > > > > it again without any way out.
+> > > > > 
+> > > > > This means that the hotremove with hwpoisoned pages has never really
+> > > > > worked (without a luck). HWPoisoning really needs a larger surgery
+> > > > > but an immediate and backportable fix is to skip over these pages during
+> > > > > offlining. Even if they are still mapped for some reason then
+> > > > > try_to_unmap should turn those mappings into hwpoison ptes and cause
+> > > > > SIGBUS on access. Nobody should be really touching the content of the
+> > > > > page so it should be safe to ignore them even when there is a pending
+> > > > > reference count.
+> > > > > 
+> > > > > Debugged-by: Oscar Salvador <osalvador@suse.com>
+> > > > > Cc: stable
+> > > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > > > ---
+> > > > > Hi,
+> > > > > I am sending this as an RFC now because I am not fully sure I see all
+> > > > > the consequences myself yet. This has passed a testing by Oscar but I
+> > > > > would highly appreciate a review from Naoya about my assumptions about
+> > > > > hwpoisoning. E.g. it is not entirely clear to me whether there is a
+> > > > > potential case where the page might be still mapped.
+> > > > 
+> > > > One potential case is ksm page, for which we give up unmapping and leave
+> > > > it unmapped. Rather than that I don't have any idea, but any new type of
+> > > > page would be potentially categorized to this class.
+> > > 
+> > > Could you be more specific why hwpoison code gives up on ksm pages while
+> > > we can safely unmap here?
+> > 
+> > Actually no big reason. Ksm pages never dominate memory, so we simply didn't
+> > have strong motivation to save the pages.
 > 
-> Very badly: page->pgmap and page->hmm_data both get corrupted. Is there an entire
-> use case I'm missing: calling get_user_pages() on ZONE_DEVICE pages? Said another
-> way: is it reasonable to disallow calling get_user_pages() on ZONE_DEVICE pages?
-> 
-> If we have to support get_user_pages() on ZONE_DEVICE pages, then the whole 
-> LRU field approach is unusable.
+> OK, so the unmapping is safe. I will drop a comment. Does this look good
+> to you?
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 08c576d5a633..ef5d42759aa2 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1370,7 +1370,9 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  		/*
+>  		 * HWPoison pages have elevated reference counts so the migration would
+>  		 * fail on them. It also doesn't make any sense to migrate them in the
+> -		 * first place. Still try to unmap such a page in case it is still mapped.
+> +		 * first place. Still try to unmap such a page in case it is still mapped
+> +		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
+> +		 * the unmap as the catch all safety net).
+>  		 */
+>  		if (PageHWPoison(page)) {
+>  			if (page_mapped(page))
 
-We just need to rearrange ZONE_DEVICE pages.  Please excuse the whitespace
-damage:
+Thanks, I'm fine to this part which explains why we unmap here.
 
-+++ b/include/linux/mm_types.h
-@@ -151,10 +151,12 @@ struct page {
- #endif
-                };
-                struct {        /* ZONE_DEVICE pages */
-+                       unsigned long _zd_pad_2;        /* LRU */
-+                       unsigned long _zd_pad_3;        /* LRU */
-+                       unsigned long _zd_pad_1;        /* uses mapping */
-                        /** @pgmap: Points to the hosting device page map. */
-                        struct dev_pagemap *pgmap;
-                        unsigned long hmm_data;
--                       unsigned long _zd_pad_1;        /* uses mapping */
-                };
- 
-                /** @rcu_head: You can use this to free a page by RCU. */
-
-You don't use page->private or page->index, do you Dan?
+- Naoya
