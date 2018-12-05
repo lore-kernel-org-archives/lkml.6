@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6894C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76987C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A39320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A39320878
+	by mail.kernel.org (Postfix) with ESMTP id 4511920850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4511920850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeLEIwP (ORCPT
+        id S1727528AbeLEIwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:52:15 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:33316 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727436AbeLEIwM (ORCPT
+        Wed, 5 Dec 2018 03:52:19 -0500
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727500AbeLEIwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:52:12 -0500
+        Wed, 5 Dec 2018 03:52:15 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 5 Dec 2018 00:52:02 -0800
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 5 Dec 2018 00:52:04 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 282BC41399;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 45F6D41396;
         Wed,  5 Dec 2018 00:52:05 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -42,152 +42,61 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 10/14] x86: avoid W^X being broken during modules loading
-Date:   Tue, 4 Dec 2018 17:34:04 -0800
-Message-ID: <20181205013408.47725-11-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v7 14/14] module: Prevent module removal racing with text_poke()
+Date:   Tue, 4 Dec 2018 17:34:08 -0800
+Message-ID: <20181205013408.47725-15-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When modules and BPF filters are loaded, there is a time window in
-which some memory is both writable and executable. An attacker that has
-already found another vulnerability (e.g., a dangling pointer) might be
-able to exploit this behavior to overwrite kernel code. This patch
-prevents having writable executable PTEs in this stage.
+It seems dangerous to allow code modifications to take place
+concurrently with module unloading. So take the text_mutex while the
+memory of the module is freed.
 
-In addition, avoiding having R+X mappings can also slightly simplify the
-patching of modules code on initialization (e.g., by alternatives and
-static-key), as would be done in the next patch. This was actually the
-main motivation for this patch.
-
-To avoid having W+X mappings, set them initially as RW (NX) and after
-they are set as RO set them as X as well. Setting them as executable is
-done as a separate step to avoid one core in which the old PTE is cached
-(hence writable), and another which sees the updated PTE (executable),
-which would break the W^X protection.
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
- arch/x86/kernel/module.c      |  2 +-
- include/linux/filter.h        |  6 ++++++
- kernel/module.c               | 10 ++++++++++
- 4 files changed, 38 insertions(+), 8 deletions(-)
+ kernel/module.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 8fc4685f3117..18415e3b6000 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -667,15 +667,29 @@ void __init alternative_instructions(void)
-  * handlers seeing an inconsistent instruction while you patch.
-  */
- void *__init_or_module text_poke_early(void *addr, const void *opcode,
--					      size_t len)
-+				       size_t len)
- {
- 	unsigned long flags;
--	local_irq_save(flags);
--	memcpy(addr, opcode, len);
--	local_irq_restore(flags);
--	sync_core();
--	/* Could also do a CLFLUSH here to speed up CPU recovery; but
--	   that causes hangs on some VIA CPUs. */
-+
-+	if (static_cpu_has(X86_FEATURE_NX) &&
-+	    is_module_text_address((unsigned long)addr)) {
-+		/*
-+		 * Modules text is marked initially as non-executable, so the
-+		 * code cannot be running and speculative code-fetches are
-+		 * prevented. We can just change the code.
-+		 */
-+		memcpy(addr, opcode, len);
-+	} else {
-+		local_irq_save(flags);
-+		memcpy(addr, opcode, len);
-+		local_irq_restore(flags);
-+		sync_core();
-+
-+		/*
-+		 * Could also do a CLFLUSH here to speed up CPU recovery; but
-+		 * that causes hangs on some VIA CPUs.
-+		 */
-+	}
- 	return addr;
- }
- 
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index b052e883dd8c..cfa3106faee4 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -87,7 +87,7 @@ void *module_alloc(unsigned long size)
- 	p = __vmalloc_node_range(size, MODULE_ALIGN,
- 				    MODULES_VADDR + get_module_load_offset(),
- 				    MODULES_END, GFP_KERNEL,
--				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-+				    PAGE_KERNEL, 0, NUMA_NO_NODE,
- 				    __builtin_return_address(0));
- 	if (p && (kasan_module_alloc(p, size) < 0)) {
- 		vfree(p);
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index de629b706d1d..ee9ae03c5f56 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -704,7 +704,13 @@ static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
- 
- static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
- {
-+	/*
-+	 * Perform mapping changes in two stages to avoid opening a time-window
-+	 * in which a PTE is cached in any TLB as writable, but marked as
-+	 * executable in the memory-resident mappings (e.g., page-tables).
-+	 */
- 	set_memory_ro((unsigned long)hdr, hdr->pages);
-+	set_memory_x((unsigned long)hdr, hdr->pages);
- }
- 
- static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
 diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..7cb207249437 100644
+index 57c5b23746e7..b45754961143 100644
 --- a/kernel/module.c
 +++ b/kernel/module.c
-@@ -1946,9 +1946,19 @@ void module_enable_ro(const struct module *mod, bool after_init)
- 	if (!rodata_enabled)
- 		return;
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/memory.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
  
-+	/*
-+	 * Perform mapping changes in two stages to avoid opening a time-window
-+	 * in which a PTE is cached in any TLB as writable, but marked as
-+	 * executable in the memory-resident mappings (e.g., page-tables).
-+	 */
- 	frob_text(&mod->core_layout, set_memory_ro);
-+	frob_text(&mod->core_layout, set_memory_x);
-+
- 	frob_rodata(&mod->core_layout, set_memory_ro);
-+
- 	frob_text(&mod->init_layout, set_memory_ro);
-+	frob_text(&mod->init_layout, set_memory_x);
-+
- 	frob_rodata(&mod->init_layout, set_memory_ro);
+@@ -2181,6 +2182,9 @@ static void free_module(struct module *mod)
+ 	synchronize_sched();
+ 	mutex_unlock(&module_mutex);
  
- 	if (after_init)
++	/* Protect against patching of the module while it is being removed */
++	mutex_lock(&text_mutex);
++
+ 	/* This may be empty, but that's OK */
+ 	module_restore_mappings(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+@@ -2194,6 +2198,7 @@ static void free_module(struct module *mod)
+ 	/* Finally, free the core (containing the module structure) */
+ 	module_restore_mappings(&mod->core_layout);
+ 	module_memfree(mod->core_layout.base);
++	mutex_unlock(&text_mutex);
+ }
+ 
+ void *__symbol_get(const char *symbol)
 -- 
 2.17.1
 
