@@ -6,93 +6,96 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF3AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428B1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9724820879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9724820879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 06EA12084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:37:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06EA12084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeLERfH (ORCPT
+        id S1727854AbeLERhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727429AbeLERfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:35:06 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12FB5206B7;
-        Wed,  5 Dec 2018 17:35:06 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 12:35:03 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181205123503.4b8e0484@vmware.local.home>
-In-Reply-To: <20181205160509.1168-2-jolsa@kernel.org>
-References: <20181205160509.1168-1-jolsa@kernel.org>
-        <20181205160509.1168-2-jolsa@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 5 Dec 2018 12:37:15 -0500
+Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:39549 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727475AbeLERhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:37:15 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id DB6F3181D3368;
+        Wed,  5 Dec 2018 17:37:13 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: fear10_3f03f044c6940
+X-Filterd-Recvd-Size: 2789
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  5 Dec 2018 17:37:12 +0000 (UTC)
+Message-ID: <3799b30191f457cfec945ccc0b91bccf6dd7c63c.camel@perches.com>
+Subject: Re: [PATCH 10/12] staging: rtl8188eu: correct indentation in
+ update_wireless_mode()
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Wed, 05 Dec 2018 09:37:11 -0800
+In-Reply-To: <20181205170247.5401-10-straube.linux@gmail.com>
+References: <20181205170247.5401-1-straube.linux@gmail.com>
+         <20181205170247.5401-10-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  5 Dec 2018 17:05:02 +0100
-Jiri Olsa <jolsa@kernel.org> wrote:
-
-> diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-> index 3b2490b81918..e55cf9169a03 100644
-> --- a/arch/x86/entry/common.c
-> +++ b/arch/x86/entry/common.c
-> @@ -60,6 +60,32 @@ static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
->  	}
->  }
+On Wed, 2018-12-05 at 18:02 +0100, Michael Straube wrote:
+> Correct indentation in update_wireless_mode() to clear a checkpatch
+> warning. WARNING: Statements should start on a tabstop
+[]
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+[]
+> @@ -1442,7 +1442,7 @@ void update_wireless_mode(struct adapter *padapter)
 >  
-> +static void trace_block_syscall(struct pt_regs *regs, bool enter)
-> +{
-> +	current->perf_blocked = true;
-> +
-> +	do {
-> +		schedule_timeout(100 * HZ);
-> +		current->perf_blocked_cnt = 0;
-> +
-> +		if (enter) {
-> +			/* perf syscalls:* enter */
-> +			perf_trace_syscall_enter(regs);
-> +
-> +			/* perf raw_syscalls:* enter */
-> +			perf_trace_sys_enter(&event_sys_enter, regs, regs->orig_ax);
-> +		} else {
-> +			/* perf syscalls:* enter */
-> +			perf_trace_syscall_exit(regs);
-> +
-> +			/* perf raw_syscalls:* enter */
-> +			perf_trace_sys_exit(&event_sys_exit, regs, regs->ax);
-> +		}
-> +	} while (current->perf_blocked_cnt);
+>  	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+>  		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
+> -	 else
+> +	else
+>  		update_mgnt_tx_rate(padapter, IEEE80211_OFDM_RATE_6MB);
+>  }
+.
+gcc generally emits smaller code by using a single
+call and a ternary.
 
-I was thinking, if the process reading the perf buffer dies, how do we
-tell this task to continue on?
+$ size drivers/staging/rtl8188eu/core/rtw_wlan_util.o*
+   text	   data	    bss	    dec	    hex	filename
+  14974	     36	      0	  15010	   3aa2	drivers/staging/rtl8188eu/core/rtw_wlan_util.o.new
+  14990	     36	      0	  15026	   3ab2	drivers/staging/rtl8188eu/core/rtw_wlan_util.o.old
+---
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
--- Steve
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 24918223499b..acad30f53f5d 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -1440,10 +1440,9 @@ void update_wireless_mode(struct adapter *padapter)
+ 
+ 	rtw_hal_set_hwreg(padapter, HW_VAR_RESP_SIFS,  (u8 *)&SIFS_Timer);
+ 
+-	if (pmlmeext->cur_wireless_mode & WIRELESS_11B)
+-		update_mgnt_tx_rate(padapter, IEEE80211_CCK_RATE_1MB);
+-	 else
+-		update_mgnt_tx_rate(padapter, IEEE80211_OFDM_RATE_6MB);
++	update_mgnt_tx_rate(padapter,
++			    pmlmeext->cur_wireless_mode & WIRELESS_11B ?
++			    IEEE80211_CCK_RATE_1MB : IEEE80211_OFDM_RATE_6MB);
+ }
+ 
+ void update_bmc_sta_support_rate(struct adapter *padapter, u32 mac_id)
 
-> +
-> +	current->perf_blocked = false;
-> +}
-> +
+
