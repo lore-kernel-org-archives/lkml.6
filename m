@@ -2,106 +2,109 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3126EC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B34C3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2EB720850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:42:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAV6r52B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2EB720850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 787A92082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:44:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787A92082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeLEBmi (ORCPT
+        id S1726538AbeLEBor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:42:38 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36585 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeLEBmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:42:36 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u3so17925078wrs.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 17:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W0RQ4W4GOIgM92/vcDV5u070gtrTghilwsK18K8ftuM=;
-        b=KAV6r52BSoydvVh/fT6UYReTo+kUH9aGLV73C9LyFs7zzAuiD/b5Tj/ElJU6idKQcU
-         uLvLp8noe26vFTeemlaDo5o28i1UPkazxNfQrTahTSwzK5Po+vItbFSz01crEOq4TqAL
-         4oNvxN+vf0AjU0/HrW2SeZaq71aZQMvlvlBbNgmePe0O4hV81bxTaA6qmdrglP3MOEEc
-         lAmZeiXr6tbhoIYBv2h1zR/6MQhqc8/1wRGgVx/OZMXXuLlUjKNeM2Q9Xz3Kz6jm9ya3
-         PFW1fAHojr/aEkpl2tN1jIaD6INmZ9rgglnnegFJbAMq5gvarmvlxJ4Li5+ApNXSycas
-         lFMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W0RQ4W4GOIgM92/vcDV5u070gtrTghilwsK18K8ftuM=;
-        b=ay+rg21A1qAlBV3BvXlqL3gzOP4uXLTUBVOOdqMYP+yfd8Fl1lSXBk3ukDGsMnEls8
-         35cdumvDT4JZTfYdWFrMXoFNRDTgle6Dcr679A9yBvyxHdA90H9ZWGbsrVUWxl3rtf0f
-         yN5Yrq8mLbbUbZOTXY/7rZcrQVxtXYmzoOsyPP5vS6jVVt3cZIubdru/dcH1wwFUPxrx
-         Gf3w/hr0P+My1yXzX45sVfI0A+aU7Km6H3XrLi/vOYZJwdgis7W7SauX6iqlxI1naYvO
-         7lSdL1fwNb/RtKrrwaFIdzuezxKswNT9F1rqB2fGwmylznJlngei6Bwc9KWls6xtgeGS
-         R9SQ==
-X-Gm-Message-State: AA+aEWbERWTyjqzPWHldEkNx96h0X0z6ITGt/4MpsCAuGtCri1wMhu65
-        Y9JpB+jbW+ccFupaXI/Olsw=
-X-Google-Smtp-Source: AFSGD/UeihGXAfdhJOnkYVqMFj/b90JXNt4Mlsw6T1Fj23zeKRfG11Fnpnr8k7mtCm8Ympnnlph5Tw==
-X-Received: by 2002:adf:d1d2:: with SMTP id m18mr21026171wri.138.1543974154263;
-        Tue, 04 Dec 2018 17:42:34 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b7sm15845784wrs.47.2018.12.04.17.42.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 17:42:33 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 2/2] ARM: Wrap '--pic-veneer' with ld-option
-Date:   Tue,  4 Dec 2018 18:42:13 -0700
-Message-Id: <20181205014213.943-2-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.0.rc1
-In-Reply-To: <20181205014213.943-1-natechancellor@gmail.com>
-References: <20181205014213.943-1-natechancellor@gmail.com>
+        Tue, 4 Dec 2018 20:44:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbeLEBor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:44:47 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7894665857;
+        Wed,  5 Dec 2018 01:44:46 +0000 (UTC)
+Received: from redhat.com (ovpn-120-95.rdu2.redhat.com [10.10.120.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C331070388;
+        Wed,  5 Dec 2018 01:44:43 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 20:44:41 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
+        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181205014441.GA3045@redhat.com>
+References: <20181204001720.26138-1-jhubbard@nvidia.com>
+ <20181204001720.26138-2-jhubbard@nvidia.com>
+ <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
+ <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
+ <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
+ <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
+ <20181205011519.GV10377@bombadil.infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205011519.GV10377@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 05 Dec 2018 01:44:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This flag is not supported by lld:
+On Tue, Dec 04, 2018 at 05:15:19PM -0800, Matthew Wilcox wrote:
+> On Tue, Dec 04, 2018 at 04:58:01PM -0800, John Hubbard wrote:
+> > On 12/4/18 3:03 PM, Dan Williams wrote:
+> > > Except the LRU fields are already in use for ZONE_DEVICE pages... how
+> > > does this proposal interact with those?
+> > 
+> > Very badly: page->pgmap and page->hmm_data both get corrupted. Is there an entire
+> > use case I'm missing: calling get_user_pages() on ZONE_DEVICE pages? Said another
+> > way: is it reasonable to disallow calling get_user_pages() on ZONE_DEVICE pages?
+> > 
+> > If we have to support get_user_pages() on ZONE_DEVICE pages, then the whole 
+> > LRU field approach is unusable.
+> 
+> We just need to rearrange ZONE_DEVICE pages.  Please excuse the whitespace
+> damage:
+> 
+> +++ b/include/linux/mm_types.h
+> @@ -151,10 +151,12 @@ struct page {
+>  #endif
+>                 };
+>                 struct {        /* ZONE_DEVICE pages */
+> +                       unsigned long _zd_pad_2;        /* LRU */
+> +                       unsigned long _zd_pad_3;        /* LRU */
+> +                       unsigned long _zd_pad_1;        /* uses mapping */
+>                         /** @pgmap: Points to the hosting device page map. */
+>                         struct dev_pagemap *pgmap;
+>                         unsigned long hmm_data;
+> -                       unsigned long _zd_pad_1;        /* uses mapping */
+>                 };
+>  
+>                 /** @rcu_head: You can use this to free a page by RCU. */
+> 
+> You don't use page->private or page->index, do you Dan?
 
-    ld.lld: error: unknown argument: --pic-veneer
+page->private and page->index are use by HMM DEVICE page.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- arch/arm/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index e2a0baf36766..4fab2aa29570 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -10,7 +10,7 @@
- #
- # Copyright (C) 1995-2001 by Russell King
- 
--LDFLAGS_vmlinux	:= --no-undefined -X --pic-veneer
-+LDFLAGS_vmlinux	:= --no-undefined -X $(call ld-option,--pic-veneer)
- ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
- LDFLAGS_vmlinux	+= --be8
- KBUILD_LDFLAGS_MODULE	+= --be8
--- 
-2.20.0.rc1
-
+Cheers,
+Jérôme
