@@ -2,133 +2,104 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C93C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E636AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17EF82064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:27:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="DQjAxKcL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17EF82064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id A2DDD20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DDD20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeLEQ1K (ORCPT
+        id S1728233AbeLEQ3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:27:10 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35580 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbeLEQ1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:27:09 -0500
-Received: by mail-io1-f68.google.com with SMTP id n9so9115625ioo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 08:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hcuc9dp/H5uwlbzrtVWkhbyE/HLJWQrwzdBHtDxRfr0=;
-        b=DQjAxKcL8UfL6LYkPg6EPYXThPrggV6zCMPmyQbEWgL1Vnu1k2aRDO8oNapvQHTr2/
-         JmmK3c7XAH7ga27pW70m88CR5uBiFq0kAjiTLeaY081LhZl69bykTqTt7icLSVi6IjgT
-         zBs2jXJMa78eSJ5rBocUbdtqEUTnpdTEPMMw+ePjZqlsE0p6LhuhwyO6DycSBT4CMm8S
-         +6rTqMxjAVwe3mNUuoBP3x02USLFFNoopsgMaKiI7hB8GIziaZqRpITFbcmf09witHpP
-         KUIx90JEolmXP75vGoV2iy+3eHQHYg0MNi9tpfOmXR7ia0g12C+rUmRblL1uVxz8L1Ue
-         k/LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hcuc9dp/H5uwlbzrtVWkhbyE/HLJWQrwzdBHtDxRfr0=;
-        b=uEt+EaFK+BWRGwvHajRKhVRFijUVe3WA9ESXGXil8TOXiiZ/CGa+6hHxRNclYDrVc3
-         cCBNWscRexxG7Tl0LDpYdX8dN/A0q0UDohCcM3zwcFQIbyOaotnQ6S3NPz9sNkWR2wGe
-         W6CmTwXeZajNcgvoh/Wj7wjkzNeEUFSGGsgup7G7Q6SxzVTgjz6y/NnHEAfgEqpTI1TG
-         7IoDZF6j/YsS2DUBV0V1v8eIwe6JNBizDv7/D71CP/4/k1VxRWbEc1aUzZywUz7S/rar
-         nh2/GoEdbKbj6m7tK7ynTNT4N+QDQUQJI1GeXjFyAW8Xzyb3NLATd268sgMW+w4Qc9P4
-         05WQ==
-X-Gm-Message-State: AA+aEWbkoWy4ByC/fnaSaoQIVnjbeGElpEr/iwyNZchcil7p83O2K01W
-        wfHIdefKwxLWDOE+E6Y0xS5X32Qg6eY=
-X-Google-Smtp-Source: AFSGD/WwVm2gCmbADAfYbV5YysnLgjKdLJKh4Uc8H7F61qdb5LOnskllqehlmDvn+u3Y/4PXdyPPSA==
-X-Received: by 2002:a6b:4a09:: with SMTP id w9mr22445165iob.260.1544027228198;
-        Wed, 05 Dec 2018 08:27:08 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id d199sm7237254itd.31.2018.12.05.08.27.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 08:27:07 -0800 (PST)
-Subject: Re: [PATCH V9 2/4] blk-mq: refactor the code of issue request
- directly
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
- <1543995842-20704-3-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d46af0a7-62f3-4988-2b1c-857378282356@kernel.dk>
-Date:   Wed, 5 Dec 2018 09:27:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 11:29:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43476 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727195AbeLEQ3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:29:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 74002AD94;
+        Wed,  5 Dec 2018 16:28:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 841301E0DBB; Wed,  5 Dec 2018 17:28:57 +0100 (CET)
+Date:   Wed, 5 Dec 2018 17:28:57 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] mm/mmu_notifier: use structure for
+ invalidate_range_start/end calls
+Message-ID: <20181205162857.GF30615@quack2.suse.cz>
+References: <20181203201817.10759-1-jglisse@redhat.com>
+ <20181203201817.10759-3-jglisse@redhat.com>
+ <20181205110416.GE22304@quack2.suse.cz>
+ <20181205155357.GA3536@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1543995842-20704-3-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205155357.GA3536@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 12:44 AM, Jianchao Wang wrote:
-> Merge blk_mq_try_issue_directly and __blk_mq_try_issue_directly
-> into one interface to unify the interfaces to issue requests
-> directly. The merged interface takes over the requests totally,
-> it could insert, end or do nothing based on the return value of
-> .queue_rq and 'bypass' parameter. Then caller needn't any other
-> handling any more and then code could be cleaned up.
+On Wed 05-12-18 10:53:57, Jerome Glisse wrote:
+> On Wed, Dec 05, 2018 at 12:04:16PM +0100, Jan Kara wrote:
+> > Hi Jerome!
+> > 
+> > On Mon 03-12-18 15:18:16, jglisse@redhat.com wrote:
+> > > From: Jérôme Glisse <jglisse@redhat.com>
+> > > 
+> > > To avoid having to change many call sites everytime we want to add a
+> > > parameter use a structure to group all parameters for the mmu_notifier
+> > > invalidate_range_start/end cakks. No functional changes with this
+> > > patch.
+> > 
+> > Two suggestions for the patch below:
+> > 
+> > > @@ -772,7 +775,8 @@ static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
+> > >  		 * call mmu_notifier_invalidate_range_start() on our behalf
+> > >  		 * before taking any lock.
+> > >  		 */
+> > > -		if (follow_pte_pmd(vma->vm_mm, address, &start, &end, &ptep, &pmdp, &ptl))
+> > > +		if (follow_pte_pmd(vma->vm_mm, address, &range,
+> > > +				   &ptep, &pmdp, &ptl))
+> > >  			continue;
+> > 
+> > The change of follow_pte_pmd() arguments looks unexpected. Why should that
+> > care about mmu notifier range? I see it may be convenient but it doesn't look
+> > like a good API to me.
 > 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
->  block/blk-mq.c | 116 +++++++++++++++++++++++++++------------------------------
->  1 file changed, 54 insertions(+), 62 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 153af90..fe92e52 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1815,93 +1815,85 @@ static bool blk_rq_can_direct_dispatch(struct request *rq)
->  	return req_op(rq) == REQ_OP_READ || req_op(rq) == REQ_OP_WRITE;
->  }
->  
-> -static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
-> +static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
->  						struct request *rq,
->  						blk_qc_t *cookie,
-> -						bool bypass_insert, bool last)
-> +						bool bypass, bool last)
->  {
->  	struct request_queue *q = rq->q;
->  	bool run_queue = true;
-> +	blk_status_t ret = BLK_STS_RESOURCE;
-> +	int srcu_idx;
->  	bool force = false;
->  
-> +	if (!blk_rq_can_direct_dispatch(rq)) {
-> +		/*
-> +		 * Insert request to hctx dispatch list for 'bypass == true'
-> +		 * case, otherwise, the caller will fail forever.
-> +		 */
-> +		if (bypass)
-> +			force = true;
-> +		goto out;
-> +	}
+> Saddly i do not see a way around that one this is because of fs/dax.c
+> which does the mmu_notifier_invalidate_range_end while follow_pte_pmd
+> do the mmu_notifier_invalidate_range_start
 
-Same here, of course.
+I see so this is really a preexisting problem with follow_pte_pmd() having
+ugly interface. After some thoughts I think your patch actually slightly
+improves the situation so OK.
 
-Otherwise looks fine.
-
+								Honza
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
