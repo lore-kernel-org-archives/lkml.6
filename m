@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10913C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F092C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A0B20661
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D1321508
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3L+8dPh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A0B20661
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1+WxYp+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D1321508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730178AbeLEJzv (ORCPT
+        id S1730186AbeLEJzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:55:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34208 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:55:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbeLEJzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:55:47 -0500
+        id S1730124AbeLEJzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:55:52 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14503214F1;
-        Wed,  5 Dec 2018 09:55:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2521214F1;
+        Wed,  5 Dec 2018 09:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003746;
-        bh=phugn/4oxUfhqk05YBi7xWDNfG+ORqzIHZfOx2vsM3M=;
+        s=default; t=1544003751;
+        bh=wvZRnCWjNk3ockfXy6s+VVwLcgODztS0bVzOzNITOVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3L+8dPh1eqYibWOa1aity6UU6bK0WUDOPeayXstqia1sJ766fOsTvgBlardad4MS
-         3VFl4KI7dUn+mXda0N43MeNAdveoAUhHLz+4FSvoPCrSw+MMprclCO+qrDwuicyIYX
-         85Hese73uoT+QGTJK3CZQ7/Ln5sxSrZnJtI6JNoM=
+        b=K1+WxYp+2f/ok9EZKrbYIfQ7ybHe4Jtxwkldn+8kvOK1FRVKgOhc0/Xr33g+o5pbD
+         vQqSrW4AX5IwQzufAH02QFLLALCj4tWSJ9NfB8Qlqku36jBOYist1/HHDwF4aSa87d
+         RNzb3aDEfhRsFaqzdEkfe4sRJf4/IevaOGuUq0po=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 09/26] ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
-Date:   Wed,  5 Dec 2018 04:54:13 -0500
-Message-Id: <20181205095430.8019-9-sashal@kernel.org>
+Cc:     Pan Bian <bianpan2016@163.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 10/26] exportfs: do not read dentry after free
+Date:   Wed,  5 Dec 2018 04:54:14 -0500
+Message-Id: <20181205095430.8019-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -53,63 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit ffdcc3638c58d55a6fa68b6e5dfd4fb4109652eb ]
+[ Upstream commit 2084ac6c505a58f7efdec13eba633c6aaa085ca5 ]
 
-We need to block sleep states which would require longer time to leave than
-the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without overrun.
+The function dentry_connected calls dput(dentry) to drop the previously
+acquired reference to dentry. In this case, dentry can be released.
+After that, IS_ROOT(dentry) checks the condition
+(dentry == dentry->d_parent), which may result in a use-after-free bug.
+This patch directly compares dentry with its parent obtained before
+dropping the reference.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: a056cc8934c("exportfs: stop retrying once we race with
+rename/remove")
+
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-dmic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/exportfs/expfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
-index 0f34e28a3d55..750d821ffee5 100644
---- a/sound/soc/omap/omap-dmic.c
-+++ b/sound/soc/omap/omap-dmic.c
-@@ -48,6 +48,8 @@ struct omap_dmic {
- 	struct device *dev;
- 	void __iomem *io_base;
- 	struct clk *fclk;
-+	struct pm_qos_request pm_qos_req;
-+	int latency;
- 	int fclk_freq;
- 	int out_freq;
- 	int clk_div;
-@@ -124,6 +126,8 @@ static void omap_dmic_dai_shutdown(struct snd_pcm_substream *substream,
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index a3aa6baad1a1..d4dcf3cc076a 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -76,7 +76,7 @@ static bool dentry_connected(struct dentry *dentry)
+ 		struct dentry *parent = dget_parent(dentry);
  
- 	mutex_lock(&dmic->mutex);
- 
-+	pm_qos_remove_request(&dmic->pm_qos_req);
-+
- 	if (!dai->active)
- 		dmic->active = 0;
- 
-@@ -226,6 +230,8 @@ static int omap_dmic_dai_hw_params(struct snd_pcm_substream *substream,
- 	/* packet size is threshold * channels */
- 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
- 	dma_data->maxburst = dmic->threshold * channels;
-+	dmic->latency = (OMAP_DMIC_THRES_MAX - dmic->threshold) * USEC_PER_SEC /
-+			params_rate(params);
- 
- 	return 0;
- }
-@@ -236,6 +242,9 @@ static int omap_dmic_dai_prepare(struct snd_pcm_substream *substream,
- 	struct omap_dmic *dmic = snd_soc_dai_get_drvdata(dai);
- 	u32 ctrl;
- 
-+	if (pm_qos_request_active(&dmic->pm_qos_req))
-+		pm_qos_update_request(&dmic->pm_qos_req, dmic->latency);
-+
- 	/* Configure uplink threshold */
- 	omap_dmic_write(dmic, OMAP_DMIC_FIFO_CTRL_REG, dmic->threshold);
- 
+ 		dput(dentry);
+-		if (IS_ROOT(dentry)) {
++		if (dentry == parent) {
+ 			dput(parent);
+ 			return false;
+ 		}
 -- 
 2.17.1
 
