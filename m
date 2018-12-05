@@ -2,93 +2,117 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBCAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C6DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 031AD2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:59:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031AD2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id C59FB2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:01:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C59FB2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeLEI7a (ORCPT
+        id S1727225AbeLEJBv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:59:30 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:40133 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726102AbeLEI7a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:59:30 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TEv2g.D_1544000312;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0TEv2g.D_1544000312)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 05 Dec 2018 16:58:32 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH 1/3] mm/memcg: Fix min/low usage in
- propagate_protected_usage()
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20181203080119.18989-1-xlpang@linux.alibaba.com>
- <20181203180008.GB31090@castle.DHCP.thefacebook.com>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <03652447-d9ba-45ea-3365-46a4caf96748@linux.alibaba.com>
-Date:   Wed, 5 Dec 2018 16:58:31 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.2
+        Wed, 5 Dec 2018 04:01:51 -0500
+Received: from mga06.intel.com ([134.134.136.31]:52970 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbeLEJBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:01:51 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 01:01:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
+   d="asc'?scan'208";a="123096314"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Dec 2018 01:01:45 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Johan Hovold <johan@kernel.org>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        martin.petersen@oracle.com, Bart Van Assche <bvanassche@acm.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Ian King <colin.king@canonical.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v.anuragkumar@gmail.com, Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+Subject: Re: [PATCH v7 05/10] usb: dwc3: make controller clear transfer resources after complete
+In-Reply-To: <1543662811-5194-6-git-send-email-anurag.kumar.vulisha@xilinx.com>
+References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1543662811-5194-6-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Date:   Wed, 05 Dec 2018 11:01:37 +0200
+Message-ID: <878t142vpq.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181203180008.GB31090@castle.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roman,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/12/4 AM 2:00, Roman Gushchin wrote:
-> On Mon, Dec 03, 2018 at 04:01:17PM +0800, Xunlei Pang wrote:
->> When usage exceeds min, min usage should be min other than 0.
->> Apply the same for low.
->>
->> Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
->> ---
->>  mm/page_counter.c | 12 ++----------
->>  1 file changed, 2 insertions(+), 10 deletions(-)
->>
->> diff --git a/mm/page_counter.c b/mm/page_counter.c
->> index de31470655f6..75d53f15f040 100644
->> --- a/mm/page_counter.c
->> +++ b/mm/page_counter.c
->> @@ -23,11 +23,7 @@ static void propagate_protected_usage(struct page_counter *c,
->>  		return;
->>  
->>  	if (c->min || atomic_long_read(&c->min_usage)) {
->> -		if (usage <= c->min)
->> -			protected = usage;
->> -		else
->> -			protected = 0;
->> -
->> +		protected = min(usage, c->min);
-> 
-> This change makes sense in the combination with the patch 3, but not as a
-> standlone "fix". It's not a bug, it's a required thing unless you start scanning
-> proportionally to memory.low/min excess.
-> 
-> Please, reflect this in the commit message. Or, even better, merge it into
-> the patch 3.
 
-The more I looked the more I think it's a bug, but anyway I'm fine with
-merging it into patch 3 :-)
+Hi,
 
-> 
-> Also, please, make sure that cgroup kselftests are passing after your changes.
+Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
+> @@ -2487,6 +2497,11 @@ static void dwc3_endpoint_interrupt(struct dwc3 *d=
+wc,
+>  	}
+>=20=20
+>  	switch (event->endpoint_event) {
+> +	case DWC3_DEPEVT_XFERCOMPLETE:
+> +		if (!dep->stream_capable)
+> +			break;
+> +		dep->flags &=3D ~DWC3_EP_TRANSFER_STARTED;
+> +		/* Fall Through */
 
-Sure, will do and send v2. Thanks for your inputs.
+instead, let's add a proper handler for this:
+
+dwc3_gadget_endpoint_transfer_complete(dep, event);
+
+That handler should be "self-sufficient". IOW, we shouldn't have this
+fall through here. This means that the other patch where you modify
+dwc3_gadget_transfer_in_progress() shouldn't be necessary, since that
+event shouldn't run for stream capable endpoints.
+
+While rewriting the patches, please rebase on my testing/next as I have
+applied a few of the patches in this series.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwHk/EACgkQzL64meEa
+mQZUHg/+PRlIWWGQLUO9kDDrS7skRCVrHgyE3hR6y3QggB0XgQj2F7+soB1TlxRC
+BJdjXDQiiJtFm69Du80UbD4XMDre/2EGiv8JHIIigvVjkHENzF5cNu4nzBfjpEbF
+keb17zVbkXK5ffDq/KemVag+a0uu5DNp1JYOVL3jqD1EJhkYiVFFfoL4/uAICgw9
+bk5TuoZiWtoLKiXpeAa5Bx8ZEAB7lgw6GFkNsUQRvchO/7uyidmRv99J4Hm9l2Ld
+q6CU2izuswPyzepiRuZzvdNJPd3gQvsIfpyjsR7poMm6gEdCCgruOgT2r4eawX41
+1t1Kzf0BigyG27nkoRgK7YYVZ3GvefGiA3ybnEut+qY+pEJ4+oIFYWkYXf9mILON
+KpG4lYxk0F7ItGZWm+/86DflGTJl4UIjWcdnmcd3DXjME+cTuOr4g+70HYZfrw56
+F4Sh+scpOOwMRAiJ4XbwIuj78VyFykpWi4zTpKkgkWtey9I3e9sFFABOzMuOo0yW
+SyAufcpXZhU5qUSAPInU0CoF0rexZzcWTJuamvVnlL53AImZmxNTxRb8bRsq3unD
+/AiMlI+XMSFoBK4238NSCN8D4FFtAkYculLyg71G6DhrwQyyYzRodcqHusLqA6Va
+uw61Z08aH+nnc/Fq7jHy3mvc2WuAqnmKxNSo0A2l62CwIQO6jJU=
+=PHEt
+-----END PGP SIGNATURE-----
+--=-=-=--
