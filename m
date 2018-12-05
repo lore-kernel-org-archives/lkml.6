@@ -2,75 +2,49 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F95C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD0AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 001F520850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:19:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ChLNC3Q4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001F520850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 780D5205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:20:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 780D5205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbeLEXTo (ORCPT
+        id S1728840AbeLEXU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:19:44 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36692 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728800AbeLEXTm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:19:42 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so10807078plo.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:19:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=E2swxDGV76YvoVIew/2XHMGOCcP7+e2yIUI04MJokIU=;
-        b=ChLNC3Q4HIlqRPFLeP9FwRiaBQKRhWQ0ril7RevpYSiQSBU0CwBTNBZiktIdcWxgBy
-         odAnFLl8Tz/QVW0nXS3TSlPEmHhv09eUzkDhd9QrYMu3oHySYNuxWKHYdCAvqYHphk7c
-         JWcxTgcT7e8R7h3R4a50/jmGTTJbAv7ySCC+FbIWOrCuJ8NL1eLHdjk7iikrLwe6Hne+
-         dkwxRSGiIAuJArrPx1UChHY9kHxtA4I/DFr65q74U2S7ZdJdiGfxnZVZlkbtvhyvY3kK
-         S8keCXb8cXGo25xKVf3uSbx4QKJLSgcJzeG2vlhnX6e4s5smGn0EeyxoOXDUElsXZ9mm
-         YqQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=E2swxDGV76YvoVIew/2XHMGOCcP7+e2yIUI04MJokIU=;
-        b=IqcrFPx2j6JDHV5q8wG/VHIv8Yq/McO5QN4UYlrDNX5EYX/z/8I3XHNSSw2lbOgp46
-         kjniO+eF797CQ49vulMPJDPR9KMDDkOYQBVSPWFY4s/gqHaHiFB+W+hMexVoHv8voe2e
-         62NeE5w5TsywHt+9e9AxKFoIRH6TQtyt5EWLFQWewoYl0tXbK7slPuuMNvNmu4E6vJ6B
-         CljaKOygurWlegZ1MOdo1zn7F0N8iYUSLxvPI1E7/Udcq7qBFNfY/1KQIiW4QhTMK47N
-         WSDTRL9ZwzP2Lzgmax9vmcfBbhjcg736hHWeVcU70KaPhpn22EgnllC//HWZOnCMLrTd
-         SZvg==
-X-Gm-Message-State: AA+aEWYUyMNCZx3iISbowAwgfzljaY1PAgtcJEiVAm5M8SlJ79y2ZeAB
-        FVkR39bvqPQbPq85vkuJy6GCK82C7jQt3g==
-X-Google-Smtp-Source: AFSGD/VKc1XjOZICtGpE/lZVETSfyFFAi1YaoLjFhEr7/6zFuRNJmA/pTFJP6Tr/lhFVz09Fnmthhw==
-X-Received: by 2002:a17:902:4401:: with SMTP id k1mr26211520pld.307.1544051981786;
-        Wed, 05 Dec 2018 15:19:41 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id p7sm51442338pfj.72.2018.12.05.15.19.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 15:19:41 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com, joel@joelfernandes.org
-Cc:     kernel-team@android.com
-Subject: [PATCH 3/3] binder: filter out nodes when showing binder procs
-Date:   Wed,  5 Dec 2018 15:19:26 -0800
-Message-Id: <20181205231926.45928-3-tkjos@google.com>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-In-Reply-To: <20181205231926.45928-1-tkjos@google.com>
-References: <20181205231926.45928-1-tkjos@google.com>
+        Wed, 5 Dec 2018 18:20:29 -0500
+Received: from mga06.intel.com ([134.134.136.31]:24296 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727592AbeLEXU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:20:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 15:20:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,320,1539673200"; 
+   d="scan'208";a="281279555"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
+  by orsmga005.jf.intel.com with ESMTP; 05 Dec 2018 15:20:28 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: [RFC PATCH 0/4] x86: Add vDSO exception fixup for SGX
+Date:   Wed,  5 Dec 2018 15:20:08 -0800
+Message-Id: <20181205232012.28920-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,33 +52,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When dumping out binder transactions via a debug node,
-the output is too verbose if a process has many nodes.
-Change the output for transaction dumps to only display
-nodes with pending async transactions.
+First things first, this RFC is not intended to address whether or not
+vDSO is the appropriate method for supporting SGX enclaves, but rather
+its purpose is to hammer out the vDSO implementation *if* we decide it
+is the best approach.
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
-v2: no change, just resubmitted as #3 of 3 patches instead of by itself
-There is no actual dependancy on patches 1 and 2 of the series
+Though the code technically stands alone, the intent is to roll it
+into the main SGX series once it has been beat on for a bit.  For that
+reason there are no dependencies on CONFIG_SGX (which doesn't exist)
+or any other bits that one might expect.
 
- drivers/android/binder.c | 3 +++
- 1 file changed, 3 insertions(+)
+The quick and dirty is that for all intents and purposes, the SGX
+architecture requires userspace to gracefully handle exceptions.  The
+vast majority of enclaves are expected to leverage a library to handle
+much of the plumbing.  Unfortunately for us (them?), putting two and
+two together means SGX libraries would need to handle most signals on
+behalf of the enclave's application, which is far from ideal.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 172c207fbf99d..cbaef3b0d3078 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -5440,6 +5440,9 @@ static void print_binder_proc(struct seq_file *m,
- 	for (n = rb_first(&proc->nodes); n != NULL; n = rb_next(n)) {
- 		struct binder_node *node = rb_entry(n, struct binder_node,
- 						    rb_node);
-+		if (!print_all && !node->has_async_transaction)
-+			continue;
-+
- 		/*
- 		 * take a temporary reference on the node so it
- 		 * survives and isn't removed from the tree
+One proposed solution for supporting SGX without requiring signals is
+to wrap enclave transitions in a vDSO function so that SGX exceptions
+can be intercepted via exception fixup and returned inline to the
+caller.  This RFC series adds exception fixup and SGX support to the
+vDSO.
+
+
+Sean Christopherson (4):
+  x86/vdso: Add support for exception fixup in vDSO functions
+  x86/fault: Attempt to fixup unhandled #PF in vDSO before signaling
+  x86/traps: Attempt to fixup exceptions in vDSO before signaling
+  x86/vdso: Add __vdso_sgx_eenter() to wrap SGX enclave transitions
+
+ arch/x86/entry/vdso/Makefile          |   5 +-
+ arch/x86/entry/vdso/extable.c         |  37 +++++++++
+ arch/x86/entry/vdso/extable.h         |  17 ++++
+ arch/x86/entry/vdso/vdso-layout.lds.S |   9 ++-
+ arch/x86/entry/vdso/vdso.lds.S        |   1 +
+ arch/x86/entry/vdso/vdso2c.h          |  58 ++++++++++++--
+ arch/x86/entry/vdso/vsgx_eenter.c     | 108 ++++++++++++++++++++++++++
+ arch/x86/include/asm/vdso.h           |   5 ++
+ arch/x86/kernel/traps.c               |  11 +++
+ arch/x86/mm/fault.c                   |   7 ++
+ 10 files changed, 247 insertions(+), 11 deletions(-)
+ create mode 100644 arch/x86/entry/vdso/extable.c
+ create mode 100644 arch/x86/entry/vdso/extable.h
+ create mode 100644 arch/x86/entry/vdso/vsgx_eenter.c
+
 -- 
-2.20.0.rc1.387.gf8505762e3-goog
+2.19.2
 
