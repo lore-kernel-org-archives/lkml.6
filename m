@@ -2,102 +2,154 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02125C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53765C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFBCB20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:17:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBCB20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B444213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:17:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHLkfnQa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B444213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeLEKRC (ORCPT
+        id S1727613AbeLEKRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:17:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45960 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 05:17:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbeLEKRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:17:02 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727332AbeLEKRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:17:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B2D36307D84C;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9336920659;
         Wed,  5 Dec 2018 10:17:01 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-63.pek2.redhat.com [10.72.12.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BC195FC05;
-        Wed,  5 Dec 2018 10:16:56 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 18:16:53 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     lijiang <lijiang@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        x86@kernel.org, akpm@linux-foundation.org, bhe@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Subject: Re: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Message-ID: <20181205101653.GA6940@dhcp-128-65.nay.redhat.com>
-References: <20181202030839.29945-1-lijiang@redhat.com>
- <20181202030839.29945-2-lijiang@redhat.com>
- <20181203150809.GA4794@zn.tnic>
- <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544005022;
+        bh=rP+OpeHCUahFgYKl2Eey7epdZBodjVeeH/3leWGOIxo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CHLkfnQaPKTqWllMjj36F6zRRWcC8VDnBzC1h85uxV0lpcfpaE3Qw1cdYwTMYAsVz
+         brxK3c94PgVx9rdo3XdqDZuVyTgrFd8FBuTObAgpqdN2UHjFVa1eohl7k85WxOAxc1
+         SRtZ9GjlXlF1eFuTgBjjXqmDH+O1FL/DY15XkdaI=
+Date:   Wed, 5 Dec 2018 11:16:59 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org,
+        lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
+        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
+        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
+        arnd@arndb.de, john.garry@huawei.com, geert+renesas@glider.be,
+        robin.murphy@arm.com, paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, maxime.ripard@bootlin.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] fieldbus_dev: add Fieldbus Device subsystem.
+Message-ID: <20181205101659.GA27058@kroah.com>
+References: <20181204220224.27324-1-TheSven73@googlemail.com>
+ <20181204220224.27324-2-TheSven73@googlemail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 05 Dec 2018 10:17:01 +0000 (UTC)
+In-Reply-To: <20181204220224.27324-2-TheSven73@googlemail.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> +init_uts_ns
-> >> +===========
-> >> +This is the UTS namespace, which is used to isolate two specific elements
-> >> +of the system that relate to the uname system call. The UTS namespace is
-> >> +named after the data structure used to store information returned by the
-> >> +uname system call.
-> > 
-> > Those non-obvious exports should also have a short explanation why
-> > they're part of VMCOREINFO.
-> > 
-> >> +
-> >> +node_online_map
-> >> +===============
-> >> +It is a macro definition, actually it is an arrary node_states[N_ONLINE],
-> >> +and it represents the set of online node in a system, one bit position
-> >> +per node number.
-> > 
-> > Ditto.
-> > 
-> > So yeah, people can find out what those things are but I think it is
-> > more important to state here *why* they're part of VMCOREINFO and how
-> > they're used and why they're exported.
-> > 
-> 
-> This is a good question.
-> 
-> For these two *why*, it should be easy to understand. Because user-space tools
-> need to know basic information, such as the symbol values, field offset, structure
-> size, etc. Otherwise, these tools won't know how to analyze the memory of the crash
-> kernel.
-> 
-> For the second question 'how they are used', we can get the answer from user-space
-> tools, such as makedumpfile, crash tools. Therefore, it may not need to explain any
-> more in kernel document. On the other hand, if we must put these contents into kernel
-> document, i have to say, that would be a hard task.
+On Tue, Dec 04, 2018 at 05:02:19PM -0500, Sven Van Asbroeck wrote:
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-fieldbus-dev
+> @@ -0,0 +1,63 @@
+> +What:		/sys/class/fieldbus_dev/fieldbus_devX/card_name
 
-It should be a good chance to learn how makedumpfile works :),  Maybe it is
-hard to get *all* of them, but it would be good to dig and find the
-thing you can find then explain it.  And leave those *unknown* part as
-FIXME or TODO, people can add description later. 
+Here's a good example of your naming being a bit too "verbose" :)
 
-Added Kazu in cc as well..
+There is no need to name your devices with the same prefix as your
+class.  Just make it:
+	/sys/class/fieldbus/XXX/card_name
 
-Thanks
-Dave
+And why is this a class and not just a "normal" device and bus?  Devices
+live on busses, not generally as a class.  Can your devices live on
+different types of busses (USB, PCI, etc.)?
+
+But, if you really just want to leave this as a "class", then just call
+it "fieldbus" and make it simple.  You are only exposing the
+"fieldbus-specific" type of attributes here, so that's probably good
+enough for now.
+
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -187,4 +187,5 @@ obj-$(CONFIG_TEE)		+= tee/
+>  obj-$(CONFIG_MULTIPLEXER)	+= mux/
+>  obj-$(CONFIG_UNISYS_VISORBUS)	+= visorbus/
+>  obj-$(CONFIG_SIOX)		+= siox/
+> +obj-$(CONFIG_FIELDBUS_DEV)	+= fieldbus/
+>  obj-$(CONFIG_GNSS)		+= gnss/
+
+Why not after gnss?
+
+> --- /dev/null
+> +++ b/drivers/fieldbus/Makefile
+> @@ -0,0 +1,9 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for fieldbus_dev drivers.
+> +#
+> +
+> +obj-$(CONFIG_FIELDBUS_DEV)	+= fieldbus_dev_core.o
+
+Why not just "fieldbus.o"?
+
+> +static ssize_t online_show(struct device *dev, struct device_attribute *attr,
+> +				char *buf)
+> +{
+> +	struct fieldbus_dev *fb = dev_get_drvdata(dev);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%s\n",
+
+Nit, sysfs attributes are always so small that you don't need to care
+about the size of the buffer because you "always" know that you will not
+overflow it.
+
+So this can just be a simple:
+	return sprintf(buf, "%s\n", ...);
+
+> +		fb->online ? "online" : "offline");
+> +}
+> +static DEVICE_ATTR_RO(online);
+> +
+> +static ssize_t enabled_show(struct device *dev, struct device_attribute *attr,
+> +				char *buf)
+> +{
+> +	struct fieldbus_dev *fb = dev_get_drvdata(dev);
+> +
+> +	if (!fb->enable_get)
+> +		return -EINVAL;
+> +	return snprintf(buf, PAGE_SIZE, "%s\n",
+> +		fb->enable_get(fb) ? ctrl_enabled : ctrl_disabled);
+> +}
+
+New line?
+
+> +static ssize_t enabled_store(struct device *dev, struct device_attribute *attr,
+> +			     const char *buf, size_t n)
+> +{
+> +	struct fieldbus_dev *fb = dev_get_drvdata(dev);
+> +	int err;
+> +
+> +	if (!fb->simple_enable_set) {
+> +		n = -ENOTSUPP;
+> +	} else if (sysfs_streq(buf, ctrl_enabled)) {
+
+Why not just have the normal "0/1" type of parsing?  We have a function
+for it already, kstrtobool().
+
+thanks,
+
+greg k-h
