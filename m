@@ -3,127 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2412CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B52EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC872133F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:58:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC872133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CF65420850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF65420850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbeLET6Z (ORCPT
+        id S1728599AbeLEUBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:58:25 -0500
-Received: from foss.arm.com ([217.140.101.70]:34584 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728772AbeLET5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:57:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FC6F1650;
-        Wed,  5 Dec 2018 11:57:22 -0800 (PST)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 49E2C3F614;
-        Wed,  5 Dec 2018 11:57:21 -0800 (PST)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de
-Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, cai@gmx.us, salil.mehta@huawei.com,
-        john.garry@huawei.com
-Subject: [PATCH v2 7/8] dma/debug: Remove dma_debug_resize_entries()
-Date:   Wed,  5 Dec 2018 19:56:56 +0000
-Message-Id: <229557ee9d279393473997caa825617b6d0b19e3.1544037783.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.19.1.dirty
-In-Reply-To: <cover.1544037783.git.robin.murphy@arm.com>
-References: <cover.1544037783.git.robin.murphy@arm.com>
+        Wed, 5 Dec 2018 15:01:05 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50902 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727388AbeLEUBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:01:05 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 47493263BF0
+Received: by earth.universe (Postfix, from userid 1000)
+        id 2BC303C08D6; Wed,  5 Dec 2018 21:00:59 +0100 (CET)
+Date:   Wed, 5 Dec 2018 21:00:59 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: cpcap-charger: clean an indentation
+ issue, remove tab
+Message-ID: <20181205200059.mk2canwpe3koeuhy@earth.universe>
+References: <20181031184841.5673-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="roq5qfpepfms3zai"
+Content-Disposition: inline
+In-Reply-To: <20181031184841.5673-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With no callers left, we can clean up this part of dma-debug's exposed
-internals, making way to tweak the allocation behaviour.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+--roq5qfpepfms3zai
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v2: New
+Hi,
 
- include/linux/dma-debug.h |  7 -------
- kernel/dma/debug.c        | 30 ------------------------------
- 2 files changed, 37 deletions(-)
+On Wed, Oct 31, 2018 at 06:48:41PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> Trivial fix to clean up indentation issue, remove an extraneous tab
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
-index 30213adbb6b9..46e6131a72b6 100644
---- a/include/linux/dma-debug.h
-+++ b/include/linux/dma-debug.h
-@@ -30,8 +30,6 @@ struct bus_type;
- 
- extern void dma_debug_add_bus(struct bus_type *bus);
- 
--extern int dma_debug_resize_entries(u32 num_entries);
--
- extern void debug_dma_map_single(struct device *dev, const void *addr,
- 				 unsigned long len);
- 
-@@ -101,11 +99,6 @@ static inline void dma_debug_add_bus(struct bus_type *bus)
- {
- }
- 
--static inline int dma_debug_resize_entries(u32 num_entries)
--{
--	return 0;
--}
--
- static inline void debug_dma_map_single(struct device *dev, const void *addr,
- 					unsigned long len)
- {
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index cd9a12bf6a3a..2202402afe9a 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -756,36 +756,6 @@ static void dma_entry_free(struct dma_debug_entry *entry)
- 	spin_unlock_irqrestore(&free_entries_lock, flags);
- }
- 
--int dma_debug_resize_entries(u32 num_entries)
--{
--	int i, delta, ret = 0;
--	unsigned long flags;
--	struct dma_debug_entry *entry;
--
--	spin_lock_irqsave(&free_entries_lock, flags);
--
--	if (nr_total_entries < num_entries) {
--		delta = num_entries - nr_total_entries;
--
--		ret = dma_debug_add_entries(delta, GFP_ATOMIC);
--	} else {
--		delta = nr_total_entries - num_entries;
--
--		for (i = 0; i < delta && !list_empty(&free_entries); i++) {
--			entry = __dma_entry_alloc();
--			kfree(entry);
--		}
--
--		nr_total_entries -= i;
--		if (nr_total_entries != num_entries)
--			ret = -EBUSY;
--	}
--
--	spin_unlock_irqrestore(&free_entries_lock, flags);
--
--	return ret;
--}
--
- /*
-  * DMA-API debugging init code
-  *
--- 
-2.19.1.dirty
+Thanks, queued.
 
+-- Sebastian
+
+>  drivers/power/supply/cpcap-charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/=
+cpcap-charger.c
+> index e4905bef2663..c843eaff8ad0 100644
+> --- a/drivers/power/supply/cpcap-charger.c
+> +++ b/drivers/power/supply/cpcap-charger.c
+> @@ -544,7 +544,7 @@ static void cpcap_charger_init_optional_gpios(struct =
+cpcap_charger_ddata *ddata)
+>  		if (IS_ERR(ddata->gpio[i])) {
+>  			dev_info(ddata->dev, "no mode change GPIO%i: %li\n",
+>  				 i, PTR_ERR(ddata->gpio[i]));
+> -				 ddata->gpio[i] =3D NULL;
+> +			ddata->gpio[i] =3D NULL;
+>  		}
+>  	}
+>  }
+> --=20
+> 2.19.1
+>=20
+
+--roq5qfpepfms3zai
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwILncACgkQ2O7X88g7
++pq+IBAAmmyk/9B4GoMD3xObZOc/MUp7vs2QFfpxyC47SDuKUQvLyPjOnS4tinwx
+el/xSPB1WNzDhfbIB+OUluFdXIJ5E5mt+fQ1BpXQHiEbN9dAOtg/SUD4MmEENT8I
+58y9ueFC8fS3G9gcjsBN8fDbmgY4Je2XtSfL0uuhAuNHoMFsxLCfecdHpRog5PF7
+mcQUZp5QI7nzIn/x5W2R0eUakGFV2sNxqHAz7m63v0PXsVQ5huXz1PPgFvyghtbn
++xNi/HmBr65bJI2TPXiprw6yWjg2Se575AgAl5WOzkWUR+DLFq87UhyUn+TZ7AIN
+qJePO4peAqxgHbJICUJmlx5E3G5LrFK3w/YWq25LpP3Fgqg4+L0bYJCWe2ywo/vw
+ULCBckfXYmJI6fwiVdl0lxeZOSINcMD+T2oJx5it8SoZZVRF+AYYKQM4xEWPbNHD
+YAHG2Cia86OCBn4waJUbDdbMv2rE5Yc56vhAPJBtLZX8cza+utDcKsYm7lhbcFYB
+HfpQY1tzA/OYjHQ3yJXuJJbdy3i7012hRnDk+APoVnWcLRAUR242Jq6WXMM6Gac6
+HYfHz0hb7AqEp+BpJ98VrvW34chgS+Qwceb4Wr75llp9OvdgTgtd1UKjgUCazbBB
+02iW9zFr3VnBZnwVLTkD3fNI+qKFMpuMzOgK6Bl7zQ1TgZY7tjc=
+=5edf
+-----END PGP SIGNATURE-----
+
+--roq5qfpepfms3zai--
