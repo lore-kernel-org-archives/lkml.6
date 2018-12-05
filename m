@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A595EC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D898C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF2520892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF2520892
+	by mail.kernel.org (Postfix) with ESMTP id BE24020850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:50:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE24020850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbeLEXu2 (ORCPT
+        id S1729042AbeLEXux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:50:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58320 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 18:50:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728731AbeLEXsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728411AbeLEXsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 18:48:31 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5B321527;
-        Wed,  5 Dec 2018 23:48:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D385223C6;
+        Wed,  5 Dec 2018 23:48:30 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gUgu4-00007B-Vv; Wed, 05 Dec 2018 18:48:28 -0500
-Message-Id: <20181205234828.889332707@goodmis.org>
+        id 1gUgu5-00009L-HN; Wed, 05 Dec 2018 18:48:29 -0500
+Message-Id: <20181205234829.443473064@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Dec 2018 18:47:52 -0500
+Date:   Wed, 05 Dec 2018 18:47:56 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -42,7 +42,7 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Tom Zanussi <zanussi@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [for-next][PATCH 03/30] fgraph: Create a fgraph.c file to store function graph infrastructure
+Subject: [for-next][PATCH 07/30] ftrace: Create new ftrace_internal.h header
 References: <20181205234749.372720574@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,510 +53,298 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-As the function graph infrastructure can be used by thing other than
-tracing, moving the code to its own file out of the trace_functions_graph.c
-code makes more sense.
-
-The fgraph.c file will only contain the infrastructure required to hook into
-functions and their return code.
+In order to move function graph infrastructure into its own file (fgraph.h)
+it needs to access various functions and variables in ftrace.c that are
+currently static. Create a new file called ftrace-internal.h that holds the
+function prototypes and the extern declarations of the variables needed by
+fgraph.c as well, and make them global in ftrace.c such that they can be
+used outside that file.
 
 Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/Makefile                |   1 +
- kernel/trace/fgraph.c                | 232 +++++++++++++++++++++++++++
- kernel/trace/trace_functions_graph.c | 220 -------------------------
- 3 files changed, 233 insertions(+), 220 deletions(-)
- create mode 100644 kernel/trace/fgraph.c
+ kernel/trace/ftrace.c          | 76 +++++++---------------------------
+ kernel/trace/ftrace_internal.h | 75 +++++++++++++++++++++++++++++++++
+ 2 files changed, 89 insertions(+), 62 deletions(-)
+ create mode 100644 kernel/trace/ftrace_internal.h
 
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index f81dadbc7c4a..c7ade7965464 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -57,6 +57,7 @@ obj-$(CONFIG_MMIOTRACE) += trace_mmiotrace.o
- obj-$(CONFIG_FUNCTION_GRAPH_TRACER) += trace_functions_graph.o
- obj-$(CONFIG_TRACE_BRANCH_PROFILING) += trace_branch.o
- obj-$(CONFIG_BLK_DEV_IO_TRACE) += blktrace.o
-+obj-$(CONFIG_FUNCTION_GRAPH_TRACER) += fgraph.o
- ifeq ($(CONFIG_BLOCK),y)
- obj-$(CONFIG_EVENT_TRACING) += blktrace.o
- endif
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-new file mode 100644
-index 000000000000..5ad9c0e88b80
---- /dev/null
-+++ b/kernel/trace/fgraph.c
-@@ -0,0 +1,232 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Infrastructure to took into function calls and returns.
-+ * Copyright (c) 2008-2009 Frederic Weisbecker <fweisbec@gmail.com>
-+ * Mostly borrowed from function tracer which
-+ * is Copyright (c) Steven Rostedt <srostedt@redhat.com>
-+ *
-+ * Highly modified by Steven Rostedt (VMware).
-+ */
-+#include <linux/ftrace.h>
-+
-+#include "trace.h"
-+
-+static bool kill_ftrace_graph;
-+
-+/**
-+ * ftrace_graph_is_dead - returns true if ftrace_graph_stop() was called
-+ *
-+ * ftrace_graph_stop() is called when a severe error is detected in
-+ * the function graph tracing. This function is called by the critical
-+ * paths of function graph to keep those paths from doing any more harm.
-+ */
-+bool ftrace_graph_is_dead(void)
-+{
-+	return kill_ftrace_graph;
-+}
-+
-+/**
-+ * ftrace_graph_stop - set to permanently disable function graph tracincg
-+ *
-+ * In case of an error int function graph tracing, this is called
-+ * to try to keep function graph tracing from causing any more harm.
-+ * Usually this is pretty severe and this is called to try to at least
-+ * get a warning out to the user.
-+ */
-+void ftrace_graph_stop(void)
-+{
-+	kill_ftrace_graph = true;
-+}
-+
-+/* Add a function return address to the trace stack on thread info.*/
-+static int
-+ftrace_push_return_trace(unsigned long ret, unsigned long func,
-+			 unsigned long frame_pointer, unsigned long *retp)
-+{
-+	unsigned long long calltime;
-+	int index;
-+
-+	if (unlikely(ftrace_graph_is_dead()))
-+		return -EBUSY;
-+
-+	if (!current->ret_stack)
-+		return -EBUSY;
-+
-+	/*
-+	 * We must make sure the ret_stack is tested before we read
-+	 * anything else.
-+	 */
-+	smp_rmb();
-+
-+	/* The return trace stack is full */
-+	if (current->curr_ret_stack == FTRACE_RETFUNC_DEPTH - 1) {
-+		atomic_inc(&current->trace_overrun);
-+		return -EBUSY;
-+	}
-+
-+	/*
-+	 * The curr_ret_stack is an index to ftrace return stack of
-+	 * current task.  Its value should be in [0, FTRACE_RETFUNC_
-+	 * DEPTH) when the function graph tracer is used.  To support
-+	 * filtering out specific functions, it makes the index
-+	 * negative by subtracting huge value (FTRACE_NOTRACE_DEPTH)
-+	 * so when it sees a negative index the ftrace will ignore
-+	 * the record.  And the index gets recovered when returning
-+	 * from the filtered function by adding the FTRACE_NOTRACE_
-+	 * DEPTH and then it'll continue to record functions normally.
-+	 *
-+	 * The curr_ret_stack is initialized to -1 and get increased
-+	 * in this function.  So it can be less than -1 only if it was
-+	 * filtered out via ftrace_graph_notrace_addr() which can be
-+	 * set from set_graph_notrace file in tracefs by user.
-+	 */
-+	if (current->curr_ret_stack < -1)
-+		return -EBUSY;
-+
-+	calltime = trace_clock_local();
-+
-+	index = ++current->curr_ret_stack;
-+	if (ftrace_graph_notrace_addr(func))
-+		current->curr_ret_stack -= FTRACE_NOTRACE_DEPTH;
-+	barrier();
-+	current->ret_stack[index].ret = ret;
-+	current->ret_stack[index].func = func;
-+	current->ret_stack[index].calltime = calltime;
-+#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-+	current->ret_stack[index].fp = frame_pointer;
-+#endif
-+#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
-+	current->ret_stack[index].retp = retp;
-+#endif
-+	return 0;
-+}
-+
-+int function_graph_enter(unsigned long ret, unsigned long func,
-+			 unsigned long frame_pointer, unsigned long *retp)
-+{
-+	struct ftrace_graph_ent trace;
-+
-+	trace.func = func;
-+	trace.depth = ++current->curr_ret_depth;
-+
-+	if (ftrace_push_return_trace(ret, func, frame_pointer, retp))
-+		goto out;
-+
-+	/* Only trace if the calling function expects to */
-+	if (!ftrace_graph_entry(&trace))
-+		goto out_ret;
-+
-+	return 0;
-+ out_ret:
-+	current->curr_ret_stack--;
-+ out:
-+	current->curr_ret_depth--;
-+	return -EBUSY;
-+}
-+
-+/* Retrieve a function return address to the trace stack on thread info.*/
-+static void
-+ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
-+			unsigned long frame_pointer)
-+{
-+	int index;
-+
-+	index = current->curr_ret_stack;
-+
-+	/*
-+	 * A negative index here means that it's just returned from a
-+	 * notrace'd function.  Recover index to get an original
-+	 * return address.  See ftrace_push_return_trace().
-+	 *
-+	 * TODO: Need to check whether the stack gets corrupted.
-+	 */
-+	if (index < 0)
-+		index += FTRACE_NOTRACE_DEPTH;
-+
-+	if (unlikely(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
-+		ftrace_graph_stop();
-+		WARN_ON(1);
-+		/* Might as well panic, otherwise we have no where to go */
-+		*ret = (unsigned long)panic;
-+		return;
-+	}
-+
-+#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-+	/*
-+	 * The arch may choose to record the frame pointer used
-+	 * and check it here to make sure that it is what we expect it
-+	 * to be. If gcc does not set the place holder of the return
-+	 * address in the frame pointer, and does a copy instead, then
-+	 * the function graph trace will fail. This test detects this
-+	 * case.
-+	 *
-+	 * Currently, x86_32 with optimize for size (-Os) makes the latest
-+	 * gcc do the above.
-+	 *
-+	 * Note, -mfentry does not use frame pointers, and this test
-+	 *  is not needed if CC_USING_FENTRY is set.
-+	 */
-+	if (unlikely(current->ret_stack[index].fp != frame_pointer)) {
-+		ftrace_graph_stop();
-+		WARN(1, "Bad frame pointer: expected %lx, received %lx\n"
-+		     "  from func %ps return to %lx\n",
-+		     current->ret_stack[index].fp,
-+		     frame_pointer,
-+		     (void *)current->ret_stack[index].func,
-+		     current->ret_stack[index].ret);
-+		*ret = (unsigned long)panic;
-+		return;
-+	}
-+#endif
-+
-+	*ret = current->ret_stack[index].ret;
-+	trace->func = current->ret_stack[index].func;
-+	trace->calltime = current->ret_stack[index].calltime;
-+	trace->overrun = atomic_read(&current->trace_overrun);
-+	trace->depth = current->curr_ret_depth--;
-+	/*
-+	 * We still want to trace interrupts coming in if
-+	 * max_depth is set to 1. Make sure the decrement is
-+	 * seen before ftrace_graph_return.
-+	 */
-+	barrier();
-+}
-+
-+/*
-+ * Send the trace to the ring-buffer.
-+ * @return the original return address.
-+ */
-+unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
-+{
-+	struct ftrace_graph_ret trace;
-+	unsigned long ret;
-+
-+	ftrace_pop_return_trace(&trace, &ret, frame_pointer);
-+	trace.rettime = trace_clock_local();
-+	ftrace_graph_return(&trace);
-+	/*
-+	 * The ftrace_graph_return() may still access the current
-+	 * ret_stack structure, we need to make sure the update of
-+	 * curr_ret_stack is after that.
-+	 */
-+	barrier();
-+	current->curr_ret_stack--;
-+	/*
-+	 * The curr_ret_stack can be less than -1 only if it was
-+	 * filtered out and it's about to return from the function.
-+	 * Recover the index and continue to trace normal functions.
-+	 */
-+	if (current->curr_ret_stack < -1) {
-+		current->curr_ret_stack += FTRACE_NOTRACE_DEPTH;
-+		return ret;
-+	}
-+
-+	if (unlikely(!ret)) {
-+		ftrace_graph_stop();
-+		WARN_ON(1);
-+		/* Might as well panic. What else to do? */
-+		ret = (unsigned long)panic;
-+	}
-+
-+	return ret;
-+}
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 0d235e44d08e..b846d82c2f95 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -16,33 +16,6 @@
- #include "trace.h"
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 77734451cb05..52c89428b0db 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -40,6 +40,7 @@
+ #include <asm/sections.h>
+ #include <asm/setup.h>
+ 
++#include "ftrace_internal.h"
  #include "trace_output.h"
+ #include "trace_stat.h"
  
--static bool kill_ftrace_graph;
--
--/**
-- * ftrace_graph_is_dead - returns true if ftrace_graph_stop() was called
+@@ -77,7 +78,7 @@
+ #define ASSIGN_OPS_HASH(opsname, val)
+ #endif
+ 
+-static struct ftrace_ops ftrace_list_end __read_mostly = {
++struct ftrace_ops ftrace_list_end __read_mostly = {
+ 	.func		= ftrace_stub,
+ 	.flags		= FTRACE_OPS_FL_RECURSION_SAFE | FTRACE_OPS_FL_STUB,
+ 	INIT_OPS_HASH(ftrace_list_end)
+@@ -112,11 +113,11 @@ static void ftrace_update_trampoline(struct ftrace_ops *ops);
+  */
+ static int ftrace_disabled __read_mostly;
+ 
+-static DEFINE_MUTEX(ftrace_lock);
++DEFINE_MUTEX(ftrace_lock);
+ 
+-static struct ftrace_ops __rcu *ftrace_ops_list __read_mostly = &ftrace_list_end;
++struct ftrace_ops __rcu *ftrace_ops_list __read_mostly = &ftrace_list_end;
+ ftrace_func_t ftrace_trace_function __read_mostly = ftrace_stub;
+-static struct ftrace_ops global_ops;
++struct ftrace_ops global_ops;
+ 
+ #if ARCH_SUPPORTS_FTRACE_OPS
+ static void ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+@@ -127,26 +128,6 @@ static void ftrace_ops_no_ops(unsigned long ip, unsigned long parent_ip);
+ #define ftrace_ops_list_func ((ftrace_func_t)ftrace_ops_no_ops)
+ #endif
+ 
+-/*
+- * Traverse the ftrace_global_list, invoking all entries.  The reason that we
+- * can use rcu_dereference_raw_notrace() is that elements removed from this list
+- * are simply leaked, so there is no need to interact with a grace-period
+- * mechanism.  The rcu_dereference_raw_notrace() calls are needed to handle
+- * concurrent insertions into the ftrace_global_list.
 - *
-- * ftrace_graph_stop() is called when a severe error is detected in
-- * the function graph tracing. This function is called by the critical
-- * paths of function graph to keep those paths from doing any more harm.
+- * Silly Alpha and silly pointer-speculation compiler optimizations!
 - */
--bool ftrace_graph_is_dead(void)
--{
--	return kill_ftrace_graph;
--}
--
--/**
-- * ftrace_graph_stop - set to permanently disable function graph tracincg
-- *
-- * In case of an error int function graph tracing, this is called
-- * to try to keep function graph tracing from causing any more harm.
-- * Usually this is pretty severe and this is called to try to at least
-- * get a warning out to the user.
-- */
--void ftrace_graph_stop(void)
--{
--	kill_ftrace_graph = true;
--}
--
- /* When set, irq functions will be ignored */
- static int ftrace_graph_skip_irqs;
- 
-@@ -117,199 +90,6 @@ static void
- print_graph_duration(struct trace_array *tr, unsigned long long duration,
- 		     struct trace_seq *s, u32 flags);
- 
--/* Add a function return address to the trace stack on thread info.*/
--static int
--ftrace_push_return_trace(unsigned long ret, unsigned long func,
--			 unsigned long frame_pointer, unsigned long *retp)
--{
--	unsigned long long calltime;
--	int index;
--
--	if (unlikely(ftrace_graph_is_dead()))
--		return -EBUSY;
--
--	if (!current->ret_stack)
--		return -EBUSY;
--
--	/*
--	 * We must make sure the ret_stack is tested before we read
--	 * anything else.
--	 */
--	smp_rmb();
--
--	/* The return trace stack is full */
--	if (current->curr_ret_stack == FTRACE_RETFUNC_DEPTH - 1) {
--		atomic_inc(&current->trace_overrun);
--		return -EBUSY;
--	}
--
--	/*
--	 * The curr_ret_stack is an index to ftrace return stack of
--	 * current task.  Its value should be in [0, FTRACE_RETFUNC_
--	 * DEPTH) when the function graph tracer is used.  To support
--	 * filtering out specific functions, it makes the index
--	 * negative by subtracting huge value (FTRACE_NOTRACE_DEPTH)
--	 * so when it sees a negative index the ftrace will ignore
--	 * the record.  And the index gets recovered when returning
--	 * from the filtered function by adding the FTRACE_NOTRACE_
--	 * DEPTH and then it'll continue to record functions normally.
--	 *
--	 * The curr_ret_stack is initialized to -1 and get increased
--	 * in this function.  So it can be less than -1 only if it was
--	 * filtered out via ftrace_graph_notrace_addr() which can be
--	 * set from set_graph_notrace file in tracefs by user.
--	 */
--	if (current->curr_ret_stack < -1)
--		return -EBUSY;
--
--	calltime = trace_clock_local();
--
--	index = ++current->curr_ret_stack;
--	if (ftrace_graph_notrace_addr(func))
--		current->curr_ret_stack -= FTRACE_NOTRACE_DEPTH;
--	barrier();
--	current->ret_stack[index].ret = ret;
--	current->ret_stack[index].func = func;
--	current->ret_stack[index].calltime = calltime;
--#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
--	current->ret_stack[index].fp = frame_pointer;
--#endif
--#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
--	current->ret_stack[index].retp = retp;
--#endif
--	return 0;
--}
--
--int function_graph_enter(unsigned long ret, unsigned long func,
--			 unsigned long frame_pointer, unsigned long *retp)
--{
--	struct ftrace_graph_ent trace;
--
--	trace.func = func;
--	trace.depth = ++current->curr_ret_depth;
--
--	if (ftrace_push_return_trace(ret, func, frame_pointer, retp))
--		goto out;
--
--	/* Only trace if the calling function expects to */
--	if (!ftrace_graph_entry(&trace))
--		goto out_ret;
--
--	return 0;
-- out_ret:
--	current->curr_ret_stack--;
-- out:
--	current->curr_ret_depth--;
--	return -EBUSY;
--}
--
--/* Retrieve a function return address to the trace stack on thread info.*/
--static void
--ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
--			unsigned long frame_pointer)
--{
--	int index;
--
--	index = current->curr_ret_stack;
--
--	/*
--	 * A negative index here means that it's just returned from a
--	 * notrace'd function.  Recover index to get an original
--	 * return address.  See ftrace_push_return_trace().
--	 *
--	 * TODO: Need to check whether the stack gets corrupted.
--	 */
--	if (index < 0)
--		index += FTRACE_NOTRACE_DEPTH;
--
--	if (unlikely(index < 0 || index >= FTRACE_RETFUNC_DEPTH)) {
--		ftrace_graph_stop();
--		WARN_ON(1);
--		/* Might as well panic, otherwise we have no where to go */
--		*ret = (unsigned long)panic;
--		return;
--	}
--
--#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
--	/*
--	 * The arch may choose to record the frame pointer used
--	 * and check it here to make sure that it is what we expect it
--	 * to be. If gcc does not set the place holder of the return
--	 * address in the frame pointer, and does a copy instead, then
--	 * the function graph trace will fail. This test detects this
--	 * case.
--	 *
--	 * Currently, x86_32 with optimize for size (-Os) makes the latest
--	 * gcc do the above.
--	 *
--	 * Note, -mfentry does not use frame pointers, and this test
--	 *  is not needed if CC_USING_FENTRY is set.
--	 */
--	if (unlikely(current->ret_stack[index].fp != frame_pointer)) {
--		ftrace_graph_stop();
--		WARN(1, "Bad frame pointer: expected %lx, received %lx\n"
--		     "  from func %ps return to %lx\n",
--		     current->ret_stack[index].fp,
--		     frame_pointer,
--		     (void *)current->ret_stack[index].func,
--		     current->ret_stack[index].ret);
--		*ret = (unsigned long)panic;
--		return;
--	}
--#endif
--
--	*ret = current->ret_stack[index].ret;
--	trace->func = current->ret_stack[index].func;
--	trace->calltime = current->ret_stack[index].calltime;
--	trace->overrun = atomic_read(&current->trace_overrun);
--	trace->depth = current->curr_ret_depth--;
--	/*
--	 * We still want to trace interrupts coming in if
--	 * max_depth is set to 1. Make sure the decrement is
--	 * seen before ftrace_graph_return.
--	 */
--	barrier();
--}
+-#define do_for_each_ftrace_op(op, list)			\
+-	op = rcu_dereference_raw_notrace(list);			\
+-	do
 -
 -/*
-- * Send the trace to the ring-buffer.
-- * @return the original return address.
+- * Optimized for just a single item in the list (as that is the normal case).
 - */
--unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
+-#define while_for_each_ftrace_op(op)				\
+-	while (likely(op = rcu_dereference_raw_notrace((op)->next)) &&	\
+-	       unlikely((op) != &ftrace_list_end))
+-
+ static inline void ftrace_ops_init(struct ftrace_ops *ops)
+ {
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -187,17 +168,11 @@ static void ftrace_sync_ipi(void *data)
+ }
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-static void update_function_graph_func(void);
+-
+ /* Both enabled by default (can be cleared by function_graph tracer flags */
+ static bool fgraph_sleep_time = true;
+ static bool fgraph_graph_time = true;
+-
+-#else
+-static inline void update_function_graph_func(void) { }
+ #endif
+ 
+-
+ static ftrace_func_t ftrace_ops_get_list_func(struct ftrace_ops *ops)
+ {
+ 	/*
+@@ -334,7 +309,7 @@ static int remove_ftrace_ops(struct ftrace_ops __rcu **list,
+ 
+ static void ftrace_update_trampoline(struct ftrace_ops *ops);
+ 
+-static int __register_ftrace_function(struct ftrace_ops *ops)
++int __register_ftrace_function(struct ftrace_ops *ops)
+ {
+ 	if (ops->flags & FTRACE_OPS_FL_DELETED)
+ 		return -EINVAL;
+@@ -375,7 +350,7 @@ static int __register_ftrace_function(struct ftrace_ops *ops)
+ 	return 0;
+ }
+ 
+-static int __unregister_ftrace_function(struct ftrace_ops *ops)
++int __unregister_ftrace_function(struct ftrace_ops *ops)
+ {
+ 	int ret;
+ 
+@@ -1022,9 +997,7 @@ static __init void ftrace_profile_tracefs(struct dentry *d_tracer)
+ #endif /* CONFIG_FUNCTION_PROFILER */
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-static int ftrace_graph_active;
+-#else
+-# define ftrace_graph_active 0
++int ftrace_graph_active;
+ #endif
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -1067,7 +1040,7 @@ static const struct ftrace_hash empty_hash = {
+ };
+ #define EMPTY_HASH	((struct ftrace_hash *)&empty_hash)
+ 
+-static struct ftrace_ops global_ops = {
++struct ftrace_ops global_ops = {
+ 	.func				= ftrace_stub,
+ 	.local_hash.notrace_hash	= EMPTY_HASH,
+ 	.local_hash.filter_hash		= EMPTY_HASH,
+@@ -1503,7 +1476,7 @@ static bool hash_contains_ip(unsigned long ip,
+  * This needs to be called with preemption disabled as
+  * the hashes are freed with call_rcu_sched().
+  */
+-static int
++int
+ ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
+ {
+ 	struct ftrace_ops_hash hash;
+@@ -2682,7 +2655,7 @@ static void ftrace_startup_all(int command)
+ 	update_all_ops = false;
+ }
+ 
+-static int ftrace_startup(struct ftrace_ops *ops, int command)
++int ftrace_startup(struct ftrace_ops *ops, int command)
+ {
+ 	int ret;
+ 
+@@ -2724,7 +2697,7 @@ static int ftrace_startup(struct ftrace_ops *ops, int command)
+ 	return 0;
+ }
+ 
+-static int ftrace_shutdown(struct ftrace_ops *ops, int command)
++int ftrace_shutdown(struct ftrace_ops *ops, int command)
+ {
+ 	int ret;
+ 
+@@ -6177,7 +6150,7 @@ void ftrace_init_trace_array(struct trace_array *tr)
+ }
+ #else
+ 
+-static struct ftrace_ops global_ops = {
++struct ftrace_ops global_ops = {
+ 	.func			= ftrace_stub,
+ 	.flags			= FTRACE_OPS_FL_RECURSION_SAFE |
+ 				  FTRACE_OPS_FL_INITIALIZED |
+@@ -6194,31 +6167,10 @@ core_initcall(ftrace_nodyn_init);
+ static inline int ftrace_init_dyn_tracefs(struct dentry *d_tracer) { return 0; }
+ static inline void ftrace_startup_enable(int command) { }
+ static inline void ftrace_startup_all(int command) { }
+-/* Keep as macros so we do not need to define the commands */
+-# define ftrace_startup(ops, command)					\
+-	({								\
+-		int ___ret = __register_ftrace_function(ops);		\
+-		if (!___ret)						\
+-			(ops)->flags |= FTRACE_OPS_FL_ENABLED;		\
+-		___ret;							\
+-	})
+-# define ftrace_shutdown(ops, command)					\
+-	({								\
+-		int ___ret = __unregister_ftrace_function(ops);		\
+-		if (!___ret)						\
+-			(ops)->flags &= ~FTRACE_OPS_FL_ENABLED;		\
+-		___ret;							\
+-	})
+ 
+ # define ftrace_startup_sysctl()	do { } while (0)
+ # define ftrace_shutdown_sysctl()	do { } while (0)
+ 
+-static inline int
+-ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
 -{
--	struct ftrace_graph_ret trace;
--	unsigned long ret;
--
--	ftrace_pop_return_trace(&trace, &ret, frame_pointer);
--	trace.rettime = trace_clock_local();
--	ftrace_graph_return(&trace);
--	/*
--	 * The ftrace_graph_return() may still access the current
--	 * ret_stack structure, we need to make sure the update of
--	 * curr_ret_stack is after that.
--	 */
--	barrier();
--	current->curr_ret_stack--;
--	/*
--	 * The curr_ret_stack can be less than -1 only if it was
--	 * filtered out and it's about to return from the function.
--	 * Recover the index and continue to trace normal functions.
--	 */
--	if (current->curr_ret_stack < -1) {
--		current->curr_ret_stack += FTRACE_NOTRACE_DEPTH;
--		return ret;
--	}
--
--	if (unlikely(!ret)) {
--		ftrace_graph_stop();
--		WARN_ON(1);
--		/* Might as well panic. What else to do? */
--		ret = (unsigned long)panic;
--	}
--
--	return ret;
+-	return 1;
 -}
 -
- /**
-  * ftrace_graph_ret_addr - convert a potentially modified stack return address
-  *			   to its original value
+ static void ftrace_update_trampoline(struct ftrace_ops *ops)
+ {
+ }
+@@ -6930,7 +6882,7 @@ static int ftrace_graph_entry_test(struct ftrace_graph_ent *trace)
+  * function against the global ops, and not just trace any function
+  * that any ftrace_ops registered.
+  */
+-static void update_function_graph_func(void)
++void update_function_graph_func(void)
+ {
+ 	struct ftrace_ops *op;
+ 	bool do_test = false;
+diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
+new file mode 100644
+index 000000000000..0515a2096f90
+--- /dev/null
++++ b/kernel/trace/ftrace_internal.h
+@@ -0,0 +1,75 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_KERNEL_FTRACE_INTERNAL_H
++#define  _LINUX_KERNEL_FTRACE_INTERNAL_H
++
++#ifdef CONFIG_FUNCTION_TRACER
++
++/*
++ * Traverse the ftrace_global_list, invoking all entries.  The reason that we
++ * can use rcu_dereference_raw_notrace() is that elements removed from this list
++ * are simply leaked, so there is no need to interact with a grace-period
++ * mechanism.  The rcu_dereference_raw_notrace() calls are needed to handle
++ * concurrent insertions into the ftrace_global_list.
++ *
++ * Silly Alpha and silly pointer-speculation compiler optimizations!
++ */
++#define do_for_each_ftrace_op(op, list)			\
++	op = rcu_dereference_raw_notrace(list);			\
++	do
++
++/*
++ * Optimized for just a single item in the list (as that is the normal case).
++ */
++#define while_for_each_ftrace_op(op)				\
++	while (likely(op = rcu_dereference_raw_notrace((op)->next)) &&	\
++	       unlikely((op) != &ftrace_list_end))
++
++extern struct ftrace_ops __rcu *ftrace_ops_list;
++extern struct ftrace_ops ftrace_list_end;
++extern struct mutex ftrace_lock;
++extern struct ftrace_ops global_ops;
++
++#ifdef CONFIG_DYNAMIC_FTRACE
++
++int ftrace_startup(struct ftrace_ops *ops, int command);
++int ftrace_shutdown(struct ftrace_ops *ops, int command);
++int ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs);
++
++#else /* !CONFIG_DYNAMIC_FTRACE */
++
++int __register_ftrace_function(struct ftrace_ops *ops);
++int __unregister_ftrace_function(struct ftrace_ops *ops);
++/* Keep as macros so we do not need to define the commands */
++# define ftrace_startup(ops, command)					\
++	({								\
++		int ___ret = __register_ftrace_function(ops);		\
++		if (!___ret)						\
++			(ops)->flags |= FTRACE_OPS_FL_ENABLED;		\
++		___ret;							\
++	})
++# define ftrace_shutdown(ops, command)					\
++	({								\
++		int ___ret = __unregister_ftrace_function(ops);		\
++		if (!___ret)						\
++			(ops)->flags &= ~FTRACE_OPS_FL_ENABLED;		\
++		___ret;							\
++	})
++static inline int
++ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
++{
++	return 1;
++}
++#endif /* CONFIG_DYNAMIC_FTRACE */
++
++#ifdef CONFIG_FUNCTION_GRAPH_TRACER
++extern int ftrace_graph_active;
++void update_function_graph_func(void);
++#else /* !CONFIG_FUNCTION_GRAPH_TRACER */
++# define ftrace_graph_active 0
++static inline void update_function_graph_func(void) { }
++#endif /* CONFIG_FUNCTION_GRAPH_TRACER */
++
++#else /* !CONFIG_FUNCTION_TRACER */
++#endif /* CONFIG_FUNCTION_TRACER */
++
++#endif
 -- 
 2.19.1
 
