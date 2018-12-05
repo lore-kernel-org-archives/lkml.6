@@ -2,153 +2,129 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFCCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EAAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE362082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:45:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4OqbIt/Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE362082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id BBA6D2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:46:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA6D2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeLEHov (ORCPT
+        id S1727128AbeLEHqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:44:51 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39736 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeLEHou (ORCPT
+        Wed, 5 Dec 2018 02:46:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43407 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeLEHqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:44:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB57i6kb166791;
-        Wed, 5 Dec 2018 07:44:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=aWc4ssTqK3+0Va0XF3SwYiR03i3PrRf+R9WvbryzeBM=;
- b=4OqbIt/Z0vJHEqoC7GD6DJJHAz8RmA354cNul3aVFLmjZ4j0pHkZyTM017XVL8cQtPFQ
- KI/HzhRU4GTCah4hpX8yAc2cndwQ850CcskC/zVVinz11FuGym9/hB2ZJCiyT8lZyHeR
- OKG41IsBgScnJjFGc7PCC7mU3ablGVqXayI9bGShwfsWa0H351aVfaBgVMRCYCViMguM
- vO+/k6dzR4QP7+ewMfRH7tP4dc8txgAsv48mcnqLhFdompmtFntPv5BYjd/tz5gLYalO
- gjqtmqrBp2+5iqGajEO3HiGjnDDpwxw5j0Qpn1G/h3i4hEKX0+I4xgs8j5q6rWDT/bq2 UA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hqu0t71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 07:44:46 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB57ifCQ020725
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 07:44:41 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB57id4V021853;
-        Wed, 5 Dec 2018 07:44:41 GMT
-Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Dec 2018 23:44:39 -0800
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V9 0/4] blk-mq: refactor code of issue directly
-Date:   Wed,  5 Dec 2018 15:43:58 +0800
-Message-Id: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=984
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050072
+        Wed, 5 Dec 2018 02:46:32 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB57jrwo1191003
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 4 Dec 2018 23:45:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB57jrWf1191000;
+        Tue, 4 Dec 2018 23:45:53 -0800
+Date:   Tue, 4 Dec 2018 23:45:53 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Masahiro Yamada <tipbot@zytor.com>
+Message-ID: <tip-10b87bc9f630a38a7f0c1e7cf13ff23fea1692ec@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        zhenzhong.duan@oracle.com, torvalds@linux-foundation.org,
+        yamada.masahiro@socionext.com, mroos@linux.ee,
+        peterz@infradead.org, bp@alien8.de, hpa@zytor.com
+Reply-To: bp@alien8.de, hpa@zytor.com, mroos@linux.ee,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          yamada.masahiro@socionext.com, zhenzhong.duan@oracle.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org
+In-Reply-To: <1543991239-18476-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1543991239-18476-1-git-send-email-yamada.masahiro@socionext.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/build: Fix compiler support check for
+ CONFIG_RETPOLINE
+Git-Commit-ID: 10b87bc9f630a38a7f0c1e7cf13ff23fea1692ec
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens
+Commit-ID:  10b87bc9f630a38a7f0c1e7cf13ff23fea1692ec
+Gitweb:     https://git.kernel.org/tip/10b87bc9f630a38a7f0c1e7cf13ff23fea1692ec
+Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
+AuthorDate: Wed, 5 Dec 2018 15:27:19 +0900
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 5 Dec 2018 08:42:09 +0100
 
-Please consider this patchset for 4.21.
+x86/build: Fix compiler support check for CONFIG_RETPOLINE
 
-It refactors the code of issue request directly to unify the interface
-and make the code clearer and more readable.
+It is troublesome to add a diagnostic like this to the Makefile
+parse stage because the top-level Makefile could be parsed with
+a stale include/config/auto.conf.
 
-This patch set is rebased on the recent for-4.21/block and add the 1st
-patch which inserts the non-read-write request to hctx dispatch
-list to avoid to involve merge and io scheduler when bypass_insert
-is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
-and the caller will fail forever.
+Once you are hit by the error about non-retpoline compiler, the
+compilation still breaks even after disabling CONFIG_RETPOLINE.
 
-The 2nd patch refactors the code of issue request directly to unify the
-helper interface which could handle all the cases.
+The easiest fix is to move this check to the "archprepare" like
+this commit did:
 
-The 3rd patch make blk_mq_sched_insert_requests issue requests directly
-with 'bypass' false, then it needn't to handle the non-issued requests
-any more.
+  829fe4aa9ac1 ("x86: Allow generating user-space headers without a compiler")
 
-The 4th patch replace and kill the blk_mq_request_issue_directly.
+Reported-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+Link: http://lkml.kernel.org/r/1543991239-18476-1-git-send-email-yamada.masahiro@socionext.com
+Link: https://lkml.org/lkml/2018/12/4/206
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/Makefile | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-V9:
- - rebase on recent for-4.21/block
- - add 1st patch
-
-V8:
- - drop the original 2nd patch which try to insert requests into hctx->dispatch
-   if quiesced or stopped.
- - remove two wrong 'unlikely'
-
-V7:
- - drop the original 3rd patch which try to ensure hctx to be ran on
-   its mapped cpu in issueing directly path.
-
-V6:
- - drop original 1st patch to address Jen's comment
- - discard the enum mq_issue_decision and blk_mq_make_decision and use
-   BLK_STS_* return values directly to address Jen's comment. (1/5)
- - add 'unlikely' in blk_mq_try_issue_directly (1/5)
- - refactor the 2nd and 3rd patch based on the new 1st patch.
- - reserve the unused_cookie in 4th and 5th patch
-
-V5:
- - rebase against Jens' for-4.21/block branch
- - adjust the order of patch04 and patch05
- - add patch06 to replace and kill the one line blk_mq_request_bypass_insert
- - comment changes
-
-V4:
- - split the original patch 1 into two patches, 1st and 2nd patch currently
- - rename the mq_decision to mq_issue_decision
- - comment changes
-
-V3:
- - Correct the code about the case bypass_insert is true and io scheduler
-   attached. The request still need to be issued in case above. (1/4)
- - Refactor the code to make code clearer. blk_mq_make_request is introduced
-   to decide insert, end or just return based on the return value of .queue_rq
-   and bypass_insert (1/4) 
- - Add the 2nd patch. It introduce a new decision result which indicates to
-   insert request with blk_mq_request_bypass_insert.
- - Modify the code to adapt the new patch 1.
-
-V2:
- - Add 1st and 2nd patch to refactor the code.
-
-
-Jianchao Wang (4)
-blk-mq: insert to hctx dispatch list when
-blk-mq: refactor the code of issue request directly
-blk-mq: issue directly with bypass 'false' in
-blk-mq: replace and kill blk_mq_request_issue_directly
-
-block/blk-core.c          |   4 +-
-block/blk-mq-sched.c      |   8 ++-
-block/blk-mq.c            | 129 +++++++++++++++++++++-------------------------
-block/blk-mq.h            |   6 ++-
-include/linux/blk_types.h |   1 +
-5 files changed, 71 insertions(+), 77 deletions(-)
-
-Thanks
-Jianchao
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index f5d7f4134524..75ef499a66e2 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -220,9 +220,6 @@ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+ 
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-ifeq ($(RETPOLINE_CFLAGS),)
+-  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+-endif
+   KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+ endif
+ 
+@@ -307,6 +304,13 @@ ifndef CC_HAVE_ASM_GOTO
+ 	@echo Compiler lacks asm-goto support.
+ 	@exit 1
+ endif
++ifdef CONFIG_RETPOLINE
++ifeq ($(RETPOLINE_CFLAGS),)
++	@echo "You are building kernel with non-retpoline compiler." >&2
++	@echo "Please update your compiler." >&2
++	@false
++endif
++endif
+ 
+ archclean:
+ 	$(Q)rm -rf $(objtree)/arch/i386
