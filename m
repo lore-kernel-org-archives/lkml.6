@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802F0C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB534C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C7920892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7089C2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEf5dTg2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C7920892
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkH+ULxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7089C2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeLERDJ (ORCPT
+        id S1728283AbeLERDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:03:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40845 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbeLERDG (ORCPT
+        Wed, 5 Dec 2018 12:03:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37163 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727934AbeLERDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:03:06 -0500
-Received: by mail-wm1-f65.google.com with SMTP id q26so13609342wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:03 -0800 (PST)
+        Wed, 5 Dec 2018 12:03:11 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g67so13620182wmd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=a8Kl5HlNdxxfoD4rhcKSir+vhVYp1fLuoWJSXS0Kcaw=;
-        b=ZEf5dTg2XdMIIwSaJs4e7GBBcUfHrtGgWcM62S2mGD8dCliqmTNvEgnBH0rLAj69MV
-         PhvLrGbG7tSACDRy8/4UphRNw1fuQPX3yxIsiI/j98JUqYdPRoeiEXhPxjGE4ez3WMUd
-         89aodnR1iw33c3kFT5s0AW/es2tF/Z6A4NHAFRXON8kfomTYWwCrVYRlsT7URcSXOYWD
-         +BP+REGZARoKmrhuQxua/eSRPJxpmMgoj9SW5dTgSHLTNcnHndKkeTirUY00fFUiDkat
-         LJvYBfiNgVwF5JLBpa1Nxq9RFPmVmv0YWTDjASt95EUxfOO+fmzKJzyVUVPKV2GP8BEh
-         jdQQ==
+        bh=X6Cb3IZL32U0xdIctqbMRGZiak7S108GweaHQVRRZZI=;
+        b=SkH+ULxYHXKluBWdKvn8LyuwS45Jfn8OjpxZ4u0uI/1wvaj3Dy1YgHX/ogm3V2rrme
+         cgxsMIgFhjFhsSwErc5BULNvUjD5gxFt7XgpkdvdrhI3rPuXZXVgU+XMDQLXypBfK/Gt
+         O9xMpuV5jaSRliTBr4wow8TMPy2f8sh+kEpdNMRfAA9T1WX1fkOYMUDLL8CaD3hsnqXB
+         uH5p1yeF+Oks0qwXFa3H08JafVm9Kv1BsVpYrWxzTOcc0e7DwP6KNufzysUwEPEOpD6U
+         8R7cGI59Xk7O7K7OQytxwgyq/KU9EsupfXbNT1JCyyIUc0dt8r+XR6xvD2cvsfzvQ6Oj
+         1QMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a8Kl5HlNdxxfoD4rhcKSir+vhVYp1fLuoWJSXS0Kcaw=;
-        b=E6dfcgygy4EIVQx/Eb/pw5JepqfXFXNOTzU2H66mpTsLO8DPOOVvb1dNcebS82Fm9Y
-         /gm8GEpUhM5ICd+akTE09OmKpmTRrExhnayllr8I4mZVe0THsNW82R/A720eRrKNfWn3
-         +NwXoqIZx05ti7seePRMKf26g0gYZnYeEZq/hdYEMS5QK/3rDhn9qkWW+WQY/odwT8WQ
-         IqHthu9zolRRjm41WkgDAHLmHlwfhhXq9X41SNCfTjiiqdnStJ9Zy95XIvRdC5wJAWHj
-         QPzuD4XT++l2MrNIctCv8bJ1oAoCPoVxnRDvT9KjxYNMhN/HTR5A71nDwJ3gh/RSB6jv
-         6NWA==
-X-Gm-Message-State: AA+aEWYShT3dFXOp8TFyAsoZoZx0VveZkpOBz9FsaZ3Ga48zs1SDcXLl
-        kg2969waKC91v+WZdwQNhrw=
-X-Google-Smtp-Source: AFSGD/V+jyVOaUKCYnthwAHvK3/Gn+tITApCkltc9SRGLvDhicuGVaXEGRre40B4Oohg7asV9ngx3A==
-X-Received: by 2002:a1c:709:: with SMTP id 9mr15685174wmh.39.1544029382806;
-        Wed, 05 Dec 2018 09:03:02 -0800 (PST)
+        bh=X6Cb3IZL32U0xdIctqbMRGZiak7S108GweaHQVRRZZI=;
+        b=hJlrBKyj/IuBlxkkZyYBuqfEz5MYeRLJoMI8SCBF6MDMi3ct1zVIhdKNlPyRdc5qgY
+         DpfQNvWXGLQbzaeMRzO+n9LLIlhF7LsD+pTewUSlGUY7sSB/Ihr8ygnCFoM4gd9TfD/b
+         Np8eV+0ovhuBKH2U69vayTkJDCBirkfPncsLj4yBEgM93QuLxRX7dn3OjetWvUG+sw9r
+         gFMMsI+wYmi2BMoljnMQRep9D9cEWnNl0CI8AjU2gm8EPFVEsmBhWd79r1fdvYijT7nf
+         27pgWo+zbK2qkWADSrIJVIBAjV4Y8kFPveDZf7nHWnEREJToHBQuHkA9JJ/NYwgsswDR
+         z37g==
+X-Gm-Message-State: AA+aEWarexNtkjbAmEAvWa4tmDHzMo8Ndegb5GuAAUKuvxF7ZvK7M9v6
+        2E6smFoloBhWBNBwL3v9wUHzESsx
+X-Google-Smtp-Source: AFSGD/V3IurxjgaipVCVaBjO2LaDKLsK2v2CuzhtIkBNDgx8EBEplQULNVYb1QztcGcFTSaIL5tQTw==
+X-Received: by 2002:a1c:8089:: with SMTP id b131mr16978486wmd.141.1544029389773;
+        Wed, 05 Dec 2018 09:03:09 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.03.01
+        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.03.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 09:03:02 -0800 (PST)
+        Wed, 05 Dec 2018 09:03:09 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 04/12] staging: rtl8188eu: remove unnecessary parentheses in rtw_wlan_util.c
-Date:   Wed,  5 Dec 2018 18:02:39 +0100
-Message-Id: <20181205170247.5401-4-straube.linux@gmail.com>
+Subject: [PATCH 11/12] staging: rtl8188eu: rename struct field Wifi_Error_Status
+Date:   Wed,  5 Dec 2018 18:02:46 +0100
+Message-Id: <20181205170247.5401-11-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205170247.5401-1-straube.linux@gmail.com>
 References: <20181205170247.5401-1-straube.linux@gmail.com>
@@ -76,262 +76,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary parentheses reported by checkpatch.
+Rename struct field Wifi_Error_Status to avoid CamelCase.
+Wifi_Error_Status -> wifi_error_status
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- .../staging/rtl8188eu/core/rtw_wlan_util.c    | 64 +++++++++----------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_sreset.c      | 4 ++--
+ drivers/staging/rtl8188eu/include/rtw_sreset.h   | 2 +-
+ drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index 76c7010c3a5c..0e2653a68f4f 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -377,7 +377,7 @@ int is_client_associated_to_ap(struct adapter *padapter)
- 		return _FAIL;
- 
- 	pmlmeext = &padapter->mlmeextpriv;
--	pmlmeinfo = &(pmlmeext->mlmext_info);
-+	pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE))
- 		return true;
-@@ -388,7 +388,7 @@ int is_client_associated_to_ap(struct adapter *padapter)
- int is_client_associated_to_ibss(struct adapter *padapter)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_sreset.c b/drivers/staging/rtl8188eu/core/rtw_sreset.c
+index fb5adaf4a42c..a8397b132002 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_sreset.c
++++ b/drivers/staging/rtl8188eu/core/rtw_sreset.c
+@@ -12,10 +12,10 @@ void rtw_hal_sreset_init(struct adapter *padapter)
  {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
+ 	struct sreset_priv *psrtpriv = &padapter->HalData->srestpriv;
  
- 	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE))
- 		return true;
-@@ -400,7 +400,7 @@ int is_IBSS_empty(struct adapter *padapter)
- {
- 	unsigned int i;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	for (i = IBSS_START_MAC_ID; i < NUM_STA; i++) {
- 		if (pmlmeinfo->FW_sta_info[i].status == 1)
-@@ -465,7 +465,7 @@ int allocate_fw_sta_entry(struct adapter *padapter)
- {
- 	unsigned int mac_id;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	for (mac_id = IBSS_START_MAC_ID; mac_id < NUM_STA; mac_id++) {
- 		if (pmlmeinfo->FW_sta_info[mac_id].status == 0) {
-@@ -481,7 +481,7 @@ int allocate_fw_sta_entry(struct adapter *padapter)
- void flush_all_cam_entry(struct adapter *padapter)
- {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	rtw_hal_set_hwreg(padapter, HW_VAR_CAM_INVALID_ALL, NULL);
- 
-@@ -491,9 +491,9 @@ void flush_all_cam_entry(struct adapter *padapter)
- int WMM_param_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- {
- 	/* struct registry_priv	*pregpriv = &padapter->registrypriv; */
--	struct mlme_priv	*pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (pmlmepriv->qospriv.qos_option == 0) {
- 		pmlmeinfo->WMM_enable = 0;
-@@ -501,7 +501,7 @@ int WMM_param_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- 	}
- 
- 	pmlmeinfo->WMM_enable = 1;
--	memcpy(&(pmlmeinfo->WMM_param), (pIE->data + 6), sizeof(struct WMM_para_element));
-+	memcpy(&pmlmeinfo->WMM_param, pIE->data + 6, sizeof(struct WMM_para_element));
- 	return true;
+-	psrtpriv->Wifi_Error_Status = WIFI_STATUS_SUCCESS;
++	psrtpriv->wifi_error_status = WIFI_STATUS_SUCCESS;
  }
  
-@@ -513,7 +513,7 @@ void WMMOnAssocRsp(struct adapter *padapter)
- 	u32	acParm, i;
- 	u32	edca[4], inx[4];
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct xmit_priv		*pxmitpriv = &padapter->xmitpriv;
- 	struct registry_priv	*pregpriv = &padapter->registrypriv;
- 
-@@ -609,9 +609,9 @@ static void bwmode_update_check(struct adapter *padapter, struct ndis_802_11_var
- 	unsigned char	 new_bwmode;
- 	unsigned char  new_ch_offset;
- 	struct HT_info_element	 *pHT_info;
--	struct mlme_priv	*pmlmepriv = &(padapter->mlmepriv);
-+	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
- 	struct ht_priv			*phtpriv = &pmlmepriv->htpriv;
- 
-@@ -660,7 +660,7 @@ static void bwmode_update_check(struct adapter *padapter, struct ndis_802_11_var
- 
- 	if (pmlmeinfo->bwmode_updated) {
- 		struct sta_info *psta;
--		struct wlan_bssid_ex	*cur_network = &(pmlmeinfo->network);
-+		struct wlan_bssid_ex	*cur_network = &pmlmeinfo->network;
- 		struct sta_priv	*pstapriv = &padapter->stapriv;
- 
- 		/* set_channel_bwmode(padapter, pmlmeext->cur_channel, pmlmeext->cur_ch_offset, pmlmeext->cur_bwmode); */
-@@ -687,7 +687,7 @@ void HT_caps_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- 	unsigned int	i;
- 	u8	max_AMPDU_len, min_MPDU_spacing;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct mlme_priv		*pmlmepriv = &padapter->mlmepriv;
- 	struct ht_priv			*phtpriv = &pmlmepriv->htpriv;
- 	u8 *HT_cap = (u8 *)(&pmlmeinfo->HT_caps);
-@@ -728,7 +728,7 @@ void HT_caps_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- void HT_info_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
+ void sreset_set_wifi_error_status(struct adapter *padapter, u32 status)
  {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 	struct mlme_priv		*pmlmepriv = &padapter->mlmepriv;
- 	struct ht_priv			*phtpriv = &pmlmepriv->htpriv;
- 
-@@ -742,7 +742,7 @@ void HT_info_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- 		return;
- 
- 	pmlmeinfo->HT_info_enable = 1;
--	memcpy(&(pmlmeinfo->HT_info), pIE->data, pIE->Length);
-+	memcpy(&pmlmeinfo->HT_info, pIE->data, pIE->Length);
+-	padapter->HalData->srestpriv.Wifi_Error_Status = status;
++	padapter->HalData->srestpriv.wifi_error_status = status;
  }
+diff --git a/drivers/staging/rtl8188eu/include/rtw_sreset.h b/drivers/staging/rtl8188eu/include/rtw_sreset.h
+index 3ee6a4a7847d..ea3c0d93bf0b 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_sreset.h
++++ b/drivers/staging/rtl8188eu/include/rtw_sreset.h
+@@ -11,7 +11,7 @@
+ #include <drv_types.h>
  
- void HTOnAssocRsp(struct adapter *padapter)
-@@ -751,7 +751,7 @@ void HTOnAssocRsp(struct adapter *padapter)
- 	unsigned char		min_MPDU_spacing;
- 	/* struct registry_priv	 *pregpriv = &padapter->registrypriv; */
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
+ struct sreset_priv {
+-	u8	Wifi_Error_Status;
++	u8 wifi_error_status;
+ };
  
- 	DBG_88E("%s\n", __func__);
- 
-@@ -779,20 +779,20 @@ void HTOnAssocRsp(struct adapter *padapter)
- void ERP_IE_handler(struct adapter *padapter, struct ndis_802_11_var_ie *pIE)
- {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (pIE->Length > 1)
- 		return;
- 
- 	pmlmeinfo->ERP_enable = 1;
--	memcpy(&(pmlmeinfo->ERP_IE), pIE->data, pIE->Length);
-+	memcpy(&pmlmeinfo->ERP_IE, pIE->data, pIE->Length);
- }
- 
- void VCS_update(struct adapter *padapter, struct sta_info *psta)
- {
- 	struct registry_priv	 *pregpriv = &padapter->registrypriv;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	switch (pregpriv->vrtl_carrier_sense) { /* 0:off 1:on 2:auto */
- 	case 0: /* off */
-@@ -831,7 +831,7 @@ int rtw_check_bcn_info(struct adapter  *Adapter, u8 *pframe, u32 packet_len)
- 	unsigned int		len;
- 	unsigned char		*p;
- 	unsigned short	val16, subtype;
--	struct wlan_network *cur_network = &(Adapter->mlmepriv.cur_network);
-+	struct wlan_network *cur_network = &Adapter->mlmepriv.cur_network;
- 	/* u8 wpa_ie[255], rsn_ie[255]; */
- 	u16 wpa_len = 0, rsn_len = 0;
- 	u8 encryp_protocol = 0;
-@@ -1061,8 +1061,8 @@ unsigned int is_ap_in_tkip(struct adapter *padapter)
- 	u32 i;
- 	struct ndis_802_11_var_ie *pIE;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex		*cur_network = &(pmlmeinfo->network);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex		*cur_network = &pmlmeinfo->network;
- 
- 	if (rtw_get_capability((struct wlan_bssid_ex *)cur_network) & WLAN_CAPABILITY_PRIVACY) {
- 		for (i = sizeof(struct ndis_802_11_fixed_ie); i < pmlmeinfo->network.ie_length;) {
-@@ -1093,8 +1093,8 @@ unsigned int is_ap_in_wep(struct adapter *padapter)
- 	u32 i;
- 	struct ndis_802_11_var_ie *pIE;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex		*cur_network = &(pmlmeinfo->network);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
-+	struct wlan_bssid_ex		*cur_network = &pmlmeinfo->network;
- 
- 	if (rtw_get_capability((struct wlan_bssid_ex *)cur_network) & WLAN_CAPABILITY_PRIVACY) {
- 		for (i = sizeof(struct ndis_802_11_fixed_ie); i < pmlmeinfo->network.ie_length;) {
-@@ -1192,7 +1192,7 @@ int support_short_GI(struct adapter *padapter, struct ieee80211_ht_cap *pHT_caps
- {
- 	unsigned char					bit_offset;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (!(pmlmeinfo->HT_enable))
- 		return _FAIL;
-@@ -1335,7 +1335,7 @@ unsigned char check_assoc_AP(u8 *pframe, uint len)
- void update_IOT_info(struct adapter *padapter)
- {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	switch (pmlmeinfo->assoc_AP_vendor) {
- 	case HT_IOT_PEER_MARVELL:
-@@ -1366,7 +1366,7 @@ void update_IOT_info(struct adapter *padapter)
- void update_capinfo(struct adapter *Adapter, u16 updateCap)
- {
- 	struct mlme_ext_priv	*pmlmeext = &Adapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 	bool		ShortPreamble;
- 
- 	/*  Check preamble mode, 2005.01.06, by rcnjko. */
-@@ -1448,8 +1448,8 @@ void update_wireless_mode(struct adapter *padapter)
- 
- void update_bmc_sta_support_rate(struct adapter *padapter, u32 mac_id)
- {
--	struct mlme_ext_priv	*pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	if (pmlmeext->cur_wireless_mode & WIRELESS_11B) {
- 		/*  Only B, B/G, and B/G/N AP could use CCK rate */
-@@ -1464,8 +1464,8 @@ int update_sta_support_rate(struct adapter *padapter, u8 *pvar_ie, uint var_ie_l
- 	unsigned int	ie_len;
- 	struct ndis_802_11_var_ie *pIE;
- 	int	supportRateNum = 0;
--	struct mlme_ext_priv	*pmlmeext = &(padapter->mlmeextpriv);
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	pIE = (struct ndis_802_11_var_ie *)rtw_get_ie(pvar_ie, _SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
- 	if (!pIE)
-@@ -1495,7 +1495,7 @@ void process_addba_req(struct adapter *padapter, u8 *paddba_req, u8 *addr)
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 	struct ADDBA_request	*preq = (struct ADDBA_request *)paddba_req;
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
--	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
-+	struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
- 
- 	psta = rtw_get_stainfo(pstapriv, addr);
- 
+ #include <rtl8188e_hal.h>
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+index 7dc7028c1cd5..e4f2af2974ed 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+@@ -263,7 +263,7 @@ static int usbctrl_vendorreq(struct adapter *adapt, u8 request, u16 value, u16 i
+ 				if (status == (-ESHUTDOWN) || status == -ENODEV)
+ 					adapt->bSurpriseRemoved = true;
+ 				else
+-					adapt->HalData->srestpriv.Wifi_Error_Status = USB_VEN_REQ_CMD_FAIL;
++					adapt->HalData->srestpriv.wifi_error_status = USB_VEN_REQ_CMD_FAIL;
+ 			} else { /*  status != len && status >= 0 */
+ 				if (status > 0) {
+ 					if (requesttype == 0x01) {
+@@ -410,7 +410,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
+ 			break;
+ 		case -EPROTO:
+ 		case -EOVERFLOW:
+-			adapt->HalData->srestpriv.Wifi_Error_Status = USB_READ_PORT_FAIL;
++			adapt->HalData->srestpriv.wifi_error_status = USB_READ_PORT_FAIL;
+ 			precvbuf->reuse = true;
+ 			usb_read_port(adapt, RECV_BULK_IN_ADDR, precvbuf);
+ 			break;
 -- 
 2.19.2
 
