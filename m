@@ -2,75 +2,153 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582AAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F71BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2858620850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:46:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2858620850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 533F720851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cswpk6Te"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533F720851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbeLEMqc (ORCPT
+        id S1727541AbeLEMrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:46:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51891 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeLEMqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:46:31 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2559920C36; Wed,  5 Dec 2018 13:46:29 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BAD5020A35;
-        Wed,  5 Dec 2018 13:46:18 +0100 (CET)
-Date:   Wed, 5 Dec 2018 13:46:18 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Vignesh R <vigneshr@ti.com>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Cc:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
-Message-ID: <20181205134618.56223758@bbrezillon>
-In-Reply-To: <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
-References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <20181203101937.7b01a0ad@bbrezillon>
-        <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 5 Dec 2018 07:47:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35128 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeLEMrb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:47:31 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so18212733ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 04:47:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2ZdeI+S0mKXmTl9lH41eV3IJqLOaBO08NcKqTZaINT8=;
+        b=Cswpk6Te3/pE48LlZcysWCgvv9a5y+lfNoMIiwnX9EAAITplyt9r3wnJm5TET/d89L
+         T+FA/Jbsw+pM+Cfolysl3C/2hYlv6LW0aW8rTuQAL1d3ZIbhliIVDw6ROq0zJudd1lEn
+         zS6QKnTeLtwjhm8xh+9kEOW0ef4nBOypkLhtw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2ZdeI+S0mKXmTl9lH41eV3IJqLOaBO08NcKqTZaINT8=;
+        b=nNAuMoRLaMXUwN8UoIXknJBo0wjpTyu6Lmaq0QZ8bg4Bg1VZCQ+qdBbsdYOceVFOhm
+         g7ioViEJBJSqWJEbqW9kvthEeklZS5JILy5TMDX7lSBTCeQR1UDb94c5p9NcWdq6jR1W
+         nmUC1X1utXHZ9seAntWO+VnRBAwrcyvSrhLF5rWTgtFEbA9yZEkBpdyKHm+KO12OVh0R
+         ZjGv3omQ4DfTbBX6SQ0iK7NstgoDTsEEQ1SofSA+Aeh86QncbVVQncTiTUdPzeBUYUTH
+         fQUkkiQRn1RAks0dQWNRtKtyz8Rk3R7SBPTrGuffBI56d7N2xfurVuG9NiCLzsrUu3VY
+         i4Mg==
+X-Gm-Message-State: AA+aEWZePWLMKVEJBVRge9JydhDbKVlunRafHfnJNOy9F8iMa3iv8Ax/
+        +NcOHO8OCZfNEZqewNqrwEYkFw==
+X-Google-Smtp-Source: AFSGD/W4ubaDU91IwQr4p05MxGlZQRvIMCnaugkOsGs/P8m+a6BRrbYArdx5jDhSy7zDqs3YX3b4Ag==
+X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr16061825ljg.22.1544014048723;
+        Wed, 05 Dec 2018 04:47:28 -0800 (PST)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id e19-v6sm3797125ljf.67.2018.12.05.04.47.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 04:47:27 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 00/15 v3] Regulator ena_gpiod fixups
+Date:   Wed,  5 Dec 2018 13:47:06 +0100
+Message-Id: <20181205124721.26624-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Dec 2018 17:25:12 +0530
-Vignesh R <vigneshr@ti.com> wrote:
+Here is a third iteration of these fixups after thinking
+over Marek's remarks on the v2 version.
 
-> >>   mtd: spi-nor: add opcodes for octal Read/Write commands
-> >>   mtd: spi-nor: add octal read flag for flash mt35xu512aba  
-> 
-> Could you consider merging these two patches alone for v4.21?
-> These can be applied independent of other patches in the series and
-> would allow supporting OSPI flash at SPI NOR level with Cadence QSPI driver.
+Also available in git branch
+gpio-descriptors-regulator-fixup in the GPIO git tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=gpio-descriptors-regulator-fixup
 
-Yep, I'll queue them to spi-nor/next.
+I added two fixup item to the list: making the gpiod
+from of node respect nonexlusive flags and fixing the
+shared regulators in devm_gpiod_get*.
 
-> >>   spi: nxp-fspi: add octal mode flag bit for octal support  
+To make sure GPIO descriptors are never left dangling
+(as far as I can tell!) I use this stepwise approach:
 
-Mark, I think you can pick this one too.
+1. Fix the regulator_register() in the core to guarantee
+   that after calling this with a valid GPIO descriptor
+   in ena_gpiod it will be gpiod_put() if there is any
+   problem.
+
+2. Fix up simple descriptor consumers to just gpiod_get()
+   and let the core take over the descriptor. Only handle
+   the errorpath up to this point.
+
+3. Export gpiod_get_from_of_node() and let max77686
+   obtain a GPIO descriptor from the device tree without
+   any devres make-up in the DT parsing callback.
+
+4. Make gpiod_get_from_of_node() respect the
+   GPIOD_FLAGS_BIT_NONEXCLUSIVE flag.
+
+5. Fix up devm_gpiod_get_* to respect the
+   GPIOD_FLAGS_BIT_NONEXCLUSIVE flag.
+
+6. Invent devm_gpiod_unhinge() that will remove the devres
+   monitoring of a devm_* allocated GPIO descriptor
+   right before handling it over to the regulator core,
+   and use this in the otherwise hairy da9211,
+   s5m8767, tps65090 and s2mps11 drivers.
+
+Linus Walleij (15):
+  regulator: core: Track dangling GPIO descriptors
+  regulator: fixed: Let core handle GPIO descriptor
+  regulator: lm363x: Let core handle GPIO descriptor
+  regulator: lp8788-ldo: Let core handle GPIO descriptor
+  regulator: max8952: Let core handle GPIO descriptor
+  regulator: max8973: Let core handle GPIO descriptor
+  gpio: Export gpiod_get_from_of_node()
+  regulator: max77686: Let core handle GPIO descriptor
+  gpio: Enable nonexclusive gpiods from DT nodes
+  gpio: devres: Handle nonexclusive GPIOs
+  gpio: Add devm_gpiod_unhinge()
+  regulator: da9211: Hand over GPIO to regulator core
+  regulator: s5m8767: Hand over GPIO to regulator core
+  regulator: tps65090: Hand over GPIO to regulator core
+  regulator: s2mps11: Hand over GPIO to regulator core
+
+ Documentation/driver-model/devres.txt  |  1 +
+ drivers/gpio/gpiolib-devres.c          | 80 ++++++++++++++++++++++----
+ drivers/gpio/gpiolib.c                 |  2 +
+ drivers/gpio/gpiolib.h                 |  6 --
+ drivers/regulator/core.c               | 55 ++++++++++++++----
+ drivers/regulator/da9211-regulator.c   |  6 ++
+ drivers/regulator/fixed.c              |  6 +-
+ drivers/regulator/lm363x-regulator.c   |  8 ++-
+ drivers/regulator/lp8788-ldo.c         |  8 ++-
+ drivers/regulator/max77686-regulator.c | 14 +++--
+ drivers/regulator/max8952.c            | 10 +++-
+ drivers/regulator/max8973-regulator.c  | 23 +++++---
+ drivers/regulator/s2mps11.c            |  7 ++-
+ drivers/regulator/s5m8767.c            |  9 ++-
+ drivers/regulator/tps65090-regulator.c |  6 ++
+ include/linux/gpio/consumer.h          | 23 ++++++++
+ 16 files changed, 214 insertions(+), 50 deletions(-)
+
+-- 
+2.19.2
+
