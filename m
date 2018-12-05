@@ -2,124 +2,125 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49C0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9BAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76B95208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544026596;
-	bh=+gwzwDnPJNvLtZKEcJq1sOD+YlIQ9jtCtlNxDquqasA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=u3I3/tdC6Aj8ZXWjNwYj2sXmMuJlexSgHSFio3KpRdTeD2gGLbbLnDrCOkHfpMb6s
-	 Co7UaV1qHU+YWsz4+FCv4MfFLXi2G9oYAI3zsfu+ykQX34cmNyKJaO+A1+exV9/8Yw
-	 2eZv1ikbka65+bEUyNlyif00Qc5uJHA8RV6eg6FE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B95208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C96C420892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:17:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VX6IHrc4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C96C420892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeLEQQf (ORCPT
+        id S1728104AbeLEQRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:16:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbeLEQQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:16:35 -0500
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68195214E0;
-        Wed,  5 Dec 2018 16:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544026593;
-        bh=+gwzwDnPJNvLtZKEcJq1sOD+YlIQ9jtCtlNxDquqasA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HgKVnjHdkCcyggeq7BjdbCl7BxcHvgPf7S/DHpWyahmTZ4lLqTK5pZFLBIiUO9OcU
-         NRMpTnap7OOMroC5aC+ikTZ9aOsLb3hDUZktI5SL1HNqXFX6A6GF1mxAtwfQ+tLxrc
-         U+KcYKEEF9B9CCrd+RqhQQ/7RzYVyHMHt2OEk5pI=
-Received: by mail-qt1-f171.google.com with SMTP id k12so22845746qtf.7;
-        Wed, 05 Dec 2018 08:16:33 -0800 (PST)
-X-Gm-Message-State: AA+aEWaura9G5+NXGidyNAWPOazdvFcE5ke8E4FEyaDh61YP0oItMIaI
-        s521FzAez3+ER+zoOboc4QMDbgwy6gI/Yxs4/A==
-X-Google-Smtp-Source: AFSGD/VShLBbgbwIJla3YZAI37uxkZHbIfEdulh/nkj92GC+EcdvCUwd6cqZQ+wGNlis0HADZyDVJlIYj4NIdiZfQ0I=
-X-Received: by 2002:ac8:6b18:: with SMTP id w24mr24356925qts.144.1544026592489;
- Wed, 05 Dec 2018 08:16:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20181127180349.29997-1-georgi.djakov@linaro.org> <20181127180349.29997-2-georgi.djakov@linaro.org>
-In-Reply-To: <20181127180349.29997-2-georgi.djakov@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 5 Dec 2018 10:16:20 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
-Message-ID: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
-Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect API
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Wed, 5 Dec 2018 11:17:46 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36066 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLEQRq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:17:46 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b85so10254757pfc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 08:17:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ew5wz79DK0P/QNOxBTyTb10TRHtfLis2s/SRSKjsHpQ=;
+        b=VX6IHrc4NusAxF875Deq9Pr7bbhsPUoG40nGCl2WeQHEHmGt1FsAWVH9J8Jx31Iw7L
+         lQreHGowszns8ZSH3bjiZsAiNMtaiyzj8zjFKAgtEsxDDbjdIUm4ukLKE6y9dGINbvAk
+         PU3CWVPWBLrEnDEuBOrnu9+ztR4X01Kgwtx4VDHZrxxrAJEszpra/pnnyOVOhVDSZsNy
+         9QyTYdHP2ZtmvIgZmvKMZwjHG+Ya8/35OAzJmlf8CnXenPOHsl2Bp1OTNcaQokp1EdZ0
+         E9AuArRNiUmBxTB6tu07aNat1Z9tO9Ntr01UngVBHh7ZltaQ8xnj+gSbCLJiRzRIIbtr
+         hweg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ew5wz79DK0P/QNOxBTyTb10TRHtfLis2s/SRSKjsHpQ=;
+        b=aIbq6EkhNqLzW8xWyUErg8qeg/dm/mfP6Pz+XKW7qdsivYMOKivfdn8WISgn1Bop3W
+         vhWHKOG7ylnodsWwCDKj1GfJrRfYbM8cpchFyDsyZpFdp9gqKB7JCks1t/FMx62euswG
+         l1FiMw48XZtCcrYA7L/0fouk7Hg7EYP2pOy5n/qH2CjKoKzWCwtIHlYttBleaD97O+Rx
+         neGoCYFUxwKkmQ9SQ5ufNb8RoDVrNDIRAmmT+V1n+QmyzRuctVZx6g2kqN9N82c6wdGD
+         qZLCKiQKUiiBmCv2VcmG/Zw4p+muaUxaXwCrXWuQZBq7thhrQEx4GZ3yhxpy+dQgBTVV
+         G4Ig==
+X-Gm-Message-State: AA+aEWblYo1LP2KlTOUQg57VMMY+zkOHAyWN0N8XgNsMJ0C0ldnTKRK6
+        TiOuuT8cGKtUOR+w67gKLns=
+X-Google-Smtp-Source: AFSGD/W5RZ/3brfagI3SEpd8k4K/SGXqAR1ypXftScaDqMrKw5jkA9LW4GfthcYgybtheQVuBbC7RA==
+X-Received: by 2002:a63:5761:: with SMTP id h33mr20993473pgm.283.1544026665024;
+        Wed, 05 Dec 2018 08:17:45 -0800 (PST)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id y6sm26994479pfl.187.2018.12.05.08.17.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 08:17:44 -0800 (PST)
+Date:   Wed, 5 Dec 2018 21:47:32 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     NeilBrown <neil@brown.name>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        Evan Green <evgreen@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Joe Perches <joe@perches.com>
+Cc:     devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v6 1/3] staging: mt7621-mmc: Remove #if 0 blocks in sd.c
+Message-ID: <20181205161729.GA12467@nishad>
+References: <cover.1538670306.git.nishadkamdar@gmail.com>
+ <d24db4fd34fc2347ba0512aaae04b937b942ac0e.1538670306.git.nishadkamdar@gmail.com>
+ <87sgzzcru8.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sgzzcru8.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:03 PM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> This patch introduces a new API to get requirements and configure the
-> interconnect buses across the entire chipset to fit with the current
-> demand.
->
-> The API is using a consumer/provider-based model, where the providers are
-> the interconnect buses and the consumers could be various drivers.
-> The consumers request interconnect resources (path) between endpoints and
-> set the desired constraints on this data flow path. The providers receive
-> requests from consumers and aggregate these requests for all master-slave
-> pairs on that path. Then the providers configure each participating in the
-> topology node according to the requested data flow path, physical links and
-> constraints. The topology could be complicated and multi-tiered and is SoC
-> specific.
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
+On Sun, Nov 18, 2018 at 08:33:03AM +1100, NeilBrown wrote:
+> On Thu, Oct 04 2018, Nishad Kamdar wrote:
+> 
+> > This patch removes #if 0 code blocks and usages of
+> > functions defined in the #if 0 blocks in sd.c.
+> >
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> 
+> Hi Nishad,
+>  thanks for this patch (and others) and apologies for not
+>  reviewing/testing it earlier.
+>  Unfortunately there is a problem - see below.
+>  
+> >  
+> > -#if 0 /* --- by chhung */
+> > -/* For E2 only */
+> > -static u8 clk_src_bit[4] = {
+> > -	0, 3, 5, 7
+> > -};
+> > -
+> >  static void msdc_select_clksrc(struct msdc_host *host, unsigned char clksrc)
+> >  {
+> >  	u32 val;
+> 
+> Above you removed the first few lines of a "#if 0" block, but not all of
+> it.  Previously the function msdc_select_clksrc() was not compiled at
+> all.  Now it is, and that causes an error - MSDC_CLKSRC_REG is not
+> defined.
+> 
+> Would you be able to send a follow-patch patch which removes this
+> function and the "#endif /* end of --- */" at the end?
+> 
+> Thanks,
+> NeilBrown
 
-[...]
+Sure, I'll send the updated patch.
 
-> +struct icc_path *icc_get(struct device *dev, const int src_id,
-> +                        const int dst_id);
-> +void icc_put(struct icc_path *path);
-> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+Thanks for the review.
 
-icc_set() is very generic, but this function isn't easily extended to
-other parameters than bandwidth. Perhaps icc_set_bandwidth() instead.
-Then when you add some other setting, you just add a new function. Of
-course, if you wind up with a bunch of different parameters, then
-you'll probably need an atomic type interface where you test all the
-settings together and then commit them separately in one call. But
-from a DT perspective, I certainly hope there are not lots of new
-settings folks want to add. :)
-
-Rob
+Regards,
+Nishad
