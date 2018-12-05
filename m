@@ -2,121 +2,89 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EA7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D388DC65BB0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A665620850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:43:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A665620850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F4C4214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544042603;
+	bh=CAYjlmC8Keax1YTT6tg+0FRFJWKrzu3ebDM0HTUT6q8=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=YnY3HG8rL73o5lZc2opL9F+vV6B3ZpVj5Ccbt9AlPEEJ0E9h1GoJCZyx7B4+XRRTu
+	 U3Y3hfN/7wV/hxBR6F9CJlGoQ9N5a24rqT4oqjJ6mKzex3TVvOKX5J1iOKGpMwRmJO
+	 9S93OQ17ZDm7oYwRoMt8yDfc3IBofTyTFRS4OXKA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4C4214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeLEUnJ (ORCPT
+        id S1728652AbeLEUnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:43:09 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34738 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLEUnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:43:08 -0500
-Received: by mail-oi1-f196.google.com with SMTP id h25so18807713oig.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 12:43:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WtfdFOrHLEdBRRSKnZ3mtxk3yR28RHuLiNsARcqEx70=;
-        b=qIJOMeyAjwK4ny9cRniRFVBmghUOr6xEwo8ITBRHeZrMBgoENOPYS2ikR87C26hFvv
-         u/jbqJIB4RnRIspV5S9SCdmgt7F+5p8WnHlDbXp5J8XJuY1qChzmsodFWSjvzhUifxJZ
-         JqgU5+t39/xFhygPw8d7yzocTxeYB3u6FCcCOskEKiZcuNegP6Trju7XArJmO1BVTFj1
-         jH99I+UAq/Qt5o3KuOnF/fBWgakxcE64nnEAR6jiS/S1jM6CggrtH5pebwQolh7s/t47
-         iAYFf9iPS9TcWYK3kEzRufoIG2+r444fkoKWaOzAjvpzk4SwSZavyZBnFw5xe0egpIuS
-         OtSA==
-X-Gm-Message-State: AA+aEWYqvdXkzGtSWKkFdNgNdF2q1UWKWPdYRz4i0BbNOBKWQd4AKxMA
-        urNgWyOmU6JaOgOIB/hiazQ2eCnVj+0=
-X-Google-Smtp-Source: AFSGD/V3dtLe+QxJfnXj3/VFj2A/IclycMI24FegBnd8v2dvpbezQ4OZfSZzZcSLUUk6DsMDUqNiRA==
-X-Received: by 2002:aca:7c5:: with SMTP id 188mr14913341oih.313.1544042587742;
-        Wed, 05 Dec 2018 12:43:07 -0800 (PST)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id h7sm8321309otb.45.2018.12.05.12.43.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 12:43:07 -0800 (PST)
-Received: by mail-oi1-f178.google.com with SMTP id x23so18770337oix.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 12:43:06 -0800 (PST)
-X-Received: by 2002:aca:654a:: with SMTP id j10mr15212756oiw.301.1544042586603;
- Wed, 05 Dec 2018 12:43:06 -0800 (PST)
+        Wed, 5 Dec 2018 15:43:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728434AbeLEUnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:43:22 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80CBB20850;
+        Wed,  5 Dec 2018 20:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544042601;
+        bh=CAYjlmC8Keax1YTT6tg+0FRFJWKrzu3ebDM0HTUT6q8=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ueM4Qx1eFxArrylzRdNzxH5ySsc+9IhfDMMfA2qJDckd4IIbzQM0BbtcxvjshePW1
+         EDIB5xCOLTPdcy6yTc20qE6bJKUiZ5LlppLU/MUAiDQaKiDdrltLDq44Pi/xJoHUOX
+         D/yLpEjGJZtbmX8ujoFBd3MsGs+s1wUk+ECSeXC0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1543741258-17433-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1543741258-17433-1-git-send-email-hofrat@osadl.org>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Wed, 5 Dec 2018 14:42:55 -0600
-X-Gmail-Original-Message-ID: <CADRPPNSZ18XhgojYgw-KJHHCS=7XnGa_6rYvXw8E0_UUwb+p7Q@mail.gmail.com>
-Message-ID: <CADRPPNSZ18XhgojYgw-KJHHCS=7XnGa_6rYvXw8E0_UUwb+p7Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] soc: fsl: guts: handle devm_kstrdup() failure
-To:     hofrat@osadl.org
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20181205195050.4759-5-robh@kernel.org>
+Message-ID: <154404260092.88331.601190671449905138@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
+Date:   Wed, 05 Dec 2018 12:43:20 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 2, 2018 at 3:07 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
->
-> devm_kstrdup() may return NULL if internal allocation failed.
-> soc_dev_attr.machine  should be checked (although its only use
-> in pr_info() would be safe even with a NULL). Therefor
-> in the unlikely case of allocation failure, fsl_guts_probe() returns
-> -ENOMEM as this allocating failing is an indication of something
-> more serious going wrong at system level.
->
-> As  machine  is from the device tree which I assume to be RO - if
-> that assumption is always correct - a better alternative would be
-> to use devm_kstrdup_const() here. That would then simply copy the
-> reference to the RO data and not perform any allocation at all.
+Quoting Rob Herring (2018-12-05 11:50:21)
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+> =
 
-I think your assumption is correct.  Do you want to send a new and
-better version?  :)
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+> =
 
->
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: a6fc3b698130 ("soc: fsl: add GUTS driver for QorIQ platforms")
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->
-> Problem located by experimental coccinelle script
->
-> Patch was compile tested with: multi_v7_defconfig (implies FSL_GUTS=y)
->
-> Patch is against 4.20-rc4 (localversion-next is next-20181130)
->
->  drivers/soc/fsl/guts.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 302e0c8..a0c751b 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -156,8 +156,11 @@ static int fsl_guts_probe(struct platform_device *pdev)
->         if (of_property_read_string(root, "model", &machine))
->                 of_property_read_string_index(root, "compatible", 0, &machine);
->         of_node_put(root);
-> -       if (machine)
-> +       if (machine) {
->                 soc_dev_attr.machine = devm_kstrdup(dev, machine, GFP_KERNEL);
-> +               if (!soc_dev_attr.machine)
-> +                       return -ENOMEM;
-> +       }
->
->         svr = fsl_guts_get_svr();
->         soc_die = fsl_soc_die_match(svr, fsl_soc_die);
-> --
-> 2.1.4
->
+
+Looks ok at a glance. I'll wait for some people to ack or test it.
+
