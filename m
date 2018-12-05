@@ -2,108 +2,135 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE74C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 559B9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75AE20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75AE20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AA9920850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcOpq+zv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA9920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbeLEIGR (ORCPT
+        id S1727149AbeLEIGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:06:17 -0500
-Received: from mga04.intel.com ([192.55.52.120]:28499 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbeLEIGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:06:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 00:06:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="scan'208";a="127233262"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Dec 2018 00:06:15 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gUSCF-000D6Z-6G; Wed, 05 Dec 2018 16:06:15 +0800
-Date:   Wed, 5 Dec 2018 16:06:00 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: drivers/mfd/madera-core.c:158:2-3: Unneeded semicolon
-Message-ID: <201812051658.GR1ik3XL%fengguang.wu@intel.com>
+        Wed, 5 Dec 2018 03:06:49 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33079 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEIGt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:06:49 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so18617831wrr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 00:06:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a6VDonw4av4hjUtnSBSuhI19+KE7SKuGQ2Y5YPedPEY=;
+        b=gcOpq+zvoZWrh6ylR6Wl0B8LS0grXz7X/VR2LiwvI/6syP8QQCqIx8BqU6eQ9FMExb
+         Y4YzSoVcur9GwmiVDCaJdbQFlO8c3TBlukHTWOXx0CJXJ4NfZu4eXU3Iky1dDQruGUYT
+         WGXBdQY2Zmy7Pra/Y58jH4NfAmbFspJK9I7kixHgHyFQJVtTNy4J1ClMtripPUC//Haq
+         IGq2HZhd6U4V80PQJA4cvjHnjmoMiQLPiKf4rACSYkDnNrCNMMYTUp2thHs/g7C5pTgy
+         UO0AoqAHk9z005MQpz+prY3mG2T5lPQIM/5uZmtnDyo5j9tKJjbJeosPqJQBFOOGTAYm
+         oavQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a6VDonw4av4hjUtnSBSuhI19+KE7SKuGQ2Y5YPedPEY=;
+        b=Z7pamanSdEo57scy63gtKfjeD2wHk1Q0C574ZJI+EznKMbc6Vh1w+z9/J6HThorTvr
+         e0ZRMfRegSF4IPVnYBnreMV5d04ZTM2TVzel6OPxxsdHKxwHn1b7CfclD++ibr2TFHVY
+         b4ycFUc48tVjoimkF79HxfB/j5icZrUbqDoFiE5yfCpiS5XsAPH7Nodkdm64zFOt5xkw
+         xlK/aW2+4fPHYN+o8pC9ijqgvEg8AItHlTN+S93FDZI95bjBm7TYdKePrH0PabX3by+5
+         DrsvQL7BjEZ8Fs/2IfVMv/tzJAlDTDcq9i0fHhwbHDDnMWoiHsE28zdJ1LLXWBWd9G8k
+         w9Mg==
+X-Gm-Message-State: AA+aEWY6aOfjIQ+TAaUB9ZKAGovAST2txUAr/zysSQYko11wkW9MpK+x
+        8ld5xRYVedasXHQIMQYnmCE=
+X-Google-Smtp-Source: AFSGD/XHlADWM+krT9wUpaP6H69TrePZsTw12eQEeDomFxRu8PTo8M1udxGQiwSlWz0+Z2QwfijdOA==
+X-Received: by 2002:adf:9d4c:: with SMTP id o12mr19415285wre.94.1543997207251;
+        Wed, 05 Dec 2018 00:06:47 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id k15sm13371734wru.8.2018.12.05.00.06.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 00:06:46 -0800 (PST)
+Date:   Wed, 5 Dec 2018 01:06:45 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH 2/2] ARM: Wrap '--pic-veneer' with ld-option
+Message-ID: <20181205080645.GA11936@flashbox>
+References: <20181205014213.943-1-natechancellor@gmail.com>
+ <20181205014213.943-2-natechancellor@gmail.com>
+ <CAKv+Gu-N9j5X4WoFDbQrzeOCfBaNm6ujXe_fAruusE_kWdj8iQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAKv+Gu-N9j5X4WoFDbQrzeOCfBaNm6ujXe_fAruusE_kWdj8iQ@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0072a0c14d5b7cb72c611d396f143f5dcd73ebe2
-commit: b04e68d16605dcde1c21b5df5f86a5372e53ae97 mfd: madera: Don't use regmap_read_poll_timeout to poll for BOOT_DONE
-date:   6 weeks ago
+On Wed, Dec 05, 2018 at 08:37:05AM +0100, Ard Biesheuvel wrote:
+> On Wed, 5 Dec 2018 at 02:42, Nathan Chancellor <natechancellor@gmail.com> wrote:
+> >
+> > This flag is not supported by lld:
+> >
+> >     ld.lld: error: unknown argument: --pic-veneer
+> >
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> 
+> Hi Nate,
+> 
+> Does this mean ld.lld is guaranteed to produce position independent
+> veneers if you build kernels that are bigger than the typical range of
+> a relative branch?
+> 
 
+Hi Ard,
 
-coccinelle warnings: (new ones prefixed by >>)
+Honestly, I'm not quite sure. I saw your commit that introduced this
+flag and I wasn't quite sure what to make of it for lld. What
+configuration would I use to verify and what would I check for?
 
->> drivers/mfd/madera-core.c:158:2-3: Unneeded semicolon
+Additionally, I have filed an LLVM bug for the lld developers to
+check and see if this is a flag they should support:
 
-vim +158 drivers/mfd/madera-core.c
+https://bugs.llvm.org/show_bug.cgi?id=39886
 
-   137	
-   138	static int madera_wait_for_boot(struct madera *madera)
-   139	{
-   140		ktime_t timeout;
-   141		unsigned int val;
-   142		int ret = 0;
-   143	
-   144		/*
-   145		 * We can't use an interrupt as we need to runtime resume to do so,
-   146		 * so we poll the status bit. This won't race with the interrupt
-   147		 * handler because it will be blocked on runtime resume.
-   148		 * The chip could NAK a read request while it is booting so ignore
-   149		 * errors from regmap_read.
-   150		 */
-   151		timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
-   152		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
-   153		while (!(val & MADERA_BOOT_DONE_STS1) &&
-   154		       !ktime_after(ktime_get(), timeout)) {
-   155			usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
-   156				     MADERA_BOOT_POLL_INTERVAL_USEC);
-   157			regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
- > 158		};
-   159	
-   160		if (!(val & MADERA_BOOT_DONE_STS1)) {
-   161			dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
-   162			ret = -ETIMEDOUT;
-   163		}
-   164	
-   165		/*
-   166		 * BOOT_DONE defaults to unmasked on boot so we must ack it.
-   167		 * Do this even after a timeout to avoid interrupt storms.
-   168		 */
-   169		regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
-   170			     MADERA_BOOT_DONE_EINT1);
-   171	
-   172		pm_runtime_mark_last_busy(madera->dev);
-   173	
-   174		return ret;
-   175	}
-   176	
+Thanks for the quick reply,
+Nathan
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> > ---
+> >  arch/arm/Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> > index e2a0baf36766..4fab2aa29570 100644
+> > --- a/arch/arm/Makefile
+> > +++ b/arch/arm/Makefile
+> > @@ -10,7 +10,7 @@
+> >  #
+> >  # Copyright (C) 1995-2001 by Russell King
+> >
+> > -LDFLAGS_vmlinux        := --no-undefined -X --pic-veneer
+> > +LDFLAGS_vmlinux        := --no-undefined -X $(call ld-option,--pic-veneer)
+> >  ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
+> >  LDFLAGS_vmlinux        += --be8
+> >  KBUILD_LDFLAGS_MODULE  += --be8
+> > --
+> > 2.20.0.rc1
+> >
