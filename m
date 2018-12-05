@@ -2,131 +2,193 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B0AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 410AFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189A32082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:47:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYT+4jlt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189A32082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 037602082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:47:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037602082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbeLEBrL (ORCPT
+        id S1726788AbeLEBrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:47:11 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40562 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbeLEBrK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:47:15 -0500
+Received: from fieldses.org ([173.255.197.46]:49500 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725841AbeLEBrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Dec 2018 20:47:10 -0500
-Received: by mail-it1-f194.google.com with SMTP id h193so17744929ita.5;
-        Tue, 04 Dec 2018 17:47:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TXxg5Oa7Ff2vkS0J3Oqcr8Gh996iy1JLISadTQFqazg=;
-        b=VYT+4jltaeYPDuFFLBz6UMKHkq9Te6gwH3K/7eA650n3vrOmaj+q3tqzTWM3Cu5D4j
-         UtxBNI7o4KJG+GIt6Kqqh0odPgAsVeDRfVWQvqt064MxtN3/ptre0Yh5eNgwtDe/cCay
-         rsSKX/txJhYtPJosa5RG66wV0VCOoDxx6zvRWx5vQtE4z1aigyk0NFl8ROf+Oclf9//1
-         aFcFehrPK09/kVCm2IsfP6b/NFsGI8EzBU015tb1Z/lQxZx5R+97xv/rzhrLkNWU9PG4
-         kqVkiHbiCbk7z19Rng8aMjMh+nSasOMcysejFcML/KbU7r8xRmij8dWboMiohdoQ9kk9
-         dEvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TXxg5Oa7Ff2vkS0J3Oqcr8Gh996iy1JLISadTQFqazg=;
-        b=duksRx0bzmEY6YWMt1oqFfEbt09UnWuLc0nDpaAXrZiV/DcbIV0c0gVBoltnEgPv4E
-         h0b5z9gu4LoXYxloDjmc5xw7qo+003Hb+DBFpv3xMNSKkqXHBcpTGPapWm4b/lSgjYjG
-         3dm9biy7Zb4E9aU3zXqwEdKR8kSLezuMKp86Izh09awyg7mZBe8MfsPKRb+lab7ZHhru
-         +IQcQ/yjxJV8Qf0M5lJvX72rMXmhD1pvAHN2XjBFJbSSqp9nAMwe77teksh2qwNgpBkn
-         ECjpYXES39ra+LwgY0Ey6sN0yvj0qbXEzc45E8GuqRpKNd/MFRTSMaCgGBYovTE28eW6
-         R99w==
-X-Gm-Message-State: AA+aEWZrXwCaiGZ1FrkWWXpGEiyV6W3RT17zNJ2aFvXzjmOJAjRi+kU7
-        gUmefbyAyTtlzW3HL8EoXttONHHKx1jztJCy/ziOCt3iAk8=
-X-Google-Smtp-Source: AFSGD/XTEoqo40wfyQk+n+sjdIuw34OMS5xi+6Mlo5iuggY5GXGFCcwbuWpEAOiCpR81PTQIU4deOg+5dqLGX0+Lw4g=
-X-Received: by 2002:a02:9d27:: with SMTP id n36mr19530350jak.30.1543974429182;
- Tue, 04 Dec 2018 17:47:09 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 74EA43F5; Tue,  4 Dec 2018 20:47:10 -0500 (EST)
+Date:   Tue, 4 Dec 2018 20:47:10 -0500
+From:   "bfields@fieldses.org" <bfields@fieldses.org>
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "neilb@suse.com" <neilb@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+Subject: Re: [PATCH 00/23 - V5] NFS: Remove generic RPC credentials.
+Message-ID: <20181205014710.GB6093@fieldses.org>
+References: <154379689752.28598.6750646657534626618.stgit@noble>
+ <20181204202103.GD3903@fieldses.org>
+ <19ce8a518de95a0c0185eccefbf17da5ebceda11.camel@netapp.com>
 MIME-Version: 1.0
-References: <20181201155229.8532-1-tiny.windzz@gmail.com> <CAHp75VdEbr9YfaCgHXNqScZC-KMobF2fU8rZb29nhZPBJvm2gg@mail.gmail.com>
- <CAEExFWvRFrS-ZTSkrS5Npe7g-rxtxfCfk+AyTz00Lx4oAWhQ_g@mail.gmail.com>
- <CAHp75VcSVEakAK4MeoG8zA7MaCWNoL2fOr48iFmxTsjbBpa5XA@mail.gmail.com>
- <CAEExFWtE7Yi8D+Dr=J7B3zqBRet0AX=ABHnUrJkZ2LO3aHdNeg@mail.gmail.com>
- <CAHp75Vc7Xfqnid9WLvQMPPWcFnRG0T4ZoHweA6Q-1ypWn29J2Q@mail.gmail.com>
- <CAEExFWso=uBKj4geVTr2zWOd74V1p5EWq=7r6AATSPh63MQ=mg@mail.gmail.com> <CAHp75VcXO0YNd32PVfk+BE68+OUCy=THNi9buU2Wu=PUZhPt8g@mail.gmail.com>
-In-Reply-To: <CAHp75VcXO0YNd32PVfk+BE68+OUCy=THNi9buU2Wu=PUZhPt8g@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Wed, 5 Dec 2018 09:47:42 +0800
-Message-ID: <CAEExFWtxJrGnoCq1_Nx3uMCW009Qe3LksG4e10s6nW3=p=UWiw@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: convert to DEFINE_SHOW_ATTRIBUTE
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     rajneesh.bhardwaj@intel.com, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, andy@infradead.org,
-        David Box <david.e.box@linux.intel.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19ce8a518de95a0c0185eccefbf17da5ebceda11.camel@netapp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 1:39 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Tue, Dec 4, 2018 at 6:58 PM Frank Lee <tiny.windzz@gmail.com> wrote:
->
-> > $ git br -r
-> >   origin/HEAD -> origin/master
-> >   origin/fixes
-> >   origin/for-next
-> >   origin/master
-> >   origin/review-andy
-> > $ git remote set-branches --add origin for-next
-> > $ git br -vv
-> > * for-next 651022382c7f [origin/for-next] Linux 4.20-rc1
->
-> Here is the problem,
->
-> For a few days at least we have
-> 4ecd94b8e13b (HEAD -> for-next) platform/x86: dell-laptop: Mark
-> expected switch fall-throughs
->
-> > $ git apply ../../0001-platform-x86-convert-to-DEFINE_SHOW_ATTRIBUTE.pa=
-tch
-> > $ git st
-> > On branch for-next
-> > Your branch is up to date with 'origin/for-next'.
-> >
-> > Changes not staged for commit:
-> >   (use "git add <file>..." to update what will be committed)
-> >   (use "git checkout -- <file>..." to discard changes in working direct=
-ory)
-> >
-> >         modified:   drivers/platform/x86/intel_pmc_core.c
-> >         modified:   drivers/platform/x86/intel_telemetry_debugfs.c
-> >
-> > no changes added to commit (use "git add" and/or "git commit -a")
->
-> > Andy,I don't know why.
-> > Is there a problem with my operation?
->
-> Definitely.
-Where can I find the correct git repository=EF=BC=9F
-I haven't found the correct one for a long time,
-which include the commit(4ecd94b8e13b ) you said.
+On Tue, Dec 04, 2018 at 09:33:18PM +0000, Schumaker, Anna wrote:
+> On Tue, 2018-12-04 at 15:21 -0500, J. Bruce Fields wrote:
+> > On Mon, Dec 03, 2018 at 11:30:30AM +1100, NeilBrown wrote:
+> > > This is the same series as posted on 07 November, modified slightly
+> > > to match some recent code changes upstream - nothing substantial.
+> > > 
+> > > General description:
+> > > 
+> > > There doesn't seem to be a maintainer for the 'cred' code, so I don't
+> > > know who to ask to approve the first 4 patches.  Maybe if the NFS
+> > > team like them, they can just go to Linus with a note for him to look
+> > > at them if he wants to.
+> > 
+> > For what it's worth: all my usual tests still pass with this series
+> > applied.  And the nfsd (and common) parts are unlikely to conflict with
+> > anything of mine.
+> > 
+> > Otherwise: sounds like a reasonable idea, but I haven't gotten a chance
+> > to review the patches in any detail.
+> 
+> The patches look okay to me, I'm was planning to take them for the next merge.
+> 
+> Bruce, can I get your acked-by for the patches that touch NFSD?  I think it's
+> just 19/23.
 
-MBR,
-Yangtao
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+Yes, feel free to add 
+
+	Acked-by: J. Bruce Fields <bfields@redhat.com>
+
+--b.
+
+> 
+> Thanks,
+> Anna
+> 
+> > 
+> > --b.
+> > 
+> > > The original motivation for this was performance.  In some
+> > > circumstances the cred caches can get big and particularly can get
+> > > long chains.  The hash function has been changed at least once to
+> > > improve the hashing and it still isn't perfect.
+> > > Rather than improving pruning of the cache, or resizing the hashtable
+> > > etc, it is easiest to just get rid of it.
+> > > 
+> > > As well as discarding generic credentials completely (using 'struct
+> > > cred' instead), we also stop storing AUTH_UNIX credentials in a hash
+> > > table - that brings no value.  Just allocate as needed and discard
+> > > when finished with.
+> > > So the only hash table will still have is for AUTH_GSS.
+> > > One of the main triggers for hashtable problems was users changing
+> > > groups a lot, so there would be many entries for the one user, each
+> > > with a different set of groups.  That doesn't apply for
+> > > AUTH_GSS as the groupids on the client are ignored.
+> > > 
+> > > That was the original motivation, but as I worked on it, I realized
+> > > that it was making a log of code simpler.
+> > > 
+> > >  44 files changed, 550 insertions(+), 925 deletions(-)
+> > > 
+> > > That is sufficient motivation in itself I think.
+> > > 
+> > > Thanks,
+> > > NeilBrown
+> > > 
+> > > 
+> > > ---
+> > > 
+> > > NeilBrown (23):
+> > >       cred: add cred_fscmp() for comparing creds.
+> > >       cred: add get_cred_rcu()
+> > >       cred: export get_task_cred().
+> > >       cred: allow get_cred() and put_cred() to be given NULL.
+> > >       SUNRPC: add 'struct cred *' to auth_cred and rpc_cred
+> > >       SUNRPC: remove groupinfo from struct auth_cred.
+> > >       SUNRPC: remove uid and gid from struct auth_cred
+> > >       SUNRPC: remove machine_cred field from struct auth_cred
+> > >       NFSv4: add cl_root_cred for use when machine cred is not available.
+> > >       NFSv4: don't require lock for get_renew_cred or get_machine_cred
+> > >       SUNRPC: discard RPC_DO_ROOTOVERRIDE()
+> > >       NFS/SUNRPC: don't lookup machine credential until rpcauth_bindcred().
+> > >       SUNRPC: introduce RPC_TASK_NULLCREDS to request auth_none
+> > >       SUNRPC: add side channel to use non-generic cred for rpc call.
+> > >       NFS: move credential expiry tracking out of SUNRPC into NFS.
+> > >       SUNRPC: remove RPCAUTH_AUTH_NO_CRKEY_TIMEOUT
+> > >       NFS: change access cache to use 'struct cred'.
+> > >       NFS: struct nfs_open_dir_context: convert rpc_cred pointer to cred.
+> > >       NFS/NFSD/SUNRPC: replace generic creds with 'struct cred'.
+> > >       SUNRPC: remove generic cred code.
+> > >       SUNRPC: remove crbind rpc_cred operation
+> > >       SUNRPC: simplify auth_unix.
+> > >       SUNRPC discard cr_uid from struct rpc_cred.
+> > > 
+> > > 
+> > >  fs/lockd/clntproc.c                       |    6 -
+> > >  fs/nfs/blocklayout/blocklayout.c          |    2 
+> > >  fs/nfs/client.c                           |    9 -
+> > >  fs/nfs/delegation.c                       |   28 +--
+> > >  fs/nfs/delegation.h                       |   10 -
+> > >  fs/nfs/dir.c                              |   59 ++----
+> > >  fs/nfs/flexfilelayout/flexfilelayout.c    |   64 +++---
+> > >  fs/nfs/flexfilelayout/flexfilelayout.h    |    8 -
+> > >  fs/nfs/flexfilelayout/flexfilelayoutdev.c |   16 +-
+> > >  fs/nfs/inode.c                            |   13 +
+> > >  fs/nfs/internal.h                         |    8 -
+> > >  fs/nfs/nfs3proc.c                         |    4 
+> > >  fs/nfs/nfs4_fs.h                          |   65 +++---
+> > >  fs/nfs/nfs4client.c                       |    4 
+> > >  fs/nfs/nfs4proc.c                         |  150 +++++++--------
+> > >  fs/nfs/nfs4renewd.c                       |    9 -
+> > >  fs/nfs/nfs4session.c                      |    5 
+> > >  fs/nfs/nfs4state.c                        |  129 ++++++-------
+> > >  fs/nfs/pagelist.c                         |    2 
+> > >  fs/nfs/pnfs.c                             |   14 +
+> > >  fs/nfs/pnfs.h                             |   10 -
+> > >  fs/nfs/pnfs_dev.c                         |    4 
+> > >  fs/nfs/pnfs_nfs.c                         |    2 
+> > >  fs/nfs/proc.c                             |    2 
+> > >  fs/nfs/unlink.c                           |   15 -
+> > >  fs/nfs/write.c                            |   24 ++
+> > >  fs/nfsd/nfs4callback.c                    |   31 +--
+> > >  fs/nfsd/state.h                           |    2 
+> > >  include/linux/cred.h                      |   26 ++-
+> > >  include/linux/nfs_fs.h                    |   13 +
+> > >  include/linux/nfs_fs_sb.h                 |    2 
+> > >  include/linux/nfs_xdr.h                   |   16 +-
+> > >  include/linux/sunrpc/auth.h               |   51 -----
+> > >  include/linux/sunrpc/clnt.h               |    1 
+> > >  include/linux/sunrpc/sched.h              |    6 -
+> > >  kernel/cred.c                             |   58 ++++++
+> > >  net/sunrpc/Makefile                       |    2 
+> > >  net/sunrpc/auth.c                         |  116 ++++++-----
+> > >  net/sunrpc/auth_generic.c                 |  293 --------------------------
+> > > ---
+> > >  net/sunrpc/auth_gss/auth_gss.c            |   47 +----
+> > >  net/sunrpc/auth_null.c                    |    4 
+> > >  net/sunrpc/auth_unix.c                    |  110 +++--------
+> > >  net/sunrpc/clnt.c                         |   26 +--
+> > >  net/sunrpc/sched.c                        |    5 
+> > >  44 files changed, 551 insertions(+), 920 deletions(-)
+> > >  delete mode 100644 net/sunrpc/auth_generic.c
+> > > 
+> > > --
+> > > Signature
