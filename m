@@ -3,109 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81554C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAFBC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAFB206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAFB206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 323472064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323472064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeLELmp (ORCPT
+        id S1727678AbeLELnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:42:45 -0500
-Received: from mx.socionext.com ([202.248.49.38]:22046 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLELmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:42:44 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 05 Dec 2018 20:42:42 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 8160F180B3E;
-        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 5 Dec 2018 20:42:42 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 55CDA40377;
-        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 38B13120455;
-        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
-Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
-To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
- <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
- <298cd5a5-66cf-0936-405e-59bcc7c396ed@socionext.com>
- <154394734173.88331.18352656286616172689@swboyd.mtv.corp.google.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <c0b37449-1221-9849-8014-13b3eeb43382@socionext.com>
-Date:   Wed, 5 Dec 2018 20:42:41 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Wed, 5 Dec 2018 06:43:41 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:39507 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeLELnk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:43:40 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wB5BggTU018984, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcas11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wB5BggTU018984
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 5 Dec 2018 19:42:42 +0800
+Received: from RTITMBSV02.realtek.com.tw ([fe80::cc0e:6d5f:56d7:c15f]) by
+ RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
+ 14.03.0399.000; Wed, 5 Dec 2018 19:42:41 +0800
+From:   Kailang <kailang@realtek.com>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+CC:     Jaroslav Kysela <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "Hui Wang" <hui.wang@canonical.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Chris Chiu <chiu@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>
+Subject: RE: [PATCH 1/3] ALSA: hda/realtek: ALC294 mic and headset-mode fixups for ASUS X542UN
+Thread-Topic: [PATCH 1/3] ALSA: hda/realtek: ALC294 mic and headset-mode
+ fixups for ASUS X542UN
+Thread-Index: AQHUjG4z5Y1EMUXolEKQbVvni1nQzqVv0chg//+KUwCAAKnw7A==
+Date:   Wed, 5 Dec 2018 11:42:37 +0000
+Message-ID: <6FAB7C47BCF00940BB0999A99BE3547A184200EB@RTITMBSV02.realtek.com.tw>
+References: <20181205074212.31104-1-jian-hong@endlessm.com>
+ <20181205074212.31104-2-jian-hong@endlessm.com>
+ <6FAB7C47BCF00940BB0999A99BE3547A18420099@RTITMBSV02.realtek.com.tw>,<CAPpJ_ed5qbhxUONdoACcQhH8jv1J_vvw4M-Vp4QwDsgQ1w8Vdw@mail.gmail.com>
+In-Reply-To: <CAPpJ_ed5qbhxUONdoACcQhH8jv1J_vvw4M-Vp4QwDsgQ1w8Vdw@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [112.104.14.167]
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <154394734173.88331.18352656286616172689@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
-
-On 2018/12/05 3:15, Stephen Boyd wrote:
-> Quoting Sugaya, Taichi (2018-12-04 00:26:16)
->> On 2018/11/30 17:31, Stephen Boyd wrote:
->>> Quoting Sugaya Taichi (2018-11-18 17:01:12)
->>>> +void __init m10v_clk_mux_setup(struct device_node *node)
->>>> +{
->>>> +       const char *clk_name = node->name;
->>>> +       struct clk_init_data init;
->>>> +       const char **parent_names;
->>>> +       struct m10v_mux *mcm;
->>>> +       struct clk *clk;
->>>> +       int i, parents;
->>>> +
->>>> +       if (!m10v_clk_iomap())
->>>> +               return;
->>>> +
->>>> +       of_property_read_string(node, "clock-output-names", &clk_name);
->>>> +
->>>> +       parents = of_clk_get_parent_count(node);
->>>> +       if (parents < 2) {
->>>> +               pr_err("%s: not a mux\n", clk_name);
->>>
->>> How is this possible?
->>
->> When the node has more than 1 clks...
->> Or I am misunderstanding your question?
-> 
-> This looks like code that's checking DT for correctness. We don't
-> typically do that in the kernel because the kernel isn't a DT validator.
-> That's all I'm saying. I think this comment is not useful if the driver
-> design is done to specify parent linkages in C code instead of DT, so
-> don't worry about this too much.
-
-I understand.
-Thank you for additional information.
-
-Sugaya Taichi
-
-> 
-
+Ck5vLgpEb24ndCB0cnkgIEFMQzI2OV9GSVhVUF9IRUFEU0VUX01PREVfTk9fSFBfTUlDIG1vZGVs
+IGZvciBBTEMyODYgcGxhdGZvcm0uCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCrFxOiBKaWFuLUhvbmcgUGFuIFtqaWFuLWhvbmdAZW5kbGVzc20uY29tXQqxSKXzpOm0
+wTogMjAxOKZ+MTKk6zWk6SCkVaTIIDA1OjMzCqbcOiBLYWlsYW5nCrDGpbs6IEphcm9zbGF2IEt5
+c2VsYTsgdGl3YWlAc3VzZS5jb207IEh1aSBXYW5nOyBhbHNhLWRldmVsQGFsc2EtcHJvamVjdC5v
+cmc7IExpbnV4IEtlcm5lbDsgTGludXggVXBzdHJlYW1pbmcgVGVhbTsgQ2hyaXMgQ2hpdTsgRGFu
+aWVsIERyYWtlCqVEpq46IFJlOiBbUEFUQ0ggMS8zXSBBTFNBOiBoZGEvcmVhbHRlazogQUxDMjk0
+IG1pYyBhbmQgaGVhZHNldC1tb2RlIGZpeHVwcyBmb3IgQVNVUyBYNTQyVU4KCkthaWxhbmcgPGth
+aWxhbmdAcmVhbHRlay5jb20+IKnzIDIwMTimfjEypOs1pOkgtmekVCCkVaTINDozNrxnuUShRwo+
+Cj4gSGkgSmlhbi1Ib25nLAo+Cj4gQ291bGQgeW91IHRlc3QgdG8gY2hhbmdlIHRoZSBtb2RlbCB0
+byBBTEMyNjlfRklYVVBfSEVBRFNFVF9NT0RFX05PX0hQX01JQz8KPgo+IC5jaGFpbl9pZCA9IEFM
+QzI1Nl9GSVhVUF9BU1VTX0hFQURTRVRfTU9ERSAgPT0+IGNoYW5nZSB0byBBTEMyNjlfRklYVVBf
+SEVBRFNFVF9NT0RFX05PX0hQX01JQwoKQWNjb3JkaW5nIHRvIHRoZSBjb21tZW50Cmh0dHBzOi8v
+cGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA3MTMwODcvIzIyMzYwMjUzICwgc2hvdWxkIEkg
+dHJ5CkFMQzI2OV9GSVhVUF9IRUFEU0VUX01PREVfTk9fSFBfTUlDIG9uIHRoaXMgbW9kZWw/CgpK
+aWFuLUhvbmcgUGFuCgotLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVudmlyb25tZW50IGJlZm9y
+ZSBwcmludGluZyB0aGlzIGUtbWFpbC4K
