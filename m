@@ -2,109 +2,152 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6A8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AF1C07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51D67205C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:28:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zEQN1nbt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D67205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 9037E20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544030904;
+	bh=CJqF/RQAkQe8DyvmUG4i2ze4TJnVlCi4awEbse+57dk=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=128vjkx5UnUVOktadmLqaaijVn5Alb6cdLgyVxrP5WELaBn7FXeBWxSWPFMA8fuGX
+	 9Gr3qvq01uq9mr6B6dX20cDgnLqQejKs3OegurRzg29CYadW4Y7hCbevXye1W6KmT0
+	 EBeZQPugjIeJmh+r9PeTRasiW3i+PtpNA+3Yf5uY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9037E20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbeLER2D (ORCPT
+        id S1728483AbeLER2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:28:03 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47554 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbeLER2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:28:02 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5HRnrB051458;
-        Wed, 5 Dec 2018 11:27:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544030869;
-        bh=PYgMBU1AMMVOn2XaO5/C1cr74Wphbrg95NXaYrVyheE=;
-        h=From:To:CC:Subject:Date;
-        b=zEQN1nbtzLpybu2zJyTfwiycByRNSOWJD/l1Uh6hCfjR1+a1IlJbxdETcX6oPGPhk
-         9HT+3jvz/jdF1d5aW/yT3LUM23vuijL7IUZxQYTm/4lgQ1JHfSJUrkMDyqguiPxZsJ
-         P0raXvvPGG/u2uQh/wVpIOesxGtMGG8PPCwURh8s=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5HRnO9069060
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 11:27:49 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
- Dec 2018 11:27:48 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 5 Dec 2018 11:27:48 -0600
-Received: from dlelxv97.itg.ti.com (dlelxv97.itg.ti.com [172.17.2.193])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5HRmdE000685;
-        Wed, 5 Dec 2018 11:27:48 -0600
-Received: from localhost.localdomain (vboxa0400828d.dhcp.ti.com [172.22.237.247])
-        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5HRkX1005259;
-        Wed, 5 Dec 2018 11:27:46 -0600
-From:   Roger Quadros <rogerq@ti.com>
-To:     <tony@atomide.com>
-CC:     <robh+dt@kernel.org>, <hns@goldelico.com>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH] ARM: dts: omap5: Fix dual-role mode on Super-Speed port
-Date:   Wed, 5 Dec 2018 19:27:44 +0200
-Message-ID: <1544030864-22842-1-git-send-email-rogerq@ti.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 5 Dec 2018 12:28:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbeLER2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:28:23 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDE7D205C9;
+        Wed,  5 Dec 2018 17:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544030902;
+        bh=CJqF/RQAkQe8DyvmUG4i2ze4TJnVlCi4awEbse+57dk=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=pJIrhNmLsH1Iwo1G/6I/+g1aUjqR902jDDXUT0oxCPOFPR7vfDFFC//P1ke75dI0y
+         VpfXSqI/ficJiQwCXaY5C+YqMn1OTC7zAHK7n1Y4uWsQa9dfwkSTstcMOyM5liT1pq
+         sq8Ojw2L6rs++9O3yGz6niJ3KI+CJj190GOH3t68=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <b1a7aa06389ccd46f60db3e63bdf1e9ce9781d49.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <b1a7aa06389ccd46f60db3e63bdf1e9ce9781d49.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154403090130.88331.18352581261422337586@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 10/10] clk: bd718x7: Initial support for ROHM bd71837/bd71847
+ PMIC clock
+Date:   Wed, 05 Dec 2018 09:28:21 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OMAP5's Super-Speed USB port has a software mailbox register
-that needs to be fed with VBUS and ID events from an external
-VBUS/ID comparator.
+Quoting Matti Vaittinen (2018-12-04 03:39:38)
+> diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+> new file mode 100644
+> index 000000000000..d486859526ed
+> --- /dev/null
+> +++ b/drivers/clk/clk-bd718x7.c
+> @@ -0,0 +1,131 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd71837.c  -- ROHM BD71837MWV clock driver
 
-Without this, Host role will not work correctly.
+This isn't even the name of the file. Please remove. Also, only the SPDX
+tag is supposed to have // on it and the other things should be normal
+/* */ comment style.
 
-Fixes: 656c1a65ab55 ("ARM: dts: omap5: enable OTG role for DWC3 controller")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/rohm-bd718x7.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/regmap.h>
+[....]
+> +
+> +static int bd71837_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct bd718xx_clk *c;
+> +       int rval =3D -ENOMEM;
+> +       const char *parent_clk;
+> +       struct device *parent =3D pdev->dev.parent;
+> +       struct bd718xx *mfd =3D dev_get_drvdata(parent);
+> +       struct clk_init_data init =3D {
+> +               .name =3D "bd718xx-32k-out",
+> +               .ops =3D &bd71837_clk_ops,
+> +       };
+> +
+> +       c =3D devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> +       if (!c)
+> +               return -ENOMEM;
+> +
+> +       init.num_parents =3D 1;
+> +       parent_clk =3D of_clk_get_parent_name(parent->of_node, 0);
+> +
+> +       init.parent_names =3D &parent_clk;
+> +       if (!parent_clk) {
+> +               dev_err(&pdev->dev, "No parent clk found\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       c->reg =3D BD718XX_REG_OUT32K;
+> +       c->mask =3D BD718XX_OUT32K_EN;
+> +       c->mfd =3D mfd;
+> +       c->pdev =3D pdev;
+> +       c->hw.init =3D &init;
+> +
+> +       of_property_read_string_index(parent->of_node,
+> +                                     "clock-output-names", 0, &init.name=
+);
+> +
+> +       rval =3D devm_clk_hw_register(&pdev->dev, &c->hw);
+> +       if (!rval) {
+> +               rval =3D devm_clk_hw_register_clkdev(&pdev->dev,
+> +                                                  &c->hw, init.name, NUL=
+L);
 
-Tony,
+Do you plan to use the clkdev lookup? This driver looks fairly DT
+dependent, so I would prefer to remove the clkdev part and only add it
+later if anyone needs it.
 
-Please included this in v4.20-rc cycle. Thanks.
-
-cheers,
--roger
-
- arch/arm/boot/dts/omap5-board-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi b/arch/arm/boot/dts/omap5-board-common.dtsi
-index bf7ca00..bc853eb 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -701,6 +701,7 @@
- };
- 
- &dwc3 {
-+	extcon = <&extcon_usb3>;
- 	dr_mode = "otg";
- };
- 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+> +               if (rval)
+> +                       dev_warn(&pdev->dev, "Failed to register clkdev\n=
+");
+> +               if (parent->of_node) {
+> +                       rval =3D devm_of_clk_add_hw_provider(&pdev->dev,
+> +                                            of_clk_hw_simple_get, &c->hw=
+);
+> +                       if (rval)
+> +                               dev_err(&pdev->dev,
+> +                                       "adding clk provider failed\n");
+> +               }
