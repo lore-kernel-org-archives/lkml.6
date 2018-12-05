@@ -2,114 +2,124 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD11C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49C0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC23720892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC23720892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 76B95208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544026596;
+	bh=+gwzwDnPJNvLtZKEcJq1sOD+YlIQ9jtCtlNxDquqasA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=u3I3/tdC6Aj8ZXWjNwYj2sXmMuJlexSgHSFio3KpRdTeD2gGLbbLnDrCOkHfpMb6s
+	 Co7UaV1qHU+YWsz4+FCv4MfFLXi2G9oYAI3zsfu+ykQX34cmNyKJaO+A1+exV9/8Yw
+	 2eZv1ikbka65+bEUyNlyif00Qc5uJHA8RV6eg6FE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B95208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbeLEQQL (ORCPT
+        id S1728214AbeLEQQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:16:11 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51598 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbeLEQQL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:16:11 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gUZqD-0006sq-IT; Wed, 05 Dec 2018 16:16:01 +0000
-Date:   Wed, 5 Dec 2018 16:16:01 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Message-ID: <20181205161601.GW2217@ZenIV.linux.org.uk>
-References: <20181127115246.00967523@canb.auug.org.au>
- <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au>
- <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
- <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
- <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
- <20181203215639.GV2217@ZenIV.linux.org.uk>
- <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
+        Wed, 5 Dec 2018 11:16:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbeLEQQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:16:35 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68195214E0;
+        Wed,  5 Dec 2018 16:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544026593;
+        bh=+gwzwDnPJNvLtZKEcJq1sOD+YlIQ9jtCtlNxDquqasA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HgKVnjHdkCcyggeq7BjdbCl7BxcHvgPf7S/DHpWyahmTZ4lLqTK5pZFLBIiUO9OcU
+         NRMpTnap7OOMroC5aC+ikTZ9aOsLb3hDUZktI5SL1HNqXFX6A6GF1mxAtwfQ+tLxrc
+         U+KcYKEEF9B9CCrd+RqhQQ/7RzYVyHMHt2OEk5pI=
+Received: by mail-qt1-f171.google.com with SMTP id k12so22845746qtf.7;
+        Wed, 05 Dec 2018 08:16:33 -0800 (PST)
+X-Gm-Message-State: AA+aEWaura9G5+NXGidyNAWPOazdvFcE5ke8E4FEyaDh61YP0oItMIaI
+        s521FzAez3+ER+zoOboc4QMDbgwy6gI/Yxs4/A==
+X-Google-Smtp-Source: AFSGD/VShLBbgbwIJla3YZAI37uxkZHbIfEdulh/nkj92GC+EcdvCUwd6cqZQ+wGNlis0HADZyDVJlIYj4NIdiZfQ0I=
+X-Received: by 2002:ac8:6b18:: with SMTP id w24mr24356925qts.144.1544026592489;
+ Wed, 05 Dec 2018 08:16:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181127180349.29997-1-georgi.djakov@linaro.org> <20181127180349.29997-2-georgi.djakov@linaro.org>
+In-Reply-To: <20181127180349.29997-2-georgi.djakov@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 5 Dec 2018 10:16:20 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
+Message-ID: <CAL_JsqJyPH9WVw2VqGTjUvhxoq3+KGpfqtAMf9iH07N7m3P4yw@mail.gmail.com>
+Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect API
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        Evan Green <evgreen@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 10:37:56AM +0100, Ondrej Mosnacek wrote:
+On Tue, Nov 27, 2018 at 12:03 PM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> This patch introduces a new API to get requirements and configure the
+> interconnect buses across the entire chipset to fit with the current
+> demand.
+>
+> The API is using a consumer/provider-based model, where the providers are
+> the interconnect buses and the consumers could be various drivers.
+> The consumers request interconnect resources (path) between endpoints and
+> set the desired constraints on this data flow path. The providers receive
+> requests from consumers and aggregate these requests for all master-slave
+> pairs on that path. Then the providers configure each participating in the
+> topology node according to the requested data flow path, physical links and
+> constraints. The topology could be complicated and multi-tiered and is SoC
+> specific.
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> Reviewed-by: Evan Green <evgreen@chromium.org>
 
-> I just tested the Q28 branch rebased onto a recent Fedora rawhide
-> kernel (4.20.0-0.rc5.git0.1) and that code seems to be working fine.
-> The submount test failed with Q28 and succeeds with Q28+fix, as
-> expected. Also, the overlay tests failures are gone now (except for
-> the 4 known failures from GH issue #43, since I had to rebase onto
-> 4.20-rcX).
-> 
-> This is the commit that I used as the SELinux submount fix:
-> https://gitlab.com/omos/linux-public/commit/47922f9c70a83008388b836c285f94c40da1af2b
+[...]
 
-FWIW, I'm none too happy about the fix.  Observations:
-	* sb_get_tree (and sb_kern_mount past the "LSM: lift parsing
-LSM options into the caller of ->sb_kern_mount()" in this series)
-is equivalent to sb_set_mnt_opts() + (for userland mounts) an selinux-only
-MAC check.  IOW, application of options (for LSMs that have those
-in the first place) + actual "are we permitted to mount that?" check.
-	* the second part should be done only for userland mounts -
-not automounting, not kernel-internal ones, etc.
-	* a very common pattern is "vfs_get_tree, vfs_create_mount if we
-hadn't failed that, then unconditional put_fs_context".  So much that it
-clearly deserves a helper - too much boilerplate as it is.
-	* look at the callers of vfs_get_tree():
-1) afs_mntpt_do_automount(): submount, helper fodder.  No MAC.
-2) nfs_do_submount(): submount, standalone, but caller will very shortly follow
-with the rest of the helper.  No MAC.
-3) btrfs_mount_root(): helper fodder, cloned context, probably no point
-in the actual MAC - we are in ->get_tree(), the caller will decide if
-it wants to bother.
-4) do_nfs4_mount(): NFS counterpart of the above.
-5) mount_one_hugetlbfs(): kernel-internal, helper fodder, no MAC.
-6) pid_ns_prepare_proc(): kernel-internal, helper fodder, no MAC.
-7) mq_create_mount(): kernel-internal, helper fodder, no MAC.
+> +struct icc_path *icc_get(struct device *dev, const int src_id,
+> +                        const int dst_id);
+> +void icc_put(struct icc_path *path);
+> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
 
-8) do_new_mount(): almost a helper fodder, wants MAC (mount(2) guts)
-9) fsopen(2): standalone, wants MAC (it's mount(2)-equivalent)
-10) vfs_kern_mount(): that's a bit more complicated.  It is, again,
-a helper fodder.  The need of MAC depends upon the caller, in theory.
-Callers:
-	simple_pin_fs() - kernel-internal, no MAC
-	init_mount_tree() - no MAC, that's the absolute root and that, by
-definition, is much too early in the boot (before initramfs, etc.) for
-any LSM shite to be applicable.  In any case, it's done by the kernel.
-	kern_mount() - kernel-internal, no MAC
-	cpuset_get_tree() - part of ->get_tree(), caller will decide if they
-want the damn MAC.
-	vfs_submount() - automounts, presumably no MAC.
+icc_set() is very generic, but this function isn't easily extended to
+other parameters than bandwidth. Perhaps icc_set_bandwidth() instead.
+Then when you add some other setting, you just add a new function. Of
+course, if you wind up with a bunch of different parameters, then
+you'll probably need an atomic type interface where you test all the
+settings together and then commit them separately in one call. But
+from a DT perspective, I certainly hope there are not lots of new
+settings folks want to add. :)
 
-Conclusion: fuck the MAC in vfs_get_tree().  Let's just lift it into
-do_new_mount()/fsopen().  The only thing we really need there is to
-keep ->s_umount held (exclusive) until after the MAC.  So let vfs_get_tree()
-return with fc->root->d_sb->s_umount locked and have mount_create_mount()
-(which is _always_ preceded by successful vfs_get_tree()), unlock the
-sucker.  In vfs_get_tree() we need to do sb_set_mnt_opts(), with the
-rest of it (selinux-only) called by do_new_mount()/fsopen(2).  All there
-is to it...
+Rob
