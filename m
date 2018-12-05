@@ -2,159 +2,115 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6813AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D030CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1482720989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8838E20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="D2EHHQ0u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1482720989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLN1TbgR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8838E20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeLEL7W (ORCPT
+        id S1727619AbeLEMBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:59:22 -0500
-Received: from mail-eopbgr60049.outbound.protection.outlook.com ([40.107.6.49]:21472
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbeLEL7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:59:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dxUpn8AEYzOWqh2ga7PogRMQL+ctmt15UB9sEX+ZVSU=;
- b=D2EHHQ0uoimJz4B7O7mJmQ/le4q3q46pFN6ybvlt6RguzfkcBSCVfJ4uUQNLJKlq2FiBeyII6OSBn0ZHBtFKU67qmzkIfikZrQdy9daMJb7uDMG8bM8XRAxEWmPfdz+vdb3vkopgZErS91GK3lMM82ZU0T+YpAwDmDQVnpW4Kak=
-Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
- AM0PR08MB3924.eurprd08.prod.outlook.com (20.178.118.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 5 Dec 2018 11:59:17 +0000
-Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
- ([fe80::60f0:87d9:8edf:bee2]) by AM0PR08MB3025.eurprd08.prod.outlook.com
- ([fe80::60f0:87d9:8edf:bee2%3]) with mapi id 15.20.1404.019; Wed, 5 Dec 2018
- 11:59:17 +0000
-From:   Brian Starkey <Brian.Starkey@arm.com>
-To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>
-CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "Jin Gao (Arm Technology China)" <Jin.Gao@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
-Thread-Topic: [PATCH v1 9/9] MAINTAINERS: Add maintainer for arm komeda driver
-Thread-Index: AQHUjIQcOEi83N47a0KC43klt9WEnaVwCtqA
-Date:   Wed, 5 Dec 2018 11:59:17 +0000
-Message-ID: <20181205115915.aakaiqpjxs62b3xl@DESKTOP-E1NTVVP.localdomain>
-References: <20181205101635.7696-1-james.qian.wang@arm.com>
- <20181205101635.7696-10-james.qian.wang@arm.com>
-In-Reply-To: <20181205101635.7696-10-james.qian.wang@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: NeoMutt/20180716-849-147d51-dirty
-x-originating-ip: [217.140.106.53]
-x-clientproxiedby: LO2P265CA0273.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a1::21) To AM0PR08MB3025.eurprd08.prod.outlook.com
- (2603:10a6:208:5c::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Brian.Starkey@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:EQvJEldEJZyVGAzcvODvQxaBswdweIR5ffZTS4KKgIfxJ8N/yCo2dk+3XDlJGyK5Hkp7I1c1D5va7YeFzXDdWU6eIwTTJxlSdqp2I/w9LMiX0O7PoAHKTxoRA5Ld+2Tv8eLKU0CmVPoYsyFTftKxbWS8sPuQ+NszVzLivQqYlNmk7rKxAzCZ3MC+kLvJx9XSh/yosEKXcsn/nf4loikzzwvFmfcJRudLkVn8LmxXw54AXhUCUWf1eu+Q7f5j87xVl/xCIkALumfYRg7MPGrplHOPyElvQ6MehqAkwdEiAu784xYi8Puh/jTq5HCu5D9sCCwbJ8QyGSvmK0Ws9MNQbHavuMf5n51x3ugch8EiokLCuuGvf0L2eEq+meCpoO/bbWk03vT50FuXqipmYkmhxlXKTWQS9JI7VbrjeJ4oatvHH54WKSln1/Kwv5/z/PEq4v8WkfSsjLneCRPmNQ6MUA==;5:7qqqsgKV0mfpDGn3R3FTnaJW7+ujFgSyKnMVry36dA3OMQ0YcSUA3o20KEN8f6UYvfpI0Mv2DvB+IvYyBQu8ndXadSnC5uOIO1SQvcCR0XP7Aqv+YtA/oKO4EElMOMSnScK261CmESg+QeR4koYZykRGfNwyR3sk08t8gDfeHOg=;7:yBhiPv3VcUXvZDRGOrrjiH4uDZZDsaTpAO2Z2OI55JxABpTyJWZiU6FHDb9wrhKD5otQg0m7hzc0e/OpeUdVpKWKtCf4ERtIVyORXntI0IM2IFVueo26b8xRWgl1BuH7BzPtPTy/xT06qJbvKiBkgg==
-x-ms-office365-filtering-correlation-id: e9852273-8521-4a00-8156-08d65aa914ff
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3924;
-x-ms-traffictypediagnostic: AM0PR08MB3924:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB3924D6252EB7498E2F8005B2F0A80@AM0PR08MB3924.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3924;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3924;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(396003)(376002)(39860400002)(199004)(189003)(446003)(71200400001)(11346002)(71190400001)(6512007)(8936002)(316002)(25786009)(476003)(106356001)(58126008)(54906003)(53936002)(110136005)(6636002)(256004)(2906002)(486006)(5660300001)(44832011)(4326008)(14454004)(81166006)(81156014)(8676002)(14444005)(86362001)(6436002)(102836004)(26005)(97736004)(6506007)(386003)(305945005)(52116002)(186003)(7736002)(33896004)(66066001)(76176011)(68736007)(99286004)(6116002)(6486002)(3846002)(478600001)(1076002)(6246003)(72206003)(9686003)(229853002)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: WiL+jy/0mLJrfks8o6m/0Pb5TLifD0usvuOGY/eINY3RzePl+KY8qzurcGbwDGoWInLIBcZ84LMdEGicnA0fk6yN9BJufLQxO5OTzDKcr/Udk9H1ZdfNA4oi1XXrH6Wik4jlKF3p9+j4F06W7NEjjP3BKqFb5Ctcrs8KgicGVXn61/PVX403wsobjAWID255bWxNjCqTY3qBsGf/ImMnGQoIcQHYQT/TXs9M7wNF2zO+Z1Vq9Ch6qQVjKXNWX8GiVOTUoMlyALTDMUG7wmMOTZPGjUWsDUmLmafrtGIiDwh4emtpkzDQq4UpPBQx13i3odwXHc+VaMIfTfm5r5oVJFmjWkP0BxPDioajrm7NDvk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F7016A140BE2924AA5426A73569320C1@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Dec 2018 07:01:07 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40591 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbeLEMBG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:01:06 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so18077027lji.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 04:01:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m2c5oGlnNZQ+q799p5nxoQFpGmfGLOYlQnWIGd6mn0Q=;
+        b=jLN1TbgRDD/fVzht2/7QZEI/H+QmXGo9ASojBnpuoPuMhxAtvqT8ficnK639nVVdUz
+         2HAqRrFhLp7U0nB0Hzcm94SEqLxZ4kddTGgnkO3K9oT0rX4Yxl1pSU1qx5KCr8vBlkTn
+         jF5JRVXzb2x+PRoL/MgROZTJU4zRS7Qzi4x3s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m2c5oGlnNZQ+q799p5nxoQFpGmfGLOYlQnWIGd6mn0Q=;
+        b=p03y/rYlkhwyAbSSdxvw4HIu51FJfPrqo2xWUvn0Y9K4fIKD1V4fQCYkiadhgl4AWw
+         0t3/YLYqGV+YWhKO8yQYsbIqKwBpJx9XLgaBwAgITYsCqrJOUowHUFV2/zeM6OKyjWAj
+         oJ3S9vijL19GOh3JdQYRo4y99G4GcDJ1hA35pP9U+n7swv0QTO0E7PKR+L3anu3N7iP2
+         cmbu4jtSEp19xzZdC2dNEwxFV9DnmQrdhAVgnK678tfDe+DohqPN0zk0j3Af/xzTphjP
+         0+EoKHf4VSPJ5Ap/DyXbNAky5+Rm1xbAIYbzYkyqUtfJeI9Vcow42Ps71CHiF8tbi99w
+         TVZQ==
+X-Gm-Message-State: AA+aEWYJ7PKhpI2oWDwUt3a5uNcRUAoxbrJEmJ0bbza5JXhvnFpvmNK5
+        nYdehtpNCqw9R/rx4/0FH98N+kda7g8mkjvNHHyzFg==
+X-Google-Smtp-Source: AFSGD/UR0z7I+ZfII9VWdgf/yzMAx4UJLcvLR82qsUCHyPGzgxUw/jjTZSXN87GC7TAwT6jxOGZwA5pMrwlITm+Z/Dc=
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr15422872ljj.9.1544011264387;
+ Wed, 05 Dec 2018 04:01:04 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9852273-8521-4a00-8156-08d65aa914ff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 11:59:17.0647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3924
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-2-manivannan.sadhasivam@linaro.org> <CACRpkda25cuiPCe9ouvDDSpFwZ2z=Pm8pK=5jC-7OAcYwPSvvA@mail.gmail.com>
+ <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
+In-Reply-To: <c1f63dd8-1c06-1797-025c-2cd4891d905d@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 5 Dec 2018 13:00:52 +0100
+Message-ID: <CACRpkdYCsh3AfmV-7ym-ffjp2k-kaNRqY1O3rd9h-WoUPYM_bw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
+ MT6797 SoC Pinctrl
+To:     Matthias Brugger <matthias.bgg@gmail.com>, arm-soc <arm@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        sean.wang@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Mon, Dec 3, 2018 at 2:08 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
+> On 15/11/2018 11:04, Linus Walleij wrote:
+> > On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> >> Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
+> >>
+> >> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >
+> > Patch applied.
+> >
+>
+> Could you provide a stable tree for me, so that I can take the dts parts?
+> I just realized that my build is broken because of the missing dt-bindings
+> header file.
 
-On Wed, Dec 05, 2018 at 10:20:13AM +0000, james qian wang (Arm Technology C=
-hina) wrote:
-> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 254b7b267731..9e44c2c2e234 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1132,6 +1132,14 @@ S:	Supported
->  F:	drivers/gpu/drm/arm/
->  F:	Documentation/devicetree/bindings/display/arm,malidp.txt
-> =20
-> +ARM KOMEDA DRM-KMS DRIVER
+Since I pulled other changes on top it is too late for me to put that
+in an immutable branch and merge into my tree separately,
+you would have to pull in the whole "devel" branch from the
+pin control tree.
 
-The list is meant to be in alphabetical order, so I think this entry
-should be before the MALI-DP one.
+What we sometimes do is simply apply the *EXACT* same patch
+to two git trees. Git will cope with that as long as they are
+absolutely *IDENTICAL*. (The patch will appear twice in the
+git log with different hashes but they will merge without
+problems, a bit unelegant but it works.)
 
-Perhaps we should make the Mali-DP "F:" rule more specific too. At
-the moment any changes under display/komeda will match that too (so
-Liviu and myself are returned by get_maintainer.pl for Komeda
-patches).
+So in your situation I would extract this patch from the pinctrl
+tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=devel&id=95d2f00657ad4c2c3eacd8a871a7aa022c3fe7d9
+and apply it with some notice to the maintainers about
+the situation.
 
-> +M:	James (Qian) Wang <james.qian.wang@arm.com>
-> +M:	Mali DP Maintainers <malidp@foss.arm.com>
-> +S:	Supported
-> +F:	drivers/gpu/drm/arm/display/komeda
+ARM SoC folks: agreed?
 
-This one should have a trailing slash to include the directory tree.
-
-Cheers,
--Brian
-
-> +F:	Documentation/devicetree/bindings/display/arm/arm,komeda.txt
-> +F:	Documentation/gpu/komeda-kms.rst
-> +
->  ARM MFM AND FLOPPY DRIVERS
->  M:	Ian Molton <spyro@f2s.com>
->  S:	Maintained
-> --=20
-> 2.17.1
->=20
+Yours,
+Linus Walleij
