@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C770AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E5EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDE72084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C5532084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGoZcFvy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDE72084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJjpGPua"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5532084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbeLEJiq (ORCPT
+        id S1728308AbeLEJiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:38:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42562 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:38:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbeLEJim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:38:42 -0500
+        id S1727720AbeLEJiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:38:46 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC80120878;
-        Wed,  5 Dec 2018 09:38:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1031E2084C;
+        Wed,  5 Dec 2018 09:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002721;
-        bh=HCb0N6XZIG+2gEWzNVFmOp7jiFDUnUl+rQCt4xTSdj0=;
+        s=default; t=1544002725;
+        bh=mQVq7lO1QFu16OvFTmXI8DVN1f4nscl45HCf9jVNAxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dGoZcFvyqNGH47YB8S4xA8GmIQdcmdkzFmbrWJ3Onjuem4BSrySQHdJ1uph4X7ILJ
-         Av3o2SP93V7wkITVD4r0Yi88v3d84eosyzLPDjMDHdx3/bTHeqPO6QiiC/jdDww5z8
-         7QeXP63iplkWZ4JTAhRrAbvA/sLWoJ2//YEo3Bsc=
+        b=kJjpGPuaSoTR/iRi1Zrk7WDsLNnP4pVK77whtCUvEOSwXToC0rNBaXz24HZXDing6
+         +CMT/dWiqz69DzYxLJSMFVIhCejgKgC7xbtgePgqBP0b6caRuz9bTFhD3TXwqi4KM1
+         22y7EJGCUwhcomQef2HqjPgJQExg5y+d2o4y28t8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Artem Savkov <asavkov@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 048/123] objtool: Fix segfault in .cold detection with -ffunction-sections
-Date:   Wed,  5 Dec 2018 04:34:40 -0500
-Message-Id: <20181205093555.5386-48-sashal@kernel.org>
+Cc:     Manu Gautam <mgautam@codeaurora.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 049/123] phy: qcom-qusb2: Use HSTX_TRIM fused value as is
+Date:   Wed,  5 Dec 2018 04:34:41 -0500
+Message-Id: <20181205093555.5386-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -56,76 +53,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artem Savkov <asavkov@redhat.com>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-[ Upstream commit 22566c1603030f0a036ad564634b064ad1a55db2 ]
+[ Upstream commit 6e34d358b24ffc40764eb3681164c79091765429 ]
 
-Because find_symbol_by_name() traverses the same lists as
-read_symbols(), changing sym->name in place without copying it affects
-the result of find_symbol_by_name().  In the case where a ".cold"
-function precedes its parent in sec->symbol_list, it can result in a
-function being considered a parent of itself. This leads to function
-length being set to 0 and other consequent side-effects including a
-segfault in add_switch_table().  The effects of this bug are only
-visible when building with -ffunction-sections in KCFLAGS.
+Fix HSTX_TRIM tuning logic which instead of using fused value
+as HSTX_TRIM, incorrectly performs bitwise OR operation with
+existing default value.
 
-Fix by copying the search string instead of modifying it in place.
-
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Link: http://lkml.kernel.org/r/910abd6b5a4945130fd44f787c24e07b9e07c8da.1542736240.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/elf.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qusb2.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index a6f543e0b387..b75d004f6482 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -31,6 +31,8 @@
- #include "elf.h"
- #include "warn.h"
+diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+index e70e425f26f5..9d6c88064158 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -402,10 +402,10 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
  
-+#define MAX_NAME_LEN 128
-+
- struct section *find_section_by_name(struct elf *elf, const char *name)
- {
- 	struct section *sec;
-@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
- 	/* Create parent/child links for any cold subfunctions */
- 	list_for_each_entry(sec, &elf->sections, list) {
- 		list_for_each_entry(sym, &sec->symbol_list, list) {
-+			char pname[MAX_NAME_LEN + 1];
-+			size_t pnamelen;
- 			if (sym->type != STT_FUNC)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
-@@ -305,9 +309,16 @@ static int read_symbols(struct elf *elf)
- 			if (!coldstr)
- 				continue;
+ 	/*
+ 	 * Read efuse register having TUNE2/1 parameter's high nibble.
+-	 * If efuse register shows value as 0x0, or if we fail to find
+-	 * a valid efuse register settings, then use default value
+-	 * as 0xB for high nibble that we have already set while
+-	 * configuring phy.
++	 * If efuse register shows value as 0x0 (indicating value is not
++	 * fused), or if we fail to find a valid efuse register setting,
++	 * then use default value for high nibble that we have already
++	 * set while configuring the phy.
+ 	 */
+ 	val = nvmem_cell_read(qphy->cell, NULL);
+ 	if (IS_ERR(val) || !val[0]) {
+@@ -415,12 +415,13 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
  
--			coldstr[0] = '\0';
--			pfunc = find_symbol_by_name(elf, sym->name);
--			coldstr[0] = '.';
-+			pnamelen = coldstr - sym->name;
-+			if (pnamelen > MAX_NAME_LEN) {
-+				WARN("%s(): parent function name exceeds maximum length of %d characters",
-+				     sym->name, MAX_NAME_LEN);
-+				return -1;
-+			}
-+
-+			strncpy(pname, sym->name, pnamelen);
-+			pname[pnamelen] = '\0';
-+			pfunc = find_symbol_by_name(elf, pname);
+ 	/* Fused TUNE1/2 value is the higher nibble only */
+ 	if (cfg->update_tune1_with_efuse)
+-		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
+-			      val[0] << 0x4);
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
++				 val[0] << HSTX_TRIM_SHIFT,
++				 HSTX_TRIM_MASK);
+ 	else
+-		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
+-			      val[0] << 0x4);
+-
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
++				 val[0] << HSTX_TRIM_SHIFT,
++				 HSTX_TRIM_MASK);
+ }
  
- 			if (!pfunc) {
- 				WARN("%s(): can't find parent function",
+ static int qusb2_phy_set_mode(struct phy *phy, enum phy_mode mode)
 -- 
 2.17.1
 
