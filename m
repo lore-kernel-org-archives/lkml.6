@@ -2,75 +2,71 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFC3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0990C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3515820879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77CD820879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544025623;
-	bh=JHmVdEzag9bGYUQ/noI5UKcAwmSF91tMsdILM3HM3p8=;
-	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=Io4lyf/A+pQqJRXeaU4CZGqA9fKZ08nYACqSf3j05pYp3A3fuR/+6EpxmIKZ9riV7
-	 Ps5tfAR6igtovSZmqC17nyTyN4Ot47FPTtLYHH4v0KeprK2HZUzCj59YBU15dU/Nak
-	 acE5aEEIbtt8/YOaP+aU7+CLyVyJdpw5XIec81OE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3515820879
+	s=default; t=1544025648;
+	bh=u5UuxBRh42uEo9ULYO5NsmpEcnbrk3DReKNA1hzrThA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iRfpkgBcKoLC+wSdiOoyFYxyY1CkZiHokGpkIkqE/nI7JLhbXbSYR38mU/HdxEpFr
+	 wWemy70Bjbxyo3y99+jyNYMaqL+c6tUFQxCEaDoAh/5uzP00K6nBgnkX6tUj96MQVy
+	 EJshVVO8F0gj+Ny7klsfVIT96/aH0yzXmLrK7I7g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CD820879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbeLEQAV (ORCPT
+        id S1728325AbeLEQAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59600 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 11:00:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728247AbeLEQAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:00:20 -0500
-Received: from localhost (unknown [104.132.0.74])
+        id S1728183AbeLEQAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:00:47 -0500
+Received: from localhost (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C610220850;
-        Wed,  5 Dec 2018 16:00:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14AA120850;
+        Wed,  5 Dec 2018 16:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544025619;
-        bh=JHmVdEzag9bGYUQ/noI5UKcAwmSF91tMsdILM3HM3p8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=fgYbUecIJlVLILd/3d/dNq3r6EZeEQH2BjbQH4Mt+UXXGRjrMtr+ips9PFFVoyj6G
-         85Hdp5VXD3+bj2hTWX0OiBdfBieX0ZotxmMyC6iAvvAGJSuzxRNPaLTZccE3/4sJav
-         tlsTvnQnxmm2KqrJIMJla79113iO9t29KjhnMWxs=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1544025646;
+        bh=u5UuxBRh42uEo9ULYO5NsmpEcnbrk3DReKNA1hzrThA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=haCdcNkuRyydUXgb133QDgc7sBd6Jsu2Z7sd8AUjQoSTSUoETLzHBLFfpzcAX/wvb
+         dff0NzNO+XF/3JNQi/Ffd/YCtfLm+y0mnCTkI6dPDR9iPeTP6hGRVUS928FsiaWSiq
+         GB4SDPAAyvwwK9/ogCsnxGi1vZzaYqi9qvvlKUtY=
+Date:   Wed, 5 Dec 2018 11:00:42 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Connor McAdams <conmanx360@gmail.com>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.de>
+Subject: Re: [PATCH AUTOSEL 4.19 40/68] ALSA: hda/ca0132 - Add new ZxR quirk
+Message-ID: <20181205160042.GB1992@sasha-vm>
+References: <20181129055559.159228-1-sashal@kernel.org>
+ <20181129055559.159228-40-sashal@kernel.org>
+ <CAM8Agx1xcN1P9y7r+Y7xgbt5Dqyk3ESU0QU7Ogc+c3iBsiHetA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1543996920-17029-1-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1543996920-17029-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <154402561913.88331.391864642069686842@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: qcom: Remove LPASS_CC config for GCC lpass clocks
-Date:   Wed, 05 Dec 2018 08:00:19 -0800
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAM8Agx1xcN1P9y7r+Y7xgbt5Dqyk3ESU0QU7Ogc+c3iBsiHetA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-12-05 00:02:00)
-> The GCC lpass clocks are updated as protected, so clean up the ifdefers.
-> =
+On Thu, Nov 29, 2018 at 09:51:55AM -0500, Connor McAdams wrote:
+>This patch won't break anything, but it also won't fix anything
+>either. Not sure if that matters or not.
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+I'll remove it then, thank you.
 
-Ok. But this will have to wait for a few months until everything is
-merged together. Was that the intention of sending this now instead of
-later?
+--
+Thanks,
+Sasha
