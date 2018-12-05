@@ -2,349 +2,330 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B25C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420F6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F42D2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0867206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="behf821E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F42D2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0faPvZkK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0867206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeLEGQG (ORCPT
+        id S1727071AbeLEGVg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:16:06 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34502 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeLEGQF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:16:05 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so9499474pfg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:16:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RxnxLeE/nMZYJF4tiJIgBKKQRgUgdiQvy6Z7yAmFPBU=;
-        b=behf821EfgII1wjMHZuLg734CsI7ssoqlH4uWjM8Bz+yzMncvj1qOJxSHCqAWCjDAn
-         xblSYSKcSlGWG/uSybQapCO6wpEokvuUs4qTWlJ2tvteyTBF73aLmplhuU+dw57LL81n
-         RSkLQXFPZyCTcR3Bdw1bo+OVeL9dduoZ8JRlw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RxnxLeE/nMZYJF4tiJIgBKKQRgUgdiQvy6Z7yAmFPBU=;
-        b=WV4X1TbVGM8D0u7aMGX2oOwlUluUwR9TQpvxcDx2ISXrwV8ARGYUjqFt/x3gZlXh/f
-         KWKloIUDx9RYvs9WLknYxOPfk8AKyv3OIwHPNqYMJElIH7BaCoLgJzu4PcBoS5O4tesp
-         CuOKM5aYTESqpAZ5bWyvmTg0pre1JHRdywDW56nAanUUU2hN+SkbNyZjr+D+Bw3BoPCx
-         KHC/BTOzlgmJwom6Csg/cGg4pSMicpkru26E09lRaWDdM2AgR8jJo7rGbHVbYxY3Oh4q
-         RoJptvn5/zQhWQweaf1TT3ArKMyP04G4+9YpP8KfvInVX0WgXb9q5Z3KplKi63dtZh2R
-         695w==
-X-Gm-Message-State: AA+aEWYb5d27dNaoJO/EVX0ZmhRNHhxKQz4aPEEuGXaJAhakBbV/YUvQ
-        yMT83rKPZ51enSrr64zyZ753aOX8eXQ=
-X-Google-Smtp-Source: AFSGD/UiG1j5iuZi/ZclCTmXQjn5TsVDfH6c65ckcqeMjSp0OzzXGZ0za6Ds9Ij2MBC9M8n4Y3ioFQ==
-X-Received: by 2002:a63:b17:: with SMTP id 23mr19550595pgl.423.1543990564559;
-        Tue, 04 Dec 2018 22:16:04 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id q199sm53092737pfc.97.2018.12.04.22.16.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 22:16:03 -0800 (PST)
-Date:   Wed, 5 Dec 2018 11:46:00 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com
-Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq
- HW driver
-Message-ID: <20181205061600.7zglbpkgbktn27am@vireshk-i7>
-References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
- <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
- <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
- <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
- <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
- <49139ae4-4373-9e70-02ad-80f7bbc4494c@codeaurora.org>
+        Wed, 5 Dec 2018 01:21:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726941AbeLEGVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 01:21:34 -0500
+Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5951120850;
+        Wed,  5 Dec 2018 06:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543990893;
+        bh=CPhRiZxrg+HhaKyuEpQvCgSkdIr/4CbPv41MEt768Xg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0faPvZkKnvTCd3NYr1YDn8xDeMCh5b0MVVRSr5E4Ic7EK/aUCJCGOPpuJij28gBm6
+         Mb3xfgkfMJHG6OCMPF7xBwA3rOSZQJg0EChjm/YF/xZnTGvWV7Qbi6EtlmsgYbnte+
+         u82mPNGhg8ZCl/yN0H85fZH8tU7vmxbqAsErogmo=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org
+Cc:     Paul Crowley <paulcrowley@google.com>,
+        Martin Willi <martin@strongswan.org>,
+        Milan Broz <gmazyland@gmail.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/6] crypto: x86/nhpoly1305 - add SSE2 accelerated NHPoly1305
+Date:   Tue,  4 Dec 2018 22:20:00 -0800
+Message-Id: <20181205062005.27727-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181205062005.27727-1-ebiggers@kernel.org>
+References: <20181205062005.27727-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49139ae4-4373-9e70-02ad-80f7bbc4494c@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-12-18, 09:07, Taniya Das wrote:
-> Hello Stephen, Viresh
-> 
-> Thanks for the code and suggestions.
-> 
-> Having a NR_DOMAINS '2' makes the driver not scalable for re-use.
+From: Eric Biggers <ebiggers@google.com>
 
-Sure, I didn't like it either and that wasn't really what I was suggesting in
-the first place. I didn't wanted to write the code myself and pass it on, but I
-have it now anyway :)
+Add a 64-bit SSE2 implementation of NHPoly1305, an ε-almost-∆-universal
+hash function used in the Adiantum encryption mode.  For now, only the
+NH portion is actually SSE2-accelerated; the Poly1305 part is less
+performance-critical so is just implemented in C.
 
-It may have a bug or two in there, but compiles just fine and is rebased over
-your patch Taniya.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/x86/crypto/Makefile               |   4 +
+ arch/x86/crypto/nh-sse2-x86_64.S       | 123 +++++++++++++++++++++++++
+ arch/x86/crypto/nhpoly1305-sse2-glue.c |  76 +++++++++++++++
+ crypto/Kconfig                         |   8 ++
+ 4 files changed, 211 insertions(+)
+ create mode 100644 arch/x86/crypto/nh-sse2-x86_64.S
+ create mode 100644 arch/x86/crypto/nhpoly1305-sse2-glue.c
 
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index ce4e43642984..2a6acb4de373 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -47,6 +47,8 @@ obj-$(CONFIG_CRYPTO_MORUS1280_GLUE) += morus1280_glue.o
+ obj-$(CONFIG_CRYPTO_MORUS640_SSE2) += morus640-sse2.o
+ obj-$(CONFIG_CRYPTO_MORUS1280_SSE2) += morus1280-sse2.o
+ 
++obj-$(CONFIG_CRYPTO_NHPOLY1305_SSE2) += nhpoly1305-sse2.o
++
+ # These modules require assembler to support AVX.
+ ifeq ($(avx_supported),yes)
+ 	obj-$(CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64) += \
+@@ -85,6 +87,8 @@ aegis256-aesni-y := aegis256-aesni-asm.o aegis256-aesni-glue.o
+ morus640-sse2-y := morus640-sse2-asm.o morus640-sse2-glue.o
+ morus1280-sse2-y := morus1280-sse2-asm.o morus1280-sse2-glue.o
+ 
++nhpoly1305-sse2-y := nh-sse2-x86_64.o nhpoly1305-sse2-glue.o
++
+ ifeq ($(avx_supported),yes)
+ 	camellia-aesni-avx-x86_64-y := camellia-aesni-avx-asm_64.o \
+ 					camellia_aesni_avx_glue.o
+diff --git a/arch/x86/crypto/nh-sse2-x86_64.S b/arch/x86/crypto/nh-sse2-x86_64.S
+new file mode 100644
+index 000000000000..51f52d4ab4bb
+--- /dev/null
++++ b/arch/x86/crypto/nh-sse2-x86_64.S
+@@ -0,0 +1,123 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * NH - ε-almost-universal hash function, x86_64 SSE2 accelerated
++ *
++ * Copyright 2018 Google LLC
++ *
++ * Author: Eric Biggers <ebiggers@google.com>
++ */
++
++#include <linux/linkage.h>
++
++#define		PASS0_SUMS	%xmm0
++#define		PASS1_SUMS	%xmm1
++#define		PASS2_SUMS	%xmm2
++#define		PASS3_SUMS	%xmm3
++#define		K0		%xmm4
++#define		K1		%xmm5
++#define		K2		%xmm6
++#define		K3		%xmm7
++#define		T0		%xmm8
++#define		T1		%xmm9
++#define		T2		%xmm10
++#define		T3		%xmm11
++#define		T4		%xmm12
++#define		T5		%xmm13
++#define		T6		%xmm14
++#define		T7		%xmm15
++#define		KEY		%rdi
++#define		MESSAGE		%rsi
++#define		MESSAGE_LEN	%rdx
++#define		HASH		%rcx
++
++.macro _nh_stride	k0, k1, k2, k3, offset
++
++	// Load next message stride
++	movdqu		\offset(MESSAGE), T1
++
++	// Load next key stride
++	movdqu		\offset(KEY), \k3
++
++	// Add message words to key words
++	movdqa		T1, T2
++	movdqa		T1, T3
++	paddd		T1, \k0    // reuse k0 to avoid a move
++	paddd		\k1, T1
++	paddd		\k2, T2
++	paddd		\k3, T3
++
++	// Multiply 32x32 => 64 and accumulate
++	pshufd		$0x10, \k0, T4
++	pshufd		$0x32, \k0, \k0
++	pshufd		$0x10, T1, T5
++	pshufd		$0x32, T1, T1
++	pshufd		$0x10, T2, T6
++	pshufd		$0x32, T2, T2
++	pshufd		$0x10, T3, T7
++	pshufd		$0x32, T3, T3
++	pmuludq		T4, \k0
++	pmuludq		T5, T1
++	pmuludq		T6, T2
++	pmuludq		T7, T3
++	paddq		\k0, PASS0_SUMS
++	paddq		T1, PASS1_SUMS
++	paddq		T2, PASS2_SUMS
++	paddq		T3, PASS3_SUMS
++.endm
++
++/*
++ * void nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++ *		u8 hash[NH_HASH_BYTES])
++ *
++ * It's guaranteed that message_len % 16 == 0.
++ */
++ENTRY(nh_sse2)
++
++	movdqu		0x00(KEY), K0
++	movdqu		0x10(KEY), K1
++	movdqu		0x20(KEY), K2
++	add		$0x30, KEY
++	pxor		PASS0_SUMS, PASS0_SUMS
++	pxor		PASS1_SUMS, PASS1_SUMS
++	pxor		PASS2_SUMS, PASS2_SUMS
++	pxor		PASS3_SUMS, PASS3_SUMS
++
++	sub		$0x40, MESSAGE_LEN
++	jl		.Lloop4_done
++.Lloop4:
++	_nh_stride	K0, K1, K2, K3, 0x00
++	_nh_stride	K1, K2, K3, K0, 0x10
++	_nh_stride	K2, K3, K0, K1, 0x20
++	_nh_stride	K3, K0, K1, K2, 0x30
++	add		$0x40, KEY
++	add		$0x40, MESSAGE
++	sub		$0x40, MESSAGE_LEN
++	jge		.Lloop4
++
++.Lloop4_done:
++	and		$0x3f, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K0, K1, K2, K3, 0x00
++
++	sub		$0x10, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K1, K2, K3, K0, 0x10
++
++	sub		$0x10, MESSAGE_LEN
++	jz		.Ldone
++	_nh_stride	K2, K3, K0, K1, 0x20
++
++.Ldone:
++	// Sum the accumulators for each pass, then store the sums to 'hash'
++	movdqa		PASS0_SUMS, T0
++	movdqa		PASS2_SUMS, T1
++	punpcklqdq	PASS1_SUMS, T0		// => (PASS0_SUM_A PASS1_SUM_A)
++	punpcklqdq	PASS3_SUMS, T1		// => (PASS2_SUM_A PASS3_SUM_A)
++	punpckhqdq	PASS1_SUMS, PASS0_SUMS	// => (PASS0_SUM_B PASS1_SUM_B)
++	punpckhqdq	PASS3_SUMS, PASS2_SUMS	// => (PASS2_SUM_B PASS3_SUM_B)
++	paddq		PASS0_SUMS, T0
++	paddq		PASS2_SUMS, T1
++	movdqu		T0, 0x00(HASH)
++	movdqu		T1, 0x10(HASH)
++	ret
++ENDPROC(nh_sse2)
+diff --git a/arch/x86/crypto/nhpoly1305-sse2-glue.c b/arch/x86/crypto/nhpoly1305-sse2-glue.c
+new file mode 100644
+index 000000000000..ed68d164ce14
+--- /dev/null
++++ b/arch/x86/crypto/nhpoly1305-sse2-glue.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * NHPoly1305 - ε-almost-∆-universal hash function for Adiantum
++ * (SSE2 accelerated version)
++ *
++ * Copyright 2018 Google LLC
++ */
++
++#include <crypto/internal/hash.h>
++#include <crypto/nhpoly1305.h>
++#include <linux/module.h>
++#include <asm/fpu/api.h>
++
++asmlinkage void nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++			u8 hash[NH_HASH_BYTES]);
++
++/* wrapper to avoid indirect call to assembly, which doesn't work with CFI */
++static void _nh_sse2(const u32 *key, const u8 *message, size_t message_len,
++		     __le64 hash[NH_NUM_PASSES])
++{
++	nh_sse2(key, message, message_len, (u8 *)hash);
++}
++
++static int nhpoly1305_sse2_update(struct shash_desc *desc,
++				  const u8 *src, unsigned int srclen)
++{
++	if (srclen < 64 || !irq_fpu_usable())
++		return crypto_nhpoly1305_update(desc, src, srclen);
++
++	do {
++		unsigned int n = min_t(unsigned int, srclen, PAGE_SIZE);
++
++		kernel_fpu_begin();
++		crypto_nhpoly1305_update_helper(desc, src, n, _nh_sse2);
++		kernel_fpu_end();
++		src += n;
++		srclen -= n;
++	} while (srclen);
++	return 0;
++}
++
++static struct shash_alg nhpoly1305_alg = {
++	.base.cra_name		= "nhpoly1305",
++	.base.cra_driver_name	= "nhpoly1305-sse2",
++	.base.cra_priority	= 200,
++	.base.cra_ctxsize	= sizeof(struct nhpoly1305_key),
++	.base.cra_module	= THIS_MODULE,
++	.digestsize		= POLY1305_DIGEST_SIZE,
++	.init			= crypto_nhpoly1305_init,
++	.update			= nhpoly1305_sse2_update,
++	.final			= crypto_nhpoly1305_final,
++	.setkey			= crypto_nhpoly1305_setkey,
++	.descsize		= sizeof(struct nhpoly1305_state),
++};
++
++static int __init nhpoly1305_mod_init(void)
++{
++	if (!boot_cpu_has(X86_FEATURE_XMM2))
++		return -ENODEV;
++
++	return crypto_register_shash(&nhpoly1305_alg);
++}
++
++static void __exit nhpoly1305_mod_exit(void)
++{
++	crypto_unregister_shash(&nhpoly1305_alg);
++}
++
++module_init(nhpoly1305_mod_init);
++module_exit(nhpoly1305_mod_exit);
++
++MODULE_DESCRIPTION("NHPoly1305 ε-almost-∆-universal hash function (SSE2-accelerated)");
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
++MODULE_ALIAS_CRYPTO("nhpoly1305");
++MODULE_ALIAS_CRYPTO("nhpoly1305-sse2");
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index b6376d5d973e..b85133966d64 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -501,6 +501,14 @@ config CRYPTO_NHPOLY1305
+ 	select CRYPTO_HASH
+ 	select CRYPTO_POLY1305
+ 
++config CRYPTO_NHPOLY1305_SSE2
++	tristate "NHPoly1305 hash function (x86_64 SSE2 implementation)"
++	depends on X86 && 64BIT
++	select CRYPTO_NHPOLY1305
++	help
++	  SSE2 optimized implementation of the hash function used by the
++	  Adiantum encryption mode.
++
+ config CRYPTO_ADIANTUM
+ 	tristate "Adiantum support"
+ 	select CRYPTO_CHACHA20
 -- 
-viresh
+2.19.2
 
--------------------------8<-------------------------
-
- drivers/cpufreq/qcom-cpufreq-hw.c | 156 +++++++++++-------------------
- 1 file changed, 57 insertions(+), 99 deletions(-)
-
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index 8dc6b73c2f22..bcf9bb37298a 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -23,13 +23,8 @@
- #define REG_LUT_TABLE			0x110
- #define REG_PERF_STATE			0x920
- 
--struct cpufreq_qcom {
--	struct cpufreq_frequency_table *table;
--	void __iomem *perf_state_reg;
--	cpumask_t related_cpus;
--};
--
--static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-+static unsigned long cpu_hw_rate, xo_rate;
-+static struct platform_device *global_pdev;
- 
- static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
- 					unsigned int index)
-@@ -74,53 +69,17 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
- 	return policy->freq_table[index].frequency;
- }
- 
--static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
--{
--	struct cpufreq_qcom *c;
--
--	c = qcom_freq_domain_map[policy->cpu];
--	if (!c) {
--		pr_err("No scaling support for CPU%d\n", policy->cpu);
--		return -ENODEV;
--	}
--
--	cpumask_copy(policy->cpus, &c->related_cpus);
--
--	policy->fast_switch_possible = true;
--	policy->freq_table = c->table;
--	policy->driver_data = c->perf_state_reg;
--
--	return 0;
--}
--
--static struct freq_attr *qcom_cpufreq_hw_attr[] = {
--	&cpufreq_freq_attr_scaling_available_freqs,
--	&cpufreq_freq_attr_scaling_boost_freqs,
--	NULL
--};
--
--static struct cpufreq_driver cpufreq_qcom_hw_driver = {
--	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
--			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
--	.verify		= cpufreq_generic_frequency_table_verify,
--	.target_index	= qcom_cpufreq_hw_target_index,
--	.get		= qcom_cpufreq_hw_get,
--	.init		= qcom_cpufreq_hw_cpu_init,
--	.fast_switch    = qcom_cpufreq_hw_fast_switch,
--	.name		= "qcom-cpufreq-hw",
--	.attr		= qcom_cpufreq_hw_attr,
--};
--
--static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qcom *c,
--				    void __iomem *base, unsigned long xo_rate,
--				    unsigned long cpu_hw_rate)
-+static int qcom_cpufreq_hw_read_lut(struct device *dev,
-+				    struct cpufreq_policy *policy,
-+				    void __iomem *base)
- {
- 	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
--	unsigned int max_cores = cpumask_weight(&c->related_cpus);
-+	unsigned int max_cores = cpumask_weight(policy->cpus);
-+	struct cpufreq_frequency_table	*table;
- 
--	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
--				sizeof(*c->table), GFP_KERNEL);
--	if (!c->table)
-+	table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-+				sizeof(*table), GFP_KERNEL);
-+	if (!table)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-@@ -136,9 +95,9 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qcom *c,
- 
- 		/* Ignore boosts in the middle of the table */
- 		if (core_count != max_cores) {
--			c->table[i].frequency = CPUFREQ_ENTRY_INVALID;
-+			table[i].frequency = CPUFREQ_ENTRY_INVALID;
- 		} else {
--			c->table[i].frequency = freq;
-+			table[i].frequency = freq;
- 			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
- 				freq, core_count);
- 		}
-@@ -148,7 +107,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qcom *c,
- 		 * end of table
- 		 */
- 		if (i > 0 && prev_freq == freq && prev_cc == core_count) {
--			struct cpufreq_frequency_table *prev = &c->table[i - 1];
-+			struct cpufreq_frequency_table *prev = &table[i - 1];
- 
- 			/*
- 			 * Only treat the last frequency that might be a boost
-@@ -166,7 +125,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qcom *c,
- 		prev_freq = freq;
- 	}
- 
--	c->table[i].frequency = CPUFREQ_TABLE_END;
-+	table[i].frequency = CPUFREQ_TABLE_END;
-+	policy->freq_table = table;
- 
- 	return 0;
- }
-@@ -194,22 +154,29 @@ static void qcom_get_related_cpus(int index, struct cpumask *m)
- 	}
- }
- 
--static int qcom_cpu_resources_init(struct platform_device *pdev,
--				   unsigned int cpu, int index,
--				   unsigned long xo_rate,
--				   unsigned long cpu_hw_rate)
-+static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- {
--	struct cpufreq_qcom *c;
-+	struct device *dev = &global_pdev->dev;
-+	struct of_phandle_args args;
-+	struct device_node *cpu_np;
- 	struct resource *res;
--	struct device *dev = &pdev->dev;
- 	void __iomem *base;
--	int ret, cpu_r;
-+	int ret, index;
- 
--	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
--	if (!c)
--		return -ENOMEM;
-+	cpu_np = of_cpu_device_node_get(policy->cpu);
-+	if (!cpu_np)
-+		return -EINVAL;
-+
-+	ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+			"#freq-domain-cells", 0, &args);
-+	of_node_put(cpu_np);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	if (ret)
-+		return ret;
-+
-+	index = args.args[0];
-+
-+	res = platform_get_resource(global_pdev, IORESOURCE_MEM, index);
- 	base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-@@ -220,33 +187,46 @@ static int qcom_cpu_resources_init(struct platform_device *pdev,
- 		return -ENODEV;
- 	}
- 
--	qcom_get_related_cpus(index, &c->related_cpus);
--	if (!cpumask_weight(&c->related_cpus)) {
-+	qcom_get_related_cpus(index, policy->cpus);
-+	if (!cpumask_weight(policy->cpus)) {
- 		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
- 		return -ENOENT;
- 	}
- 
--	c->perf_state_reg = base + REG_PERF_STATE;
-+	policy->driver_data = base + REG_PERF_STATE;
- 
--	ret = qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
-+	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
- 	if (ret) {
- 		dev_err(dev, "Domain-%d failed to read LUT\n", index);
- 		return ret;
- 	}
- 
--	for_each_cpu(cpu_r, &c->related_cpus)
--		qcom_freq_domain_map[cpu_r] = c;
-+	policy->fast_switch_possible = true;
- 
- 	return 0;
- }
- 
-+static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	&cpufreq_freq_attr_scaling_boost_freqs,
-+	NULL
-+};
-+
-+static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-+	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-+	.verify		= cpufreq_generic_frequency_table_verify,
-+	.target_index	= qcom_cpufreq_hw_target_index,
-+	.get		= qcom_cpufreq_hw_get,
-+	.init		= qcom_cpufreq_hw_cpu_init,
-+	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-+	.name		= "qcom-cpufreq-hw",
-+	.attr		= qcom_cpufreq_hw_attr,
-+};
-+
- static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
- {
--	struct device_node *cpu_np;
--	struct of_phandle_args args;
- 	struct clk *clk;
--	unsigned int cpu;
--	unsigned long xo_rate, cpu_hw_rate;
- 	int ret;
- 
- 	clk = clk_get(&pdev->dev, "xo");
-@@ -263,29 +243,7 @@ static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
- 	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
- 	clk_put(clk);
- 
--	for_each_possible_cpu(cpu) {
--		cpu_np = of_cpu_device_node_get(cpu);
--		if (!cpu_np) {
--			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
--				cpu);
--			continue;
--		}
--
--		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
--						 "#freq-domain-cells", 0,
--						  &args);
--		of_node_put(cpu_np);
--		if (ret)
--			return ret;
--
--		if (qcom_freq_domain_map[cpu])
--			continue;
--
--		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
--					      xo_rate, cpu_hw_rate);
--		if (ret)
--			return ret;
--	}
-+	global_pdev = pdev;
- 
- 	ret = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
- 	if (ret) {
