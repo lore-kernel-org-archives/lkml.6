@@ -2,185 +2,122 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAA1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB19AC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212DE20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:49:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L28U+PqZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212DE20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ADB52081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADB52081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeLECtf (ORCPT
+        id S1726778AbeLECwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:49:35 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:43864 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbeLECtf (ORCPT
+        Tue, 4 Dec 2018 21:52:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56437 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeLECwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:49:35 -0500
-Received: by mail-io1-f54.google.com with SMTP id f10so9646901iop.10;
-        Tue, 04 Dec 2018 18:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PCBvX9s5iUr4KG02Mf7F60KrJg0h+OuE4z4iGyRamW4=;
-        b=L28U+PqZfYnyR2dk5speoap7xelQ0W1IgC4VmYkoo9IZW1pU/Ay/WOsg8XTK0KH2fr
-         luF6OiTcxhkvAZP61tgZjCUeKOmnA/IvcGhzzD2RZKWVroJ6js2ZmxkXWw1mGU1gmfN9
-         rU9biH8B5cG1m1ej5GaS9cpMZ/VccMaq0sb4rnP26VtqSG1h/bCO4oO5EEvtRlcR6893
-         EoGLD5Se2XUJ2WPPJUxgAeMzi80E625tug8+5HJzGKNnsEKK9OylGAAFStm+Yut7qu3e
-         YxcliAa0X0GrJPuvXgTOUW9JNrBTARlA2R6kDU5pTupzoV+FBz9Kz5YZqVCgyeCLmbcJ
-         /1cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PCBvX9s5iUr4KG02Mf7F60KrJg0h+OuE4z4iGyRamW4=;
-        b=HbNEjLbIpneMoQ+O3bYqB770KP8IOycxfUUd7nBQ4OpBigYoUaeEVUZmWeB/fasYwM
-         gghww27gMQNIEVNtgJp6hyWuDchqKAG4dqnfXzVKZaUXJ4iYZE1y7xZxwMP/ukTGrT5P
-         N8gbkQf1X7u7/l1cTgm/7xh0cbjd4pIiWnTR3XyejU3GJB/jYZB/PD4ziJjhUdBRxYtX
-         rpdR4t+VjdKResFJNHw+i2zEqqHe7Td6Dw72TccFtvOVTIQrTsl9FH1TZ+evEIyUE4X5
-         qqodroeDWMBDShgQFJ6cDJxAaHtOm6qvM1CFSVMWrRgElZmaihEbwsbTIi4d7Oa31wb+
-         +5YA==
-X-Gm-Message-State: AA+aEWbdIRIxWZdiTPNfGHASKrEaexactTNlBGcocNa21OzRZS/FPui1
-        UwWy10j61kRil8xEIfQGXE0=
-X-Google-Smtp-Source: AFSGD/W8buFKZV/dysYKtQP09yyBr69wnyIvdMXmb/rnT7/qWEJbDAVeZoiifgb4R78KcakDtg48Gg==
-X-Received: by 2002:a6b:3b47:: with SMTP id i68mr19376206ioa.133.1543978173629;
-        Tue, 04 Dec 2018 18:49:33 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::4:ffc9])
-        by smtp.gmail.com with ESMTPSA id l25sm7263736ioj.68.2018.12.04.18.49.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 18:49:32 -0800 (PST)
-Date:   Tue, 4 Dec 2018 18:49:30 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Aaron Conole <aconole@bytheb.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jesper Brouer <brouer@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Rony Efraim <ronye@mellanox.com>,
-        Simon Horman <horms@verge.net.au>,
-        Marcelo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [RFC -next v0 1/3] bpf: modular maps
-Message-ID: <20181205024928.57xcrgspllcr7umo@ast-mbp.dhcp.thefacebook.com>
-References: <20181125180919.13996-1-aconole@bytheb.org>
- <20181125180919.13996-2-aconole@bytheb.org>
- <20181127020608.4vucwmhrtu2cxrwu@ast-mbp.dhcp.thefacebook.com>
- <f7tftvmd2ey.fsf@dhcp-25.97.bos.redhat.com>
- <20181128051001.wcsgqx3d6c2aszp6@ast-mbp.dhcp.thefacebook.com>
- <f7to9a99gsh.fsf@dhcp-25.97.bos.redhat.com>
- <20181129041948.pepdcksplt6xppk3@ast-mbp>
- <f7twoou65gi.fsf@dhcp-25.97.bos.redhat.com>
+        Tue, 4 Dec 2018 21:52:35 -0500
+Received: from static-50-53-40-197.bvtn.or.frontiernet.net ([50.53.40.197] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1gUNIa-0007vE-CB; Wed, 05 Dec 2018 02:52:28 +0000
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
+ <fead393a-ef06-0008-e795-a480aa75b8b5@schaufler-ca.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <71c9d3b9-99bd-ec08-cb5e-52d909476d5f@canonical.com>
+Date:   Tue, 4 Dec 2018 18:52:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7twoou65gi.fsf@dhcp-25.97.bos.redhat.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <fead393a-ef06-0008-e795-a480aa75b8b5@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 08:49:17AM -0500, Aaron Conole wrote:
+On 12/4/18 6:37 PM, Casey Schaufler wrote:
+> On 12/4/2018 4:31 PM, Kees Cook wrote:
+>> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> v5: Include Kees Cook's rework of the lsm command
+>>>     line interface. Stacking is not conditional.
+>> Can you resend this series with corrected "From:" lines in the body, etc?
 > 
-> While this is one reason to use hash map, I don't think we should use
-> this as a reason to exclude development of a data type that may work
-> better.  After all, if we can do better then we should.
-
-I'm all for improving existing hash map or implementing new data types.
-Like classifier map == same as wild-card match map == ACL map.
-The one that OVS folks could use and other folks wanted for long time.
-
-But I don't want bpf to become a collection of single purpose solutions.
-Like mega-flow style OVS map.
-That one does linear number of lookups applying mask at a time.
-
-It sounds to me that you're proposing "NAT-as-bpf-helper"
-or "NAT-as-bpf-map" type of solution.
-That falls into single purpose solution category.
-I'd rather see generic connection tracking building block.
-The one that works out of skb and out of XDP layer.
-Existing stack-queue-map can already be used to allocate integers
-out of specified range. It can be used to implement port allocation for NAT.
-If generic stack-queue-map is not enough, let's improve it.
-
-> >> forward direction addresses could be different from reverse direction so
-> >> just swapping addresses / ports will not match).
-> >
-> > That makes no sense to me. What would be an example of such flow?
-> > Certainly not a tcp flow.
+> Yes, I can. I was hoping to hear something other than crickets.
 > 
-> Maybe it's poorly worded on my part.  Think about this scenario (ipv4, tcp):
+I am trying to get to it, its the next thing on my list. So hopefully this week
+
+
+>> Beyond that, I obviously like it. James, what's needed for this to move forward?
 > 
-> Interfaces A(internet), B(lan)
+> Agreed.
 > 
-> When XDP program receives a packet from B, it will have a tuple like:
-> 
-> source=B-subnet:B-port  dest=inet-addr:inet-port
-> 
-> When XDP program receives a packet from A, it will have a tuple like:
-> 
-> source=inet-addr:inet-port  dest=gw-addr:gw-port
-
-first of all there are two netdevs.
-one XDP program can attach to multiple netdevs, but in this
-case we're dealing with two indepedent tcp flows.
-
-> The only data in common there is inet-addr:inet-port, and that will
-> likely be shared among too many connections to be a valid key.
-
-two independent tcp flows don't make a 'connection'.
-That definition of connection is only meaningful in the context
-of the particular problem you're trying to solve and
-confuses me quite a bit.
-
-> I don't know how to figure out from A the same connetion that
-> corresponds to B.  A really simple static map works, *except*, when
-> something causes either side of the connection to become invalid, I
-> can't mark the other side.  For instance, even if I have some static
-> mapping, I might not be able to infer the correct B-side tuple from the
-> A-side tuple to do the teardown.
-
-I don't think I got enough information from the above description to
-understand why two tcp flows (same as two tcp connections) will
-form single 'connection' in your definition of connection.
-
-> 1. Port / address reservation.  If I want to do NAT, I need to reserve
->    ports and addresses correctly.  That requires knowing the interface
->    addresses, and which addresses are currently allocated.  The stack
->    knows this already, let it do these allocations then.  Then when
->    packets arrive for the connection that the stack set up, just forward
->    via XDP.
-
-I beg to disagree. For NAT use case the stack has nothing to do with
-port allocation for NATing. It's all within NAT framework
-(whichever way it's implemented).
-The stack cares about sockets and ports that are open on the host
-to be consumed by the host.
-NAT function is independent of that.
-
-> 2. Helpers.  Parsing an in-flight stream is always going to be slow.
->    Let the stack do that.  But when it sets up an expectation, then use
->    that information to forward that via XDP.
-
-XDP parses packets way faster than the stack, since XDP deals with linear
-buffers whereas stack has to do pskb_may_pull at every step.
-The stack can be optimized further, but assuming that packet parsing
-by the stack is faster than XDP and making techincal decisions based
-on that just doesn't seem like the right approach to take.
 
