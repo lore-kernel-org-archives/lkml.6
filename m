@@ -2,173 +2,180 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ACDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8DBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF8E2087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF4FC2087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzyGzeEJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF8E2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldsb29x2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4FC2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeLEPNM (ORCPT
+        id S1728003AbeLEPN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:13:12 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36437 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbeLEPNL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:13:11 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so10164559pfc.3;
-        Wed, 05 Dec 2018 07:13:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=t0pTSgQzPOe+pRKtUg2xtfpHJj+iazLyW+zcccLA6Lk=;
-        b=GzyGzeEJbN4cAmucz+CPKsPwyr+74MsksbaKcccP7YayRk6gS8IWegHRu9DFUwqDqS
-         gk8aIMg3QJI8KhmD9tHMFXALbQFvdDGWzFoZ6iwrCb3VEcFbAqW6OCAAn77VvR9n/FDI
-         aFZ3ghQHvwUr4SXrPB0dtDOf05I/ATrQCi59mt4Rd5N4btZx3jYTaXMh22TL+6yIZh7z
-         QrXsszXsAaEQClnAo+h1TbeSK9aNcVGqmqCnyZR/lbdWKhIqlYyjZryJOBT+aEZhuxlU
-         YfksIi8LKDOa6DhQHurFlGjNz63Z6K1erzIhjHPuCFTAFO9qQFir5lezOy3VtUdjXEmH
-         cAUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=t0pTSgQzPOe+pRKtUg2xtfpHJj+iazLyW+zcccLA6Lk=;
-        b=BJCtpC+cnAxii9Dv1c0jKnSCull14GR1ktE+VqH7r5W0/9nBnWkc5sC6dxLbgc1NFA
-         4on8XeVrvZr8yro04ROM8o4r/FUW19+DgR/u+94RGOKpJMaygyKUFULWBfCZge5Bav6F
-         X5BZ3QTAkfgf3aArlaTBBOv6BunbWh3iBcwgbcyh3HKie0B1ltldd4s1nvL5d5S7MwwE
-         /nbKzhdUxLZ+VLHoVrJ0QRnWfldL/SWlcneL2W88JVwBE0ahgiLAIRYJc32L8ey4wqWa
-         dIZYoxc12le7WUZNkRFHiLOhAhhmWbm9kNWYNAE79ByE0H6DVJOdrmflYZCsZr/Lh150
-         pHoA==
-X-Gm-Message-State: AA+aEWZU61fjZV62T8vnwwI6oSj73qOv7yapKs4uVQDvu9XsvwdQaMWC
-        BaTe1Bo3o77QjT8A9Ta2tTE=
-X-Google-Smtp-Source: AFSGD/WBRkHL8HL0rDpSo6ZStKYeIXjFHcIscSLhzWzdGx7zQ5qVuZfPveWhJ1zofd0wwqWW3VZDDw==
-X-Received: by 2002:a62:3141:: with SMTP id x62mr24488423pfx.12.1544022790629;
-        Wed, 05 Dec 2018 07:13:10 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x3sm66083204pgt.45.2018.12.05.07.13.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 07:13:10 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     rajneesh.bhardwaj@intel.com, vishwanath.somayaji@intel.com,
-        dvhart@infradead.org, andy@infradead.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 2/2] platform/x86: intel_telemetry: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Wed,  5 Dec 2018 10:12:55 -0500
-Message-Id: <20181205151255.15367-2-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20181205151255.15367-1-tiny.windzz@gmail.com>
-References: <20181205151255.15367-1-tiny.windzz@gmail.com>
+        Wed, 5 Dec 2018 10:13:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727240AbeLEPN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:13:26 -0500
+Received: from [192.168.1.11] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCE7C2082D;
+        Wed,  5 Dec 2018 15:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544022804;
+        bh=hJ8Xk+1HZY51QDB36C17v9HNLCsqZh8G9rBuAA19ZBg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ldsb29x2Kf6sB7L5jeY6D5XWpXO1YlgvxwGgCStjoY1rFklNWS77gx9YR1CNujC5U
+         3nYut+rkwesnjzFmPI+/7rZWfjJgKOu4WHOEiGluXm3cISWrol8bCeJfFYTatvczUi
+         4OVMCPFTfKTtzWoyRvLMx4JlaY4spxKA5PKOFEa4=
+Subject: Re: [PATCH v2 04/34] dt-bindings: altera: Convert clkmgr binding to
+ json-schema
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20181203213223.16986-1-robh@kernel.org>
+ <20181203213223.16986-5-robh@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
+ Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
+ yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
+ c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
+ smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
+ K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
+ yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
+ LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
+ 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
+ 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
+ biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
+ CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
+ AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
+ twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
+ cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
+ NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
+ n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
+ yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
+ Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
+ m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
+ ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
+ zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
+ 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
+ cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
+ xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
+ 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
+ UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
+ 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
+ rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
+ eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
+ prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
+ J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
+ 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
+ d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
+ K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
+ oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
+ 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
+ 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
+ cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
+ Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
+ JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
+Message-ID: <b00ee14b-1495-c1b6-ccd0-8c28a04b37d0@kernel.org>
+Date:   Wed, 5 Dec 2018 09:13:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181203213223.16986-5-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- .../platform/x86/intel_telemetry_debugfs.c    | 42 +++----------------
- 1 file changed, 6 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
-index 40bce560eb30..98ba9185a27b 100644
---- a/drivers/platform/x86/intel_telemetry_debugfs.c
-+++ b/drivers/platform/x86/intel_telemetry_debugfs.c
-@@ -466,17 +466,7 @@ static int telem_pss_states_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int telem_pss_state_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, telem_pss_states_show, inode->i_private);
--}
--
--static const struct file_operations telem_pss_ops = {
--	.open		= telem_pss_state_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(telem_pss_states);
- 
- static int telem_ioss_states_show(struct seq_file *s, void *unused)
- {
-@@ -505,17 +495,7 @@ static int telem_ioss_states_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int telem_ioss_state_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, telem_ioss_states_show, inode->i_private);
--}
--
--static const struct file_operations telem_ioss_ops = {
--	.open		= telem_ioss_state_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(telem_ioss_states);
- 
- static int telem_soc_states_show(struct seq_file *s, void *unused)
- {
-@@ -664,17 +644,7 @@ static int telem_soc_states_show(struct seq_file *s, void *unused)
- 	return 0;
- }
- 
--static int telem_soc_state_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, telem_soc_states_show, inode->i_private);
--}
--
--static const struct file_operations telem_socstate_ops = {
--	.open		= telem_soc_state_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(telem_soc_states);
- 
- static int telem_s0ix_res_get(void *data, u64 *val)
- {
-@@ -960,7 +930,7 @@ static int __init telemetry_debugfs_init(void)
- 
- 	f = debugfs_create_file("pss_info", S_IFREG | S_IRUGO,
- 				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_pss_ops);
-+				&telem_pss_states_fops);
- 	if (!f) {
- 		pr_err("pss_sample_info debugfs register failed\n");
- 		goto out;
-@@ -968,7 +938,7 @@ static int __init telemetry_debugfs_init(void)
- 
- 	f = debugfs_create_file("ioss_info", S_IFREG | S_IRUGO,
- 				debugfs_conf->telemetry_dbg_dir, NULL,
--				&telem_ioss_ops);
-+				&telem_ioss_states_fops);
- 	if (!f) {
- 		pr_err("ioss_sample_info debugfs register failed\n");
- 		goto out;
-@@ -976,7 +946,7 @@ static int __init telemetry_debugfs_init(void)
- 
- 	f = debugfs_create_file("soc_states", S_IFREG | S_IRUGO,
- 				debugfs_conf->telemetry_dbg_dir,
--				NULL, &telem_socstate_ops);
-+				NULL, &telem_soc_states_fops);
- 	if (!f) {
- 		pr_err("ioss_sample_info debugfs register failed\n");
- 		goto out;
--- 
-2.17.0
+On 12/3/18 3:31 PM, Rob Herring wrote:
+> Convert Altera clkmgr to DT schema format using json-schema.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../arm/altera/socfpga-clk-manager.txt        | 11 -------
+>  .../arm/altera/socfpga-clk-manager.yaml       | 31 +++++++++++++++++++
+>  2 files changed, 31 insertions(+), 11 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.txt b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.txt
+> deleted file mode 100644
+> index 2c28f1d12f45..000000000000
+> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.txt
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -Altera SOCFPGA Clock Manager
+> -
+> -Required properties:
+> -- compatible : "altr,clk-mgr"
+> -- reg : Should contain base address and length for Clock Manager
+> -
+> -Example:
+> -	 clkmgr@ffd04000 {
+> -		compatible = "altr,clk-mgr";
+> -		reg = <0xffd04000 0x1000>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> new file mode 100644
+> index 000000000000..e4131fa42b26
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> @@ -0,0 +1,31 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/altera/socfpga-clk-manager.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Altera SOCFPGA Clock Manager
+> +
+> +maintainers:
+> +  - Dinh Nguyen <dinguyen@kernel.org>
+> +
+> +description: test
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: altr,clk-mgr
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  - |
+> +    clkmgr@ffd04000 {
+> +      compatible = "altr,clk-mgr";
+> +      reg = <0xffd04000 0x1000>;
+> +    };
+> +
+> +...
+> 
 
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
