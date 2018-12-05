@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA4FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696AAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA35214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2682C20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQo6JH2v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA35214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fi7IU3bF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682C20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeLEJpf (ORCPT
+        id S1729442AbeLEJpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50340 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:45:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729402AbeLEJpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:30 -0500
+        id S1729031AbeLEJpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:39 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4634E2087F;
-        Wed,  5 Dec 2018 09:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E487213A2;
+        Wed,  5 Dec 2018 09:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003130;
-        bh=u7dB6fkuX+Ld8J18Lmf6n8xTerIJ8Ms12iJ1nt8evCM=;
+        s=default; t=1544003138;
+        bh=PTFLRBX/OkXfYiJARuFzC4QNZrpP5BCOVwzpy2QzOCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQo6JH2v5fm3TlOFikN4lmFsJltN4Dt2PbySQBtfoIa6ZVQwsGK01HE1jniljI4FA
-         7dmB1WhdP39/0YmUgrlv5NaxopKFTRpqkw2yGHoUpfBI3CskQHQa49D5xm2SLns0PF
-         T3qOtsI/8hNIHVrq0IJZZZS9a5LQ2wwp6FKZqq1U=
+        b=Fi7IU3bF2AamKlPCIYP5yp+jbNA6HOzO2HMBQzS27g9FoCPsvO2Z655cSvEqM2Bto
+         ulwmZl65R+6nh2TOavOZI97PLbqg84pSJ5ga55IjIwL8mmgKkAk7u3PI3FtWBgwDD2
+         9roTneNfoU2Fk9lEA8COBr38sD+3pfOG4B9G4IG0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 38/69] USB: omap_udc: fix rejection of out transfers when DMA is used
-Date:   Wed,  5 Dec 2018 04:42:16 -0500
-Message-Id: <20181205094247.6556-38-sashal@kernel.org>
+Cc:     Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 41/69] IB/mlx5: Fix page fault handling for MW
+Date:   Wed,  5 Dec 2018 04:42:19 -0500
+Message-Id: <20181205094247.6556-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,35 +55,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
-[ Upstream commit 069caf5950dfa75d0526cd89c439ff9d9d3136d8 ]
+[ Upstream commit 75b7b86bdb0df37e08e44b6c1f99010967f81944 ]
 
-Commit 387f869d2579 ("usb: gadget: u_ether: conditionally align
-transfer size") started aligning transfer size only if requested,
-breaking omap_udc DMA mode. Set quirk_ep_out_aligned_size to restore
-the old behaviour.
+Memory windows are implemented with an indirect MKey, when a page fault
+event comes for a MW Mkey we need to find the MR at the end of the list of
+the indirect MKeys by iterating on all items from the first to the last.
 
-Fixes: 387f869d2579 ("usb: gadget: u_ether: conditionally align transfer size")
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The offset calculated during this process has to be zeroed after the first
+iteration or the next iteration will start from a wrong address, resulting
+incorrect ODP faulting behavior.
+
+Fixes: db570d7deafb ("IB/mlx5: Add ODP support to MW")
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 1 +
+ drivers/infiniband/hw/mlx5/odp.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index c8facc8aa87e..ee0b87a0773c 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2661,6 +2661,7 @@ omap_udc_setup(struct platform_device *odev, struct usb_phy *xceiv)
- 	udc->gadget.speed = USB_SPEED_UNKNOWN;
- 	udc->gadget.max_speed = USB_SPEED_FULL;
- 	udc->gadget.name = driver_name;
-+	udc->gadget.quirk_ep_out_aligned_size = 1;
- 	udc->transceiver = xceiv;
+diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
+index 3d701c7a4c91..1ed94b6c0b0a 100644
+--- a/drivers/infiniband/hw/mlx5/odp.c
++++ b/drivers/infiniband/hw/mlx5/odp.c
+@@ -723,6 +723,7 @@ static int pagefault_single_data_segment(struct mlx5_ib_dev *dev,
+ 			head = frame;
  
- 	/* ep0 is special; put it right after the SETUP buffer */
+ 			bcnt -= frame->bcnt;
++			offset = 0;
+ 		}
+ 		break;
+ 
 -- 
 2.17.1
 
