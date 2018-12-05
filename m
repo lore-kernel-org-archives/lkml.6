@@ -2,162 +2,144 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F067EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2EAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD9B20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:08:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD9B20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id F146220892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:09:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBs8m2G8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F146220892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbeLEVIg (ORCPT
+        id S1728543AbeLEVJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:08:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59802 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727575AbeLEVIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:08:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB0CEAFEF;
-        Wed,  5 Dec 2018 21:08:32 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>
-Date:   Thu, 06 Dec 2018 08:08:24 +1100
-Cc:     devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] staging: mt7621-mmc: Remove missed lines of the #if 0 block in sd.c
-In-Reply-To: <20181205161001.GA12511@nishad>
-References: <20181205161001.GA12511@nishad>
-Message-ID: <87tvjrel6f.fsf@notabene.neil.brown.name>
+        Wed, 5 Dec 2018 16:09:57 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33082 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLEVJ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 16:09:56 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so21163116wrr.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:09:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VQDin7JGSc3ZPWPhExhQGZc77SPAprQij9lLAd7C/eo=;
+        b=jBs8m2G8FW3msmaU9pyRmoen4GtnA8Qgqh1qPolkfRZqk6/tR2W8BCLfhXA4v2m0WX
+         JlIo2kDDoBzntoRYD0rbbk2a/1r1/MmQnX49D/xFjLvVKTn059zjOanjie9XoU5tPtD5
+         9gIcWxi05uBirE0Stiz60MMGAFHG12klz77GqeTpnQHJ4p0xiH0un+7VA+nspQVlJ9+Q
+         KJ0gUXMx3Hph5LEfgHMGfoREjdC7zWegXL4pw17q2AwAJirmdPijqoa8vZP/CJ0j/eOC
+         9tpMYrv1Cl2jplhv7gRUwrwkgfFmpyZW+lfJsRcythP8dxBHJFWfcqoWl/AnYfvaUj9r
+         fcPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VQDin7JGSc3ZPWPhExhQGZc77SPAprQij9lLAd7C/eo=;
+        b=KyrlJ+jg4+gYqVumty1OpQiGIOiYtAAaMl1J/FI0p5EnCcz9g28HSq680ZrpfpqouL
+         lZsM6EBnCuQdLw232LBcbHCLXg2La/O6qtselppBzdUzF0Zm7k4GCq2IQaZ6nS+uKnVR
+         kMKJLD42jJiyakd8OHVuQl/p/RcV81PNpEqSvGt2z7+59VMjIt9ux8ubJOWKVWAS7dV1
+         2IiBnKXZQ387V4YrG1kPYn8GmNrD2kO20K+jEAsxQ1RAxb8wxyf8VKsSE0gE58LG3FoC
+         yEDgxDCl0ip8esmesZjUTkj4J2iRmUesg79LgtIIsU6RJ0YymeAUBMAoGk76qrJ3cxJ7
+         T4VQ==
+X-Gm-Message-State: AA+aEWYP7LlYIKRqVjPbPDprA7jwDI5YvoQ2f4KXX86JLe8bUJ1AY+1v
+        +F1I0oSgzil5WAZMqgdtkPpEWNDfubA=
+X-Google-Smtp-Source: AFSGD/Vo2b1wj+sFRxNfc6cxiBriNoaYzBJz++aRez6k+8jDafmH2jvYgLkihQQvOlTTWJr8SE/DDA==
+X-Received: by 2002:adf:be8d:: with SMTP id i13mr24043049wrh.235.1544044194815;
+        Wed, 05 Dec 2018 13:09:54 -0800 (PST)
+Received: from peano (host93-127-dynamic.50-79-r.retail.telecomitalia.it. [79.50.127.93])
+        by smtp.gmail.com with ESMTPSA id g188sm14922020wmf.32.2018.12.05.13.09.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 13:09:54 -0800 (PST)
+Date:   Wed, 5 Dec 2018 22:09:51 +0100
+From:   Sicilia Cristian <sicilia.cristian@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bryan O Donoghue <pure.logic@nexus-software.ie>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org
+Subject: Re: [PATCH 1/2] staging: greybus: Align function call parameters to
+ parenthesis
+Message-ID: <20181205210951.GA24993@peano>
+References: <cover.1543956271.git.sicilia.cristian@gmail.com>
+ <6087f45a8a4544fa6c671d8b42928fb48194e66e.1543956271.git.sicilia.cristian@gmail.com>
+ <20181205084603.GA4987@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+In-Reply-To: <20181205084603.GA4987@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 05 2018, Nishad Kamdar wrote:
+On Wed, Dec 05, 2018 at 09:46:03AM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Dec 04, 2018 at 09:58:14PM +0100, Cristian Sicilia wrote:
+> > Aligned some parameters to the previous parenthesis.
+> >=20
+> > Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
+> > ---
+> >  drivers/staging/greybus/loopback.c | 10 ++++++----
+> >  1 file changed, 6 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greyb=
+us/loopback.c
+> > index e4d42c1..1085e06 100644
+> > --- a/drivers/staging/greybus/loopback.c
+> > +++ b/drivers/staging/greybus/loopback.c
+> > @@ -638,7 +638,8 @@ static int gb_loopback_async_transfer(struct gb_loo=
+pback *gb, u32 len)
+> >  	retval =3D gb_loopback_async_operation(gb, GB_LOOPBACK_TYPE_TRANSFER,
+> >  					     request, len + sizeof(*request),
+> >  					     len + response_len,
+> > -					     gb_loopback_async_transfer_complete);
+> > +					     gb_loopback_async_transfer_complete
+> > +					     );
+>=20
+> Ick, why do this?  That's not really needed.
+>=20
 
-> The below patch
-> https://lore.kernel.org/patchwork/patch/995533/
-> does not completely remove an #if 0 block in sd.c.
+Ok, better to leave it unchanged
 
-Standard practice is to identify patches by their commit id.
-In this case you could
-  git log --oneline  drivers/staging/mt7621-mmc/sd.c
+> thanks,
+>=20
+> greg k-h
 
-choose the right patch, and copy/paste with a bit of editing, so:
-
-  Commit 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in
-  sd.c") does not completely ....
-
-I have
-
-  [alias]
-  	cm =3D !git --no-pager show -s --format=3Dcm
-	fx =3D !git --no-pager show -s --format=3Dfixes
-  [pretty]
-	fixes =3D Fixes: %h (\"%s\")
-	cm =3D Commit %h (\"%s\")
-
-in my $HOME/.gitconfig so I can get the text with, e.g.,
-
-  $ git cm 2a54e3259e2a
-  Commit 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
-
-Then as that commit introduced a problem, it is best-practice to also do
-
-  $ git fx 2a54e3259e2a
-  Fixes: 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
-
-and add the "Fixes" near the Signed-off-by line.
-
-Thanks,
-NeilBrown
-
-
-> This causes the function msdc_select_clksrc()
-> which was earler not compiled, to be compiled.
-> That causes an error - MSDC_CLKSRC_REG is not
-> defined.
->
-> This patch completely removes the #if 0 block
->
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/staging/mt7621-mmc/sd.c | 20 --------------------
->  1 file changed, 20 deletions(-)
->
-> diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc=
-/sd.c
-> index 7b66f9b0a094..3d918e481bd8 100644
-> --- a/drivers/staging/mt7621-mmc/sd.c
-> +++ b/drivers/staging/mt7621-mmc/sd.c
-> @@ -216,26 +216,6 @@ static void msdc_tasklet_card(struct work_struct *wo=
-rk)
->  	spin_unlock(&host->lock);
->  }
->=20=20
-> -static void msdc_select_clksrc(struct msdc_host *host, unsigned char clk=
-src)
-> -{
-> -	u32 val;
-> -
-> -	BUG_ON(clksrc > 3);
-> -
-> -	val =3D readl(host->base + MSDC_CLKSRC_REG);
-> -	if (readl(host->base + MSDC_ECO_VER) >=3D 4) {
-> -		val &=3D ~(0x3  << clk_src_bit[host->id]);
-> -		val |=3D clksrc << clk_src_bit[host->id];
-> -	} else {
-> -		val &=3D ~0x3; val |=3D clksrc;
-> -	}
-> -	writel(val, host->base + MSDC_CLKSRC_REG);
-> -
-> -	host->hclk =3D hclks[clksrc];
-> -	host->hw->clk_src =3D clksrc;
-> -}
-> -#endif /* end of --- */
-> -
->  static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int =
-hz)
->  {
->  	//struct msdc_hw *hw =3D host->hw;
-> --=20
-> 2.17.1
-
---=-=-=
+--KsGdsel6WgEHnImy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwIPkkACgkQOeye3VZi
-gbmyAg/+Le52NLIJ2gVH21PYCVy+ZveawkEnefKByKeQllJCh+xam98j62cth2Lc
-2Loa1+DW7VYAzXBCpF8anG6HWAWS/36LDTQ6lTCRS8wdvGSyKUi+oIYP+mbh8ydU
-Xm8pyou58VKy8UFS2U5Q3cRHPa3QmzTTcyPoYYhZ76zA+cMUfL9wvoCHcAJUiXkK
-53j1GUS61H7Zr7Oaum4E0Sqtk/gbJfIRJo+Gnp315ha/0UhNFo120l+q9IkNWPBQ
-bgaBVmK64ZqQkbQI1lqLRNscxl/1MZzlJRVauUHpsNYl2kCWr2fYcmqInREQ4BJW
-iZhY0xxqMjne3sgk5ZMuzk4Cd4TJrH+xjHruyxfeviW9poh1emXIaHStn95Xi/jy
-9ojsEhRzdtK8P8mcapQoKnUI8Qp/IFrKUwuW254DQTNV64mxLdelw50qCTv+7nBd
-p5CeCzcC67MgU/SPwV2XDVQRkWnb/xUAL5b/zA3x8WgWh2ZH5wuRUNGXAZV/qGxV
-MO/9EXRDQeGaDn7qDTn8RF/FokGxVq6Z3LG/e6lSvpnNtnlTL/Dtasy722XBGndS
-DnVmGlFtHtgcIuaWTiVURbR1CunPOVAh89qmt+XGkkNgxDZZT+vsCjOfvSSUCudk
-OEtX2IjYn11BbjmP3mFiD8YuoUwfE29Nuk4lRQX0hrdW66CuYOw=
-=0ciX
+iQIcBAABCAAGBQJcCD6eAAoJEAnJ2Lo5pAXyvhQP/16vTeHBKpmXlijHktcypkxp
+wIR5wyZLlyiazKu5W1COZU5xrxDyWj3R8X+ViUn0MMGBQkDejYP6YvAm0VvgeKp3
+Wr3kXlqkAj+5Q/GrRA1yX9UonxPyJhohYxW0OVzngr720xKg8WbTNRpVMBp2FVdD
+OUNAJyB6+Vt+sEh0H2vJHlkH0+/cCQv0+orqQDpO1dfmswYmi2qExFH/EJ6x20qC
+GIBLSqy9UR9T52dDjB7ehG8AupYefEX7HTyBfuCMn1y7YYGZWg6ajGwELlQKD9ir
+AB8E5UIvA3a1sgRmSRcjgNKED4xLE7RSWqhRpX+Dg8QWtGnDucuG/bTY1pjd7mW8
+LpFvsOppo0ojWeRnX+tWHj+mUzOGJxB1sjIGYkpp5eJRUe572/srPg+hZLWMgTen
+lgRx6oAok8aQ0F8Gy3IhC2lFsZe7ULG7yjVjb1oUjxhZG3bE6seBEDU7JEscjv8U
+en+qjML/zleJMMq90p0HaH7nuskGScdltvEnIMi+lQJ0rJnBJWPup692k2LAUbB4
+DLYV2heK9I9YhKhF580MZWQoRoCQ1gjzUBURYLYxd26CtRE0pDld8VmHzhtB+t7f
+5LfnifZz6ZY2TlHWjMe9V/O3UxSj3U1XmAteA/hPfif1I89lY2oss1qVdrjx4pOk
+kE4huxRgl9aL4Mpk8Mt6
+=8W48
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--KsGdsel6WgEHnImy--
