@@ -2,136 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EF0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9F4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911E020850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:18:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911E020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 18EF92082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:19:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBEK0eyf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18EF92082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbeLELSI (ORCPT
+        id S1727492AbeLELTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:18:08 -0500
-Received: from mga11.intel.com ([192.55.52.93]:51814 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbeLELSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:18:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 03:18:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="scan'208";a="107467509"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2018 03:18:05 -0800
-Subject: Re: [PATCH V3] sdhci: fix the timeout check window for clock and
- reset
-To:     "Du, Alek" <alek.du@intel.com>
-Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
-        linux-kernel@vger.kernel.org
-References: <20181130150028.732896d8@xdu1-mobl>
- <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
- <20181130221300.4ef2956c@xdu1-mobl>
- <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
- <20181201134251.26573207@xdu1-mobl> <20181204090120.63b5f0a4@xdu1-mobl>
- <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
- <20181205111450.300e0478@xdu1-mobl>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <59a458e5-d53f-d57b-98a4-48ea223e0650@intel.com>
-Date:   Wed, 5 Dec 2018 13:16:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181205111450.300e0478@xdu1-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 5 Dec 2018 06:19:30 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46405 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeLELTa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:19:30 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y20so21728504qtm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 03:19:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8CHfiRwxEDOflDsQ1UB4C3wvULIvrMVzWwFsjRMLPAQ=;
+        b=WBEK0eyfX09plNYhK++Zga/wk11dSY0KVQOOVuoZE7j6Vd1ayw9QaLxIG94CIsSCYO
+         /nAuZnrEAJcrTFRiw8CSSMMZeu48sRhbekzIRQsgoF/Rqn40EeGrkuv+smTXG+mYaGfm
+         6hFInu5St5kQRFiq6uujHCzntYHPhX63kKELynEvxawGr30Bvd78yOkUw3aqVD71Nk5r
+         z3By8DHiiWzEwMx0kAdP4qt13PPyo+RXhfu0i2LxX7xd0RutHe7P8QyKeUDUTTOqqgRu
+         ihXHVckipdKO6kOx0x3Vm8r2rCeJzKmMMZ+qr/fbkbL5Sx9+iv0eVsXs8uH6bgK8rHxO
+         4Zeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8CHfiRwxEDOflDsQ1UB4C3wvULIvrMVzWwFsjRMLPAQ=;
+        b=V2yNKNJ3aQcOlxSCFvaCWFZ8nL8kyE1krFHWQtsoMh8o9M6ewhOVuuErZ9HBDePuCX
+         ynkGPHGCK4pAk3NLb/9fZbjH6dqjzqSEIElCQpNy0MQT3ylvea+XIPIo85ohMRXCNHB1
+         NJ16D5E7ovJmAzQfjoB8jOtzrk/y58U2Nv6zzvSoaucapWFzXwVy7N0zN1JlSnhZQUko
+         QWYWnHzfhRFZ326X3wvvbw/fUumkb5X8tyEW1PK3aoiMfIQrF4eovWE4z2TVfrpYOKvJ
+         hNTXSqJ/u31Swylhf6ZjfBNbWhxQPDwHFpN5kbYixV+EROfWwxvgpgH8oWBJd9DN0RGq
+         EVHg==
+X-Gm-Message-State: AA+aEWavagy1wFOpEePhZIxMqgKELUXI7pIks/mzizGT/3WGlUfGBtOu
+        HkOtilVV1lFtJdY0vig5X/4=
+X-Google-Smtp-Source: AFSGD/WfcnxquOLZm7fHFspCBRjIkrlKZ5wZ0EA4ErshlCdu3tKPo8xT1HezNHepvoClrIaBvH/zFg==
+X-Received: by 2002:a0c:c993:: with SMTP id b19mr22225456qvk.126.1544008769237;
+        Wed, 05 Dec 2018 03:19:29 -0800 (PST)
+Received: from localhost.localdomain ([201.82.144.36])
+        by smtp.gmail.com with ESMTPSA id k62sm9960189qte.86.2018.12.05.03.19.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 05 Dec 2018 03:19:28 -0800 (PST)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     shawnguo@kernel.org
+Cc:     cphealy@gmail.com, linux-kernel@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH v2] ARM: dts: vf610-zii-scu4-aib: Add HI8435 support
+Date:   Wed,  5 Dec 2018 09:19:35 -0200
+Message-Id: <1544008775-24128-1-git-send-email-festevam@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/12/18 5:14 AM, Du, Alek wrote:
->>From bcb38577961823b4f8f2cc0aec7dd450a81b6ddc Mon Sep 17 00:00:00 2001
-> From: Alek Du <alek.du@intel.com>
-> Date: Fri, 30 Nov 2018 14:02:28 +0800
-> Subject: [PATCH] sdhci: fix the timeout check window for clock and reset
-> 
-> We observed some premature timeouts on a virtualization platform, the log
-> is like this:
-> 
-> case 1:
-> [159525.255629] mmc1: Internal clock never stabilised.
-> [159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
-> ...
-> [159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
->>From the clock control register dump, we are pretty sure the clock was
-> stablized.
-> 
-> case 2:
-> [  914.550127] mmc1: Reset 0x2 never completed.
-> [  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
-> 
-> After checking the sdhci code, we found the timeout check actually has a
-> little window that the CPU can be scheduled out and when it comes back,
-> the original time set or check is not valid.
-> 
-> Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
-> Signed-off-by: Alek Du <alek.du@intel.com>
-> Cc: stable@vger.kernel.org      # v4.12+
+On the vf610-zii-scu4-aib board there is a hi8435 (32-channel
+discrete-to-digital SPI sensor device) in the DSPI0 bus.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Add support for it.
 
-> ---
->  drivers/mmc/host/sdhci.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 99bdae53fa2e..451b08a818a9 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -216,8 +216,12 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
->  	timeout = ktime_add_ms(ktime_get(), 100);
->  
->  	/* hw clears the bit when it's done */
-> -	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
-> -		if (ktime_after(ktime_get(), timeout)) {
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
-> +			break;
-> +		if (timedout) {
->  			pr_err("%s: Reset 0x%x never completed.\n",
->  				mmc_hostname(host->mmc), (int)mask);
->  			sdhci_dumpregs(host);
-> @@ -1608,9 +1612,13 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
->  
->  	/* Wait max 20 ms */
->  	timeout = ktime_add_ms(ktime_get(), 20);
-> -	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
-> -		& SDHCI_CLOCK_INT_STABLE)) {
-> -		if (ktime_after(ktime_get(), timeout)) {
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-> +		if (clk & SDHCI_CLOCK_INT_STABLE)
-> +			break;
-> +		if (timedout) {
->  			pr_err("%s: Internal clock never stabilised.\n",
->  			       mmc_hostname(host->mmc));
->  			sdhci_dumpregs(host);
-> 
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Chris Healy <cphealy@gmail.com>
+---
+Changes since v1:
+- Put status as the last propert
+- Use a generic node name
+
+ arch/arm/boot/dts/vf610-zii-scu4-aib.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+index 52bac14..de6dfa5 100644
+--- a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
++++ b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+@@ -397,6 +397,20 @@
+ 	};
+ };
+ 
++&dspi0 {
++	pinctrl-0 = <&pinctrl_dspi0>;
++	pinctrl-names = "default";
++	bus-num = <0>;
++	status = "okay";
++
++	adc@5 {
++		compatible = "holt,hi8435";
++		reg = <5>;
++		gpios = <&gpio5 3 GPIO_ACTIVE_HIGH>;
++		spi-max-frequency = <1000000>;
++	};
++};
++
+ &dspi1 {
+ 	bus-num = <1>;
+ 	pinctrl-names = "default";
+-- 
+2.7.4
 
