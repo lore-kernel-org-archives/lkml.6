@@ -2,130 +2,107 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D09BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDA5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED7B206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED7B206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 20CBE206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGFI4GJh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CBE206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbeLEPkG (ORCPT
+        id S1728199AbeLEPkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:40:06 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:34350 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbeLEPjv (ORCPT
+        Wed, 5 Dec 2018 10:40:11 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41603 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728064AbeLEPkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:51 -0500
-Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id 8Ffo1z00M3XaVaC06Ffo5R; Wed, 05 Dec 2018 16:39:49 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUZHA-0001yg-9f; Wed, 05 Dec 2018 16:39:48 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gUZHA-0003b1-7e; Wed, 05 Dec 2018 16:39:48 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] soc: renesas: rcar-sysc: Fix power domain control after system resume
-Date:   Wed,  5 Dec 2018 16:39:45 +0100
-Message-Id: <20181205153945.13767-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
-References: <20181205153945.13767-1-geert+renesas@glider.be>
+        Wed, 5 Dec 2018 10:40:08 -0500
+Received: by mail-ot1-f68.google.com with SMTP id u16so19010022otk.8;
+        Wed, 05 Dec 2018 07:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4LK8vKYxLML5UTUxdpvvd8+mGoJ+sEjvcv5rgExeQuQ=;
+        b=dGFI4GJhkKAByB2Z3q7uY35ErMUo0hQch5V3GVtXUcwTfFFaF748JcmHDWpcvMnGhv
+         NjBR09gxTL8kubfEOFa6Kaij/t+PJqFWE38/iICKeEQ0ZMj1xmoLdaJmQi2uHmkp6wgG
+         it104JLwinyz/pANUMwaLW9LwxvbJpyeUnWfc/69LwyhD53rSDx/QJg6f4cNzSroed8W
+         +KvTns4ptbdYph4ott1qrBDirAcjGdNW4q8R9pkdBkQ8v4sAtMiYOuj//PYTTs1nUjGv
+         nDqlcfcsjDOH6Y5Zw1V158wxaYgFuO2TZReC+84KkF6HIidkDcdjlnu3Zj/+fY6q0glC
+         /VLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4LK8vKYxLML5UTUxdpvvd8+mGoJ+sEjvcv5rgExeQuQ=;
+        b=GDo+Kk0Wc9jo+YsFRyXHfcAyP4i/Dt8q8WGjLs6F/cpZexWXUiMB1XSXQXo80t/afi
+         6stbt4Yi0t5yqzlDsEXOd6tKqwYw6BmWBmqrzmQBCA+sa89DR3BK8CGQYVLKzL4MrSgd
+         EDacRKVYTF2Xe6IdvcUK3JOWZjSzRMgQqW2mpksCGOnnjde5RbsTnuUtyPmvVbAmp4Bj
+         2cGqP39eXGu/P6YKbOaTDLWh8IqjVe0gvzg5Ao/yD6RV43tVaLs+hrRkY+Ht1G0g12Xt
+         ALBuPPMDw07+G6M9Ts17kcmBslt1dnw6OFHpwefpskrHmDNyBHubpLv7tBeRdruLZaQ8
+         vrMA==
+X-Gm-Message-State: AA+aEWYvAwYIkSFm1Oat9caVsyCyJevhxksOwED0quIiq3VmvhRDKVn3
+        tMCVshUAwaIX4wDUcBhPq82IvRHY9ibEGzd4h5g=
+X-Google-Smtp-Source: AFSGD/UZGCC8SRrn0FQqr6zkB2wFIi5KvQl3dbhM2EK9XSc4dLyty7f6sIMvniXuttzNyxAzg3bsfWIDYs7phACHptc=
+X-Received: by 2002:a9d:b8e:: with SMTP id 14mr14758930oth.279.1544024407901;
+ Wed, 05 Dec 2018 07:40:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20181204220224.27324-1-TheSven73@googlemail.com>
+ <20181204220224.27324-2-TheSven73@googlemail.com> <20181205101659.GA27058@kroah.com>
+In-Reply-To: <20181205101659.GA27058@kroah.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Wed, 5 Dec 2018 10:39:56 -0500
+Message-ID: <CAGngYiXXrrqGxTt339EP53tschLgZ82eRGvGifHQw6pg=C88+Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] fieldbus_dev: add Fieldbus Device subsystem.
+To:     gregkh@linuxfoundation.org
+Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To control power to a power domain, the System Controller (SYSC) needs
-the corresponding interrupt source to be enabled, but masked, to prevent
-the CPU from receiving it.
+Hello Greg, thanks for the feedback!
 
-Currently this is handled in the driver's probe() routine, and set up
-for every domain present, even if it will not be controlled directly by
-SYSC (CPU domains are powered through the APMU on R-Car Gen2 and later).
+On Wed, Dec 5, 2018 at 5:17 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> And why is this a class and not just a "normal" device and bus?  Devices
+> live on busses, not generally as a class.  Can your devices live on
+> different types of busses (USB, PCI, etc.)?
 
-On R-Car Gen3, PSCI powers down the SoC during system suspend, thus
-loosing any configured interrupt state.  Hence after system resume, power
-domains not controlled through the APMU (e.g. A3IR, A3VC, A3VP) fail to
-power up.
+This patchset can be a bit confusing, because it doesn't just add support for a
+single fieldbus device - it proposes a general fieldbus subsystem.
 
-Fix this by replacing the global interrupt setup in the probe() routine
-by a domain-specific interrupt setup in rcar_sysc_power(), where the
-domain's power is actually controlled.  This brings the code more in
-line with the flowchart in the Hardware User's Manual.
+Fieldbus devices from different vendors can sit on the usb, i2c, pci, etc.
+buse, but they all register as a fieldbus device, via fieldbus_dev_register(),
+and show up as a fieldbus class member.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/soc/renesas/rcar-sysc.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+Userspace can then enumerate all fieldbus devices connected to the system by
+looking at the class. Without having to know which bus they happen to be
+connected to.
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 123e553510e826f5..0c80fab4f8de6bc8 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -105,6 +105,15 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 
- 	spin_lock_irqsave(&rcar_sysc_lock, flags);
- 
-+	/*
-+	 * The interrupt source needs to be enabled, but masked, to prevent the
-+	 * CPU from receiving it.
-+	 */
-+	iowrite32(ioread32(rcar_sysc_base + SYSCIMR) | isr_mask,
-+		  rcar_sysc_base + SYSCIMR);
-+	iowrite32(ioread32(rcar_sysc_base + SYSCIER) | isr_mask,
-+		  rcar_sysc_base + SYSCIER);
-+
- 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
- 
- 	/* Submit power shutoff or resume request until it was accepted */
-@@ -324,7 +333,6 @@ static int __init rcar_sysc_pd_init(void)
- 	const struct of_device_id *match;
- 	struct rcar_pm_domains *domains;
- 	struct device_node *np;
--	u32 syscier, syscimr;
- 	void __iomem *base;
- 	unsigned int i;
- 	int error;
-@@ -363,24 +371,6 @@ static int __init rcar_sysc_pd_init(void)
- 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
- 	rcar_sysc_onecell_data = &domains->onecell_data;
- 
--	for (i = 0, syscier = 0; i < info->num_areas; i++)
--		syscier |= BIT(info->areas[i].isr_bit);
--
--	/*
--	 * Mask all interrupt sources to prevent the CPU from receiving them.
--	 * Make sure not to clear reserved bits that were set before.
--	 */
--	syscimr = ioread32(base + SYSCIMR);
--	syscimr |= syscier;
--	pr_debug("%pOF: syscimr = 0x%08x\n", np, syscimr);
--	iowrite32(syscimr, base + SYSCIMR);
--
--	/*
--	 * SYSC needs all interrupt sources enabled to control power.
--	 */
--	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
--	iowrite32(syscier, base + SYSCIER);
--
- 	for (i = 0; i < info->num_areas; i++) {
- 		const struct rcar_sysc_area *area = &info->areas[i];
- 		struct rcar_sysc_pd *pd;
--- 
-2.17.1
+If there is an abstraction in Linux that's a better fit, I'm very open to
+making changes.
 
+Sven
