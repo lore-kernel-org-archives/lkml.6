@@ -2,177 +2,188 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6A3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988E1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F12D2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:50:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BqqWeaGl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F12D2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5029320850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5029320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soulik.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeLENuu (ORCPT
+        id S1727486AbeLENwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:50:50 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:39608 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbeLENuu (ORCPT
+        Wed, 5 Dec 2018 08:52:55 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:38744 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeLENwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:50:50 -0500
-Received: by mail-vs1-f67.google.com with SMTP id h78so12090642vsi.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 05:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XIjgt2gx1tQqeMA8Vi3ilc6OUOxgrIK10oepLPMPFWM=;
-        b=BqqWeaGlN3ZCkG1PzNZuktgd59BwAFGB44lELKma23Pw18s4noUtChMIjAEFPA6UCn
-         awGSge/BJ9VKhAi5VjKtFCB/JSAEZnl3ikLFnwcZtK2teaI7RmnYPD03WtvV+TzsB0rw
-         EEHrjpBO7+4MbT7TezqiNEJcr7YN5E1FPuSmE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XIjgt2gx1tQqeMA8Vi3ilc6OUOxgrIK10oepLPMPFWM=;
-        b=apSJLVnDTE5Bua3LAdW/wVm4H1KrNeGhgDSjoxvqOh2oVAqbxWd2Bqc417OPbX3Wn1
-         NdCvanPDfYqEgbG55LWQKJ6B6RKldbHyEIkkvvsADPAtibRiFNeGLyW7/oLyV4wB8694
-         uMVtxfbk3tGlSH1SBvTMBRh/RNLeeNocsBtmmVi7Fo002EgsPsM+WhUCPgR4vflsWmRM
-         lIHO4MKnP5YqeuLY4Oaem9gdOmGqChT1aipAcOPbSRMLYEd/z9t5xaE5zYo/8SPylbrq
-         rAKDKmfzzIo66y0xd1YKle/3R0ufgKZKGMo+st5q+ZZJcxzgQQnt4XYdrUWLs1Bz7TJt
-         hM6Q==
-X-Gm-Message-State: AA+aEWYbwkcSxBvpzhYKgtRg+OD3+nziAmtCGSPIT7cRPYD4D3urnr4t
-        KnSVsVPmyc6agT3+Bj05gJLCCGDXpTk/UC35rGNJFA==
-X-Google-Smtp-Source: AFSGD/XQWeStv76NT/5hcIHKhpZkP9uNZnINJmzaQQ++YjgJ0JQyNfR38ftLnqHloyR5nper0sSBxTSYxuNwp2O5bUQ=
-X-Received: by 2002:a67:d00f:: with SMTP id r15mr10624825vsi.191.1544017848895;
- Wed, 05 Dec 2018 05:50:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129190503.6040-1-faiz_abbas@ti.com> <cb1e8e88-4c9d-741d-79cd-57b03c5e0808@ti.com>
- <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com>
-In-Reply-To: <c4704766-7a58-8aa4-6bc0-b9373b15096c@ti.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 5 Dec 2018 14:50:12 +0100
-Message-ID: <CAPDyKFqMW+tMaVsS_c=kPztZRjX97Nzr2W0egvDkyzkpWckHRA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
- tuning failures (i929)
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Kishon <kishon@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 08:52:54 -0500
+Received: from misaki.sumomo.pri (unknown [IPv6:2001:470:b30d:2:c604:15ff:0:f0e])
+        by kozue.soulik.info (Postfix) with ESMTPA id EB1AB1001C5;
+        Wed,  5 Dec 2018 22:52:46 +0900 (JST)
+From:   Randy Li <ayaka@soulik.info>
+To:     dri-devel@lists.freedesktop.org
+Cc:     hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ayaka <ayaka@soulik.info>
+Subject: [PATCH v3] drm/rockchip: support hwc layer
+Date:   Wed,  5 Dec 2018 21:52:30 +0800
+Message-Id: <20181205135230.17677-1-ayaka@soulik.info>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 at 06:53, Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Hi Kishon,
->
-> On 30/11/18 10:10 AM, Kishon Vijay Abraham I wrote:
-> > Hi Faiz,
-> >
-> > On 30/11/18 12:35 AM, Faiz Abbas wrote:
-> >> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
-> >> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
-> >> unexpected tuning pattern errors. A small failure band may be present
-> >> in the tuning range which may be missed by the current algorithm.
-> >> Furthermore, the failure bands vary with temperature leading to
-> >> different optimum tuning values for different temperatures.
-> >>
-> >> As suggested in the related Application Report (SPRACA9B - October 2017
-> >> - Revised July 2018 [2]), tuning should be done in two stages.
-> >> In stage 1, assign the optimum ratio in the maximum pass window for the
-> >> current temperature. In stage 2, if the chosen value is close to the
-> >> small failure band, move away from it in the appropriate direction.
-> >>
-> >> References:
-> >> [1] http://www.ti.com/lit/pdf/sprz426
-> >> [2] http://www.ti.com/lit/pdf/SPRACA9
-> >>
-> >> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> >> ---
-> >>  drivers/mmc/host/Kconfig      |  2 +
-> >>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
-> >>  2 files changed, 91 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> >> index 1b58739d9744..6d3553f06f27 100644
-> >> --- a/drivers/mmc/host/Kconfig
-> >> +++ b/drivers/mmc/host/Kconfig
-> >> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
-> >>  config MMC_SDHCI_OMAP
-> >>      tristate "TI SDHCI Controller Support"
-> >>      depends on MMC_SDHCI_PLTFM && OF
-> >> +    select THERMAL
-> >> +    select TI_SOC_THERMAL
-> >>      help
-> >>        This selects the Secure Digital Host Controller Interface (SDHCI)
-> >>        support present in TI's DRA7 SOCs. The controller supports
-> >> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> >> index b3cb39d0db6f..9ccce7ef3a60 100644
-> >> --- a/drivers/mmc/host/sdhci-omap.c
-> >> +++ b/drivers/mmc/host/sdhci-omap.c
-> >> @@ -27,6 +27,7 @@
-> >>  #include <linux/regulator/consumer.h>
-> >>  #include <linux/pinctrl/consumer.h>
-> >>  #include <linux/sys_soc.h>
-> >> +#include <linux/thermal.h>
-> >>
-> >>  #include "sdhci-pltfm.h"
-> >>
-> >> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> >>      struct sdhci_host *host = mmc_priv(mmc);
-> >>      struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >>      struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-> >> +    struct thermal_zone_device *thermal_dev;
-> >>      struct device *dev = omap_host->dev;
-> >>      struct mmc_ios *ios = &mmc->ios;
-> >>      u32 start_window = 0, max_window = 0;
-> >> +    bool single_point_failure = false;
-> >>      u8 cur_match, prev_match = 0;
-> >>      u32 length = 0, max_len = 0;
-> >>      u32 phase_delay = 0;
-> >> +    int temperature;
-> >>      int ret = 0;
-> >>      u32 reg;
-> >> +    int i;
-> >>
-> >>      /* clock tuning is not needed for upto 52MHz */
-> >>      if (ios->clock <= 52000000)
-> >> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> >>      if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
-> >>              return 0;
-> >>
-> >> +    thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
-> >> +    if (IS_ERR(thermal_dev)) {
-> >> +            dev_err(dev, "Unable to get thermal zone for tuning\n");
-> >> +            return PTR_ERR(thermal_dev);
-> >> +    }
-> >
-> > Can't we get thermal zone once during probe?
-> >
->
-> Tuning is also (ideally) supposed to happen only once per enumeration.
-> Also it doesn't make sense to get a thermal zone for lower speed systems
-> that won't do tuning.
+From: ayaka <ayaka@soulik.info>
 
-Currently sdhci-omap calls pm_runtime_get_sync() during probe, and
-then keeps the host device runtime resumed until ->remove() is called
-on it. I assume you are going to change that, at some point!?
+The Windows 2/3 or a RGB UI layer is a high performance flexibly
+plane. It is too waste to use it as a cursor plane.
 
-In other words, what will happen to the host device when it becomes
-runtime suspended? Is re-tuning needed when it gets runtime resumed,
-which is the case for many other sdhci variants?
+I have verified this patch with weston git version, I am not
+sure whether X would meet with this patch. As the previous
+author is gone, I can't confirm this problem with him.
 
-Depending on the answer, you may want to fetch the thermal zone during
-probe. :-)
+Also the weston only use the only two achors with a same
+size and pixel format, I need more users to verify this
+patch.
 
-Kind regards
-Uffe
+changelog:
+v2: the previous version is mixed with the code for the other
+patches, I forget to remove it.
+v3: fix the error for the rk3399 vop little.
+
+Signed-off-by: Randy Li <ayaka@soulik.info>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 20 ++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 42 ++++++++++++++++++++++++++---
+ 2 files changed, 58 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index fb70fb486fbf..1a3b72391ee8 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -751,6 +751,26 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+ 
+ 	dsp_info = (drm_rect_height(dest) - 1) << 16;
+ 	dsp_info |= (drm_rect_width(dest) - 1) & 0xffff;
++	/* HWC layer only supports various of square icon */
++	if (plane->type == DRM_PLANE_TYPE_CURSOR) {
++		switch (actual_w) {
++		case 32:
++			dsp_info = 0;
++			break;
++		case 64:
++			dsp_info = 0x1;
++			break;
++		case 94:
++			dsp_info = 0x10;
++			break;
++		case 128:
++			dsp_info = 0x11;
++			break;
++		/* Unsupported pixel resolution */
++		default:
++			return;
++		}
++	}
+ 
+ 	dsp_stx = dest->x1 + crtc->mode.htotal - crtc->mode.hsync_start;
+ 	dsp_sty = dest->y1 + crtc->mode.vtotal - crtc->mode.vsync_start;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+index 08fc40af52c8..694f43fdeb23 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+@@ -63,6 +63,15 @@ static const uint32_t formats_win_lite[] = {
+ 	DRM_FORMAT_BGR565,
+ };
+ 
++static const uint32_t formats_win_hwc[] = {
++	DRM_FORMAT_ARGB8888,
++	DRM_FORMAT_ABGR8888,
++	DRM_FORMAT_RGB888,
++	DRM_FORMAT_BGR888,
++	DRM_FORMAT_RGB565,
++	DRM_FORMAT_BGR565,
++};
++
+ static const struct vop_scl_regs rk3036_win_scl = {
+ 	.scale_yrgb_x = VOP_REG(RK3036_WIN0_SCL_FACTOR_YRGB, 0xffff, 0x0),
+ 	.scale_yrgb_y = VOP_REG(RK3036_WIN0_SCL_FACTOR_YRGB, 0xffff, 16),
+@@ -456,6 +465,19 @@ static const struct vop_win_phy rk3288_win23_data = {
+ 	.dst_alpha_ctl = VOP_REG(RK3288_WIN2_DST_ALPHA_CTRL, 0xff, 0),
+ };
+ 
++static const struct vop_win_phy rk3288_winhwc_data = {
++	.data_formats = formats_win_hwc,
++	.nformats = ARRAY_SIZE(formats_win_hwc),
++	.enable = VOP_REG(RK3288_HWC_CTRL0, 0x1, 0),
++	.format = VOP_REG(RK3288_HWC_CTRL0, 0x7, 1),
++	.rb_swap = VOP_REG(RK3288_HWC_CTRL0, 0x1, 12),
++	.dsp_info = VOP_REG(RK3288_HWC_CTRL0, 0x3, 5),
++	.dsp_st = VOP_REG(RK3288_HWC_DSP_ST, 0x1fff1fff, 0),
++	.yrgb_mst = VOP_REG(RK3288_HWC_MST, 0xffffffff, 0),
++	.src_alpha_ctl = VOP_REG(RK3288_HWC_SRC_ALPHA_CTRL, 0xffff, 0),
++	.dst_alpha_ctl = VOP_REG(RK3288_HWC_DST_ALPHA_CTRL, 0xffffffff, 0),
++};
++
+ static const struct vop_modeset rk3288_modeset = {
+ 	.htotal_pw = VOP_REG(RK3288_DSP_HTOTAL_HS_END, 0x1fff1fff, 0),
+ 	.hact_st_end = VOP_REG(RK3288_DSP_HACT_ST_END, 0x1fff1fff, 0),
+@@ -500,7 +522,10 @@ static const struct vop_win_data rk3288_vop_win_data[] = {
+ 	{ .base = 0x00, .phy = &rk3288_win23_data,
+ 	  .type = DRM_PLANE_TYPE_OVERLAY },
+ 	{ .base = 0x50, .phy = &rk3288_win23_data,
+-	  .type = DRM_PLANE_TYPE_CURSOR },
++	  .type = DRM_PLANE_TYPE_OVERLAY },
++	{ .base = 0x00, .phy = &rk3288_winhwc_data,
++	  .type = DRM_PLANE_TYPE_CURSOR,
++	},
+ };
+ 
+ static const int rk3288_vop_intrs[] = {
+@@ -573,7 +598,10 @@ static const struct vop_win_data rk3368_vop_win_data[] = {
+ 	{ .base = 0x00, .phy = &rk3368_win23_data,
+ 	  .type = DRM_PLANE_TYPE_OVERLAY },
+ 	{ .base = 0x50, .phy = &rk3368_win23_data,
+-	  .type = DRM_PLANE_TYPE_CURSOR },
++	  .type = DRM_PLANE_TYPE_OVERLAY },
++	{ .base = 0x00, .phy = &rk3288_winhwc_data,
++	  .type = DRM_PLANE_TYPE_CURSOR,
++	},
+ };
+ 
+ static const struct vop_output rk3368_output = {
+@@ -653,7 +681,10 @@ static const struct vop_win_data rk3399_vop_lit_win_data[] = {
+ 	{ .base = 0x00, .phy = &rk3288_win01_data,
+ 	  .type = DRM_PLANE_TYPE_PRIMARY },
+ 	{ .base = 0x00, .phy = &rk3368_win23_data,
+-	  .type = DRM_PLANE_TYPE_CURSOR},
++	  .type = DRM_PLANE_TYPE_OVERLAY},
++	{ .base = 0x00, .phy = &rk3288_winhwc_data,
++	  .type = DRM_PLANE_TYPE_CURSOR,
++	},
+ };
+ 
+ static const struct vop_data rk3399_vop_lit = {
+@@ -735,7 +766,10 @@ static const struct vop_win_data rk3328_vop_win_data[] = {
+ 	{ .base = 0x1d0, .phy = &rk3288_win01_data,
+ 	  .type = DRM_PLANE_TYPE_OVERLAY },
+ 	{ .base = 0x2d0, .phy = &rk3288_win01_data,
+-	  .type = DRM_PLANE_TYPE_CURSOR },
++	  .type = DRM_PLANE_TYPE_OVERLAY },
++	{ .base = 0x3d0, .phy = &rk3288_winhwc_data,
++	  .type = DRM_PLANE_TYPE_CURSOR,
++	},
+ };
+ 
+ static const struct vop_data rk3328_vop = {
+-- 
+2.14.5
+
