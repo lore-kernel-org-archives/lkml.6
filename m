@@ -2,132 +2,105 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CB4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5BEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0CC20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:33:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0CC20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F0DA20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:36:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544052985;
+	bh=HdKzwjq0Ktp+3fDTmn75tOVezfVsQGQJUbhDfnOAGO4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vNqEDTLqFmKP7AVHSdXjMA/0/z37b00mxlZ0HPGiLjviC6wGJsPrvsK79Pt2fd1za
+	 tkpQyxO+b9F6Jr4dD38fPxFPIL4Khf+aHffSXFkggENcQ5h0PSJMuEcGJWupkYYX7/
+	 sZpXF4rhukAwtJYdB9A54P6KZFR5PBXr5UI6Ocv0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0DA20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbeLEXdV convert rfc822-to-8bit (ORCPT
+        id S1728765AbeLEXgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:33:21 -0500
-Received: from mga03.intel.com ([134.134.136.65]:31561 "EHLO mga03.intel.com"
+        Wed, 5 Dec 2018 18:36:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727592AbeLEXdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:33:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 15:33:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,320,1539673200"; 
-   d="scan'208,223";a="107322007"
-Received: from xdu1-desk.sh.intel.com (HELO xdu1-desk) ([10.239.154.142])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Dec 2018 15:33:19 -0800
-Date:   Thu, 6 Dec 2018 07:33:18 +0800
-From:   "Du, Alek" <alek.du@intel.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH V3 rebase] mmc: sdhci: fix the timeout check window for
- clock and reset
-Message-ID: <20181206073318.049065a8@xdu1-desk>
-In-Reply-To: <CAPDyKFot12Fc83R5wNsHYSu1-5mopNauYusu0RTQ9bjcUere5w@mail.gmail.com>
-References: <20181130150028.732896d8@xdu1-mobl>
-        <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
-        <20181130221300.4ef2956c@xdu1-mobl>
-        <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
-        <20181201134251.26573207@xdu1-mobl>
-        <20181204090120.63b5f0a4@xdu1-mobl>
-        <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
-        <20181205111450.300e0478@xdu1-mobl>
-        <CAPDyKFot12Fc83R5wNsHYSu1-5mopNauYusu0RTQ9bjcUere5w@mail.gmail.com>
-Organization: Intel
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727628AbeLEXgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:36:23 -0500
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF201213A2
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 23:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544052983;
+        bh=HdKzwjq0Ktp+3fDTmn75tOVezfVsQGQJUbhDfnOAGO4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LKxsy6iwT1syzHEMGN9kUv2eF8/m/yymbi4vbkd6+G5oL08pmdMJ961Ir9xVm481e
+         22rv/J5683IKZbWPExK200+EMPqjrIkRdoHYih5ShTCcXnlz1l4RRpQF6lOH8z0Dmo
+         ad8u/N7VmNm2ipBaE8BGtTzkzYbcKSLzM4TCFi/k=
+Received: by mail-wr1-f53.google.com with SMTP id q18so21419715wrx.9
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:36:22 -0800 (PST)
+X-Gm-Message-State: AA+aEWbIwSFS67nZCMiPFQyXrQBsDGooFoZI7YIEXgMxzi9GRZwfF2vx
+        nfI39st2SYt1QvPJDAF1lVbAlp8pf6S2v4J6vY5XkA==
+X-Google-Smtp-Source: AFSGD/VM4K/n8k3YpqBh8waGbHJeO9yrb9B0DMwNHN4b4UqLvlhx91mdfrz/yKI3a3ViZKefYx3ZTV+uJ4gmvGScH0c=
+X-Received: by 2002:a5d:5502:: with SMTP id b2mr24114300wrv.330.1544052981473;
+ Wed, 05 Dec 2018 15:36:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+References: <cover.1543200841.git.jpoimboe@redhat.com> <20181204180835.29f9aa03@vmware.local.home>
+ <EE66E7C9-5735-48B3-A001-E9FCDA46E177@amacapital.net> <20181205150422.mlrjcm5rm26ozg5j@treble>
+In-Reply-To: <20181205150422.mlrjcm5rm26ozg5j@treble>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 5 Dec 2018 15:36:10 -0800
+X-Gmail-Original-Message-ID: <CALCETrVeWE8NOry6-wiy1q7C0cT8JXSAJvg8T7pwV=Vubu27bw@mail.gmail.com>
+Message-ID: <CALCETrVeWE8NOry6-wiy1q7C0cT8JXSAJvg8T7pwV=Vubu27bw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Static calls
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, julia@ni.com, jeyu@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From a081e783383adf1179c71bc37b4e199d087af643 Mon Sep 17 00:00:00 2001
-From: Alek Du <alek.du@intel.com>
-Date: Fri, 30 Nov 2018 14:02:28 +0800
-Subject: [PATCH] mmc: sdhci: fix the timeout check window for clock and reset
+>> On Dec 5, 2018, at 7:04 AM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+>
+>> Anyway, I have a new objection to Josh=E2=80=99s create_gap proposal: wh=
+at on
+>> Earth will kernel CET do to it?  Maybe my longjmp-like hack is
+>> actually better.
+>
+> Does CET even care about iret?  I assumed it didn't.  If it does, your
+> proposal would have the same problem, no?
 
-We observed some premature timeouts on a virtualization platform, the log
-is like this:
+I think it doesn=E2=80=99t, but it doesn=E2=80=99t really matter.  The shad=
+ow stack looks like:
 
-case 1:
-[159525.255629] mmc1: Internal clock never stabilised.
-[159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
-...
-[159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-From the clock control register dump, we are pretty sure the clock was
-stablized.
+retaddr of function being poked
+call do_int3 + 5
 
-case 2:
-[  914.550127] mmc1: Reset 0x2 never completed.
-[  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
+And, to emulate a call, you need to stick a new frame right in the
+middle.  At least with a longjmp-like approach, you can clobber the
+=E2=80=9Ccall do_int3 + 5=E2=80=9D part and then INCSSP on the way out.  To=
+ be fair, I
+think this also sucks.
 
-After checking the sdhci code, we found the timeout check actually has a
-little window that the CPU can be scheduled out and when it comes back,
-the original time set or check is not valid.
-
-Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
-Cc: stable@vger.kernel.org      # v4.12+
-Signed-off-by: Alek Du <alek.du@intel.com>
----
- drivers/mmc/host/sdhci.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 99bdae53fa2e..451b08a818a9 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -216,8 +216,12 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
- 	timeout = ktime_add_ms(ktime_get(), 100);
- 
- 	/* hw clears the bit when it's done */
--	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Reset 0x%x never completed.\n",
- 				mmc_hostname(host->mmc), (int)mask);
- 			sdhci_dumpregs(host);
-@@ -1608,9 +1612,13 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- 
- 	/* Wait max 20 ms */
- 	timeout = ktime_add_ms(ktime_get(), 20);
--	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
--		& SDHCI_CLOCK_INT_STABLE)) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+		if (clk & SDHCI_CLOCK_INT_STABLE)
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Internal clock never stabilised.\n",
- 			       mmc_hostname(host->mmc));
- 			sdhci_dumpregs(host);
--- 
-2.17.1
+PeterZ, can we abuse NMI to make this problem go away?  I don't
+suppose that we have some rule that NMI handlers never wait for other
+CPUs to finish doing anything?
