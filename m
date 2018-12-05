@@ -2,148 +2,173 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D940C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0D9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 584D3208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584D3208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A3928208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:59:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="OIuSAW/o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3928208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeLEW6f (ORCPT
+        id S1728631AbeLEW7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:58:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58414 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbeLEW6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:58:34 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9AC203C2CEB;
-        Wed,  5 Dec 2018 22:58:33 +0000 (UTC)
-Received: from redhat.com (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5EE1160565;
-        Wed,  5 Dec 2018 22:58:30 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 17:58:28 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-Message-ID: <20181205225828.GL3536@redhat.com>
-References: <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
- <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
- <20181205180756.GI3536@redhat.com>
- <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
- <20181205183314.GJ3536@redhat.com>
- <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
- <20181205185550.GK3536@redhat.com>
- <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
+        Wed, 5 Dec 2018 17:59:54 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:60724 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbeLEW7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:59:54 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id EADCB5C0604;
+        Wed,  5 Dec 2018 23:59:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1544050789;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KVYxo4u0la4cM7i7reyYTw5IJsYJFBEQtgfd+YN7xl8=;
+        b=OIuSAW/oAyttAZOm1K2O2UJ1k4Ml4RwcA1IDbjNm8D2QPwk+dAOhZgOfNby5poVLZvHdoM
+        RBVSzEb7lPNdFeFn9u+27xKfHHMFctjkOx8CERzY46FoVaMtvhHmv+M77nKY2fTiWXo738
+        6m9ZDbpD0eFraLtoU/mI3azsPv1njBc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 05 Dec 2018 22:58:34 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 05 Dec 2018 23:59:49 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux@armlinux.org.uk,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH 2/2] ARM: Wrap '--pic-veneer' with ld-option
+In-Reply-To: <CAKwvOdnQy0HsfDgJeq02opRD1A7fje=bZfpypUFcXWj9CHVyVg@mail.gmail.com>
+References: <20181205014213.943-1-natechancellor@gmail.com>
+ <20181205014213.943-2-natechancellor@gmail.com>
+ <CAKv+Gu-N9j5X4WoFDbQrzeOCfBaNm6ujXe_fAruusE_kWdj8iQ@mail.gmail.com>
+ <20181205080645.GA11936@flashbox>
+ <CAKv+Gu9Nq51Fj_14MYS6MEm0VPHOJB1CBFkCHmyC8Wt0=NWpRg@mail.gmail.com>
+ <20181205183606.GA7274@flashbox>
+ <CAKv+Gu-2JAiAJqWu9VaaEJ3uFr_B--J7s=iHAN9ze90HD=pXEQ@mail.gmail.com>
+ <CAKwvOdnQy0HsfDgJeq02opRD1A7fje=bZfpypUFcXWj9CHVyVg@mail.gmail.com>
+Message-ID: <baba21221482726e9eab67c24c308870@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:10:10PM -0700, Logan Gunthorpe wrote:
+On 05.12.2018 19:41, Nick Desaulniers wrote:
+> On Wed, Dec 5, 2018 at 10:40 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>>
+>> On Wed, 5 Dec 2018 at 19:36, Nathan Chancellor <natechancellor@gmail.com> wrote:
+>> >
+>> > On Wed, Dec 05, 2018 at 09:09:56AM +0100, Ard Biesheuvel wrote:
+>> > > (+ Arnd)
+>> > >
+>> > > On Wed, 5 Dec 2018 at 09:06, Nathan Chancellor <natechancellor@gmail.com> wrote:
+>> > > >
+>> > > > On Wed, Dec 05, 2018 at 08:37:05AM +0100, Ard Biesheuvel wrote:
+>> > > > > On Wed, 5 Dec 2018 at 02:42, Nathan Chancellor <natechancellor@gmail.com> wrote:
+>> > > > > >
+>> > > > > > This flag is not supported by lld:
+>> > > > > >
+>> > > > > >     ld.lld: error: unknown argument: --pic-veneer
+>> > > > > >
+>> > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> > > > >
+>> > > > > Hi Nate,
+>> > > > >
+>> > > > > Does this mean ld.lld is guaranteed to produce position independent
+>> > > > > veneers if you build kernels that are bigger than the typical range of
+>> > > > > a relative branch?
+>> > > > >
+>> > > >
+>> > > > Hi Ard,
+>> > > >
+>> > > > Honestly, I'm not quite sure. I saw your commit that introduced this
+>> > > > flag and I wasn't quite sure what to make of it for lld. What
+>> > > > configuration would I use to verify and what would I check for?
+>> > > >
+>> > >
+>> > > Try building allyesconfig, and check the resulting binary for veneers
+>> > > (which have 'veneer' in the symbol name, at least when ld.bfd emits
+>> > > them). These veneers should not take the [virtual] address of the
+>> > > branch target directly, but take a PC relative offset (as in the
+>> > > example in the commit log of that patch you are referring to)
+>> > >
+>> >
+>> > Alright, compiling with allyesconfig is a little rough at the moment
+>> > (bug reports I will file in due time) but I was able to do it. Here's
+>> > the disassembly specifically for the functions you had in your commit,
+>> > my assembly knowledge is pretty much non-existent unfortunately so I am
+>> > not sure what to make of it (it doesn't look like there is a virtual
+>> > address for pc in that mix?). I am happy to provide any more information
+>> > that is needed.
+>> >
+>> > c03030cc <__enable_mmu>:
+>> > c03030cc:       e3c00002        bic     r0, r0, #2
+>> > c03030d0:       e3c00b02        bic     r0, r0, #2048   ; 0x800
+>> > c03030d4:       e3c00a01        bic     r0, r0, #4096   ; 0x1000
+>> > c03030d8:       e3a05051        mov     r5, #81 ; 0x51
+>> > c03030dc:       ee035f10        mcr     15, 0, r5, cr3, cr0, {0}
+>> > c03030e0:       ee024f10        mcr     15, 0, r4, cr2, cr0, {0}
+>> > c03030e4:       eafff3c5        b       c0300000 <__turn_mmu_on>
+>> > c03030e8:       e320f000        nop     {0}
+>> > c03030ec:       e320f000        nop     {0}
+>> > c03030f0:       e320f000        nop     {0}
+>> > c03030f4:       e320f000        nop     {0}
+>> > c03030f8:       e320f000        nop     {0}
+>> > c03030fc:       e320f000        nop     {0}
+>> >
+>> > c0300000 <__turn_mmu_on>:
+>> > c0300000:       e1a00000        nop                     ; (mov r0, r0)
+>> > c0300004:       ee070f95        mcr     15, 0, r0, cr7, cr5, {4}
+>> > c0300008:       ee010f10        mcr     15, 0, r0, cr1, cr0, {0}
+>> > c030000c:       ee103f10        mrc     15, 0, r3, cr0, cr0, {0}
+>> > c0300010:       ee070f95        mcr     15, 0, r0, cr7, cr5, {4}
+>> > c0300014:       e1a03003        mov     r3, r3
+>> > c0300018:       e1a0300d        mov     r3, sp
+>> > c030001c:       e1a0f003        mov     pc, r3
+>> >
+>>
+>> Thanks Nate.
+>>
+>> So these functions no longer appear to reside far away from each
+>> other, so there no veneer has been emitted.
+>>
+>> What we're looking for are veneers, i.e., snippets inserted by the
+>> linker that serve as a trampoline so a branch target that is far away
+>> can be reached.
+>>
+>> If no symbols exist with 'veneer' in their name *, it might make sense
+>> to rebuild the kernel as Thumb2, which has a branching range of only 8
+>> MB (as opposed to 16 MB for ARM mode)
 > 
+> Heh, Arnd and I were just talking about this yesterday.  Is there a
+> config that sets Thumb2 mode for the kernel?
 > 
-> On 2018-12-05 11:55 a.m., Jerome Glisse wrote:
-> > So now once next type of device shows up with the exact same thing
-> > let say FPGA, we have to create a new subsystem for them too. Also
-> > this make the userspace life much much harder. Now userspace must
-> > go parse PCIE, subsystem1, subsystem2, subsystemN, NUMA, ... and
-> > merge all that different information together and rebuild the
-> > representation i am putting forward in this patchset in userspace.
-> 
-> Yes. But seeing such FPGA links aren't common yet and there isn't really
-> much in terms of common FPGA infrastructure in the kernel (which are
-> hard seeing the hardware is infinitely customization) you can let the
-> people developing FPGA code worry about it and come up with their own
-> solution. Buses between FPGAs may end up never being common enough for
-> people to care, or they may end up being so weird that they need their
-> own description independent of GPUS, or maybe when they become common
-> they find a way to use the GPU link subsystem -- who knows. Don't try to
-> design for use cases that don't exist yet.
-> 
-> Yes, userspace will have to know about all the buses it cares to find
-> links over. Sounds like a perfect thing for libhms to do.
 
-So just to be clear here is how i understand your position:
-"Single coherent sysfs hierarchy to describe something is useless
- let's git rm drivers/base/"
+Yes there is CONFIG_THUMB2_KERNEL, and it works also with LLVM/Clang.
 
-While i am arguing that "hey the /sys/bus/node/devices/* is nice
-but it just does not cut it for all this new hardware platform
-if i add new nodes there for my new memory i will break tons of
-existing application. So what about a new hierarchy that allow
-to describe those new hardware platform in a single place like
-today node thing"
+However, it sometimes leads to surprising issues, like I just
+encountered a few days ago:
 
+https://lore.kernel.org/linux-pci/20181126161645.8177-1-stefan@agner.ch/
 
-> 
-> > There is no telling that kernel won't be able to provide quirk and
-> > workaround because some merging is actually illegal on a given
-> > platform (like some link from a subsystem is not accessible through
-> > the PCI connection of one of the device connected to that link).
-> 
-> These are all just different individual problems which need different
-> solutions not grand new design concepts.
-> 
-> > So it means userspace will have to grow its own database or work-
-> > around and quirk and i am back in the situation i am in today.
-> 
-> No, as I've said, quirks are firmly the responsibility of kernels.
-> Userspace will need to know how to work with the different buses and
-> CPU/node information but there really isn't that many of these to deal
-> with and this is a much easier approach than trying to come up with a
-> new API that can wrap the nuances of all existing and potential future
-> bus types we may have to deal with.
+--
+Stefan
 
-No can do that is what i am trying to explain. So if i bus 1 in a
-sub-system A and usualy that kind of bus can serve a bridge for
-PCIE ie a CPU can access device behind it by going through a PCIE
-device first. So now the userspace libary have this knowledge
-bake in. Now if a platform has a bug for whatever reasons where
-that does not hold, the kernel has no way to tell userspace that
-there is an exception there. It is up to userspace to have a data
-base of quirks.
-
-Kernel see all those objects in isolation in your scheme. While in
-what i am proposing there is only one place and any device that
-participate in this common place can report any quirks so that a
-coherent view is given to user space.
-
-If we have gazillion of places where all this informations is spread
-around than we have no way to fix weird inter-action between any
-of those.
-
-Cheers,
-Jérôme
+>>
+>> * I have no idea whether lld names its veneers like this, or even at all
