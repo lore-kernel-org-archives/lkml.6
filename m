@@ -6,94 +6,151 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47372C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15537C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA002081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C352E20834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:27:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UNd0vZvQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA002081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="eFnPJ62w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C352E20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbeLEAXf (ORCPT
+        id S1726534AbeLEA1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:23:35 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38232 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbeLEAXf (ORCPT
+        Tue, 4 Dec 2018 19:27:00 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39441 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbeLEA07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:23:35 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so8142166pgc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:23:35 -0800 (PST)
+        Tue, 4 Dec 2018 19:26:59 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n8so13173289otl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:26:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=rXz3U3BB2qLVL7pDyi7g6ArLmKgfu6RB2C9y2sIyQss=;
-        b=UNd0vZvQx46EpcicD+JD3WZrqKRZgMmW0+NfSxRx6ZOsPWgr93gbFJHwv86Co7x1Jn
-         p9NN8tpcSLd1aV8vfa6kwFuxTjfRwyBuVnUfwdhwKOkpWCyVYeAt3Id8LhZ+QZ2aK7jF
-         17JXlnclsppDUhQozJ7gPyQ5Jlb+diavl0oMF0539qPEROjmnTBVWC24wQYqX6jDSomF
-         D0CXkgaOo/ocrB/pNYEylbPzKMnkW1fs/WFNGYR2xSsNAqWZqiGWAa8QtPdk6oyv/kxK
-         TEnihlIbZbkKsfGOhd0xPSp0wD0cn00cKyIqyDetuqb2CjKHUxpBTSr3+HUeCpVG2Wlw
-         94LQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1KwpwloZKWw2r288NR2PSotNAVR8VQ9kiMJsfd3nibY=;
+        b=eFnPJ62wB08z7V8csIVZJdAadTp6k1yMVyIZpCT0Nafn54N5yNTv9jxEP3MYhoURXl
+         HFtc2oVgrb/QqbRoZj8hrme/U007glVODlp9llUectox/l3F9iagdwfNaV/6TZyzy0iH
+         bK/qTp7nezDCqrVymoCFSafplLlWCKwOzLmH1BF4DMpR73kQE3lU09vl8RLdl9y+Ej86
+         JsbmjbUh4+KkxZ8RKimvzW92dmp/1NJConeURM8GDTWtEPwra3IpeTaJPah9dk4SX0wY
+         +dzjpJG/6WTBMvGn6t7gbwmwmplIRv/OKkoXCN3fpyqFY8UMzlFjHKUuKyUI7qYuoaiB
+         3q1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=rXz3U3BB2qLVL7pDyi7g6ArLmKgfu6RB2C9y2sIyQss=;
-        b=WySOTlThnOpqqzYPqk0OaRpvknGsDogi1+ohX/29HVBQFDt3/WXjGvUzXgz2q45fng
-         Htlk01LjhopGLEeiPjxW/UzxkMFZpW3bU9sQ0WL/lpigRPncXdPZmSqUX8Cc5MPg5DYQ
-         wyexdJtpVxkYnrD6h3OxkrhpkHqufpqboTcaGuzyf8tvOreXl08QBkCGphDNUVavYD18
-         tm392L17lb36mqIFX73XyCEwsHRc9XaZHLe/nT9d5dQb+IEH7rTi5LHlsrbyBLWdYm3t
-         3mLMHgViCida8xKzyVYruOOqKXaJlXhFEuFklaS5fEDN6PCJtvmyYq5IOhKZEt+SFhgN
-         w2NA==
-X-Gm-Message-State: AA+aEWbdPhsEBbCdgOygg5vyf54NlsoMKpZqdD7ePa3EXgTbQ9xkLEwu
-        DoEJ7MGnwr1bgP1CgwIpBZ5JeQ==
-X-Google-Smtp-Source: AFSGD/XGJhD03HWOsr+Ai1mk71eWDszLqTXBQnA1uSfWhbIxF4GaeH+M9b0XYGvsM2ojZLlr9yKLDA==
-X-Received: by 2002:a63:f34b:: with SMTP id t11mr18681172pgj.341.1543969414116;
-        Tue, 04 Dec 2018 16:23:34 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id k129sm32765272pgk.29.2018.12.04.16.23.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 16:23:33 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Carlo Caione <ccaione@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH] MAINTAINERS: Remove myself from the list
-In-Reply-To: <eaf25e588c5ab78c607e7168e22871464e7ec8d7.camel@baylibre.com>
-References: <20181201151749.10932-1-ccaione@baylibre.com> <928e27de-cb7b-cf40-b8b6-2aa43a69ee39@baylibre.com> <eaf25e588c5ab78c607e7168e22871464e7ec8d7.camel@baylibre.com>
-Date:   Tue, 04 Dec 2018 16:23:32 -0800
-Message-ID: <7h1s6wddob.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1KwpwloZKWw2r288NR2PSotNAVR8VQ9kiMJsfd3nibY=;
+        b=MIVorPWgYiWsXWal0+Ay/TMKRdEvbsONu8JIuH71xNe9BxlGigAv4oUTDEJPbE09vJ
+         22NTwf1tjTW0680sJSSMFxs9tR0ELvWEUwsOhSOnJIi6Z+3PjoIcG0TDfgiNoyYOoFn5
+         IFBGL+xe4axCQx2qbP6JHehO/DGOSn/6kV1Fp4rapm0F0kS7k/L+FC41JyhbptkCzgYE
+         DtY4rr6kk7jTpK5okypX5wqQQAcYOXUy0dxlAUjB0HwKp96Gb7oHUUjC+9PlvnnRVYA9
+         g2qPsYUgZAaXb4RBLgSq6Fd7cHpGpiOSiQqkIBsMgy7IHxu2bmyTQgQrCo2hHIHwrRMl
+         EK8g==
+X-Gm-Message-State: AA+aEWar9r0VywEpgbGbwN76ZCNK2aX1mwRbCZxKlwT2oW4N8p9nDGUk
+        fFDcz+YLjTPeJzgxTPb16swh8betVt1oe62qeZDB0A==
+X-Google-Smtp-Source: AFSGD/VLMKzBX1LQT0+RqHpyklwZYHPbFlACAD/7oT63eG/1ar+LAG8QbPGsK3hEIJSmj1/19GUQmqzulcLU4WQA4Qk=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr14354977oti.367.1543969618737;
+ Tue, 04 Dec 2018 16:26:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
+ <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
+ <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
+ <CAPcyv4i=FL4f34H2_1mgWMk=UyyaXFaKPh5zJSnFNyN3cBoJhA@mail.gmail.com>
+ <2a3f70b011b56de2289e2f304b3d2d617c5658fb.camel@linux.intel.com>
+ <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
+ <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
+ <CAPcyv4izGr4dLs_Xpa1wbqJRrHZVEKFWQNb2Qo2Ej_xbEXhbTg@mail.gmail.com>
+ <dd7296db5996f15cc3e666d008f209f5f24fa98e.camel@linux.intel.com>
+ <20181204182428.11bec385@gnomeregan.cam.corp.google.com> <bb141157ac8bc4a99883800d757aa037a7402b10.camel@linux.intel.com>
+In-Reply-To: <bb141157ac8bc4a99883800d757aa037a7402b10.camel@linux.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 4 Dec 2018 16:26:46 -0800
+Message-ID: <CAPcyv4ix4aHyivwCiw0YNMxLjRJeqDX3x3m1q1JhyMPCEMOJtQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
+ supports refcount pinning
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Barret Rhoden <brho@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        KVM list <kvm@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Pankaj Gupta <pagupta@redhat.com>,
+        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Carlo Caione <ccaione@baylibre.com> writes:
-
-> On Mon, 2018-12-03 at 11:21 +0100, Neil Armstrong wrote:
->> On 01/12/2018 16:17, Carlo Caione wrote:
->> > Kevin is basically doing all the work. Remove my name as co-
->> > maintainer.
->> 
->> Sure, but couldn't we move you as reviewer and add Martin as reviewer
->> aswell since he is dedicated to the Meson8X support ?
->> 
->> Or maybe add a separate entry with Kevin as maintainer and Martin as
->> reviewer for Meson8X ?
+On Tue, Dec 4, 2018 at 4:01 PM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
 >
-> This. At this point I don't think I will be going to work on the
-> Meson8X for a while and Martin proved to be the right guy for this job.
+> On Tue, 2018-12-04 at 18:24 -0500, Barret Rhoden wrote:
+> > Hi -
+> >
+> > On 2018-12-04 at 14:51 Alexander Duyck
+> > <alexander.h.duyck@linux.intel.com> wrote:
+> >
+> > [snip]
+> >
+> > > > I think the confusion arises from the fact that there are a few MMIO
+> > > > resources with a struct page and all the rest MMIO resources without.
+> > > > The problem comes from the coarse definition of pfn_valid(), it may
+> > > > return 'true' for things that are not System-RAM, because pfn_valid()
+> > > > may be something as simplistic as a single "address < X" check. Then
+> > > > PageReserved is a fallback to clarify the pfn_valid() result. The
+> > > > typical case is that MMIO space is not caught up in this linear map
+> > > > confusion. An MMIO address may or may not have an associated 'struct
+> > > > page' and in most cases it does not.
+> > >
+> > > Okay. I think I understand this somewhat now. So the page might be
+> > > physically there, but with the reserved bit it is not supposed to be
+> > > touched.
+> > >
+> > > My main concern with just dropping the bit is that we start seeing some
+> > > other uses that I was not certain what the impact would be. For example
+> > > the functions like kvm_set_pfn_accessed start going in and manipulating
+> > > things that I am not sure should be messed with for a DAX page.
+> >
+> > One thing regarding the accessed and dirty bits is that we might want
+> > to have DAX pages marked dirty/accessed, even if we can't LRU-reclaim
+> > or swap them.  I don't have a real example and I'm fairly ignorant
+> > about the specifics here.  But one possibility would be using the A/D
+> > bits to detect changes to a guest's memory for VM migration.  Maybe
+> > there would be issues with KSM too.
+> >
+> > Barret
 >
-> So, let's remove my name from here first and then Martin can add a new
-> entry for Meson8X.
+> I get that, but the issue is that the code associated with those bits
+> currently assumes you are working with either an anonymous swap backed
+> page or a page cache page. We should really be updating that logic now,
+> and then enabling DAX to access it rather than trying to do things the
+> other way around which is how this feels.
 
-Queued for v4.21 (branch: v4.21/soc)
+Agree. I understand the concern about unintended side effects of
+dropping PageReserved for dax pages, but they simply don't fit the
+definition of the intended use of PageReserved. We've already had
+fallout from legacy code paths doing the wrong thing with dax pages
+where PageReserved wouldn't have helped. For example, see commit
+6e2608dfd934 "xfs, dax: introduce xfs_dax_aops", or commit
+6100e34b2526 "mm, memory_failure: Teach memory_failure() about
+dev_pagemap pages". So formerly teaching kvm about these page
+semantics and dropping the reliance on a side effect of PageReserved()
+seems the right direction.
 
-Kevin
+That said, for mark_page_accessed(), it does not look like it will
+have any effect on dax pages. PageLRU will be false,
+__lru_cache_activate_page() will not find a page on a percpu pagevec,
+and workingset_activation() won't find an associated memcg. I would
+not be surprised if mark_page_accessed() is already being called today
+via the ext4 + dax use case.
