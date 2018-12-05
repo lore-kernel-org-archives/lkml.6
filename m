@@ -2,107 +2,184 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6FBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48620C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DBBA20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:42:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBBA20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F149208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mR12I0Wg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F149208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeLERmO (ORCPT
+        id S1728197AbeLERmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:42:14 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:34122 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeLERmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:42:13 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUbBP-0008HY-2X; Wed, 05 Dec 2018 10:42:00 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <20181204192221.GG2937@redhat.com>
- <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
- <20181204201347.GK2937@redhat.com>
- <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
- <20181204205902.GM2937@redhat.com>
- <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
- <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
-Date:   Wed, 5 Dec 2018 10:41:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 5 Dec 2018 12:42:18 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37075 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727514AbeLERmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:42:15 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 80so9338471pge.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:42:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=H82VOLH32FQsGyx2BnmP11meBb7aRxjVMwmR5I4yftQ=;
+        b=mR12I0WgDkJJk9doQzmB5CI33SvEW0wmcF1ZxUAeOImCl+7uM65cv5mpJasfv4Kw78
+         5PzNV0naYFDJSQQiAUenHvkYN3vmjqhtZ1vdAqr0Xi87AwSbU0JKtcxWW+Jtr6aBluxK
+         WrzJZAUa/m7NkA609kvLKDQ038DKX+sZyE53k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=H82VOLH32FQsGyx2BnmP11meBb7aRxjVMwmR5I4yftQ=;
+        b=SXy2vyloUC9J2GOhtWqTrh1VLMsmnM05Kxe8039sdy8f1a7Dqlu68x82MPpfvrRMG2
+         VUBDHcEIA26iYpg9u2K6LXxb8/CmM7GTnVxaOAoVUPgJGwxknkRtL9Be6TMkM/mfJG4I
+         jHMNNpUQYoHGe10AuvYw3vzcPw16s4i9jVnwqtVWnC4yHZL4GylzJcOgj+lA9mFiMil8
+         YOnqo3hjAb4Y+n58UlLcB+Ah0LqlOJH3gwfKHMKS+WtaZbM3fPOg4SPMX37upbK2BGN8
+         yMAxtdpr3OtBg+bpFK0iTHP64tJzcHn4ILQlg+7QrxGWUFTNaw/y+BWgtER+9EC2ZvFX
+         /lkg==
+X-Gm-Message-State: AA+aEWYfOqhW+HnmWhCzYWpn6TOqR5G98Syg437PrqdbIm4Uf2C1q4uy
+        xfsj1t1OqtrWNLnT5SrqFSA7bA==
+X-Google-Smtp-Source: AFSGD/Vya30S7Xoif9HN5bgrX0P/yaC6sJypQyj6h1u0MMLshTlK1kv74VJG/+5PyCQq7ftlVWWx2Q==
+X-Received: by 2002:a62:3241:: with SMTP id y62mr25246550pfy.178.1544031734383;
+        Wed, 05 Dec 2018 09:42:14 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id g11sm26168194pfo.139.2018.12.05.09.42.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 09:42:13 -0800 (PST)
+Date:   Wed, 5 Dec 2018 09:42:11 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: Allow driver to be shutdown on reboot/kexec
+Message-ID: <20181205174209.GA224281@google.com>
+References: <20180805124807.18169-1-marc.zyngier@arm.com>
+ <20181205030127.GA200921@google.com>
+ <1693737.bVF0dcvACY@diego>
+ <dd1777ad-fe3e-a661-a27f-8ba418064b40@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205023116.GD3045@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd1777ad-fe3e-a661-a27f-8ba418064b40@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On Wed, Dec 05, 2018 at 02:28:48PM +0000, Marc Zyngier wrote:
+> On 05/12/2018 14:11, Heiko Stübner wrote:
+> > Am Mittwoch, 5. Dezember 2018, 04:01:34 CET schrieb Brian Norris:
+> >> On Sun, Aug 05, 2018 at 01:48:07PM +0100, Marc Zyngier wrote:
+> >>> Leaving the DRM driver enabled on reboot or kexec has the annoying
+> >>> effect of leaving the display generating transactions whilst the
+> >>> IOMMU has been shut down.
+> >>>
+> >>> In turn, the IOMMU driver (which shares its interrupt line with
+> >>> the VOP) starts warning either on shutdown or when entering the
+> >>> secondary kernel in the kexec case (nothing is expected on that
+> >>> front).
+> >>>
+> >>> A cheap way of ensuring that things are nicely shut down is to
+> >>> register a shutdown callback in the platform driver.
+> >>>
+> >>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> >>> ---
+> >>
+> >> This patch made it into 4.20-rc1 as well as -stable, and it has caused
+> >> regressions for me, on the Kevin and Scarlet [1] RK3399 platforms.
+> >>
+> >> On
+> >> shutdown/reboot, I see this:
+> >>
+> >> [   94.742559] WARNING: CPU: 4 PID: 2035 at
+> >> drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
+> >> ...
+...
+> >> Anyway, the above warnings occur on v4.20-rc, which I think is
+> >> justification enough for a revert.
+> > 
+> > That's strange. I remember testing quite a number of shutdown/reboot
+> > cycles before applying that patch. And for good measure did the same
+> > again right now.
+> > 
+> > - Kevin, with netboot firmware, booting into Debian+console only
+> > - Bob, with stock firmware, booting into Debian+KDE Plasma
+> > - Scarlet, with stock firmware, booting into Debian+KDE Plasma
+> > 
+> > With some random number of reboot and shutdowns on each I didn't
+> > see any warnings at all.
+> 
+> And I've been using this very patch for quite a while now.
+> 
+> Before suggesting a revert, I'd rather we understand what is going on,
+> and why is the DRM layer crapping itself that badly for a legitimate
+> operation (it is certainly better to have a shutdown than to let the VOP
+> scan out crap once the IOMMU has been shut down). In short, don't shoot
+> the messenger.
 
-On 2018-12-04 7:31 p.m., Jerome Glisse wrote:
-> How can i express multiple link, or memory that is only accessible
-> by a subset of the devices/CPUs. In today model they are back in
-> assumption like everyone can access all the node which do not hold
-> in what i am trying to do.
+I honestly don't know much at all about DRM. But I do see this problem
+on 4.19.y also (and probably 4.14.y), now that this patch was included
+there.
 
-Well multiple links are easy when you have a 'link' bus. Just add
-another link device under the bus.
+I'm fine with trying to "fix forward" in mainline, but unfortunately,
+it's usually quite difficult to get Greg to drop things from -stable,
+especially when the regression is already pushed to a release. That's
+why I'd propose a revert first, which can be sent back to -stable while
+things are figured out.
 
-Technically, the accessibility issue is already encoded in sysfs. For
-example, through the PCI tree you can determine which ACS bits are set
-and determine which devices are behind the same root bridge the same way
-we do in the kernel p2pdma subsystem. This is all bus specific which is
-fine, but if we want to change that, we should have a common way for
-existing buses to describe these attributes in the existing tree. The
-new 'link' bus devices would have to have some way to describe cases if
-memory isn't accessible in some way across it.
+I'm also willing to test any updates, if you have better suggestions.
 
-But really, I would say the kernel is responsible for telling you when
-memory is accessible to a list of initiators, so it should be part of
-the checks in a theoretical hbind api. This is already the approach
-p2pdma takes in-kernel: we have functions that tell you if two PCI
-devices can talk to each other and we have functions to give you memory
-accessible by a set of devices. What we don't have is a special tree
-that p2pdma users have to walk through to determine accessibility.
+> >> I plan to submit a revert which I hope can go to 4.20 as well as
+> >> -stable. I'd hope the remove()/shutdown() paths should be fixed before
+> >> this gets applied again, and that it does not get shipped to -stable
+> >> kernels.
+> > 
+> > But judging by the fact that the warning indicates that somthing is still
+> > holding onto a framebuffer and a rmmod rockchipdrm is not possible
+> > at runrtime for likely the same reason, I guess we really might be creating
+> > a problem with that shutdown.
+> 
+> That's a potential root cause.
+> 
+> > 
+> > Can you maybe give "drm/rockchip: shutdown drm subsystem on shutdown" [2]
+> > a try? When the underlying issue of rebooting surfaced we had 2 competing 
+> > solutions, so we at least don't reopen the issue, that people have problems
+> > rebooting?
 
-In my eye's, you are just conflating a bunch of different issues that
-are better solved independently in the existing frameworks we have. And
-if they were tackled individually, you'd have a much easier time getting
-them merged one by one.
+I'll try to give that a spin.
 
-Logan
+> kexec working is certainly something I need. And I'd like to understand
+> why Brian sees this and nobody else.
+
+For one, I'm actually running Chrome OS. My tests currently don't have
+the full Chrome UI working, since Chrome OS has some basic graphics API
+requirements and there's no Mali GPU driver upstream (so I get relegated
+to our splash screen and console manager, frecon, instead). But some
+people have a software-rendered llvmpipe backend working, and they
+likely would see the same problem.
+
+Maybe common Linux distros treat "no GPU" too simplistically and don't
+really exercise the DRM framework much. I dunno.
+
+Brian
