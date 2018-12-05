@@ -2,167 +2,218 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBA8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A126C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842BB2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:01:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LAY80nDE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842BB2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F74A20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F74A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeLEOBv (ORCPT
+        id S1727634AbeLEOCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:01:51 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46048 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeLEOBu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:01:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB5DsVFw070700;
-        Wed, 5 Dec 2018 14:01:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=0CwyAs8k2tb98BaTpRwo4efxShx6cegVrqvIxtE7FQ8=;
- b=LAY80nDEJsfBQrS1Xy0bKxFHtiuQwf5WDLOkMvInjCNxLMjmdKllIeZiwChSXnIwYfX3
- 96JjjX9VAbvDwo8rByIbmFohQGYrM7sHEehEz4kJMror5P0j9FuosuWEE3FXlstUTrRH
- ZhmMwWm3adfjGTGvsHNLDTafO2Z8T9uXUT2hxoU+TEWpfeGM7iuOMHSpZklvU/V5YXDI
- UwlGgGm476PPA3ImiAD1KKOGFujguHF2Avoz+6obwhpLLizokqjhEljciEN8Zno8qjs8
- cIK1pyZltnLhHghDtb07UTkx/pjgcrev35IsN/gHqukxsF6DkQsw3SneKXr1Zfl7PuhF /Q== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2p3hqu2h8p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 14:01:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB5E1aoi024914
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 14:01:36 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB5E1avw000814;
-        Wed, 5 Dec 2018 14:01:36 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 06:01:35 -0800
-Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing a
- device
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Chao Gao <chao.gao@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        xen-devel@lists.xenproject.org, Jan Beulich <jbeulich@suse.com>
-References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
- <20181205093223.dncg4nq4dh6xmrhk@mac>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+        Wed, 5 Dec 2018 09:02:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41920 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727142AbeLEOCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:02:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F1D0CAEF2;
+        Wed,  5 Dec 2018 14:02:08 +0000 (UTC)
+Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-3-drinkcat@chromium.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <c27236d3-6125-4049-6268-3d9c93cf3ef2@oracle.com>
-Date:   Wed, 5 Dec 2018 09:01:33 -0500
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <5eddd264-5527-a98e-fc8b-31ea89f474db@suse.cz>
+Date:   Wed, 5 Dec 2018 14:59:09 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181205093223.dncg4nq4dh6xmrhk@mac>
+In-Reply-To: <20181205054828.183476-3-drinkcat@chromium.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050127
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 4:32 AM, Roger Pau Monné wrote:
-> On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
->> I find some pass-thru devices don't work any more across guest reboot.
->> Assigning it to another guest also meets the same issue. And the only
->> way to make it work again is un-binding and binding it to pciback.
->> Someone reported this issue one year ago [1]. More detail also can be
->> found in [2].
->>
->> The root-cause is Xen's internal MSI-X state isn't reset properly
->> during reboot or re-assignment. In the above case, Xen set maskall bit
->> to mask all MSI interrupts after it detected a potential security
->> issue. Even after device reset, Xen didn't reset its internal maskall
->> bit. As a result, maskall bit would be set again in next write to
->> MSI-X message control register.
->>
->> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
->> internal state of a device, we employ it to fix this issue rather than
->> introducing another dedicated sub-hypercall.
->>
->> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
->> the device's msix and pirq has been created. This limitation prevents
->> us calling this function when detaching a device from a guest during
->> guest shutdown. Thus it is called right before calling
->> PHYSDEVOPS_prepare_msix().
-> s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
-> () at the end of the hypercall name since it's not a function.
->
-> I'm also wondering why the release can't be done when the device is
-> detached from the guest (or the guest has been shut down). This makes
-> me worry about the raciness of the attach/detach procedure: if there's
-> a state where pciback assumes the device has been detached from the
-> guest, but there are still pirqs bound, an attempt to attach to
-> another guest in such state will fail.
+On 12/5/18 6:48 AM, Nicolas Boichat wrote:
+> In some cases (e.g. IOMMU ARMv7s page allocator), we need to allocate
+> data structures smaller than a page with GFP_DMA32 flag.
+> 
+> This change makes it possible to create a custom cache in DMA32 zone
+> using kmem_cache_create, then allocate memory using kmem_cache_alloc.
+> 
+> We do not create a DMA32 kmalloc cache array, as there are currently
+> no users of kmalloc(..., GFP_DMA32). The new test in check_slab_flags
+> ensures that such calls still fail (as they do before this change).
+> 
+> Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
 
-I wonder whether this additional reset functionality could be done out
-of xen_pcibk_xenbus_remove(). We first do a (best effort) device reset
-and then do the extra things that are not properly done there.
+Same as my comment for 1/3.
 
--boris
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
+In general,
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+Some comments below:
+
+> ---
+> 
+> Changes since v2:
+>  - Clarified commit message
+>  - Add entry in sysfs-kernel-slab to document the new sysfs file
+> 
+> (v3 used the page_frag approach)
+> 
+> Documentation/ABI/testing/sysfs-kernel-slab |  9 +++++++++
+>  include/linux/slab.h                        |  2 ++
+>  mm/internal.h                               |  8 ++++++--
+>  mm/slab.c                                   |  4 +++-
+>  mm/slab.h                                   |  3 ++-
+>  mm/slab_common.c                            |  2 +-
+>  mm/slub.c                                   | 18 +++++++++++++++++-
+>  7 files changed, 40 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
+> index 29601d93a1c2ea..d742c6cfdffbe9 100644
+> --- a/Documentation/ABI/testing/sysfs-kernel-slab
+> +++ b/Documentation/ABI/testing/sysfs-kernel-slab
+> @@ -106,6 +106,15 @@ Description:
+>  		are from ZONE_DMA.
+>  		Available when CONFIG_ZONE_DMA is enabled.
+>  
+> +What:		/sys/kernel/slab/cache/cache_dma32
+> +Date:		December 2018
+> +KernelVersion:	4.21
+> +Contact:	Nicolas Boichat <drinkcat@chromium.org>
+> +Description:
+> +		The cache_dma32 file is read-only and specifies whether objects
+> +		are from ZONE_DMA32.
+> +		Available when CONFIG_ZONE_DMA32 is enabled.
+
+I don't have a strong opinion. It's a new file, yeah, but consistent
+with already existing ones. I'd leave the decision with SL*B maintainers.
+
+>  What:		/sys/kernel/slab/cache/cpu_slabs
+>  Date:		May 2007
+>  KernelVersion:	2.6.22
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 11b45f7ae4057c..9449b19c5f107a 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -32,6 +32,8 @@
+>  #define SLAB_HWCACHE_ALIGN	((slab_flags_t __force)0x00002000U)
+>  /* Use GFP_DMA memory */
+>  #define SLAB_CACHE_DMA		((slab_flags_t __force)0x00004000U)
+> +/* Use GFP_DMA32 memory */
+> +#define SLAB_CACHE_DMA32	((slab_flags_t __force)0x00008000U)
+>  /* DEBUG: Store the last owner for bug hunting */
+>  #define SLAB_STORE_USER		((slab_flags_t __force)0x00010000U)
+>  /* Panic if kmem_cache_create() fails */
+> diff --git a/mm/internal.h b/mm/internal.h
+> index a2ee82a0cd44ae..fd244ad716eaf8 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/slab.h>
+>  #include <linux/tracepoint-defs.h>
+>  
+>  /*
+> @@ -34,9 +35,12 @@
+>  #define GFP_CONSTRAINT_MASK (__GFP_HARDWALL|__GFP_THISNODE)
+>  
+>  /* Check for flags that must not be used with a slab allocator */
+> -static inline gfp_t check_slab_flags(gfp_t flags)
+> +static inline gfp_t check_slab_flags(gfp_t flags, slab_flags_t slab_flags)
+>  {
+> -	gfp_t bug_mask = __GFP_DMA32 | __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+> +	gfp_t bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+> +
+> +	if (!IS_ENABLED(CONFIG_ZONE_DMA32) || !(slab_flags & SLAB_CACHE_DMA32))
+> +		bug_mask |= __GFP_DMA32;
+
+I'll point out that this is not even strictly needed AFAICS, as only
+flags passed to kmem_cache_alloc() are checked - the cache->allocflags
+derived from SLAB_CACHE_DMA32 are appended only after check_slab_flags()
+(in both SLAB and SLUB AFAICS). And for a cache created with
+SLAB_CACHE_DMA32, the caller of kmem_cache_alloc() doesn't need to also
+include __GFP_DMA32, the allocation will be from ZONE_DMA32 regardless.
+So it would be fine even unchanged. The check would anyway need some
+more love to catch the same with __GFP_DMA to be consistent and cover
+all corner cases.
+
+>  
+>  	if (unlikely(flags & bug_mask)) {
+>  		gfp_t invalid_mask = flags & bug_mask;
