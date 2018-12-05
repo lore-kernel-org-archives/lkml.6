@@ -2,160 +2,109 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA528C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78F9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6872A2081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2AA2082D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CfTBNihG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6872A2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHDf6Oky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2AA2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbeLEPIa (ORCPT
+        id S1727942AbeLEPJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:08:30 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45952 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeLEPI3 (ORCPT
+        Wed, 5 Dec 2018 10:09:40 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37233 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeLEPJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:08:29 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 32so18857616ota.12;
-        Wed, 05 Dec 2018 07:08:28 -0800 (PST)
+        Wed, 5 Dec 2018 10:09:40 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e5-v6so18663099lja.4;
+        Wed, 05 Dec 2018 07:09:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r9WUZstKqAOsKHMYcP2ws0dyJFa2WDWkLWIP3NiPsHk=;
-        b=CfTBNihGodl+w11JP/vLBANzcDljhfATXzqt7gu3xOcxYoaMxUE5T5LfHp5p9Cp2A4
-         sd8shdYwl03X4jhxxMBWVw6gd5b6wtvAHQb0HZaOSPjVdq3XCpW38+MEKRytwofpOhzr
-         6AbA6F4iM7+BjHic5hkJ95tXB04VY9/CA+9/qLQRIZ0XPHdT7KN2ZWMJwoJtA16FNc+C
-         F2HSbRnwpBwgoblg6l+Dn+ozT58hSiNgBCY6SjnE+bpf3/ATjEVFfnrjtsoxJL5JW+xb
-         V6Z0EitAAC6HL67bs6jEJBsW9Oby0926FDt9ct6LSP0I3ttc4zzNonXzC4D1CP5TTF9u
-         Lzyg==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8iLLBeQDhV8Tszwawl8dd2d7JvZqYxaJoo0YXAX88DI=;
+        b=nHDf6OkyEQUX9D6ZbC4GNg7Vu4FwftZ/J8+I3MYIjkN+9MKNhRNJPRxq0kWW1ITk1J
+         +OrrMKCbZjP+GPGR6IyOHevyNAx3FzYvVNYVgCFFzl8RIeqdnIJJwJvJHp2rjuoZKfAe
+         APMIn+5etInFua28keWQnaDoic8iaDlHnucn7z89ypuUE1vLtDedZ+/mH21FPvXd349W
+         z7bwTT2T1ZHERnBALUm7oTkK0+U4a7cy7z8lhMqcONT/m8yDf2lpyeRCcJbKLUm5PhBm
+         H0SYeOgo+GV1keyXl0fBAAyQ6T5KSzOugb+6j7ujP1sYSaYbq5bvV9NFdJ31GO2DuiT/
+         F3aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r9WUZstKqAOsKHMYcP2ws0dyJFa2WDWkLWIP3NiPsHk=;
-        b=nvVOZXNXqEmGjKBGBXr6Pwd9jYL3PEAVixBHheMxRWkBfq9CNMeNskpDqwcbqHTKfR
-         9TbXU5MbXeaoCrpUHBzddPoTnQLlHCfKSVGGnKwV2U9tTKB/7NgdR3Ztl9Bjr/p7uedf
-         C5HM1suVNxM7p8FVipbiqEkAGzeFKL/ZyEeWnJGDAHCQAVg807l74d3RjUjg34N5z4Lo
-         Gu85t+jGQXbHYdW4x0I+CpS4cbYVPqOazOIxLXJm6EG6HCVL5DTwVQBxJj2hWITj+WJC
-         zE6ebiL1LypkXofPLNjXImFNoRy/K7zxIDEzgdh9W+snAXjP9YrmF/WmO4Dh3xtopGdV
-         aWtA==
-X-Gm-Message-State: AA+aEWaySoNHv/152sDgvQQKS5OVr0pY/kKXftv0MeM1n3TM066AveNT
-        /1B/GN7RLMFJVLJ30ctg1Q/LPr7Xehb9UiXUWis=
-X-Google-Smtp-Source: AFSGD/X7QyA8VLmuJH/v/CBHnI6KXMbAbP8U+qcZMVJJ1warNLJnopGZxEsnCxEp6ZDggSGDZADLYosZJNfT1RInyrM=
-X-Received: by 2002:a9d:2c65:: with SMTP id f92mr15802100otb.18.1544022507769;
- Wed, 05 Dec 2018 07:08:27 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8iLLBeQDhV8Tszwawl8dd2d7JvZqYxaJoo0YXAX88DI=;
+        b=iDSgQPG+WVTPuCgjofrVIGoBSXU0HuBwsGUgFzRbscWmWnt7puH03qGg3zYksFPNyc
+         jemB6TYEBKlMbLKeb80ZFXfpwhh1DjXCavsZbv2Dzl3d/+kGSJz9t3S+FrW++bwpL1EP
+         NdXyZHRhfId27DBx1VzaWbgNG9RENHOpbBG0s/IqE1dag8KZxYfiRguSmLnYDUkt+RRx
+         3lsQZhQ+HTmCY9FAxxUaUW3bXQNsyOJSYOJXOrVAMt1SAOjf7uZ9/n8/p3Ec89poqe2v
+         dDpAcIAHgdYzcAsvqybPa8EjZfmL6Y9TdTXvqi+c+6NYInsWOh9+au5h4TPtp2s/gE8o
+         LpmA==
+X-Gm-Message-State: AA+aEWbVpzJAD7ZA6BUjFmrLmaZ5f/G1MP6cR+7sH9p++veTEfsdOxob
+        noZAoY9BaCd1O9eVhd0oyoE=
+X-Google-Smtp-Source: AFSGD/XosVtYTsUwirfVAaYSrWY6Sb+IeZX/Xma9iEcp3GuI5Nv2qalPNrtN8bTodzXUR8//yGEeDw==
+X-Received: by 2002:a2e:7c13:: with SMTP id x19-v6mr16091313ljc.83.1544022578230;
+        Wed, 05 Dec 2018 07:09:38 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm3853504ljh.66.2018.12.05.07.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 07:09:36 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gUYnz-00043A-9Y; Wed, 05 Dec 2018 16:09:39 +0100
+Date:   Wed, 5 Dec 2018 16:09:39 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH RFC 5/5] dt-bindings: gnss: add lna-supply property
+Message-ID: <20181205150939.GI15689@localhost>
+References: <20181118215801.12280-1-andreas@kemnade.info>
+ <20181118215801.12280-6-andreas@kemnade.info>
 MIME-Version: 1.0
-References: <20181130205624.16227-1-TheSven73@googlemail.com>
- <20181130205624.16227-2-TheSven73@googlemail.com> <20181205075145.GN3987@dragon>
-In-Reply-To: <20181205075145.GN3987@dragon>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Wed, 5 Dec 2018 10:08:16 -0500
-Message-ID: <CAGngYiUvYHTRMvsS_4s8PVyPg5_sg4DhZZU4_k8US871oAWSvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] bus: imx-weim: support multiple address ranges per
- child node
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, Rob Herring <robh@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181118215801.12280-6-andreas@kemnade.info>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Shawn, many thanks for the patch review, I really appreciate it !
+On Sun, Nov 18, 2018 at 10:58:01PM +0100, Andreas Kemnade wrote:
+> Add lna-supply property.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
+> index 1be7597ae884..9614774d14bc 100644
+> --- a/Documentation/devicetree/bindings/gnss/sirfstar.txt
+> +++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
+> @@ -30,6 +30,7 @@ Optional properties:
+>  - sirf,wakeup-gpios	: GPIO used to determine device power state
+>  			  (pin name: RFPWRUP, WAKEUP)
+>  - timepulse-gpios	: Time pulse GPIO (pin name: 1PPS, TM)
+> +- lna-supply		: Separate supply for a LNA
 
-On Wed, Dec 5, 2018 at 2:52 AM Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Fri, Nov 30, 2018 at 03:56:23PM -0500, thesven73@gmail.com wrote:
-> > From: Sven Van Asbroeck <TheSven73@googlemail.com>
-> >
-> > Ensure that timing values for the child node are applied to
-> > all chip selects in the child's address ranges.
-> >
->
-> I'm not sure about that.  Shouldn't we have another child node for
-> different chip select, something like below?
->
-> &weim {
->         acme@0,0 {
->                 compatible = "acme,whatever";
->                 reg = <0 0 0x100>, <0 0x400000 0x800>;
->                 fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
->                                       0x00000000 0xa0000240 0x00000000>;
->         };
->
->         acme@1,400000 {
->                 compatible = "acme,whatever";
->                 reg = <1 0x400000 0x800>;
->                 fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
->                                       0x00000000 0xa0000240 0x00000000>;
->         };
->
-> Shawn
+"Supply for external LNA"?
 
-I am submitting patches for a device that spans chip selects :(
-And such a device needs multiple address changes with different chip selects.
+And please keep the entries sorted.
 
-Imagine we have an acme device, which contains a control and a fifo region,
-on different chip selects:
+>  
+>  Example:
 
-&weim {
-        acme@0 {
-                compatible = "acme";
-                reg = <0 0x0 0x100>, <1 0x0 0x100>;
-        };
-};
-
-Now in probe we can access both regions:
-int acme_probe(struct platform_device *pdev)
-{
-        control_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-        fifo_res =    platform_get_resource(pdev, IORESOURCE_MEM, 1);
-        /* all ok */
-}
-
-But, if we have two separate child nodes, we also get two calls to probe(),
-which assumes two devices on the bus, and that is incorrect:
-
-&weim {
-        acme@0 {
-                compatible = "acme";
-                reg = <0 0x0 0x100>;
-        };
-        acme@1 {
-                compatible = "acme";
-                reg = <1 0x0 0x100>;
-        };
-};
-
-int acme_probe(struct platform_device *pdev)
-{
-        control_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-        /* next call always fails */
-        fifo_res =    platform_get_resource(pdev, IORESOURCE_MEM, 1);
-}
-
-For my patchset, Rob Herring suggested I made changes to the imx-weim driver
-to accommodate multi-chipselect devices.
-
-See the conversation below between Rob Herring and myself:
-https://lkml.org/lkml/2018/11/30/390
-
-If you are not entirely satisfied with my patch, then perhaps you
-could think of another way to support multi-chipselect devices?
-
-Many thanks,
-Sven
+Johan
