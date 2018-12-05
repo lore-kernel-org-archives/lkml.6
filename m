@@ -2,121 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A880C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A750C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3449120850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3449120850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bakke.com
+	by mail.kernel.org (Postfix) with ESMTP id 285D520850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285D520850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeLETN7 (ORCPT
+        id S1728293AbeLETOL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:13:59 -0500
-Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:40210 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727606AbeLETN6 (ORCPT
+        Wed, 5 Dec 2018 14:14:11 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49712 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbeLETOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:13:58 -0500
-X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 14:13:57 EST
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 3FB6A18020DB3;
-        Wed,  5 Dec 2018 19:05:09 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 26B75182CF66B;
-        Wed,  5 Dec 2018 19:05:08 +0000 (UTC)
-X-Session-Marker: 6461674062616B6B652E636F6D
-X-HE-Tag: coil62_663d10cb1d15b
-X-Filterd-Recvd-Size: 3591
-Received: from [192.168.6.106] (219.92-221-209.customer.lyse.net [92.221.209.219])
-        (Authenticated sender: dag@bakke.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  5 Dec 2018 19:05:01 +0000 (UTC)
-Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-bluetooth@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kay Sievers <kay.sievers@vrfy.org>,
-        =?UTF-8?Q?Zbigniew_J=c4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
- <20181204204117.14964-1-ville.syrjala@linux.intel.com>
- <20181205070621.GE16346@kroah.com> <20181205154032.GT9144@intel.com>
-From:   Dag B <dag@bakke.com>
-Message-ID: <c2f9f862-0bf1-be6b-ad9f-8c375d4b8ff0@bakke.com>
-Date:   Wed, 5 Dec 2018 20:09:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 5 Dec 2018 14:14:10 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gUccT-0000sm-4o; Wed, 05 Dec 2018 20:14:01 +0100
+Date:   Wed, 5 Dec 2018 20:14:01 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     catalin.marinas@arm.com, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
+Message-ID: <20181205191400.qrhim3m3ak5hcsuh@linutronix.de>
+References: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
+ <20181123095314.hervxkxtqoixovro@linutronix.de>
+ <40a63aa5-edb6-4673-b4cc-1bc10e7b3953@windriver.com>
+ <20181130181956.eewrlaabtceekzyu@linutronix.de>
+ <e7795912-7d93-8f4e-b997-67c4ac1f3549@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205154032.GT9144@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <e7795912-7d93-8f4e-b997-67c4ac1f3549@windriver.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-12-05 21:53:37 [+0800], He Zhe wrote:
+> For call trace 1:
+…
+> Since kmemleak would most likely be used to debug in environments where
+> we would not expect as great performance as without it, and kfree() has raw locks
+> in its main path and other debug function paths, I suppose it wouldn't hurt that
+> we change to raw locks.
+okay.
 
+> >> >From what I reached above, this is RT-only and happens on v4.18 and v4.19.
+> >>
+> >> The call trace above is caused by grabbing kmemleak_lock and then getting
+> >> scheduled and then re-grabbing kmemleak_lock. Using raw lock can also solve
+> >> this problem.
+> > But this is a reader / writer lock. And if I understand the other part
+> > of the thread then it needs multiple readers.
+> 
+> For call trace 2:
+> 
+> I don't get what "it needs multiple readers" exactly means here.
+> 
+> In this call trace, the kmemleak_lock is grabbed as write lock, and then scheduled
+> away, and then grabbed again as write lock from another path. It's a
+> write->write locking, compared to the discussion in the other part of the thread.
+> 
+> This is essentially because kmemleak hooks on the very low level memory
+> allocation and free operations. After scheduled away, it can easily re-enter itself.
+> We need raw locks to prevent this from happening.
 
-On 05.12.2018 16:40, Ville Syrjälä wrote:
-> On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
->> On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
->>> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
->>>
->>> Since commit 1455cf8dbfd0 ("driver core: emit uevents when
->>> device is bound to a driver") the kernel started emitting
->>> "bind" and "unbind" uevents which confuse the hid2hci
->>> udev rules.
->>>
->>> The symptoms on an affected machine (Dell E5400 in my case)
->>> include bluetooth devices not appearing and udev hogging
->>> the cpu as it's busy processing a constant stream of these
->>> "bind"+"unbind" uevents.
->> What is causing a "stream" of bind and unbind events?  This only happens
->> when a device is attached to a driver or removed from a driver, which is
->> caused by something else happening.
-> Not sure if it's just due to this thing causing devices to
-> appear/disappear during bind/unbind events or what.
->
->> This should not be a normal
->> occurance, unless something odd is happening to your hardware?
-> It's not specific to my hardware. Lot's of people are affected.
-> See eg.
-> https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
->
-> Acutally looking through that bug it seems someone else noticed
-> hid2hci failing lot in the logs. So maybe it's just that we already
-> switched the mode during "add", and then we try to redo the same
-> thing during "bind" which fails, and that then causes and unbind?
-> Dunno, udev is beyond me.
->
->
-There is another bluetooth scenario where a cpu core peaks at 100%.
-This is when a bluetooth keyboard goes out to lunch/suspends/disappears.
-No idea if this is related to the original issue, asking forgiveness if 
-it is not.
-I have found it challenging to attract any attention to the problem, 
-despite it not being an entirely new or uncommon occurence.
+With raw locks you wouldn't have multiple readers at the same time.
+Maybe you wouldn't have recursion but since you can't have multiple
+readers you would add lock contention where was none (because you could
+have two readers at the same time).
 
-Google the following terms: bluetooth keyboard bluetoothd linux 100% cpu
+> > Couldn't we just get rid of that kfree() or move it somewhere else?
+> > I mean if the free() memory on CPU-down and allocate it again CPU-up
+> > then we could skip that, rigth? Just allocate it and don't free it
+> > because the CPU will likely get up again.
+> 
+> For call trace 1:
+> 
+> I went through the CPU hotplug code and found that the allocation of the
+> problematic data, cpuc->shared_regs, is done in intel_pmu_cpu_prepare. And
+> the free is done in intel_pmu_cpu_dying. They are handlers triggered by two
+> different perf events.
+> 
+> It seems we can hardly form a convincing method that holds the data while
+> CPUs are off and then uses it again. raw locks would be easy and good enough.
 
+Why not allocate the memory in intel_pmu_cpu_prepare() if it is not
+already there (otherwise skip the allocation) and in
+intel_pmu_cpu_dying() not free it. It looks easy.
 
+> Thanks,
+> Zhe
 
-By chance, I discovered a supposed fix for this on github today. I have 
-not had the chance to test it (or if it even applies) yet:
-
-https://github.com/peak3d/bluez/commit/9cc3c1afd793e40b1a0cdc4a13e08b5e2575759e
-
-Could someone please shine a light on the sanity of this patch?
-
-
-
-Dag B
+Sebastian
