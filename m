@@ -2,100 +2,99 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB914C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1C2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A1A205C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A1A205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 701AD205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:38:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="buWz/wuh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701AD205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeLELiY (ORCPT
+        id S1727749AbeLELi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:38:24 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:36198 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727142AbeLELiY (ORCPT
+        Wed, 5 Dec 2018 06:38:28 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38960 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbeLELi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:38:24 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB5BT5bq024827;
-        Wed, 5 Dec 2018 05:38:21 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2p3qktq2mu-1;
-        Wed, 05 Dec 2018 05:38:21 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id BED00611C8BB;
-        Wed,  5 Dec 2018 05:38:20 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 5 Dec 2018
- 11:38:20 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wB5BcKLj006348; Wed,
- 5 Dec 2018 11:38:20 GMT
+        Wed, 5 Dec 2018 06:38:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=co7i7kojXM/YSztxUwTNPdkPl2J/ItoQs0xD8/ImA3I=; b=buWz/wuh3DsbaUMmiyHwOBNy0
+        gYakkZgbaSiqKJFzzQB6J7XBnrB0Jl1HK6Tg9ZIJthiwXpquJPnvgqOt5TcMEBE+ExaTPRNEM+3rs
+        CAiRm4Sn/S/LlEbqiM7pTkgwRdVWbhg4ELTwSXiuAB5lhH6aq9t2pUhZixyP/e2YLIuSU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gUVVU-0003JX-TY; Wed, 05 Dec 2018 11:38:20 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 7670F112533E; Wed,  5 Dec 2018 11:38:20 +0000 (GMT)
 Date:   Wed, 5 Dec 2018 11:38:20 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 18/22] mfd: wm831x-i2c: Make it explicitly non-modular
-Message-ID: <20181205113820.GZ16508@imbe.wolfsonmicro.main>
-References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
- <1543811009-15112-19-git-send-email-paul.gortmaker@windriver.com>
+From:   Mark Brown <broonie@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keiji Hayashibara <hayashibara.keiji@socionext.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 002/123] spi: uniphier: fix incorrect
+ property items
+Message-ID: <20181205113820.GB6205@sirena.org.uk>
+References: <20181205093555.5386-1-sashal@kernel.org>
+ <20181205093555.5386-2-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
 Content-Disposition: inline
-In-Reply-To: <1543811009-15112-19-git-send-email-paul.gortmaker@windriver.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=818 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812050106
+In-Reply-To: <20181205093555.5386-2-sashal@kernel.org>
+X-Cookie: Real Users never use the Help key.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 02, 2018 at 11:23:25PM -0500, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
-> 
-> drivers/mfd/Kconfig:config MFD_WM831X_I2C
-> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with I2C"
-> 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
-> 
-> Since module_init was not in use by this code, the init ordering
-> remains unchanged with this commit.
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: patches@opensource.cirrus.com
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
-> -static int wm831x_i2c_remove(struct i2c_client *i2c)
-> -{
-> -	struct wm831x *wm831x = i2c_get_clientdata(i2c);
-> -
-> -	wm831x_device_exit(wm831x);
 
-These patches remove the only callers of wm831x_device_exit, so I
-guess we should probably remove that function too?
+--OwLcNYc0lM97+oe1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Charles
+On Wed, Dec 05, 2018 at 04:33:54AM -0500, Sasha Levin wrote:
+> From: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+>=20
+> [ Upstream commit 3511ba7d4ca6f39e2d060bb94e42a41ad1fee7bf ]
+>=20
+> This commit fixes incorrect property because it was different
+> from the actual.
+> The parameters of '#address-cells' and '#size-cells' were removed,
+> and 'interrupts', 'pinctrl-names' and 'pinctrl-0' were added.
+
+Not sure we should be backporting documentation changes like this to
+stable, especially not without accompanying code changes...
+
+--OwLcNYc0lM97+oe1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwHuKsACgkQJNaLcl1U
+h9BdGQf/cVEzlCz8LauxdMkpmxd0zk92aQB/jLXrj3Pj09j/PoB86dqeUI1VB7Q3
+yGMxw6fC9Zir4cVF/r3J5I3js+BkF8F+5qCBsw2oa2v6oM8Laqat8l0U36zUulyR
+Qr53SzOSGC64SH8tiXju/jRVAFAeTF07eNlSHg2Q4+cNdOqrdnn/tIDWvpC8Fqvf
+9HlSLMnT19FHWm3U9f/nkzqm+UmxirUKyg2sJl1CSApMgoRqNDiMn7vkTArYXISs
+V97WQ+CUSCJIca6/Etko7By+ky8wTpodYSi40uZTomzM8HoHunoxRaVGRa9vAXto
+2j1FDIiwmilt8t6WBNlGI9GZ5i8p7Q==
+=/7CJ
+-----END PGP SIGNATURE-----
+
+--OwLcNYc0lM97+oe1--
