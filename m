@@ -2,173 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A42C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF57C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF7B2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E160E2087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVk09lg4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVk09lg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF7B2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="aPeUsASA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E160E2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbeLEHCN (ORCPT
+        id S1727244AbeLEHCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:02:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49584 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbeLEHCN (ORCPT
+        Wed, 5 Dec 2018 02:02:23 -0500
+Received: from host.euro-space.net ([87.117.239.2]:33466 "EHLO
+        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbeLEHCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:02:13 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D206360B7F; Wed,  5 Dec 2018 07:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543993331;
-        bh=21Xttrj99Oxbg2rASzj1UD+gR3498gxNUeLvKS/2w7I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aVk09lg4gr38Gm7Ls55/CTqKRaylAiu+QQWs2P1f7qGZE+bOCcfblV+zQIDNGXsI4
-         ROHhmO+M4FYvncKsem3s59MCbZJUdemcQMEPVGw2QphmMi6Kir5B7yV9r9lnAIQ5py
-         NDyC7qb7plUcfxq6f90rdexy8ut7WQcX4kZE9lAs=
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D77B607B5;
-        Wed,  5 Dec 2018 07:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543993331;
-        bh=21Xttrj99Oxbg2rASzj1UD+gR3498gxNUeLvKS/2w7I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aVk09lg4gr38Gm7Ls55/CTqKRaylAiu+QQWs2P1f7qGZE+bOCcfblV+zQIDNGXsI4
-         ROHhmO+M4FYvncKsem3s59MCbZJUdemcQMEPVGw2QphmMi6Kir5B7yV9r9lnAIQ5py
-         NDyC7qb7plUcfxq6f90rdexy8ut7WQcX4kZE9lAs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D77B607B5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f177.google.com with SMTP id z16so21151574qtq.4;
-        Tue, 04 Dec 2018 23:02:11 -0800 (PST)
-X-Gm-Message-State: AA+aEWa23pBdQKu06a4QsexRG0+2UryV10bLwzXG4GPDzF4w/u9nWjvv
-        UHhOij1Wby4SjHvr4W+Y2UMFgno9peuWLGUufjs=
-X-Google-Smtp-Source: AFSGD/WtKAk49RWawlVV4teV76nfmjHqo1IIwfZl10lCKm5kusA65R5JMiLYJ8oF0LEtM3SrFcH5f3/JQk3oHo0xAy4=
-X-Received: by 2002:a0c:f053:: with SMTP id b19mr22686772qvl.29.1543993330365;
- Tue, 04 Dec 2018 23:02:10 -0800 (PST)
+        Wed, 5 Dec 2018 02:02:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
+        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MUwZ4/xXouELJhOt4zikfgXQ+QMNK1eM/6meihPAHSM=; b=aPeUsASAxnhfQgD45XVInLKTY4
+        VEB79OnLMCtfisp0X6qjVTsFsjs9/x94gf2HUbbSVFF5mgO71r/7zkjb1lnl6Kk2D4ihR36fwlMc9
+        Bmv/0q9ZqZ8lDeeWDuj0+lIDDCHslMgOlGzWC33dcokzaQT0WdccNj2XGZ8QA+v/dnQqaVdHnO7ml
+        t179rtzdtlV1j6YDVBSv9XYFfBRqvJnRcqJmBH1/RYZpuX6ub+MFdDYCRWmbI24ZeVzvDF8UzWlDo
+        y1GJXD+qQhzfJ9LiLqVgwPo04m8NGVLjY2tQeaeU4ZqQbK7n8iVRLadeIXhJjMMjopzlXCrHLBiN5
+        pNhJ6SjQ==;
+Received: from x2f62ea7.dyn.telefonica.de ([2.246.46.167]:33156 helo=[192.168.1.3])
+        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <kmarinushkin@birdec.tech>)
+        id 1gURCN-00006S-CI; Wed, 05 Dec 2018 07:02:19 +0000
+Subject: Re: [resend PATCH] dt-bindings: sound: Add documentation for pcm3060
+ property out-single-ended
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20181115071253.22558-1-kmarinushkin@birdec.tech>
+ <20181204214313.GA7847@bogus>
+From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
+Message-ID: <7cbf1452-354f-07d6-2310-cadc4358433e@birdec.tech>
+Date:   Wed, 5 Dec 2018 08:04:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-References: <1540269361-28185-1-git-send-email-cang@codeaurora.org>
-In-Reply-To: <1540269361-28185-1-git-send-email-cang@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Wed, 5 Dec 2018 12:31:57 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iH9sz3NsejvxLdgAy+E-6Rff9RDA74EtnSidWOuZN=q9w@mail.gmail.com>
-Message-ID: <CAFp+6iH9sz3NsejvxLdgAy+E-6Rff9RDA74EtnSidWOuZN=q9w@mail.gmail.com>
-Subject: Re: [PATCH v10 0/6] Support for Qualcomm UFS QMP PHY on SDM845
-To:     Can Guo <cang@codeaurora.org>
-Cc:     Subhash Jadavani <subhashj@codeaurora.org>,
-        asutoshd@codeaurora.org, evgreen@chromium.org,
-        Manu Gautam <mgautam@codeaurora.org>, kishon <kishon@ti.com>,
-        "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181204214313.GA7847@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - host.euro-space.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - birdec.tech
+X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
+X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 10:07 AM Can Guo <cang@codeaurora.org> wrote:
->
-> This patch series adds support for UFS QMP PHY on SDM845 and the
-> compatible string for it. This patch series depends on the current
-> proposed QMP V3 USB3 UNI PHY support for sdm845 driver [1], on
-> the DT bindings for the QMP V3 USB3 PHYs based dirver [2], and also
-> rebased on updated pipe_clk initialization sequence [3]. This series
-> can only be merged once the dependent patches do.
-> [1] http://lists-archives.com/linux-kernel/29071659-dt-bindings-phy-qcom-qmp-update-bindings-for-sdm845.html
-> [2] http://lists-archives.com/linux-kernel/29071660-phy-qcom-qmp-add-qmp-v3-usb3-uni-phy-support-for-sdm845.html
-> [3] https://patchwork.kernel.org/patch/10376551/
+Thank you Rob,
 
-Besides my comment for PATCH 4/6, I have already reviewed the entire series,
-and it looks good.
-If adding new bindings for sdm845 needs a further review, can you separate out
-just the phy patches from this series (patch 1, 2, 3 & 6), and re-send them.
-We can ask Kishon if he can pull them in for this merge window.
-Thanks.
+Mark already applied this patch, with a slightly modified subject:
 
-best regards
-Vivek
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-next&id=fd7de6370cb62b147185834d60069568a21acacd
 
->
-> Changes since v9:
-> - Incorporated review comments from Rob.
->
-> Changes since v8:
-> - Add one new change to support ufs core reset.
-> - Incorporated review comments from Evan, Vivek.
->
-> Changes since v7:
-> - Add one new change to update UFS PHY power on sequence
-> - Incorporated review comments from Evan, Vivek and Manu.
->
-> Changes since v6:
-> - Add one new change to clean up some structs and field
-> - Updates the PHY power control sequence.
-> - Incorporated review comments from Vivek and Manu.
->
-> Changes since v5:
-> - Updates the PHY power control sequence.
-> - Updates UFS PHY power on condition check.
->
-> Changes since v4:
-> - Adds 'ref_aux' clock back to SDM845 UFS PHY clock list.
-> - Power on PHY before serdes configuration starts.
-> - Updates the UFS PHY initialization sequence.
-> - Updates a few UFS PHY registers.
-> - Incorporated review comments from Vivek and Manu.
->
-> Changes since v3:
-> - Incorporated review comments from Vivek and Rob.
->
-> Changes since v2:
-> - Incorporated review comments from Vivek and Rob.
-> - Remove "ref_aux" from sdm845 ufs phy clock list structure.
->
-> Changes since v1:
-> - Incorporated review comments from Vivek and Manu.
-> - Update the commit title of patch 2.
->
-> Can Guo (5):
->   phy: Update PHY power control sequence
->   phy: General struct and field cleanup
->   phy: Add QMP phy based UFS phy support for sdm845
->   scsi: ufs: Power on phy after it is initialized
->   dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
->
-> Dov Levenglick (1):
->   scsi: ufs: Add core reset support
->
->  .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   4 +-
->  drivers/phy/qualcomm/phy-qcom-qmp.c                | 216 +++++++++++++++++++--
->  drivers/phy/qualcomm/phy-qcom-qmp.h                |  15 ++
->  drivers/scsi/ufs/ufs-qcom.c                        |  34 +++-
->  drivers/scsi/ufs/ufs-qcom.h                        |   1 +
->  drivers/scsi/ufs/ufshcd-pltfrm.c                   |  22 +++
->  drivers/scsi/ufs/ufshcd.c                          |  13 ++
->  drivers/scsi/ufs/ufshcd.h                          |  12 ++
->  8 files changed, 296 insertions(+), 21 deletions(-)
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Best Regards,
+Kirill
 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On 12/04/18 22:43, Rob Herring wrote:
+> On Thu, 15 Nov 2018 08:12:53 +0100, Kirill Marinushkin wrote:
+>> Output of pcm3060 codec may be configured as single-ended or differential
+>>
+>> Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
+>> Cc: devicetree@vger.kernel.org
+>> ---
+>> Hello Mark,
+>>
+>> yesterday there was a misunderstanding: when I wrote you
+>>
+>>> I think you forgot one patch in the series
+>>
+>> you accidently applied the already-applied patch instead of the forgotten
+>> one. To avoid the confusion, in this e-mail I resend you the proper
+>> forgotten patch in a separate mailing thread.
+>>
+>> Please apply this patch for-next.
+>>
+>> Best Regards,
+>> Kirill
+>> ---
+>>  Documentation/devicetree/bindings/sound/pcm3060.txt | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
