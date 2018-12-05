@@ -6,63 +6,62 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3480C04EB9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFE6C07E85
 	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A7B20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B401320892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1544034012;
-	bh=3orrtxMYPTCt7x+Wku4tzYWGXQoWImMQqTEXl03RHbA=;
+	bh=BIi1hZ66zkvyDapsBOnmj0Wu0Y+lx7A9nfovLhZgTDU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=1NI63br4qIS77XscY0n7yXdNqT3CKQv6M8FDWTY9E1KqQoQpbecp6tIA75YgM62aT
-	 SYNtx88V0WHgAQo1qotEEnIxd6Dt1rjD/65YCGHKabsa3G6/c/v9sygSZLtJTLPLAL
-	 4eGEc4vlzis92V4b2ZypuBGVc8O/++mkM3ZaCd7w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A7B20879
+	b=QuJx7nXxlWhOYIAig1atVev0U4p8fTVPJ6lEraeKi2PUN8ReNHmbpcFuwnG0xhwXH
+	 WAM7k5XD4x6LMH8l0v50Qhq81Jcz9dQb1lMArlsZt3W0m8QmVt/2DykTpydU9LyzEo
+	 7IvzErA816O7Bp/l4K6b9N6SrzctJuF4EdbDxJIw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B401320892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeLESUD (ORCPT
+        id S1728268AbeLESUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:20:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48186 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 13:20:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeLESUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727923AbeLESUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 13:20:03 -0500
-Subject: Re: [git pull] Input updates for v4.20-rc5
+Subject: Re: [GIT PULL] MFD fixes for v4.20
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544034002;
-        bh=3orrtxMYPTCt7x+Wku4tzYWGXQoWImMQqTEXl03RHbA=;
+        s=default; t=1544034003;
+        bh=BIi1hZ66zkvyDapsBOnmj0Wu0Y+lx7A9nfovLhZgTDU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JdLZ5bhkq5fbB7HAUMuWy7Wh9Yp0eD1evr82e+P3mbyrnD23dA6F0VVXQ7CqPzr/B
-         IMw+mtwic2M6mqV6vEyXnbOIxyXB2kAjV7rVrDncMaY1eok1pb1iz2ms4ngfp2ppWP
-         spz0u9fBbgVLN3mpmdO9zx1cJiwokxpYVCKBIX3k=
+        b=mF8fK+KEhdiVp4eKz+vvL0Js7pj/B1Mggo/iH7all6n8C4OsINEuZzTQ5Fa2TErjk
+         qHU5zn/LQsPI75JlhVjUU9kz8OgQ6iOIebKkMQOghIeMd4/M2acxUnf+AUbfPTGijL
+         P3QG898YsbFS8VBw5YELBD8wN+I/Ssz7abaoEdpM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181204033746.GA235290@dtor-ws>
-References: <20181204033746.GA235290@dtor-ws>
+In-Reply-To: <20181205100856.GC26661@dell>
+References: <20181205100856.GC26661@dell>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181204033746.GA235290@dtor-ws>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-X-PR-Tracked-Commit-Id: 6c3516fed7b61a3527459ccfa67fab130d910610
+X-PR-Tracked-Message-Id: <20181205100856.GC26661@dell>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-fixes-4.20
+X-PR-Tracked-Commit-Id: 48a2ca0ee3994df53da230c7079a18a70ec914f9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: adac0753c25217a2365b132c87cb2540b51fa89b
-Message-Id: <20181205182002.5826.80954.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Wed, 05 Dec 2018 18:20:02 +0000
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+X-PR-Merge-Commit-Id: 5e0dc1a7ce1f322c06e993845def2c73cfc485fd
+Message-Id: <20181205182003.5826.28704.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Wed, 05 Dec 2018 18:20:03 +0000
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 3 Dec 2018 19:37:46 -0800:
+The pull request you sent on Wed, 5 Dec 2018 10:08:56 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-fixes-4.20
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/adac0753c25217a2365b132c87cb2540b51fa89b
+https://git.kernel.org/torvalds/c/5e0dc1a7ce1f322c06e993845def2c73cfc485fd
 
 Thank you!
 
