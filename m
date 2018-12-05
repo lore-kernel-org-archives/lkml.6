@@ -7,126 +7,89 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFDAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E9CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11FBA206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB138206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0nnN+0jo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11FBA206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFGTGKbl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB138206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbeLEJnd (ORCPT
+        id S1728561AbeLEJnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:43:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48088 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:43:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbeLEJna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:43:30 -0500
+        id S1728536AbeLEJl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:56 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A6F720892;
-        Wed,  5 Dec 2018 09:43:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39D3120878;
+        Wed,  5 Dec 2018 09:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003009;
-        bh=vZPSzNYPMiOhOKC4E6xYUZ0lqyp+YSxDWyBqB4W23Yg=;
+        s=default; t=1544002915;
+        bh=bn65UKNiVpCGjjYafzuGPcxKhIR5k87iTmZiUa8C5gE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0nnN+0joaIpozsukQcqMawFnxTYJbuF3ezrvFWnekIdPNNCvoV+fTBTFg6SO3svfh
-         oS/q1etvEAVt5ysTHxk8XnSw/v1IOOakxqaOgLsi0+1lccmUZ2d+2uxzbPPxhH1jlu
-         oB14m/VbBQ83fIyJ6kEThT54/FyKfqmtC0o6Z3c0=
+        b=XFGTGKblu55doSalbFfEYmn0D2HLBwm1PiVgdNlBtDCS7aSkKKSCT5k974A9X48Fb
+         190EGk+2Eseosd7G1QVFBIHS/TE8vJcThGi66QhuszqmzdKR35Ibnj/5Uo6dqWpyJX
+         doNGU5uM99uH0Gvr1fyIJy5VrKNxxNW26iuOBM2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin Kelly <martin@martingkelly.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 03/69] iio:st_magn: Fix enable device after trigger
-Date:   Wed,  5 Dec 2018 04:41:41 -0500
-Message-Id: <20181205094247.6556-3-sashal@kernel.org>
+Cc:     Prabhath Sajeepa <psajeepa@purestorage.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 111/123] nvme-rdma: fix double freeing of async event data
+Date:   Wed,  5 Dec 2018 04:35:43 -0500
+Message-Id: <20181205093555.5386-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
-References: <20181205094247.6556-1-sashal@kernel.org>
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kelly <martin@martingkelly.com>
+From: Prabhath Sajeepa <psajeepa@purestorage.com>
 
-[ Upstream commit fe5192ac81ad0d4dfe1395d11f393f0513c15f7f ]
+[ Upstream commit 6344d02dc8f886b6bbcd922ae1a17e4a41500f2d ]
 
-Currently, we enable the device before we enable the device trigger. At
-high frequencies, this can cause interrupts that don't yet have a poll
-function associated with them and are thus treated as spurious. At high
-frequencies with level interrupts, this can even cause an interrupt storm
-of repeated spurious interrupts (~100,000 on my Beagleboard with the
-LSM9DS1 magnetometer). If these repeat too much, the interrupt will get
-disabled and the device will stop functioning.
+Some error paths in configuration of admin queue free data buffer
+associated with async request SQE without resetting the data buffer
+pointer to NULL, This buffer is also freed up again if the controller
+is shutdown or reset.
 
-To prevent these problems, enable the device prior to enabling the device
-trigger, and disable the divec prior to disabling the trigger. This means
-there's no window of time during which the device creates interrupts but we
-have no trigger to answer them.
-
-Fixes: 90efe055629 ("iio: st_sensors: harden interrupt handling")
-Signed-off-by: Martin Kelly <martin@martingkelly.com>
-Tested-by: Denis Ciocca <denis.ciocca@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
+Reviewed-by: Roland Dreier <roland@purestorage.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/magnetometer/st_magn_buffer.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/nvme/host/rdma.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iio/magnetometer/st_magn_buffer.c b/drivers/iio/magnetometer/st_magn_buffer.c
-index 0a9e8fadfa9d..37ab30566464 100644
---- a/drivers/iio/magnetometer/st_magn_buffer.c
-+++ b/drivers/iio/magnetometer/st_magn_buffer.c
-@@ -30,11 +30,6 @@ int st_magn_trig_set_state(struct iio_trigger *trig, bool state)
- 	return st_sensors_set_dataready_irq(indio_dev, state);
- }
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index dc042017c293..b6a28de682e8 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -184,6 +184,7 @@ static int nvme_rdma_alloc_qe(struct ib_device *ibdev, struct nvme_rdma_qe *qe,
+ 	qe->dma = ib_dma_map_single(ibdev, qe->data, capsule_size, dir);
+ 	if (ib_dma_mapping_error(ibdev, qe->dma)) {
+ 		kfree(qe->data);
++		qe->data = NULL;
+ 		return -ENOMEM;
+ 	}
  
--static int st_magn_buffer_preenable(struct iio_dev *indio_dev)
--{
--	return st_sensors_set_enable(indio_dev, true);
--}
--
- static int st_magn_buffer_postenable(struct iio_dev *indio_dev)
- {
- 	int err;
-@@ -50,7 +45,7 @@ static int st_magn_buffer_postenable(struct iio_dev *indio_dev)
- 	if (err < 0)
- 		goto st_magn_buffer_postenable_error;
- 
--	return err;
-+	return st_sensors_set_enable(indio_dev, true);
- 
- st_magn_buffer_postenable_error:
- 	kfree(mdata->buffer_data);
-@@ -63,11 +58,11 @@ static int st_magn_buffer_predisable(struct iio_dev *indio_dev)
- 	int err;
- 	struct st_sensor_data *mdata = iio_priv(indio_dev);
- 
--	err = iio_triggered_buffer_predisable(indio_dev);
-+	err = st_sensors_set_enable(indio_dev, false);
- 	if (err < 0)
- 		goto st_magn_buffer_predisable_error;
- 
--	err = st_sensors_set_enable(indio_dev, false);
-+	err = iio_triggered_buffer_predisable(indio_dev);
- 
- st_magn_buffer_predisable_error:
- 	kfree(mdata->buffer_data);
-@@ -75,7 +70,6 @@ static int st_magn_buffer_predisable(struct iio_dev *indio_dev)
- }
- 
- static const struct iio_buffer_setup_ops st_magn_buffer_setup_ops = {
--	.preenable = &st_magn_buffer_preenable,
- 	.postenable = &st_magn_buffer_postenable,
- 	.predisable = &st_magn_buffer_predisable,
- };
+@@ -816,6 +817,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
+ out_free_async_qe:
+ 	nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
+ 		sizeof(struct nvme_command), DMA_TO_DEVICE);
++	ctrl->async_event_sqe.data = NULL;
+ out_free_queue:
+ 	nvme_rdma_free_queue(&ctrl->queues[0]);
+ 	return error;
 -- 
 2.17.1
 
