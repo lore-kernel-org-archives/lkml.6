@@ -2,138 +2,266 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36429C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE86C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B0520879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D9F2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:48:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QhGKxBJV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B0520879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FroNUStp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D9F2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeLERrp (ORCPT
+        id S1727918AbeLERs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:47:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36938 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLERrp (ORCPT
+        Wed, 5 Dec 2018 12:48:57 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53034 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbeLERs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:47:45 -0500
-Received: by mail-pf1-f195.google.com with SMTP id y126so10378045pfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:47:44 -0800 (PST)
+        Wed, 5 Dec 2018 12:48:57 -0500
+Received: by mail-it1-f194.google.com with SMTP id g76so2740171itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:48:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GWWzcbrSwfAg0ZxQMB2tb6h9CB60uyE2zzgL39jC1qs=;
-        b=QhGKxBJVc+/PGXaVm70xwsQpApDz+s2UfTF7gkB0RXEnJxCkN0udCkhAedwxkUZWQH
-         Z3z+yxctfHtkqHdRXpei9BNSZqX4xFi+SqOCfAcwQRpbP+0jKjrOVbgmAa407gH6clxW
-         sGKYxxsu2ISOUBYU9BMcDrQERLLYHptpxjmR1J54WgJk46n3Dh0XSFp09ZpaIF/9CgGz
-         uVCywZ0/C9wIEcZEfr6GFJhWjo/Q7WKC7PL3b1V2KyhSkuKfGsQw97RVvgWSenVsSa02
-         Fuq4Qg+6h69qsU0NONkDidqQIKACnNhD8FEpo3nqmjN5rL2VyxcDySRl13OM4AFKuRv/
-         Q3rQ==
+        bh=d++t2nZr1qCftJckZMZdxevjAVDxBeVn6BBLCL4SvUA=;
+        b=FroNUStp70TJN4KhqRKaYBCwDT3fUlbPZb++pAxek99PQQFInr2JTdm5OIJ5VvK4dB
+         X3+gcCZBBNO/cCskrq3DXWa5X3UmCdBjqkPR87gdAygL667H+jSz9c2RN3jFbIRC2Wem
+         R80EwNtytgcsLP5c6ETAXoFVZuKjjnjf+l0QU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GWWzcbrSwfAg0ZxQMB2tb6h9CB60uyE2zzgL39jC1qs=;
-        b=rPiQVrBLzaVqFtgNWzIUHnfxiffx16oqweInM7JkVoaBEL3kgLJBXR4Qhe7/43YB+A
-         fmT/YsfSKxfEdLaa+hqaWNtIHA2v9U1oiwtesFpvdpoO+s4Xhwy03kzZBT5JSlJGUP7c
-         x0tlZnB6C/PYjMx/Et8so8aVlPUHOPBxRCaADcjcizskFu/MsQrjntN5EXBG80Uvk6G4
-         j6NXcA2zOsK2B1mmp/P4Dn9Z+Y6ikHDZT04p7WNIhtArgrzwiq7rMM71t80mdvfOQLU5
-         xYFODCRuSnNiOPdHXjkda+i5snHtXHftaMyvUw68AehjwQl7QVyZ/JoZC4WPPOu7+CDn
-         7RTg==
-X-Gm-Message-State: AA+aEWb+cqDehP6b/Wty3tcQ7EWJAugyUBmSE2OLoIgFdIVXBII8bUcF
-        naL3FspN0oXTqgnNCsf5piFk3/PXQiJt+1RVRewO4Q==
-X-Google-Smtp-Source: AFSGD/U6fSaLsrqIwZBsF5ZBExT8q43sfVzlRaakRZOmgO7OaFsltOEv3p51DpiJfbYstF3xabVXWluEibUKyk2X4WY=
-X-Received: by 2002:a65:4683:: with SMTP id h3mr20384165pgr.225.1544032063638;
- Wed, 05 Dec 2018 09:47:43 -0800 (PST)
+        bh=d++t2nZr1qCftJckZMZdxevjAVDxBeVn6BBLCL4SvUA=;
+        b=iW//8urKRrdpW1hkyJt1i7g6N2goflFY8rBE6p2wVNes9IBVeYLZg3h3F25kyxMSo3
+         T4kXzmoaRzvaUk58MmVKFHqUxIvlWZ7u7cIFCorJDzNul/1Jp+uG19J8kVT7c2/Jo02u
+         25Gi+xO4dqZ2QNQpR2yODqA+aMrMRGur3C8QJJ6yk0kYXec28PdoHyli+BAzjdbzQGh2
+         xIKs2Bqldamz0EmJQqpTuHcWctfUAFJ45t0PLkyBIcVUrfzS5CxqUHy2o64FqC3UK5KB
+         /0JGn/yTCLROWnfsuFdVql4yEvIb0ifSEx8l26wZB+/gymZ8KdhtjtJpBujX2FHkmZ0m
+         0pPA==
+X-Gm-Message-State: AA+aEWbBuzPLiiGB1LyekiKNsSQ/Q/St3f55e4lWWirvshECdIFyNmod
+        kgzp5l4VhUjt1vSu91UWs6R3veIT0U6iDtTxEKpH7g==
+X-Google-Smtp-Source: AFSGD/W8hIa7cRxP2mVTCLSzVJeeWpSsSF+m5HT3tksyPR6MoKV7z1PoaCHvhWrDmH3MK4ggIRBXcTwBhZKRC24Tg7s=
+X-Received: by 2002:a05:660c:34f:: with SMTP id b15mr16548692itl.146.1544032136245;
+ Wed, 05 Dec 2018 09:48:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20181205014213.943-1-natechancellor@gmail.com>
-In-Reply-To: <20181205014213.943-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 5 Dec 2018 09:47:32 -0800
-Message-ID: <CAKwvOdkMbf-=aKrWPZ7nPP0miKDxKMDYN4Kk46N4rxOwHb-zAw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: Remove '-p' from LDFLAGS
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux@armlinux.org.uk,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
+ <1541912383-19915-4-git-send-email-leo.yan@linaro.org> <20181119182759.GA608@xps15>
+ <20181205033145.GA15964@leoy-ThinkPad-X240s>
+In-Reply-To: <20181205033145.GA15964@leoy-ThinkPad-X240s>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 5 Dec 2018 10:48:45 -0700
+Message-ID: <CANLsYkyMb58D9JetJN4BdVcaTmurPRqd5BZy99zX=5DA0J9wDA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/5] perf cs-etm: Support for NO_SYNC packet
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 5:42 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Tue, 4 Dec 2018 at 20:31, <leo.yan@linaro.org> wrote:
 >
-> This option is not supported by lld:
+> On Mon, Nov 19, 2018 at 11:27:59AM -0700, Mathieu Poirier wrote:
+> > On Sun, Nov 11, 2018 at 12:59:41PM +0800, Leo Yan wrote:
+> > > As described in OpenCSD (CoreSight decoder lib), in the decoding stream
+> > > it includes one trace element with type OCSD_GEN_TRC_ELEM_NO_SYNC; the
+> > > element indicates 'either at start of decode, or after overflow / bad
+> > > packet', we should take it as a signal for the tracing off and this will
+> > > cause tracing discontinuity.  From the trace dump with 'perf script',
+> > > sometimes the element OCSD_GEN_TRC_ELEM_NO_SYNC collaborates with
+> > > element OCSD_GEN_TRC_ELEM_TRACE_ON to show the tracing flow have been
+> > > turned off and on, in this case the cs-etm code has handled TRACE_ON
+> > > packet well so we observe the tracing discontinuity; but in another case
+> > > it only inserts the element OCSD_GEN_TRC_ELEM_NO_SYNC into instructions
+> > > packets, we miss to handle the case if has only standalone NO_SYNC
+> > > element and users cannot receive the info for tracing discontinuity.
+> > >
+> > > This patch introduces new type CS_ETM_TRACE_OFF to generate packet for
+> > > receiving element OCSD_GEN_TRC_ELEM_NO_SYNC from decoder; when generate
+> > > sample, CS_ETM_TRACE_OFF packet has almost the same behaviour with
+> >
+> > Here you have used the word "almost", leading me to beleive there are cases
+> > where the handling of TRACE_ON and NO_SYNC packets differ, but the
+> > implementation enacts the same behavior for both.
+> >
+> > Mike or Robert, can you confirm that TRACE_ON and NO_SYNC packets should be
+> > treated the same way?
 >
->     ld.lld: error: unknown argument: -p
+> I also would like to get suggestions/comments from Mike and Rob.
 >
-> This has been a no-op in binutils since 2004 (see commit dea514f51da1 in
-> that tree). Given that the lowest officially supported of binutils for
-> the kernel is 2.20, which was released in 2009, nobody needs this flag
-> around so just remove it. Commit 1a381d4a0a9a ("arm64: remove no-op -p
-> linker flag") did the same for arm64.
+> For NO_SYNC packet, Mike before has given some explination for it:
+>
+> "looking at the decoder flow, when the decoder is reset, then it is
+> returned to an unsynchronised state and a NO_SYNC will be output.
+> With perf, it can concatenate multiple trace buffers into a single
+> section of the perf.data file. To ensure that the decode process can
+> see the start of a new buffer, the drivers will insert a barrier
+> packet between different buffers so that the decoder can spot the
+> boundaries. When the decoder hits a barrier packet it will
+> automatically reset so that it correctly decodes the next trace
+> buffer. This could be what you are seeing here."
+>
+> So I think there still have some difference between TRACE_ON and
+> NO_SYNC packets, TRACE_ON packet indicates the start of trace and it's
+> also possible caused by tracing discontinuity; NO_SYNC packets usually
+> caused by an unsynchronised state.  But both of them presents
+> discontinuity in perf trace data.
+>
+> I prefer to use two different packet types to present them, this can
+> let the code to be more readable and easier to be maintained later.
 
-While investigating the context of 1a381d4a0a9a for review, I found
-that bfd had removed -p's implementation a long time ago, but kept the
-flag as a no-op for compatibility.  I asked that the patch be extended
-to arm as well, but don't think a v2 was ever cut.
-
-Thanks for sending this Nathan.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Absolutely.  Make sure to get to the bottom of the story with Mike
+and/or Robert before sending your next patchset.
 
 >
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  arch/arm/Makefile                 | 2 +-
->  arch/arm/boot/compressed/Makefile | 2 --
->  2 files changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index 05a91d8b89f3..e2a0baf36766 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -10,7 +10,7 @@
->  #
->  # Copyright (C) 1995-2001 by Russell King
->
-> -LDFLAGS_vmlinux        :=-p --no-undefined -X --pic-veneer
-> +LDFLAGS_vmlinux        := --no-undefined -X --pic-veneer
->  ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
->  LDFLAGS_vmlinux        += --be8
->  KBUILD_LDFLAGS_MODULE  += --be8
-> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-> index 1f5a5ffe7fcf..dcd07bd24b85 100644
-> --- a/arch/arm/boot/compressed/Makefile
-> +++ b/arch/arm/boot/compressed/Makefile
-> @@ -131,8 +131,6 @@ endif
->  ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
->  LDFLAGS_vmlinux += --be8
->  endif
-> -# ?
-> -LDFLAGS_vmlinux += -p
->  # Report unresolved symbol references
->  LDFLAGS_vmlinux += --no-undefined
->  # Delete all temporary local symbols
-> --
-> 2.20.0.rc1
->
+> If you agree with this, I also will rephrase the commit log to avoid
+> confusion that these two packets are the same thing.
 
+Yes please.
 
--- 
-Thanks,
-~Nick Desaulniers
+>
+> > Leo, if handling of the TRACE_ON and NO_SYNC packets is the same then we should
+> > treat them the same way in cs_etm_decoder__gen_trace_elem_printer(), i.e simply
+> > call cs_etm_decoder__buffer_trace_on().  That way packet handling in cs-etm.c
+> > doesn't change.  Otherwise see my comments below.
+> >
+> > > CS_ETM_TRACE_ON packet: both of them invokes cs_etm__flush() to generate
+> > > samples for the previous instructions packet, and in cs_etm__sample() it
+> > > also needs to generate samples if TRACE_OFF packet is followed by one
+> > > sequential instructions packet.  This patch also converts the address to
+> > > 0 for TRACE_OFF packet, this is same with TRACE_ON packet as well.
+> > >
+> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > > ---
+> > >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++++++++++
+> > >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  7 ++++---
+> > >  tools/perf/util/cs-etm.c                        | 15 +++++++++++----
+> > >  3 files changed, 25 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > > index 5efb616..9d52727 100644
+> > > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > > @@ -369,6 +369,14 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+> > >  }
+> > >
+> > >  static ocsd_datapath_resp_t
+> > > +cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
+> > > +                            const uint8_t trace_chan_id)
+> > > +{
+> > > +   return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > > +                                        CS_ETM_TRACE_OFF);
+> > > +}
+> > > +
+> > > +static ocsd_datapath_resp_t
+> > >  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
+> > >                             const uint8_t trace_chan_id)
+> > >  {
+> > > @@ -389,6 +397,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+> > >     case OCSD_GEN_TRC_ELEM_UNKNOWN:
+> > >             break;
+> > >     case OCSD_GEN_TRC_ELEM_NO_SYNC:
+> > > +           resp = cs_etm_decoder__buffer_trace_off(decoder,
+> > > +                                                   trace_chan_id);
+> >
+> > If we want to handle NO_SYNC element types, why introduce a "trace_off"
+> > function?  Wouldn't it make more sense to call it
+> > cs_etm_decoder__buffer_no_sync() ?
+>
+> Will change to cs_etm_decoder__buffer_no_sync().
+>
+> > >             decoder->trace_on = false;
+> > >             break;
+> > >     case OCSD_GEN_TRC_ELEM_TRACE_ON:
+> > > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > > index 9351bd1..a38c97c 100644
+> > > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > > @@ -23,9 +23,10 @@ struct cs_etm_buffer {
+> > >  };
+> > >
+> > >  enum cs_etm_sample_type {
+> > > -   CS_ETM_EMPTY = 0,
+> > > -   CS_ETM_RANGE = 1 << 0,
+> > > -   CS_ETM_TRACE_ON = 1 << 1,
+> > > +   CS_ETM_EMPTY            = 0,
+> > > +   CS_ETM_RANGE            = 1 << 0,
+> > > +   CS_ETM_TRACE_ON         = 1 << 1,
+> > > +   CS_ETM_TRACE_OFF        = 1 << 2,
+> >
+> > CS_ETM_NO_SYNC, see above comment.  And please don't use indentation.
+>
+> Will do this.
+>
+> > >  };
+> > >
+> > >  enum cs_etm_isa {
+> > > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > > index f4fa877..2a0cef9 100644
+> > > --- a/tools/perf/util/cs-etm.c
+> > > +++ b/tools/perf/util/cs-etm.c
+> > > @@ -517,8 +517,9 @@ static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
+> > >
+> > >  static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+> > >  {
+> > > -   /* Returns 0 for the CS_ETM_TRACE_ON packet */
+> > > -   if (packet->sample_type == CS_ETM_TRACE_ON)
+> > > +   /* Returns 0 for TRACE_ON and TRACE_OFF packets */
+> > > +   if (packet->sample_type == CS_ETM_TRACE_ON ||
+> > > +       packet->sample_type == CS_ETM_TRACE_OFF)
+> > >             return 0;
+> > >
+> > >     return packet->start_addr;
+> > > @@ -527,8 +528,9 @@ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+> > >  static inline
+> > >  u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
+> > >  {
+> > > -   /* Returns 0 for the CS_ETM_TRACE_ON packet */
+> > > -   if (packet->sample_type == CS_ETM_TRACE_ON)
+> > > +   /* Returns 0 for TRACE_ON and TRACE_OFF packets */
+> > > +   if (packet->sample_type == CS_ETM_TRACE_ON ||
+> > > +       packet->sample_type == CS_ETM_TRACE_OFF)
+> > >             return 0;
+> > >
+> > >     return packet->end_addr - packet->last_instr_size;
+> > > @@ -930,6 +932,10 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+> > >             if (etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
+> > >                     generate_sample = true;
+> > >
+> > > +           /* Generate sample for tracing off packet */
+> > > +           if (etmq->prev_packet->sample_type == CS_ETM_TRACE_OFF)
+> > > +                   generate_sample = true;
+> > > +
+> > >             /* Generate sample for branch taken packet */
+> > >             if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+> > >                 etmq->prev_packet->last_instr_taken_branch)
+> > > @@ -1085,6 +1091,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+> > >                                     cs_etm__sample(etmq);
+> > >                                     break;
+> > >                             case CS_ETM_TRACE_ON:
+> > > +                           case CS_ETM_TRACE_OFF:
+> > >                                     /*
+> > >                                      * Discontinuity in trace, flush
+> > >                                      * previous branch stack
+> > > --
+> > > 2.7.4
+> > >
