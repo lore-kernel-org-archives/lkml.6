@@ -2,128 +2,132 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BB4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFA7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEC520666
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EEC520666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 16B2920850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:18:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="enji7Fix"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B2920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbeLEDOy convert rfc822-to-8bit (ORCPT
+        id S1726537AbeLEDSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 22:14:54 -0500
-Received: from mga01.intel.com ([192.55.52.88]:34896 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbeLEDOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 22:14:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 19:14:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208,223";a="98132950"
-Received: from xdu1-mobl.sh.intel.com (HELO xdu1-mobl) ([10.239.204.5])
-  by orsmga006.jf.intel.com with ESMTP; 04 Dec 2018 19:14:52 -0800
-Date:   Wed, 5 Dec 2018 11:14:50 +0800
-From:   "Du, Alek" <alek.du@intel.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     <linux-mmc@vger.kernel.org>, <ulf.hansson@linaro.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V3] sdhci: fix the timeout check window for clock and reset
-Message-ID: <20181205111450.300e0478@xdu1-mobl>
-In-Reply-To: <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
-References: <20181130150028.732896d8@xdu1-mobl>
-        <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
-        <20181130221300.4ef2956c@xdu1-mobl>
-        <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
-        <20181201134251.26573207@xdu1-mobl>
-        <20181204090120.63b5f0a4@xdu1-mobl>
-        <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
-Organization: Intel APAC R&D
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 4 Dec 2018 22:18:05 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33796 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeLEDSF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 22:18:05 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j2so18092177wrw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:18:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R0DWsMZrObglW2zA0/UHdOcvbey0vSWCz623dOeNnbU=;
+        b=enji7FixFOHWQnScPC6lRtEQ97E4xNzNAyjfKFD3NHPr6xAbHYfjfJZVXb62n3cqCF
+         K3vPNz9ItOqDJ8jwBrv3zGAhgkH2NLsPLKYyG+AqaSTGv1ybHm8TYk5xJcAPYu1Yw4Us
+         Ze+QKO5X7C3a4xB9FGkimYsi+Dro3xcn8x8Vs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R0DWsMZrObglW2zA0/UHdOcvbey0vSWCz623dOeNnbU=;
+        b=p3cby2plI1mE5563SFU5uo2cq9UUTqot0bvVLIU2Sx7u19f/QZBVok4zmvJarmfcwU
+         UXznbaLLx+fOCG8Jl0erIJVvQOYDS4lVnM/8+DjfO3juCIR5RhOa+XFr2my9s5oORE1T
+         oXrYyjSDigjPU569+bgIk8I5+KDrZiNXHlcUSfiBj0vCVK0hpqpvGdhWRY/sERxPVPmC
+         NIpxkIvJvdeOR0bq4lL1q/7DJ3rrhWmE22B/gzxiqNeka/n1CL6LL0LB7lqd+dXtS+wy
+         T0XQmfWuWrlWtSsaoyZoI+LxYSuSA+bXuJXpVprYwLEKGtmfDorKfhSStqExa1oxUcqI
+         vA4Q==
+X-Gm-Message-State: AA+aEWaLSAUlueuE5z7ZdI7ykDT7sVPjKis2FC1LEVfSbKmPFrynW2Jz
+        dRe8OyiKNEx0S79uVEdPNhGbE7WIyd3ppV7tfbtA9g==
+X-Google-Smtp-Source: AFSGD/WbHUT4uaDWm5rlmPCXPfeYT7ihZXcqqD41z/n9lpZ6Zu1+Zg+RlG8Fqwl0d8e7QpqHkxr0t9Mxzp7XmBBpeKU=
+X-Received: by 2002:a5d:4d88:: with SMTP id b8mr1989730wru.54.1543979883872;
+ Tue, 04 Dec 2018 19:18:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+References: <1539702680-3746-1-git-send-email-srinath.mannam@broadcom.com> <b6e02875-784f-4908-a985-5ee7e3df3ac6@gmail.com>
+In-Reply-To: <b6e02875-784f-4908-a985-5ee7e3df3ac6@gmail.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Wed, 5 Dec 2018 08:47:52 +0530
+Message-ID: <CABe79T4mpnbkaTCerYegmc1+uY4idOVOxCVDqHramk3fYipiCA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] Stingray thermal driver support
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From bcb38577961823b4f8f2cc0aec7dd450a81b6ddc Mon Sep 17 00:00:00 2001
-From: Alek Du <alek.du@intel.com>
-Date: Fri, 30 Nov 2018 14:02:28 +0800
-Subject: [PATCH] sdhci: fix the timeout check window for clock and reset
+Hi,
 
-We observed some premature timeouts on a virtualization platform, the log
-is like this:
+Could you please provide your feedback to this patch series?
 
-case 1:
-[159525.255629] mmc1: Internal clock never stabilised.
-[159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
-...
-[159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-From the clock control register dump, we are pretty sure the clock was
-stablized.
-
-case 2:
-[  914.550127] mmc1: Reset 0x2 never completed.
-[  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
-
-After checking the sdhci code, we found the timeout check actually has a
-little window that the CPU can be scheduled out and when it comes back,
-the original time set or check is not valid.
-
-Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
-Signed-off-by: Alek Du <alek.du@intel.com>
-Cc: stable@vger.kernel.org      # v4.12+
----
- drivers/mmc/host/sdhci.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 99bdae53fa2e..451b08a818a9 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -216,8 +216,12 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
- 	timeout = ktime_add_ms(ktime_get(), 100);
- 
- 	/* hw clears the bit when it's done */
--	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Reset 0x%x never completed.\n",
- 				mmc_hostname(host->mmc), (int)mask);
- 			sdhci_dumpregs(host);
-@@ -1608,9 +1612,13 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- 
- 	/* Wait max 20 ms */
- 	timeout = ktime_add_ms(ktime_get(), 20);
--	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
--		& SDHCI_CLOCK_INT_STABLE)) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+		if (clk & SDHCI_CLOCK_INT_STABLE)
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Internal clock never stabilised.\n",
- 			       mmc_hostname(host->mmc));
- 			sdhci_dumpregs(host);
--- 
-2.17.1
+Regards,
+Srinath.
+On Thu, Nov 8, 2018 at 3:45 AM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 10/16/2018 8:11 AM, Srinath Mannam wrote:
+> > These patches adds the stingray thermal driver and its
+> > corresponding DT nodes with documentation.
+>
+> Can we get feedback from the thermal maintains whether this is
+> acceptable or not?
+>
+> >
+> > Changes from v4
+> >   - Addressed Rob Herring comments on DT parameters and
+> >     thermal driver architecture.
+> >   - Removed brcm,max-crit-temp DT parameter
+> >   - Changed driver to thermal sensor registration model.
+> >   - Added trip DT properties.
+> >
+> > Changes from v3
+> >   - Addressed Daniel lezcano comments.
+> >   - Elaborated commit description of thermal driver patch.
+> >   - Added brcm,max-crit-temp DT parameter.
+> >
+> > Changes from v2:
+> >   - All stingray TMON DT nodes are combine together into single.
+> >     Temperature registers are combined into one mem resource.
+> >     brcm,tmon-mask parameter has available TMONs mask value.
+> >   - All available TMONs are initialized together in single
+> >     instance of driver probe call.
+> >
+> > Changes from v1:
+> >   - Fixed auto build sparce warning.
+> >
+> > Pramod Kumar (3):
+> >   dt-bindings: thermal: Add binding document for SR thermal
+> >   thermal: broadcom: Add Stingray thermal driver
+> >   arm64: dts: stingray: Add Stingray Thermal DT support.
+> >
+> >  .../bindings/thermal/brcm,sr-thermal.txt           | 105 ++++++++++++++++
+> >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89 +++++++++++++
+> >  drivers/thermal/Kconfig                            |   3 +-
+> >  drivers/thermal/broadcom/Kconfig                   |   9 ++
+> >  drivers/thermal/broadcom/Makefile                  |   1 +
+> >  drivers/thermal/broadcom/sr-thermal.c              | 138 +++++++++++++++++++++
+> >  6 files changed, 344 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+> >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
+> >
+>
+> --
+> Florian
