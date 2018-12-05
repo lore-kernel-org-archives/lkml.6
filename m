@@ -2,95 +2,74 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACD9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC99C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2855214DB
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D4820989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyH5TdlM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2855214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOn0JkPR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D4820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbeLEJpL (ORCPT
+        id S1729074AbeLEKDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49946 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 05:03:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729331AbeLEJpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:07 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728164AbeLEKDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:03:08 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76BA62133F;
-        Wed,  5 Dec 2018 09:45:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF92F214C1;
+        Wed,  5 Dec 2018 10:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003107;
-        bh=/4F0mHo4Mfp5x9WyIclLAc0+i2VoR3YmjeFuRvg1RJ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UyH5TdlM692+KpljvSv8XO9iEWvXOFPe8Hq8PAMJqs+w536XwCAxoTNQlvCZsGgBU
-         GTaO3BlHXh+QGSPvOog5KzyGrhPpNWWWce03WQH2PDRCoBwxsMxy8ITr4hYxGtCB4m
-         i9Mh4LH2+i49PCJ/O6l+tUTO6ctOlWNHT5s8eWBI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martynas Pumputis <m@lambda.lt>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 32/69] bpf: fix check of allowed specifiers in bpf_trace_printk
-Date:   Wed,  5 Dec 2018 04:42:10 -0500
-Message-Id: <20181205094247.6556-32-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
-References: <20181205094247.6556-1-sashal@kernel.org>
+        s=default; t=1544004188;
+        bh=id3Hy8SLfpthRW254ddehmNdy5cfWf1emeIptw9dh6Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iOn0JkPRyAQ500q+vw3nLPO22McBxoX8XhWS4ob/nZ4jpEWjMhMW/H9Shtk5mf/By
+         e2fGoNAMu8yHmMiS7JvCjU9PNl1bFhIhPtHHjHUNWWbSrIWpQPlCK6eilPNmf4q2M1
+         yCnNMVdxUWcNFiQwK7usG2Qe88fBKH1DYaeXEHBI=
+Date:   Wed, 5 Dec 2018 11:03:06 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Long Cheng <long.cheng@mediatek.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, srv_heupstream@mediatek.com,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>
+Subject: Re: [PATCH v2 0/4] add uart DMA function
+Message-ID: <20181205100306.GA12106@kroah.com>
+References: <1543999380-7946-1-git-send-email-long.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543999380-7946-1-git-send-email-long.cheng@mediatek.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martynas Pumputis <m@lambda.lt>
+On Wed, Dec 05, 2018 at 04:42:56PM +0800, Long Cheng wrote:
+> In Mediatek SOCs, the uart can support DMA function.
+> Base on DMA engine formwork, we add the DMA code to support uart. And put the code under drivers/dma.
+> 
+> This series contains document bindings, Kconfig to control the function enable or not,
+> device tree including interrupt and dma device node, the code of UART DM
 
-[ Upstream commit 1efb6ee3edea57f57f9fb05dba8dcb3f7333f61f ]
+I've queued up patches 1 and 3 from this series in my tty tree, thanks.
 
-A format string consisting of "%p" or "%s" followed by an invalid
-specifier (e.g. "%p%\n" or "%s%") could pass the check which
-would make format_decode (lib/vsprintf.c) to warn.
-
-Fixes: 9c959c863f82 ("tracing: Allow BPF programs to call bpf_trace_printk()")
-Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
-Signed-off-by: Martynas Pumputis <m@lambda.lt>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/trace/bpf_trace.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 6350f64d5aa4..f9dd8fd055a6 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -161,11 +161,13 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
- 			i++;
- 		} else if (fmt[i] == 'p' || fmt[i] == 's') {
- 			mod[fmt_cnt]++;
--			i++;
--			if (!isspace(fmt[i]) && !ispunct(fmt[i]) && fmt[i] != 0)
-+			/* disallow any further format extensions */
-+			if (fmt[i + 1] != 0 &&
-+			    !isspace(fmt[i + 1]) &&
-+			    !ispunct(fmt[i + 1]))
- 				return -EINVAL;
- 			fmt_cnt++;
--			if (fmt[i - 1] == 's') {
-+			if (fmt[i] == 's') {
- 				if (str_seen)
- 					/* allow only one '%s' per fmt string */
- 					return -EINVAL;
--- 
-2.17.1
-
+greg k-h
