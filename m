@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB78C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13ACC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4292A2133F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A52FB214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+OniyGs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4292A2133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFlNNBcV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52FB214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbeLEJvO (ORCPT
+        id S1729840AbeLEJvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57390 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:51:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbeLEJvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:51:10 -0500
+        id S1729612AbeLEJvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:51:18 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFB2C2082B;
-        Wed,  5 Dec 2018 09:51:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D95F92082B;
+        Wed,  5 Dec 2018 09:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003469;
-        bh=b0IHSgUSy50pbIqeRaEhsU5t430F0nvR2rNARyjafG4=;
+        s=default; t=1544003477;
+        bh=QzSoWVTMVE77q+rTYZUE5hTXNZQ5dWw5omEJr43o8Bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g+OniyGsb8kerhdphKcAQ1M5jMuF6QLExdFI2Rixa+zqiMr/UYOtD0Xt9o8ydJxcF
-         cM5ufZygwGBqHZ4q27JD2liBh0dFD2CBXFw0zMu7zk7kJDIIss7Q1/8kFVJ2Sw1a0K
-         nS9jW6hkCbGkDtBNc4aGrTVo1SRKAifyxPpW/S+k=
+        b=HFlNNBcVU89GhKq2PP7dmouzvlC54psJV1JnXgly6u9R6aAniIb7fhLdwVe1oMDm/
+         nGTc+EsjqsNqULNof7vhpTpZfFngPBG1X0h8eGI0/JXPxz6PrDkeqcRR/PM8PFKGSR
+         e81+8+13ONDdbMtdHYt1VhmV98k7PnALvSdBSgj0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 40/45] unifdef: use memcpy instead of strncpy
-Date:   Wed,  5 Dec 2018 04:47:01 -0500
-Message-Id: <20181205094706.7225-40-sashal@kernel.org>
+Cc:     Pan Bian <bianpan2016@163.com>, Joe Perches <joe@perches.com>,
+        "Ernesto A . Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 42/45] hfs: do not free node before using
+Date:   Wed,  5 Dec 2018 04:47:03 -0500
+Message-Id: <20181205094706.7225-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -52,48 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 38c7b224ce22c25fed04007839edf974bd13439d ]
+[ Upstream commit ce96a407adef126870b3f4a1b73529dd8aa80f49 ]
 
-New versions of gcc reasonably warn about the odd pattern of
+hfs_bmap_free() frees the node via hfs_bnode_put(node).  However, it
+then reads node->this when dumping error message on an error path, which
+may result in a use-after-free bug.  This patch frees the node only when
+it is never again used.
 
-	strncpy(p, q, strlen(q));
-
-which really doesn't make sense: the strncpy() ends up being just a slow
-and odd way to write memcpy() in this case.
-
-There was a comment about _why_ the code used strncpy - to avoid the
-terminating NUL byte, but memcpy does the same and avoids the warning.
-
+Link: http://lkml.kernel.org/r/1542963889-128825-1-git-send-email-bianpan2016@163.com
+Fixes: a1185ffa2fc ("HFS rewrite")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/unifdef.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hfs/btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/unifdef.c b/scripts/unifdef.c
-index 7493c0ee51cc..db00e3e30a59 100644
---- a/scripts/unifdef.c
-+++ b/scripts/unifdef.c
-@@ -395,7 +395,7 @@ usage(void)
-  * When we have processed a group that starts off with a known-false
-  * #if/#elif sequence (which has therefore been deleted) followed by a
-  * #elif that we don't understand and therefore must keep, we edit the
-- * latter into a #if to keep the nesting correct. We use strncpy() to
-+ * latter into a #if to keep the nesting correct. We use memcpy() to
-  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
-  *
-  * When we find a true #elif in a group, the following block will
-@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
- static void Itrue (void) { Ftrue();  ignoreon(); }
- static void Ifalse(void) { Ffalse(); ignoreon(); }
- /* modify this line */
--static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
-+static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
- static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
- static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
- static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
+diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
+index 37cdd955eceb..320f4372f172 100644
+--- a/fs/hfs/btree.c
++++ b/fs/hfs/btree.c
+@@ -328,13 +328,14 @@ void hfs_bmap_free(struct hfs_bnode *node)
+ 
+ 		nidx -= len * 8;
+ 		i = node->next;
+-		hfs_bnode_put(node);
+ 		if (!i) {
+ 			/* panic */;
+ 			pr_crit("unable to free bnode %u. bmap not found!\n",
+ 				node->this);
++			hfs_bnode_put(node);
+ 			return;
+ 		}
++		hfs_bnode_put(node);
+ 		node = hfs_bnode_find(tree, i);
+ 		if (IS_ERR(node))
+ 			return;
 -- 
 2.17.1
 
