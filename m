@@ -2,98 +2,155 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0DAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63778C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B6020879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:44:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XkhnWwL4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B6020879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CC2320879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:45:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC2320879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbeLEWoi (ORCPT
+        id S1728629AbeLEWpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:44:38 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41338 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbeLEWoi (ORCPT
+        Wed, 5 Dec 2018 17:45:50 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56347 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeLEWpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:44:38 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j21so19036100oii.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:44:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H5hNIsE+vi31DoIW4zfBtZTjXbV1Bwzu9KSl0XAsVUw=;
-        b=XkhnWwL4SWUbaTr//vN/MOVQaFsIh+4Ox4ibOkfqnrPbKbUFLyQimoXiapkxVD/Cg/
-         5/UL7wlFB+tE4QJuwP/PhpgFkGdGbXorHoUr9gSZpBUM5tKSOEOfmEDr7sOD5Pg8E2gc
-         +0v1NWh1etykEPsudz679SK3LWdq3A2j+Vb4E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H5hNIsE+vi31DoIW4zfBtZTjXbV1Bwzu9KSl0XAsVUw=;
-        b=bjG5IEGXKPt1kCnuoLqfuO6aanEBI1WIjcBpMlKF+Lsf7L2SN1Hek/6ODxNYwyGuXr
-         SC0sQXUP7sgtQSa5mp4Sqhq/SWgYFFi6b1cET7NsoIlAQdaNeJ9AR3ZaHvDWBVLtgHJV
-         yUhN53Ne+qIMLmkCQ8YH9Hm1/vtn7Ep9JSB1KEfvohrdIMoiQ4avjiVU79smGzeas700
-         M85+MZkLbHrlhCyNjqMAaahTkbnijnK5FIrV+8YGxwZ6ZxKwR5J9CKLoMP97qLMLZlM2
-         Gfh+ZQmM4V5VpgtgaQqVGbEDUhu/dYuboljmG+lgQ83ZvgtFjgzDi/D7gCLl2EPa0JBs
-         YVJQ==
-X-Gm-Message-State: AA+aEWZ9a1k7+PO6cGOF6tYOenMEtEx5h5+hTHQGFClgxSp8ggijW5Qu
-        kDt05/6OQ9WgtoMvL9RYa/jsRg==
-X-Google-Smtp-Source: AFSGD/USnyKKRohiPVsGGczGPm/P7mShXNY0ymr2eBv7n7ZaF5QGPyUwPVIeZkMi4zobvw/0YOyydw==
-X-Received: by 2002:aca:6a02:: with SMTP id f2mr16909627oic.260.1544049877270;
-        Wed, 05 Dec 2018 14:44:37 -0800 (PST)
-Received: from localhost ([2600:1700:141:4960:1524:ebd:d530:a61b])
-        by smtp.gmail.com with ESMTPSA id s66sm8343266otb.74.2018.12.05.14.44.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 14:44:35 -0800 (PST)
-Date:   Wed, 5 Dec 2018 16:44:34 -0600
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Jonathan Marek <jonathan@marek.ca>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] firmware: qcom: scm: fix compilation error when disabled
-Message-ID: <20181205224434.GC5497@hector.attlocal.net>
-References: <20181122023226.1074-1-jonathan@marek.ca>
- <20181205173721.GA5232@tuxbook-pro>
+        Wed, 5 Dec 2018 17:45:49 -0500
+Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.177)
+ id bb70f2fd3131f3ff; Wed, 5 Dec 2018 23:45:46 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>
+Subject: [PATCH] cpuidle: Add cpuidle.governor= command line parameter
+Date:   Wed, 05 Dec 2018 23:45:34 +0100
+Message-ID: <1752296.bicKxrytZO@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205173721.GA5232@tuxbook-pro>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:37:21AM -0800, Bjorn Andersson wrote:
-> + linux-arm-msm
-> 
-> On Wed 21 Nov 18:32 PST 2018, Jonathan Marek wrote:
-> 
-> > This fixes the case when CONFIG_QCOM_SCM is not enabled, and linux/errno.h
-> > has not been included previously.
-> > 
-> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+Add cpuidle.governor= command line parameter to allow the default
+cpuidle governor to be replaced.
 
-Got it queued.
+That is useful, for example, if someone running a tickful kernel
+wants to use the menu governor on it.
 
-Andy
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+On top of https://patchwork.kernel.org/patch/10714995/ and
+https://patchwork.kernel.org/patch/10705317/
+
+---
+ Documentation/admin-guide/kernel-parameters.txt |    3 +++
+ Documentation/admin-guide/pm/cpuidle.rst        |    7 +++++++
+ drivers/cpuidle/cpuidle.c                       |    1 +
+ drivers/cpuidle/cpuidle.h                       |    1 +
+ drivers/cpuidle/governor.c                      |    9 +++++++--
+ 5 files changed, 19 insertions(+), 2 deletions(-)
+
+Index: linux-pm/drivers/cpuidle/governor.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governor.c
++++ linux-pm/drivers/cpuidle/governor.c
+@@ -11,10 +11,13 @@
+ #include <linux/cpu.h>
+ #include <linux/cpuidle.h>
+ #include <linux/mutex.h>
++#include <linux/module.h>
+ #include <linux/pm_qos.h>
+ 
+ #include "cpuidle.h"
+ 
++char param_governor[CPUIDLE_NAME_LEN];
++
+ LIST_HEAD(cpuidle_governors);
+ struct cpuidle_governor *cpuidle_curr_governor;
+ 
+@@ -86,9 +89,11 @@ int cpuidle_register_governor(struct cpu
+ 	mutex_lock(&cpuidle_lock);
+ 	if (__cpuidle_find_governor(gov->name) == NULL) {
+ 		ret = 0;
+-		list_add_tail(&gov->governor_list, &cpuidle_governors);
+ 		if (!cpuidle_curr_governor ||
+-		    cpuidle_curr_governor->rating < gov->rating)
++		    !strncasecmp(param_governor, gov->name, CPUIDLE_NAME_LEN) ||
++		    (cpuidle_curr_governor->rating < gov->rating &&
++		     strncasecmp(param_governor, cpuidle_curr_governor->name,
++				 CPUIDLE_NAME_LEN)))
+ 			cpuidle_switch_governor(gov);
+ 	}
+ 	mutex_unlock(&cpuidle_lock);
+Index: linux-pm/drivers/cpuidle/cpuidle.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/cpuidle.c
++++ linux-pm/drivers/cpuidle/cpuidle.c
+@@ -731,4 +731,5 @@ static int __init cpuidle_init(void)
+ }
+ 
+ module_param(off, int, 0444);
++module_param_string(governor, param_governor, CPUIDLE_NAME_LEN, 0444);
+ core_initcall(cpuidle_init);
+Index: linux-pm/drivers/cpuidle/cpuidle.h
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/cpuidle.h
++++ linux-pm/drivers/cpuidle/cpuidle.h
+@@ -7,6 +7,7 @@
+ #define __DRIVER_CPUIDLE_H
+ 
+ /* For internal use only */
++extern char param_governor[];
+ extern struct cpuidle_governor *cpuidle_curr_governor;
+ extern struct list_head cpuidle_governors;
+ extern struct list_head cpuidle_detected_devices;
+Index: linux-pm/Documentation/admin-guide/pm/cpuidle.rst
+===================================================================
+--- linux-pm.orig/Documentation/admin-guide/pm/cpuidle.rst
++++ linux-pm/Documentation/admin-guide/pm/cpuidle.rst
+@@ -576,6 +576,13 @@ processors implementing the architecture
+ however, so it is rather crude and not very energy-efficient.  For this reason,
+ it is not recommended for production use.
+ 
++The ``cpuidle.governor=`` kernel command line switch allows the ``CPUIdle``
++governor to use to be specified.  It has to be appended with a string matching
++the name of an available governor (e.g. ``cpuidle.governor=menu``) and that
++governor will be used instead of the default one.  It is possible to force
++the ``menu`` governor to be used on the systems that use the ``ladder`` governor
++by default this way, for example.
++
+ The other kernel command line parameters controlling CPU idle time management
+ described below are only relevant for the *x86* architecture and some of
+ them affect Intel processors only.
+Index: linux-pm/Documentation/admin-guide/kernel-parameters.txt
+===================================================================
+--- linux-pm.orig/Documentation/admin-guide/kernel-parameters.txt
++++ linux-pm/Documentation/admin-guide/kernel-parameters.txt
+@@ -674,6 +674,9 @@
+ 	cpuidle.off=1	[CPU_IDLE]
+ 			disable the cpuidle sub-system
+ 
++	cpuidle.governor=
++			[CPU_IDLE] Name of the cpuidle governor to use.
++
+ 	cpufreq.off=1	[CPU_FREQ]
+ 			disable the cpufreq sub-system
+ 
+
