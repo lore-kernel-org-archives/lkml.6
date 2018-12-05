@@ -2,138 +2,111 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A61DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89364C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4AD920659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46DF420659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:30:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nUcDnLH0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4AD920659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="BT2m0P8z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DF420659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbeLEL3X (ORCPT
+        id S1727582AbeLELal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:29:23 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:58256 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbeLEL3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:29:22 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wB5BSBlW028064;
-        Wed, 5 Dec 2018 20:28:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wB5BSBlW028064
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544009292;
-        bh=H36yvD8LOqrJ4DjVGlwvJ7B2rd10VOZDsz4ulX8ISz4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nUcDnLH0CqUfD05RzSYxzCgBpv1ctmbz+Nvtqu/kBHV441FxN5rG1c9VHyi92EmGe
-         YtIAoHxKvFy7Jrx7YUphXGLquRTXkrsCmSWAv8KMZ0mutCzYSt5UuqVtxFMaIRJ6QU
-         SIq57KMcQRQX+MHu646R1r5JtAE3aKqe5JHwCWd3e48XrveCukWIYqlSIl7VUju+8B
-         g07upgCR78yaz9Q2fvr/X6UCLhlYUs+AUyHTzsXA1SLdo/KIObYY34a36I34kIGl0g
-         DqT1h7SFcFhm9o5ss3XUTJidJ0c4mm5pjyeyqsQx3mi26pmcTP83p8zNgKFAGDCLRt
-         5R9VMjYqnWvHQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 2/3] kbuild: generate asm-generic wrappers if mandatory headers are missing
-Date:   Wed,  5 Dec 2018 20:28:05 +0900
-Message-Id: <1544009286-15705-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544009286-15705-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1544009286-15705-1-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 5 Dec 2018 06:30:41 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42494 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbeLELal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:30:41 -0500
+Received: from zn.tnic (p200300EC2BC0990030B9A0F23022A8BF.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:9900:30b9:a0f2:3022:a8bf])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 96E6E1EC0B69;
+        Wed,  5 Dec 2018 12:30:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544009439;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JLhqjsfa2CquKOYmT6utM3/cei0NP7DCwshiiuRa9uk=;
+        b=BT2m0P8zCuEuqwbmNVsCQ9X3Y/1cVabKr2HcdwKAl8875grp64ktRFVO7pQALx1RifhPr5
+        Y34i+imZ19sad+7bMoX0YBQWkwxPLVgQPlLSiSJhvzooh0dQOPa0OucShO17XeafjcXHDa
+        K8wwtNJwyNMFaihjyjOCvGnb4fw67jg=
+Date:   Wed, 5 Dec 2018 12:30:32 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
+Message-ID: <20181205113032.GF29510@zn.tnic>
+References: <20181202030839.29945-1-lijiang@redhat.com>
+ <20181202030839.29945-2-lijiang@redhat.com>
+ <20181203150809.GA4794@zn.tnic>
+ <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some time ago, Sam pointed out a certain degree of overwrap between
-generic-y and mandatory-y. (https://lkml.org/lkml/2017/7/10/121)
+On Tue, Dec 04, 2018 at 05:35:09PM +0800, lijiang wrote:
+> There are more people to review and improve this document together, that would
+> be fine.
 
-I a bit tweaked the meaning of mandatory-y; now it defines the minimum
-set of ASM headers that all architectures must have.
+That's basically kernel development :)
 
-If arch does not have specific implementation of a mandatory header,
-Kbuild will let it fallback to the asm-generic one by automatically
-generating a wrapper. This will allow to drop lots of redundant
-generic-y defines.
+> Generating VMCOREINFO is easy in the first kernel, for example:
+> # makedumpfile -g VMCOREINFO -x vmlinux
 
-Previously, "mandatory" was used in the context of UAPI, but I guess
-this can be extended to kernel space ASM headers.
+I get:
 
-Suggested-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+$ makedumpfile -g VMCOREINFO -x vmlinux
+The kernel version is not supported.
+The makedumpfile operation may be incomplete.
 
- Documentation/kbuild/makefiles.txt | 9 ++++++---
- scripts/Makefile.asm-generic       | 3 +++
- scripts/Makefile.headersinst       | 7 -------
- 3 files changed, 9 insertions(+), 10 deletions(-)
+The vmcoreinfo is saved to VMCOREINFO.
 
-diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-index 8da26c6..bf28c47 100644
---- a/Documentation/kbuild/makefiles.txt
-+++ b/Documentation/kbuild/makefiles.txt
-@@ -1296,9 +1296,12 @@ See subsequent chapter for the syntax of the Kbuild file.
- 
- --- 7.4 mandatory-y
- 
--	mandatory-y is essentially used by include/uapi/asm-generic/Kbuild.asm
--	to define the minimum set of headers that must be exported in
--	include/asm.
-+	mandatory-y is essentially used by include/(uapi/)asm-generic/Kbuild.asm
-+	to define the minimum set of ASM headers that all architectures must have.
-+
-+	This works like optional generic-y. If a mandatory header is missing
-+	in arch/$(ARCH)/include/(uapi/)/asm, Kbuild will automatically generate
-+	a wrapper of the asm-generic one.
- 
- 	The convention is to list one subdir per line and
- 	preferably in alphabetic order.
-diff --git a/scripts/Makefile.asm-generic b/scripts/Makefile.asm-generic
-index 760323e..c7cd23d 100644
---- a/scripts/Makefile.asm-generic
-+++ b/scripts/Makefile.asm-generic
-@@ -14,6 +14,9 @@ src := $(subst /generated,,$(obj))
- 
- include scripts/Kbuild.include
- 
-+# If arch does not implement mandatory headers, fallback to asm-generic ones.
-+generic-y   += $(foreach f, $(mandatory-y), $(if $(wildcard $(srctree)/$(src)/$(f)),,$(f)))
-+
- generic-y   := $(addprefix $(obj)/, $(generic-y))
- generated-y := $(addprefix $(obj)/, $(generated-y))
- 
-diff --git a/scripts/Makefile.headersinst b/scripts/Makefile.headersinst
-index d5e1314..0d4a96d 100644
---- a/scripts/Makefile.headersinst
-+++ b/scripts/Makefile.headersinst
-@@ -57,13 +57,6 @@ check-file    := $(installdir)/.check
- all-files     := $(header-files) $(genhdr-files)
- output-files  := $(addprefix $(installdir)/, $(all-files))
- 
--ifneq ($(mandatory-y),)
--missing       := $(filter-out $(all-files),$(mandatory-y))
--ifneq ($(missing),)
--$(error Some mandatory headers ($(missing)) are missing in $(obj))
--endif
--endif
--
- # Work out what needs to be removed
- oldheaders    := $(patsubst $(installdir)/%,%,$(wildcard $(installdir)/*.h))
- unwanted      := $(filter-out $(all-files),$(oldheaders))
+makedumpfile Completed.
+
+But the text file looks ok AFAICT. Please add that command to the
+documentation file.
+
+> For these two *why*, it should be easy to understand. Because user-space tools
+> need to know basic information, such as the symbol values, field offset, structure
+> size, etc. Otherwise, these tools won't know how to analyze the memory of the crash
+> kernel.
+
+That's clear. The question is *why* *exactly* is every piece of export
+needed.
+
+> For the second question 'how they are used', we can get the answer
+> from user-space tools, such as makedumpfile, crash tools. Therefore,
+> it may not need to explain any more in kernel document. On the other
+> hand, if we must put these contents into kernel document, i have to
+> say, that would be a hard task.
+
+You can put one or two sentences for each, stating what they're used
+for. This way, people can go and look up makedumpfile source code for
+further info and people trying to add new items to VMCOREINFO can look
+in this documentation here first to figure out whether maybe the info
+they need has been exported already.
+
+Thx.
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
