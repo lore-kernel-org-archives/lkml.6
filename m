@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F41C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BFFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE3920878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB5282087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTxzoqrW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE3920878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="km/NJBZ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB5282087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbeLEJjh (ORCPT
+        id S1728503AbeLEJjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:39:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43750 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:39:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728456AbeLEJjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:39:35 -0500
+        id S1728468AbeLEJjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:39:36 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE4AB2084C;
-        Wed,  5 Dec 2018 09:39:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3003520850;
+        Wed,  5 Dec 2018 09:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002773;
-        bh=Vd3X+inIlMX5Jen4/M4H7Qrm51IaslpuPMF5pJ/sGhg=;
+        s=default; t=1544002776;
+        bh=/dxTeEvnhKyIZ7eGoj45EBn51skRS+tkMt1NlI07aWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZTxzoqrWWyZn6jCUXQkZgVgWVlyQZerN2ZFfCNMWthp2/DP9GQ/DOTJb6tPBOI9ZW
-         bM2Wv1glCJYpA/mOzOmJFFtKzXWcbAla0ozWmyz+XtKQ9D3A7Xd6wLKHfv8tFky3De
-         7t59kNm1EP+G9K/SGLP8wYD33aDb51VwtZKp1SDA=
+        b=km/NJBZ77bUeq0eRIJiO63OnlBnjijfZs48ow28p545lEfSD+SL+4AOHp/BV3QIsG
+         016T1WF8nl406fkJQqyUzY1/IQ84S1zYXuWpdxTmV+Pao9dsyb7LQeMZuirreuvEfZ
+         n9hutQqi9VGqcG6zS6OL8dMvqUy39hDYBfz5cN/M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yixian Liu <liuyixian@huawei.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 064/123] RDMA/hns: Bugfix pbl configuration for rereg mr
-Date:   Wed,  5 Dec 2018 04:34:56 -0500
-Message-Id: <20181205093555.5386-64-sashal@kernel.org>
+Cc:     Martynas Pumputis <m@lambda.lt>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 065/123] bpf: fix check of allowed specifiers in bpf_trace_printk
+Date:   Wed,  5 Dec 2018 04:34:57 -0500
+Message-Id: <20181205093555.5386-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,226 +53,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixian Liu <liuyixian@huawei.com>
+From: Martynas Pumputis <m@lambda.lt>
 
-[ Upstream commit ca088320a02537f36c243ac21794525d8eabb3bd ]
+[ Upstream commit 1efb6ee3edea57f57f9fb05dba8dcb3f7333f61f ]
 
-Current hns driver assigned the first two PBL page addresses from previous
-registered MR to the hardware when reregister MR changing the memory
-locations occurred. This will lead to PBL addressing error as the PBL has
-already been released. This patch fixes this wrong assignment by using the
-page address from new allocated PBL.
+A format string consisting of "%p" or "%s" followed by an invalid
+specifier (e.g. "%p%\n" or "%s%") could pass the check which
+would make format_decode (lib/vsprintf.c) to warn.
 
-Fixes: a2c80b7b4119 ("RDMA/hns: Add rereg mr support for hip08")
-Signed-off-by: Yixian Liu <liuyixian@huawei.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 9c959c863f82 ("tracing: Allow BPF programs to call bpf_trace_printk()")
+Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
+Signed-off-by: Martynas Pumputis <m@lambda.lt>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 128 ++++++++++-----------
- 1 file changed, 60 insertions(+), 68 deletions(-)
+ kernel/trace/bpf_trace.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 0218c0f8c2a7..a442b29e7611 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -1661,10 +1661,9 @@ static int hns_roce_v2_set_mac(struct hns_roce_dev *hr_dev, u8 phy_port,
- 	return hns_roce_cmq_send(hr_dev, &desc, 1);
- }
- 
--static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
--				  unsigned long mtpt_idx)
-+static int set_mtpt_pbl(struct hns_roce_v2_mpt_entry *mpt_entry,
-+			struct hns_roce_mr *mr)
- {
--	struct hns_roce_v2_mpt_entry *mpt_entry;
- 	struct scatterlist *sg;
- 	u64 page_addr;
- 	u64 *pages;
-@@ -1672,6 +1671,53 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
- 	int len;
- 	int entry;
- 
-+	mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
-+	mpt_entry->pbl_ba_l = cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
-+	roce_set_field(mpt_entry->byte_48_mode_ba,
-+		       V2_MPT_BYTE_48_PBL_BA_H_M, V2_MPT_BYTE_48_PBL_BA_H_S,
-+		       upper_32_bits(mr->pbl_ba >> 3));
-+
-+	pages = (u64 *)__get_free_page(GFP_KERNEL);
-+	if (!pages)
-+		return -ENOMEM;
-+
-+	i = 0;
-+	for_each_sg(mr->umem->sg_head.sgl, sg, mr->umem->nmap, entry) {
-+		len = sg_dma_len(sg) >> PAGE_SHIFT;
-+		for (j = 0; j < len; ++j) {
-+			page_addr = sg_dma_address(sg) +
-+				(j << mr->umem->page_shift);
-+			pages[i] = page_addr >> 6;
-+			/* Record the first 2 entry directly to MTPT table */
-+			if (i >= HNS_ROCE_V2_MAX_INNER_MTPT_NUM - 1)
-+				goto found;
-+			i++;
-+		}
-+	}
-+found:
-+	mpt_entry->pa0_l = cpu_to_le32(lower_32_bits(pages[0]));
-+	roce_set_field(mpt_entry->byte_56_pa0_h, V2_MPT_BYTE_56_PA0_H_M,
-+		       V2_MPT_BYTE_56_PA0_H_S, upper_32_bits(pages[0]));
-+
-+	mpt_entry->pa1_l = cpu_to_le32(lower_32_bits(pages[1]));
-+	roce_set_field(mpt_entry->byte_64_buf_pa1, V2_MPT_BYTE_64_PA1_H_M,
-+		       V2_MPT_BYTE_64_PA1_H_S, upper_32_bits(pages[1]));
-+	roce_set_field(mpt_entry->byte_64_buf_pa1,
-+		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_M,
-+		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_S,
-+		       mr->pbl_buf_pg_sz + PG_SHIFT_OFFSET);
-+
-+	free_page((unsigned long)pages);
-+
-+	return 0;
-+}
-+
-+static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
-+				  unsigned long mtpt_idx)
-+{
-+	struct hns_roce_v2_mpt_entry *mpt_entry;
-+	int ret;
-+
- 	mpt_entry = mb_buf;
- 	memset(mpt_entry, 0, sizeof(*mpt_entry));
- 
-@@ -1686,7 +1732,6 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
- 		       mr->pbl_ba_pg_sz + PG_SHIFT_OFFSET);
- 	roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_PD_M,
- 		       V2_MPT_BYTE_4_PD_S, mr->pd);
--	mpt_entry->byte_4_pd_hop_st = cpu_to_le32(mpt_entry->byte_4_pd_hop_st);
- 
- 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RA_EN_S, 0);
- 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_R_INV_EN_S, 1);
-@@ -1700,13 +1745,11 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
- 		     (mr->access & IB_ACCESS_REMOTE_WRITE ? 1 : 0));
- 	roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_LW_EN_S,
- 		     (mr->access & IB_ACCESS_LOCAL_WRITE ? 1 : 0));
--	mpt_entry->byte_8_mw_cnt_en = cpu_to_le32(mpt_entry->byte_8_mw_cnt_en);
- 
- 	roce_set_bit(mpt_entry->byte_12_mw_pa, V2_MPT_BYTE_12_PA_S,
- 		     mr->type == MR_TYPE_MR ? 0 : 1);
- 	roce_set_bit(mpt_entry->byte_12_mw_pa, V2_MPT_BYTE_12_INNER_PA_VLD_S,
- 		     1);
--	mpt_entry->byte_12_mw_pa = cpu_to_le32(mpt_entry->byte_12_mw_pa);
- 
- 	mpt_entry->len_l = cpu_to_le32(lower_32_bits(mr->size));
- 	mpt_entry->len_h = cpu_to_le32(upper_32_bits(mr->size));
-@@ -1717,53 +1760,9 @@ static int hns_roce_v2_write_mtpt(void *mb_buf, struct hns_roce_mr *mr,
- 	if (mr->type == MR_TYPE_DMA)
- 		return 0;
- 
--	mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
--
--	mpt_entry->pbl_ba_l = cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
--	roce_set_field(mpt_entry->byte_48_mode_ba, V2_MPT_BYTE_48_PBL_BA_H_M,
--		       V2_MPT_BYTE_48_PBL_BA_H_S,
--		       upper_32_bits(mr->pbl_ba >> 3));
--	mpt_entry->byte_48_mode_ba = cpu_to_le32(mpt_entry->byte_48_mode_ba);
--
--	pages = (u64 *)__get_free_page(GFP_KERNEL);
--	if (!pages)
--		return -ENOMEM;
--
--	i = 0;
--	for_each_sg(mr->umem->sg_head.sgl, sg, mr->umem->nmap, entry) {
--		len = sg_dma_len(sg) >> PAGE_SHIFT;
--		for (j = 0; j < len; ++j) {
--			page_addr = sg_dma_address(sg) +
--				    (j << mr->umem->page_shift);
--			pages[i] = page_addr >> 6;
--
--			/* Record the first 2 entry directly to MTPT table */
--			if (i >= HNS_ROCE_V2_MAX_INNER_MTPT_NUM - 1)
--				goto found;
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 08fcfe440c63..9864a35c8bb5 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -196,11 +196,13 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
+ 			i++;
+ 		} else if (fmt[i] == 'p' || fmt[i] == 's') {
+ 			mod[fmt_cnt]++;
 -			i++;
--		}
--	}
-+	ret = set_mtpt_pbl(mpt_entry, mr);
- 
--found:
--	mpt_entry->pa0_l = cpu_to_le32(lower_32_bits(pages[0]));
--	roce_set_field(mpt_entry->byte_56_pa0_h, V2_MPT_BYTE_56_PA0_H_M,
--		       V2_MPT_BYTE_56_PA0_H_S,
--		       upper_32_bits(pages[0]));
--	mpt_entry->byte_56_pa0_h = cpu_to_le32(mpt_entry->byte_56_pa0_h);
--
--	mpt_entry->pa1_l = cpu_to_le32(lower_32_bits(pages[1]));
--	roce_set_field(mpt_entry->byte_64_buf_pa1, V2_MPT_BYTE_64_PA1_H_M,
--		       V2_MPT_BYTE_64_PA1_H_S, upper_32_bits(pages[1]));
--
--	free_page((unsigned long)pages);
--
--	roce_set_field(mpt_entry->byte_64_buf_pa1,
--		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_M,
--		       V2_MPT_BYTE_64_PBL_BUF_PG_SZ_S,
--		       mr->pbl_buf_pg_sz + PG_SHIFT_OFFSET);
--	mpt_entry->byte_64_buf_pa1 = cpu_to_le32(mpt_entry->byte_64_buf_pa1);
--
--	return 0;
-+	return ret;
- }
- 
- static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
-@@ -1772,6 +1771,7 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
- 					u64 size, void *mb_buf)
- {
- 	struct hns_roce_v2_mpt_entry *mpt_entry = mb_buf;
-+	int ret = 0;
- 
- 	if (flags & IB_MR_REREG_PD) {
- 		roce_set_field(mpt_entry->byte_4_pd_hop_st, V2_MPT_BYTE_4_PD_M,
-@@ -1784,14 +1784,14 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
- 			     V2_MPT_BYTE_8_BIND_EN_S,
- 			     (mr_access_flags & IB_ACCESS_MW_BIND ? 1 : 0));
- 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en,
--			   V2_MPT_BYTE_8_ATOMIC_EN_S,
--			   (mr_access_flags & IB_ACCESS_REMOTE_ATOMIC ? 1 : 0));
-+			     V2_MPT_BYTE_8_ATOMIC_EN_S,
-+			     mr_access_flags & IB_ACCESS_REMOTE_ATOMIC ? 1 : 0);
- 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RR_EN_S,
--			     (mr_access_flags & IB_ACCESS_REMOTE_READ ? 1 : 0));
-+			     mr_access_flags & IB_ACCESS_REMOTE_READ ? 1 : 0);
- 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_RW_EN_S,
--			    (mr_access_flags & IB_ACCESS_REMOTE_WRITE ? 1 : 0));
-+			     mr_access_flags & IB_ACCESS_REMOTE_WRITE ? 1 : 0);
- 		roce_set_bit(mpt_entry->byte_8_mw_cnt_en, V2_MPT_BYTE_8_LW_EN_S,
--			     (mr_access_flags & IB_ACCESS_LOCAL_WRITE ? 1 : 0));
-+			     mr_access_flags & IB_ACCESS_LOCAL_WRITE ? 1 : 0);
- 	}
- 
- 	if (flags & IB_MR_REREG_TRANS) {
-@@ -1800,21 +1800,13 @@ static int hns_roce_v2_rereg_write_mtpt(struct hns_roce_dev *hr_dev,
- 		mpt_entry->len_l = cpu_to_le32(lower_32_bits(size));
- 		mpt_entry->len_h = cpu_to_le32(upper_32_bits(size));
- 
--		mpt_entry->pbl_size = cpu_to_le32(mr->pbl_size);
--		mpt_entry->pbl_ba_l =
--				cpu_to_le32(lower_32_bits(mr->pbl_ba >> 3));
--		roce_set_field(mpt_entry->byte_48_mode_ba,
--			       V2_MPT_BYTE_48_PBL_BA_H_M,
--			       V2_MPT_BYTE_48_PBL_BA_H_S,
--			       upper_32_bits(mr->pbl_ba >> 3));
--		mpt_entry->byte_48_mode_ba =
--				cpu_to_le32(mpt_entry->byte_48_mode_ba);
--
- 		mr->iova = iova;
- 		mr->size = size;
-+
-+		ret = set_mtpt_pbl(mpt_entry, mr);
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static void *get_cqe_v2(struct hns_roce_cq *hr_cq, int n)
+-			if (!isspace(fmt[i]) && !ispunct(fmt[i]) && fmt[i] != 0)
++			/* disallow any further format extensions */
++			if (fmt[i + 1] != 0 &&
++			    !isspace(fmt[i + 1]) &&
++			    !ispunct(fmt[i + 1]))
+ 				return -EINVAL;
+ 			fmt_cnt++;
+-			if (fmt[i - 1] == 's') {
++			if (fmt[i] == 's') {
+ 				if (str_seen)
+ 					/* allow only one '%s' per fmt string */
+ 					return -EINVAL;
 -- 
 2.17.1
 
