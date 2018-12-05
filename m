@@ -2,100 +2,215 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3AFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893B4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4362082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:13:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4362082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 36FA92082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:18:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+MN+WYP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FA92082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeLEJNr (ORCPT
+        id S1727403AbeLEJSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:13:47 -0500
-Received: from mga18.intel.com ([134.134.136.126]:8161 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbeLEJNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:13:47 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 01:13:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="asc'?scan'208";a="281079696"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga005.jf.intel.com with ESMTP; 05 Dec 2018 01:13:43 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>,
-        minas.harutyunyan@synopsys.com, Terin Stock <terin@terinstock.com>
-Cc:     linux-usb@vger.kernel.org, Julius Werner <jwerner@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: dwc2: host: use hrtimer for NAK retries
-In-Reply-To: <CAD=FV=UpPv3fWFjhrRRj1JjLPecbtzVYptVBkRaFHUgEm=isXw@mail.gmail.com>
-References: <153655347149.19910.4781444209586693527.stgit@Rincon.localdomain> <CAD=FV=Vau3KL=hqbu-jx19VvGZ5FZug+C-sxxdw2hiAtCXgBtg@mail.gmail.com> <410670D7E743164D87FA6160E7907A56013A7A9610@am04wembxa.internal.synopsys.com> <CAD=FV=UpPv3fWFjhrRRj1JjLPecbtzVYptVBkRaFHUgEm=isXw@mail.gmail.com>
-Date:   Wed, 05 Dec 2018 11:13:39 +0200
-Message-ID: <87zhtk1gl8.fsf@linux.intel.com>
+        Wed, 5 Dec 2018 04:18:50 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41435 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeLEJSt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:18:49 -0500
+Received: by mail-ed1-f67.google.com with SMTP id z28so16358776edi.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 01:18:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k4x4HIua/ebWA4ICeAcRKBy/h5TWt5GAp0PQqy5ul3Y=;
+        b=M+MN+WYPfm4NNV7wX75sanY6/CZSWnWn8H81lBGRO5Bo7XhoaVGvXqaFkNmZStyyNG
+         n9r7FfxZ8QJHvyJhIv0AZbF8hcofPrKxOK12Pov2Zr7ZXM2Zj5wc0Ewdh5v7e+oh1irY
+         tIzD9masPGRs0AeZt5H4pPC201rZttbIFVlz9mqmVzSj/DfDryV1Yu7VrPQigK6g9zQi
+         02F1uKFtNsO810mU+AqnuB8oZKTmqRyFFBg8lX2pufsq52v6rho1E8diZPqX8m2FnOfh
+         4fBGdDLWaeHt5sPOg7ZksSmsNiSA0fLU9oPxYDdsih8f/4Q2khYXjeGSEdRWFyfnrBih
+         kXlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k4x4HIua/ebWA4ICeAcRKBy/h5TWt5GAp0PQqy5ul3Y=;
+        b=ZweOU3BTRVNfLKE1q/gRhR0OS27LkS65uL0iCU43XOIpkVVbEFmGJpTslYzCE23JuT
+         +xAo9astDGyzP/LdRXOY7xXWgLqXkWMpZJkRfD20yQ5X+tjkSXd1yoLaA5ba+4uZ2saI
+         t02dkWQxtPHJTg8CRvfZyf5IqkC9xOBxrX7QxvkyBMb34+feEub5/ZsFbz7BTeMY8BYT
+         rJMgjzlpdsiUKc+DkWZnfHNN0iG9jKp4eN5+xplUpeKudQM3GhR1gKpBy6CeuzDiNb7O
+         Cyw5lPrSb/NG+W3R5rpRXSht4Tm/YgDSgMQ1bmwaVsppBCUQhNdmXDq74kH4Lqip7OTX
+         IPWg==
+X-Gm-Message-State: AA+aEWZd0Ax5y3L+RzPVpOGHa/5/y6tIKahvFR2WnljDruWsxZ7Rftf1
+        EDCUEExP8r62LPo5pRN+Yhw=
+X-Google-Smtp-Source: AFSGD/WP/4fZapI4uzPRzqSCK1Qzo2f4xKVolkgPjiHXvOzIci6PHtUSW/nnssSVcEoJuIb4L72Q6g==
+X-Received: by 2002:a17:906:81cc:: with SMTP id e12-v6mr18708661ejx.138.1544001527273;
+        Wed, 05 Dec 2018 01:18:47 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id v20sm5349833edm.29.2018.12.05.01.18.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 01:18:46 -0800 (PST)
+Date:   Wed, 5 Dec 2018 09:18:45 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     richard.weiyang@gmail.com, Will Deacon <will.deacon@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        linux-mm@kvack.org, Christoph Lameter <cl@linux.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        yingjoe.chen@mediatek.com, Vlastimil Babka <vbabka@suse.cz>,
+        Tomasz Figa <tfiga@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
+Message-ID: <20181205091845.kfro65nu7v4g6esa@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-3-drinkcat@chromium.org>
+ <20181205072528.l7blg6y24ggblh4m@master>
+ <CANMq1KCi-k_4-66pMfvByzsjpf1H6_bvC82Ow0b_jEH6B3LHwA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANMq1KCi-k_4-66pMfvByzsjpf1H6_bvC82Ow0b_jEH6B3LHwA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Doug Anderson <dianders@chromium.org> writes:
-> >> Signed-off-by: Terin Stock <terin@terinstock.com>
->> >> ---
->> >>   drivers/usb/dwc2/hcd.h       |    2 +-
->> >>   drivers/usb/dwc2/hcd_queue.c |   19 ++++++++++++-------
->> >>   2 files changed, 13 insertions(+), 8 deletions(-)
+On Wed, Dec 05, 2018 at 03:39:51PM +0800, Nicolas Boichat wrote:
+>On Wed, Dec 5, 2018 at 3:25 PM Wei Yang <richard.weiyang@gmail.com> wrote:
+>>
+>> On Wed, Dec 05, 2018 at 01:48:27PM +0800, Nicolas Boichat wrote:
+>> >In some cases (e.g. IOMMU ARMv7s page allocator), we need to allocate
+>> >data structures smaller than a page with GFP_DMA32 flag.
 >> >
->> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
->> > Cc: stable@vger.kernel.org
+>> >This change makes it possible to create a custom cache in DMA32 zone
+>> >using kmem_cache_create, then allocate memory using kmem_cache_alloc.
 >> >
->> Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+>> >We do not create a DMA32 kmalloc cache array, as there are currently
+>> >no users of kmalloc(..., GFP_DMA32). The new test in check_slab_flags
+>> >ensures that such calls still fail (as they do before this change).
+>> >
+>> >Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
+>> >Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+>> >---
+>> >
+>> >Changes since v2:
+>> > - Clarified commit message
+>> > - Add entry in sysfs-kernel-slab to document the new sysfs file
+>> >
+>> >(v3 used the page_frag approach)
+>> >
+>> >Documentation/ABI/testing/sysfs-kernel-slab |  9 +++++++++
+>> > include/linux/slab.h                        |  2 ++
+>> > mm/internal.h                               |  8 ++++++--
+>> > mm/slab.c                                   |  4 +++-
+>> > mm/slab.h                                   |  3 ++-
+>> > mm/slab_common.c                            |  2 +-
+>> > mm/slub.c                                   | 18 +++++++++++++++++-
+>> > 7 files changed, 40 insertions(+), 6 deletions(-)
+>> >
+>> >diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
+>> >index 29601d93a1c2ea..d742c6cfdffbe9 100644
+>> >--- a/Documentation/ABI/testing/sysfs-kernel-slab
+>> >+++ b/Documentation/ABI/testing/sysfs-kernel-slab
+>> >@@ -106,6 +106,15 @@ Description:
+>> >               are from ZONE_DMA.
+>> >               Available when CONFIG_ZONE_DMA is enabled.
+>> >
+>> >+What:         /sys/kernel/slab/cache/cache_dma32
+>> >+Date:         December 2018
+>> >+KernelVersion:        4.21
+>> >+Contact:      Nicolas Boichat <drinkcat@chromium.org>
+>> >+Description:
+>> >+              The cache_dma32 file is read-only and specifies whether objects
+>> >+              are from ZONE_DMA32.
+>> >+              Available when CONFIG_ZONE_DMA32 is enabled.
+>> >+
+>> > What:         /sys/kernel/slab/cache/cpu_slabs
+>> > Date:         May 2007
+>> > KernelVersion:        2.6.22
+>> >diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> >index 11b45f7ae4057c..9449b19c5f107a 100644
+>> >--- a/include/linux/slab.h
+>> >+++ b/include/linux/slab.h
+>> >@@ -32,6 +32,8 @@
+>> > #define SLAB_HWCACHE_ALIGN    ((slab_flags_t __force)0x00002000U)
+>> > /* Use GFP_DMA memory */
+>> > #define SLAB_CACHE_DMA                ((slab_flags_t __force)0x00004000U)
+>> >+/* Use GFP_DMA32 memory */
+>> >+#define SLAB_CACHE_DMA32      ((slab_flags_t __force)0x00008000U)
+>> > /* DEBUG: Store the last owner for bug hunting */
+>> > #define SLAB_STORE_USER               ((slab_flags_t __force)0x00010000U)
+>> > /* Panic if kmem_cache_create() fails */
+>> >diff --git a/mm/internal.h b/mm/internal.h
+>> >index a2ee82a0cd44ae..fd244ad716eaf8 100644
+>> >--- a/mm/internal.h
+>> >+++ b/mm/internal.h
+>> >@@ -14,6 +14,7 @@
+>> > #include <linux/fs.h>
+>> > #include <linux/mm.h>
+>> > #include <linux/pagemap.h>
+>> >+#include <linux/slab.h>
+>> > #include <linux/tracepoint-defs.h>
+>> >
+>> > /*
+>> >@@ -34,9 +35,12 @@
+>> > #define GFP_CONSTRAINT_MASK (__GFP_HARDWALL|__GFP_THISNODE)
+>> >
+>> > /* Check for flags that must not be used with a slab allocator */
+>> >-static inline gfp_t check_slab_flags(gfp_t flags)
+>> >+static inline gfp_t check_slab_flags(gfp_t flags, slab_flags_t slab_flags)
+>> > {
+>> >-      gfp_t bug_mask = __GFP_DMA32 | __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+>> >+      gfp_t bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+>> >+
+>> >+      if (!IS_ENABLED(CONFIG_ZONE_DMA32) || !(slab_flags & SLAB_CACHE_DMA32))
+>> >+              bug_mask |= __GFP_DMA32;
+>>
+>> The original version doesn't check CONFIG_ZONE_DMA32.
+>>
+>> Do we need to add this condition here?
+>> Could we just decide the bug_mask based on slab_flags?
 >
-> It looks like Terin missed CCing you on the original patch.  I assume
-> you are still picking up dwc2 changes like this?  If so, should he
-> resend the patch targeting you (and including Minas and my tags) or do
-> you want to pick it up from one of the mailing lists he CCed?
+>We can. The reason I did it this way is that when we don't have
+>CONFIG_ZONE_DMA32, the compiler should be able to simplify to:
+>
+>bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+>if (true || ..) => if (true)
+>   bug_mask |= __GFP_DMA32;
+>
+>Then just
+>bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK | __GFP_DMA32;
+>
+>And since the function is inline, slab_flags would not even need to be
+>accessed at all.
+>
 
-I'm picking it up, thanks
+Thanks for explanation. This make sense to me.
 
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwHlsMACgkQzL64meEa
-mQZJeg//QeVLQOOVLmZgar3UEoYA//JuFe4l11UAqXHYV34PrTuLai3qOzuFLcEH
-VfIRS1Ewo1c9xHjBISMYZxrOEqn7aG3qZJnfvG3tmC705xv2HxuLIuVtTMCpfyXX
-yO5uRf1N2ScdngSU7gS8jygc4e/FZbQEuNiecNn7MA+r3lirwWHLjT/EfKVbjwCu
-RYN+Ib3HKDlL4sAlQGpYyAZjLTJiHuFEdg2cKYa1KGtwt4ZclemcEdaIfB+zK653
-0hdbefjqDAdk01cEYKEfmISNbA1cBTEt8mfdzcU6QY0SDHjP1bl3kuDFx4pt/Agv
-9APF2qZSooXfgtVSG3i+YqfgpG4Rxu2AKH9gmjA+poBpSj251hA37ybXiYkqNFOX
-Y384WBY/+SZEL9Qb+3cYdmfr3WO4zj9KcOfKjZrInxxvJm8DqJZYBiLe4NRXFU96
-hommoLh2woIakaCY/7yWKsDSZbpmKSq4cVWg+GsOOqTZDUyplBWdHOINVH7XiUyf
-OKOmLcughb2i2a6qjcbVGX5uD0fewr3KwAcn7Gxy0sRzW0ddy6Y2neNkKb2FPem/
-qlbQsKVjQjWg3uWQYATJmO21RfmCGVSjKrGYNQdDXdZkuqbey6eY3XuCHEilIkEZ
-6Vpts82IPLT1br+wQyeAFk8iDleymAmzRcurvh3uZ7fZ9Vx+bbA=
-=lSgH
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Wei Yang
+Help you, Help me
