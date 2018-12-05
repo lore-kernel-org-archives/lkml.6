@@ -2,102 +2,78 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3742C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E81C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA802081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA802081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 994322081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:39:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="S0skCL9r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994322081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeLENhV (ORCPT
+        id S1727419AbeLENjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:37:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36382 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726909AbeLENhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:37:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4D614AF3C;
-        Wed,  5 Dec 2018 13:37:18 +0000 (UTC)
-Subject: Re: [PATCH v4 1/3] mm: slab/slub: Add check_slab_flags function to
- check for valid flags
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
-        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
-References: <20181205054828.183476-1-drinkcat@chromium.org>
- <20181205054828.183476-2-drinkcat@chromium.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <6dc0181c-406d-bd13-f36b-98496f488979@suse.cz>
-Date:   Wed, 5 Dec 2018 14:34:20 +0100
+        Wed, 5 Dec 2018 08:39:31 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41754 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeLENja (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:39:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 70so9036769pgh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 05:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=+XAQonzhCNLkgQlokuTYmawobRYE4+g+xNZscTgpuT8=;
+        b=S0skCL9rgOJ96U32C/8n8x0W64y0RXn9ZNJmDqvT7LIcfBrlOZB0KcRmWbAiAHWz9n
+         xlThDKkjTdB5/qoH5GvCZst5Pi0gQ43Eww+hPECrPAKLsXxM7pZQRZwXHOFV9VxdsNsA
+         Sl8YSrvPKi1uaJ30GNmNyl+OPP4Td4zsVuTmLxmYy8pZl/2vuAVM5JUhEUzk73Ww9/vJ
+         9HaVn9+g1NtH90hWdXNfzS77trJiltuybUD85N6nbCcG8EvCvHKAhxcDmJZr3aSieIGz
+         m5CxfIvqCEU7FS2IInKCfW/7ZE5wvCfIK8vontrpjAbi7SQmqHY+aZ8HhkoW3CAgfkwQ
+         dLHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+XAQonzhCNLkgQlokuTYmawobRYE4+g+xNZscTgpuT8=;
+        b=V4VBLDe3Xa4lKwLreN/D3tLMaDMeBP2+aknvlSbjw8pPb8YnNP/ivF4YPWX9W2vpxJ
+         MPLUf5pccqh4s22RcJ59yN4TtA5QUJnC1n+Dt/YG15Bg+J3OjPvmMssB0mx/w7g0jQdX
+         jgt9IUPtdWxfUzcrrwxH4JzgYvR/oakqbuxBI3cmWjG+SyML+nUuOBu1YM1FhM+Hp+Zu
+         54s/2pkYgu7hXGk4ZJd8OBe9u0uCnYyqLkVqTwTDf4cj6wo4krR4BP+q6fpWE9GrdPVq
+         oQHg8X6j6of+dfKxREM1tVcF4i644expRbyLk2fK0bUqe11X0cZ1J/QTII23TH7JrF/1
+         ja7w==
+X-Gm-Message-State: AA+aEWZyXSQ0eiJNc2/o/OdFYAkA5FS7OkxdHFzCrl3IT5nFpafjgAkB
+        MPAif0GldoJ/+1QD1PhmOjTva5vXrGs=
+X-Google-Smtp-Source: AFSGD/UcIleevaKjpQhyFqV7oaocqfqiaVCJXnuR4BYHJReGyOAWhNVTnayQzldlMpkNHlZbyNQYww==
+X-Received: by 2002:a62:4b4d:: with SMTP id y74mr24175497pfa.186.1544017169222;
+        Wed, 05 Dec 2018 05:39:29 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id j6sm31673181pfg.126.2018.12.05.05.39.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 05:39:27 -0800 (PST)
+Subject: Re: Kernel crashes after 529262d56dbe "block: remove ->poll_fn"
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>, hch@lst.de, sagi@grimberg.me,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <0bd2d36e-bef0-b836-7039-124ae4d346a6@virtuozzo.com>
+ <c374e085-a86b-6df3-2142-74968f067bc7@kernel.dk>
+ <5e8d3302-a7d0-3483-6540-f0b87c237f7d@virtuozzo.com>
+ <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
+Message-ID: <a6efd5b2-3190-54e7-ad4c-06f9ac441641@kernel.dk>
+Date:   Wed, 5 Dec 2018 06:39:26 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181205054828.183476-2-drinkcat@chromium.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -105,16 +81,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 6:48 AM, Nicolas Boichat wrote:
-> Remove duplicated code between slab and slub, and will make it
-> easier to make the test more complicated in the next commits.
+On 12/5/18 6:20 AM, Jens Axboe wrote:
+> On 12/5/18 6:05 AM, Kirill Tkhai wrote:
+>> On 05.12.2018 15:45, Jens Axboe wrote:
+>>> On 12/5/18 5:19 AM, Kirill Tkhai wrote:
+>>>> Hi,
+>>>>
+>>>> commit 529262d56dbe from today linux-next makes my kernel crash:
+>>>>
+>>>> Author: Christoph Hellwig <hch@lst.de>
+>>>> Date:   Sun Dec 2 17:46:26 2018 +0100
+>>>>
+>>>>     block: remove ->poll_fn
+>>>>
+>>>> Traceback is below, config and reproducer (not minimal, just a random one populating swap) are attached.
+>>>>
+>>>> [   29.097612] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+>>>> [   29.098730] #PF error: [INSTR]
+>>>> [   29.099104] PGD 0 P4D 0 
+>>>> [   29.099425] Oops: 0010 [#1] PREEMPT SMP
+>>>> [   29.099879] CPU: 3 PID: 925 Comm: bash Not tainted 4.20.0-rc5-next-20181205+ #244
+>>>> [   29.100658] RIP: 0010:          (null)
+>>>> [   29.101100] Code: Bad RIP value.
+>>>> [   29.101480] RSP: 0000:ffffc9000023fb80 EFLAGS: 00010202
+>>>> [   29.102061] RAX: ffffffff8182d0e0 RBX: ffff88807ceee000 RCX: 0000000000000000
+>>>> [   29.102818] RDX: ffff88807d560f40 RSI: 0000000000000000 RDI: ffff88807ceee000
+>>>> [   29.103661] RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000002000
+>>>> [   29.104560] R10: 00000000ffffffff R11: ffff88807c854150 R12: 0000000000000000
+>>>> [   29.105458] R13: 0000000000000002 R14: ffff88807d7236c0 R15: ffffc9000023fe20
+>>>> [   29.106438] FS:  00007faba91d7740(0000) GS:ffff88807db80000(0000) knlGS:0000000000000000
+>>>> [   29.107304] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [   29.107917] CR2: ffffffffffffffd6 CR3: 000000007a172000 CR4: 00000000000006a0
+>>>> [   29.109401] Call Trace:
+>>>> [   29.110017]  ? blk_poll+0x27c/0x340
+>>>> [   29.110691]  ? submit_bio+0x40/0x120
+>>>> [   29.111278]  ? swap_readpage+0x148/0x190
+>>>> [   29.111924]  ? read_swap_cache_async+0x53/0x60
+>>>> [   29.112670]  ? swap_cluster_readahead+0x231/0x2b0
+>>>> [   29.113310]  ? swapin_readahead+0x2ce/0x400
+>>>> [   29.113878]  ? pagecache_get_page+0x2b/0x210
+>>>> [   29.114416]  ? do_swap_page+0x42c/0x800
+>>>> [   29.114919]  ? __handle_mm_fault+0x544/0xdd0
+>>>> [   29.115455]  ? handle_mm_fault+0x112/0x230
+>>>> [   29.115978]  ? __do_page_fault+0x196/0x410
+>>>> [   29.116501]  ? __put_user_4+0x19/0x20
+>>>> [   29.116990]  ? page_fault+0x5/0x20
+>>>> [   29.117451]  ? page_fault+0x1b/0x20
+>>>> [   29.117925] CR2: 0000000000000000
+>>>> [   29.118472] ---[ end trace 0faa4ddc190b41fa ]---
+>>>
+>>> Can you try this? The swap read-in poll attempts looks totally
+>>> incorrect.
+>>>
+>>>
+>>> diff --git a/mm/page_io.c b/mm/page_io.c
+>>> index 5bdfd21c1bd9..f3455f9f8dc7 100644
+>>> --- a/mm/page_io.c
+>>> +++ b/mm/page_io.c
+>>> @@ -401,6 +401,8 @@ int swap_readpage(struct page *page, bool synchronous)
+>>>  	get_task_struct(current);
+>>>  	bio->bi_private = current;
+>>>  	bio_set_op_attrs(bio, REQ_OP_READ, 0);
+>>> +	if (synchronous)
+>>> +		bio->bi_opf |= REQ_HIPRI;
+>>>  	count_vm_event(PSWPIN);
+>>>  	bio_get(bio);
+>>>  	qc = submit_bio(bio);
+>>> @@ -411,7 +413,7 @@ int swap_readpage(struct page *page, bool synchronous)
+>>>  			break;
+>>>  
+>>>  		if (!blk_poll(disk->queue, qc, true))
+>>> -			break;
+>>> +			io_schedule();
+>>>  	}
+>>>  	__set_current_state(TASK_RUNNING);
+>>>  	bio_put(bio);
+>>
+>> Still crashes:
 > 
-> Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
+> What device is this?
 
-Well, not really. Patch 3 does that and yeah this will be a prerequisity
-for a clean stable backport, but we don't tag all prerequisities like
-this, I think?
+This might also help...
 
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 0b3874bdbc6a..81f1b105946b 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -606,8 +606,7 @@ struct request_queue {
+ 				 (1 << QUEUE_FLAG_ADD_RANDOM))
+ 
+ #define QUEUE_FLAG_MQ_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+-				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
+-				 (1 << QUEUE_FLAG_POLL))
++				 (1 << QUEUE_FLAG_SAME_COMP))
+ 
+ void blk_queue_flag_set(unsigned int flag, struct request_queue *q);
+ void blk_queue_flag_clear(unsigned int flag, struct request_queue *q);
+
+-- 
+Jens Axboe
+
