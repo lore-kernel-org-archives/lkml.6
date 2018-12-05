@@ -2,223 +2,173 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11717C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A94C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1F020834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1F020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C49820834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:12:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NWJYWjNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C49820834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbeLEBLM (ORCPT
+        id S1726769AbeLEBML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:11:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34144 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbeLEBLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:11:12 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58C7F8831E;
-        Wed,  5 Dec 2018 01:11:11 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8FB935D78C;
-        Wed,  5 Dec 2018 01:11:04 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 09:10:59 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     axboe@kernel.dk, Gwendal Grignou <gwendal@chromium.org>,
-        asavery@chromium.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
-Message-ID: <20181205011059.GA17845@ming.t460p>
-References: <20181030230624.61834-1-evgreen@chromium.org>
- <20181030230624.61834-3-evgreen@chromium.org>
- <20181128012624.GB11128@ming.t460p>
- <CAE=gft7Fyq+Jb3ZG3PSTR=C0Wjt3uu57+H2bshM6Gu=_0W0YQw@mail.gmail.com>
+        Tue, 4 Dec 2018 20:12:11 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:59852 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbeLEBML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:12:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Qsxik1dvJAYMIiIG3FyD4gxkbNyCTBskx/v19tpbex8=; b=NWJYWjNKCKs7TpPIK8Zf+yU59a
+        17NYEigx9EiO7eJB1U+Dd7+cljGFonVUv0eARWUWQZEaUGsdnmSwjb1eIx6QaRtBJNeItplK17YhO
+        +BSxwyRQWQFtAC678wZvJMX5oZeOzIjCY525RdblWTZC+yKmoB/Q/nouIsxsAadFbG+pmqxdt19+c
+        ETdr/aT00GYA3q2HFgtxvUYzrDXOhIS1FkHLVtufFz9T20oQxIh2nc/5XhKCmxxDYRImfSVSC/7Ed
+        voJmai60ZHRX+TxHSMoGdO2BkhE+hsMOeNy9YwXG7JcdbrvQo9Gp8MrTh0RJj7kiV4G3Na1vDHetv
+        edm7VSag==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gULjT-0007Iu-PJ; Wed, 05 Dec 2018 01:12:07 +0000
+Subject: Re: [PATCH v5 1/6] fieldbus_dev: add Fieldbus Device subsystem.
+To:     Sven Van Asbroeck <thesven73@gmail.com>, svendev@arcx.com,
+        robh+dt@kernel.org, linus.walleij@linaro.org
+Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
+        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
+        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, maxime.ripard@bootlin.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20181204220224.27324-1-TheSven73@googlemail.com>
+ <20181204220224.27324-2-TheSven73@googlemail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9f44b8a5-57bf-5dbf-1854-85c732708d02@infradead.org>
+Date:   Tue, 4 Dec 2018 17:12:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE=gft7Fyq+Jb3ZG3PSTR=C0Wjt3uu57+H2bshM6Gu=_0W0YQw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 05 Dec 2018 01:11:11 +0000 (UTC)
+In-Reply-To: <20181204220224.27324-2-TheSven73@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:19:46PM -0800, Evan Green wrote:
-> Hi Ming,
+On 12/4/18 2:02 PM, Sven Van Asbroeck wrote:
+> Fieldbus device (client) adapters allow data exchange with a PLC aka.
+> "Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
 > 
-> On Tue, Nov 27, 2018 at 5:26 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Tue, Oct 30, 2018 at 04:06:24PM -0700, Evan Green wrote:
-> > > If the backing device for a loop device is a block device,
-> > > then mirror the discard properties of the underlying block
-> > > device into the loop device. While in there, differentiate
-> > > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
-> > > different for block devices, but which the loop device had
-> > > just been lumping together.
-> > >
-> > > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > > ---
-> > >
-> > >  drivers/block/loop.c | 61 +++++++++++++++++++++++++++++++++++-----------------
-> > >  1 file changed, 41 insertions(+), 20 deletions(-)
-> > >
-> > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > > index 28990fc94841a..176e65101c4ef 100644
-> > > --- a/drivers/block/loop.c
-> > > +++ b/drivers/block/loop.c
-> > > @@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
-> > >       return ret;
-> > >  }
-> > >
-> > > -static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-> > > +static int lo_discard(struct loop_device *lo, struct request *rq,
-> > > +             int mode, loff_t pos)
-> > >  {
-> > > -     /*
-> > > -      * We use punch hole to reclaim the free space used by the
-> > > -      * image a.k.a. discard. However we do not support discard if
-> > > -      * encryption is enabled, because it may give an attacker
-> > > -      * useful information.
-> > > -      */
-> > >       struct file *file = lo->lo_backing_file;
-> > > -     int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-> > > +     struct request_queue *q = lo->lo_queue;
-> > >       int ret;
-> > >
-> > > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> > > +     if (!blk_queue_discard(q)) {
-> > >               ret = -EOPNOTSUPP;
-> > >               goto out;
-> > >       }
-> > > @@ -603,8 +598,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
-> > >       case REQ_OP_FLUSH:
-> > >               return lo_req_flush(lo, rq);
-> > >       case REQ_OP_DISCARD:
-> > > +             return lo_discard(lo, rq,
-> > > +                     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-> > > +
-> > >       case REQ_OP_WRITE_ZEROES:
-> > > -             return lo_discard(lo, rq, pos);
-> > > +             return lo_discard(lo, rq,
-> > > +                     FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-> > > +
-> > >       case REQ_OP_WRITE:
-> > >               if (lo->transfer)
-> > >                       return lo_write_transfer(lo, rq, pos);
-> > > @@ -859,6 +859,25 @@ static void loop_config_discard(struct loop_device *lo)
-> > >       struct file *file = lo->lo_backing_file;
-> > >       struct inode *inode = file->f_mapping->host;
-> > >       struct request_queue *q = lo->lo_queue;
-> > > +     struct request_queue *backingq;
-> > > +
-> > > +     /*
-> > > +      * If the backing device is a block device, mirror its discard
-> > > +      * capabilities.
-> > > +      */
-> > > +     if (S_ISBLK(inode->i_mode)) {
-> > > +             backingq = bdev_get_queue(inode->i_bdev);
-> > > +             blk_queue_max_discard_sectors(q,
-> > > +                     backingq->limits.max_discard_sectors);
-> > > +
-> > > +             blk_queue_max_write_zeroes_sectors(q,
-> > > +                     backingq->limits.max_write_zeroes_sectors);
-> > > +
-> > > +             q->limits.discard_granularity =
-> > > +                     backingq->limits.discard_granularity;
-> > > +
-> > > +             q->limits.discard_alignment =
-> > > +                     backingq->limits.discard_alignment;
-> >
-> > I think it isn't necessary to mirror backing queue's discard/write_zeros
-> > capabilities, given either fs of the underlying queue can deal with well.
-> >
-> > >
-> > >       /*
-> > >        * We use punch hole to reclaim the free space used by the
-> > > @@ -866,22 +885,24 @@ static void loop_config_discard(struct loop_device *lo)
-> > >        * encryption is enabled, because it may give an attacker
-> > >        * useful information.
-> > >        */
-> > > -     if ((!file->f_op->fallocate) ||
-> > > -         lo->lo_encrypt_key_size) {
-> > > +     } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> > >               q->limits.discard_granularity = 0;
-> > >               q->limits.discard_alignment = 0;
-> > >               blk_queue_max_discard_sectors(q, 0);
-> > >               blk_queue_max_write_zeroes_sectors(q, 0);
-> > > -             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> > > -             return;
-> > > -     }
-> > >
-> > > -     q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> > > -     q->limits.discard_alignment = 0;
-> > > +     } else {
-> > > +             q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> > > +             q->limits.discard_alignment = 0;
-> > > +
-> > > +             blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> > > +             blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> > > +     }
-> > >
-> > > -     blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> > > -     blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> > > -     blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> > > +     if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
-> > > +             blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> > > +     else
-> > > +             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> > >  }
-> >
-> > Looks it should work just by mirroring backing queue's discard
-> > capability to loop queue in case that the loop is backed by
-> > block device, doesn't it? Meantime the unified discard limits &
-> > write_zeros limits can be kept.
+> They are typically used when a Linux device wants to expose itself
+> as an actuator, motor, console light, switch, etc. over the fieldbus.
 > 
-> I tested this out, and you're right that I could just flip the
-> QUEUE_FLAG_DISCARD based on whether its a block device, and leave
-
-What I meant actually is to do the following discard config:
-
-	bool discard;
-	if (S_ISBLK(inode->i_mode)) {
-		struct request_queue *backingq = bdev_get_queue(inode->i_bdev);
-		discard = blk_queue_discard(backingq);
-	} else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size)
-		discard = false;
-	else
-		discard = true;
-
-	if (discard) {
-		blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-		blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-	} else {
-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-	}
-
-> everything else alone, to completely disable discard support for loop
-> devices backed by block devices. This seems to work for programs like
-> mkfs.ext4, but still leaves problems for coreutils cp.
+> This framework is designed to provide a generic interface to Fieldbus
+> Devices from both the Linux Kernel and the userspace.
 > 
-> But is that really the right call? With this change, we're not only
-> able to use loop devices in this way, but we're able to use the
-> discard and zero functionality of the underlying block device by
-> simply passing it through. To me that seemed better than disabling all
-> discard support for block devices, which would severely slow us down
-> on some devices.
+> Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+> ---
+> 
 
-I guess the above approach can do the same job with yours, but simpler.
+> diff --git a/Documentation/fieldbus_dev/fieldbus_dev.txt b/Documentation/fieldbus_dev/fieldbus_dev.txt
+> new file mode 100644
+> index 000000000000..40ab4de0f019
+> --- /dev/null
+> +++ b/Documentation/fieldbus_dev/fieldbus_dev.txt
+> @@ -0,0 +1,66 @@
+> +                       Fieldbus-Device Subsystem
+> +               ============================================
+> +
+> +Part 0 - What is a Fieldbus Device ?
+> +------------------------------------
+> +
+> +Fieldbus is the name of a family of industrial computer network protocols used
+> +for real-time distributed control, standardized as IEC 61158.
+> +
+> +A complex automated industrial system — such as manufacturing assembly line —
+> +usually needs a distributed control system—an organized hierarchy of controller
 
-thanks,
-Ming
+"system-an" looks like a hyphenated word, but it's not.  It would be better
+to use either "--" or " - " (as in the line above it).
+
+> +systems—to function. In this hierarchy, there is usually a
+
+Same for "systems-to".
+
+> +Human Machine Interface (HMI) at the top, where an operator can monitor or
+> +operate the system. This is typically linked to a middle layer of programmable
+> +logic controllers (PLC) via a non-time-critical communications system
+> +(e.g. Ethernet). At the bottom of the control chain is the fieldbus that links
+> +the PLCs to the components that actually do the work, such as sensors,
+> +actuators, electric motors, console lights, switches, valves and contactors.
+> +
+> +(Source: Wikipedia)
+> +
+> +A "Fieldbus Device" is such an actuator, motor, console light, switch, ...
+> +controlled via the Fieldbus by a PLC aka. "Fieldbus Controller".
+
+a.k.a. or just "aka", but not "aka."
+
+> +
+> +Communication between PLC and device typically happens via process data memory,
+> +separated into input and output areas. The Fieldbus then cyclically transfers
+> +the PLC's output area to the device's input area, and vice versa.
+> +
+> +Part I - Why do we need this subsystem?
+> +---------------------------------------
+> +
+> +Fieldbus device (client) adapters are commercially available. They allow data
+> +exchange with a PLC aka. "Fieldbus Controller" via process data memory.
+
+                       aka
+
+> +
+> +They are typically used when a Linux device wants to expose itself as an
+> +actuator, motor, console light, switch, etc. over the fieldbus.
+> +
+> +The purpose of this subsystem is:
+> +a) present a general, standardized, extensible API/ABI to userspace; and
+> +b) present a convenient interface to drivers.
+> +
+> +Part II - How can drivers use the subsystem?
+> +--------------------------------------------
+> +
+> +Any driver that wants to register as a Fieldbus Device should allocate and
+> +populate a 'struct fieldbus_dev' (from include/linux/fieldbus_dev.h).
+> +Registration then happens by calling fieldbus_dev_register().
+> +
+> +Part III - How can userspace use the subsystem?
+> +-----------------------------------------------
+> +
+> +Fieldbus protocols and adapters are diverse and varied. However, they share
+> +a limited few common behaviours and properties. This allows us to define
+> +a simple interface consisting of a character device and a set of sysfs files:
+> +
+> +See:
+> +Documentation/ABI/testing/sysfs-class-fieldbus-dev
+> +Documentation/ABI/testing/fieldbus-dev-cdev
+> +
+> +Note that this simple interface does not provide a way to modify adapter
+> +configuration settings. It is therefore useful only for adapters that get their
+> +configuration settings some other way, e.g. non-volatile memory on the adapter,
+> +through the network, ...
+> +
+> +At a later phase, this simple interface can easily co-exist with a future
+> +(netlink-based ?) configuration settings interface.
+
+
+-- 
+~Randy
