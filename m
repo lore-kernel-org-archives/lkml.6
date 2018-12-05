@@ -2,142 +2,138 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710A8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4FFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B45220879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:40:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B45220879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id B295F20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544049666;
+	bh=QGid9c8fcmYrIrtsqICzM5hBjYULD6bUpSZfRiAxfbw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WQw5AsgxXtAouaDBAhBd5dRbiz/OMN1PR4+BN6fiHrFa7C4OMqffshakPCoK2Zotv
+	 5M4Sg0iGRgUtuuaM4mI0bV4oo+NMD6Kd/PwBtwZeeeVjAj51FWClBNfmsfbtdlD8H3
+	 Rhb75yjfTLEGERD116mEWaaIHlBz6/sfOqKpx9ag=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B295F20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbeLEWk5 (ORCPT
+        id S1728753AbeLEWlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:40:57 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51692 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeLEWk4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:40:56 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 7BE59267733
-Received: by earth.universe (Postfix, from userid 1000)
-        id 395113C08D6; Wed,  5 Dec 2018 23:40:52 +0100 (CET)
-Date:   Wed, 5 Dec 2018 23:40:52 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Claudiu.Beznea@microchip.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] power: reset: at91-poweroff: move shdwc related data
- to one structure
-Message-ID: <20181205224052.34o3cmh3y3htchcj@earth.universe>
-References: <1541416443-4321-1-git-send-email-claudiu.beznea@microchip.com>
- <1541416443-4321-3-git-send-email-claudiu.beznea@microchip.com>
- <20181106210933.GU24212@piout.net>
- <6719a808-e704-3c63-f592-3b90d44ccbfe@microchip.com>
- <20181107172340.GF21694@piout.net>
+        Wed, 5 Dec 2018 17:41:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727337AbeLEWlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:41:03 -0500
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A41F320989;
+        Wed,  5 Dec 2018 22:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544049662;
+        bh=QGid9c8fcmYrIrtsqICzM5hBjYULD6bUpSZfRiAxfbw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Km9S9fCI68QsJOnhn+KUzVDICYMEWArrMxjLPw5f/kmjvSrE5/ti6DikCjDlG7kUp
+         A9VWjCZpxN2rDePF2yUBlR4pF49mG/5I7ILMO7q/8HnIeWXABzjUFDhQqKQFDFfymh
+         mEkW6kQuBWM+c4jw7sRBAgfToqupfQnpAFdWWaPE=
+Received: by mail-qt1-f179.google.com with SMTP id n21so24245503qtl.6;
+        Wed, 05 Dec 2018 14:41:02 -0800 (PST)
+X-Gm-Message-State: AA+aEWbKXIOKL2H9lABM1LKEc5Ym3LdVkVXyxDZSeb8lJ3RcxMF7PQc6
+        4sLJsY7cmahC3Wn8NwTBwTKtkvkSZawmmeMQRg==
+X-Google-Smtp-Source: AFSGD/WHSW83dpwigr+NuV+o6CHNMLQLAyGqoHjJfnFqmAlj+oFBfOsqluDu9Oz8k6sLa1sx3CPSydHsOar5BIQYM8E=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr26328965qvl.77.1544049661848;
+ Wed, 05 Dec 2018 14:41:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7jup4dhfa2jvl5qs"
-Content-Disposition: inline
-In-Reply-To: <20181107172340.GF21694@piout.net>
-User-Agent: NeoMutt/20180716
+References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com> <20181120092615.11680-23-Zhiqiang.Hou@nxp.com>
+ <20181205223843.GA2125@bogus>
+In-Reply-To: <20181205223843.GA2125@bogus>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 5 Dec 2018 16:40:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLmV65rt46FiMy1Tvox+5LQa=vkFxQwzQUx1toBq-JzfA@mail.gmail.com>
+Message-ID: <CAL_JsqLmV65rt46FiMy1Tvox+5LQa=vkFxQwzQUx1toBq-JzfA@mail.gmail.com>
+Subject: Re: [PATCHv2 22/25] dt-bindings: pci: Add NXP Layerscape SoCs PCIe
+ Gen4 controller
+To:     "Z.Q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     linux-pci@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Yang-Leo Li <leoyang.li@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 5, 2018 at 4:38 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Nov 20, 2018 at 09:27:51AM +0000, Z.q. Hou wrote:
+> > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> >
+> > Add PCIe Gen4 controller DT bindings of NXP Layerscape SoCs.
+> >
+> > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > ---
+> > V2:
+> >  - Change to use the layerscape-pci.txt for PCIe Gen4 controller
+> >    dt-bindings
+>
+> Sorry someone suggested this, but it seems there's no point in having
+> these in the same file. New IP block, do a new file.
+>
+> >
+> >  .../bindings/pci/layerscape-pci.txt           | 57 +++++++++++++++++++
+> >  MAINTAINERS                                   |  8 +++
+> >  2 files changed, 65 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > index 66df1e81e0b8..3ef8836b6e97 100644
+> > --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> > @@ -1,4 +1,6 @@
+> > +====================================
+> >  Freescale Layerscape PCIe controller
+> > +====================================
+> >
+> >  This PCIe host controller is based on the Synopsys DesignWare PCIe IP
+> >  and thus inherits all the common properties defined in designware-pcie.txt.
+> > @@ -58,3 +60,58 @@ Example:
+> >                               <0000 0 0 3 &gic GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
+> >                               <0000 0 0 4 &gic GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
+> >       };
+> > +
+> > +===================================
+> > +NXP Layerscape PCIe Gen4 controller
+> > +===================================
+> > +
+> > +This PCIe controller is based on the Mobiveil PCIe IP and thus inherits all
+> > +the common properties defined in mobiveil-pcie.txt.
+> > +
+> > +Required properties:
+> > +- compatible: should contain the platform identifier such as:
+> > +  "fsl,lx2160a-pcie"
+> > +- reg: base addresses and lengths of the PCIe controller register blocks.
+> > +  "config_axi_slave": PCIe controller registers
+> > +  "csr_axi_slave": Bridge config registers
+>
+> Wouldn't 'config' and 'csr' be sufficient? And these should be listed
+> under reg-names.
 
---7jup4dhfa2jvl5qs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+NM on the names. I see these are inherited.
 
-Hi,
-
-On Wed, Nov 07, 2018 at 06:23:40PM +0100, Alexandre Belloni wrote:
-> On 07/11/2018 14:54:17+0000, Claudiu.Beznea@microchip.com wrote:
-> > Hi Alexandre,
-> >=20
-> > On 06.11.2018 23:09, Alexandre Belloni wrote:
-> > > Hi Claudiu,
-> > >=20
-> > > On 05/11/2018 11:14:26+0000, Claudiu.Beznea@microchip.com wrote:
-> > >>  static int __init at91_poweroff_probe(struct platform_device *pdev)
-> > >> @@ -154,16 +160,22 @@ static int __init at91_poweroff_probe(struct p=
-latform_device *pdev)
-> > >>  	u32 ddr_type;
-> > >>  	int ret;
-> > >> =20
-> > >> +	at91_shdwc =3D devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_K=
-ERNEL);
-> > >> +	if (!at91_shdwc)
-> > >> +		return -ENOMEM;
-> > >> +
-> > >=20
-> > > Is there any real benefit that will offset the time lost for that
-> > > allocation at boot time?
-> >=20
-> > No, I haven't run benchmarks on this. I only wanted to have them groupe=
-d in
-> > one structure. Please let me know if you have some tests in mind.
-> >=20
->=20
-> Well, it is probably not much but small things adds up. Having it as a
-> global structure is probably good enough.
-
-I suppose I will get a new patch with this change?
-
--- Sebastian
-
->=20
-> > >=20
-> > > I understand you are then testing at91_shdwc to know whether the driv=
-er
-> > > already probed once. But, the driver will never probe twice as there =
-is
-> > > only one shutdown controller on the SoC and anyway, If it was to probe
-> > > twice, it will still work as expected.
-> >=20
-> > I had in mind the scenario where the driver would be compiled as module=
-=2E I
-> > know insmod already does this checking. I'm ok to remove this checking.=
- I
-> > will do it in next version. With this I will also remove devm_kzalloc()=
- of
-> > at91_shdwc.
-> >=20
->=20
-> Thanks,
->=20
-> --=20
-> Alexandre Belloni, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
---7jup4dhfa2jvl5qs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwIU/QACgkQ2O7X88g7
-+prpcBAApVtD/m59e95DIdgGh2IqxIfqkmorBI4Yy/SQD7QokwmVns/8AUPhwxDO
-SdulNqMPGCkm7QvUODDMJ91VSUwv6nnBY7ABu0R6eBi188c0V1g0qukrX4j0fbQh
-7q+HxhcmWJddtkSE3QSYzsVb9+hrtwaYy47zehqzDNiloxJj0P6iFQbZmXJwIr2/
-rVRLnMk99Aj+fUGcpu1Far2ojzftVFvsUGm80kYS8iMi6kS3zhxzXweo9QZr0wNb
-O9trFVRGI7Y/jxdQGNevc8zJGMmfLXRpN7JZ4Mwyidckc2OWwMNXe+3TBmOZy/Wi
-Fckz5OKKymitxe3d41XLwnsxNglAmDwz7HLTLdpszabYH89FnkgXFvh5csHZq9E4
-NMapiMD8uhZevVF2b5Gkk0PQGnijV+OZNsM0AzyJIWj41rq2+OfJgaJ3vMNDeMGn
-mbzUYjCxw0FfKlwvigTRYq/4c/NdS5vdmfnNsyshg70/ctCcXyHBPPR6GAWTX4tG
-XEdIoGfexgIFT8lvspSEucRtsS2e25bvBCDB8gvstvXBllrt8FJqhZ78dnxFzr1Z
-Bn+KlwCoatA7Y4w7A0zPrHIY93m9zyuBXhkAsSkKmXh0YN4nPtGyAmRcT78f985s
-2TiN3zGNwG6o5g0dHF8k6NlzhoNnI6mvgZYMlNwCtUUTBt0SC0c=
-=YuLw
------END PGP SIGNATURE-----
-
---7jup4dhfa2jvl5qs--
+Rob
