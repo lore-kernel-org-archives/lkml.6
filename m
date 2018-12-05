@@ -2,342 +2,162 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F4EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DD3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D592081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A142C2054F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:38:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mmt3tGcV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QNI0yT/L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D592081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K585Xp8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A142C2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeLEDhM (ORCPT
+        id S1726890AbeLEDip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 22:37:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60070 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeLEDhL (ORCPT
+        Tue, 4 Dec 2018 22:38:45 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38161 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbeLEDip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 22:37:11 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0117660159; Wed,  5 Dec 2018 03:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543981030;
-        bh=y/Vqn6N2YfoZY/j8McxAGSD8g8dbRBIyqgSPRbAHItc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mmt3tGcVPi1D9dj3qvI7AYamsgGrmyM508yu4rsUaFiMRGWes+bjqXhbqW18NsNR+
-         HWfAjY0yNkC7rKpiRMfFWeYKG9ZYFzSTZfx59StGmeORWvSoec52k2ut94K05PEUr9
-         zc60vFPsVShHgILcnRn6vHQ7BQjPS640S50mjqK4=
-Received: from [192.168.225.247] (unknown [49.33.238.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A4A0860159;
-        Wed,  5 Dec 2018 03:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543981028;
-        bh=y/Vqn6N2YfoZY/j8McxAGSD8g8dbRBIyqgSPRbAHItc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QNI0yT/LOhAs2HzfpubQh3ZGl4fZGracpL51RW9K6601tMYUDHwavj2LTDppjDNtF
-         syoimra/PNyqnY7OfwBST7mdXc+HG78/rgf/vzASIubELt4fIac3E308JrP68V6y3C
-         1RLHyjL2M7jsaNcu2o2f7plab7GGgiwIQP+UHb6s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4A0860159
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
- driver
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com
-References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
- <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
- <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
- <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
- <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <49139ae4-4373-9e70-02ad-80f7bbc4494c@codeaurora.org>
-Date:   Wed, 5 Dec 2018 09:07:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Tue, 4 Dec 2018 22:38:45 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so9357668plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:38:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z/GbV0bSeaz7chU5sXMqG6QAgF9+DILZOJ/C236ktZg=;
+        b=K585Xp8M4Mj3zup8T9K9CnKl4VOlIafuSOnnvbxKM8V1kf46nuvqH1uHEdwKMYinkL
+         nyfz+MfsRT7pb38WKSqQ/Jk7I/DULvv9yF0M7LkRKGDDWZ9oi6UUcmWJH3T+uL0b3ZdR
+         FPnt5zmTvnBxRjwpKdeCnBD5Sb+wD7OSc94lU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z/GbV0bSeaz7chU5sXMqG6QAgF9+DILZOJ/C236ktZg=;
+        b=i4TYpJju+KMZ1mI7Rtj9wK0G3UJmPWIVgCkGYlZj1rKgp80hrI6MbcWE/fYSdcU6Ms
+         E/MC6dnY9tjK9UAety0GTEVSRS30WPlgkb6b3kqDTs0pB1r3CZZexUlKBOmaQGcFKkrN
+         4mfKH3LYAAgwgA97cBANTB+BUCM6bA+cayJgRIAWCQYF9VK4JrzyYRhhMkezMVcIYw2i
+         O+EJpF+sF0Llrzj2yTHr1UKH1kYh0GZDxsvtWeJGTsG/+PhOePvP5hH68saQVIbxXoE2
+         PlMy8GPGtW6q3+kSeGwfaICOyfuKPsN7Ge3EhK0mNH44M5I+BcB6N1OkrqULvo5RBRAu
+         RfGg==
+X-Gm-Message-State: AA+aEWYwApkxWDjvT8GLd7/GOyvvxNF3T+G2YiZnvD7uGWKUrcu/sNTj
+        WXVIjjRl4Jxt0sKi9gN7h4FA2ICX2lk=
+X-Google-Smtp-Source: AFSGD/UUAx/BmSjzU6O0GtiLMctB0PNju8amdYqWiEUhmdvwBIPj48F8CP8UPuaJauNCwojHWqL9Yg==
+X-Received: by 2002:a17:902:e012:: with SMTP id ca18mr22658609plb.218.1543981123446;
+        Tue, 04 Dec 2018 19:38:43 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id z62sm26456939pfl.33.2018.12.04.19.38.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 19:38:42 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-sh@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
+        x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Huang Ying <ying.huang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rich Felker <dalias@libc.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-mips@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [REPOST PATCH v6 0/4] kgdb: Fix kgdb_roundup_cpus()
+Date:   Tue,  4 Dec 2018 19:38:24 -0800
+Message-Id: <20181205033828.6156-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-In-Reply-To: <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen, Viresh
+This series was originally part of the series ("serial: Finish kgdb on
+qcom_geni; fix many lockdep splats w/ kgdb") but it made sense to
+split it up.
 
-Thanks for the code and suggestions.
+It's believed that dropping into kgdb should be more robust once these
+patches are applied.
 
-Having a NR_DOMAINS '2' makes the driver not scalable for re-use.
-This assumption is only true for the current version of the HW and do 
-not intend to update/clean-up this logic again. So want to stick keeping 
-current logic of having the *qcom_freq_domain_map[NR_CPUS].
+Repost of v6 adds CC's and also tags already received.
 
-On 12/5/2018 4:35 AM, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2018-12-04 14:28:11)
->> Quoting Viresh Kumar (2018-12-03 21:12:31)
->>> Hi Taniya,
->>>
->>> Sorry that I haven't been reviewing it much from last few iterations as I was
->>> letting others get this into a better shape. Thanks for your efforts..
->>>
->>> On 02-12-18, 09:25, Taniya Das wrote:
->>>> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
->>>
->>>> +struct cpufreq_qcom {
->>>> +     struct cpufreq_frequency_table *table;
->>>> +     void __iomem *perf_state_reg;
->>>> +     cpumask_t related_cpus;
->>>> +};
->>>> +
->>>> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
->>>
->>> Now that the code is much more simplified, I am not sure if you need this
->>> per-cpu structure at all. The only place where you are using it is in
->>> qcom_cpufreq_hw_cpu_init() and probe(). Why not merge qcom_cpu_resources_init()
->>> completely into qcom_cpufreq_hw_cpu_init() and get rid of this structure
->>> entirely ?
->>>
->>
->> Good point. Here's an untested patch to handle that. It removes the
->> related functionality and makes an array of pointers to the domains that
->> are created each time qcom_cpu_resources_init() is called.
->>
->> ---8<----
->>
->> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
->> index 8dc6b73c2f22..04e7cfd70316 100644
->> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
->> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
->> @@ -23,14 +23,14 @@
->>   #define REG_LUT_TABLE                  0x110
->>   #define REG_PERF_STATE                 0x920
->>   
->> +#define MAX_FREQ_DOMAINS               2
->> +
->>   struct cpufreq_qcom {
->>          struct cpufreq_frequency_table *table;
->>          void __iomem *perf_state_reg;
->>          cpumask_t related_cpus;
->>   };
->>   
->> -static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
->> -
->>   static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
->>                                          unsigned int index)
->>   {
->> @@ -76,9 +76,14 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
->>   
->>   static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->>   {
->> +       struct cpufreq_qcom **freq_domain_map;
->>          struct cpufreq_qcom *c;
->>   
->> -       c = qcom_freq_domain_map[policy->cpu];
->> +       freq_domain_map = cpufreq_get_driver_data();
->> +       if (!freq_domain_map)
->> +               return -ENODEV;
->> +
->> +       c = freq_domain_map[policy->cpu];
-> 
-> And this fails now because it indexes based on cpu number. We have to
-> parse the frequency domain out of the cpunode again to fix that.
-> 
-> Here's the updated (still untested) patch and I also just allocated the
-> freq domain array up front instead of in each domain init routine to
-> simplify some more.
-> 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> index 8dc6b73c2f22..bc0d734f7e3c 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -23,14 +23,14 @@
->   #define REG_LUT_TABLE			0x110
->   #define REG_PERF_STATE			0x920
->   
-> +#define MAX_FREQ_DOMAINS		2
-> +
->   struct cpufreq_qcom {
->   	struct cpufreq_frequency_table *table;
->   	void __iomem *perf_state_reg;
->   	cpumask_t related_cpus;
->   };
->   
-> -static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> -
->   static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
->   					unsigned int index)
->   {
-> @@ -76,9 +76,26 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
->   
->   static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->   {
-> -	struct cpufreq_qcom *c;
-> +	struct cpufreq_qcom *freq_domain_map, *c;
-> +	struct device_node *cpu_np;
-> +	struct of_phandle_args args;
-> +	int ret;
-> +
-> +	freq_domain_map = cpufreq_get_driver_data();
-> +	if (!freq_domain_map)
-> +		return -ENODEV;
-> +
-> +	cpu_np = of_cpu_device_node_get(policy->cpu);
-> +	if (!cpu_np)
-> +		return -ENODEV;
-> +
-> +	ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> +					 "#freq-domain-cells", 0, &args);
-> +	of_node_put(cpu_np);
-> +	if (ret)
-> +		return ret;
->   
-> -	c = qcom_freq_domain_map[policy->cpu];
-> +	c = &freq_domain_map[args.args[0]];
->   	if (!c) {
->   		pr_err("No scaling support for CPU%d\n", policy->cpu);
->   		return -ENODEV;
-> @@ -171,43 +188,15 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qcom *c,
->   	return 0;
->   }
->   
-> -static void qcom_get_related_cpus(int index, struct cpumask *m)
-> -{
-> -	struct device_node *cpu_np;
-> -	struct of_phandle_args args;
-> -	int cpu, ret;
-> -
-> -	for_each_possible_cpu(cpu) {
-> -		cpu_np = of_cpu_device_node_get(cpu);
-> -		if (!cpu_np)
-> -			continue;
-> -
-> -		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> -						 "#freq-domain-cells", 0,
-> -						  &args);
-> -		of_node_put(cpu_np);
-> -		if (ret < 0)
-> -			continue;
-> -
-> -		if (index == args.args[0])
-> -			cpumask_set_cpu(cpu, m);
-> -	}
-> -}
-> -
->   static int qcom_cpu_resources_init(struct platform_device *pdev,
-> -				   unsigned int cpu, int index,
-> -				   unsigned long xo_rate,
-> -				   unsigned long cpu_hw_rate)
-> +				   int index, unsigned long xo_rate,
-> +				   unsigned long cpu_hw_rate,
-> +				   struct cpufreq_qcom *c)
->   {
-> -	struct cpufreq_qcom *c;
->   	struct resource *res;
->   	struct device *dev = &pdev->dev;
->   	void __iomem *base;
-> -	int ret, cpu_r;
-> -
-> -	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-> -	if (!c)
-> -		return -ENOMEM;
-> +	int ret;
->   
->   	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
->   	base = devm_ioremap_resource(dev, res);
-> @@ -220,12 +209,6 @@ static int qcom_cpu_resources_init(struct platform_device *pdev,
->   		return -ENODEV;
->   	}
->   
-> -	qcom_get_related_cpus(index, &c->related_cpus);
-> -	if (!cpumask_weight(&c->related_cpus)) {
-> -		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
-> -		return -ENOENT;
-> -	}
-> -
->   	c->perf_state_reg = base + REG_PERF_STATE;
->   
->   	ret = qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
-> @@ -234,9 +217,6 @@ static int qcom_cpu_resources_init(struct platform_device *pdev,
->   		return ret;
->   	}
->   
-> -	for_each_cpu(cpu_r, &c->related_cpus)
-> -		qcom_freq_domain_map[cpu_r] = c;
-> -
->   	return 0;
->   }
->   
-> @@ -245,9 +225,16 @@ static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
->   	struct device_node *cpu_np;
->   	struct of_phandle_args args;
->   	struct clk *clk;
-> -	unsigned int cpu;
-> +	unsigned int cpu, domain;
->   	unsigned long xo_rate, cpu_hw_rate;
->   	int ret;
-> +	struct cpufreq_qcom *freq_domain_map, *freq_domain;
-> +
-> +	freq_domain_map = devm_kcalloc(&pdev->dev, MAX_FREQ_DOMAINS,
-> +				       sizeof(*freq_domain_map), GFP_KERNEL);
-> +	cpufreq_qcom_hw_driver.driver_data = freq_domain_map;
-> +	if (!freq_domain_map)
-> +		return -ENOMEM;
->   
->   	clk = clk_get(&pdev->dev, "xo");
->   	if (IS_ERR(clk))
-> @@ -273,16 +260,26 @@ static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
->   
->   		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
->   						 "#freq-domain-cells", 0,
-> -						  &args);
-> +						 &args);
->   		of_node_put(cpu_np);
->   		if (ret)
->   			return ret;
->   
-> -		if (qcom_freq_domain_map[cpu])
-> +		domain = args.args[0];
-> +		if (WARN_ON(domain >= MAX_FREQ_DOMAINS))
-> +			continue;
-> +
-> +		freq_domain = &freq_domain_map[domain];
-> +		cpumask_set_cpu(cpu, &freq_domain->related_cpus);
-> +		/*
-> +		 * If we've already populated the frequency table for this domain
-> +		 * just mark it related and get out of here
-> +		 */
-> +		if (cpumask_weight(&freq_domain->related_cpus) > 1)
->   			continue;
->   
-> -		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
-> -					      xo_rate, cpu_hw_rate);
-> +		ret = qcom_cpu_resources_init(pdev, domain, xo_rate,
-> +					      cpu_hw_rate, freq_domain);
->   		if (ret)
->   			return ret;
->   	}
-> 
+Changes in v6:
+- Moved smp_call_function_single_async() error check to patch 3.
+
+Changes in v5:
+- Add a comment about get_irq_regs().
+- get_cpu() => raw_smp_processor_id() in kgdb_roundup_cpus().
+- for_each_cpu() => for_each_online_cpu()
+- Error check smp_call_function_single_async()
+
+Changes in v4:
+- Removed smp_mb() calls.
+- Also clear out .debuggerinfo.
+- Also clear out .debuggerinfo and .task for the master.
+- Remove clearing out in kdb_stub for offline CPUs; it's now redundant.
+
+Changes in v3:
+- No separate init call.
+- Don't round up the CPU that is doing the rounding up.
+- Add "#ifdef CONFIG_SMP" to match the rest of the file.
+- Updated desc saying we don't solve the "failed to roundup" case.
+- Document the ignored parameter.
+- Don't round up a CPU that failed rounding up before new for v3.
+- Don't back trace on a cpu that didn't round up new for v3.
+
+Changes in v2:
+- Removing irq flags separated from fixing lockdep splat.
+- Don't use smp_call_function (Daniel).
+
+Douglas Anderson (4):
+  kgdb: Remove irq flags from roundup
+  kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
+  kgdb: Don't round up a CPU that failed rounding up before
+  kdb: Don't back trace on a cpu that didn't round up
+
+ arch/arc/kernel/kgdb.c          | 10 +----
+ arch/arm/kernel/kgdb.c          | 12 ------
+ arch/arm64/kernel/kgdb.c        | 12 ------
+ arch/hexagon/kernel/kgdb.c      | 32 ----------------
+ arch/mips/kernel/kgdb.c         |  9 +----
+ arch/powerpc/kernel/kgdb.c      |  6 +--
+ arch/sh/kernel/kgdb.c           | 12 ------
+ arch/sparc/kernel/smp_64.c      |  2 +-
+ arch/x86/kernel/kgdb.c          |  9 +----
+ include/linux/kgdb.h            | 22 +++++++----
+ kernel/debug/debug_core.c       | 65 ++++++++++++++++++++++++++++++++-
+ kernel/debug/debug_core.h       |  1 +
+ kernel/debug/kdb/kdb_bt.c       | 11 +++++-
+ kernel/debug/kdb/kdb_debugger.c |  7 ----
+ 14 files changed, 98 insertions(+), 112 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.20.0.rc1.387.gf8505762e3-goog
 
---
