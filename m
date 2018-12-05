@@ -2,137 +2,177 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230EBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58520C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E7820850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:12:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLEsEPnX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E7820850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DA1020850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA1020850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeLELMk (ORCPT
+        id S1727476AbeLELPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:12:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbeLELMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:12:39 -0500
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D04FF20989;
-        Wed,  5 Dec 2018 11:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544008358;
-        bh=C0jvGcRv9UsknAfqJvNP6eKG2uaCJg4zqUAFO82b+Bg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qLEsEPnX+hXifi6BDQiOidDW31UpPvnvsS4dFFyTplbFR1dzJotGP5teg0JOpCTlV
-         1Y+nFt8dFxbF9ZMaw0MrF2AYKhNx18C86khs5zLzOu0mVGlz1jS9y/EydRJZrwFdmD
-         6ev3YmUyQvxcvqlmChsuodLeD3U8A8lW7dGeqk40=
-Received: by mail-lj1-f179.google.com with SMTP id e5-v6so17955231lja.4;
-        Wed, 05 Dec 2018 03:12:37 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ4ro7nD0hsOC0o0et+IRmkCfez3AWtshgTcXcSjmwMCbKkXNyS
-        sc6eF+u+jaTkPLBUvIkPrK4LBfxjOI4s5Q15INQ=
-X-Google-Smtp-Source: AFSGD/VMb9KbVgESvp5zxEfhj/1neNJwfismfRKxsLCGZtkFWzg2gWmmAGY2Xdf6Qv9Ig57K09txvVLS+5EGzmM0DUY=
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr17184219lji.60.1544008355906;
- Wed, 05 Dec 2018 03:12:35 -0800 (PST)
+        Wed, 5 Dec 2018 06:15:11 -0500
+Received: from mail-eopbgr40051.outbound.protection.outlook.com ([40.107.4.51]:27328
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727142AbeLELPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:15:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eJYLu2Tjv7jQE1JNifDPeQJdXHS5dSl2xOHClMnQao0=;
+ b=E9ocwzJwyDt9QUjfpBpdoN+WuvRCWYOkUeFUJfXweTIrN7L0wgfCiUSpDlkM1qFC8EEIQ+GJyDsc6VY5pG4Dk9YiU3bwMETSntrfqqMsGdMFrunLXzM3ZTfaj9dQ3sxiTRVIQ0NYk5gsbbuRsQ1b/gHW2E6MpawafECiFFgHiy0=
+Received: from DB6PR0802MB2551.eurprd08.prod.outlook.com (10.172.251.149) by
+ DB6PR0802MB2422.eurprd08.prod.outlook.com (10.172.250.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Wed, 5 Dec 2018 11:15:07 +0000
+Received: from DB6PR0802MB2551.eurprd08.prod.outlook.com
+ ([fe80::74e9:75ef:69d9:d10b]) by DB6PR0802MB2551.eurprd08.prod.outlook.com
+ ([fe80::74e9:75ef:69d9:d10b%6]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
+ 11:15:07 +0000
+From:   Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
+To:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        nd <nd@arm.com>, Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] drm/arm: Delete redundant CONFIG_DRM_ARM
+Thread-Topic: [PATCH v1] drm/arm: Delete redundant CONFIG_DRM_ARM
+Thread-Index: AQHUjExrupzxTQVxfESmoukk40rkGKVv/vQA
+Date:   Wed, 5 Dec 2018 11:15:06 +0000
+Message-ID: <20181205111506.GA5567@e114479-lin.cambridge.arm.com>
+References: <20181205034011.29103-1-james.qian.wang@arm.com>
+In-Reply-To: <20181205034011.29103-1-james.qian.wang@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0319.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a4::19) To DB6PR0802MB2551.eurprd08.prod.outlook.com
+ (2603:10a6:4:a1::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexandru-Cosmin.Gheorghe@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [217.140.106.52]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0802MB2422;6:2yQJPT/JpFbN9jInAQUky9b0MwPlxM8rAaNaA+Uw+6M+yENXQNABl9ZxCYaAQb5HY2RnzW2yQKXBvjwedx+3AvztYQ0HHTo2E5QYZmEZWkHAPqZ1HiQ7vTdkkjL2TpUzZf0z4U4OrnM44k62EghvNOeAkPbQW0AK3ju7JHcbJkjegVesggWMMCPm2P1+D9QVBCAnDWKB0m1KIyLEwkoXMvc2aT63m3xa7WwhNLQ1pCvUF4lYvbk/go7zinW0lAxjEwqGqRtyf+7U5aeLWyuu1UjE3f4zegKxspeoh2Gy36Mp76rivxzrySvk1/qj/8QTk7uOp256g2tfZAIAO7TZtx9v4ga/wVL3qZ7HB6RcoopJJWD4futyUlWBUOeZS9m6bkc6+Md8JkujvKGtISkMBtvvGzTDOznUFVrUvh+jJVwcMWuoIWRIpHTzmw/AYK2V2gy2jz4v/5rvocCtFkAkfw==;5:aAUOkhPfHxYukubT4aDdLdi+WcbXHPhLGSgRwEK8dCcn2fTG58cv09MiRzdxH+DEB4okmU9dmAXcDAifPs0WW0Urbmp5EMbY34k/IPQ7DTfi3HAFaFEY4kPsL56p714iUjiwDMjCNvQJMT2Pa1PvYoINmaLnGinuO/7LL1A6WxE=;7:sNuj0O2tNb7hU8gDbuNUawzZMCZ99fO9YnZ2EiD39SOj6+qjnn0zXUdbssBKQ5pbdtLxpmvx8gYg8KUe7UzUPAoQRs0LaXgx4NCP51QQM8jm8vyENLhBbo0m+HH4/+X1G0sJf5V1OQfqF2XQ9UHgWw==
+x-ms-office365-filtering-correlation-id: 5208947b-6872-4ed3-378c-08d65aa2e963
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB6PR0802MB2422;
+x-ms-traffictypediagnostic: DB6PR0802MB2422:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <DB6PR0802MB2422BD883E4F7E10953B900EBCA80@DB6PR0802MB2422.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB6PR0802MB2422;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0802MB2422;
+x-forefront-prvs: 08770259B4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(366004)(199004)(189003)(33656002)(6436002)(7736002)(8676002)(25786009)(486006)(5660300001)(11346002)(476003)(81156014)(71200400001)(81166006)(446003)(26005)(102836004)(2906002)(6246003)(14454004)(4326008)(6862004)(8936002)(305945005)(6512007)(53936002)(229853002)(3846002)(6116002)(6486002)(478600001)(52116002)(6636002)(186003)(97736004)(76176011)(1076002)(106356001)(68736007)(99286004)(105586002)(316002)(54906003)(66066001)(71190400001)(14444005)(256004)(72206003)(86362001)(386003)(6506007)(575784001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2422;H:DB6PR0802MB2551.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: gfznXAsqRnzHCLh3B1fE9z7fc4ZO2rBUdlrpNwS+lOcUpPpCkWy9bcRtVaZrUlmqi1H3mwNqepu5iUAe9zKaTQIbWITyRUwRINzvrdzUSMuhckd33tIm6SWCzWF36Xg3LfzHgWqCq4KzrOoqsV/0XDW0/L/CglzR9F/XU0Z7xdRdHe/4CCSz1uC3ktqtnUDFTDKgx42TXOgWYlSoMBXOKindMUsGczdbzwF6/d1kld/Uw/cFdFb0zh+HQR+kdMssKcjszFRWz7ne1J/Le82PrqBXEhhKfv5iH567nZvq8/yjFi8CARpVvHwASP940HctSiTSWWmzbpdz40rqFphQYyUE+qfzqxg4GphamsaZxfY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2A99B7F1BF0D114F9C1C5C991742949D@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CGME20181205110625eucas1p10c7b3137fb77ae51a211c4f040c4eb6f@eucas1p1.samsung.com>
- <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com> <1544007956-28889-6-git-send-email-l.luba@partner.samsung.com>
-In-Reply-To: <1544007956-28889-6-git-send-email-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 5 Dec 2018 12:12:24 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd8eErBf4a4x2bAQUnCenOsM+omJoVJ3FrakcTT6KWedg@mail.gmail.com>
-Message-ID: <CAJKOXPd8eErBf4a4x2bAQUnCenOsM+omJoVJ3FrakcTT6KWedg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] arm: dts: exynos4: opp-suspend in DMC and leftbus
-To:     l.luba@partner.samsung.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5208947b-6872-4ed3-378c-08d65aa2e963
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 11:15:06.9111
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2422
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Dec 2018 at 12:06, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> Mark the state for devfreq device while entring suspend/resume process.
->
-> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+Hi James,
 
-I already applied v2:
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=next/dt
+On Wed, Dec 05, 2018 at 03:41:35AM +0000, james qian wang (Arm Technology C=
+hina) wrote:
+> Delete redundant CONFIG_DRM_ARM, and add a menu "ARM devices" to subclass
+> ARM device drivers.
+>=20
+> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
 
-Best regards,
-Krzysztof
+Reviewed-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
 
 > ---
->  arch/arm/boot/dts/exynos4210.dtsi | 2 ++
->  arch/arm/boot/dts/exynos4412.dtsi | 2 ++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index b6091c2..4429b72 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -298,6 +298,7 @@
->                         opp-400000000 {
->                                 opp-hz = /bits/ 64 <400000000>;
->                                 opp-microvolt = <1150000>;
-> +                               opp-suspend;
->                         };
->                 };
->
-> @@ -367,6 +368,7 @@
->                         };
->                         opp-200000000 {
->                                 opp-hz = /bits/ 64 <200000000>;
-> +                               opp-suspend;
->                         };
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index 51f72f0..908c0c4 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -432,6 +432,7 @@
->                         opp-400000000 {
->                                 opp-hz = /bits/ 64 <400000000>;
->                                 opp-microvolt = <1050000>;
-> +                               opp-suspend;
->                         };
->                 };
->
-> @@ -520,6 +521,7 @@
->                         opp-200000000 {
->                                 opp-hz = /bits/ 64 <200000000>;
->                                 opp-microvolt = <1000000>;
-> +                               opp-suspend;
->                         };
->                 };
->
-> --
-> 2.7.4
->
+>  drivers/gpu/drm/Makefile    |  2 +-
+>  drivers/gpu/drm/arm/Kconfig | 10 ++++------
+>  2 files changed, 5 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index 1fafc2f8e8f9..0df0a5a4cc82 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -51,7 +51,7 @@ obj-$(CONFIG_DRM_DEBUG_SELFTEST) +=3D selftests/
+>  obj-$(CONFIG_DRM)	+=3D drm.o
+>  obj-$(CONFIG_DRM_MIPI_DSI) +=3D drm_mipi_dsi.o
+>  obj-$(CONFIG_DRM_PANEL_ORIENTATION_QUIRKS) +=3D drm_panel_orientation_qu=
+irks.o
+> -obj-$(CONFIG_DRM_ARM)	+=3D arm/
+> +obj-y			+=3D arm/
+>  obj-$(CONFIG_DRM_TTM)	+=3D ttm/
+>  obj-$(CONFIG_DRM_SCHED)	+=3D scheduler/
+>  obj-$(CONFIG_DRM_TDFX)	+=3D tdfx/
+> diff --git a/drivers/gpu/drm/arm/Kconfig b/drivers/gpu/drm/arm/Kconfig
+> index 9a18e1bd57b4..f9f7761cb2f4 100644
+> --- a/drivers/gpu/drm/arm/Kconfig
+> +++ b/drivers/gpu/drm/arm/Kconfig
+> @@ -1,13 +1,10 @@
+> -config DRM_ARM
+> -	bool
+> -	help
+> -	  Choose this option to select drivers for ARM's devices
+> +# SPDX-License-Identifier: GPL-2.0
+> +menu "ARM devices"
+> =20
+>  config DRM_HDLCD
+>  	tristate "ARM HDLCD"
+>  	depends on DRM && OF && (ARM || ARM64)
+>  	depends on COMMON_CLK
+> -	select DRM_ARM
+>  	select DRM_KMS_HELPER
+>  	select DRM_KMS_CMA_HELPER
+>  	help
+> @@ -29,7 +26,6 @@ config DRM_MALI_DISPLAY
+>  	tristate "ARM Mali Display Processor"
+>  	depends on DRM && OF && (ARM || ARM64)
+>  	depends on COMMON_CLK
+> -	select DRM_ARM
+>  	select DRM_KMS_HELPER
+>  	select DRM_KMS_CMA_HELPER
+>  	select DRM_GEM_CMA_HELPER
+> @@ -40,3 +36,5 @@ config DRM_MALI_DISPLAY
+>  	  of the hardware.
+> =20
+>  	  If compiled as a module it will be called mali-dp.
+> +
+> +endmenu
+> --=20
+> 2.17.1
+
+--=20
+Cheers,
+Alex G
