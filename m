@@ -2,117 +2,187 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F96C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83773C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DA220850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:06:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YpwJuLID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DA220850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4850720834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:06:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4850720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbeLEBG1 (ORCPT
+        id S1726833AbeLEBGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:06:27 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45514 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeLEBG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:06:27 -0500
-Received: by mail-yb1-f195.google.com with SMTP id f6-v6so7702808ybg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 17:06:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r5TNJp2wKYH4m2pZA22/AbeeXpQmAxWVL7kp77B9RHU=;
-        b=YpwJuLIDUn7PMHScb3HLy1RhaMb5Kh28v9C8GQ8a+/Dm1X1GhBvUBuqAdDy1dBSe82
-         YYZRWETp+Rpo11bcWOgHv4bqUyagFMExSKjS67a5c9Nb7RTntB05Z+teo0idk3P6OnhX
-         HtJ5Sxtqr97fDvmNtPSD4oa7Bbm8fss6ya46A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r5TNJp2wKYH4m2pZA22/AbeeXpQmAxWVL7kp77B9RHU=;
-        b=QUcv8hgv1uCzDV8J1VxmGtx9WWqslbSTQFqkZIF7gdlykt9or2jCkRV/DSoijLvI1q
-         L1zlhxRZIUZUp6ruXh9wcpTjAHlpBxj1lkJ6pUUIt/hMaZs1dUifFL5a2gLSz8pf7XTE
-         c8akW9N46p11U04yl4LLPT4E1nAYX3OACRNjgKlUfgMJcgi36x+1+ikzYK+qYtkLhIRG
-         RVaoUA2RNFFEDrhjhh/td+me112zsPOOoniOMbk0j+SC8nZhDJAoEnVqZgrK6OL5gUYY
-         EZv/MKoECtBw38Pd/OV45pqYyv+gt9+F8D6aQsu02Qf2zSPko6rhDtTxJlnnyp1kRjfi
-         Z8jg==
-X-Gm-Message-State: AA+aEWYH3/Mly08hT8hDvy+AX4vQcD8hJK+f1z0cqpEQtv0IXkbBr+sh
-        C8WsE7Z7gCKiQtsB3HO6JhiZpa3vnFU=
-X-Google-Smtp-Source: AFSGD/WflhVwgOJlC3Zez211ceuC7VioQ3jff3g9SlmbNFkJQO8OZaXfQo8B2Z6xL72adY7dhbufng==
-X-Received: by 2002:a25:5b03:: with SMTP id p3-v6mr21354023ybb.385.1543971986266;
-        Tue, 04 Dec 2018 17:06:26 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id n16sm7523277ywn.31.2018.12.04.17.06.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 17:06:26 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id x144so3548512ybg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 17:06:25 -0800 (PST)
-X-Received: by 2002:a25:2347:: with SMTP id j68mr13250519ybj.137.1543971984874;
- Tue, 04 Dec 2018 17:06:24 -0800 (PST)
+        Tue, 4 Dec 2018 20:06:53 -0500
+Received: from mga07.intel.com ([134.134.136.100]:60112 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725979AbeLEBGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:06:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 17:06:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
+   d="scan'208";a="98701882"
+Received: from cstiner-mobl.amr.corp.intel.com (HELO [10.254.102.153]) ([10.254.102.153])
+  by orsmga008.jf.intel.com with ESMTP; 04 Dec 2018 17:06:49 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
+ <20181205001544.GR2937@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+Date:   Tue, 4 Dec 2018 17:06:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1510754620-27088-1-git-send-email-elena.reshetova@intel.com>
-In-Reply-To: <1510754620-27088-1-git-send-email-elena.reshetova@intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 4 Dec 2018 17:06:13 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKsX=0HE17JRiK-agq7R6RWg+03Ww_CaB9BzL4odLnZjA@mail.gmail.com>
-Message-ID: <CAGXu5jKsX=0HE17JRiK-agq7R6RWg+03Ww_CaB9BzL4odLnZjA@mail.gmail.com>
-Subject: Re: [PATCH 00/16] v6 kernel core pieces refcount conversions
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Eric Paris <eparis@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Darren Hart <dvhart@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux-MM <linux-mm@kvack.org>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181205001544.GR2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 15, 2017 at 6:07 AM Elena Reshetova
-<elena.reshetova@intel.com> wrote:
-> Changes in v6:
->  * memory ordering differences are outlined in each patch
->    together with potential problematic areas.
->   Note: I didn't include any statements in individual patches
->   on why I think the memory ordering changes do not matter
->   in that particular case since ultimately these are only
->   known by maintainers (unless explicitly documented) and
->   very hard to figure out reliably from the code.
->   Therefore maintainers are expected to double check the
->   specific pointed functions and make the end decision.
->  * rebase on top of today's linux-next/master
+On 12/4/18 4:15 PM, Jerome Glisse wrote:
+> On Tue, Dec 04, 2018 at 03:54:22PM -0800, Dave Hansen wrote:
+>> Basically, is sysfs the right place to even expose this much data?
+> 
+> I definitly want to avoid the memoryX mistake. So i do not want to
+> see one link directory per device. Taking my simple laptop as an
+> example with 4 CPUs, a wifi and 2 GPU (the integrated one and a
+> discret one):
+> 
+> link0: cpu0 cpu1 cpu2 cpu3
+> link1: wifi (2 pcie lane)
+> link2: gpu0 (unknown number of lane but i believe it has higher
+>              bandwidth to main memory)
+> link3: gpu1 (16 pcie lane)
+> link4: gpu1 and gpu memory
+> 
+> So one link directory per number of pcie lane your device have
+> so that you can differentiate on bandwidth. The main memory is
+> symlinked inside all the link directory except link4. The GPU
+> discret memory is only in link4 directory as it is only
+> accessible by the GPU (we could add it under link3 too with the
+> non cache coherent property attach to it).
 
-*thread resurrection*
+I'm actually really interested in how this proposal scales.  It's quite
+easy to represent a laptop, but can this scale to the largest systems
+that we expect to encounter over the next 20 years that this ABI will live?
 
-Was there a v7 for this series? I'd like to finish off any of the
-known outstanding refcount_t conversions.
+> The issue then becomes how to convert down the HMAT over verbose
+> information to populate some reasonable layout for HMS. For that
+> i would say that create a link directory for each different
+> matrix cell. As an example let say that each entry in the matrix
+> has bandwidth and latency then we create a link directory for
+> each combination of bandwidth and latency. On simple system that
+> should boils down to a handfull of combination roughly speaking
+> mirroring the example above of one link directory per number of
+> PCIE lane for instance.
 
-Thanks!
+OK, but there are 1024*1024 matrix cells on a systems with 1024
+proximity domains (ACPI term for NUMA node).  So it sounds like you are
+proposing a million-directory approach.
 
--- 
-Kees Cook
+We also can't simply say that two CPUs with the same connection to two
+other CPUs (think a 4-socket QPI-connected system) share the same "link"
+because they share the same combination of bandwidth and latency.  We
+need to know that *each* has its own, unique link and do not share link
+resources.
+
+> I don't think i have a system with an HMAT table if you have one
+> HMAT table to provide i could show up the end result.
+
+It is new enough (ACPI 6.2) that no publicly-available hardware that
+exists that implements one (that I know of).  Keith Busch can probably
+extract one and send it to you or show you how we're faking them with QEMU.
+
+> Note i believe the ACPI HMAT matrix is a bad design for that
+> reasons ie there is lot of commonality in many of the matrix
+> entry and many entry also do not make sense (ie initiator not
+> being able to access all the targets). I feel that link/bridge
+> is much more compact and allow to represent any directed graph
+> with multiple arrows from one node to another same node.
+
+I don't disagree.  But, folks are building systems with them and we need
+to either deal with it, or make its data manageable.  You saw our
+approach: we cull the data and only expose the bare minimum in sysfs.
