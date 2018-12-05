@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686FFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0604BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE9E20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6FB42133F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0osAphGR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE9E20892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x/gA4Szy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FB42133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbeLEJn5 (ORCPT
+        id S1728641AbeLEJoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48548 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbeLEJn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:43:56 -0500
+        id S1727882AbeLEJn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:43:58 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11D442087F;
-        Wed,  5 Dec 2018 09:43:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B83720878;
+        Wed,  5 Dec 2018 09:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003035;
-        bh=TDFHSdd3biWLJ3Dh4b5TjmbRBwe3pG1OT7L3XiRnMWM=;
+        s=default; t=1544003037;
+        bh=AEiYBnLeLCRKd65wPxauWAf1zR3bwxbO5t6Mj0KHlzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0osAphGRU0nnwD9yi5xK7z1aCQOzPkztqVxb7SkN4zcdbmfvKB5Qhj1sVWnrvwa8J
-         ZxSpehk+ErygqJckzGQcjCXQ1k+UwaPFg6yFeJcuVDwp68jmu+c3T4J80//wwYZscf
-         sMaTPuYZdzSlHVAtSCh6dI1PP7+Np5apNQt9W3wU=
+        b=x/gA4SzyfXb2x8AoDA9v57jfSU1IQRLxRPi7HJn9bUXfaRIttwQhKHtJWJ7V/XWaP
+         P0bZVjt8TZA6nYbopBLYI9Opa4VL+psgO6YKnAmsV75x0f7XUdueWjyuyr55hSvQ0N
+         Z10xAlM4pfmRAdXctjvDNknPh1V920QdBTsYbRMg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 09/69] netfilter: nf_tables: fix use-after-free when deleting compat expressions
-Date:   Wed,  5 Dec 2018 04:41:47 -0500
-Message-Id: <20181205094247.6556-9-sashal@kernel.org>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 10/69] hwmon (ina2xx) Fix NULL id pointer in probe()
+Date:   Wed,  5 Dec 2018 04:41:48 -0500
+Message-Id: <20181205094247.6556-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -55,77 +53,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-[ Upstream commit 29e3880109e357fdc607b4393f8308cef6af9413 ]
+[ Upstream commit 70df9ebbd82c794ddfbb49d45b337f18d5588dc2 ]
 
-nft_compat ops do not have static storage duration, unlike all other
-expressions.
+When using DT configurations, the id pointer might turn out to
+be NULL. Then the driver encounters NULL pointer access:
 
-When nf_tables_expr_destroy() returns, expr->ops might have been
-free'd already, so we need to store next address before calling
-expression destructor.
+  Unable to handle kernel read from unreadable memory at vaddr 00000018
+  [...]
+  PC is at ina2xx_probe+0x114/0x200
+  LR is at ina2xx_probe+0x10c/0x200
+  [...]
+  Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-For same reason, we can't deref match pointer after nft_xt_put().
+The reason is that i2c core returns the id pointer by matching
+id_table with client->name, while the client->name is actually
+using the name from the first string in the DT compatible list,
+not the best one. So i2c core would fail to match the id_table
+if the best matched compatible string isn't the first one, and
+then would return a NULL id pointer.
 
-This can be easily reproduced by adding msleep() before
-nft_match_destroy() returns.
+This probably should be fixed in i2c core. But it doesn't hurt
+to make the driver robust. So this patch fixes it by using the
+"chip" that's added to unify both DT and non-DT configurations.
 
-Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
-Reported-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Additionally, since id pointer could be null, so as id->name:
+  ina2xx 10-0047: power monitor (null) (Rshunt = 1000 uOhm)
+  ina2xx 10-0048: power monitor (null) (Rshunt = 10000 uOhm)
+
+So this patch also fixes NULL name pointer, using client->name
+to play safe and to align with hwmon->name.
+
+Fixes: bd0ddd4d0883 ("hwmon: (ina2xx) Add OF device ID table")
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_tables_api.c | 5 +++--
- net/netfilter/nft_compat.c    | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/hwmon/ina2xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 3ae365f92bff..ea1e57daf50e 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2252,7 +2252,7 @@ static int nf_tables_getrule(struct net *net, struct sock *nlsk,
- static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 				   struct nft_rule *rule)
- {
--	struct nft_expr *expr;
-+	struct nft_expr *expr, *next;
- 
- 	/*
- 	 * Careful: some expressions might not be initialized in case this
-@@ -2260,8 +2260,9 @@ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 	 */
- 	expr = nft_expr_first(rule);
- 	while (expr != nft_expr_last(rule) && expr->ops) {
-+		next = nft_expr_next(expr);
- 		nf_tables_expr_destroy(ctx, expr);
--		expr = nft_expr_next(expr);
-+		expr = next;
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index 71d3445ba869..c2252cf452f5 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -491,7 +491,7 @@ static int ina2xx_probe(struct i2c_client *client,
  	}
- 	kfree(rule);
+ 
+ 	data->groups[group++] = &ina2xx_group;
+-	if (id->driver_data == ina226)
++	if (chip == ina226)
+ 		data->groups[group++] = &ina226_group;
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+@@ -500,7 +500,7 @@ static int ina2xx_probe(struct i2c_client *client,
+ 		return PTR_ERR(hwmon_dev);
+ 
+ 	dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
+-		 id->name, data->rshunt);
++		 client->name, data->rshunt);
+ 
+ 	return 0;
  }
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index 6da1cec1494a..7533c2fd6b76 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -497,6 +497,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		    void *info)
- {
- 	struct xt_match *match = expr->ops->data;
-+	struct module *me = match->me;
- 	struct xt_mtdtor_param par;
- 
- 	par.net = ctx->net;
-@@ -507,7 +508,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		par.match->destroy(&par);
- 
- 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
--		module_put(match->me);
-+		module_put(me);
- }
- 
- static void
 -- 
 2.17.1
 
