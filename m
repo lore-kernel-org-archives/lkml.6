@@ -2,164 +2,70 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA0DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3480C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF39A20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:17:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O7BtN5y/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF39A20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 78A7B20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544034012;
+	bh=3orrtxMYPTCt7x+Wku4tzYWGXQoWImMQqTEXl03RHbA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=1NI63br4qIS77XscY0n7yXdNqT3CKQv6M8FDWTY9E1KqQoQpbecp6tIA75YgM62aT
+	 SYNtx88V0WHgAQo1qotEEnIxd6Dt1rjD/65YCGHKabsa3G6/c/v9sygSZLtJTLPLAL
+	 4eGEc4vlzis92V4b2ZypuBGVc8O/++mkM3ZaCd7w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A7B20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeLESRI (ORCPT
+        id S1728047AbeLESUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:17:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33676 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeLESRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:17:08 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so9396711pgu.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:17:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6vMht8+Ph9JHpETTWF5GW6LB5/gngb0kDvS5i0Ablh0=;
-        b=O7BtN5y/jc8pG7n9rlH2yavCcgsXRlYXvkH6x6VfMOtfIbvE4IRjaJ6DgW625xSZ5C
-         AsnvmXyNeDYZFKuYvJgpFykWxavJi7lf5tozQfx57/YlBTXQeNdSSw6Jk9aC5j+Ea/Ki
-         OtgbIbl6TLsEJpDi9q/yYjUsoxJtLVFtpvIb8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6vMht8+Ph9JHpETTWF5GW6LB5/gngb0kDvS5i0Ablh0=;
-        b=PVpv/zNpSpf+U0Tk/XQFQ+Rq3Qao1SlMNBVsOTN5jUzNk7PCav4C4UDX1yqMDsKU0T
-         CnDyjqjlBF/eEyGDz2F/K7KTsPV5qRqlN7BSiDbzpaeG9NYHArkW+tOyQgwwZrtHSXez
-         lHtkqFigaEuaj3meSbeUSlz7w56i0yLBmxzFxq+P3nFniUeCh2H5b1ZJQjIQ+m+9chO/
-         GlV63PlY7umQZaTOqvleJ94MbcafLCCvV9Xl6UutvJQk3AnX7xT0JnEI4ZiOvLrexjIu
-         k1d2UHz20v+G4aYb9Xl0+UK/efKBw3TmnPhfOWVVTbTrwx84OaQ1GvyCJjuedUpO3vUm
-         Hdrg==
-X-Gm-Message-State: AA+aEWYvft/IPde9g8aLmgJfsEeVt3WWMq0H+p3ZIkm8bDk0msiBZyGY
-        iPSvrlvYYJR8+iFAXpvaXGP7VQ==
-X-Google-Smtp-Source: AFSGD/UNOuP1DFWZAhtStiObktfOGcOAV8B2mnfuBvwmMAPxs4uJYKeyjgD7750wF4j4ydZKruQcaA==
-X-Received: by 2002:a65:610d:: with SMTP id z13mr21601439pgu.427.1544033827360;
-        Wed, 05 Dec 2018 10:17:07 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id w88sm21061483pfk.11.2018.12.05.10.17.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 10:17:05 -0800 (PST)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Sean Paul <seanpaul@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Brian Norris <briannorris@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>, stable@vger.kernel.org
-Subject: [PATCH for-4.20] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
-Date:   Wed,  5 Dec 2018 10:16:57 -0800
-Message-Id: <20181205181657.177703-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 5 Dec 2018 13:20:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbeLESUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 13:20:03 -0500
+Subject: Re: [git pull] Input updates for v4.20-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544034002;
+        bh=3orrtxMYPTCt7x+Wku4tzYWGXQoWImMQqTEXl03RHbA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=JdLZ5bhkq5fbB7HAUMuWy7Wh9Yp0eD1evr82e+P3mbyrnD23dA6F0VVXQ7CqPzr/B
+         IMw+mtwic2M6mqV6vEyXnbOIxyXB2kAjV7rVrDncMaY1eok1pb1iz2ms4ngfp2ppWP
+         spz0u9fBbgVLN3mpmdO9zx1cJiwokxpYVCKBIX3k=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20181204033746.GA235290@dtor-ws>
+References: <20181204033746.GA235290@dtor-ws>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20181204033746.GA235290@dtor-ws>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+X-PR-Tracked-Commit-Id: 6c3516fed7b61a3527459ccfa67fab130d910610
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: adac0753c25217a2365b132c87cb2540b51fa89b
+Message-Id: <20181205182002.5826.80954.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Wed, 05 Dec 2018 18:20:02 +0000
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
+The pull request you sent on Mon, 3 Dec 2018 19:37:46 -0800:
 
-It causes new warnings [1] on shutdown when running the Google Kevin or
-Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
-different than what Marc and Heiko test.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
 
-We're looking at a different approach (e.g., [2]) to replace this, but
-IMO the revert should be taken first, as it already propagated to
--stable.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/adac0753c25217a2365b132c87cb2540b51fa89b
 
-[1] Report here:
-http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
+Thank you!
 
-WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
-...
- Call trace:
-  drm_mode_config_cleanup+0x1c4/0x294
-  rockchip_drm_unbind+0x4c/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
- Memory manager not clean during takedown.
- WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
-...
-  drm_mm_takedown+0x34/0x44
-  rockchip_drm_unbind+0x64/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
-
-[2] https://patchwork.kernel.org/patch/10556151/
-    https://www.spinics.net/lists/linux-rockchip/msg21342.html
-    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
-
-Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Vicente Bergas <vicencb@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 941f35233b1f..5864cb452c5c 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -448,11 +448,6 @@ static int rockchip_drm_platform_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
--{
--	rockchip_drm_platform_remove(pdev);
--}
--
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -462,7 +457,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_ids);
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
--	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
 -- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
