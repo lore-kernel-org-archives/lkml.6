@@ -2,380 +2,91 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFBFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248AEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A402F214E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A402F214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id DE553206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4TsEiG8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE553206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeLEKGf (ORCPT
+        id S1728413AbeLEKHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:06:35 -0500
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:50775 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728280AbeLEKGb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:06:31 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id E016CB885E
-        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 10:06:26 +0000 (GMT)
-Received: (qmail 31874 invoked from network); 5 Dec 2018 10:06:26 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.245.71])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 5 Dec 2018 10:06:26 -0000
-Date:   Wed, 5 Dec 2018 10:06:24 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, mhocko@kernel.org,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org,
-        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181205100624.GX23260@techsingularity.net>
-References: <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
- <20181203183050.GL31738@dhcp22.suse.cz>
- <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
- <20181203185954.GM31738@dhcp22.suse.cz>
- <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
- <20181203201214.GB3540@redhat.com>
- <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
- <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
- <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
- <20181204104558.GV23260@techsingularity.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181204104558.GV23260@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 5 Dec 2018 05:07:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728822AbeLEJlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:00 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5B882084C;
+        Wed,  5 Dec 2018 09:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002860;
+        bh=JAN29/KFpKsDaCkiQLyC9yTIRecNGXcNSk+IRCHRiKI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n4TsEiG8tTh9mpUDNpXcvd1G9RZ4xgCT78bZKABJ1d0q6brPFzk3xvrpwFZANRPvW
+         DSRFCSY6lWITcqJBRSrfa2L5sXPceBZ1QtHOAOzfexbz8xA8WFtVGhDeUlOfWcsYoo
+         GnIW2FsBHaJTTFKrYVYJCmnaRkJfJ9aNsSlXXLYA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Hui Wang <hui.wang@canonical.com>, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 090/123] ALSA: usb-audio: Add vendor and product name for Dell WD19 Dock
+Date:   Wed,  5 Dec 2018 04:35:22 -0500
+Message-Id: <20181205093555.5386-90-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 10:45:58AM +0000, Mel Gorman wrote:
-> I have *one* result of the series on a 1-socket machine running
-> "thpscale". It creates a file, punches holes in it to create a
-> very light form of fragmentation and then tries THP allocations
-> using madvise measuring latency and success rates. It's the
-> global-dhp__workload_thpscale-madvhugepage in mmtests using XFS as the
-> filesystem.
-> 
-> thpscale Fault Latencies
->                                     4.20.0-rc4             4.20.0-rc4
->                                 mmots-20181130       gfpthisnode-v1r1
-> Amean     fault-base-3      5358.54 (   0.00%)     2408.93 *  55.04%*
-> Amean     fault-base-5      9742.30 (   0.00%)     3035.25 *  68.84%*
-> Amean     fault-base-7     13069.18 (   0.00%)     4362.22 *  66.62%*
-> Amean     fault-base-12    14882.53 (   0.00%)     9424.38 *  36.67%*
-> Amean     fault-base-18    15692.75 (   0.00%)    16280.03 (  -3.74%)
-> Amean     fault-base-24    28775.11 (   0.00%)    18374.84 *  36.14%*
-> Amean     fault-base-30    42056.32 (   0.00%)    21984.55 *  47.73%*
-> Amean     fault-base-32    38634.26 (   0.00%)    22199.49 *  42.54%*
-> Amean     fault-huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-> Amean     fault-huge-3      3628.86 (   0.00%)      963.45 *  73.45%*
-> Amean     fault-huge-5      4926.42 (   0.00%)     2959.85 *  39.92%*
-> Amean     fault-huge-7      6717.15 (   0.00%)     3828.68 *  43.00%*
-> Amean     fault-huge-12    11393.47 (   0.00%)     5772.92 *  49.33%*
-> Amean     fault-huge-18    16979.38 (   0.00%)     4435.95 *  73.87%*
-> Amean     fault-huge-24    16558.00 (   0.00%)     4416.46 *  73.33%*
-> Amean     fault-huge-30    20351.46 (   0.00%)     5099.73 *  74.94%*
-> Amean     fault-huge-32    23332.54 (   0.00%)     6524.73 *  72.04%*
-> 
-> So, looks like massive latency improvements but then the THP allocation
-> success rates
-> 
-> thpscale Percentage Faults Huge
->                                4.20.0-rc4             4.20.0-rc4
->                            mmots-20181130       gfpthisnode-v1r1
-> Percentage huge-3        95.14 (   0.00%)        7.94 ( -91.65%)
-> Percentage huge-5        91.28 (   0.00%)        5.00 ( -94.52%)
-> Percentage huge-7        86.87 (   0.00%)        9.36 ( -89.22%)
-> Percentage huge-12       83.36 (   0.00%)       21.03 ( -74.78%)
-> Percentage huge-18       83.04 (   0.00%)       30.73 ( -63.00%)
-> Percentage huge-24       83.74 (   0.00%)       27.47 ( -67.20%)
-> Percentage huge-30       83.66 (   0.00%)       31.85 ( -61.93%)
-> Percentage huge-32       83.89 (   0.00%)       29.09 ( -65.32%)
-> 
+From: Hui Wang <hui.wang@canonical.com>
 
-Other results arrived once the grid caught up and it's a mixed bag of
-gains and losses roughtly along the lines predicted by the discussion
-already -- namely locality is better as long as the workload fits,
-compaction is reduced, reclaim is reduced, THP allocation success rates
-are reduced but latencies are often better.
+[ Upstream commit 8159a6a4a7d2a092d5375f695ecfca22b4562b5f ]
 
-Whether this is "good" or "bad" depends on whether you have a workload
-that benefits because it's neither universally good or bad. It would
-still be nice to hear how Andreas fared but I think we'll reach the same
-conclusion -- the patches shuffles the problem around with limited effort
-to address the root causes so all we end up changing is the identity of
-the person who complains about their workload. One might be tempted to
-think that the reduced latencies in some cases are great but not if the
-workload is one that benefits from longer startup costs in exchange for
-lower runtime costs in the active phase.
+Like the Dell WD15 Dock, the WD19 Dock (0bda:402e) doens't provide
+useful string for the vendor and product names too. In order to share
+the UCM with WD15, here we keep the profile_name same as the WD15.
 
-For the much longer answer, I'll focus on the two-socket results because
-they are more relevant to the current discussion. The workloads are
-not realistic in the slightest, they just happen to trigger some of the
-interesting corner cases.
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/usb/quirks-table.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-global-dhp__workload_usemem-stress-numa-compact
-o Plain anonymous faulting workload
-o defrag=always (not representative, simply triggers a bad case)
-
-                               4.20.0-rc4             4.20.0-rc4
-                           mmots-20181130       gfpthisnode-v1r1
-Amean     Elapsd-1       26.79 (   0.00%)       34.92 * -30.37%*
-Amean     Elapsd-3        7.32 (   0.00%)        8.10 * -10.61%*
-Amean     Elapsd-4        5.53 (   0.00%)        5.64 (  -1.94%)
-
-Units are seconds, time to complete 30.37% worse for the single-threaded
-case. No direct reclaim activity but other activity is interesting and
-I'll pick it out snippets;
-
-                            4.20.0-rc4  4.20.0-rc4
-                          mmots-20181130gfpthisnode-v1r1
-Swap Ins                             8           0
-Swap Outs                         1546           0
-Allocation stalls                    0           0
-Fragmentation stalls                 0        2022
-Direct pages scanned                 0           0
-Kswapd pages scanned             42719        1078
-Kswapd pages reclaimed           41082        1049
-Page writes by reclaim            1546           0
-Page writes file                     0           0
-Page writes anon                  1546           0
-Page reclaim immediate               2           0
-
-Baseline kernel swaps out (bad), David's patch reclaims less (good).
-That's reasonably positive. Less positive is that fragmentation stalls are
-triggered with David's patch. This is due to a patch of mine in Andrew's
-tree which I've asked that he drop as while it helps control long-term
-fragmentation, there was always a risk that the short stalls would be
-problematic and it's a distraction.
-
-THP fault alloc                 540043      456714
-THP fault fallback                   0       83329
-THP collapse alloc                   0           4
-THP collapse fail                    0           0
-THP split                            1           0
-THP split failed                     0           0
-
-David's patch falls back to base page allocation to a much higher degree
-(bad).
-
-Compaction pages isolated        85381       11432
-Compaction migrate scanned      204787       42635
-Compaction free scanned          72376       13061
-Compact scan efficiency           282%        326%
-
-David's patch also compacts less.
-
-NUMA alloc hit                 1188182     1093244
-NUMA alloc miss                  68199    42764192
-NUMA interleave hit                  0           0
-NUMA alloc local               1179614     1084665
-NUMA base PTE updates         28902547    23270389
-NUMA huge PMD updates            56437       45438
-NUMA page range updates       57798291    46534645
-NUMA hint faults                 61395       47838
-NUMA hint local faults           46440       47833
-NUMA hint local percent            75%         99%
-NUMA pages migrated            2000156           5
-
-Interestingly, the NUMA misses are higher with David's patch indicating
-that it's allocating *more* from remote nodes. However, there are also
-hints that the accessing process then removes to the remote node instead
-of the current mmotm kernel which tries to migrate the memory locally.
-
-So, in line with expectations. The baseline kernel works harder to
-allocate the THPs where as David's gives up quickly and moves over. At
-one level this is good but the bottom line is total time to complete the
-workload goes from the baseline of 280 seconds up to 344 seconds. This
-is overall mixed because depending on what you look at, it's both good
-and bad.
-
-global-dhp__workload_thpscale-xfs
-o Workload creates a large file, punches holes in it
-o Mapping is created and faulted to measure allocation success rates and
-  latencies
-o No special madvise
-o Considered a relatively "simple" case
-
-                                    4.20.0-rc4             4.20.0-rc4
-                                mmots-20181130       gfpthisnode-v1r1
-Amean     fault-base-3      2021.05 (   0.00%)     2633.11 * -30.28%*
-Amean     fault-base-5      2475.25 (   0.00%)     2997.15 * -21.08%*
-Amean     fault-base-7      5595.79 (   0.00%)     7523.10 ( -34.44%)
-Amean     fault-base-12    15604.91 (   0.00%)    16355.02 (  -4.81%)
-Amean     fault-base-18    20277.13 (   0.00%)    22062.73 (  -8.81%)
-Amean     fault-base-24    24218.46 (   0.00%)    25772.49 (  -6.42%)
-Amean     fault-base-30    28516.75 (   0.00%)    28208.14 (   1.08%)
-Amean     fault-base-32    36722.30 (   0.00%)    20712.46 *  43.60%*
-Amean     fault-huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-Amean     fault-huge-3       685.38 (   0.00%)      512.02 *  25.29%*
-Amean     fault-huge-5      3639.75 (   0.00%)      807.33 (  77.82%)
-Amean     fault-huge-7      1139.54 (   0.00%)      555.45 *  51.26%*
-Amean     fault-huge-12     1012.64 (   0.00%)      850.68 (  15.99%)
-Amean     fault-huge-18     6694.45 (   0.00%)     1310.39 *  80.43%*
-Amean     fault-huge-24    10165.27 (   0.00%)     3822.23 *  62.40%*
-Amean     fault-huge-30    13496.19 (   0.00%)    19248.06 * -42.62%*
-Amean     fault-huge-32     4477.05 (   0.00%)    63463.78 *-1317.54%*
-
-These latency outliers can be huge so take them with a grain of salt.
-Sometimes I'll look at the percentiles but it takes an age to discuss.
-
-In general, David's patch faults huge pages faster, particularly with
-higher threads.  The allocation success rates are also great
-
-                               4.20.0-rc4             4.20.0-rc4
-                           mmots-20181130       gfpthisnode-v1r1
-Percentage huge-3         2.86 (   0.00%)       26.48 ( 825.27%)
-Percentage huge-5         1.07 (   0.00%)        1.41 (  31.16%)
-Percentage huge-7        20.38 (   0.00%)       54.82 ( 168.94%)
-Percentage huge-12       19.07 (   0.00%)       38.10 (  99.76%)
-Percentage huge-18       10.72 (   0.00%)       30.18 ( 181.49%)
-Percentage huge-24        8.44 (   0.00%)       15.48 (  83.39%)
-Percentage huge-30        7.41 (   0.00%)       10.78 (  45.38%)
-Percentage huge-32       29.08 (   0.00%)        3.23 ( -88.91%)
-
-Overall system activity looks similar which is counter-intuitive. The
-only hints of what is going on is that David's patch reclaims less from
-kswapd context. Direct reclaim scanning is high in both cases but does
-not reclaim much. David's patch scans for free page as compaction
-targets much more aggressively but no indication as to why. Locality
-information looks similar.
-
-So, not as sure what to think about this. Headline results look good but
-no obvious explanation as to why exactly. It could be that stalls
-(higher with David's patch) mean there is less inteference between
-threads but that's thin.
-
-global-dhp__workload_thpscale-madvhugepage-xfs
-o Same as above except that MADV_HUGEPAGE is used
-
-                                    4.20.0-rc4             4.20.0-rc4
-                                mmots-20181130       gfpthisnode-v1r1
-Amean     fault-base-1         0.00 (   0.00%)        0.00 (   0.00%)
-Amean     fault-base-3     18880.35 (   0.00%)     6341.60 *  66.41%*
-Amean     fault-base-5     27608.74 (   0.00%)     6515.10 *  76.40%*
-Amean     fault-base-7     28345.03 (   0.00%)     7529.98 *  73.43%*
-Amean     fault-base-12    35690.33 (   0.00%)    13518.77 *  62.12%*
-Amean     fault-base-18    56538.31 (   0.00%)    23933.91 *  57.67%*
-Amean     fault-base-24    71485.33 (   0.00%)    26927.03 *  62.33%*
-Amean     fault-base-30    54286.39 (   0.00%)    23453.61 *  56.80%*
-Amean     fault-base-32    92143.50 (   0.00%)    19474.99 *  78.86%*
-Amean     fault-huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-Amean     fault-huge-3      5666.72 (   0.00%)     1351.55 *  76.15%*
-Amean     fault-huge-5      8307.35 (   0.00%)     2776.28 *  66.58%*
-Amean     fault-huge-7     10651.96 (   0.00%)     2397.70 *  77.49%*
-Amean     fault-huge-12    15489.56 (   0.00%)     7034.98 *  54.58%*
-Amean     fault-huge-18    20278.54 (   0.00%)     6417.46 *  68.35%*
-Amean     fault-huge-24    29378.24 (   0.00%)    16173.41 *  44.95%*
-Amean     fault-huge-30    29237.66 (   0.00%)    81198.70 *-177.72%*
-Amean     fault-huge-32    27177.37 (   0.00%)    18966.08 *  30.21%*
-
-Superb improvement in latencies coupled with the following
-
-                               4.20.0-rc4             4.20.0-rc4
-                           mmots-20181130       gfpthisnode-v1r1
-Percentage huge-1         0.00 (   0.00%)        0.00 (   0.00%)
-Percentage huge-3        99.74 (   0.00%)       49.62 ( -50.25%)
-Percentage huge-5        99.24 (   0.00%)       12.19 ( -87.72%)
-Percentage huge-7        97.98 (   0.00%)       19.20 ( -80.40%)
-Percentage huge-12       95.76 (   0.00%)       21.33 ( -77.73%)
-Percentage huge-18       94.91 (   0.00%)       31.63 ( -66.67%)
-Percentage huge-24       94.36 (   0.00%)        9.27 ( -90.18%)
-Percentage huge-30       92.15 (   0.00%)        9.60 ( -89.58%)
-Percentage huge-32       94.18 (   0.00%)        8.67 ( -90.79%)
-
-THP allocation success rates are through the floor which is why
-latencies overall are better.
-
-This goes back to the fundamental question -- does your workload benefit
-from THP or not and is it the primary metric? If yes (potentially in the
-case with KVM) then this is a disaster. It's actually a mixed bad for
-David because THP was desired but so was locality. In this case, the
-application specifically requested THP so presumably a real application
-specifying the flag means it
-
-The high-level system stats reflect the level of effort, David's patch
-does less work in the system which is both good and bad depending on
-your requirements
-
-                            4.20.0-rc4  4.20.0-rc4
-                          mmots-20181130gfpthisnode-v1r1
-Swap Ins                          1564           0
-Swap Outs                        12283         163
-Allocation stalls                30236          24
-Fragmentation stalls              1069       24683
-
-Baseline kernel swaps and has high allocation stalls to reclaim memory.
-David's patch stalls on trying to control fragmentation instead.
-
-                            4.20.0-rc4  4.20.0-rc4
-                          mmots-20181130gfpthisnode-v1r1
-Direct pages scanned          12780511     9955217
-Kswapd pages scanned           1944181    16554296
-Kswapd pages reclaimed          870023     4029534
-Direct pages reclaimed         6738924        5884
-Kswapd efficiency                  44%         24%
-Kswapd velocity               1308.975   11200.850
-Direct efficiency                  52%          0%
-Direct velocity               8604.840    6735.828
-
-The baseline kernel does much of the reclaim work in direct context
-while David's does it in kswapd context.
-
-THP fault alloc                 316843      238810
-THP fault fallback               17224       95256
-THP collapse alloc                   2           0
-THP collapse fail                    0           5
-THP split                       177536      180673
-THP split failed                 10024           2
-
-Baseline kernel allocates THP while David's falls back
-
-THP collapse alloc                   2           0
-THP collapse fail                    0           5
-Compaction stalls               100198       75267
-Compaction success               65803        3964
-Compaction failures              34395       71303
-Compaction efficiency              65%          5%
-Page migrate success          40807601    17963914
-Page migrate failure             16206       16782
-Compaction pages isolated     90818819    41285100
-Compaction migrate scanned    98628306    36990342
-Compaction free scanned     6547623619  6870889207
-
-Unsurprisingly, David's patch tries to compact less. The collapse activity
-shows that enough time didn't pass for khugepaged to intervene. While
-outside the context of the current discussion, that compaction scanning
-activity is mental but also unsurprising. A lot of it is from kcompactd
-activity. It's a seperate series to deal with that.
-
-Given the mix of gains and losses, the patch simply shuffles the problem
-around in a circle. Some workloads benefit, some don't and whether it's
-merged or not merged, someone ends up annoyed as their workload suffers.
-
-I know I didn't review the patch in much detail because in this context,
-it was more interesting to know "what it does" than the specifics of the
-approach. I'm going to go back to hopping my face off the compaction
-series because I think it has the potential to reduce the problem
-overall instead of shuffling the deckchairs around the titanic[1]
-
-[1] Famous last words, the series could end up being the iceberg
-
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index 08aa78007020..1c73b9ed44a6 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3387,5 +3387,15 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge", "HVR-950Q"),
+ 		.ifnum = QUIRK_NO_INTERFACE
+ 	}
+ },
++/* Dell WD19 Dock */
++{
++	USB_DEVICE(0x0bda, 0x402e),
++	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
++		.vendor_name = "Dell",
++		.product_name = "WD19 Dock",
++		.profile_name = "Dell-WD15-Dock",
++		.ifnum = QUIRK_NO_INTERFACE
++	}
++},
+ 
+ #undef USB_DEVICE_VENDOR_SPEC
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
+
