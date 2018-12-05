@@ -2,223 +2,128 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D06BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7FBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93EF2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:03:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4Xf3TEt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93EF2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E72820892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E72820892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbeLESDm (ORCPT
+        id S1727851AbeLESFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:03:42 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42565 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeLESDl (ORCPT
+        Wed, 5 Dec 2018 13:05:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55547 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbeLESFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:03:41 -0500
-Received: by mail-io1-f67.google.com with SMTP id x6so17400957ioa.9
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:03:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aWfZeS78Vkx1R058+bEflsF9sIFx63RBTJ9viV3bmPE=;
-        b=Z4Xf3TEtbIW8eDV74nk3AVE9E2eifE6bl+pryztTQP0WSgwDE03Tr0qL7Nw26GMdK5
-         wnYoMK2C0wKQDAw2qgBTxzAVOhf88t7+b2yDPV+giitUZOGMxNjvW8D/oNpS5FBwkcRs
-         3wxlB5ZzOa/4arCbELlFiNOEvheEPgFF7oZWc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aWfZeS78Vkx1R058+bEflsF9sIFx63RBTJ9viV3bmPE=;
-        b=UhT+EsC7zGMhmaIqOsKdxFyy+GJDGNhcHD73D5lCuYKuqhF7JipQIkjJMetw9iTi5d
-         s6raDN+hZlaNR5wOKIxCue2T9mgC7GZYvQtsNguukHvRDaHGJe6UUHGVGQY3O0VnuS4j
-         7S32W/wIuxv2XVvNo7YDOPtNtZG20MjKXfjhHzJCg1FO493iFoj+xPUqCATRJGRD98u8
-         95L2NVqkA+HWOSA5tZxZtZR6Ms7JgfE+IiYv4nWU0Gw+rN6PWXp+ll7ipF3FV172SajC
-         qUVGXZU6t/OnS/3Rb11KvyTRlhSNvhIm5OBQ2IA41dcZiv+COyXUwhY1EiF2dxNyiUob
-         3C+g==
-X-Gm-Message-State: AA+aEWa/7YqUMZ9uyza6rW+CwVUMW3RwGlx2dDoGS0S7qN8HBMta9klO
-        Z6fIyZBVmlVtBmElOla3TCdLSP1BVTCr75Ss7ypMBDOg
-X-Google-Smtp-Source: AFSGD/VVxVoA1iYAS8DUaYuslDs6TjP6ByhgvFeUC4srpHiYDFijWu069qopJoAOtLOsCSwRayVVcMcwZUvOClQAMMg=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr19582901iom.11.1544033020093;
- Wed, 05 Dec 2018 10:03:40 -0800 (PST)
+        Wed, 5 Dec 2018 13:05:33 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB5I53Ie1375357
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 5 Dec 2018 10:05:03 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB5I53Wr1375354;
+        Wed, 5 Dec 2018 10:05:03 -0800
+Date:   Wed, 5 Dec 2018 10:05:03 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dan Williams <tipbot@zytor.com>
+Message-ID: <tip-c683c37cd13246941924c48f6c6a9863425e0cec@git.kernel.org>
+Cc:     dan.j.williams@intel.com, bp@alien8.de, mingo@kernel.org,
+        tglx@linutronix.de, riel@surriel.com, linux-kernel@vger.kernel.org,
+        dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
+        bigeasy@linutronix.de, luto@kernel.org, hpa@zytor.com,
+        kirill.shutemov@linux.intel.com, peterz@infradead.org
+Reply-To: hpa@zytor.com, luto@kernel.org, kirill.shutemov@linux.intel.com,
+          peterz@infradead.org, mingo@kernel.org, dan.j.williams@intel.com,
+          bp@alien8.de, bigeasy@linutronix.de, riel@surriel.com,
+          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de
+In-Reply-To: <154395942644.32119.10238934183949418128.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154395942644.32119.10238934183949418128.stgit@dwillia2-desk3.amr.corp.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] generic/pgtable: Make {pmd, pud}_same()
+ unconditionally available
+Git-Commit-ID: c683c37cd13246941924c48f6c6a9863425e0cec
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
- <1541912383-19915-6-git-send-email-leo.yan@linaro.org> <20181119204749.GB608@xps15>
- <20181205034950.GB15964@leoy-ThinkPad-X240s>
-In-Reply-To: <20181205034950.GB15964@leoy-ThinkPad-X240s>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 5 Dec 2018 11:03:29 -0700
-Message-ID: <CANLsYkxY1K-TmJKQb3F=T7MGND5pzOZ5ZrK=UZuVihoOAq5p=w@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] perf cs-etm: Track exception number
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Al Grant <Al.Grant@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 at 20:49, <leo.yan@linaro.org> wrote:
->
-> On Mon, Nov 19, 2018 at 01:47:49PM -0700, Mathieu Poirier wrote:
-> > On Sun, Nov 11, 2018 at 12:59:43PM +0800, Leo Yan wrote:
-> > > When an exception packet comes, it contains the info for exception
-> > > number; the exception number indicates the exception types, so from it
-> > > we can know if the exception is taken for interrupt, system call or
-> > > other traps, etc.  But because the exception return packet cannot
-> > > delivery exception number correctly by decoder thus when prepare sample
-> > > flags we cannot know what's type for exception return.
-> > >
-> > > This patch adds a new 'exc_num' array in decoder structure to record
-> > > exception number per CPU, the exception number is recorded in the array
-> > > when the exception packet comes and this exception number can be used by
-> > > exception return packet.  If detect there have discontinuous trace with
-> > > TRACE_ON or TRACE_OFF packet, the exception number is set to invalid
-> > > value.
-> > >
-> > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > ---
-> > >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 67 ++++++++++++++++++++++---
-> > >  1 file changed, 59 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > > index b8cb7a3e..d1a6cbc 100644
-> > > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > > @@ -43,6 +43,7 @@ struct cs_etm_decoder {
-> > >     u32 packet_count;
-> > >     u32 head;
-> > >     u32 tail;
-> > > +   u32 *exc_num;
-> > >     struct cs_etm_packet packet_buffer[MAX_BUFFER];
-> > >  };
-> > >
-> > > @@ -368,24 +369,64 @@ static ocsd_datapath_resp_t
-> > >  cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
-> > >                              const uint8_t trace_chan_id)
-> > >  {
-> > > -   return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > -                                        CS_ETM_TRACE_OFF);
-> > > +   int ret;
-> > > +   struct cs_etm_packet *packet;
-> > > +
-> > > +   ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > +                                       CS_ETM_TRACE_OFF);
-> > > +   if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > > +           return ret;
-> > > +
-> > > +   packet = &decoder->packet_buffer[decoder->tail];
-> > > +
-> > > +   /* Clear execption number for discontinuous trace */
-> > > +   decoder->exc_num[packet->cpu] = UINT32_MAX;
-> > > +
-> > > +   return ret;
-> > >  }
-> > >
-> > >  static ocsd_datapath_resp_t
-> > >  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
-> > >                             const uint8_t trace_chan_id)
-> > >  {
-> > > -   return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > -                                        CS_ETM_TRACE_ON);
-> > > +   int ret;
-> > > +   struct cs_etm_packet *packet;
-> > > +
-> > > +   ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > +                                       CS_ETM_TRACE_ON);
-> > > +   if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > > +           return ret;
-> > > +
-> > > +   packet = &decoder->packet_buffer[decoder->tail];
-> > > +
-> > > +   /* Clear execption number for discontinuous trace */
-> > > +   decoder->exc_num[packet->cpu] = UINT32_MAX;
-> > > +
-> > > +   return ret;
-> > >  }
-> > >
-> > >  static ocsd_datapath_resp_t
-> > >  cs_etm_decoder__buffer_exception(struct cs_etm_decoder *decoder,
-> > > +                            const ocsd_generic_trace_elem *elem,
-> > >                              const uint8_t trace_chan_id)
-> > >  {
-> > > -   return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > -                                        CS_ETM_EXCEPTION);
-> > > +   int ret;
-> > > +   struct cs_etm_packet *packet;
-> > > +
-> > > +   ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > > +                                       CS_ETM_EXCEPTION);
-> > > +   if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > > +           return ret;
-> > > +
-> > > +   packet = &decoder->packet_buffer[decoder->tail];
-> > > +
-> > > +   /*
-> > > +    * Exception number is recorded per CPU and later can be used
-> > > +    * for exception return instruction analysis.
-> > > +    */
-> > > +   decoder->exc_num[packet->cpu] = elem->exception_number;
-> >
-> > Am I missing something or the information about the exception number that is
-> > recorded here isn't used anywhere?
->
-> The exception number will be used to set branch flag patch [1].
+Commit-ID:  c683c37cd13246941924c48f6c6a9863425e0cec
+Gitweb:     https://git.kernel.org/tip/c683c37cd13246941924c48f6c6a9863425e0cec
+Author:     Dan Williams <dan.j.williams@intel.com>
+AuthorDate: Tue, 4 Dec 2018 13:37:06 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 5 Dec 2018 09:03:05 +0100
 
-Right, I realised that when I started reviewing that set.  The rule of
-thumb here is to introduce code in the same patchset it is used so
-that we avoid adding needless code to the kernel.
+generic/pgtable: Make {pmd, pud}_same() unconditionally available
 
-> According to exception number we can know it's for system call,
-> interrupt or other traps.
->
-> [1] http://archive.armlinux.org.uk/lurker/message/20181111.050755.d1c1b257.en.html
->
-> > If you want to use this in perf report/script,
-> > the exception number will have to be added to the cs_etm_packet struct.
->
-> Actually before has discussed this with Mike but found it's hard to
-> save the exception number in cs_etm_packet struct.  The reason is the
-> exception packet contains the correct exception number, but the
-> exception return packet doesn't contain exception number.  Thus this
-> patch uses cs_etm_decoder struct to save exception number per CPU
-> context when receive exception packet, and later the saved exception
-> number will be used by exception return packet.
->
-> Please see related discussion at the end of page [2].
+In preparation for {pmd,pud}_same() to be used outside of transparent
+huge page code paths, make them unconditionally available. This enables
+them to be used in the definition of a new family of
+set_{pte,pmd,pud,p4d,pgd}_safe() helpers.
 
-I find Mike's point about the possibility of seeing exception returns
-without having a prior exception due to various factors very
-interesting.  I will make sure to keep an eye out for that in the next
-revision.
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/154395942644.32119.10238934183949418128.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/asm-generic/pgtable.h | 14 --------------
+ 1 file changed, 14 deletions(-)
 
->
-> [2] https://lists.linaro.org/pipermail/coresight/2018-October/001832.html
->
-> > I am done with the revision of this set.
->
-> Thanks a lot for reviewing.
->
-> [...]
->
-> Thanks,
-> Leo Yan
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 359fb935ded6..eea50ef8b8cd 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -375,7 +375,6 @@ static inline int pte_unused(pte_t pte)
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMD_SAME
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+ {
+ 	return pmd_val(pmd_a) == pmd_val(pmd_b);
+@@ -385,19 +384,6 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
+ {
+ 	return pud_val(pud_a) == pud_val(pud_b);
+ }
+-#else /* CONFIG_TRANSPARENT_HUGEPAGE */
+-static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+-{
+-	BUILD_BUG();
+-	return 0;
+-}
+-
+-static inline int pud_same(pud_t pud_a, pud_t pud_b)
+-{
+-	BUILD_BUG();
+-	return 0;
+-}
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
+ 
+ #ifndef __HAVE_ARCH_DO_SWAP_PAGE
