@@ -2,118 +2,248 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B9EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2316EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B4320989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:33:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B4320989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCBB42081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:34:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U02ON9uM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCBB42081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbeLEBdL (ORCPT
+        id S1726720AbeLEBeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:33:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56118 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725979AbeLEBdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:33:11 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BDCF8C057E06;
-        Wed,  5 Dec 2018 01:33:10 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-74.rdu2.redhat.com [10.10.112.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B46623844;
-        Wed,  5 Dec 2018 01:33:09 +0000 (UTC)
-Message-ID: <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
- tree
-From:   Doug Ledford <dledford@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Tue, 4 Dec 2018 20:34:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53480 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLEBeq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:34:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2THFkAsZkfEIPUI2E/WigtyCc/DcNRVRqfFBrlIBYvw=; b=U02ON9uMc/W+3hqtFdhGY6skr
+        70vp1RicSkFSNnkPK9FkO769BUejKbothT0FIJlQCBr6jwn1f6OOE+CYBaqban3ocHFCWoT2Nzvso
+        eezc5hYd84+nHIQ9us5yB5opOtk1qOmTamXayUKEt5Kxf/uz3GjN4QhBNrj8RFYDM5Vxvh+kRpSJF
+        XUsZrEyL0t4gt0n17dNxdasMy7KhIOdfSQ2get42ILGpRFl9xG5KzCANORj1t7K80jCeq37SNMUiX
+        nLyZ9MqKsJZ/6FZfphedo2eiHzh5cKqIAsy2RvS3h6KJrn2G/aBUuANyWYOaY/khcrVU6RlptCSS4
+        C/gy/lDMA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUM5N-0000yl-4O; Wed, 05 Dec 2018 01:34:45 +0000
+Date:   Tue, 4 Dec 2018 17:34:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 04 Dec 2018 20:33:08 -0500
-In-Reply-To: <20181205120706.294b9422@canb.auug.org.au>
-References: <20181205120706.294b9422@canb.auug.org.au>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ODxKlQt9+ykmbI0CeVSH"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 05 Dec 2018 01:33:10 +0000 (UTC)
+Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
+Message-ID: <20181205013444.GX10377@bombadil.infradead.org>
+References: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181130154902.GL10377@bombadil.infradead.org>
+ <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
+ <20181130162435.GM10377@bombadil.infradead.org>
+ <CAPcyv4gBwtCxN4xTncsyShMwMzNiLG3SxKA-frYh9Fn-f6QV=g@mail.gmail.com>
+ <CAPcyv4gDO7sUJgE5kKe=VC5uUG36QaUrkb6tCrtnaFMkgdSYGw@mail.gmail.com>
+ <20181130195021.GN10377@bombadil.infradead.org>
+ <CAPcyv4iqA84WbE8pE=Yi15Q0T8JUXnPZss27HqhQTP08F9sTrQ@mail.gmail.com>
+ <CAPcyv4jFwpsiMTwj3tzbQ4NjV_XnO5-2hTqKYOaWtRCGtT=T+g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jFwpsiMTwj3tzbQ4NjV_XnO5-2hTqKYOaWtRCGtT=T+g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 03, 2018 at 07:33:43PM -0800, Dan Williams wrote:
+> On Fri, Nov 30, 2018 at 12:05 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > -void dax_unlock_mapping_entry(struct page *page)
+> > > +void dax_unlock_mapping_entry(struct page *page, dax_entry_t entry)
+> >
+> > Let's not require the page to be passed back, it can be derived:
+> >
+> >     page = pfn_to_page(dax_to_pfn((void*) entry));
+> >
+> > A bit more symmetric that way and canonical with other locking schemes
+> > that return a cookie.
+> 
+> The patch does not apply on top of the pending fixes. could resend on
+> top of the current libnvdimm-fixes branch [1]?
+> 
+> I think because we are changing the calling convention to take return
+> a locked dax_entry_t type, I feel like we should go back to the
+> originally proposed names of these interfaces. I.e.
+> 
+>     dax_entry_t dax_lock_page(struct page *page)
+> 
+>     void dax_unlock_page(dax_entry_t entry)
+> 
+> Yes, it introduces an entry-to-pfn and pfn-to-page conversion.
+> However, If I can't convince you to drop the page argument, lets at
+> least do the name change. I.e. offload the responsibility of conveying
+> that this is not the traditional page lock to the fact that a
+> dax_entry is returned and passed back to the unlock routine.
 
---=-ODxKlQt9+ykmbI0CeVSH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Matthew Wilcox <willy@infradead.org>
+Date: Fri, 30 Nov 2018 11:05:06 -0500
+Subject: [PATCH] dax: Change lock/unlock API
 
-FWIW this will go away in a day or two.  I merged mlx5-next into rdma
-for-next in order to take a series that depended on it.
+Return the unlock cookie from dax_lock_page() and pass it to
+dax_unlock_page().  This fixes a bug where dax_unlock_page() was
+assuming that the page was PMD-aligned if the entry was a PMD entry.
 
-On Wed, 2018-12-05 at 12:07 +1100, Stephen Rothwell wrote:
-> Hi Leon,
->=20
-> Today's linux-next merge of the mlx5-next tree got a conflict in:
->=20
->   drivers/infiniband/hw/mlx5/main.c
->   drivers/infiniband/hw/mlx5/mlx5_ib.h
->=20
-> between commit:
->=20
->   36e235c88299 ("RDMA/mlx5: Use the uapi disablement APIs instead of code=
-")
->=20
-> from the rdma tree and commit:
->=20
->   81773ce5f07f ("RDMA/mlx5: Use stages for callback to setup and release =
-DEVX")
->=20
-> from the mlx5-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-ODxKlQt9+ykmbI0CeVSH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlwHKtQACgkQuCajMw5X
-L92fpQ//T8hLm2O9WblvQt6R4t4H+uYtr2UAo/Q2GU5/riOpZ+UJKV2iYCIgvl/V
-ce+wl4DxWneKjkBtCcJczlXs4oXEE37NstOGNZog/bj4h8TKuX8XQBrm28BoBFCe
-5DziJigSvBJHQnXR+FPmVt8xnJ4ZAjmH93LcA5j3Mue5ua+e23YfQ8M56Lz/OM7/
-mdDp3Ady7kH86tqDYJ2m4m2RFvz+pt3WzkIa7XyVTPKtogAQ0T680LsyJWvMG26c
-FBtNMNbA8JswwzQJU5yoJWh7BVZSNE4GHJrID8HOmop5fkvVTW1H2YUr2sozBFtJ
-yyE7qO9y9CKpiGltN7FSzuneTo0RgtXkauMh5VA4kWd3mGG6AGtugVzw4DpfVT10
-x5wQHUM+367Q13ZvwI3S6y3h9aLvDsrm9Iz7JHwIUKM+IYa1Ak2JagAqAgm6aK8m
-BQksWiWqDMwY5acKwe3zNSs3S7WWmBwEmLt+3bJSDEcvTe9Tn8Tt0AwNEKstLpBT
-eXlXj1fGc5KjVzOHssA6Mtb1epFZQ5hN7oesqxIh6C2KSZh7jrQOfkf3XjPBiDTz
-9Cc7gSeSWOXIQGWErLuDpGekzWSLsnee20u+GeitC4qH8D2yWW6gKFCM+DgOeVBe
-Tku6ODcthETaxaR20iVtAlOXVUYmNN0TM6IhKh4/bGOs1nFlwWE=
-=e5a9
------END PGP SIGNATURE-----
-
---=-ODxKlQt9+ykmbI0CeVSH--
-
+Debugged-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+diff --git a/fs/dax.c b/fs/dax.c
+index 3f592dc18d67..48132eca3761 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -379,20 +379,20 @@ static struct page *dax_busy_page(void *entry)
+  * @page: The page whose entry we want to lock
+  *
+  * Context: Process context.
+- * Return: %true if the entry was locked or does not need to be locked.
++ * Return: A cookie to pass to dax_unlock_page() or 0 if the entry could
++ * not be locked.
+  */
+-bool dax_lock_mapping_entry(struct page *page)
++dax_entry_t dax_lock_page(struct page *page)
+ {
+ 	XA_STATE(xas, NULL, 0);
+ 	void *entry;
+-	bool locked;
+ 
+ 	/* Ensure page->mapping isn't freed while we look at it */
+ 	rcu_read_lock();
+ 	for (;;) {
+ 		struct address_space *mapping = READ_ONCE(page->mapping);
+ 
+-		locked = false;
++		entry = NULL;
+ 		if (!mapping || !dax_mapping(mapping))
+ 			break;
+ 
+@@ -403,7 +403,7 @@ bool dax_lock_mapping_entry(struct page *page)
+ 		 * otherwise we would not have a valid pfn_to_page()
+ 		 * translation.
+ 		 */
+-		locked = true;
++		entry = (void *)~0UL;
+ 		if (S_ISCHR(mapping->host->i_mode))
+ 			break;
+ 
+@@ -426,23 +426,18 @@ bool dax_lock_mapping_entry(struct page *page)
+ 		break;
+ 	}
+ 	rcu_read_unlock();
+-	return locked;
++	return (dax_entry_t)entry;
+ }
+ 
+-void dax_unlock_mapping_entry(struct page *page)
++void dax_unlock_page(struct page *page, dax_entry_t cookie)
+ {
+ 	struct address_space *mapping = page->mapping;
+ 	XA_STATE(xas, &mapping->i_pages, page->index);
+-	void *entry;
+ 
+ 	if (S_ISCHR(mapping->host->i_mode))
+ 		return;
+ 
+-	rcu_read_lock();
+-	entry = xas_load(&xas);
+-	rcu_read_unlock();
+-	entry = dax_make_entry(page_to_pfn_t(page), dax_is_pmd_entry(entry));
+-	dax_unlock_entry(&xas, entry);
++	dax_unlock_entry(&xas, (void *)cookie);
+ }
+ 
+ /*
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 450b28db9533..0dd316a74a29 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -7,6 +7,8 @@
+ #include <linux/radix-tree.h>
+ #include <asm/pgtable.h>
+ 
++typedef unsigned long dax_entry_t;
++
+ struct iomap_ops;
+ struct dax_device;
+ struct dax_operations {
+@@ -88,8 +90,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct block_device *bdev, struct writeback_control *wbc);
+ 
+ struct page *dax_layout_busy_page(struct address_space *mapping);
+-bool dax_lock_mapping_entry(struct page *page);
+-void dax_unlock_mapping_entry(struct page *page);
++dax_entry_t dax_lock_page(struct page *page);
++void dax_unlock_page(struct page *page, dax_entry_t cookie);
+ #else
+ static inline bool bdev_dax_supported(struct block_device *bdev,
+ 		int blocksize)
+@@ -122,14 +124,14 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline bool dax_lock_mapping_entry(struct page *page)
++static inline dax_entry_t dax_lock_page(struct page *page)
+ {
+ 	if (IS_DAX(page->mapping->host))
+-		return true;
+-	return false;
++		return ~0UL;
++	return 0;
+ }
+ 
+-static inline void dax_unlock_mapping_entry(struct page *page)
++static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
+ {
+ }
+ #endif
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 0cd3de3550f0..7c72f2a95785 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1161,6 +1161,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+ 	LIST_HEAD(tokill);
+ 	int rc = -EBUSY;
+ 	loff_t start;
++	dax_entry_t cookie;
+ 
+ 	/*
+ 	 * Prevent the inode from being freed while we are interrogating
+@@ -1169,7 +1170,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+ 	 * also prevents changes to the mapping of this pfn until
+ 	 * poison signaling is complete.
+ 	 */
+-	if (!dax_lock_mapping_entry(page))
++	cookie = dax_lock_page(page);
++	if (!cookie)
+ 		goto out;
+ 
+ 	if (hwpoison_filter(page)) {
+@@ -1220,7 +1222,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+ 	kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
+ 	rc = 0;
+ unlock:
+-	dax_unlock_mapping_entry(page);
++	dax_unlock_page(page, cookie);
+ out:
+ 	/* drop pgmap ref acquired in caller */
+ 	put_dev_pagemap(pgmap);
