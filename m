@@ -2,129 +2,123 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C64AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6E2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7E7208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:38:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a9fTMQO5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D7E7208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B211214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:40:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B211214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeLETip (ORCPT
+        id S1728326AbeLETk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:38:45 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:58212 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLETip (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:38:45 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB5JXv44144904;
-        Wed, 5 Dec 2018 19:38:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=e8hy47dV//26XronhAG0ev1PSKIm7aRevaWciGMuMeM=;
- b=a9fTMQO5uXJpAa275Fe/HlqCT1Txdg3o91gB6VCQgA+eHdAIKKuXQ3JDNUTgCs71bPOP
- 5uu52ob1SMjjmOgNappq2bEyUZLC0vaL9df1RYRuIjPDLOCV/AZ8zsswtLLv6UT/wuij
- t368hkmMr2Yq+u0M1h5qsQeCmjhUlIFmjDA//AB8j0oxPWcSI5maSwNhDJ70oJ5rG2EY
- yX9nMBeTKcacTnB9QGHFExGtpkvxMMWTE2PjcTDgLw1RJGgiqGjbUIrbLcuI2QBAZgKL
- b3XRYo3y8J+yNK/59MrfcJRYz9Q9WVWd2PEwbof04e+IuoUvkKJIox9qPL7Z0MUC771H Dw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftf8cs9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 19:38:02 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB5Jc0sH022496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 19:38:01 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB5JbvaN031530;
-        Wed, 5 Dec 2018 19:37:57 GMT
-Received: from [10.39.220.54] (/10.39.220.54)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 11:37:57 -0800
-Subject: Re: [PATCH] /proc/kpagecount: return 0 for special pages that are
- never mapped
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        adobriyan@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
-        sfr@canb.auug.org.au, kirill.shutemov@linux.intel.com,
-        rppt@linux.vnet.ibm.com, mhocko@suse.com,
-        alexander.h.duyck@linux.intel.com, hannes@cmpxchg.org,
-        miles.chen@mediatek.com, n-horiguchi@ah.jp.nec.com
-References: <1543963526-27917-1-git-send-email-anthony.yznaga@oracle.com>
- <20181205004836.GU10377@bombadil.infradead.org>
- <fa5b667d-ccfb-b11a-2aeb-b1007651f9ec@oracle.com>
- <20181205012534.GW10377@bombadil.infradead.org>
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <540f7690-5fcd-04d6-edb3-a44ebd09e70c@oracle.com>
-Date:   Wed, 5 Dec 2018 11:40:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Dec 2018 14:40:57 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19844 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727523AbeLETk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:40:57 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 11:40:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,319,1539673200"; 
+   d="scan'208";a="98359884"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 05 Dec 2018 11:40:52 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 05 Dec 2018 21:40:51 +0200
+Date:   Wed, 5 Dec 2018 21:40:51 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-bluetooth@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kay Sievers <kay.sievers@vrfy.org>,
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
+Message-ID: <20181205194051.GU9144@intel.com>
+References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
+ <20181204204117.14964-1-ville.syrjala@linux.intel.com>
+ <20181205070621.GE16346@kroah.com>
+ <20181205154032.GT9144@intel.com>
+ <20181205192036.GB434@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205012534.GW10377@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050171
+In-Reply-To: <20181205192036.GB434@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 05, 2018 at 08:20:36PM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Dec 05, 2018 at 05:40:32PM +0200, Ville Syrj�l� wrote:
+> > On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
+> > > On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
+> > > > From: Ville Syrj�l� <ville.syrjala@linux.intel.com>
+> > > > 
+> > > > Since commit 1455cf8dbfd0 ("driver core: emit uevents when
+> > > > device is bound to a driver") the kernel started emitting
+> > > > "bind" and "unbind" uevents which confuse the hid2hci
+> > > > udev rules.
+> > > > 
+> > > > The symptoms on an affected machine (Dell E5400 in my case)
+> > > > include bluetooth devices not appearing and udev hogging
+> > > > the cpu as it's busy processing a constant stream of these
+> > > > "bind"+"unbind" uevents.
+> > > 
+> > > What is causing a "stream" of bind and unbind events?  This only happens
+> > > when a device is attached to a driver or removed from a driver, which is
+> > > caused by something else happening.
+> > 
+> > Not sure if it's just due to this thing causing devices to
+> > appear/disappear during bind/unbind events or what.
+> 
+> Someone has to be telling the kernel to bind/unbind from a driver to
+> a device, it doesn't do it on its own.  Look at your other rules/scripts
+> for that.
+> 
+> Also note that the kernel has been doing this for over a year now (since
+> 4.l4), what just happened in 4.19 to cause this to be an issue?
 
+It became an issue for me after I got a machine that suffers from
+this. The regression has been present ever since commit 1455cf8dbfd0
+("driver core: emit uevents when device is bound to a driver").
 
-On 12/04/2018 05:25 PM, Matthew Wilcox wrote:
-> On Tue, Dec 04, 2018 at 05:18:32PM -0800, anthony.yznaga@oracle.com wrote:
->> On 12/04/2018 04:48 PM, Matthew Wilcox wrote:
->>> On Tue, Dec 04, 2018 at 02:45:26PM -0800, Anthony Yznaga wrote:
->>>> +static inline int page_has_type(struct page *page)
->>>> +{
->>>> +	return (PageType(page, 0) &&
->>>> +	       ((page->page_type & PAGE_TYPE_ALL) != PAGE_TYPE_ALL));
->>>> +}
->>>> +
->>> I think this is a bit complex, and a bit of a pain to update as we add
->>> new page types.  How about this?
->>>
->>> 	return (int)page_type < -128;
->>>
->>> (I'm open to appropriate #defines to make this more obvious that it's ~0x7F)
->> I thought about having this:
->>
->> #define PAGE_TYPE_END    0xffffff80
->>
->> static int inline page_has_type(struct page *page)
->> {
->>     return page->page_type > PAGE_TYPE_BASE &&
->>            page->page_type < PAGE_TYPE_END;
->> }
->>
->> But I opted for the additional complexity to avoid more false-positives from
->> possibly corrupted values.  I'm certainly fine with a simple approach, though.
-> The way I'm thinking about this field is that usually it's _mapcount
-> which is 0xffffffff to represent 0.  We allow a certain small amount
-> of underflow and still treat it as a mapcount.  We also allow for some
-> amount of overflow.  So to be utterly precise, what you had there would
-> have been fine, but for simplicity, I'd rather just do a signed compare
-> against -128.
-The signed compare does not allow for mapcount overflow.  Is that acceptable?
-False-positives would be benign for /proc/kpagecount though from a debug
-perspective it could be helpful to see overflowed mapcounts.  Some future
-caller would need separate consideration.
+You need a Dell E5400 or something similar to see it since those
+have these magic bluetooth devices or whatever.
 
+> 
+> > > This should not be a normal
+> > > occurance, unless something odd is happening to your hardware?
+> > 
+> > It's not specific to my hardware. Lot's of people are affected.
+> > See eg. 
+> > https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
+> > 
+> > Acutally looking through that bug it seems someone else noticed
+> > hid2hci failing lot in the logs. So maybe it's just that we already
+> > switched the mode during "add", and then we try to redo the same
+> > thing during "bind" which fails, and that then causes and unbind?
+> 
+> You have to manually unbind the device, the kernel does not do that.  So
+> perhaps you have a broken udev rule somewhere else that would do
+> something odd like unbind/bind?
+> 
+> I don't see this happening on my systems, but hey, I know better than to
+> run Ubuntu :)
 
+As do I. And you don't see it because you don't have the right
+hardware.
 
+-- 
+Ville Syrj�l�
+Intel
