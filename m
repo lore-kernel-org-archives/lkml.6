@@ -2,175 +2,133 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75464C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F22C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FEA12082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9252082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjmKejcF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FEA12082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="gJAmelD3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9252082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeLEGs1 (ORCPT
+        id S1727024AbeLEGtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:48:27 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46088 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeLEGs1 (ORCPT
+        Wed, 5 Dec 2018 01:49:50 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41673 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeLEGtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:48:27 -0500
-Received: by mail-oi1-f195.google.com with SMTP id x202so16589721oif.13
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:48:26 -0800 (PST)
+        Wed, 5 Dec 2018 01:49:49 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 70so8559389pgh.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:49:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k+aJ9ULJsUuCBLbE1FFaQoiO9mg4/BkUiE2mBCKV9Mw=;
-        b=jjmKejcF6VMM8VRilW5S/PSLMnoABN+i0CCjx4dI+SkN60yOprYkcUC6Ae6IbPJ259
-         kT7iGHXsfF0xyRn3tpPO7uDduh0AEeuiwjg22CqRjCxGpnqLPZpWOm3B56pirDIJOjtd
-         qiP3kZC8MCtP7J2vApCR3UtW58GzKnVgSJaP3V/xxTshCsziSLRCRZKQD79/NGZHI1xm
-         QOL1gfK2Cmcb3y660AnjXe5ZgST+p8SgI5c3pulpr7fn3HgSZS/hng9SHFRoj5kW6Zl3
-         0jShKSq5o/DIt5IlcLIETKehxV1eU24WvzqmWoumcfXYKZplRJBd1vo+9jB5v5W5JADK
-         MjXQ==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=6BJcg3ek3gGRvR369ztMOJW5erTNjFk86k2+aWsWv+I=;
+        b=gJAmelD3t96UETw2TBTkwlPLhNp0YBancKlyMxhHEIWP9OurDmSebjyPlnRtzZvZvu
+         GqZ8Q44GOhtA7iEegn5Ng0KFkw08v6AIneF90wq6/7cjZ5K8sq4wXZQikSwUfzrJc6hV
+         vZRb1ppD393yeAPbSy6XkVyP98jxVDQE4LgUzVsJojR23/zkDMENU//5sRHcKC3i+cCj
+         agLv0dRhMFU9Q923bQUQZLb0oP8u0ZLVLOzTtqRBbEkOlaxpHX+uTQB5i4gJ19F3zG/0
+         6aGliTFfD44BvgLXhJ+JkSKJ5CQdRd37ei9P7S5mzmBr92icd3XhcmnMe7vxWJBqDtr9
+         yqFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k+aJ9ULJsUuCBLbE1FFaQoiO9mg4/BkUiE2mBCKV9Mw=;
-        b=Q1aXGHbVMikJcuLCfI/IQDLq5J18vmVjvbeF/cjQgrnjPhIYPC7movrM4vgnAplFuB
-         ztdvBXPxflTsqsYMqBKXsbenrOY8zefhjwz87bqNJDptlWxPNXmQSspzArJbYlaPnFx0
-         Gk+Ft/atMjFntmVKoRVJRmRfYbhkeLM6dHM/toCDXgCQB04W97WSVyWXTQ+ISpJanVr4
-         qs5qjL3Q3Wbx0K6kDAgORpW1Tusy6mQsUqO+3pP1ivUp4G0Tkzed7vSDVUpSqDklWJUG
-         +vS8lJH1SMLkfUatU+vF6YJs1JU9oGK6hwSeXyINPkiUlF89hkPRM+SJP6eq0fw3nGTe
-         7cVQ==
-X-Gm-Message-State: AA+aEWaWmnj68q+jw0JBpp5Ryc3uZ3EwLUOcAXcn2ep+C0ksPPMzxLko
-        Bzaqmk4hmhTGPxFFZUHTecifhqQLoI8sCKwXr4N/Pg==
-X-Google-Smtp-Source: AFSGD/V4LO2SRmocBeosF0NVfV8nyvMr8Gkhx2gsLPgtP5RcRxJ8ZvsOKp7+K6b8DO5ldw1oLLI4g1Ag9gioMPmPg98=
-X-Received: by 2002:aca:e003:: with SMTP id x3mr14944256oig.39.1543992505577;
- Tue, 04 Dec 2018 22:48:25 -0800 (PST)
-MIME-Version: 1.0
-References: <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com> <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
- <20181026082812.GA10581@redhat.com> <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
- <20181029111804.GA24820@redhat.com> <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
- <80e96710-f424-9b39-72ee-9cc7cbe7a5f7@cisco.com> <20181128151911.GN3505@e103592.cambridge.arm.com>
- <ad461da7-f0a6-7912-3201-e440dc372f89@cisco.com> <20181129115520.GO3505@e103592.cambridge.arm.com>
-In-Reply-To: <20181129115520.GO3505@e103592.cambridge.arm.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 4 Dec 2018 22:47:57 -0800
-Message-ID: <CAG48ez1CMTMAZKQ_Vqjju8RaoNtUu_1rttw9PxHJFypCTEkYGA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] kernel/signal: Signal-based pre-coredump notification
-To:     Dave.Martin@arm.com
-Cc:     enkechen@cisco.com, Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian@brauner.io, Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>, mchehab+samsung@kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
-        linux@dominikbrodowski.net, Cyrill Gorcunov <gorcunov@openvz.org>,
-        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Victor Kamensky <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, sstrogin@cisco.com,
-        Andy Lutomirski <luto@amacapital.net>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6BJcg3ek3gGRvR369ztMOJW5erTNjFk86k2+aWsWv+I=;
+        b=W4M2E6x24W86dEGITmjm7pXHyvU0h1Xk4/ZvPDJ+ScpZoXDimaHFp5PeNfpLZW66Ee
+         AVJZhpJi0O83JlgmbmBq/0AFVsYipIFFjwHlkZ1IvGhEXF4Ku371gFMhpbAR0P9HEGj7
+         M6KoELHnF0V3Sir2Liq/ndyqlBlGeUflMOxQL+f5+TtVA0bNLFw+FvduAXYv5BCx6M90
+         kucZpDqZBcCymFE8JYcKu09g3wCiYH6420zESK35gHtXOhiIwU5aO8zPZkLBjDqPwY1d
+         u5nuMOYTCFZGZHzAgmuUqwcrkgUBHJd1WNlrjJVTHP/CaD/2OvK2EbE39JTtI+H7XHaf
+         KTmA==
+X-Gm-Message-State: AA+aEWZNJdh7GTsMD2YLcl33VqqSSyxoZ54uQFt0igAzno6rhIXXYfU8
+        UBoX7FLlYVU9i5k4FLgszXrtjg==
+X-Google-Smtp-Source: AFSGD/XPKyYI2g4pUx5FsRoLAXC9H3gzeQpLC67H68QQ10M28HEjyGpNenXJnw7nYVkswt/57FCgsw==
+X-Received: by 2002:a63:7154:: with SMTP id b20mr19411854pgn.342.1543992588731;
+        Tue, 04 Dec 2018 22:49:48 -0800 (PST)
+Received: from localhost.localdomain (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
+        by smtp.gmail.com with ESMTPSA id c13sm36995220pfe.93.2018.12.04.22.49.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 22:49:48 -0800 (PST)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Chris Chiu <chiu@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>
+Subject: [PATCH 1/4] ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
+Date:   Wed,  5 Dec 2018 14:48:53 +0800
+Message-Id: <20181205064856.19380-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 3:55 AM Dave Martin <Dave.Martin@arm.com> wrote:
-> On Thu, Nov 29, 2018 at 12:15:35AM +0000, Enke Chen wrote:
-> > Hi, Dave:
-> >
-> > Thanks for your comments. You have indeed missed some of the prior reviews
-> > and discussions. But that is OK.
-> >
-> > Please see my replies inline.
-> >
-> > On 11/28/18 7:19 AM, Dave Martin wrote:
-> > > On Tue, Nov 27, 2018 at 10:54:41PM +0000, Enke Chen wrote:
-> > >> diff --git a/kernel/sys.c b/kernel/sys.c
-> > >> index 123bd73..39aa3b8 100644
-> > >> --- a/kernel/sys.c
-> > >> +++ b/kernel/sys.c
-> > >> @@ -2476,6 +2476,19 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
-> > >>                    return -EINVAL;
-> > >>            error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
-> > >>            break;
-> > >> +  case PR_SET_PREDUMP_SIG:
-> > >> +          if (arg3 || arg4 || arg5)
-> > >
-> > > glibc has
-> > >
-> > >     int prctl(int option, ...);
-> > >
-> > > Some prctls() police extra arguments for zeros, but this means that
-> > > the userspace caller also has to supply pointless 0 arguments.
-> > >
-> > > It's debatable which is the preferred approach.  Did you have any
-> > > particular rationale for your choice here?
-> > >
-> >
-> > The initial version did not check the values of these unused arguments.
-> > But Jann Horn pointed out the new convention is to enforce the 0 values
-> > so I followed ...
->
-> Hmmm, I wasn't aware of this convention when I added PR_SVE_SET_VL etc.,
-> and there is no clear pattern in sys.c, and nobody commented at the
-> time.
->
-> Of course, it works either way.
+From: Chris Chiu <chiu@endlessm.com>
 
-Looking at the last couple prctls that have been added:
+Acer Aspire U27-880(AIO) with ALC286 codec can not detect headset mic
+and internal mic not working either. It needs the similar quirk like
+Sony laptops to fix headphone jack sensing and enables use of the
+internal microphone.
 
-PR_GET_SPECULATION_CTRL/PR_GET_SPECULATION_CTRL: checks unused args
-(commit b617cfc858161140d69cc0b5cc211996b557a1c7, by tglx)
-PR_SVE_GET_VL/PR_SVE_SET_VL: doesn't check unused args (commit
-2d2123bc7c7f843aa9db87720de159a049839862, by Dave Martin)
-PR_CAP_AMBIENT: checks unused args (by Andy Lutomirski)
-PR_SET_FP_MODE/PR_GET_FP_MODE: doesn't check unused args
-PR_MPX_ENABLE_MANAGEMENT/PR_MPX_DISABLE_MANAGEMENT: checks unused
-args; this one actually specifically added such checks in commit
-e9d1b4f3c60997fe197bf0243cb4a41a44387a88 ("x86, mpx: Strictly enforce
-empty prctl() args") and specifically says "should be done for all new
-prctl()s":
+Unfortunately jack sensing for the headset mic is still not working.
 
-    Description from Michael Kerrisk.  He suggested an identical patch
-    to one I had already coded up and tested.
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+---
+ sound/pci/hda/patch_realtek.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-    commit fe3d197f8431 "x86, mpx: On-demand kernel allocation of bounds
-    tables" added two new prctl() operations, PR_MPX_ENABLE_MANAGEMENT and
-    PR_MPX_DISABLE_MANAGEMENT.  However, no checks were included to ensure
-    that unused arguments are zero, as is done in many existing prctl()s
-    and as should be done for all new prctl()s. This patch adds the
-    required checks.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index c0b289ba397f..f21d52eb2ed3 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5516,6 +5516,7 @@ enum {
+ 	ALC221_FIXUP_HP_HEADSET_MIC,
+ 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+ 	ALC295_FIXUP_HP_AUTO_MUTE,
++	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6393,6 +6394,15 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_auto_mute_via_amp,
+ 	},
++	[ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x18, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7071,6 +7081,10 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x04a11040},
+ 		{0x21, 0x04211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0286, 0x1025, "Acer", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
++		{0x12, 0x90a60130},
++		{0x17, 0x90170110},
++		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0288, 0x1028, "Dell", ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60120},
+ 		{0x14, 0x90170110},
+-- 
+2.11.0
 
-    Suggested-by: Andy Lutomirski <luto@amacapital.net>
-    Suggested-by: Michael Kerrisk <mtk.manpages@gmail.com>
-    Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-    Cc: Dave Hansen <dave@sr71.net>
-    Link: http://lkml.kernel.org/r/20150108223022.7F56FD13@viggo.jf.intel.com
-    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
