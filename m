@@ -2,231 +2,166 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D7EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D62C6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57CF1205C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544030827;
-	bh=1m7ftA8gG4N6kHxIRA252VIzIJPqAz7a4tFTC19L/Ys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0U4Dn09hzohD+B2Lj99eCH1xnhSpEU97pdxBp1GacnclcymoNuTG8jsqbg7ED6Y2E
-	 3fJWbTQalSJVUvsvGSYwZlP4q1AEbEsULX5DqmZD7rzlfTv7E5lWIrDrEqah2iZ9tu
-	 qTGDGQAbCaOCVOcyBsNGlh4tvmEevXGb8d7osRQM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CF1205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C9CD205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9CD205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeLER1G (ORCPT
+        id S1728439AbeLER1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:27:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59092 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbeLER1F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:27:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NFkjVIfWSibnirUgBf+GzbIa1g+CKd7TZrRFG2Brysc=; b=VzH0j7FRRSrRwBKdwIdqO6eGj
-        /AEZCiyr5NLoiBVVwjr+TSarzCwQ0+t/mpyRO3dMmkjh8Vn52HF3SIA0cUc7aQNLpB+HvJ8OJqBpI
-        pGpnwbXJ4CCbboQGpE0JJxSYwj0SrDHDCjzvcSZTWSPQByheaMwPgIZCj+ZVyzVXT06Zo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gUaww-00063c-19; Wed, 05 Dec 2018 17:27:02 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 773511125340; Wed,  5 Dec 2018 17:27:01 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 17:27:01 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
-Message-ID: <20181205172701.GH6205@sirena.org.uk>
-References: <20181130085908.GA24983@localhost.localdomain>
- <20181204172137.GE6809@sirena.org.uk>
- <20181205082251.GE31204@localhost.localdomain>
+        Wed, 5 Dec 2018 12:27:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:36564 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727780AbeLER1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:27:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:27:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
+   d="scan'208";a="116248123"
+Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
+  by orsmga001.jf.intel.com with ESMTP; 05 Dec 2018 09:27:09 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
+ <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+ <20181205021334.GB3045@redhat.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
+Date:   Wed, 5 Dec 2018 09:27:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8sldprk+5E/pDEv"
-Content-Disposition: inline
-In-Reply-To: <20181205082251.GE31204@localhost.localdomain>
-X-Cookie: Real Users never use the Help key.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181205021334.GB3045@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/4/18 6:13 PM, Jerome Glisse wrote:
+> On Tue, Dec 04, 2018 at 05:06:49PM -0800, Dave Hansen wrote:
+>> OK, but there are 1024*1024 matrix cells on a systems with 1024
+>> proximity domains (ACPI term for NUMA node).  So it sounds like you are
+>> proposing a million-directory approach.
+> 
+> No, pseudo code:
+>     struct list links;
+> 
+>     for (unsigned r = 0; r < nrows; r++) {
+>         for (unsigned c = 0; c < ncolumns; c++) {
+>             if (!link_find(links, hmat[r][c].bandwidth,
+>                            hmat[r][c].latency)) {
+>                 link = link_new(hmat[r][c].bandwidth,
+>                                 hmat[r][c].latency);
+>                 // add initiator and target correspond to that row
+>                 // and columns to this new link
+>                 list_add(&link, links);
+>             }
+>         }
+>     }
+> 
+> So all cells that have same property are under the same link. 
 
---a8sldprk+5E/pDEv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, so the "link" here is like a cable.  It's like saying, "we have a
+network and everything is connected with an ethernet cable that can do
+1gbit/sec".
 
-On Wed, Dec 05, 2018 at 10:22:51AM +0200, Matti Vaittinen wrote:
-> On Tue, Dec 04, 2018 at 05:21:37PM +0000, Mark Brown wrote:
-> > On Fri, Nov 30, 2018 at 10:59:08AM +0200, Matti Vaittinen wrote:
+But, what actually connects an initiator to a target?  I assume we still
+need to know which link is used for each target/initiator pair.  Where
+is that enumerated?
 
-> > This sounds exactly like the wm831x which uses cascaded irqchips for
-> > this, though not regmap-irq.
+I think this just means we need a million symlinks to a "link" instead
+of a million link directories.  Still not great.
 
-> Yep. I guess I could do cascaded chips - but I would like to use the
-> regmap-irq for this driver. Maybe we could change regmap-irq so that it
-> would be possible to not give the DT node from regmap for this chip?
-> This was actually my first thought - but then I felt that having two irq
-> chips for one device is a bit hacky - and hence I decided to see how
-> regmap-irq could be changed to support the 'main irq status' register
-> usage. I think this 'main register' setup is pretty common design.
+> Note that userspace can parse all this once during its initialization
+> and create pools of target to use.
 
-I'm not sure I see it as particularly hacky - it's using features that
-the frameworks provide to do the fan out, that just seems like making
-use of existing framework features.
-
-> > I suspect the idiomatic way to handle this in DT is to make DT nodes
-> > (and devices) for the subfunction interrupt controllers and expose the
-> > internal structure of the chip to the DT.
-
-> Yes. This would be one approach - but I am not sure how DT guys see
-> this. I may be wrong but I have a feeling Rob prefers having only one DT
-> node describing single device. But for me it would make sense to have
-> own node for GPIO - especially because the GPIO is only IRQ controller
-
-Well, it kind of depends if you see the sub-interrupt controllers as
-independent devices or not (at the hardware level they will be).
-
-> which really is visible outside the chip. But here we still hit the same
-> problem if we want to use regmap-irq. Regmap-irq still knows only the
-> i2c device DT node. Currently there is no way to tell regmap-irq to use
-> the sub-node.
-
-If they're full subdevices you'd be pointing at the relevant platform
-device anyway.
-
-> >  This does make some sense as
-> > the individual interrupt controllers within the chip are clearly
-> > reusable IP blocks though it means that the chip starts looking a bit
-> > weird externally so perhaps that's not ideal and your suggestion makes
-> > sense.
-
-> So I take this as a suggestion to continue tinkering with the 'main irq
-> register support'. Or how do you see my suggestion of making iot
-> possible to instruct the regmap-irq to not use DT for 'main irq
-> controller'? Then we could probably do cascaded controllers where only
-> the controller handling the externally visible 'sub-irqs' would be
-> bound to DT? The pitfall here is case where more than one sub-irq
-> controllers needs to be exposed to other devices. In that sense the
-> 'main irq thing' would have better 'case coverage' =3D) (Wow, what a fancy
-> words, maybe I am turning into a manager here :p )
-
-I'm on the fence about the main controller idea.
-
-> > > + * @main_status: Base main status register address. For chips which =
-have
-> > > + *		 interrupts arranged in separate sub-irq blocks with own IRQ
-> > > + *		 registers and which have a main IRQ registers indicating
-> > > + *		 sub-irq blocks with unhandled interrupts. For such chips fill
-> > > + *		 sub-irq register information in status_base, mask_base and
-> > > + *		 ack_base.
-> > > + * @sub_reg_offsets: arrays of mappings from main register bits to s=
-ub irq
-> > > + *		 registers. First item in array describes the registers
-> > > + *		 for first main status bit. Second array for second bit etc.
-> > > + *		 Offset is given as sub register status offset to status_base.
-> > > + *		 Should contain num_regs arrays. Can be provided for chips with
-> > > + *		 more complex mapping than 1.st bit to 1.st sub-reg, 2.nd bit to
-> > > + *		 2.nd sub-reg, ...
-
-> > This interface feels a little awkward in that we define the sub
-> > interrupts in this separate array and require them all to be in separate
-> > single registers which probably won't be true in general (IIRC it wasn't
-> > how the wm831x worked).
-
-> So my implementation here was just the simplest solution to 'glue' the
-> main status register on top of existing implementation. If we do it this
-> way, then the 'main status register' is completely optional - chip would
-> work just fine even without the 'main register' - main register only
-> saves some reads as subregisters with no irqs can be left unread. But
-> you are correct - this only supports limited amount of HWs. Many chips I
-> have seen (prior to the one I am now working with) actually require
-> acking also the main status register. They also may support masking the
-> main status register. But I guess trying to support all such cases would
-> make the regmap-irq really complex and hard to understand.
-
-Right, it's that sort of thing that makes me want to just cascade the
-interrupt controllers - at some point you just end up with as fully
-featured an interrupt controller distributing to other fully featured
-interrupt controllers.
-
-> > How about instead we have the individual
-> > interrupts mark which main status bits flag them, then build up a
-> > mapping in the other direction during init of subregisters to read?
-
-> I am not sure if I understand your idea correctly - but for me it feels
-> that the 'main status register' is only benefical when we can do direct
-> mapping from main register bit/value to sub-register(s).=20
-
-The mapping isn't guaranteed to be a 1:1 mapping - one way this hardware
-gets structured is that the central interrupt controller is saying which
-IP block is flagging an interrupt rather than which register has an
-interrupt set in it.  You can then have either more than one detailed
-status register for that IP or several smaller IPs reporting through a
-single detailed status register.  I've also seen some interrupts
-represented directly in the main status if there's some need for a fast
-path.
-
-> But as we must really read whole sub register at once, it really does
-> not matter which interrupts inside the sub register did activate the
-> main status - we go through all bits in the sub register anyways. Hence
-> it may not be needed to have mapping from individual interrupts to the
-> main status register value? I guess looping through all the sub
-> register bits is negligible source of latency compared to the time the
-> register access takes. So identifying the sub register(s) based on main
-> status is the thing - not mapping the individual interrupts in sub
-> register(s), right? I think that having to specify the main status
-> register value for each interrupt would be quite a overkill.
-
-Right, it's about working out which subregister to read - the point is
-you can do this by adding a link in either direction, I'm suggesting
-doing it from the individual interrupt to the main register since we
-already have individual data structures for those and it feels less
-likely to run into hard to represent corner cases.
-
->  * @main_status: Optional base main status register address. Some chips h=
-ave
->  *		 "main status register(s)" which indicate actual irq registers
->  *		 with unhandled interrupts. Provide main status register
->  *		 address here to avoid reading irq registers with no
->  *		 active interrupts. Mapping from main status value to
->  *		 interrupt register can be provided in sub_reg_offsets.
-
-> Perhaps this would clarify that the status_base, mask_base, ack_base,
-> etc. should still be used normally?
-
-Probably.
-
---a8sldprk+5E/pDEv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwICmQACgkQJNaLcl1U
-h9BX4gf/aF1S0pjstxYcjB++RclZZfYA5j4LOY/4DGo6vmN/HL3v6gPZtyWYfNVP
-Qpal0FqlIXU1FaVPQrD2lue3FGMNqvtMzke1UM1HTTjDdsaPYf9mrK2IK3VPtuef
-3kVcCq8vUbslYf4YfJqAHTiwd/6ZSeY+WrGokFkVVp52RROZ6zBK2AMxSc/bCXlr
-H6UrorlK9mN/9nsiwF+BkrawWNZGbmqsMTWsvDGyWQovZi3U+PGFee5fQ3ShkI4k
-3RKR7N7UDj2eMpM8SLp00EJ7uSQzG1pxXgJWFwJzsq9LhK1Ck1KBk7IIhEgzHaXy
-23DQOj/xXcNWANLvYj+1UJYhQ4C6nw==
-=NQYQ
------END PGP SIGNATURE-----
-
---a8sldprk+5E/pDEv--
+It sounds like you're agreeing that there is too much data in this
+interface for applications to _regularly_ parse it.  We need some
+central thing that parses it all and caches the results.
