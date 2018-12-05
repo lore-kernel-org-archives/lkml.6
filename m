@@ -2,100 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E985CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43074C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5E920851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 041DD20851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:49:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="V7tjByPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5E920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9HnlLLF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041DD20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbeLENs1 (ORCPT
+        id S1727468AbeLENtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:48:27 -0500
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:43209 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeLENs0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:48:26 -0500
-Received: by mail-pf1-f176.google.com with SMTP id w73so10034482pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 05:48:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5bQP5GF38p6tNBGkNNSdM9jrCUfjWB3hksiQ0JVFb5o=;
-        b=V7tjByPdfvuxTTVaM7N53ibJ1UApYyiZiwC/F+J5Fn+BZuqIhtsJBIBCuAkdbIUnRN
-         FlXtwB3Su9V1I2zwRvwRXu7h8hzwibGlaxjaf4GLDK5iLEnN9QnuYJMZYbrG45gjNOR1
-         3gqPRNAfKJcOHjHEpXSmI7Whk2TzyK90mgG9CZOtW0ri2NflSGuJ7iZYGXnCEqhOtOr8
-         VQz+p6T+vFQRClu7JVX6uZqO+KPSak7ZZEZ0apWZCU003CtuqKIYz9WXj7U1+vHZ/BL3
-         8q+EPMio719XrLaYNfLNvWwR5ltveE/td8aIP3dFmolDLGnE07bD+Ztc/rmNkbMqgeHv
-         OJXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5bQP5GF38p6tNBGkNNSdM9jrCUfjWB3hksiQ0JVFb5o=;
-        b=gKe0amcKm6cBdHOuQljxXJRWPqPzsU1o2NA8HP9KSPX8ttg6jAGxZF4lV+6B8Qq6HT
-         mdJKrjYKdxOO3b7PGkdyVbggjMtPWBO6/24j8ZTnoKrWVu6t5peEUwlltVhnVlwVm0fM
-         wBqiktDSYcD7WDjc8AVqrIP81xck4zaew8ZXVhPkqcWMUYZGzmlHtTZGKGHS9VGRoJmI
-         Ab0EtXqUtvugK1zqVvqC+DMKJXVwbtlISMjalCIRH+EBXvpB1gAlO8GUYJUARP0ucp3/
-         GcpoQujVEcUbwbyD6UTeLiCjzQYdHawZzQTBJEOoQfuUckzKp9JMZ0kbx3plFbYEb8OX
-         Bk8Q==
-X-Gm-Message-State: AA+aEWYGuDBZREucJErX+qiI8aViChIXTMfwxZtm5DJI0rXaQCbZ0TKT
-        2va3zh4I/Zn6c2ZsUqkY6coBZb72fQY=
-X-Google-Smtp-Source: AFSGD/Uoli/9J+EWCBGBnqwrlMSiQOjpuFETYcordDaQJ4OkTokm3sYZVMFTUlQLqAs+XC46G7/WvQ==
-X-Received: by 2002:a62:99dd:: with SMTP id t90mr19609855pfk.179.1544017705582;
-        Wed, 05 Dec 2018 05:48:25 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id j14sm26594399pfn.175.2018.12.05.05.48.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 05:48:24 -0800 (PST)
-Subject: Re: Kernel crashes after 529262d56dbe "block: remove ->poll_fn"
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, sagi@grimberg.me,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <0bd2d36e-bef0-b836-7039-124ae4d346a6@virtuozzo.com>
- <c374e085-a86b-6df3-2142-74968f067bc7@kernel.dk>
- <5e8d3302-a7d0-3483-6540-f0b87c237f7d@virtuozzo.com>
- <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
- <a6efd5b2-3190-54e7-ad4c-06f9ac441641@kernel.dk>
- <20181205134727.GA26794@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0bf49b6e-19ea-5bf8-164d-4d0dbf8446fe@kernel.dk>
-Date:   Wed, 5 Dec 2018 06:48:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181205134727.GA26794@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 5 Dec 2018 08:49:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727084AbeLENtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:49:11 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD5572081C;
+        Wed,  5 Dec 2018 13:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544017750;
+        bh=t3NuYITez6BCumKON0YXMBsRCi2j7qNU9slpLTviDKo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=s9HnlLLFN+GtHtEUj+MrZguzMqvn4RW1LppBeirEZT4XirrnrklNFXtQCwTn2MRkr
+         M2E6s5dkwiQHgKzgMr5p/EyjyXTLDJxUP63etdD3aQNa5Ry2d+8OhPcWb3BoDyF32Q
+         5eXOiFNeItbTXIx1mzbndQ1b6AJj8phAZ8k92aPI=
+Date:   Wed, 5 Dec 2018 22:49:06 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mike Travis <mike.travis@hpe.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yi Wang <wang.yi59@zte.com.cn>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] x86/kernel: Fix more -Wmissing-prototypes warnings
+Message-Id: <20181205224906.824483ea3c5d1d5b7712c99a@kernel.org>
+In-Reply-To: <20181205101131.28996-1-bp@alien8.de>
+References: <20181205101131.28996-1-bp@alien8.de>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 6:47 AM, Christoph Hellwig wrote:
-> On Wed, Dec 05, 2018 at 06:39:26AM -0700, Jens Axboe wrote:
->>> What device is this?
->>
->> This might also help...
-> 
-> Yes, it should.  I had missed that we turned on QUEUE_FLAG_POLL
-> by default, which is rather odd.  The even weirder things is that
-> git-blame claims it was me who enabled it :)
+Hi Borislav,
 
-No presents for you this year!
+On Wed,  5 Dec 2018 11:11:31 +0100
+Borislav Petkov <bp@alien8.de> wrote:
+
+> From: Borislav Petkov <bp@suse.de>
+> 
+> ... with the goal of eventually enabling -Wmissing-prototypes by
+> default. At least on x86.
+> 
+> Make functions static where possible, otherwise add prototypes or make
+> them visible through includes.
+
+OK, and I have some comments for kprobe's parts.
+
+[...]
+> diff --git a/arch/x86/kernel/kprobes/common.h b/arch/x86/kernel/kprobes/common.h
+> index 2b949f4fd4d8..f0fc628c4bb7 100644
+> --- a/arch/x86/kernel/kprobes/common.h
+> +++ b/arch/x86/kernel/kprobes/common.h
+> @@ -91,6 +91,8 @@ extern int __copy_instruction(u8 *dest, u8 *src, u8 *real, struct insn *insn);
+>  extern void synthesize_reljump(void *dest, void *from, void *to);
+>  extern void synthesize_relcall(void *dest, void *from, void *to);
+>  
+> +extern void *trampoline_handler(struct pt_regs *regs);
+> +
+
+I would like to put this prototype inside arch/x86/kernel/kprobes/core.c,
+since that is locally used.
+
+>  #ifdef	CONFIG_OPTPROBES
+>  extern int setup_detour_execution(struct kprobe *p, struct pt_regs *regs, int reenter);
+>  extern unsigned long __recover_optprobed_insn(kprobe_opcode_t *buf, unsigned long addr);
+[...]
+> diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+> index e909413e4e38..91d19d6a2892 100644
+> --- a/include/linux/kprobes.h
+> +++ b/include/linux/kprobes.h
+> @@ -379,6 +379,9 @@ int enable_kprobe(struct kprobe *kp);
+>  
+>  void dump_kprobe(struct kprobe *kp);
+>  
+> +void __weak *alloc_insn_page(void);
+> +void __weak free_insn_page(void *page);
+
+Should we declare prototypes for __weak functions? Anyway, we should remove
+__weak from the prototypes.
+
+Thank you,
 
 -- 
-Jens Axboe
-
+Masami Hiramatsu <mhiramat@kernel.org>
