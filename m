@@ -2,88 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D69F6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCAEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A462082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77B842082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="D3C3U5Ge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A462082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="jF6R/BoW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B842082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbeLERPr (ORCPT
+        id S1728170AbeLERPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:15:47 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:52172 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbeLERPq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:15:46 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 881EC10C0ACD;
-        Wed,  5 Dec 2018 09:15:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544030146; bh=Q7i0vP4op/czna0dHpGbxZhRG+D2TI9I9KW2YwD83dA=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=D3C3U5GeWyyZeW5bLh9yKY/z5+5xTEems1KWS+9JwySl2qVrejnJFHWiN+OgbHiud
-         HnpQvThCiyyqp+h+fIik8Q0ccgjr1/69rFkQwC8+MiBkhqfTJUuXv5CNyKq8lx08/G
-         2M1FX2NSgEJBn0xoB4qRzwYAVDuKUuAupPpOx4gnZpQkHIp+ID//kLvyp2Sq6J5N15
-         918fzyJI/mptSZHpWTDmM98Ig1irI7qSmWVitFmDqy+9sfXoUIBywbFZqSsXPjZJzd
-         0w2Vro/r7/AIrPjJA6eb2HQlTpPEfW1ltC1utzrnZos+u5HeNUEW4tqwsQwYavPvnE
-         wxVy/4OYEE9aw==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 710E35817;
-        Wed,  5 Dec 2018 09:15:46 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000;
- Wed, 5 Dec 2018 09:15:46 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 3/5] ARC: perf: fix of kernel data types using
-Thread-Topic: [PATCH 3/5] ARC: perf: fix of kernel data types using
-Thread-Index: AQHUjLzhlRR+XbBr/0msXgnUICyTug==
-Date:   Wed, 5 Dec 2018 17:15:45 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641B931@US01WEMBX2.internal.synopsys.com>
-References: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
- <20181205170609.18690-4-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Dec 2018 12:15:51 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42958 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727475AbeLERPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:15:50 -0500
+Received: from zn.tnic (p200300EC2BC09900993F789616C996F0.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:9900:993f:7896:16c9:96f0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9F5611EC04FB;
+        Wed,  5 Dec 2018 18:15:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544030148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=3uts6kY0iJEWyzfmbPrSn4EYtacafb7f3091l+c8Pyw=;
+        b=jF6R/BoWO/ddjM4hgf5dsaT0rh/hwaOeOCPyPvxmx5djdfUvahDLIIAplm1H4kDHrCF5KB
+        wzC0d+lupwaKguDRycf1rxEgWfj5ITx3JTtkJyygADLktRmEFlsW530F+wqYFZ+n4ylsz0
+        VVwXNW5jx2V3oKaRwhJI91E5Jl/zgdo=
+Date:   Wed, 5 Dec 2018 18:15:47 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yi Wang <wang.yi59@zte.com.cn>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] x86/kernel: Fix more -Wmissing-prototypes warnings
+Message-ID: <20181205171547.GM29510@zn.tnic>
+References: <20181205101131.28996-1-bp@alien8.de>
+ <20181205224906.824483ea3c5d1d5b7712c99a@kernel.org>
+ <20181205142448.GH29510@zn.tnic>
+ <20181205162526.GB109259@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181205162526.GB109259@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 9:06 AM, Eugeniy Paltsev wrote:=0A=
-> Use u32, u64, s64 instead of uint32_t, uint64_t, int64_t=0A=
->=0A=
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
-=0A=
-=0A=
-Maybe squash this into trivial cleanups 1/5 ?=0A=
-=0A=
-Acked-by: Vineet Gupta <vgupta@synopsys.com>=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+On Wed, Dec 05, 2018 at 05:25:26PM +0100, Ingo Molnar wrote:
+> Also, preferably the prototype should be eliminated via proper ordering 
+> of functions from lower level to higher levels.
+
+Well, that trampoline_handler() is special as we call it from inline asm
+and I see Masami has marked it __visible etc.
+
+So doing this below still builds and the trampoline_handler doesn't get
+discarded but maybe there's a reason for it not being static.
+
+Masami?
+
+---
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 6480056d370f..308bf103cc73 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -66,8 +66,6 @@
+ 
+ #include "common.h"
+ 
+-void *trampoline_handler(struct pt_regs *regs);
+-
+ DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
+ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+ 
+@@ -753,7 +751,7 @@ STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
+ /*
+  * Called from kretprobe_trampoline
+  */
+-__visible __used void *trampoline_handler(struct pt_regs *regs)
++static __used void *trampoline_handler(struct pt_regs *regs)
+ {
+ 	struct kretprobe_instance *ri = NULL;
+ 	struct hlist_head *head, empty_rp;
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
