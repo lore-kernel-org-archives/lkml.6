@@ -4,52 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A84C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31689C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9659120878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94D720850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1pHx2QSf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9659120878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KD/Uu5o6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94D720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbeLEJmr (ORCPT
+        id S1728499AbeLEJnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:42:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbeLEJmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:42:43 -0500
+        id S1728284AbeLEJmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:42:02 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6382420850;
-        Wed,  5 Dec 2018 09:42:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D847320851;
+        Wed,  5 Dec 2018 09:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002962;
-        bh=QgND/igT+OcDt8qn2UK+4UTQkUaTXWJsSELaDl06MXg=;
+        s=default; t=1544002922;
+        bh=nVwXeZbd1KUhy8grK4kZZCDX8p0msN7Q7WJ0uFFB4es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1pHx2QSfm9N+cfFwkANRIUOBy/NkJ89HgPTRg0PpRChmJWJPINuCEtf6TtJXeU27H
-         GqejbLwJE8FJTowdEwZTJlNmuHeTMAd7Wa15WPTHYpqAcnjI67BS9Rw67rDQm68bv7
-         IIXfXlSAd1SO15DOC8M+dEmeg74YfreQQUNKegX8=
+        b=KD/Uu5o6kNmwbsCFWFgS9ylbwsjzgeulfWX32AoHaSzinIzjjGLpV+4ir4q+advlu
+         nvRgB1hfZgWK6GbLUEGC6+9AneLXEMIr2gt6lxYQpK7Y5X2RYyw0kgUHrG4qUiVo+4
+         qcLG63BoI6EkM2eFknE47haKAZeOUQTAdj4XzSxc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Li Zhijian <lizhijian@cn.fujitsu.com>,
-        Philip Li <philip.li@intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Li Zhijian <zhijianx.li@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 122/123] initramfs: clean old path before creating a hardlink
-Date:   Wed,  5 Dec 2018 04:35:54 -0500
-Message-Id: <20181205093555.5386-122-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 113/123] test_hexdump: use memcpy instead of strncpy
+Date:   Wed,  5 Dec 2018 04:35:45 -0500
+Message-Id: <20181205093555.5386-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -58,111 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 7c0950d455d6ab610d2990a13120f935b75abf2c ]
+[ Upstream commit b1286ed7158e9b62787508066283ab0b8850b518 ]
 
-sys_link() can fail due to the new path already existing.  This case
-ofen occurs when we use a concated initrd, for example:
+New versions of gcc reasonably warn about the odd pattern of
 
-1) prepare a basic rootfs, it contains a regular files rc.local
-lizhijian@:~/yocto-tiny-i386-2016-04-22$ cat etc/rc.local
- #!/bin/sh
- echo "Running /etc/rc.local..."
-yocto-tiny-i386-2016-04-22$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rootfs.cgz
+	strncpy(p, q, strlen(q));
 
-2) create a extra initrd which also includes a etc/rc.local
-lizhijian@:~/lkp-x86_64/etc$ echo "append initrd" >rc.local
-lizhijian@:~/lkp/lkp-x86_64/etc$ cat rc.local
-append initrd
-lizhijian@:~/lkp/lkp-x86_64/etc$ ln rc.local rc.local.hardlink
-append initrd
-lizhijian@:~/lkp/lkp-x86_64/etc$ stat rc.local rc.local.hardlink
-  File: 'rc.local'
-  Size: 14        	Blocks: 8          IO Block: 4096   regular file
-Device: 801h/2049d	Inode: 11296086    Links: 2
-Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
-Access: 2018-11-15 16:08:28.654464815 +0800
-Modify: 2018-11-15 16:07:57.514903210 +0800
-Change: 2018-11-15 16:08:24.180228872 +0800
- Birth: -
-  File: 'rc.local.hardlink'
-  Size: 14        	Blocks: 8          IO Block: 4096   regular file
-Device: 801h/2049d	Inode: 11296086    Links: 2
-Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
-Access: 2018-11-15 16:08:28.654464815 +0800
-Modify: 2018-11-15 16:07:57.514903210 +0800
-Change: 2018-11-15 16:08:24.180228872 +0800
- Birth: -
+which really doesn't make sense: the strncpy() ends up being just a slow
+and odd way to write memcpy() in this case.
 
-lizhijian@:~/lkp/lkp-x86_64$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rc-local.cgz
-lizhijian@:~/lkp/lkp-x86_64$ gzip -dc ../rc-local.cgz | cpio -t
-.
-etc
-etc/rc.local.hardlink <<< it will be extracted first at this initrd
-etc/rc.local
+Apparently there was a patch for this floating around earlier, but it
+got lost.
 
-3) concate 2 initrds and boot
-lizhijian@:~/lkp$ cat rootfs.cgz rc-local.cgz >concate-initrd.cgz
-lizhijian@:~/lkp$ qemu-system-x86_64 -nographic -enable-kvm -cpu host -smp 1 -m 1024 -kernel ~/lkp/linux/arch/x86/boot/bzImage -append "console=ttyS0 earlyprint=ttyS0 ignore_loglevel" -initrd ./concate-initr.cgz -serial stdio -nodefaults
-
-In this case, sys_link(2) will fail and return -EEXIST, so we can only get
-the rc.local at rootfs.cgz instead of rc-local.cgz
-
-[akpm@linux-foundation.org: move code to avoid forward declaration]
-Link: http://lkml.kernel.org/r/1542352368-13299-1-git-send-email-lizhijian@cn.fujitsu.com
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-Cc: Philip Li <philip.li@intel.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Li Zhijian <zhijianx.li@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-again-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- init/initramfs.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ lib/test_hexdump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 640557788026..f6f4a1e4cd54 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -291,16 +291,6 @@ static int __init do_reset(void)
- 	return 1;
- }
+diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+index 626f580b4ff7..5144899d3c6b 100644
+--- a/lib/test_hexdump.c
++++ b/lib/test_hexdump.c
+@@ -99,7 +99,7 @@ static void __init test_hexdump_prepare_test(size_t len, int rowsize,
+ 		const char *q = *result++;
+ 		size_t amount = strlen(q);
  
--static int __init maybe_link(void)
--{
--	if (nlink >= 2) {
--		char *old = find_link(major, minor, ino, mode, collected);
--		if (old)
--			return (ksys_link(old, collected) < 0) ? -1 : 1;
--	}
--	return 0;
--}
--
- static void __init clean_path(char *path, umode_t fmode)
- {
- 	struct kstat st;
-@@ -313,6 +303,18 @@ static void __init clean_path(char *path, umode_t fmode)
- 	}
- }
+-		strncpy(p, q, amount);
++		memcpy(p, q, amount);
+ 		p += amount;
  
-+static int __init maybe_link(void)
-+{
-+	if (nlink >= 2) {
-+		char *old = find_link(major, minor, ino, mode, collected);
-+		if (old) {
-+			clean_path(collected, 0);
-+			return (ksys_link(old, collected) < 0) ? -1 : 1;
-+		}
-+	}
-+	return 0;
-+}
-+
- static __initdata int wfd;
- 
- static int __init do_name(void)
+ 		*p++ = ' ';
 -- 
 2.17.1
 
