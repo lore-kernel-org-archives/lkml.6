@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFCEC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5236EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51456214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BCAE214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESY6gSM+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51456214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCpYX2+Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCAE214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbeLEJuM (ORCPT
+        id S1729519AbeLEKBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:50:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 05:01:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729315AbeLEJuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:50:09 -0500
+        id S1728229AbeLEJtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:49:39 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C29582082B;
-        Wed,  5 Dec 2018 09:50:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 094572087F;
+        Wed,  5 Dec 2018 09:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003408;
-        bh=BkjNCTm8cYwpA7HGrnq9GU96PRQtDvAZIo7URNGdMtk=;
+        s=default; t=1544003378;
+        bh=/nuJRpR5ZhXgX+Bt6hiWyf5T2NfQE9eAfL8I8Wddwm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ESY6gSM+YmXmsPVxRs1zLErgHHYYj0IeaMf3fSUUDaLnrkbZUlAS7aZdx1cCOF4Uu
-         V9XAC0qv25AKC3TyB9soZ5Vb3R7iu0j+LLCwReOy4YUP5MeuEkya75wHaz1CFoUZTt
-         xq+MbAiEZywYbS1xsLxLUfQKK/u7ucpjp569a+B4=
+        b=tCpYX2+Z6cdODF/Vnbbeeyi9Oz+rwzRWYzX1BS2gmy67IOq1OjtJ4j+6inX7uZYDO
+         y11NNOFmQkhLTeSqwYjWHUG0QFJef0kP4lu+DnJR0TIE47hoabskPfRfSLiyjDmwGX
+         imQ0SQJHqTVRU0wFb5jw4p25I3tIb75aVp+eCGQI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 22/45] USB: omap_udc: use devm_request_irq()
-Date:   Wed,  5 Dec 2018 04:46:43 -0500
-Message-Id: <20181205094706.7225-22-sashal@kernel.org>
+Cc:     Robbie Ko <robbieko@synology.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 14/45] Btrfs: send, fix infinite loop due to directory rename dependencies
+Date:   Wed,  5 Dec 2018 04:46:35 -0500
+Message-Id: <20181205094706.7225-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -53,102 +54,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Robbie Ko <robbieko@synology.com>
 
-[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
+[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
 
-The current code fails to release the third irq on the error path
-(observed by reading the code), and we get also multiple WARNs with
-failing gadget drivers due to duplicate IRQ releases. Fix by using
-devm_request_irq().
+When doing an incremental send, due to the need of delaying directory move
+(rename) operations we can end up in infinite loop at
+apply_children_dir_moves().
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+An example scenario that triggers this problem is described below, where
+directory names correspond to the numbers of their respective inodes.
+
+Parent snapshot:
+
+ .
+ |--- 261/
+       |--- 271/
+             |--- 266/
+                   |--- 259/
+                   |--- 260/
+                   |     |--- 267
+                   |
+                   |--- 264/
+                   |     |--- 258/
+                   |           |--- 257/
+                   |
+                   |--- 265/
+                   |--- 268/
+                   |--- 269/
+                   |     |--- 262/
+                   |
+                   |--- 270/
+                   |--- 272/
+                   |     |--- 263/
+                   |     |--- 275/
+                   |
+                   |--- 274/
+                         |--- 273/
+
+Send snapshot:
+
+ .
+ |-- 275/
+      |-- 274/
+           |-- 273/
+                |-- 262/
+                     |-- 269/
+                          |-- 258/
+                               |-- 271/
+                                    |-- 268/
+                                         |-- 267/
+                                              |-- 270/
+                                                   |-- 259/
+                                                   |    |-- 265/
+                                                   |
+                                                   |-- 272/
+                                                        |-- 257/
+                                                             |-- 260/
+                                                             |-- 264/
+                                                                  |-- 263/
+                                                                       |-- 261/
+                                                                            |-- 266/
+
+When processing inode 257 we delay its move (rename) operation because its
+new parent in the send snapshot, inode 272, was not yet processed. Then
+when processing inode 272, we delay the move operation for that inode
+because inode 274 is its ancestor in the send snapshot. Finally we delay
+the move operation for inode 274 when processing it because inode 275 is
+its new parent in the send snapshot and was not yet moved.
+
+When finishing processing inode 275, we start to do the move operations
+that were previously delayed (at apply_children_dir_moves()), resulting in
+the following iterations:
+
+1) We issue the move operation for inode 274;
+
+2) Because inode 262 depended on the move operation of inode 274 (it was
+   delayed because 274 is its ancestor in the send snapshot), we issue the
+   move operation for inode 262;
+
+3) We issue the move operation for inode 272, because it was delayed by
+   inode 274 too (ancestor of 272 in the send snapshot);
+
+4) We issue the move operation for inode 269 (it was delayed by 262);
+
+5) We issue the move operation for inode 257 (it was delayed by 272);
+
+6) We issue the move operation for inode 260 (it was delayed by 272);
+
+7) We issue the move operation for inode 258 (it was delayed by 269);
+
+8) We issue the move operation for inode 264 (it was delayed by 257);
+
+9) We issue the move operation for inode 271 (it was delayed by 258);
+
+10) We issue the move operation for inode 263 (it was delayed by 264);
+
+11) We issue the move operation for inode 268 (it was delayed by 271);
+
+12) We verify if we can issue the move operation for inode 270 (it was
+    delayed by 271). We detect a path loop in the current state, because
+    inode 267 needs to be moved first before we can issue the move
+    operation for inode 270. So we delay again the move operation for
+    inode 270, this time we will attempt to do it after inode 267 is
+    moved;
+
+13) We issue the move operation for inode 261 (it was delayed by 263);
+
+14) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 263). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12);
+
+15) We issue the move operation for inode 267 (it was delayed by 268);
+
+16) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 270). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12). So here we added
+    again the same delayed move operation that we added in step 14;
+
+17) We attempt again to see if we can issue the move operation for inode
+    266, and as in step 16, we realize we can not due to a path loop in
+    the current state due to a dependency on inode 270. Again we delay
+    inode's 266 rename to happen after inode's 270 move operation, adding
+    the same dependency to the empty stack that we did in steps 14 and 16.
+    The next iteration will pick the same move dependency on the stack
+    (the only entry) and realize again there is still a path loop and then
+    again the same dependency to the stack, over and over, resulting in
+    an infinite loop.
+
+So fix this by preventing adding the same move dependency entries to the
+stack by removing each pending move record from the red black tree of
+pending moves. This way the next call to get_pending_dir_moves() will
+not return anything for the current parent inode.
+
+A test case for fstests, with this reproducer, follows soon.
+
+Signed-off-by: Robbie Ko <robbieko@synology.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[Wrote changelog with example and more clear explanation]
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+ fs/btrfs/send.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index a8709f9e5648..2945408f0eec 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2886,8 +2886,8 @@ static int omap_udc_probe(struct platform_device *pdev)
- 		udc->clr_halt = UDC_RESET_EP;
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 79dc3ee1de58..a45f26ac5da7 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3349,7 +3349,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
+ 	kfree(m);
+ }
  
- 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
--	status = request_irq(pdev->resource[1].start, omap_udc_irq,
--			0, driver_name, udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
-+				  omap_udc_irq, 0, driver_name, udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[1].start, status);
-@@ -2895,20 +2895,20 @@ static int omap_udc_probe(struct platform_device *pdev)
+-static void tail_append_pending_moves(struct pending_dir_move *moves,
++static void tail_append_pending_moves(struct send_ctx *sctx,
++				      struct pending_dir_move *moves,
+ 				      struct list_head *stack)
+ {
+ 	if (list_empty(&moves->list)) {
+@@ -3360,6 +3361,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
+ 		list_add_tail(&moves->list, stack);
+ 		list_splice_tail(&list, stack);
  	}
++	if (!RB_EMPTY_NODE(&moves->node)) {
++		rb_erase(&moves->node, &sctx->pending_dir_moves);
++		RB_CLEAR_NODE(&moves->node);
++	}
+ }
  
- 	/* USB "non-iso" IRQ (PIO for all but ep0) */
--	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
--			0, "omap_udc pio", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
-+				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[2].start, status);
--		goto cleanup2;
-+		goto cleanup1;
+ static int apply_children_dir_moves(struct send_ctx *sctx)
+@@ -3374,7 +3379,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 		return 0;
+ 
+ 	INIT_LIST_HEAD(&stack);
+-	tail_append_pending_moves(pm, &stack);
++	tail_append_pending_moves(sctx, pm, &stack);
+ 
+ 	while (!list_empty(&stack)) {
+ 		pm = list_first_entry(&stack, struct pending_dir_move, list);
+@@ -3385,7 +3390,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 			goto out;
+ 		pm = get_pending_dir_moves(sctx, parent_ino);
+ 		if (pm)
+-			tail_append_pending_moves(pm, &stack);
++			tail_append_pending_moves(sctx, pm, &stack);
  	}
- #ifdef	USE_ISO
--	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
--			0, "omap_udc iso", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
-+				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[3].start, status);
--		goto cleanup3;
-+		goto cleanup1;
- 	}
- #endif
- 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
-@@ -2921,22 +2921,11 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	create_proc_file();
- 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
- 			omap_udc_release);
--	if (status)
--		goto cleanup4;
--
--	return 0;
-+	if (!status)
-+		return 0;
+ 	return 0;
  
--cleanup4:
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--cleanup3:
--	free_irq(pdev->resource[2].start, udc);
--#endif
--
--cleanup2:
--	free_irq(pdev->resource[1].start, udc);
--
- cleanup1:
- 	kfree(udc);
- 	udc = NULL;
-@@ -2980,12 +2969,6 @@ static int omap_udc_remove(struct platform_device *pdev)
- 
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--	free_irq(pdev->resource[3].start, udc);
--#endif
--	free_irq(pdev->resource[2].start, udc);
--	free_irq(pdev->resource[1].start, udc);
--
- 	if (udc->dc_clk) {
- 		if (udc->clk_requested)
- 			omap_udc_enable_clock(0);
 -- 
 2.17.1
 
