@@ -2,78 +2,89 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F39C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C3AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B6420989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:54:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B6420989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A57E620989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:54:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544050479;
+	bh=AVS7o0b7+lm6ZVk2q+mkLoxyAyiVzAQZHqz8Pai+a8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hE+9lWRjw02q3sXLj1LdTaY+fjBAZafklAYOwooOnljJ6gxl2QtVlgAz829ldIV8L
+	 5XgcjP3NqlelAUhHpvA7ZNm6jFE5co0grMpIlPbxomoKpehVv0y/eoJwk0SX6IgmeR
+	 QKKLPONGMtH0ZrDMmlWfV1JbymSUQ4qMdliUlwNg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57E620989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeLEWy3 (ORCPT
+        id S1728781AbeLEWyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:54:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbeLEWy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:54:26 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BBDC589AC8;
-        Wed,  5 Dec 2018 22:54:25 +0000 (UTC)
-Received: from redhat.com (ovpn-122-208.rdu2.redhat.com [10.10.122.208])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9BAE05C669;
-        Wed,  5 Dec 2018 22:54:24 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 17:54:24 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     maxime.coquelin@redhat.com, tiwei.bie@intel.com, wexu@redhat.com,
-        jfreimann@redhat.com, Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH RFC 2/2] virtio_net: bulk free tx skbs
-Message-ID: <20181205225323.12555-3-mst@redhat.com>
-References: <20181205225323.12555-1-mst@redhat.com>
+        Wed, 5 Dec 2018 17:54:38 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44408 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727712AbeLEWyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:54:37 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m6so19053647oig.11;
+        Wed, 05 Dec 2018 14:54:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rNupeygO25bAORrcQpQPF8KCLv/J0W9v9dF40ZcPMQo=;
+        b=FJpgNx2goNK41C9Ay2cCTHpSA3AfiROpvb2aqdkYV6HjQE81H5cYdmzfWcjpGUXAHg
+         8jl0/SQAmjmqObu0efNkZDScqZL4gSboDegioP6YM7h4+sCJhbNtYoveT/SL6GXT++zt
+         wJxIuQXFLFnrJQUT2b8uMOD1yVF62CQvkaufubF+JSO14QqUfqL0zuYO9+7zHjl1sGyy
+         qE+vvSCLeRhvsJeGBHTxzd5sfQV9ijyPZLt47wQg1hevcHfVUEe+cNidvYxCEHXPXfff
+         +ZoRt4MsrPK9DAPI1hPuBzIxm2I8OlQPQ0f6JcTl1KG6bS4k+P+PqRvE+Bqba7VYfuwa
+         CAFg==
+X-Gm-Message-State: AA+aEWYtFV+15l6Ecxj+EpaXKbkWdeXABt0dVmhluKNtvd5XGiCwjeWd
+        G1tvBBhpGmDIQo7tB5oF/g==
+X-Google-Smtp-Source: AFSGD/XHrhhpl9+PVSankcEZrKHzYk5LZm57I7WuSbstkGqApqFVIQ6cZgfsqaejNbsGV9C8rjhWVA==
+X-Received: by 2002:aca:b707:: with SMTP id h7mr15038173oif.89.1544050476074;
+        Wed, 05 Dec 2018 14:54:36 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r203sm8169861oih.11.2018.12.05.14.54.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 14:54:35 -0800 (PST)
+Date:   Wed, 5 Dec 2018 16:54:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        ohad@wizery.com, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: Add shutdown-ack irq
+ for Q6v5
+Message-ID: <20181205225434.GA5059@bogus>
+References: <20181120210209.9029-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205225323.12555-1-mst@redhat.com>
-X-Mutt-Fcc: =sent
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Dec 2018 22:54:25 +0000 (UTC)
+In-Reply-To: <20181120210209.9029-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use napi_consume_skb() to get bulk free.  Note that napi_consume_skb is
-safe to call in a non-napi context as long as the napi_budget flag is
-correct.
+On Wed, 21 Nov 2018 02:32:07 +0530, Sibi Sankar wrote:
+> Add optional shutdown-irq binding required for sysmon shutdown on
+> SDM845/MSM8996/QCS404 SoCs.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index b657bde6b94b..18c06322be40 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1339,7 +1339,7 @@ static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
- 		bytes += skb->len;
- 		packets++;
- 
--		dev_consume_skb_any(skb);
-+		napi_consume_skb(skb, use_napi);
- 	}
- 
- 	/* Avoid overhead when no packets have been processed
--- 
-MST
-
+Reviewed-by: Rob Herring <robh@kernel.org>
