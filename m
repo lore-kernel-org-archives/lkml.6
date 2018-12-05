@@ -2,87 +2,103 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56902C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7433C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292EC2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292EC2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A30C920879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:19:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30C920879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeLERR5 (ORCPT
+        id S1728060AbeLERTS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:17:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:59490 "EHLO foss.arm.com"
+        Wed, 5 Dec 2018 12:19:18 -0500
+Received: from mga12.intel.com ([192.55.52.136]:35530 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeLERR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:17:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5305CA78;
-        Wed,  5 Dec 2018 09:17:56 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 667DE3F575;
-        Wed,  5 Dec 2018 09:17:55 -0800 (PST)
-Subject: Re: [PATCH 2/5] iommu/of: Use device_iommu_mapped()
-To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joerg Roedel <jroedel@suse.de>, linux-kernel@vger.kernel.org
-References: <20181204172504.19708-1-joro@8bytes.org>
- <20181204172504.19708-3-joro@8bytes.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <44c82503-bc36-e8de-6932-7c4fd2b597f8@arm.com>
-Date:   Wed, 5 Dec 2018 17:17:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727195AbeLERTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:19:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:19:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
+   d="scan'208";a="116290345"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Dec 2018 09:19:17 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
+ ORSMSX103.amr.corp.intel.com ([169.254.5.166]) with mapi id 14.03.0415.000;
+ Wed, 5 Dec 2018 09:19:17 -0800
+From:   "Ghorai, Sukumar" <sukumar.ghorai@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajat Jain <rajatja@google.com>
+CC:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Dmitry Torokhov" <dtor@chromium.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "rajatxjain@gmail.com" <rajatxjain@gmail.com>,
+        "dtor@google.com" <dtor@google.com>,
+        "Hegde, Raghuram" <raghuram.hegde@intel.com>,
+        "Tumkur Narayan, Chethan" <chethan.tumkur.narayan@intel.com>
+Subject: RE: [PATCH v3 2/5] usb: assign ACPI companions for embedded USB
+ devices
+Thread-Topic: [PATCH v3 2/5] usb: assign ACPI companions for embedded USB
+ devices
+Thread-Index: AQHUgfT9bpVoLUXBzUeHmeL1LtVGbaVwfSmA///7x/A=
+Date:   Wed, 5 Dec 2018 17:19:16 +0000
+Message-ID: <D73ECEF0C711E34A8F972E4B87F540058FBCF1CB@ORSMSX114.amr.corp.intel.com>
+References: <20181117010748.24347-1-rajatja@google.com>
+ <20181121235020.29461-1-rajatja@google.com>
+ <20181121235020.29461-2-rajatja@google.com> <20181205093247.GB1817@kroah.com>
+In-Reply-To: <20181205093247.GB1817@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTAwY2E3ZjYtNzY4Ny00YmY3LTkwYWEtZTMyMDE5ODRiMzBjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMXRNbkxIS0ExUElYNmRPZEQrRVdJQk1pN1NXN3Y2ZlEwZWl3MzREY0U2QloyV0ZtS0ZpZGFKZ2EzWmpWcUl4RyJ9
+x-ctpclassification: CTP_NT
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20181204172504.19708-3-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/2018 17:25, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
-> 
-> Use Use device_iommu_mapped() to check if the device is
-> already mapped by an IOMMU.
+>On Wed, Nov 21, 2018 at 03:50:17PM -0800, Rajat Jain wrote:
+>> From: Dmitry Torokhov <dtor@chromium.org>
+>>
+>> USB devices permanently connected to USB ports may be described in
+>> ACPI tables and share ACPI devices with ports they are connected to.
+>> See [1] for details.
+>>
+>> This will allow us to describe sideband resources for devices, such
+>> as, for example, hard reset line for BT USB controllers.
+>>
+>> [1]
+>> https://docs.microsoft.com/en-us/windows-hardware/drivers/bringup/othe
+>> r-acpi-namespace-objects#acpi-namespace-hierarchy-and-adr-for-
+>embedded
+>> -usb-devices
+>>
+>> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+>> Signed-off-by: Rajat Jain <rajatja@google.com> (changed how we get the
+>> usb_port)
+>
+>Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-FWIW, this check (and its ACPI equivalent in patch #3) is specifically 
-asking "has .add_device() already been called?", rather than the more 
-general "is this device managed by an IOMMU?" (to which the exact answer 
-at this point is "yes, provided we return successfully from here").
-
-I have no objection to the change as-is - especially if that usage is 
-within the intended scope of this API - I just wanted to call it out in 
-case you're also planning to introduce something else which would be 
-even more appropriate for that.
-
-Robin.
-
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->   drivers/iommu/of_iommu.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> index c5dd63072529..bfcf139503f0 100644
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -220,7 +220,7 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
->   	 * If we have reason to believe the IOMMU driver missed the initial
->   	 * add_device callback for dev, replay it to get things in order.
->   	 */
-> -	if (ops && ops->add_device && dev->bus && !dev->iommu_group)
-> +	if (ops && ops->add_device && dev->bus && !device_iommu_mapped(dev))
->   		err = ops->add_device(dev);
->   
->   	/* Ignore all other errors apart from EPROBE_DEFER */
-> 
+Tested-by: Sukumar Ghorai <sukumar.ghorai@intel.com>
