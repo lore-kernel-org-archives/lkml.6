@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1D6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C717C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A5420989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5A92208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1/V4mhlL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A5420989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ts8VHX4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A92208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbeLEJpx (ORCPT
+        id S1729512AbeLEJp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50694 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:45:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729192AbeLEJpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:51 -0500
+        id S1728754AbeLEJpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:54 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD43920878;
-        Wed,  5 Dec 2018 09:45:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CF2C2087F;
+        Wed,  5 Dec 2018 09:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003150;
-        bh=3vGwVMEMlLYDWVhD1VGjQU1Nm5BnbDVeD+MI+GhG7QE=;
+        s=default; t=1544003153;
+        bh=uIQyTRvERH6K+c5PgYVTE46RAlql1GWDVmLM/shzlhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1/V4mhlLN9Kk3Ib4UlVFYmycCDuy129nedM8RZiK9t6aOMp7Wha1ozYflHWZPmWTs
-         d7LjU26Vl7oD2okFAXNwRMDI/rs+6EciIjZs9bacBKb1YAsXzibrPwuAzY8sBvaWZi
-         9suVQz1SxhoiduSThx1OBm4NDqkkI6CNWQDTTM8I=
+        b=ts8VHX4M2Wd3ayEKlYUZdgEVU4FwtzsurYXmhZXR0KMaAVulbkvQOUU4AgkyGyPRW
+         OWrx9YHo8z5q+Wbfe4k9fBx5o34paVjqjiJHc5JgwAWfKIko2oE55R/tqvJN2Wu6cK
+         u3PJBOQDYpQxHc3M4SKWO7YVR/NQFDRY7aYvTrPI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 45/69] usb: gadget: u_ether: fix unsafe list iteration
-Date:   Wed,  5 Dec 2018 04:42:23 -0500
-Message-Id: <20181205094247.6556-45-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 46/69] netfilter: nf_tables: deactivate expressions in rule replecement routine
+Date:   Wed,  5 Dec 2018 04:42:24 -0500
+Message-Id: <20181205094247.6556-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,103 +55,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit c9287fa657b3328b4549c0ab39ea7f197a3d6a50 ]
+[ Upstream commit ca08987885a147643817d02bf260bc4756ce8cd4 ]
 
-list_for_each_entry_safe() is not safe for deleting entries from the
-list if the spin lock, which protects it, is released and reacquired during
-the list iteration. Fix this issue by replacing this construction with
-a simple check if list is empty and removing the first entry in each
-iteration. This is almost equivalent to a revert of the commit mentioned in
-the Fixes: tag.
+There is no expression deactivation call from the rule replacement path,
+hence, chain counter is not decremented. A few steps to reproduce the
+problem:
 
-This patch fixes following issue:
---->8---
-Unable to handle kernel NULL pointer dereference at virtual address 00000104
-pgd = (ptrval)
-[00000104] *pgd=00000000
-Internal error: Oops: 817 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 1 PID: 84 Comm: kworker/1:1 Not tainted 4.20.0-rc2-next-20181114-00009-g8266b35ec404 #1061
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-Workqueue: events eth_work
-PC is at rx_fill+0x60/0xac
-LR is at _raw_spin_lock_irqsave+0x50/0x5c
-pc : [<c065fee0>]    lr : [<c0a056b8>]    psr: 80000093
-sp : ee7fbee8  ip : 00000100  fp : 00000000
-r10: 006000c0  r9 : c10b0ab0  r8 : ee7eb5c0
-r7 : ee7eb614  r6 : ee7eb5ec  r5 : 000000dc  r4 : ee12ac00
-r3 : ee12ac24  r2 : 00000200  r1 : 60000013  r0 : ee7eb5ec
-Flags: Nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 6d5dc04a  DAC: 00000051
-Process kworker/1:1 (pid: 84, stack limit = 0x(ptrval))
-Stack: (0xee7fbee8 to 0xee7fc000)
-...
-[<c065fee0>] (rx_fill) from [<c0143b7c>] (process_one_work+0x200/0x738)
-[<c0143b7c>] (process_one_work) from [<c0144118>] (worker_thread+0x2c/0x4c8)
-[<c0144118>] (worker_thread) from [<c014a8a4>] (kthread+0x128/0x164)
-[<c014a8a4>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xee7fbfb0 to 0xee7fbff8)
-...
----[ end trace 64480bc835eba7d6 ]---
+   %nft add table ip filter
+   %nft add chain ip filter c1
+   %nft add chain ip filter c1
+   %nft add rule ip filter c1 jump c2
+   %nft replace rule ip filter c1 handle 3 accept
+   %nft flush ruleset
 
-Fixes: fea14e68ff5e ("usb: gadget: u_ether: use better list accessors")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+<jump c2> expression means immediate NFT_JUMP to chain c2.
+Reference count of chain c2 is increased when the rule is added.
 
+When rule is deleted or replaced, the reference counter of c2 should be
+decreased via nft_rule_expr_deactivate() which calls
+nft_immediate_deactivate().
+
+Splat looks like:
+[  214.396453] WARNING: CPU: 1 PID: 21 at net/netfilter/nf_tables_api.c:1432 nf_tables_chain_destroy.isra.38+0x2f9/0x3a0 [nf_tables]
+[  214.398983] Modules linked in: nf_tables nfnetlink
+[  214.398983] CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 4.20.0-rc2+ #44
+[  214.398983] Workqueue: events nf_tables_trans_destroy_work [nf_tables]
+[  214.398983] RIP: 0010:nf_tables_chain_destroy.isra.38+0x2f9/0x3a0 [nf_tables]
+[  214.398983] Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 8e 00 00 00 48 8b 7b 58 e8 e1 2c 4e c6 48 89 df e8 d9 2c 4e c6 eb 9a <0f> 0b eb 96 0f 0b e9 7e fe ff ff e8 a7 7e 4e c6 e9 a4 fe ff ff e8
+[  214.398983] RSP: 0018:ffff8881152874e8 EFLAGS: 00010202
+[  214.398983] RAX: 0000000000000001 RBX: ffff88810ef9fc28 RCX: ffff8881152876f0
+[  214.398983] RDX: dffffc0000000000 RSI: 1ffff11022a50ede RDI: ffff88810ef9fc78
+[  214.398983] RBP: 1ffff11022a50e9d R08: 0000000080000000 R09: 0000000000000000
+[  214.398983] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff11022a50eba
+[  214.398983] R13: ffff888114446e08 R14: ffff8881152876f0 R15: ffffed1022a50ed6
+[  214.398983] FS:  0000000000000000(0000) GS:ffff888116400000(0000) knlGS:0000000000000000
+[  214.398983] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.398983] CR2: 00007fab9bb5f868 CR3: 000000012aa16000 CR4: 00000000001006e0
+[  214.398983] Call Trace:
+[  214.398983]  ? nf_tables_table_destroy.isra.37+0x100/0x100 [nf_tables]
+[  214.398983]  ? __kasan_slab_free+0x145/0x180
+[  214.398983]  ? nf_tables_trans_destroy_work+0x439/0x830 [nf_tables]
+[  214.398983]  ? kfree+0xdb/0x280
+[  214.398983]  nf_tables_trans_destroy_work+0x5f5/0x830 [nf_tables]
+[ ... ]
+
+Fixes: bb7b40aecbf7 ("netfilter: nf_tables: bogus EBUSY in chain deletions")
+Reported by: Christoph Anton Mitterer <calestyo@scientia.net>
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=914505
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201791
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/u_ether.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/netfilter/nf_tables_api.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index bdbc3fdc7c4f..3a0e4f5d7b83 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -405,12 +405,12 @@ static int alloc_requests(struct eth_dev *dev, struct gether *link, unsigned n)
- static void rx_fill(struct eth_dev *dev, gfp_t gfp_flags)
- {
- 	struct usb_request	*req;
--	struct usb_request	*tmp;
- 	unsigned long		flags;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index ea1e57daf50e..623ec29ade26 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2400,21 +2400,14 @@ static int nf_tables_newrule(struct net *net, struct sock *nlsk,
+ 	}
  
- 	/* fill unused rxq slots with some skb */
- 	spin_lock_irqsave(&dev->req_lock, flags);
--	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
-+	while (!list_empty(&dev->rx_reqs)) {
-+		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
- 		list_del_init(&req->list);
- 		spin_unlock_irqrestore(&dev->req_lock, flags);
+ 	if (nlh->nlmsg_flags & NLM_F_REPLACE) {
+-		if (!nft_is_active_next(net, old_rule)) {
+-			err = -ENOENT;
+-			goto err2;
+-		}
+-		trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
+-					   old_rule);
++		trans = nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule);
+ 		if (trans == NULL) {
+ 			err = -ENOMEM;
+ 			goto err2;
+ 		}
+-		nft_deactivate_next(net, old_rule);
+-		chain->use--;
+-
+-		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
+-			err = -ENOMEM;
++		err = nft_delrule(&ctx, old_rule);
++		if (err < 0) {
++			nft_trans_destroy(trans);
+ 			goto err2;
+ 		}
  
-@@ -1125,7 +1125,6 @@ void gether_disconnect(struct gether *link)
- {
- 	struct eth_dev		*dev = link->ioport;
- 	struct usb_request	*req;
--	struct usb_request	*tmp;
- 
- 	WARN_ON(!dev);
- 	if (!dev)
-@@ -1142,7 +1141,8 @@ void gether_disconnect(struct gether *link)
- 	 */
- 	usb_ep_disable(link->in_ep);
- 	spin_lock(&dev->req_lock);
--	list_for_each_entry_safe(req, tmp, &dev->tx_reqs, list) {
-+	while (!list_empty(&dev->tx_reqs)) {
-+		req = list_first_entry(&dev->tx_reqs, struct usb_request, list);
- 		list_del(&req->list);
- 
- 		spin_unlock(&dev->req_lock);
-@@ -1154,7 +1154,8 @@ void gether_disconnect(struct gether *link)
- 
- 	usb_ep_disable(link->out_ep);
- 	spin_lock(&dev->req_lock);
--	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
-+	while (!list_empty(&dev->rx_reqs)) {
-+		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
- 		list_del(&req->list);
- 
- 		spin_unlock(&dev->req_lock);
 -- 
 2.17.1
 
