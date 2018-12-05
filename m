@@ -2,132 +2,184 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C67C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1C8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BB3920989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544040110;
-	bh=NagzmOYbcSserz4ybU0d3orW/TZcWbUDcPfyZoNlHc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GnaaSHXCxhrmVKRIVIhgw23yGMc+H5qfRs0Ew9TEQtXQBp7U6zcZ5ZYHVN/dDns7w
-	 F/NmMzmxZ0lsSGidaBHlok+xzOJdCDrFbkUna1uhMAHnS11IoDWz7tdV4vhfhUWJCZ
-	 imKDK7aThbMNP9F6IEFZ1T5q/SgTpkTBRU7YPW/E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB3920989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C9BFC208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:09:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="p8KZ5K5z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BFC208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbeLEUBt (ORCPT
+        id S1728407AbeLEUJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:01:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37336 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 15:09:18 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41426 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727592AbeLEUBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:01:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1727257AbeLEUJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:09:17 -0500
+Received: from zn.tnic (p200300EC2BC09900ED3DB18DCE3E6DEF.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:9900:ed3d:b18d:ce3e:6def])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D2BF20850;
-        Wed,  5 Dec 2018 20:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544040108;
-        bh=NagzmOYbcSserz4ybU0d3orW/TZcWbUDcPfyZoNlHc0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dq6rDRYHDg7QyWBwy0fu7AcBB5+lHl7lrgurPSxD1T3bt2RdA3Ezb54mCGAfmXKVW
-         sO9qad1V1yxbFfD2SqbtVk5nKzJHhEATOrydnYWDdBhyZXHKEIh3/8VA87YuhukCNS
-         xWhTzlY7dOSkzUJ5RL+Ymer35ctwsjS5vHejFf6o=
-Date:   Wed, 5 Dec 2018 21:01:45 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     tkjos@android.com, maco@android.com, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, kilobyte@angband.pl,
-        darrick.wong@oracle.com, chouryzhou@tencent.com,
-        david@fromorbit.com, arve@android.com, joel@joelfernandes.org,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH] binder: implement binderfs
-Message-ID: <20181205200145.GA25230@kroah.com>
-References: <20181204131239.15158-1-christian@brauner.io>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5758F1EC0B89;
+        Wed,  5 Dec 2018 21:09:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544040555;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ZJK1+K8g3o0hszzc92rk41OSC1TG0mlEGoJV2Nqo8Xg=;
+        b=p8KZ5K5zcldL2ZRXQRsflsfB5Ngb8rdnVC5iKO4KfqGLXWpU9/XWA7HriQNTBS3Q7PK/IT
+        Ueb3JWj2fmsmno+oQWYGxOleD/WVtebAbC6wEWUlTub2CbQ3W++0Ar+wYVLzrtAMG0dufv
+        GbWUTKhZF+wAHS+5+jq32uPCc+6+++s=
+Date:   Wed, 5 Dec 2018 21:09:13 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH] x86/mce: Unify pr_* prefix
+Message-ID: <20181205200913.GR29510@zn.tnic>
+References: <20181205141323.14995-1-bp@alien8.de>
+ <20181205165711.GA23186@agluck-desk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181204131239.15158-1-christian@brauner.io>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <20181205165711.GA23186@agluck-desk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 02:12:39PM +0100, Christian Brauner wrote:
-> As discussed at Linux Plumbers Conference 2018 in Vancouver [1] this is the
-> implementation of binderfs. If you want to skip reading and just see how it
-> works, please go to [2].
+On Wed, Dec 05, 2018 at 08:57:16AM -0800, Luck, Tony wrote:
+> Acked-by: Tony Luck <tony.luck@intel.com>
 
-First off, thanks for doing this so quickly.  I think the overall idea
-and implementation is great, I just have some minor issues with the user
-api:
+One more thing we need to do ontop, otherwise the prefix changes:
 
-> /* binder-control */
-> Each new binderfs instance comes with a binder-control device. No other
-> devices will be present at first. The binder-control device can be used to
-> dynamically allocate binder devices. All requests operate on the binderfs
-> mount the binder-control device resides in:
-> - BINDER_CTL_ADD
->   Allocate a new binder device.
-> Assuming a new instance of binderfs has been mounted at /dev/binderfs via
-> mount -t binderfs binderfs /dev/binderfs. Then a request to create a new
-> binder device can be made via:
-> 
-> struct binderfs_device device = {0};
-> int fd = open("/dev/binderfs/binder-control", O_RDWR);
-> ioctl(fd, BINDER_CTL_ADD, &device);
-> 
-> The struct binderfs_device will be used to return the major and minor
-> number, as well as the index used as the new name for the device.
-> Binderfs devices can simply be removed via unlink().
+-mce: CPU supports 23 MCE banks
++core: CPU supports 23 MCE banks
 
-I think you should provide a name in the BINDER_CTL_ADD command.  That
-way you can easily emulate the existing binder queues, and it saves you
-a create/rename sequence that you will be forced to do otherwise.  Why
-not do it just in a single command?
+---
+Move the pr_fmt prefix to internal.h and include it everywhere. This
+way, all pr_* printed strings will be prepended with "mce: ".
 
-That way also you don't need to care about the major/minor number at
-all.  Userspace should never need to worry about that, use a name,
-that's the best thing.  Also, it allows you to drop the use of the idr,
-making the kernel code simpler overall.
+No functional changes.
 
-> /* Implementation details */
-> - When binderfs is registered as a new filesystem it will dynamically
->   allocate a new major number. The allocated major number will be returned
->   in struct binderfs_device when a new binder device is allocated.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/mce/core.c        | 2 --
+ arch/x86/kernel/cpu/mce/dev-mcelog.c  | 2 --
+ arch/x86/kernel/cpu/mce/internal.h    | 3 +++
+ arch/x86/kernel/cpu/mce/p5.c          | 2 ++
+ arch/x86/kernel/cpu/mce/therm_throt.c | 2 ++
+ arch/x86/kernel/cpu/mce/threshold.c   | 2 ++
+ arch/x86/kernel/cpu/mce/winchip.c     | 2 ++
+ 7 files changed, 11 insertions(+), 4 deletions(-)
 
-Why does userspace care about major/minor numbers at all?  You should
-just be able to deal with the binder "names", that's all that userspace
-uses normally as you are not calling mknod() yourself.
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index b0ae12cf7827..ad8f62a0c706 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -8,8 +8,6 @@
+  * Author: Andi Kleen
+  */
+ 
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+ #include <linux/thread_info.h>
+ #include <linux/capability.h>
+ #include <linux/miscdevice.h>
+diff --git a/arch/x86/kernel/cpu/mce/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+index 41d9169d27fa..9690ec5c8051 100644
+--- a/arch/x86/kernel/cpu/mce/dev-mcelog.c
++++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
+@@ -8,8 +8,6 @@
+  * Author: Andi Kleen
+  */
+ 
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-
+ #include <linux/miscdevice.h>
+ #include <linux/slab.h>
+ #include <linux/kmod.h>
+diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
+index ceb67cd5918f..af5eab1e65e2 100644
+--- a/arch/x86/kernel/cpu/mce/internal.h
++++ b/arch/x86/kernel/cpu/mce/internal.h
+@@ -2,6 +2,9 @@
+ #ifndef __X86_MCE_INTERNAL_H__
+ #define __X86_MCE_INTERNAL_H__
+ 
++#undef pr_fmt
++#define pr_fmt(fmt) "mce: " fmt
++
+ #include <linux/device.h>
+ #include <asm/mce.h>
+ 
+diff --git a/arch/x86/kernel/cpu/mce/p5.c b/arch/x86/kernel/cpu/mce/p5.c
+index 5cddf831720f..4ae6df556526 100644
+--- a/arch/x86/kernel/cpu/mce/p5.c
++++ b/arch/x86/kernel/cpu/mce/p5.c
+@@ -14,6 +14,8 @@
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+ 
++#include "internal.h"
++
+ /* By default disabled */
+ int mce_p5_enabled __read_mostly;
+ 
+diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
+index 2da67b70ba98..df01ff8513a5 100644
+--- a/arch/x86/kernel/cpu/mce/therm_throt.c
++++ b/arch/x86/kernel/cpu/mce/therm_throt.c
+@@ -30,6 +30,8 @@
+ #include <asm/msr.h>
+ #include <asm/trace/irq_vectors.h>
+ 
++#include "internal.h"
++
+ /* How long to wait between reporting thermal events */
+ #define CHECK_INTERVAL		(300 * HZ)
+ 
+diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
+index 2b584b319eff..10586a85c23f 100644
+--- a/arch/x86/kernel/cpu/mce/threshold.c
++++ b/arch/x86/kernel/cpu/mce/threshold.c
+@@ -10,6 +10,8 @@
+ #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
+ 
++#include "internal.h"
++
+ static void default_threshold_interrupt(void)
+ {
+ 	pr_err("Unexpected threshold interrupt at vector %x\n",
+diff --git a/arch/x86/kernel/cpu/mce/winchip.c b/arch/x86/kernel/cpu/mce/winchip.c
+index 3b45b270a865..a30ea13cccc2 100644
+--- a/arch/x86/kernel/cpu/mce/winchip.c
++++ b/arch/x86/kernel/cpu/mce/winchip.c
+@@ -13,6 +13,8 @@
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+ 
++#include "internal.h"
++
+ /* Machine check handler for WinChip C6: */
+ static void winchip_machine_check(struct pt_regs *regs, long error_code)
+ {
+-- 
+2.19.1
 
->   Minor numbers that have been given out are tracked in a global idr struct
->   that is capped at BINDERFS_MAX_MINOR. The minor number tracker is
->   protected by a global mutex. This is the only point of contention between
->   binderfs mounts.
+-- 
+Regards/Gruss,
+    Boris.
 
-I doubt this will be any real contention given that setting up / tearing
-down binder mounts is going to be rare, right?  Well, hopefully, who
-knows with some container systems...
-
-> - The naming scheme for binder devices is binder%d. Each binderfs mount
->   starts numbering of new binder devices at 0 up to n. The indeces used in
->   constructing the name are tracked in a struct idr that is per-binderfs
->   super block.
-
-Again, let userspace pick the name, as you will have to rename it anyway
-to get userspace to work properly with it.
-
-I'll stop repeating myself now :)
-
-thanks,
-
-greg k-h
+Good mailing practices for 400: avoid top-posting and trim the reply.
