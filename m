@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B167FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FD8C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A65920892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:05:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A65920892
+	by mail.kernel.org (Postfix) with ESMTP id 2940C20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:06:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2940C20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeLESFm (ORCPT
+        id S1728122AbeLESGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:05:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42835 "EHLO
+        Wed, 5 Dec 2018 13:06:02 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41195 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeLESFl (ORCPT
+        with ESMTP id S1727349AbeLESGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:05:41 -0500
+        Wed, 5 Dec 2018 13:06:02 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB5I3tf41373727
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB5I5cPv1375408
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 5 Dec 2018 10:03:55 -0800
+        Wed, 5 Dec 2018 10:05:38 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB5I3sNF1373724;
-        Wed, 5 Dec 2018 10:03:54 -0800
-Date:   Wed, 5 Dec 2018 10:03:54 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB5I5blL1375405;
+        Wed, 5 Dec 2018 10:05:37 -0800
+Date:   Wed, 5 Dec 2018 10:05:37 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sean Christopherson <tipbot@zytor.com>
-Message-ID: <tip-24b7c77bbb24f129beead93574ff248c3db1288e@git.kernel.org>
-Cc:     bp@alien8.de, hpa@zytor.com, riel@surriel.com, dvlasenk@redhat.com,
-        sean.j.christopherson@intel.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, brgerst@gmail.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: dvlasenk@redhat.com, hpa@zytor.com, riel@surriel.com,
-          bp@alien8.de, sean.j.christopherson@intel.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          brgerst@gmail.com, dave.hansen@linux.intel.com, luto@kernel.org,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20181204212600.28090-2-sean.j.christopherson@intel.com>
-References: <20181204212600.28090-2-sean.j.christopherson@intel.com>
+From:   tip-bot for Dan Williams <tipbot@zytor.com>
+Message-ID: <tip-0cebbb60f759a709dabb3c87b9704f9844878850@git.kernel.org>
+Cc:     dave.hansen@linux.intel.com, bigeasy@linutronix.de,
+        kirill.shutemov@linux.intel.com, mingo@kernel.org,
+        tglx@linutronix.de, luto@kernel.org, torvalds@linux-foundation.org,
+        dan.j.williams@intel.com, hpa@zytor.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, riel@surriel.com, bp@alien8.de
+Reply-To: peterz@infradead.org, torvalds@linux-foundation.org,
+          hpa@zytor.com, dan.j.williams@intel.com,
+          linux-kernel@vger.kernel.org, bp@alien8.de, riel@surriel.com,
+          kirill.shutemov@linux.intel.com, dave.hansen@linux.intel.com,
+          bigeasy@linutronix.de, tglx@linutronix.de, luto@kernel.org,
+          mingo@kernel.org
+In-Reply-To: <154395943153.32119.1733586547359626311.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154395943153.32119.1733586547359626311.stgit@dwillia2-desk3.amr.corp.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/vdso: Remove obsolete "fake section table"
- reservation
-Git-Commit-ID: 24b7c77bbb24f129beead93574ff248c3db1288e
+Subject: [tip:x86/mm] generic/pgtable: Introduce {p4d,pgd}_same()
+Git-Commit-ID: 0cebbb60f759a709dabb3c87b9704f9844878850
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,118 +64,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  24b7c77bbb24f129beead93574ff248c3db1288e
-Gitweb:     https://git.kernel.org/tip/24b7c77bbb24f129beead93574ff248c3db1288e
-Author:     Sean Christopherson <sean.j.christopherson@intel.com>
-AuthorDate: Tue, 4 Dec 2018 13:25:57 -0800
+Commit-ID:  0cebbb60f759a709dabb3c87b9704f9844878850
+Gitweb:     https://git.kernel.org/tip/0cebbb60f759a709dabb3c87b9704f9844878850
+Author:     Dan Williams <dan.j.williams@intel.com>
+AuthorDate: Tue, 4 Dec 2018 13:37:11 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Wed, 5 Dec 2018 08:58:11 +0100
+CommitDate: Wed, 5 Dec 2018 09:03:06 +0100
 
-x86/vdso: Remove obsolete "fake section table" reservation
+generic/pgtable: Introduce {p4d,pgd}_same()
 
-At one point the vDSO image was manually stripped down by vdso2c in an
-attempt to minimize the size of the image mapped into userspace.  Part
-of that stripping process involved building a fake section table so as
-not to break userspace processes that parse the section table.  Memory
-for the fake section table was reserved in the .rodata section so that
-vdso2c could simply copy the entire PT_LOAD segment into the userspace
-image after building the fake table.
+In preparation for introducing '_safe' versions of page table entry 'set'
+helpers, introduce generic versions of p4d_same() and pgd_same().
 
-Eventually, the entire fake section table approach was dropped in favor
-of stripping the vdso "the old fashioned way", i.e. via objdump -S.
-But, the reservation in .rodata for the fake table was left behind.
-Remove the reserveration along with a few other related defines and
-section entries.
-
-Removing the fake section table placeholder zaps a whopping 0x340 bytes
-from the 64-bit vDSO image, which drops the current image's size to
-under 4k, i.e. reduces the effective size of the userspace vDSO mapping
-by a full page.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Acked-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@surriel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: da861e18eccc ("x86, vdso: Get rid of the fake section mechanism")
-Link: http://lkml.kernel.org/r/20181204212600.28090-2-sean.j.christopherson@intel.com
+Link: http://lkml.kernel.org/r/154395943153.32119.1733586547359626311.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/entry/vdso/vdso-layout.lds.S | 22 ----------------------
- arch/x86/entry/vdso/vdso2c.c          |  8 --------
- 2 files changed, 30 deletions(-)
+ include/asm-generic/pgtable.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-index acfd5ba7d943..0cedc905c8d6 100644
---- a/arch/x86/entry/vdso/vdso-layout.lds.S
-+++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-@@ -7,16 +7,6 @@
-  * This script controls its layout.
-  */
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index eea50ef8b8cd..dae7f98babed 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -386,6 +386,20 @@ static inline int pud_same(pud_t pud_a, pud_t pud_b)
+ }
+ #endif
  
--#if defined(BUILD_VDSO64)
--# define SHDR_SIZE 64
--#elif defined(BUILD_VDSO32) || defined(BUILD_VDSOX32)
--# define SHDR_SIZE 40
--#else
--# error unknown VDSO target
--#endif
--
--#define NUM_FAKE_SHDRS 13
--
- SECTIONS
- {
- 	/*
-@@ -60,20 +50,8 @@ SECTIONS
- 		*(.bss*)
- 		*(.dynbss*)
- 		*(.gnu.linkonce.b.*)
--
--		/*
--		 * Ideally this would live in a C file, but that won't
--		 * work cleanly for x32 until we start building the x32
--		 * C code using an x32 toolchain.
--		 */
--		VDSO_FAKE_SECTION_TABLE_START = .;
--		. = . + NUM_FAKE_SHDRS * SHDR_SIZE;
--		VDSO_FAKE_SECTION_TABLE_END = .;
- 	}						:text
- 
--	.fake_shstrtab	: { *(.fake_shstrtab) }		:text
--
--
- 	.note		: { *(.note.*) }		:text	:note
- 
- 	.eh_frame_hdr	: { *(.eh_frame_hdr) }		:text	:eh_frame_hdr
-diff --git a/arch/x86/entry/vdso/vdso2c.c b/arch/x86/entry/vdso/vdso2c.c
-index 4674f58581a1..8e470b018512 100644
---- a/arch/x86/entry/vdso/vdso2c.c
-+++ b/arch/x86/entry/vdso/vdso2c.c
-@@ -76,8 +76,6 @@ enum {
- 	sym_hpet_page,
- 	sym_pvclock_page,
- 	sym_hvclock_page,
--	sym_VDSO_FAKE_SECTION_TABLE_START,
--	sym_VDSO_FAKE_SECTION_TABLE_END,
- };
- 
- const int special_pages[] = {
-@@ -98,12 +96,6 @@ struct vdso_sym required_syms[] = {
- 	[sym_hpet_page] = {"hpet_page", true},
- 	[sym_pvclock_page] = {"pvclock_page", true},
- 	[sym_hvclock_page] = {"hvclock_page", true},
--	[sym_VDSO_FAKE_SECTION_TABLE_START] = {
--		"VDSO_FAKE_SECTION_TABLE_START", false
--	},
--	[sym_VDSO_FAKE_SECTION_TABLE_END] = {
--		"VDSO_FAKE_SECTION_TABLE_END", false
--	},
- 	{"VDSO32_NOTE_MASK", true},
- 	{"__kernel_vsyscall", true},
- 	{"__kernel_sigreturn", true},
++#ifndef __HAVE_ARCH_P4D_SAME
++static inline int p4d_same(p4d_t p4d_a, p4d_t p4d_b)
++{
++	return p4d_val(p4d_a) == p4d_val(p4d_b);
++}
++#endif
++
++#ifndef __HAVE_ARCH_PGD_SAME
++static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
++{
++	return pgd_val(pgd_a) == pgd_val(pgd_b);
++}
++#endif
++
+ #ifndef __HAVE_ARCH_DO_SWAP_PAGE
+ /*
+  * Some architectures support metadata associated with a page. When a
