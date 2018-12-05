@@ -2,41 +2,40 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5A0C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8A2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8EC20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83C2A206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:22:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2hh2ss7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8EC20850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1MtuI4Eo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83C2A206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeLEGVx (ORCPT
+        id S1727029AbeLEGVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:21:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeLEGVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 01:21:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726820AbeLEGVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 01:21:34 -0500
 Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD7C52087F;
-        Wed,  5 Dec 2018 06:21:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C75206B7;
+        Wed,  5 Dec 2018 06:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543990895;
-        bh=ongp57rkWtQ+pMiUb2Zfd4HWbK1ypCIxLtaUNxTKu9o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S2hh2ss7V8co7vnH2ouxq9N42SHijagYmxPDxVg03H2QzmfQdUTRX9YAGtr4aastr
-         +X1bukxtVahZBSHps8fTlY862tk73A9/nDs459Lu9/MLYtRNyW2S/BVcd7Swlt4BuV
-         BIrTFndU1IRnY4ENu1xE/HJ4wxqLZDqBjz7rSVU0=
+        s=default; t=1543990893;
+        bh=L7fRI2g+eORGBF1Fj98y0HR5f1ZQ46j+yh9Mlz9g4M8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1MtuI4EouyJkZao6oVGJq/R68WtvNsFplLe4OFVADHOYv7JirX8Ts0zDQOOLgACJu
+         epavOsStws4hzJF96EB5vQG6g7VkabCExf2egpaC+DmHPFul1zrWFyEID1eN1R358g
+         UBCvG4GyZAhGyUh6vavFw0zdo3J/vwPUk40JxmSE=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-crypto@vger.kernel.org
 Cc:     Paul Crowley <paulcrowley@google.com>,
@@ -44,80 +43,99 @@ Cc:     Paul Crowley <paulcrowley@google.com>,
         Milan Broz <gmazyland@gmail.com>,
         "Jason A . Donenfeld" <Jason@zx2c4.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/6] crypto: x86/chacha - add XChaCha12 support
-Date:   Tue,  4 Dec 2018 22:20:04 -0800
-Message-Id: <20181205062005.27727-6-ebiggers@kernel.org>
+Subject: [PATCH v3 0/6] crypto: x86_64 optimized XChaCha and NHPoly1305 (for Adiantum)
+Date:   Tue,  4 Dec 2018 22:19:59 -0800
+Message-Id: <20181205062005.27727-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181205062005.27727-1-ebiggers@kernel.org>
-References: <20181205062005.27727-1-ebiggers@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hello,
 
-Now that the x86_64 SIMD implementations of ChaCha20 and XChaCha20 have
-been refactored to support varying the number of rounds, add support for
-XChaCha12.  This is identical to XChaCha20 except for the number of
-rounds, which is 12 instead of 20.  This can be used by Adiantum.
+This series optimizes the Adiantum encryption mode for x86_64 by adding
+SSE2 and AVX2 accelerated implementations of NHPoly1305, specifically
+the NH part; and by modifying the existing x86_64 SSSE3/AVX2/AVX-512VL
+implementation of ChaCha20 to support XChaCha20 and XChaCha12.
 
-Reviewed-by: Martin Willi <martin@strongswan.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- arch/x86/crypto/chacha_glue.c | 17 +++++++++++++++++
- crypto/Kconfig                |  4 ++--
- 2 files changed, 19 insertions(+), 2 deletions(-)
+This greatly improves Adiantum performance on x86_64.  
 
-diff --git a/arch/x86/crypto/chacha_glue.c b/arch/x86/crypto/chacha_glue.c
-index 35fd02b50d27..d19c2908be90 100644
---- a/arch/x86/crypto/chacha_glue.c
-+++ b/arch/x86/crypto/chacha_glue.c
-@@ -232,6 +232,21 @@ static struct skcipher_alg algs[] = {
- 		.setkey			= crypto_chacha20_setkey,
- 		.encrypt		= xchacha_simd,
- 		.decrypt		= xchacha_simd,
-+	}, {
-+		.base.cra_name		= "xchacha12",
-+		.base.cra_driver_name	= "xchacha12-simd",
-+		.base.cra_priority	= 300,
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct chacha_ctx),
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= CHACHA_KEY_SIZE,
-+		.max_keysize		= CHACHA_KEY_SIZE,
-+		.ivsize			= XCHACHA_IV_SIZE,
-+		.chunksize		= CHACHA_BLOCK_SIZE,
-+		.setkey			= crypto_chacha12_setkey,
-+		.encrypt		= xchacha_simd,
-+		.decrypt		= xchacha_simd,
- 	},
- };
- 
-@@ -268,3 +283,5 @@ MODULE_ALIAS_CRYPTO("chacha20");
- MODULE_ALIAS_CRYPTO("chacha20-simd");
- MODULE_ALIAS_CRYPTO("xchacha20");
- MODULE_ALIAS_CRYPTO("xchacha20-simd");
-+MODULE_ALIAS_CRYPTO("xchacha12");
-+MODULE_ALIAS_CRYPTO("xchacha12-simd");
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index df466771e9bf..29865c599b04 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1473,8 +1473,8 @@ config CRYPTO_CHACHA20_X86_64
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_CHACHA20
- 	help
--	  SSSE3, AVX2, and AVX-512VL optimized implementations of the ChaCha20
--	  and XChaCha20 stream ciphers.
-+	  SSSE3, AVX2, and AVX-512VL optimized implementations of the ChaCha20,
-+	  XChaCha20, and XChaCha12 stream ciphers.
- 
- config CRYPTO_SEED
- 	tristate "SEED cipher algorithm"
+For example, encrypting 4096-byte messages (single-threaded) on a
+Skylake-based processor (Intel Xeon, supports AVX-512VL and AVX2):
+
+                           Before                After
+                           --------              ---------
+adiantum(xchacha12,aes)    348 MB/s              1493 MB/s
+adiantum(xchacha20,aes)    266 MB/s              1261 MB/s
+
+And on a Zen-based processor (Threadripper 1950X, supports AVX2):
+
+                           Before                After
+                           --------              ---------
+adiantum(xchacha12,aes)    505 MB/s              1292 MB/s
+adiantum(xchacha20,aes)    387 MB/s              1037 MB/s
+
+Decryption is almost exactly the same speed as encryption.
+
+The biggest benefit comes from accelerating XChaCha.  Accelerating NH
+gives a somewhat smaller, but still significant benefit.
+
+Performance on 512-byte inputs is also improved, though that is much
+slower in the first place.  When Adiantium is used with dm-crypt (or
+cryptsetup), we recommend using a 4096-byte sector size.
+
+For comparison, AES-256-XTS is 2710 MB/s on the Skylake CPU and
+4140 MB/s on the Zen CPU.  However, AES has the benefit of direct AES-NI
+hardware support whereas Adiantum is implemented entirely with
+general-purpose instructions (scalar and SIMD).  Adiantum is also a
+super-pseudorandom permutation over the entire sector, unlike XTS.
+
+Note that XChaCha20 and XChaCha12 can be used for other purposes too.
+
+Changed since v2:
+  - Yield the FPU once per 4096 bytes rather than once per skcipher_walk
+    step.
+  - Create full stack frame in hchacha_block_ssse3() and
+    chacha_block_xor_ssse3().
+
+Changed since v1:
+  - Rebase on top of latest cryptodev with the AVX-512VL accelerated
+    ChaCha20 from Martin Willi.
+
+Eric Biggers (6):
+  crypto: x86/nhpoly1305 - add SSE2 accelerated NHPoly1305
+  crypto: x86/nhpoly1305 - add AVX2 accelerated NHPoly1305
+  crypto: x86/chacha20 - add XChaCha20 support
+  crypto: x86/chacha20 - refactor to allow varying number of rounds
+  crypto: x86/chacha - add XChaCha12 support
+  crypto: x86/chacha - yield the FPU occasionally
+
+ arch/x86/crypto/Makefile                      |  15 +-
+ ...a20-avx2-x86_64.S => chacha-avx2-x86_64.S} |  33 +-
+ ...12vl-x86_64.S => chacha-avx512vl-x86_64.S} |  35 +--
+ ...0-ssse3-x86_64.S => chacha-ssse3-x86_64.S} | 104 +++---
+ arch/x86/crypto/chacha20_glue.c               | 208 ------------
+ arch/x86/crypto/chacha_glue.c                 | 297 ++++++++++++++++++
+ arch/x86/crypto/nh-avx2-x86_64.S              | 157 +++++++++
+ arch/x86/crypto/nh-sse2-x86_64.S              | 123 ++++++++
+ arch/x86/crypto/nhpoly1305-avx2-glue.c        |  77 +++++
+ arch/x86/crypto/nhpoly1305-sse2-glue.c        |  76 +++++
+ crypto/Kconfig                                |  28 +-
+ 11 files changed, 861 insertions(+), 292 deletions(-)
+ rename arch/x86/crypto/{chacha20-avx2-x86_64.S => chacha-avx2-x86_64.S} (97%)
+ rename arch/x86/crypto/{chacha20-avx512vl-x86_64.S => chacha-avx512vl-x86_64.S} (97%)
+ rename arch/x86/crypto/{chacha20-ssse3-x86_64.S => chacha-ssse3-x86_64.S} (92%)
+ delete mode 100644 arch/x86/crypto/chacha20_glue.c
+ create mode 100644 arch/x86/crypto/chacha_glue.c
+ create mode 100644 arch/x86/crypto/nh-avx2-x86_64.S
+ create mode 100644 arch/x86/crypto/nh-sse2-x86_64.S
+ create mode 100644 arch/x86/crypto/nhpoly1305-avx2-glue.c
+ create mode 100644 arch/x86/crypto/nhpoly1305-sse2-glue.c
+
 -- 
 2.19.2
 
