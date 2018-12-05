@@ -2,129 +2,136 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2260C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EF0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0F932087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F932087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 911E020850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911E020850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeLELQx (ORCPT
+        id S1727584AbeLELSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:16:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58112 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726918AbeLELQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:16:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E365CAF74;
-        Wed,  5 Dec 2018 11:16:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C0B881E0DBB; Wed,  5 Dec 2018 12:16:46 +0100 (CET)
-Date:   Wed, 5 Dec 2018 12:16:46 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        tom@talpey.com, Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181205111646.GF22304@quack2.suse.cz>
-References: <20181204001720.26138-1-jhubbard@nvidia.com>
- <20181204001720.26138-2-jhubbard@nvidia.com>
- <CAPcyv4h99JVHAS7Q7k3iPPUq+oc1NxHdyBHMjpgyesF1EjVfWA@mail.gmail.com>
- <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
+        Wed, 5 Dec 2018 06:18:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:51814 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726171AbeLELSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:18:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 03:18:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
+   d="scan'208";a="107467509"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2018 03:18:05 -0800
+Subject: Re: [PATCH V3] sdhci: fix the timeout check window for clock and
+ reset
+To:     "Du, Alek" <alek.du@intel.com>
+Cc:     linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+        linux-kernel@vger.kernel.org
+References: <20181130150028.732896d8@xdu1-mobl>
+ <81ba3745-8277-d16e-3aad-48324f51dc8a@intel.com>
+ <20181130221300.4ef2956c@xdu1-mobl>
+ <c580be57-8a49-59f3-791e-c605d892266b@intel.com>
+ <20181201134251.26573207@xdu1-mobl> <20181204090120.63b5f0a4@xdu1-mobl>
+ <229dc468-1155-b81f-9fda-b71402387e3f@intel.com>
+ <20181205111450.300e0478@xdu1-mobl>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <59a458e5-d53f-d57b-98a4-48ea223e0650@intel.com>
+Date:   Wed, 5 Dec 2018 13:16:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0adcf7c-5592-f003-abc5-a2645eb1d5df@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181205111450.300e0478@xdu1-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-12-18 13:56:36, John Hubbard wrote:
-> On 12/4/18 12:28 PM, Dan Williams wrote:
-> > On Mon, Dec 3, 2018 at 4:17 PM <john.hubbard@gmail.com> wrote:
-> >>
-> >> From: John Hubbard <jhubbard@nvidia.com>
-> >>
-> >> Introduces put_user_page(), which simply calls put_page().
-> >> This provides a way to update all get_user_pages*() callers,
-> >> so that they call put_user_page(), instead of put_page().
-> >>
-> >> Also introduces put_user_pages(), and a few dirty/locked variations,
-> >> as a replacement for release_pages(), and also as a replacement
-> >> for open-coded loops that release multiple pages.
-> >> These may be used for subsequent performance improvements,
-> >> via batching of pages to be released.
-> >>
-> >> This is the first step of fixing the problem described in [1]. The steps
-> >> are:
-> >>
-> >> 1) (This patch): provide put_user_page*() routines, intended to be used
-> >>    for releasing pages that were pinned via get_user_pages*().
-> >>
-> >> 2) Convert all of the call sites for get_user_pages*(), to
-> >>    invoke put_user_page*(), instead of put_page(). This involves dozens of
-> >>    call sites, and will take some time.
-> >>
-> >> 3) After (2) is complete, use get_user_pages*() and put_user_page*() to
-> >>    implement tracking of these pages. This tracking will be separate from
-> >>    the existing struct page refcounting.
-> >>
-> >> 4) Use the tracking and identification of these pages, to implement
-> >>    special handling (especially in writeback paths) when the pages are
-> >>    backed by a filesystem. Again, [1] provides details as to why that is
-> >>    desirable.
-> > 
-> > I thought at Plumbers we talked about using a page bit to tag pages
-> > that have had their reference count elevated by get_user_pages()? That
-> > way there is no need to distinguish put_page() from put_user_page() it
-> > just happens internally to put_page(). At the conference Matthew was
-> > offering to free up a page bit for this purpose.
-> > 
+On 5/12/18 5:14 AM, Du, Alek wrote:
+>>From bcb38577961823b4f8f2cc0aec7dd450a81b6ddc Mon Sep 17 00:00:00 2001
+> From: Alek Du <alek.du@intel.com>
+> Date: Fri, 30 Nov 2018 14:02:28 +0800
+> Subject: [PATCH] sdhci: fix the timeout check window for clock and reset
 > 
-> ...but then, upon further discussion in that same session, we realized that
-> that doesn't help. You need a reference count. Otherwise a random put_page
-> could affect your dma-pinned pages, etc, etc.
+> We observed some premature timeouts on a virtualization platform, the log
+> is like this:
+> 
+> case 1:
+> [159525.255629] mmc1: Internal clock never stabilised.
+> [159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> [159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
+> ...
+> [159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+>>From the clock control register dump, we are pretty sure the clock was
+> stablized.
+> 
+> case 2:
+> [  914.550127] mmc1: Reset 0x2 never completed.
+> [  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> [  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
+> 
+> After checking the sdhci code, we found the timeout check actually has a
+> little window that the CPU can be scheduled out and when it comes back,
+> the original time set or check is not valid.
+> 
+> Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
+> Signed-off-by: Alek Du <alek.du@intel.com>
+> Cc: stable@vger.kernel.org      # v4.12+
 
-Exactly.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-> I was not able to actually find any place where a single additional page
-> bit would help our situation, which is why this still uses LRU fields for
-> both the two bits required (the RFC [1] still applies), and the dma_pinned_count.
+> ---
+>  drivers/mmc/host/sdhci.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..451b08a818a9 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -216,8 +216,12 @@ void sdhci_reset(struct sdhci_host *host, u8 mask)
+>  	timeout = ktime_add_ms(ktime_get(), 100);
+>  
+>  	/* hw clears the bit when it's done */
+> -	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
+> -		if (ktime_after(ktime_get(), timeout)) {
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
+> +			break;
+> +		if (timedout) {
+>  			pr_err("%s: Reset 0x%x never completed.\n",
+>  				mmc_hostname(host->mmc), (int)mask);
+>  			sdhci_dumpregs(host);
+> @@ -1608,9 +1612,13 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
+>  
+>  	/* Wait max 20 ms */
+>  	timeout = ktime_add_ms(ktime_get(), 20);
+> -	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+> -		& SDHCI_CLOCK_INT_STABLE)) {
+> -		if (ktime_after(ktime_get(), timeout)) {
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +		if (clk & SDHCI_CLOCK_INT_STABLE)
+> +			break;
+> +		if (timedout) {
+>  			pr_err("%s: Internal clock never stabilised.\n",
+>  			       mmc_hostname(host->mmc));
+>  			sdhci_dumpregs(host);
+> 
 
-So single page bit could help you with performance. In 99% of cases there's
-just one reference from GUP. So if you could store that info in page flags,
-you could safe yourself a relatively expensive removal from LRU and putting
-it back to make space in struct page for proper refcount. But since you
-report that the performance isn't that horrible, I'd leave this idea on a
-backburner. We can always implement it later in case we find in future we
-need to improve the performance.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
