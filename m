@@ -2,68 +2,91 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8E2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF60C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9BBD2087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48402146D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IKQZ6VF2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BBD2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBJdPVSJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48402146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeLEOyU (ORCPT
+        id S1727774AbeLEO5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:54:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50724 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbeLEOyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:54:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+87eI+JEfkbPBCx04kQPJxYdbRPKuDj3Yo/fIN5ET/Q=; b=IKQZ6VF2gfcyvl1HtOrzFlfo1
-        NRwmclD2fHTQgifM5ZN4N32k8bhEDQXZvSOgOx9otRjuw41xeEKMHqm5qzEtQp/TlzDEoyfcI508L
-        LtVothsYBWdHT4VkhVQbT9uuUyFp5u0GTsWBkOdzTfdr8GyF3YQE+mn3xtWzAi3s9Zg5GnIqy9rSV
-        m9IWjWTzXkmyCKZ54FlcRTHwWfhJw6cZHMVisAWxlpvc2DMsF7/pmiCM0G6XxXb/7DY6Z0qXJEmnx
-        mlnnyGKxSB2WtPYOh9axao7fFY5TBm393gKLK2QGQx+ddDa/SPiTy9IAULyjwIIe+ffT4iCHHMYmh
-        hnlqrA/SA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUYZ8-0003rC-Is; Wed, 05 Dec 2018 14:54:18 +0000
-Date:   Wed, 5 Dec 2018 06:54:18 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 2/4] iommu: Consolitate ->add/remove_device() calls
-Message-ID: <20181205145418.GA14251@infradead.org>
-References: <20181205143646.4876-1-joro@8bytes.org>
- <20181205143646.4876-3-joro@8bytes.org>
+        Wed, 5 Dec 2018 09:57:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727094AbeLEO5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:57:17 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4250206B7;
+        Wed,  5 Dec 2018 14:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544021837;
+        bh=hs/PgCaS1ZDsyB5ecFoim71C6sGywSoWhD8Q4Ky9cgA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tBJdPVSJ9YaoBq0uxygrTACw2xQsT+waZ0HFw2B/xDprWvZp+RngBcE7DWArXDih5
+         Bt0p0pmEyjM9FZzhHq+OsX13gpSiDGCfuG2eYktMyr3IqJppZYOF0DS87+OWDJZXa6
+         XLS+85WjM7AeoZh8GmblRnlyNdPIWBTHXgTWAvow=
+Subject: Re: [PATCH] cpupower : Auto-completion for cpupower tool
+To:     Thomas Renninger <trenn@suse.de>,
+        Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ego@linux.vnet.ibm.com, akshay.adiga@linux.vnet.ibm.com,
+        Bharath Thodla <bharath.thodla@in.ibm.com>,
+        shuah <shuah@kernel.org>
+References: <20181205113104.71319-1-huntbag@linux.vnet.ibm.com>
+ <2133486.u21R1XiQqC@house>
+From:   shuah <shuah@kernel.org>
+Message-ID: <89d66277-ed2c-d3d5-ab62-b8244e9108f2@kernel.org>
+Date:   Wed, 5 Dec 2018 07:57:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205143646.4876-3-joro@8bytes.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <2133486.u21R1XiQqC@house>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +void  iommu_release_device(struct device *dev)
+On 12/5/18 4:48 AM, Thomas Renninger wrote:
+> On Wednesday, December 5, 2018 12:31:04 PM CET Abhishek Goel wrote:
+>> This script adds support for auto-completion for cpupower tool.
+>> Added support for auto-completion of all the eight commands for
+>> cpupower tool and their all subsequent sub-commands, wherever
+>> possible.
+> 
+>>From what I see all changes I proposed in a previous review round
+> with a "not that broad audience" have been addressed.
+> 
+> I already integrated the patch (slightly different, without functional
+> changes) into the latest cpupower sources of our build service and
+> things work out nice.
+> 
+> Shuah: Can you pick this up for next cpupower submission round, please.
+> 
+> Thanks,
+> 
+>         Thomas
+> 
 
-Nitpick: there seems to be a double space here.
+Thanks Thomas.
 
-> +int iommu_probe_device(struct device *dev);
-> +void  iommu_release_device(struct device *dev);
+Patch applied to
 
-.. and here.
+git.kernel.org/pub/scm/linux/kernel/git/shuah/linux cpupower branch to 
+be included in the next pull request to Rafael.
+
+thanks,
+-- Shuah
