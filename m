@@ -2,178 +2,236 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0115C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889EFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A964B20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BcbPdMZK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A964B20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 4ED8320659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:42:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED8320659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbeLEKmM (ORCPT
+        id S1727409AbeLEKmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:42:12 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34965 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbeLEKmM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:42:12 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so19488635itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 02:42:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TwuF27VaYgsEQ66NARt3sXmyD+Z9BEMtwBPS0cBRVbY=;
-        b=BcbPdMZKXhWXR71BkcOxD7JJ4DRrDu3QbUj2yijLW2zzKpj5lQqFW7S/5xSsuxhpyF
-         XwYr6TkHr7ithiMdCg/OVszIwtX8Gb/PPxZStc8dvnmHxd01EOYbgSQX855VhEv6x5yy
-         Ahtwmn3G0os82oypVvk5TLd3KzBei/8+Jkfww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TwuF27VaYgsEQ66NARt3sXmyD+Z9BEMtwBPS0cBRVbY=;
-        b=aILF0Ux1RCnPHuHHYPRcNcT8ai2qze2LScoeHX/p3zRzVpyYSS9jhSlZ8LWrgro78x
-         I150kmaSfKEAvfHn2K0cmZnRarcqg1ctxfDngDjEsxPFNDZEl7f/dzShNaFkWI9Vnk5Z
-         +Uwx0pyl7FgpPqkmoRAoR6TwNNNoS96GE8iYLkaB9T9DzAcPo5OzjRQwjRJSF5+yzgIP
-         0EVH306eGtDm/RnunoollAdAzRG03W1CosygiS7fzd455gcb6K36lYFRvewheyB0ChDP
-         5qbZRH/3tx21XaZJ1mTb4xN9jh5WDLDjc98Sk8uxIseMPyH2MIyAyAKMO4weyeARbYOV
-         V8yQ==
-X-Gm-Message-State: AA+aEWZBbEAUXFPoKnnMjmvODCnzLyPnrdy+WzYyoq74rLc6UbjgLQqU
-        2ZlIUYW2UF2fxwde9n5+O1s+bN5njiE6I6Ve2oSIubhclM0=
-X-Google-Smtp-Source: AFSGD/U9obVPCmjzwEPFeoNHy0Z3qZXMcCen6WQp6I/x90QGR8c//2H4dZApac2zvkCpd5ejXVCm2lsPFdFnAbjZP/Q=
-X-Received: by 2002:a24:10cb:: with SMTP id 194mr15176353ity.173.1544006530043;
- Wed, 05 Dec 2018 02:42:10 -0800 (PST)
+        Wed, 5 Dec 2018 05:42:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727335AbeLEKmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:42:15 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0DC9C3082AFD;
+        Wed,  5 Dec 2018 10:42:14 +0000 (UTC)
+Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 35B262B89D;
+        Wed,  5 Dec 2018 10:42:12 +0000 (UTC)
+Subject: Re: [PATCH] mm, page_alloc: Drop uneeded __meminit and __meminitdata
+To:     Oscar Salvador <osalvador@suse.de>, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, pavel.tatashin@microsoft.com, vbabka@suse.cz,
+        alexander.h.duyck@linux.intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181204111507.4808-1-osalvador@suse.de>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <35894e57-0429-77a2-a61b-0beb4a285ccb@redhat.com>
+Date:   Wed, 5 Dec 2018 11:42:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181203100747.16442-1-jagan@amarulasolutions.com> <CAGb2v64B-afrJ=n1td4HsJgtyrr=oxjF3M=pqjuKtp2AU2V0Gw@mail.gmail.com>
-In-Reply-To: <CAGb2v64B-afrJ=n1td4HsJgtyrr=oxjF3M=pqjuKtp2AU2V0Gw@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 5 Dec 2018 16:11:58 +0530
-Message-ID: <CAMty3ZAKaQcMhv=0+ZL-_o4xqUkZnu3h9+=COupzVhMmREdcBQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] media/sun6i: Allwinner A64 CSI support
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181204111507.4808-1-osalvador@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 05 Dec 2018 10:42:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 3:44 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Mon, Dec 3, 2018 at 6:07 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > This series support CSI on Allwinner A64.
-> >
-> > The CSI controller seems similar to that of in H3, so fallback
-> > compatible is used to load the driver.
-> >
-> > Unlike other SoC's A64 has set of GPIO Pin gropus SDA, SCK intead
-> > of dedicated I2C controller, so this series used i2c-gpio bitbanging.
-> >
-> > Right now the camera is able to detect, but capture images shows
-> > sequence of red, blue line. any suggestion please help.
->
-> The CSI controller doesn't seem to work properly at the default
-> clock rate of 600 MHz. Dropping it down to 300 MHz, the default
-> rate used by the BSP, fixes things.
->
-> The BSP also tries to use different clock rates (multiples of 108 MHz)
-> according to the captured image size. I've not tried this since the
-> driver no longer exports sub-device controls, and I currently don't
-> know how to handle that to change the resolution.
+On 04.12.18 12:15, Oscar Salvador wrote:
+> Since commit 03e85f9d5f1 ("mm/page_alloc: Introduce free_area_init_core_hotplug"),
+> some functions changed to only be called during system initialization.
+> In concret, free_area_init_node and and the functions that hang from it.
+> 
+> Also, some variables are no longer used after the system has gone
+> through initialization.
+> So this could be considered as a late clean-up for that patch.
+> 
+> This patch changes the functions from __meminit to __init, and
+> the variables from __meminitdata to __initdata.
+> 
+> In return, we get some KBs back:
+> 
+> Before:
+> Freeing unused kernel image memory: 2472K
+> 
+> After:
+> Freeing unused kernel image memory: 2480K
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  mm/page_alloc.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index fee5e9bad0dd..94e16eba162c 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -266,18 +266,18 @@ int watermark_boost_factor __read_mostly = 15000;
+>  int watermark_scale_factor = 10;
+>  int fragment_stall_order __read_mostly = (PAGE_ALLOC_COSTLY_ORDER + 1);
+>  
+> -static unsigned long nr_kernel_pages __meminitdata;
+> -static unsigned long nr_all_pages __meminitdata;
+> -static unsigned long dma_reserve __meminitdata;
+> +static unsigned long nr_kernel_pages __initdata;
+> +static unsigned long nr_all_pages __initdata;
+> +static unsigned long dma_reserve __initdata;
+>  
+>  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+> -static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __meminitdata;
+> -static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __meminitdata;
+> +static unsigned long arch_zone_lowest_possible_pfn[MAX_NR_ZONES] __initdata;
+> +static unsigned long arch_zone_highest_possible_pfn[MAX_NR_ZONES] __initdata;
+>  static unsigned long required_kernelcore __initdata;
+>  static unsigned long required_kernelcore_percent __initdata;
+>  static unsigned long required_movablecore __initdata;
+>  static unsigned long required_movablecore_percent __initdata;
+> -static unsigned long zone_movable_pfn[MAX_NUMNODES] __meminitdata;
+> +static unsigned long zone_movable_pfn[MAX_NUMNODES] __initdata;
+>  static bool mirrored_kernelcore __meminitdata;
+>  
+>  /* movable_zone is the "real" zone pages in ZONE_MOVABLE are taken from */
+> @@ -6211,7 +6211,7 @@ void __init sparse_memory_present_with_active_regions(int nid)
+>   * with no available memory, a warning is printed and the start and end
+>   * PFNs will be 0.
+>   */
+> -void __meminit get_pfn_range_for_nid(unsigned int nid,
+> +void __init get_pfn_range_for_nid(unsigned int nid,
+>  			unsigned long *start_pfn, unsigned long *end_pfn)
+>  {
+>  	unsigned long this_start_pfn, this_end_pfn;
+> @@ -6260,7 +6260,7 @@ static void __init find_usable_zone_for_movable(void)
+>   * highest usable zone for ZONE_MOVABLE. This preserves the assumption that
+>   * zones within a node are in order of monotonic increases memory addresses
+>   */
+> -static void __meminit adjust_zone_range_for_zone_movable(int nid,
+> +static void __init adjust_zone_range_for_zone_movable(int nid,
+>  					unsigned long zone_type,
+>  					unsigned long node_start_pfn,
+>  					unsigned long node_end_pfn,
+> @@ -6291,7 +6291,7 @@ static void __meminit adjust_zone_range_for_zone_movable(int nid,
+>   * Return the number of pages a zone spans in a node, including holes
+>   * present_pages = zone_spanned_pages_in_node() - zone_absent_pages_in_node()
+>   */
+> -static unsigned long __meminit zone_spanned_pages_in_node(int nid,
+> +static unsigned long __init zone_spanned_pages_in_node(int nid,
+>  					unsigned long zone_type,
+>  					unsigned long node_start_pfn,
+>  					unsigned long node_end_pfn,
+> @@ -6326,7 +6326,7 @@ static unsigned long __meminit zone_spanned_pages_in_node(int nid,
+>   * Return the number of holes in a range on a node. If nid is MAX_NUMNODES,
+>   * then all holes in the requested range will be accounted for.
+>   */
+> -unsigned long __meminit __absent_pages_in_range(int nid,
+> +unsigned long __init __absent_pages_in_range(int nid,
+>  				unsigned long range_start_pfn,
+>  				unsigned long range_end_pfn)
+>  {
+> @@ -6356,7 +6356,7 @@ unsigned long __init absent_pages_in_range(unsigned long start_pfn,
+>  }
+>  
+>  /* Return the number of page frames in holes in a zone on a node */
+> -static unsigned long __meminit zone_absent_pages_in_node(int nid,
+> +static unsigned long __init zone_absent_pages_in_node(int nid,
+>  					unsigned long zone_type,
+>  					unsigned long node_start_pfn,
+>  					unsigned long node_end_pfn,
+> @@ -6408,7 +6408,7 @@ static unsigned long __meminit zone_absent_pages_in_node(int nid,
+>  }
+>  
+>  #else /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+> -static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
+> +static inline unsigned long __init zone_spanned_pages_in_node(int nid,
+>  					unsigned long zone_type,
+>  					unsigned long node_start_pfn,
+>  					unsigned long node_end_pfn,
+> @@ -6427,7 +6427,7 @@ static inline unsigned long __meminit zone_spanned_pages_in_node(int nid,
+>  	return zones_size[zone_type];
+>  }
+>  
+> -static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
+> +static inline unsigned long __init zone_absent_pages_in_node(int nid,
+>  						unsigned long zone_type,
+>  						unsigned long node_start_pfn,
+>  						unsigned long node_end_pfn,
+> @@ -6441,7 +6441,7 @@ static inline unsigned long __meminit zone_absent_pages_in_node(int nid,
+>  
+>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+>  
+> -static void __meminit calculate_node_totalpages(struct pglist_data *pgdat,
+> +static void __init calculate_node_totalpages(struct pglist_data *pgdat,
+>  						unsigned long node_start_pfn,
+>  						unsigned long node_end_pfn,
+>  						unsigned long *zones_size,
+> 
 
-I saw 1080p@30 capture is not working, but rest 320x240@30,
-640x480@30, 640x480@60, 1280x720@30 with UYVY8_2X8 and YUYV8_2X8 seems
-working on 300MHz.
+I am in general a friend of fixing up parameter alignment.
 
-I even tried 1080p on 600MHz but kernel seems crashing
-[video4linux2,v4l2 @ 0x2eaa9380] ioctl(VIDIOC_G_PARM): Inappropriate
-ioctl for device
-[video4linux2,v4l2 @ 0x2eaa9380] Time per frame unknown
-[video4linux2,v4l2 @ 0x2eaa9380] Stream #0: not enough frames to
-estimate rate; consider increasing probesize
-Input #0, video4linux2,v4l2, from '/dev/video0':
-  Duration: N/A, start: 44.934807, bitrate: N/A
-    Stream #0:0: Video: rawvideo (I420 / 0x30323449), yuv420p,
-1920x1080, 1000k tbr, 1000k tbn, 1000k tbc
-Stream mapping:
-  Stream #0:0 -> #0:0 (rawvideo (native) -> mpeg4 (native))
-Press [q] to stop, [?] for help
-Output #0, matroska, to 'output_YUYV8_2X8_1920x1080@1_30-new.mkv':
-  Metadata:
-    encoder         : Lavf57.83.100
-    Stream #0:0: Video: mpeg4 (FMP4 / 0x34504D46), yuv420p, 1920x1080,
-q=2-31, 200 kb/s, 65535 fps, 1k tbn, 65535 tbc
-    Metadata:
-      encoder         : Lavc57.107.100 mpeg4
-    Side data:
-      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: -1
-[   45.255793] random: ffmpeg: uninitialized urandom read (4 bytes read)
-frame=    4 fps=0.0 q=10.0 size=     150kB time=00:00:00.10
-bitrate=12162.7kbits/s speed=0.17x    [   46.115153] ------------[ cut
-here ]------------
-[   46.119804] kernel BUG at arch/arm64/kernel/traps.c:426!
-[   46.125120] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-[   46.130607] Modules linked in:
-[   46.133670] CPU: 2 PID: 1630 Comm: ffmpeg Not tainted
-4.20.0-rc4-next-20181130-00027-g58d9b3c5c1db-dirty #10
-[   46.143497] Hardware name: Amarula A64-Relic (DT)
-[   46.148203] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[   46.153005] pc : do_undefinstr+0x248/0x260
-[   46.157103] lr : do_undefinstr+0x13c/0x260
-[   46.161198] sp : ffff000008013bb0
-[   46.164513] x29: ffff000008013bb0 x28: ffff800035b30d40
-[   46.169827] x27: ffff00000815a758 x26: 0000000000000001
-[   46.175141] x25: 0000000000000000 x24: 0000000000000000
-[   46.180454] x23: 0000000000000000 x22: ffff000009344140
-[   46.185768] x21: 00000000837f8080 x20: ffff000008013c00
-[   46.191082] x19: ffff0000091dd000 x18: 0000000000000000
-[   46.196395] x17: 0000000000000000 x16: 0000000000000000
-[   46.201709] x15: 0000000000000043 x14: 0000000000000341
-[   46.207022] x13: 0000000000000400 x12: 0000000000000043
-[   46.212336] x11: 0000000000000400 x10: 000000000001234d
-[   46.217650] x9 : 0000000000000001 x8 : ffff800037db7900
-[   46.222964] x7 : ffff800037db8380 x6 : ffff000008013bf8
-[   46.228278] x5 : ffff0000091e8310 x4 : 00000000d5300000
-[   46.233592] x3 : 0000000083700000 x2 : 0000000000000000
-[   46.238906] x1 : ffff800035b30d40 x0 : 0000000000000005
-[   46.244222] Process ffmpeg (pid: 1630, stack limit = 0x(____ptrval____))
-[   46.250921] Call trace:
-[   46.253371]  do_undefinstr+0x248/0x260
-[   46.257125]  el1_undef+0x10/0x70
-[   46.260358]  task_tick_fair+0x140/0x548
-[   46.264199]  scheduler_tick+0x6c/0x110
-[   46.267956]  update_process_times+0x40/0x58
-[   46.272144]  tick_sched_handle.isra.5+0x30/0x50
-[   46.276677]  tick_sched_timer+0x48/0x98
-[   46.280516]  __hrtimer_run_queues+0x11c/0x190
-[   46.284875]  hrtimer_interrupt+0xe4/0x240
-[   46.288890]  arch_timer_handler_phys+0x30/0x40
-[   46.293340]  handle_percpu_devid_irq+0x78/0x130
-[   46.297874]  generic_handle_irq+0x24/0x38
-[   46.301887]  __handle_domain_irq+0x5c/0xb8
-[   46.305986]  gic_handle_irq+0x58/0xb0
-[   46.309651]  el0_irq_naked+0x4c/0x54
-[   46.313233] Code: b5fff8c0 b94047b5 17ffff9e d503201f (d4210000)
-[   46.319338] ---[ end trace 0463ef25f03a52f8 ]---
-[   46.323957] Kernel panic - not syncing: Fatal exception in interrupt
-[   46.330311] SMP: stopping secondary CPUs
-[   46.334240] Kernel Offset: disabled
-[   46.337732] CPU features: 0x2,24802004
-[   46.341481] Memory Limit: none
+Apart from that, looks good to me.
+
+-- 
+
+Thanks,
+
+David / dhildenb
