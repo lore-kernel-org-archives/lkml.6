@@ -2,124 +2,117 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EA7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F407AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2D420850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2D420850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id B7EEA20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:10:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZPt0qcNZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7EEA20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbeLEXJq (ORCPT
+        id S1728759AbeLEXKP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:09:46 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:37014 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727628AbeLEXJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:09:45 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUgIO-0004EQ-LG; Wed, 05 Dec 2018 16:09:33 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
- <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
- <20181205180756.GI3536@redhat.com>
- <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
- <20181205183314.GJ3536@redhat.com>
- <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
- <20181205185550.GK3536@redhat.com>
- <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
- <20181205225828.GL3536@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a0240f08-68ab-5167-c2c7-2f930aa0a54b@deltatee.com>
-Date:   Wed, 5 Dec 2018 16:09:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 5 Dec 2018 18:10:15 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38168 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727741AbeLEXKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:10:14 -0500
+Received: by mail-ot1-f68.google.com with SMTP id e12so20332823otl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:10:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PKWGlg2UOSjs1lv56V75iwQ/7WJY8e6vN8MAabWosoA=;
+        b=ZPt0qcNZIB62WVzH0gyDiayM4HyGaDIXyiLFZNA5IM5WnzCEjx1+jeC3w4A6tBvKE6
+         8EeUYnb/IPqJnGLvX7pTeC3WeAynqdc/CkbDEbwJHeMXUJaWXFD7jWVdRrCZWrOwOiuN
+         GeV4lbbmwuGFoXgSA5VNrTHiNQSS+TUhVfcISg42VIXk+XSk38pmu11Qzn6hPIaXsJEb
+         G/yMsbg/5w6IqdIbmxFeW89RFmAKOPu1PbSTTHtY9VcaOM/ggIvTNwAD0YvV5nPZv6mr
+         10ZsgcxA2Id2wljj0eIXRRNOs/5pvHAQjdVhm7hAeLMoV8n9dIE9afBiWZjMHFIpXUwD
+         TAuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PKWGlg2UOSjs1lv56V75iwQ/7WJY8e6vN8MAabWosoA=;
+        b=feDcdJ9WokzZBx7HUL2W8kpzOm7lL/Y3FL5etKkoNvJP/xxWkxDJyv3ztRjlaOvI1R
+         TdzK89of3+2fS8SIjEInKaUyMlFFG6+0Lus3Blwioi2NXH9vYep+UJ+cV7vSkCTr67zy
+         2FHBtwYQrEzJEobnkMQdOyCc/SQup9c3oke4MkkuiWBynveX4YdPIkZrxdchN1Q8vDWJ
+         WDlXXih7WAPxhpQqeV0ZrjE635aV+HLhYrymdLLQ086q9N4aANt7n5zk+0YBczFS8yr7
+         DRC9v6uJXhtLxBnZyL5PKyNt3b8W3nlY9YcKb4rPG/5F/vPbeJ4H7C0FDoOSyTtyDCkv
+         pZNQ==
+X-Gm-Message-State: AA+aEWaIKaY+KMCAAsMj0kISLsxTf8NBAGvvlm8+6n3ITXyzJK72fZC+
+        wzrQaJ9IYMCou3uGqbxvdyJzsFkFIbiCBSeCekE4sQ==
+X-Google-Smtp-Source: AFSGD/X2llRnM9ET7rdCH4YdW88RrUlXNDacnBSDaGl9RM0ixx72CLvGhuNf4bL9/ZezHkNF6q65bVXQ2Jvw0BC+0+U=
+X-Received: by 2002:a9d:bee:: with SMTP id 101mr17358342oth.120.1544051413740;
+ Wed, 05 Dec 2018 15:10:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181205225828.GL3536@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <1543829467-18025-1-git-send-email-karahmed@amazon.de> <1543829467-18025-3-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1543829467-18025-3-git-send-email-karahmed@amazon.de>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 5 Dec 2018 15:10:02 -0800
+Message-ID: <CALMp9eSX99cd3-XCCJOySVPXwxt=fx0zOczzq0ictDFNU1rqNw@mail.gmail.com>
+Subject: Re: [PATCH v4 02/14] X86/nVMX: handle_vmptrld: Copy the VMCS12
+ directly from guest memory
+To:     KarimAllah Ahmed <karahmed@amazon.de>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 3, 2018 at 1:31 AM KarimAllah Ahmed <karahmed@amazon.de> wrote:
+>
+> Copy the VMCS12 directly from guest memory instead of the map->copy->unmap
+> sequence. This also avoids using kvm_vcpu_gpa_to_page() and kmap() which
+> assumes that there is a "struct page" for guest memory.
+>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+> v3 -> v4:
+> - Return VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID on failure (jmattson@)
+> v1 -> v2:
+> - Massage commit message a bit.
+> ---
+>  arch/x86/kvm/vmx.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index b84f230..75817cb 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -9301,20 +9301,22 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+>                 return 1;
+>
+>         if (vmx->nested.current_vmptr != vmptr) {
+> -               struct vmcs12 *new_vmcs12;
+> -               struct page *page;
+> -               page = kvm_vcpu_gpa_to_page(vcpu, vmptr);
+> -               if (is_error_page(page))
+> -                       return nested_vmx_failInvalid(vcpu);
+> +               struct vmcs12 *new_vmcs12 = (struct vmcs12 *)__get_free_page(GFP_KERNEL);
+> +
+> +               if (!new_vmcs12 ||
+> +                   kvm_read_guest(vcpu->kvm, vmptr, new_vmcs12,
+> +                                  sizeof(*new_vmcs12))) {
 
+Isn't this a lot slower than kmap() when there is a struct page?
 
-On 2018-12-05 3:58 p.m., Jerome Glisse wrote:
-> So just to be clear here is how i understand your position:
-> "Single coherent sysfs hierarchy to describe something is useless
->  let's git rm drivers/base/"
+> +                       free_page((unsigned long)new_vmcs12);
+> +                       return nested_vmx_failValid(vcpu,
+> +                                                   VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
 
-I have no idea what you're talking about. I'm saying the existing sysfs
-hierarchy *should* be used for this application -- we shouldn't be
-creating another hierarchy.
-
-> While i am arguing that "hey the /sys/bus/node/devices/* is nice
-> but it just does not cut it for all this new hardware platform
-> if i add new nodes there for my new memory i will break tons of
-> existing application. So what about a new hierarchy that allow
-> to describe those new hardware platform in a single place like
-> today node thing"
-
-I'm talking about /sys/bus and all the bus information under there; not
-just the node hierarchy. With this information, you can figure out how
-any struct device is connected to another struct device. This has little
-to do with a hypothetical memory device and what it might expose. You're
-conflating memory devices with links between devices (ie. buses).
-
-
-> No can do that is what i am trying to explain. So if i bus 1 in a
-> sub-system A and usualy that kind of bus can serve a bridge for
-> PCIE ie a CPU can access device behind it by going through a PCIE
-> device first. So now the userspace libary have this knowledge
-> bake in. Now if a platform has a bug for whatever reasons where
-> that does not hold, the kernel has no way to tell userspace that
-> there is an exception there. It is up to userspace to have a data
-> base of quirks.
-
-> Kernel see all those objects in isolation in your scheme. While in
-> what i am proposing there is only one place and any device that
-> participate in this common place can report any quirks so that a
-> coherent view is given to user space.
-
-The above makes no sense to me.
-
-
-> If we have gazillion of places where all this informations is spread
-> around than we have no way to fix weird inter-action between any
-> of those.
-
-So work to standardize it so that all buses present a consistent view of
-what guarantees they provide for bus accesses. Quirks could then adjust
-that information for systems that may be broken.
-
-Logan
+I agree with David that this isn't the right thing to do for -ENOMEM.
