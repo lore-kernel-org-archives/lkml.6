@@ -7,54 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C5AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FD9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFEE214DA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24CFB2133F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZqvL8JJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFEE214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpKR2ujo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CFB2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbeLEJtt (ORCPT
+        id S1729599AbeLEJtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:49:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55968 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:49:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbeLEJtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:49:47 -0500
+        id S1727872AbeLEJtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:49:51 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C56C2087F;
-        Wed,  5 Dec 2018 09:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B60F2133F;
+        Wed,  5 Dec 2018 09:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003386;
-        bh=nqBCrYA9PUUopQ/x88PhbWWFBDMjiUidkxFoWXb4a+M=;
+        s=default; t=1544003389;
+        bh=l12o27qr00QLilg3qf7XVr4pONO9FyKaBGtRiKGC4Sk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pZqvL8JJNKFe9vn2zPUn5T5zFfywczAUhj8MzTC+O252XnlLQSs4M97pG6b+Z0HGJ
-         aMaRh/4jY5CeTL8MC62W6BnFMK/TuZygQMA72YmuPKSlL7T4KR33uquiT6k/V3+nFk
-         WsUyhfHpDUg5hg0TvQRKwB8y2onMD52lFjK0Nv3A=
+        b=RpKR2ujoXqQxZoUalj2VylIjWWpYELsvB0Jy/snigni0pA3Gy2LoW/nJfKSc5cMTp
+         oPOAyCNGOJRhRwKIAkxJ+r5nqUN//eMWEVTOFmLsMJn6uhmqVKJKxUaMsXMcgxA1aj
+         nzQCze2/ltPnmyfXYlXarthCxBmM6PzuFIj0rKV8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, stable@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 16/45] uprobes: Fix handle_swbp() vs. unregister() + register() race once more
-Date:   Wed,  5 Dec 2018 04:46:37 -0500
-Message-Id: <20181205094706.7225-16-sashal@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 17/45] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
+Date:   Wed,  5 Dec 2018 04:46:38 -0500
+Message-Id: <20181205094706.7225-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -63,81 +53,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 09d3f015d1e1b4fee7e9bbdcf54201d239393391 ]
+[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
 
-Commit:
+We need to block sleep states which would require longer time to leave than
+the time the DMA must react to the DMA request in order to keep the FIFO
+serviced without under of overrun.
 
-  142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
-
-added the UPROBE_COPY_INSN flag, and corresponding smp_wmb() and smp_rmb()
-memory barriers, to ensure that handle_swbp() uses fully-initialized
-uprobes only.
-
-However, the smp_rmb() is mis-placed: this barrier should be placed
-after handle_swbp() has tested for the flag, thus guaranteeing that
-(program-order) subsequent loads from the uprobe can see the initial
-stores performed by prepare_uprobe().
-
-Move the smp_rmb() accordingly.  Also amend the comments associated
-to the two memory barriers to indicate their actual locations.
-
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: stable@kernel.org
-Fixes: 142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
-Link: http://lkml.kernel.org/r/20181122161031.15179-1-andrea.parri@amarulasolutions.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/uprobes.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index a1de021dccba..fbfab5722254 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -608,7 +608,7 @@ static int prepare_uprobe(struct uprobe *uprobe, struct file *file,
- 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
- 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index 64609c77a79d..44ffeb71cd1d 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -54,6 +54,8 @@ struct omap_mcpdm {
+ 	unsigned long phys_base;
+ 	void __iomem *io_base;
+ 	int irq;
++	struct pm_qos_request pm_qos_req;
++	int latency[2];
  
--	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
-+	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
- 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
+ 	struct mutex mutex;
  
-  out:
-@@ -1902,10 +1902,18 @@ static void handle_swbp(struct pt_regs *regs)
- 	 * After we hit the bp, _unregister + _register can install the
- 	 * new and not-yet-analyzed uprobe at the same address, restart.
- 	 */
--	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
- 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
- 		goto out;
+@@ -277,6 +279,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
+ 
+ 	mutex_lock(&mcpdm->mutex);
+ 
+@@ -289,6 +294,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	if (mcpdm->latency[stream2])
++		pm_qos_update_request(&mcpdm->pm_qos_req,
++				      mcpdm->latency[stream2]);
++	else if (mcpdm->latency[stream1])
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
++	mcpdm->latency[stream1] = 0;
++
+ 	mutex_unlock(&mcpdm->mutex);
+ }
+ 
+@@ -300,7 +313,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 	int stream = substream->stream;
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 threshold;
+-	int channels;
++	int channels, latency;
+ 	int link_mask = 0;
+ 
+ 	channels = params_channels(params);
+@@ -340,14 +353,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		dma_data->maxburst =
+ 				(MCPDM_DN_THRES_MAX - threshold) * channels;
++		latency = threshold;
+ 	} else {
+ 		/* If playback is not running assume a stereo stream to come */
+ 		if (!mcpdm->config[!stream].link_mask)
+ 			mcpdm->config[!stream].link_mask = (0x3 << 3);
+ 
+ 		dma_data->maxburst = threshold * channels;
++		latency = (MCPDM_DN_THRES_MAX - threshold);
+ 	}
  
 +	/*
-+	 * Pairs with the smp_wmb() in prepare_uprobe().
-+	 *
-+	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
-+	 * we must also see the stores to &uprobe->arch performed by the
-+	 * prepare_uprobe() call.
++	 * The DMA must act to a DMA request within latency time (usec) to avoid
++	 * under/overflow
 +	 */
-+	smp_rmb();
++	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
 +
- 	/* Tracing handlers use ->utask to communicate with fetch methods */
- 	if (!get_utask())
- 		goto out;
++	if (!mcpdm->latency[stream])
++		mcpdm->latency[stream] = 10;
++
+ 	/* Check if we need to restart McPDM with this stream */
+ 	if (mcpdm->config[stream].link_mask &&
+ 	    mcpdm->config[stream].link_mask != link_mask)
+@@ -362,6 +386,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
++	int latency = mcpdm->latency[stream2];
++
++	/* Prevent omap hardware from hitting off between FIFO fills */
++	if (!latency || mcpdm->latency[stream1] < latency)
++		latency = mcpdm->latency[stream1];
++
++	if (pm_qos_request_active(pm_qos_req))
++		pm_qos_update_request(pm_qos_req, latency);
++	else if (latency)
++		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
+ 
+ 	if (!omap_mcpdm_active(mcpdm)) {
+ 		omap_mcpdm_start(mcpdm);
+@@ -423,6 +461,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
+ 	free_irq(mcpdm->irq, (void *)mcpdm);
+ 	pm_runtime_disable(mcpdm->dev);
+ 
++	if (pm_qos_request_active(&mcpdm->pm_qos_req))
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
