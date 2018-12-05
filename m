@@ -2,128 +2,299 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E329C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 337B4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0707206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0707206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EA220206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:22:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA220206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeLEJVv (ORCPT
+        id S1727448AbeLEJWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:21:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48940 "EHLO mx1.suse.de"
+        Wed, 5 Dec 2018 04:22:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49272 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726889AbeLEJVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:21:51 -0500
+        id S1726866AbeLEJWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:22:33 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 45240B623;
-        Wed,  5 Dec 2018 09:21:49 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 10:21:48 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
- offline
-Message-ID: <20181205092148.GA1286@dhcp22.suse.cz>
-References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
- <20181204072251.GT31738@dhcp22.suse.cz>
- <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
- <20181204085601.GC1286@dhcp22.suse.cz>
- <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D5A11B62F;
+        Wed,  5 Dec 2018 09:22:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9BCBD1E0DBB; Wed,  5 Dec 2018 10:22:29 +0100 (CET)
+Date:   Wed, 5 Dec 2018 10:22:29 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
+Message-ID: <20181205092229.GB22304@quack2.suse.cz>
+References: <20181130154902.GL10377@bombadil.infradead.org>
+ <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
+ <20181130162435.GM10377@bombadil.infradead.org>
+ <CAPcyv4gBwtCxN4xTncsyShMwMzNiLG3SxKA-frYh9Fn-f6QV=g@mail.gmail.com>
+ <CAPcyv4gDO7sUJgE5kKe=VC5uUG36QaUrkb6tCrtnaFMkgdSYGw@mail.gmail.com>
+ <20181130195021.GN10377@bombadil.infradead.org>
+ <CAPcyv4iqA84WbE8pE=Yi15Q0T8JUXnPZss27HqhQTP08F9sTrQ@mail.gmail.com>
+ <CAPcyv4jFwpsiMTwj3tzbQ4NjV_XnO5-2hTqKYOaWtRCGtT=T+g@mail.gmail.com>
+ <20181205013444.GX10377@bombadil.infradead.org>
+ <CAPcyv4jqfws-LQOwemQm9Xt0wp7_R6K9KxWvKriDjEeUmRJ9zQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
+In-Reply-To: <CAPcyv4jqfws-LQOwemQm9Xt0wp7_R6K9KxWvKriDjEeUmRJ9zQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-12-18 13:38:17, Pingfan Liu wrote:
-> On Tue, Dec 4, 2018 at 4:56 PM Michal Hocko <mhocko@kernel.org> wrote:
+On Tue 04-12-18 22:11:10, Dan Williams wrote:
+> On Tue, Dec 4, 2018 at 5:35 PM Matthew Wilcox <willy@infradead.org> wrote:
 > >
-> > On Tue 04-12-18 16:20:32, Pingfan Liu wrote:
-> > > On Tue, Dec 4, 2018 at 3:22 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > On Mon, Dec 03, 2018 at 07:33:43PM -0800, Dan Williams wrote:
+> > > On Fri, Nov 30, 2018 at 12:05 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > > > -void dax_unlock_mapping_entry(struct page *page)
+> > > > > +void dax_unlock_mapping_entry(struct page *page, dax_entry_t entry)
 > > > >
-> > > > On Tue 04-12-18 11:05:57, Pingfan Liu wrote:
-> > > > > During my test on some AMD machine, with kexec -l nr_cpus=x option, the
-> > > > > kernel failed to bootup, because some node's data struct can not be allocated,
-> > > > > e.g, on x86, initialized by init_cpu_to_node()->init_memory_less_node(). But
-> > > > > device->numa_node info is used as preferred_nid param for
-> > > > > __alloc_pages_nodemask(), which causes NULL reference
-> > > > >   ac->zonelist = node_zonelist(preferred_nid, gfp_mask);
-> > > > > This patch tries to fix the issue by falling back to the first online node,
-> > > > > when encountering such corner case.
+> > > > Let's not require the page to be passed back, it can be derived:
 > > > >
-> > > > We have seen similar issues already and the bug was usually that the
-> > > > zonelists were not initialized yet or the node is completely bogus.
-> > > > Zonelists should be initialized by build_all_zonelists quite early so I
-> > > > am wondering whether the later is the case. What is the actual node
-> > > > number the device is associated with?
+> > > >     page = pfn_to_page(dax_to_pfn((void*) entry));
 > > > >
-> > > The device's node num is 2. And in my case, I used nr_cpus param. Due
-> > > to init_cpu_to_node() initialize all the possible node.  It is hard
-> > > for me to figure out without this param, how zonelists is accessed
-> > > before page allocator works.
+> > > > A bit more symmetric that way and canonical with other locking schemes
+> > > > that return a cookie.
+> > >
+> > > The patch does not apply on top of the pending fixes. could resend on
+> > > top of the current libnvdimm-fixes branch [1]?
+> > >
+> > > I think because we are changing the calling convention to take return
+> > > a locked dax_entry_t type, I feel like we should go back to the
+> > > originally proposed names of these interfaces. I.e.
+> > >
+> > >     dax_entry_t dax_lock_page(struct page *page)
+> > >
+> > >     void dax_unlock_page(dax_entry_t entry)
+> > >
+> > > Yes, it introduces an entry-to-pfn and pfn-to-page conversion.
+> > > However, If I can't convince you to drop the page argument, lets at
+> > > least do the name change. I.e. offload the responsibility of conveying
+> > > that this is not the traditional page lock to the fact that a
+> > > dax_entry is returned and passed back to the unlock routine.
 > >
-> > I believe we should focus on this. Why does the node have no zonelist
-> > even though all zonelists should be initialized already? Maybe this is
-> > nr_cpus pecularity and we do not initialize all the existing numa nodes.
-> > Or maybe the device is associated to a non-existing node with that
-> > setup. A full dmesg might help us here.
+> > From: Matthew Wilcox <willy@infradead.org>
+> > Date: Fri, 30 Nov 2018 11:05:06 -0500
+> > Subject: [PATCH] dax: Change lock/unlock API
 > >
-> Requiring the machine again, and I got the following without nr_cpus option
-> [root@dell-per7425-03 ~]# cd /sys/devices/system/node/
-> [root@dell-per7425-03 node]# ls
-> has_cpu  has_memory  has_normal_memory  node0  node1  node2  node3
-> node4  node5  node6  node7  online  possible  power  uevent
-> [root@dell-per7425-03 node]# cat has_cpu
-> 0-7
-> [root@dell-per7425-03 node]# cat has_memory
-> 1,5
-> [root@dell-per7425-03 node]# cat online
-> 0-7
-> [root@dell-per7425-03 node]# cat possible
-> 0-7
-> And lscpu shows the following numa-cpu info:
-> NUMA node0 CPU(s):     0,8,16,24
-> NUMA node1 CPU(s):     2,10,18,26
-> NUMA node2 CPU(s):     4,12,20,28
-> NUMA node3 CPU(s):     6,14,22,30
-> NUMA node4 CPU(s):     1,9,17,25
-> NUMA node5 CPU(s):     3,11,19,27
-> NUMA node6 CPU(s):     5,13,21,29
-> NUMA node7 CPU(s):     7,15,23,31
+> > Return the unlock cookie from dax_lock_page() and pass it to
+> > dax_unlock_page().  This fixes a bug where dax_unlock_page() was
+> > assuming that the page was PMD-aligned if the entry was a PMD entry.
+> >
+> > Debugged-by: Dan Williams <dan.j.williams@intel.com>
+> > Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
+> > Signed-off-by: Matthew Wilcox <willy@infradead.org>
 > 
-> For the full panic message (I masked some hostname info with xx),
-> please see the attachment.
-> In a short word, it seems a problem with nr_cpus, if without this
-> option, the kernel can bootup correctly.
+> Looks good, passes testing. I did fix up the changelog a bit to make
+> it clearer that this is a fix, not new development, and included more
+> details about the failing signature from my initial fix. No code
+> changes. I'll push it out to libnvdimm-fixes for -next to pick up.
+> 
+> ---
+> 
+> dax: Fix unlock mismatch with updated API
+> 
+> Internal to dax_unlock_mapping_entry(), dax_unlock_entry() is used to
+> store a replacement entry in the Xarray at the given xas-index with the
+> DAX_LOCKED bit clear. When called, dax_unlock_entry() expects the unlocked
+> value of the entry relative to the current Xarray state to be specified.
+> 
+> In most contexts dax_unlock_entry() is operating in the same scope as
+> the matched dax_lock_entry(). However, in the dax_unlock_mapping_entry()
+> case the implementation needs to recall the original entry. In the case
+> where the original entry is a 'pmd' entry it is possible that the pfn
+> performed to do the lookup is misaligned to the value retrieved in the
+> Xarray.
+> 
+> Change the api to return return the unlock cookie from dax_lock_page()
+> and pass it to dax_unlock_page(). This fixes a bug where
+> dax_unlock_page() was assuming that the page was PMD-aligned if the
+> entry was a PMD entry with signatures like:
+> 
+>  WARNING: CPU: 38 PID: 1396 at fs/dax.c:340 dax_insert_entry+0x2b2/0x2d0
+>  RIP: 0010:dax_insert_entry+0x2b2/0x2d0
+>  [..]
+>  Call Trace:
+>   dax_iomap_pte_fault.isra.41+0x791/0xde0
+>   ext4_dax_huge_fault+0x16f/0x1f0
+>   ? up_read+0x1c/0xa0
+>   __do_fault+0x1f/0x160
+>   __handle_mm_fault+0x1033/0x1490
+>   handle_mm_fault+0x18b/0x3d0
+> 
+> Link: https://lkml.kernel.org/r/20181130154902.GL10377@bombadil.infradead.org
+> Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
+> Reported-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> Tested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Yep.
-[    0.007418] Early memory node ranges
-[    0.007419]   node   1: [mem 0x0000000000001000-0x000000000008efff]
-[    0.007420]   node   1: [mem 0x0000000000090000-0x000000000009ffff]
-[    0.007422]   node   1: [mem 0x0000000000100000-0x000000005c3d6fff]
-[    0.007422]   node   1: [mem 0x00000000643df000-0x0000000068ff7fff]
-[    0.007423]   node   1: [mem 0x000000006c528000-0x000000006fffffff]
-[    0.007424]   node   1: [mem 0x0000000100000000-0x000000047fffffff]
-[    0.007425]   node   5: [mem 0x0000000480000000-0x000000087effffff]
+The patch looks good to me. Thanks for nailing this down! You can add:
 
-There is clearly no node2. Where did the driver get the node2 from?
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> 
+> ---
+> 
+> > ---
+> > diff --git a/fs/dax.c b/fs/dax.c
+> > index 3f592dc18d67..48132eca3761 100644
+> > --- a/fs/dax.c
+> > +++ b/fs/dax.c
+> > @@ -379,20 +379,20 @@ static struct page *dax_busy_page(void *entry)
+> >   * @page: The page whose entry we want to lock
+> >   *
+> >   * Context: Process context.
+> > - * Return: %true if the entry was locked or does not need to be locked.
+> > + * Return: A cookie to pass to dax_unlock_page() or 0 if the entry could
+> > + * not be locked.
+> >   */
+> > -bool dax_lock_mapping_entry(struct page *page)
+> > +dax_entry_t dax_lock_page(struct page *page)
+> >  {
+> >         XA_STATE(xas, NULL, 0);
+> >         void *entry;
+> > -       bool locked;
+> >
+> >         /* Ensure page->mapping isn't freed while we look at it */
+> >         rcu_read_lock();
+> >         for (;;) {
+> >                 struct address_space *mapping = READ_ONCE(page->mapping);
+> >
+> > -               locked = false;
+> > +               entry = NULL;
+> >                 if (!mapping || !dax_mapping(mapping))
+> >                         break;
+> >
+> > @@ -403,7 +403,7 @@ bool dax_lock_mapping_entry(struct page *page)
+> >                  * otherwise we would not have a valid pfn_to_page()
+> >                  * translation.
+> >                  */
+> > -               locked = true;
+> > +               entry = (void *)~0UL;
+> >                 if (S_ISCHR(mapping->host->i_mode))
+> >                         break;
+> >
+> > @@ -426,23 +426,18 @@ bool dax_lock_mapping_entry(struct page *page)
+> >                 break;
+> >         }
+> >         rcu_read_unlock();
+> > -       return locked;
+> > +       return (dax_entry_t)entry;
+> >  }
+> >
+> > -void dax_unlock_mapping_entry(struct page *page)
+> > +void dax_unlock_page(struct page *page, dax_entry_t cookie)
+> >  {
+> >         struct address_space *mapping = page->mapping;
+> >         XA_STATE(xas, &mapping->i_pages, page->index);
+> > -       void *entry;
+> >
+> >         if (S_ISCHR(mapping->host->i_mode))
+> >                 return;
+> >
+> > -       rcu_read_lock();
+> > -       entry = xas_load(&xas);
+> > -       rcu_read_unlock();
+> > -       entry = dax_make_entry(page_to_pfn_t(page), dax_is_pmd_entry(entry));
+> > -       dax_unlock_entry(&xas, entry);
+> > +       dax_unlock_entry(&xas, (void *)cookie);
+> >  }
+> >
+> >  /*
+> > diff --git a/include/linux/dax.h b/include/linux/dax.h
+> > index 450b28db9533..0dd316a74a29 100644
+> > --- a/include/linux/dax.h
+> > +++ b/include/linux/dax.h
+> > @@ -7,6 +7,8 @@
+> >  #include <linux/radix-tree.h>
+> >  #include <asm/pgtable.h>
+> >
+> > +typedef unsigned long dax_entry_t;
+> > +
+> >  struct iomap_ops;
+> >  struct dax_device;
+> >  struct dax_operations {
+> > @@ -88,8 +90,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+> >                 struct block_device *bdev, struct writeback_control *wbc);
+> >
+> >  struct page *dax_layout_busy_page(struct address_space *mapping);
+> > -bool dax_lock_mapping_entry(struct page *page);
+> > -void dax_unlock_mapping_entry(struct page *page);
+> > +dax_entry_t dax_lock_page(struct page *page);
+> > +void dax_unlock_page(struct page *page, dax_entry_t cookie);
+> >  #else
+> >  static inline bool bdev_dax_supported(struct block_device *bdev,
+> >                 int blocksize)
+> > @@ -122,14 +124,14 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+> >         return -EOPNOTSUPP;
+> >  }
+> >
+> > -static inline bool dax_lock_mapping_entry(struct page *page)
+> > +static inline dax_entry_t dax_lock_page(struct page *page)
+> >  {
+> >         if (IS_DAX(page->mapping->host))
+> > -               return true;
+> > -       return false;
+> > +               return ~0UL;
+> > +       return 0;
+> >  }
+> >
+> > -static inline void dax_unlock_mapping_entry(struct page *page)
+> > +static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
+> >  {
+> >  }
+> >  #endif
+> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> > index 0cd3de3550f0..7c72f2a95785 100644
+> > --- a/mm/memory-failure.c
+> > +++ b/mm/memory-failure.c
+> > @@ -1161,6 +1161,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+> >         LIST_HEAD(tokill);
+> >         int rc = -EBUSY;
+> >         loff_t start;
+> > +       dax_entry_t cookie;
+> >
+> >         /*
+> >          * Prevent the inode from being freed while we are interrogating
+> > @@ -1169,7 +1170,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+> >          * also prevents changes to the mapping of this pfn until
+> >          * poison signaling is complete.
+> >          */
+> > -       if (!dax_lock_mapping_entry(page))
+> > +       cookie = dax_lock_page(page);
+> > +       if (!cookie)
+> >                 goto out;
+> >
+> >         if (hwpoison_filter(page)) {
+> > @@ -1220,7 +1222,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+> >         kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
+> >         rc = 0;
+> >  unlock:
+> > -       dax_unlock_mapping_entry(page);
+> > +       dax_unlock_page(page, cookie);
+> >  out:
+> >         /* drop pgmap ref acquired in caller */
+> >         put_dev_pagemap(pgmap);
 -- 
-Michal Hocko
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
