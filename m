@@ -2,96 +2,191 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7203FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F578C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBBB2081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:10:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I0SYMCax"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBBB2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4DFC920851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DFC920851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbeLECKy (ORCPT
+        id S1726669AbeLECNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:10:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:57895 "EHLO ozlabs.org"
+        Tue, 4 Dec 2018 21:13:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34392 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbeLECKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:10:53 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725834AbeLECNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 21:13:43 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 438hzG6nqpz9s6w;
-        Wed,  5 Dec 2018 13:10:50 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543975851;
-        bh=ka//mFHanEEku5Tdz9+82pLkMl7qRpMjJ2fezgsmX9Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I0SYMCax55eZ15jBX5lcQ//Rh3AVS4w75nhcL2IYH2oamspFrPi3qAf66Mf6Wzm6C
-         ge5fZK1VuVucF0a0fLvYvC9qkL8JMfO0zCpWHr/chN0xN6qe4Pb0uPYB+Bs2a32LZ+
-         PNJ1j4cs6MgjIwCEdugXl/SZwwqrOnArgI+GYGVFlPOMVH8mGJNe6tBLRvhIOq2q1y
-         ACIVKegqTEtDzbWnHVCU1X/Nv1KWsf4xaqe2t0awkdkzdRtnc+bvUX+xLRF+kZKiaE
-         bIy35OI5mX7kAW0oM+ESNsPoXU0DREqR3gybpz5bnxgqKMcVDGFTA7Kw0yEtgJCTY9
-         /70GWaxNgTrGQ==
-Date:   Wed, 5 Dec 2018 13:10:50 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
- tree
-Message-ID: <20181205131050.40ab2924@canb.auug.org.au>
-In-Reply-To: <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
-References: <20181205120706.294b9422@canb.auug.org.au>
-        <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 9224A81DFA;
+        Wed,  5 Dec 2018 02:13:42 +0000 (UTC)
+Received: from redhat.com (ovpn-120-95.rdu2.redhat.com [10.10.120.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28C9D627DE;
+        Wed,  5 Dec 2018 02:13:37 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 21:13:35 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+Message-ID: <20181205021334.GB3045@redhat.com>
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
+ <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vG645c4b6W9KXzOY2s6rz7x"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 05 Dec 2018 02:13:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vG645c4b6W9KXzOY2s6rz7x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 04, 2018 at 05:06:49PM -0800, Dave Hansen wrote:
+> On 12/4/18 4:15 PM, Jerome Glisse wrote:
+> > On Tue, Dec 04, 2018 at 03:54:22PM -0800, Dave Hansen wrote:
+> >> Basically, is sysfs the right place to even expose this much data?
+> > 
+> > I definitly want to avoid the memoryX mistake. So i do not want to
+> > see one link directory per device. Taking my simple laptop as an
+> > example with 4 CPUs, a wifi and 2 GPU (the integrated one and a
+> > discret one):
+> > 
+> > link0: cpu0 cpu1 cpu2 cpu3
+> > link1: wifi (2 pcie lane)
+> > link2: gpu0 (unknown number of lane but i believe it has higher
+> >              bandwidth to main memory)
+> > link3: gpu1 (16 pcie lane)
+> > link4: gpu1 and gpu memory
+> > 
+> > So one link directory per number of pcie lane your device have
+> > so that you can differentiate on bandwidth. The main memory is
+> > symlinked inside all the link directory except link4. The GPU
+> > discret memory is only in link4 directory as it is only
+> > accessible by the GPU (we could add it under link3 too with the
+> > non cache coherent property attach to it).
+> 
+> I'm actually really interested in how this proposal scales.  It's quite
+> easy to represent a laptop, but can this scale to the largest systems
+> that we expect to encounter over the next 20 years that this ABI will live?
+> 
+> > The issue then becomes how to convert down the HMAT over verbose
+> > information to populate some reasonable layout for HMS. For that
+> > i would say that create a link directory for each different
+> > matrix cell. As an example let say that each entry in the matrix
+> > has bandwidth and latency then we create a link directory for
+> > each combination of bandwidth and latency. On simple system that
+> > should boils down to a handfull of combination roughly speaking
+> > mirroring the example above of one link directory per number of
+> > PCIE lane for instance.
+> 
+> OK, but there are 1024*1024 matrix cells on a systems with 1024
+> proximity domains (ACPI term for NUMA node).  So it sounds like you are
+> proposing a million-directory approach.
 
-Hi Doug,
+No, pseudo code:
+    struct list links;
 
-On Tue, 04 Dec 2018 20:33:08 -0500 Doug Ledford <dledford@redhat.com> wrote:
->
-> FWIW this will go away in a day or two.  I merged mlx5-next into rdma
-> for-next in order to take a series that depended on it.
+    for (unsigned r = 0; r < nrows; r++) {
+        for (unsigned c = 0; c < ncolumns; c++) {
+            if (!link_find(links, hmat[r][c].bandwidth,
+                           hmat[r][c].latency)) {
+                link = link_new(hmat[r][c].bandwidth,
+                                hmat[r][c].latency);
+                // add initiator and target correspond to that row
+                // and columns to this new link
+                list_add(&link, links);
+            }
+        }
+    }
 
-Understood, thanks.
+So all cells that have same property are under the same link. Do you
+expect all the cell to always have different properties ? On today
+platform it should not be the case. I do expect we will keep seeing
+many initiator/target pair that share same properties as other pair.
 
---=20
+But yes if you have system where no initiator/target pair have the
+same properties than you in the worst case you are describing. But
+hey that is the hardware you have then :)
+
+Note that userspace can parse all this once during its initialization
+and create pools of target to use.
+
+
+> We also can't simply say that two CPUs with the same connection to two
+> other CPUs (think a 4-socket QPI-connected system) share the same "link"
+> because they share the same combination of bandwidth and latency.  We
+> need to know that *each* has its own, unique link and do not share link
+> resources.
+
+That is the purpose of the bridge object to inter-connect link.
+To be more exact link is like saying you have 2 arrows with the
+same properties between every node listed in the link. While
+bridge allow to define arrow in just one direction. Maybe i
+should define arrow and node instead of trying to match some of
+the ACPI terminology. This might be easier for people to follow
+than first having to understand the terminology.
+
+The fear i have with HMAT culling is that HMAT does not have the
+information to avoid such culling.
+
+> > I don't think i have a system with an HMAT table if you have one
+> > HMAT table to provide i could show up the end result.
+> 
+> It is new enough (ACPI 6.2) that no publicly-available hardware that
+> exists that implements one (that I know of).  Keith Busch can probably
+> extract one and send it to you or show you how we're faking them with QEMU.
+> 
+> > Note i believe the ACPI HMAT matrix is a bad design for that
+> > reasons ie there is lot of commonality in many of the matrix
+> > entry and many entry also do not make sense (ie initiator not
+> > being able to access all the targets). I feel that link/bridge
+> > is much more compact and allow to represent any directed graph
+> > with multiple arrows from one node to another same node.
+> 
+> I don't disagree.  But, folks are building systems with them and we need
+> to either deal with it, or make its data manageable.  You saw our
+> approach: we cull the data and only expose the bare minimum in sysfs.
+
+Yeah and i intend to cull data too inside HMS.
+
 Cheers,
-Stephen Rothwell
-
---Sig_/vG645c4b6W9KXzOY2s6rz7x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwHM6oACgkQAVBC80lX
-0GzOJwf/SCt5nIq9akTUi/0Js6T48he9Lzl2FF6YTU4b9Z6l4Nhv6NCIjS5siEOS
-j7HifJEBkW+zwzIXVjGq1U9ZMrBy8ZJQSux16x60B4Er5RuYp4VmsbDGdmmP8D8A
-ESmtQdoQEKnr3I4G3qkEhveJPBSc2DKlkLXCOxH2f9SJc6A5xY9z6KboUT7ebJ9W
-9t+gbv49UxkU+mVh4muRVnYbA8KK3/iBHc0NnZxaUQZpl/chgAe2YEYyaOd2XmOi
-/VWtPeuJOSVrSMJuBMovA7BQHAkjR6sQUK6DCqKVTO+qhG94n1kSkyzSxo+S0LMp
-jwgm3hCToxPRhv7vBWdHdd/DOmlSlg==
-=6VdL
------END PGP SIGNATURE-----
-
---Sig_/vG645c4b6W9KXzOY2s6rz7x--
+Jérôme
