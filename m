@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5263BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEDFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2399D20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2399D20850
+	by mail.kernel.org (Postfix) with ESMTP id 3E1F120851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1F120851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeLEIwZ (ORCPT
+        id S1727561AbeLEIwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:52:25 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727458AbeLEIwN (ORCPT
+        Wed, 5 Dec 2018 03:52:34 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:33316 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727337AbeLEIwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 03:52:13 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 37C1841390;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 3EDB341392;
         Wed,  5 Dec 2018 00:52:05 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -43,109 +43,117 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 12/14] x86/alternative: Remove the return value of text_poke_*()
-Date:   Tue, 4 Dec 2018 17:34:06 -0800
-Message-ID: <20181205013408.47725-13-namit@vmware.com>
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v7 13/14] module: Do not set nx for module memory before freeing
+Date:   Tue, 4 Dec 2018 17:34:07 -0800
+Message-ID: <20181205013408.47725-14-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return value of text_poke_early() and text_poke_bp() is useless.
-Remove it.
+When module memory is about to be freed, there is no apparent reason to
+make it (and its data) executable, but that's exactly what is done
+today. This is not efficient and not secure.
 
+There are various theories why it was done, but none of them seem as
+something that really require it today. nios2 uses kmalloc for module
+memory, but anyhow it does not change the PTEs of the module memory.  In
+x86, changing vmalloc'd memory mappings also modifies the direct mapping
+alias, but the NX-bit is not modified in such way.
+
+So let's remove it. Andy suggested that the changes of the PTEs can be
+avoided (excluding the direct-mapping alias), which is true. However,
+in x86 it requires some cleanup of the contiguous page allocator, which
+is outside of the scope of this patch-set.
+
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/text-patching.h |  4 ++--
- arch/x86/kernel/alternative.c        | 11 ++++-------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ kernel/module.c | 35 ++++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index a75eed841eed..c90678fd391a 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
- #define __parainstructions_end	NULL
+diff --git a/kernel/module.c b/kernel/module.c
+index 7cb207249437..57c5b23746e7 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2027,20 +2027,29 @@ void set_all_modules_text_ro(void)
+ 	mutex_unlock(&module_mutex);
+ }
+ 
+-static void disable_ro_nx(const struct module_layout *layout)
++static void module_restore_mappings(const struct module_layout *layout)
+ {
+-	if (rodata_enabled) {
+-		frob_text(layout, set_memory_rw);
+-		frob_rodata(layout, set_memory_rw);
+-		frob_ro_after_init(layout, set_memory_rw);
+-	}
+-	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_x);
+-	frob_writable_data(layout, set_memory_x);
++	/*
++	 * First, make the mappings of the code non-executable to prevent
++	 * transient W+X mappings from being set when the text is set as RW.
++	 */
++	frob_text(layout, set_memory_nx);
++
++	if (!rodata_enabled)
++		return;
++
++	/*
++	 * Second, set the memory as writable. Although the module memory is
++	 * about to be freed, these calls are required (at least on x86) to
++	 * restore the direct map to its "correct" state.
++	 */
++	frob_text(layout, set_memory_rw);
++	frob_rodata(layout, set_memory_rw);
++	frob_ro_after_init(layout, set_memory_rw);
+ }
+ 
+ #else
+-static void disable_ro_nx(const struct module_layout *layout) { }
++static void module_restore_mappings(const struct module_layout *layout) { }
+ static void module_enable_nx(const struct module *mod) { }
+ static void module_disable_nx(const struct module *mod) { }
  #endif
+@@ -2173,7 +2182,7 @@ static void free_module(struct module *mod)
+ 	mutex_unlock(&module_mutex);
  
--extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-+extern void text_poke_early(void *addr, const void *opcode, size_t len);
+ 	/* This may be empty, but that's OK */
+-	disable_ro_nx(&mod->init_layout);
++	module_restore_mappings(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+ 	kfree(mod->args);
+@@ -2183,7 +2192,7 @@ static void free_module(struct module *mod)
+ 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
  
- /*
-  * Clear and restore the kernel write-protection flag on the local CPU.
-@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
- extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
--extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-+extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
- extern __ro_after_init struct mm_struct *poking_mm;
- extern __ro_after_init unsigned long poking_addr;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 18415e3b6000..2740ad2c6f21 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
- 
- extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
- extern s32 __smp_locks[], __smp_locks_end[];
--void *text_poke_early(void *addr, const void *opcode, size_t len);
-+void text_poke_early(void *addr, const void *opcode, size_t len);
- 
- /*
-  * Are we looking at a near JMP with a 1 or 4-byte displacement.
-@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
-  * instructions. And on the local CPU you need to be protected again NMI or MCE
-  * handlers seeing an inconsistent instruction while you patch.
-  */
--void *__init_or_module text_poke_early(void *addr, const void *opcode,
--				       size_t len)
-+void __init_or_module text_poke_early(void *addr, const void *opcode,
-+				      size_t len)
- {
- 	unsigned long flags;
- 
-@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 		 * that causes hangs on some VIA CPUs.
- 		 */
- 	}
--	return addr;
+ 	/* Finally, free the core (containing the module structure) */
+-	disable_ro_nx(&mod->core_layout);
++	module_restore_mappings(&mod->core_layout);
+ 	module_memfree(mod->core_layout.base);
  }
  
- __ro_after_init struct mm_struct *poking_mm;
-@@ -893,7 +892,7 @@ int poke_int3_handler(struct pt_regs *regs)
-  *	  replacing opcode
-  *	- sync cores
-  */
--void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-+void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- {
- 	unsigned char int3 = 0xcc;
- 
-@@ -935,7 +934,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 	 * the writing of the new instruction.
- 	 */
- 	bp_patching_in_progress = false;
--
--	return addr;
- }
- 
+@@ -3507,7 +3516,7 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+ 	module_enable_ro(mod, true);
+ 	mod_tree_remove_init(mod);
+-	disable_ro_nx(&mod->init_layout);
++	module_restore_mappings(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	mod->init_layout.base = NULL;
+ 	mod->init_layout.size = 0;
 -- 
 2.17.1
 
