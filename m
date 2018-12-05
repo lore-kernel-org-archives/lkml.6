@@ -6,171 +6,116 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BBBC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F9DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4535E20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A3720850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="Aq0uad+X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4535E20989
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="Ixrm4fAM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A3720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeLEXGP (ORCPT
+        id S1728700AbeLEXH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:06:15 -0500
-Received: from cmta16.telus.net ([209.171.16.89]:60966 "EHLO cmta16.telus.net"
+        Wed, 5 Dec 2018 18:07:59 -0500
+Received: from cmta17.telus.net ([209.171.16.90]:54232 "EHLO cmta17.telus.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727679AbeLEXGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:06:15 -0500
+        id S1727679AbeLEXH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:07:59 -0500
 Received: from dougxps ([173.180.45.4])
         by cmsmtp with SMTP
-        id UgF5gGKVcPTKIUgF6gIlWb; Wed, 05 Dec 2018 16:06:13 -0700
+        id UgGpgyTLMP96wUgGqgUMum; Wed, 05 Dec 2018 16:07:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1544051173; bh=iiDkuUXGDkKK0d88NSWmOd4F/gGl1vbOm8NSFqATgfE=;
+        t=1544051277; bh=16wvuldLn/HqQsgWpoEWod0QYyN9fSua/uB09H8QZeg=;
         h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=Aq0uad+XCU9YljxpBLNDua0KBPIv1shwlkSMSD4+A1hkdmaZ+BJKOPVMwOrf1C+RL
-         0l0SaBnie58k/rz2JRSA2X7sehjLRc5CKyR2L3Z+6O8hVkbxAlpOMq30Z5jpDbBw3t
-         U/8/FKO4d2kmcjP3FIt7alADb3Kg/P1bFMnEhl/9uF2oEAsU29uRpe7KiXAIhnIwTc
-         85PdKk/JpfzwSmkAp1prf9UlmUPULW2UZ/fO6zpwBvX/DTkW5h05Gho+yDxn3KQfLd
-         orWy8NJ7tcoTQXymA+FhPFc5V+WeAC3VVaN3m6HC5669avakq/KLYmUu+fOrTFruS5
-         7A+Jg8PMKjg4A==
-X-Authority-Analysis: v=2.3 cv=ScEmicZu c=1 sm=1 tr=0
+        b=Ixrm4fAMPHZhlbw+KbgVLYE2fV9PpzMbfekfg8Twfg696fMOVBsAGnOT47jCO6cn3
+         i1oqhIaUmmcio9YATSoT+ryCf9F9sdYfE7XWnuqvkIzYN40RmCFQn0KulQw8QC5CYe
+         AWFwaCKkQe2MHbCAUbYwSTxK4WDnsB97F7baSeVxaL5OEwBPNm+F23+K/nq4Ul9xSB
+         RVux6GOJx/lHvtPosvkiM5HIp5ROYj0igQnoopL87albbdUgrE9oytbWvRnfsEPJHC
+         a2TWmf53lPa6dz5xUYYqQvdXLSH41Kc1hJIRjGprN4+Ozk69CYd1n5XTL0wi+cYYFx
+         MGH0GqOCZdzvQ==
+X-Authority-Analysis: v=2.3 cv=G5vN7Os5 c=1 sm=1 tr=0
  a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=RQEsy13LsdxU4s_QaawA:9
- a=Mnl_tZ6p8BeDrPqz:21 a=dEhgL4zssbhsfoJQ:21 a=CjuIK1q_8ugA:10
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=jpbZs5yXI5kjarsWqy4A:9
+ a=xj_gZadtinr1vAgT:21 a=fUl3DSob3bFrHl83:21 a=CjuIK1q_8ugA:10
 From:   "Doug Smythies" <dsmythies@telus.net>
 To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+Cc:     "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Linux Documentation'" <linux-doc@vger.kernel.org>,
         "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        "'Frederic Weisbecker'" <frederic@kernel.org>,
-        "'Mel Gorman'" <mgorman@suse.de>,
         "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
         "'Linux PM'" <linux-pm@vger.kernel.org>,
         "Doug Smythies" <dsmythies@telus.net>
-References: <001901d48881$29ea59d0$7dbf0d70$@net> <CAJZ5v0j6AEjztoFfpQAc3NgQ5JtsWgRqscoE_u1eespVM-Cnmw@mail.gmail.com> TxwEg6mkVwifMTxwJgBHov
-In-Reply-To: TxwEg6mkVwifMTxwJgBHov
-Subject: RE: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
-Date:   Wed, 5 Dec 2018 15:06:05 -0800
-Message-ID: <006801d48cef$1d476e80$57d64b80$@net>
+References: TnO3gBgeGpqCWTnO8gldCG
+In-Reply-To: TnO3gBgeGpqCWTnO8gldCG
+Subject: RE: [PATCH] cpuidle: Add 'high' and 'low' idle state metrics
+Date:   Wed, 5 Dec 2018 15:07:54 -0800
+Message-ID: <006901d48cef$5bb88a00$13299e00$@net>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdSLYpooKIXuaYZySA2GtxFdiiIGXgBSVqqQ
+Thread-Index: AdSLBCu1OtjiTaHmT7WIyCahJReY1QB6N6Qg
 Content-Language: en-ca
-X-CMAE-Envelope: MS4wfNMIxpvUOl6NGLORgNBS7TFa5YeEQCf2JpQpJW5W4ekycF/dXqf86VuKrFJTffnHy9sr+RHv1xrlby0XXcpUtRgr9vuyKMsnSDWEc2oONsCGE0YAynX2
- 87oRAFuLPOBb2RVn7aN8NmLkW7d7wTsaGiX0mTyd44nWgH9v33oNuIESmtrcPNp9fokEfH1kuosizjzlkreaQMaddnBd8/4og687j3I6eK86w6xCMSsbJQag
- VEZ/c5TTtBn5RukK82iAZBx9hGzH5xCOb28SQmcB1bW1IlnXduJEx50XmeHRdj9b1ALeSIl3qWquQUiX70BXB8a615BMiI+pakVXyM0JPnXr29yU3yqriUqN
- PCcZHwWRmEUJTXTXOy4meGmfM/9SF54rX5996tFob2+0Z7/8WNWmqDqq0mJ8IhGBDpjuRbnyOMWN71sRgXPTfaEICFFQIhbzF3SfuUaDJ67iL3NjOG/92Ws0
- zYEU7vhQqDpTxdsT
+X-CMAE-Envelope: MS4wfCwM4h6RU1EZMsyr00ZI/veEoIPUzkZohFpAGgzHtovZUNownDbH8fTBGkF4H70KkYfFyXWa7G15AEJZ8is0uN/tBh1ZNOesnYnNjRWgZK31NrqsFBnd
+ EjcU5xwPM7k5Sf9GIj6srhSCWyS4FtLfP6q510NT+Tsaxd5iOeQFrymYJAERTBuFbnEyqfMNad8IikUIeSSqlIZobP+XlC5r02KRFFz5V2u6NwbChGPFYn/h
+ T/gke/LufHoh+veVaZnXPFHh6kEnroyQp59ISMAd8rScOlqV/YJtMcHkPTHFVTSEO+KTrVrTcQjUGaBiFGEZB+jNftKcuegYF4CLtzQdvgQwrw2Ih02udJTG
+ hsP11xw65TM3R9W/4Ym0qo6VrDlm6uDQLsIv7izeP/I58MPo6xk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.12.03 03:48 Rafael J. Wysocki wrote:
+Hi Rafael,
 
->>> There is an additional issue where if idle state 0 is disabled (with the above suggested code patch),
->>> idle state usage seems to fall to deeper states than idle state 1.
->>> This is not the expected behaviour.
->> 
->> No, it isn't.
->> 
->>> Kernel 4.20-rc3 works as expected.
->>> I have not figured this issue out yet, in the code.
->>>
->>> Example (1 minute per sample. Number of entries/exits per state):
->>>     State 0     State 1     State 2     State 3     State 4    Watts
->>>    28235143,         83,         26,         17,        837,  64.900
->>>     5583238,     657079,    5884941,    8498552,   30986831,  62.433 << Transition sample, after idle state 0 disabled
->>>           0,     793517,    7186099,   10559878,   38485721,  61.900 << ?? should have all gone into Idle state 1
->>>           0,     795414,    7340703,   10553117,   38513456,  62.050
->>>           0,     807028,    7288195,   10574113,   38523524,  62.167
->>>           0,     814983,    7403534,   10575108,   38571228,  62.167
->>>           0,     838302,    7747127,   10552289,   38556054,  62.183
->>>     9664999,     544473,    4914512,    6942037,   25295361,  63.633 << Transition sample, after idle state 0 enabled
->>>    27893504,         96,         40,          9,        912,  66.500
->>>    26556343,         83,         29,          7,        814,  66.683
->>>    27929227,         64,         20,         10,        931,  66.683
->> 
->> I see.
->> 
->> OK, I'll look into this too, thanks!
->
-> This probably is the artifact of the fix for the teo_find_shallower_state()
-> issue.
->
-> Anyway, I'm not able to reproduce this with the teo_find_shallower_state() issue
-> fixed differently.
+On 2018.12.03 04:32 Rafael J. Wysocki wrote:
 
-I am not able to reproduce with your teo_find_shallower_state(), or teo V 7,
-either. Everything is graceful now, as states are disabled:
-(10 seconds per sample. Number of entries/exits per state):
+> Add two new metrics for CPU idle states, "high" and "low", to count
+> the number of times the given state had been asked for (or entered
+> from the kernel's perspective), but the observed idle duration turned
+> out to be too high or too low for it (respectively).
 
-    State 0     State 1     State 2     State 3     State 4    Watts
-          0,          6,          4,          1,        414,   3.700
-          2,          4,         30,          3,        578,   3.700  << No load
-     168619,         37,         39,          4,        480,   5.600  << Transition sample
-    4643618,         45,          8,          1,        137,  61.200  << All idle states enabled
-    4736227,         40,          3,          5,        111,  61.800
-    1888417,    4369314,         25,          2,         89,  62.000  << Transition sample
-          0,    7266864,          9,          0,          0,  62.200  << state 0 disabled
-          0,    7193372,          9,          0,          0,  62.700
-          0,    5539898,    1744007,          0,          0,  63.500  << Transition sample
-          0,          0,    8152956,          0,          0,  63.700  << states 0,1 disabled
-          0,          0,    8015151,          0,          0,  63.900
-          0,          0,    4146806,    6349619,          0,  63.000  << Transition sample
-          0,          0,          0,   13252144,          0,  61.600  << states 0,1,2 disabled
-          0,          0,          0,   13258313,          0,  61.800
-          0,          0,          0,   10417428,    1984451,  61.200  << Transition sample
-          0,          0,          0,          0,    9247172,  58.500  << states 0,1,2,3 disabled
-          0,          0,          0,          0,    9242657,  58.500
-          0,          0,          0,          0,    9233749,  58.600
-          0,          0,          0,          0,    9238444,  58.700
-          0,          0,          0,          0,    9236345,  58.600
+I wonder about the "high" "low" terminology here.
 
-For reference, this is kernel 4.20-rc5 (with your other proposed patches):
+> These mertics help to estimat the quality of the CPU idle governor
+> in use.
 
-    State 0     State 1     State 2     State 3     State 4    Watts
-          0,          4,          8,          6,        426,   3.700
-    1592870,        279,        149,         96,        831,  21.800
-    5071279,        154,         25,          6,        105,  61.200
-    5095090,         78,         21,          1,         86,  61.800
-    5001493,         94,         30,          4,        101,  62.200
-     616019,    5446924,          5,          3,         38,  62.500
-          0,    6249752,          0,          0,          0,  63.300
-          0,    6293671,          0,          0,          0,  63.800
-          0,    3751035,    2529964,          0,          0,  64.100
-          0,          0,    6101167,          0,          0,  64.500
-          0,          0,    6172526,          0,          0,  64.700
-          0,          0,    6163797,          0,          0,  64.900
-          0,          0,    1724841,    9567528,          0,  63.300
-          0,          0,          0,   13349668,          0,  62.700
-          0,          0,          0,   13360471,          0,  62.700
-          0,          0,          0,   13355424,          0,  62.700
-          0,          0,          0,    8854491,    3132640,  61.600
-          0,          0,          0,          0,    9302824,  59.000
-          0,          0,          0,          0,    9303561,  58.900
-          0,          0,          0,          0,    9313397,  59.000
-          0,          0,          0,          0,    9333944,  59.000
+Yes, very useful. Thanks.
 
-Test kernel:
-94a976a cpuidle: New timer events oriented governor for tickless systems  <<< V7
-935be4e cpuidle: poll_state: Disregard disable idle states
-e3670df cpuidle: Add 'high' and 'low' idle state metrics
-dfa672c Documentation: admin-guide: PM: Add cpuidle document
-2595646 Linux 4.20-rc5
+Here the terms are mixed with "deep" and "shallow"
 
-Reference kernel:
-f418681 cpuidle: poll_state: Disregard disable idle states
-1be0e87 cpuidle: Add 'high' and 'low' idle state metrics
-279ec1d Documentation: admin-guide: PM: Add cpuidle document
-2595646 Linux 4.20-rc5
+> +	unsigned long long	high; /* Number of times it's been too deep */
+> +	unsigned long long	low;  /* Number of times it's been too shallow */
+
+> +``high``
+> +	Total number of times this idle state had been asked for, but the
+> +	observed idle duration was too short to match its target residency.
+> +
+
+O.K. To avoid ambiguity, how about naming them "too_short" and "too_long"?
+
+> +``low``
+> +	Total number of times this idle state had been asked for, but a deeper
+> +	idle state would have been a better match for the observed idle duration.
+
+Even though I read the patch, by the time I actually looked at the numbers I had
+forgotten the meaning. I had look at idle state 0 and 4 (the deepest for my computer)
+to figure it out:
+
+doug@s15:~/c$ cat /sys/devices/system/cpu/cpu0/cpuidle/state0/low
+259871
+doug@s15:~/c$ cat /sys/devices/system/cpu/cpu0/cpuidle/state0/high
+0
+doug@s15:~/c$ cat /sys/devices/system/cpu/cpu0/cpuidle/state4/low
+0
+doug@s15:~/c$ cat /sys/devices/system/cpu/cpu0/cpuidle/state4/high
+5584
+
+Because state 0 can not be too short and state 4 can not be too long.
 
 ... Doug
 
