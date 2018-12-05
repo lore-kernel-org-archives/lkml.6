@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332C5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60807C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E126620989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 228D021508
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XogeQ0dj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E126620989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fK9Y4LL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228D021508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730287AbeLEJ4m (ORCPT
+        id S1729742AbeLEJ4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35182 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:56:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730282AbeLEJ4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:56:39 -0500
+        id S1730282AbeLEJ4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:56:43 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AB2D2151B;
-        Wed,  5 Dec 2018 09:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E05B214F1;
+        Wed,  5 Dec 2018 09:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003798;
-        bh=13vjhrHzO2OBef2xlQczTYEo1DjJ6PM/bOGFxzw0WKw=;
+        s=default; t=1544003803;
+        bh=0vGCPPmrdtOTpcqpMGDJjFcNb7U8CA7Daz2O2E7tJZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XogeQ0djU/cjJXsTX2hLPug9S7OaPOriDc2wGj4D3lrvTtDVP2C5XPhv3xrNW+TOT
-         WVbpkMYS0IaH7bEly7aelDdY/eiwVrDpKt/TAR5SwTmJ3HmahDrJbUaP2acfX+n9mA
-         F8PDEc05Dx1ttn2DmxHcAbEJdidw8ZYTFvIOmioY=
+        b=fK9Y4LL5N0XFfZ4K9WR1EXAqTFB924xYz5okeOClYIsZhdCi5yj541N78RIdSxwIH
+         a6K6o5pm+rjmgB+QtxvMktHl6QTL/b6i3VUdpwZGKgI88+8TbVMpuoX7wMy+aZhXMD
+         eRkITjAZcyc4qhhUKpEVA/y/i3qrZhQPD/yhC2fU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Larry Chen <lchen@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
+Cc:     Pan Bian <bianpan2016@163.com>, Joe Perches <joe@perches.com>,
+        "Ernesto A . Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 22/26] ocfs2: fix deadlock caused by ocfs2_defrag_extent()
-Date:   Wed,  5 Dec 2018 04:54:26 -0500
-Message-Id: <20181205095430.8019-22-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 23/26] hfs: do not free node before using
+Date:   Wed,  5 Dec 2018 04:54:27 -0500
+Message-Id: <20181205095430.8019-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -57,147 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Chen <lchen@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit e21e57445a64598b29a6f629688f9b9a39e7242a ]
+[ Upstream commit ce96a407adef126870b3f4a1b73529dd8aa80f49 ]
 
-ocfs2_defrag_extent may fall into deadlock.
+hfs_bmap_free() frees the node via hfs_bnode_put(node).  However, it
+then reads node->this when dumping error message on an error path, which
+may result in a use-after-free bug.  This patch frees the node only when
+it is never again used.
 
-ocfs2_ioctl_move_extents
-    ocfs2_ioctl_move_extents
-      ocfs2_move_extents
-        ocfs2_defrag_extent
-          ocfs2_lock_allocators_move_extents
-
-            ocfs2_reserve_clusters
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-
-	  __ocfs2_flush_truncate_log
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-
-As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
-against the global bitmap if local allocator has not sufficient cluters.
-Once global bitmap could meet the demand, ocfs2_reserve_cluster will
-return success with global bitmap locked.
-
-After ocfs2_reserve_cluster(), if truncate log is full,
-__ocfs2_flush_truncate_log() will definitely fall into deadlock because
-it needs to inode_lock global bitmap, which has already been locked.
-
-To fix this bug, we could remove from
-ocfs2_lock_allocators_move_extents() the code which intends to lock
-global allocator, and put the removed code after
-__ocfs2_flush_truncate_log().
-
-ocfs2_lock_allocators_move_extents() is referred by 2 places, one is
-here, the other does not need the data allocator context, which means
-this patch does not affect the caller so far.
-
-Link: http://lkml.kernel.org/r/20181101071422.14470-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
+Link: http://lkml.kernel.org/r/1542963889-128825-1-git-send-email-bianpan2016@163.com
+Fixes: a1185ffa2fc ("HFS rewrite")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/move_extents.c | 47 +++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ fs/hfs/btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 74caffeeee1d..51b7ab554208 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -158,18 +158,14 @@ static int __ocfs2_move_extent(handle_t *handle,
- }
+diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
+index 1ab19e660e69..1ff5774a5382 100644
+--- a/fs/hfs/btree.c
++++ b/fs/hfs/btree.c
+@@ -328,13 +328,14 @@ void hfs_bmap_free(struct hfs_bnode *node)
  
- /*
-- * lock allocators, and reserving appropriate number of bits for
-- * meta blocks and data clusters.
-- *
-- * in some cases, we don't need to reserve clusters, just let data_ac
-- * be NULL.
-+ * lock allocator, and reserve appropriate number of bits for
-+ * meta blocks.
-  */
--static int ocfs2_lock_allocators_move_extents(struct inode *inode,
-+static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
- 					struct ocfs2_extent_tree *et,
- 					u32 clusters_to_move,
- 					u32 extents_to_split,
- 					struct ocfs2_alloc_context **meta_ac,
--					struct ocfs2_alloc_context **data_ac,
- 					int extra_blocks,
- 					int *credits)
- {
-@@ -194,13 +190,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
- 		goto out;
- 	}
- 
--	if (data_ac) {
--		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
--		if (ret) {
--			mlog_errno(ret);
--			goto out;
--		}
--	}
- 
- 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
- 
-@@ -262,10 +251,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		nidx -= len * 8;
+ 		i = node->next;
+-		hfs_bnode_put(node);
+ 		if (!i) {
+ 			/* panic */;
+ 			pr_crit("unable to free bnode %u. bmap not found!\n",
+ 				node->this);
++			hfs_bnode_put(node);
+ 			return;
  		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
--						 &context->meta_ac,
--						 &context->data_ac,
--						 extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						*len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
-@@ -288,6 +277,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
-+	/*
-+	 * Make sure ocfs2_reserve_cluster is called after
-+	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
-+	 *
-+	 * If ocfs2_reserve_cluster is called
-+	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
-+	 * may happen.
-+	 *
-+	 */
-+	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
-+	if (ret) {
-+		mlog_errno(ret);
-+		goto out_unlock_mutex;
-+	}
-+
- 	handle = ocfs2_start_trans(osb, credits);
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
-@@ -608,9 +612,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
--						 &context->meta_ac,
--						 NULL, extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
++		hfs_bnode_put(node);
+ 		node = hfs_bnode_find(tree, i);
+ 		if (IS_ERR(node))
+ 			return;
 -- 
 2.17.1
 
