@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C36BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15F0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361AA205C9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 361AA205C9
+	by mail.kernel.org (Postfix) with ESMTP id 9515F20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9515F20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728524AbeLERZk (ORCPT
+        id S1728550AbeLERZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:25:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:41954 "EHLO mga07.intel.com"
+        Wed, 5 Dec 2018 12:25:45 -0500
+Received: from mga03.intel.com ([134.134.136.65]:51299 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727628AbeLERZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:25:38 -0500
+        id S1728500AbeLERZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:25:40 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:25:34 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:25:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
-   d="scan'208";a="96373051"
+   d="scan'208";a="257063898"
 Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga007.jf.intel.com with ESMTP; 05 Dec 2018 09:25:34 -0800
-Subject: [driver-core PATCH v8 4/9] driver core: Probe devices
- asynchronously instead of the driver
+  by orsmga004.jf.intel.com with ESMTP; 05 Dec 2018 09:25:39 -0800
+Subject: [driver-core PATCH v8 5/9] workqueue: Provide queue_work_node to
+ queue work near a given NUMA node
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
@@ -41,8 +41,8 @@ Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
         pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
         dave.jiang@intel.com, bvanassche@acm.org,
         alexander.h.duyck@linux.intel.com
-Date:   Wed, 05 Dec 2018 09:25:34 -0800
-Message-ID: <154403073429.11544.13495666211219472007.stgit@ahduyck-desk1.jf.intel.com>
+Date:   Wed, 05 Dec 2018 09:25:39 -0800
+Message-ID: <154403073942.11544.13718906050363008742.stgit@ahduyck-desk1.jf.intel.com>
 In-Reply-To: <154403054034.11544.3978949383914046587.stgit@ahduyck-desk1.jf.intel.com>
 References: <154403054034.11544.3978949383914046587.stgit@ahduyck-desk1.jf.intel.com>
 User-Agent: StGit/unknown-version
@@ -54,155 +54,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Probe devices asynchronously instead of the driver. This results in us
-seeing the same behavior if the device is registered before the driver or
-after. This way we can avoid serializing the initialization should the
-driver not be loaded until after the devices have already been added.
+Provide a new function, queue_work_node, which is meant to schedule work on
+a "random" CPU of the requested NUMA node. The main motivation for this is
+to help assist asynchronous init to better improve boot times for devices
+that are local to a specific node.
 
-The motivation behind this is that if we have a set of devices that
-take a significant amount of time to load we can greatly reduce the time to
-load by processing them in parallel instead of one at a time. In addition,
-each device can exist on a different node so placing a single thread on one
-CPU to initialize all of the devices for a given driver can result in poor
-performance on a system with multiple nodes.
+For now we just default to the first CPU that is in the intersection of the
+cpumask of the node and the online cpumask. The only exception is if the
+CPU is local to the node we will just use the current CPU. This should work
+for our purposes as we are currently only using this for unbound work so
+the CPU will be translated to a node anyway instead of being directly used.
 
-This approach can reduce the time needed to scan SCSI LUNs significantly.
-The only way to realize that speedup is by enabling more concurrency which
-is what is achieved with this patch.
+As we are only using the first CPU to represent the NUMA node for now I am
+limiting the scope of the function so that it can only be used with unbound
+workqueues.
 
-To achieve this it was necessary to add a new member "async_driver" to the
-device_private structure to store the driver pointer while we wait on the
-deferred probe call.
-
+Acked-by: Tejun Heo <tj@kernel.org>
 Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/base.h |    2 ++
- drivers/base/bus.c  |   23 +++--------------------
- drivers/base/dd.c   |   43 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 48 insertions(+), 20 deletions(-)
+ include/linux/workqueue.h |    2 +
+ kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 3f22ebd6117a..c95384a8e53c 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -64,6 +64,7 @@ struct driver_private {
-  *	binding of drivers which were unable to get all the resources needed by
-  *	the device; typically because it depends on another driver getting
-  *	probed first.
-+ * @async_driver - pointer to device driver awaiting probe via async_probe
-  * @device - pointer back to the struct device that this structure is
-  * associated with.
-  *
-@@ -75,6 +76,7 @@ struct device_private {
- 	struct klist_node knode_driver;
- 	struct klist_node knode_bus;
- 	struct list_head deferred_probe;
-+	struct device_driver *async_driver;
- 	struct device *device;
- };
- #define to_device_private_parent(obj)	\
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 8a630f9bd880..0cd2eadd0816 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -606,17 +606,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 60d673e15632..1f50c1e586e7 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -463,6 +463,8 @@ int workqueue_set_unbound_cpumask(cpumask_var_t cpumask);
+ 
+ extern bool queue_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct work_struct *work);
++extern bool queue_work_node(int node, struct workqueue_struct *wq,
++			    struct work_struct *work);
+ extern bool queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct delayed_work *work, unsigned long delay);
+ extern bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 392be4b252f6..d5a26e456f7a 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1492,6 +1492,90 @@ bool queue_work_on(int cpu, struct workqueue_struct *wq,
  }
- static DRIVER_ATTR_WO(uevent);
+ EXPORT_SYMBOL(queue_work_on);
  
--static void driver_attach_async(void *_drv, async_cookie_t cookie)
--{
--	struct device_driver *drv = _drv;
--	int ret;
--
--	ret = driver_attach(drv);
--
--	pr_debug("bus: '%s': driver %s async attach completed: %d\n",
--		 drv->bus->name, drv->name, ret);
--}
--
- /**
-  * bus_add_driver - Add a driver to the bus.
-  * @drv: driver.
-@@ -649,15 +638,9 @@ int bus_add_driver(struct device_driver *drv)
- 
- 	klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
- 	if (drv->bus->p->drivers_autoprobe) {
--		if (driver_allows_async_probing(drv)) {
--			pr_debug("bus: '%s': probing driver %s asynchronously\n",
--				drv->bus->name, drv->name);
--			async_schedule(driver_attach_async, drv);
--		} else {
--			error = driver_attach(drv);
--			if (error)
--				goto out_unregister;
--		}
-+		error = driver_attach(drv);
-+		if (error)
-+			goto out_unregister;
- 	}
- 	module_add_driver(drv->owner, drv);
- 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index e50d768cd3b5..b731741059cb 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -929,6 +929,30 @@ int device_driver_attach(struct device_driver *drv, struct device *dev)
- 	return ret;
- }
- 
-+static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
++/**
++ * workqueue_select_cpu_near - Select a CPU based on NUMA node
++ * @node: NUMA node ID that we want to select a CPU from
++ *
++ * This function will attempt to find a "random" cpu available on a given
++ * node. If there are no CPUs available on the given node it will return
++ * WORK_CPU_UNBOUND indicating that we should just schedule to any
++ * available CPU if we need to schedule this work.
++ */
++static int workqueue_select_cpu_near(int node)
 +{
-+	struct device *dev = _dev;
-+	struct device_driver *drv;
-+	int ret = 0;
++	int cpu;
 +
-+	__device_driver_lock(dev, dev->parent);
++	/* No point in doing this if NUMA isn't enabled for workqueues */
++	if (!wq_numa_enabled)
++		return WORK_CPU_UNBOUND;
 +
-+	drv = dev->p->async_driver;
++	/* Delay binding to CPU if node is not valid or online */
++	if (node < 0 || node >= MAX_NUMNODES || !node_online(node))
++		return WORK_CPU_UNBOUND;
 +
-+	/*
-+	 * If device has been removed or someone has already successfully
-+	 * bound a driver before us just skip the driver probe call.
-+	 */
-+	if (!dev->dead && !dev->driver)
-+		ret = driver_probe_device(drv, dev);
++	/* Use local node/cpu if we are already there */
++	cpu = raw_smp_processor_id();
++	if (node == cpu_to_node(cpu))
++		return cpu;
 +
-+	__device_driver_unlock(dev, dev->parent);
++	/* Use "random" otherwise know as "first" online CPU of node */
++	cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
 +
-+	dev_dbg(dev, "driver %s async attach completed: %d\n", drv->name, ret);
-+
-+	put_device(dev);
++	/* If CPU is valid return that, otherwise just defer */
++	return cpu < nr_cpu_ids ? cpu : WORK_CPU_UNBOUND;
 +}
 +
- static int __driver_attach(struct device *dev, void *data)
- {
- 	struct device_driver *drv = data;
-@@ -956,6 +980,25 @@ static int __driver_attach(struct device *dev, void *data)
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
-+	if (driver_allows_async_probing(drv)) {
-+		/*
-+		 * Instead of probing the device synchronously we will
-+		 * probe it asynchronously to allow for more parallelism.
-+		 *
-+		 * We only take the device lock here in order to guarantee
-+		 * that the dev->driver and async_driver fields are protected
-+		 */
-+		dev_dbg(dev, "probing driver %s asynchronously\n", drv->name);
-+		device_lock(dev);
-+		if (!dev->driver) {
-+			get_device(dev);
-+			dev->p->async_driver = drv;
-+			async_schedule(__driver_attach_async_helper, dev);
-+		}
-+		device_unlock(dev);
-+		return 0;
++/**
++ * queue_work_node - queue work on a "random" cpu for a given NUMA node
++ * @node: NUMA node that we are targeting the work for
++ * @wq: workqueue to use
++ * @work: work to queue
++ *
++ * We queue the work to a "random" CPU within a given NUMA node. The basic
++ * idea here is to provide a way to somehow associate work with a given
++ * NUMA node.
++ *
++ * This function will only make a best effort attempt at getting this onto
++ * the right NUMA node. If no node is requested or the requested node is
++ * offline then we just fall back to standard queue_work behavior.
++ *
++ * Currently the "random" CPU ends up being the first available CPU in the
++ * intersection of cpu_online_mask and the cpumask of the node, unless we
++ * are running on the node. In that case we just use the current CPU.
++ *
++ * Return: %false if @work was already on a queue, %true otherwise.
++ */
++bool queue_work_node(int node, struct workqueue_struct *wq,
++		     struct work_struct *work)
++{
++	unsigned long flags;
++	bool ret = false;
++
++	/*
++	 * This current implementation is specific to unbound workqueues.
++	 * Specifically we only return the first available CPU for a given
++	 * node instead of cycling through individual CPUs within the node.
++	 *
++	 * If this is used with a per-cpu workqueue then the logic in
++	 * workqueue_select_cpu_near would need to be updated to allow for
++	 * some round robin type logic.
++	 */
++	WARN_ON_ONCE(!(wq->flags & WQ_UNBOUND));
++
++	local_irq_save(flags);
++
++	if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))) {
++		int cpu = workqueue_select_cpu_near(node);
++
++		__queue_work(cpu, wq, work);
++		ret = true;
 +	}
 +
- 	device_driver_attach(drv, dev);
- 
- 	return 0;
++	local_irq_restore(flags);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(queue_work_node);
++
+ void delayed_work_timer_fn(struct timer_list *t)
+ {
+ 	struct delayed_work *dwork = from_timer(dwork, t, timer);
 
