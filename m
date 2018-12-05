@@ -2,107 +2,112 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDA5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BEFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CBE206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGFI4GJh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CBE206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 37763206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:40:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37763206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeLEPkL (ORCPT
+        id S1728140AbeLEPju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:40:11 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41603 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbeLEPkI (ORCPT
+        Wed, 5 Dec 2018 10:39:50 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46378 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727475AbeLEPju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:40:08 -0500
-Received: by mail-ot1-f68.google.com with SMTP id u16so19010022otk.8;
-        Wed, 05 Dec 2018 07:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4LK8vKYxLML5UTUxdpvvd8+mGoJ+sEjvcv5rgExeQuQ=;
-        b=dGFI4GJhkKAByB2Z3q7uY35ErMUo0hQch5V3GVtXUcwTfFFaF748JcmHDWpcvMnGhv
-         NjBR09gxTL8kubfEOFa6Kaij/t+PJqFWE38/iICKeEQ0ZMj1xmoLdaJmQi2uHmkp6wgG
-         it104JLwinyz/pANUMwaLW9LwxvbJpyeUnWfc/69LwyhD53rSDx/QJg6f4cNzSroed8W
-         +KvTns4ptbdYph4ott1qrBDirAcjGdNW4q8R9pkdBkQ8v4sAtMiYOuj//PYTTs1nUjGv
-         nDqlcfcsjDOH6Y5Zw1V158wxaYgFuO2TZReC+84KkF6HIidkDcdjlnu3Zj/+fY6q0glC
-         /VLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4LK8vKYxLML5UTUxdpvvd8+mGoJ+sEjvcv5rgExeQuQ=;
-        b=GDo+Kk0Wc9jo+YsFRyXHfcAyP4i/Dt8q8WGjLs6F/cpZexWXUiMB1XSXQXo80t/afi
-         6stbt4Yi0t5yqzlDsEXOd6tKqwYw6BmWBmqrzmQBCA+sa89DR3BK8CGQYVLKzL4MrSgd
-         EDacRKVYTF2Xe6IdvcUK3JOWZjSzRMgQqW2mpksCGOnnjde5RbsTnuUtyPmvVbAmp4Bj
-         2cGqP39eXGu/P6YKbOaTDLWh8IqjVe0gvzg5Ao/yD6RV43tVaLs+hrRkY+Ht1G0g12Xt
-         ALBuPPMDw07+G6M9Ts17kcmBslt1dnw6OFHpwefpskrHmDNyBHubpLv7tBeRdruLZaQ8
-         vrMA==
-X-Gm-Message-State: AA+aEWYvAwYIkSFm1Oat9caVsyCyJevhxksOwED0quIiq3VmvhRDKVn3
-        tMCVshUAwaIX4wDUcBhPq82IvRHY9ibEGzd4h5g=
-X-Google-Smtp-Source: AFSGD/UZGCC8SRrn0FQqr6zkB2wFIi5KvQl3dbhM2EK9XSc4dLyty7f6sIMvniXuttzNyxAzg3bsfWIDYs7phACHptc=
-X-Received: by 2002:a9d:b8e:: with SMTP id 14mr14758930oth.279.1544024407901;
- Wed, 05 Dec 2018 07:40:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181204220224.27324-1-TheSven73@googlemail.com>
- <20181204220224.27324-2-TheSven73@googlemail.com> <20181205101659.GA27058@kroah.com>
-In-Reply-To: <20181205101659.GA27058@kroah.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Wed, 5 Dec 2018 10:39:56 -0500
-Message-ID: <CAGngYiXXrrqGxTt339EP53tschLgZ82eRGvGifHQw6pg=C88+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/6] fieldbus_dev: add Fieldbus Device subsystem.
-To:     gregkh@linuxfoundation.org
-Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        treding@nvidia.com, David Lechner <david@lechnology.com>,
-        noralf@tronnes.org, johan@kernel.org,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 10:39:50 -0500
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id 8Ffo1z00K3XaVaC01Ffott; Wed, 05 Dec 2018 16:39:49 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gUZHA-0001yW-7u; Wed, 05 Dec 2018 16:39:48 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gUZHA-0003ay-5y; Wed, 05 Dec 2018 16:39:48 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] soc: renesas: rcar-sysc: Merge PM Domain registration and linking
+Date:   Wed,  5 Dec 2018 16:39:44 +0100
+Message-Id: <20181205153945.13767-4-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
+References: <20181205153945.13767-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg, thanks for the feedback!
+Commit 977d5ba4507dfe5b ("soc: renesas: rcar-sysc: Make PM domain
+initialization more robust") split PM Domain registration and the
+linking of children to their parents, to accommodate PM Domain tables
+that list child domains before their parents.
 
-On Wed, Dec 5, 2018 at 5:17 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> And why is this a class and not just a "normal" device and bus?  Devices
-> live on busses, not generally as a class.  Can your devices live on
-> different types of busses (USB, PCI, etc.)?
+However, this failed to realize that parent power domains must be
+powered up before their children anyway, and that this thus must be
+reflected by the order in the PM Domain tables.
 
-This patchset can be a bit confusing, because it doesn't just add support for a
-single fieldbus device - it proposes a general fieldbus subsystem.
+Revert the split, as it did not help anyway.
 
-Fieldbus devices from different vendors can sit on the usb, i2c, pci, etc.
-buse, but they all register as a fieldbus device, via fieldbus_dev_register(),
-and show up as a fieldbus class member.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/soc/renesas/rcar-sysc.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-Userspace can then enumerate all fieldbus devices connected to the system by
-looking at the class. Without having to know which bus they happen to be
-connected to.
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 73fae6a9728df9ae..123e553510e826f5 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -381,9 +381,6 @@ static int __init rcar_sysc_pd_init(void)
+ 	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
+ 	iowrite32(syscier, base + SYSCIER);
+ 
+-	/*
+-	 * First, create all PM domains
+-	 */
+ 	for (i = 0; i < info->num_areas; i++) {
+ 		const struct rcar_sysc_area *area = &info->areas[i];
+ 		struct rcar_sysc_pd *pd;
+@@ -411,22 +408,17 @@ static int __init rcar_sysc_pd_init(void)
+ 			goto out_put;
+ 
+ 		domains->domains[area->isr_bit] = &pd->genpd;
+-	}
+ 
+-	/*
+-	 * Second, link all PM domains to their parents
+-	 */
+-	for (i = 0; i < info->num_areas; i++) {
+-		const struct rcar_sysc_area *area = &info->areas[i];
+-
+-		if (!area->name || area->parent < 0)
++		if (area->parent < 0)
+ 			continue;
+ 
+ 		error = pm_genpd_add_subdomain(domains->domains[area->parent],
+-					       domains->domains[area->isr_bit]);
+-		if (error)
++					       &pd->genpd);
++		if (error) {
+ 			pr_warn("Failed to add PM subdomain %s to parent %u\n",
+ 				area->name, area->parent);
++			goto out_put;
++		}
+ 	}
+ 
+ 	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
+-- 
+2.17.1
 
-If there is an abstraction in Linux that's a better fit, I'm very open to
-making changes.
-
-Sven
