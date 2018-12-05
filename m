@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DB3C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA41CC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02F682087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D4720989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPll4Mfw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F682087F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mh+KHq6B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D4720989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbeLEJon (ORCPT
+        id S1729260AbeLEJoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:44:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49338 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbeLEJoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:44:39 -0500
+        id S1729232AbeLEJol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:41 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BCD5208E7;
-        Wed,  5 Dec 2018 09:44:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F3BA2087F;
+        Wed,  5 Dec 2018 09:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003078;
-        bh=fhYSQKZHYJ+Sc56gxHARqWhH+DNtWwlKdVvga9+WY5M=;
+        s=default; t=1544003081;
+        bh=rh/cELFvY/7IGWHstc/y0KOkqyoyZKfE45/CASMJyH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WPll4MfwSgx/vneAnr95o+EElZH+Df79rV8C7W9m0rLAYPXm4sLv64+cyiOQoc52o
-         bFm33XUeVSF8QMW/LyIy0tsasougAlV5u+wB3tDUwJmTnJKazvIL9hSH5yhecjqli4
-         VSL4nx5Ui1EpvBABDXduYmcLoaRNRJkfmq4y/ZN0=
+        b=Mh+KHq6BcFoQaoFOU5953fO+ZLK8aw+D8drMOoQ3s+dzDzpSuRKzMjj2vaV03euNE
+         gpcGlJ4Qe0FfmCrKjst0GaFYBkKjDCqkDxaYrR70L/05i4e1NYW1SWUKt/ou8GUvAA
+         /z92oDAfnD99xu8vKGNjDLJn16+cavJmjsi9OPf4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Artem Savkov <asavkov@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 22/69] objtool: Fix segfault in .cold detection with -ffunction-sections
-Date:   Wed,  5 Dec 2018 04:42:00 -0500
-Message-Id: <20181205094247.6556-22-sashal@kernel.org>
+Cc:     Romain Izard <romain.izard.pro@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 23/69] ARM: dts: at91: sama5d2: use the divided clock for SMC
+Date:   Wed,  5 Dec 2018 04:42:01 -0500
+Message-Id: <20181205094247.6556-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -56,76 +53,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artem Savkov <asavkov@redhat.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-[ Upstream commit 22566c1603030f0a036ad564634b064ad1a55db2 ]
+[ Upstream commit 4ab7ca092c3c7ac8b16aa28eba723a8868f82f14 ]
 
-Because find_symbol_by_name() traverses the same lists as
-read_symbols(), changing sym->name in place without copying it affects
-the result of find_symbol_by_name().  In the case where a ".cold"
-function precedes its parent in sec->symbol_list, it can result in a
-function being considered a parent of itself. This leads to function
-length being set to 0 and other consequent side-effects including a
-segfault in add_switch_table().  The effects of this bug are only
-visible when building with -ffunction-sections in KCFLAGS.
+The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
+different clocks for the peripherals in the SoC. The Static Memory
+controller is connected to the divided master clock.
 
-Fix by copying the search string instead of modifying it in place.
+Unfortunately, the device tree does not correctly show this and uses the
+master clock directly. This clock is then used by the code for the NAND
+controller to calculate the timings for the controller, and we end up with
+slow NAND Flash access.
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Link: http://lkml.kernel.org/r/910abd6b5a4945130fd44f787c24e07b9e07c8da.1542736240.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fix the device tree, and the performance of Flash access is improved.
+
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/elf.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sama5d2.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 3616d626991e..dd4ed7c3c062 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -31,6 +31,8 @@
- #include "elf.h"
- #include "warn.h"
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index b1a26b42d190..a8e4b89097d9 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -308,7 +308,7 @@
+ 				  0x1 0x0 0x60000000 0x10000000
+ 				  0x2 0x0 0x70000000 0x10000000
+ 				  0x3 0x0 0x80000000 0x10000000>;
+-			clocks = <&mck>;
++			clocks = <&h32ck>;
+ 			status = "disabled";
  
-+#define MAX_NAME_LEN 128
-+
- struct section *find_section_by_name(struct elf *elf, const char *name)
- {
- 	struct section *sec;
-@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
- 	/* Create parent/child links for any cold subfunctions */
- 	list_for_each_entry(sec, &elf->sections, list) {
- 		list_for_each_entry(sym, &sec->symbol_list, list) {
-+			char pname[MAX_NAME_LEN + 1];
-+			size_t pnamelen;
- 			if (sym->type != STT_FUNC)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
-@@ -305,9 +309,16 @@ static int read_symbols(struct elf *elf)
- 			if (!coldstr)
- 				continue;
- 
--			coldstr[0] = '\0';
--			pfunc = find_symbol_by_name(elf, sym->name);
--			coldstr[0] = '.';
-+			pnamelen = coldstr - sym->name;
-+			if (pnamelen > MAX_NAME_LEN) {
-+				WARN("%s(): parent function name exceeds maximum length of %d characters",
-+				     sym->name, MAX_NAME_LEN);
-+				return -1;
-+			}
-+
-+			strncpy(pname, sym->name, pnamelen);
-+			pname[pnamelen] = '\0';
-+			pfunc = find_symbol_by_name(elf, pname);
- 
- 			if (!pfunc) {
- 				WARN("%s(): can't find parent function",
+ 			nand_controller: nand-controller {
 -- 
 2.17.1
 
