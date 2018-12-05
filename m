@@ -2,71 +2,63 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594BCC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A880C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBDA20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBDA20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 3449120850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3449120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bakke.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbeLETKX (ORCPT
+        id S1728151AbeLETN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:10:23 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:35036 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727436AbeLETKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:10:23 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUcYn-0001BO-Jp; Wed, 05 Dec 2018 12:10:14 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
- <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
- <20181205180756.GI3536@redhat.com>
- <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
- <20181205183314.GJ3536@redhat.com>
- <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
- <20181205185550.GK3536@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
-Date:   Wed, 5 Dec 2018 12:10:10 -0700
+        Wed, 5 Dec 2018 14:13:59 -0500
+Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:40210 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727606AbeLETN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:13:58 -0500
+X-Greylist: delayed 529 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 14:13:57 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 3FB6A18020DB3;
+        Wed,  5 Dec 2018 19:05:09 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 26B75182CF66B;
+        Wed,  5 Dec 2018 19:05:08 +0000 (UTC)
+X-Session-Marker: 6461674062616B6B652E636F6D
+X-HE-Tag: coil62_663d10cb1d15b
+X-Filterd-Recvd-Size: 3591
+Received: from [192.168.6.106] (219.92-221-209.customer.lyse.net [92.221.209.219])
+        (Authenticated sender: dag@bakke.com)
+        by omf15.hostedemail.com (Postfix) with ESMTPA;
+        Wed,  5 Dec 2018 19:05:01 +0000 (UTC)
+Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-bluetooth@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kay Sievers <kay.sievers@vrfy.org>,
+        =?UTF-8?Q?Zbigniew_J=c4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
+ <20181204204117.14964-1-ville.syrjala@linux.intel.com>
+ <20181205070621.GE16346@kroah.com> <20181205154032.GT9144@intel.com>
+From:   Dag B <dag@bakke.com>
+Message-ID: <c2f9f862-0bf1-be6b-ad9f-8c375d4b8ff0@bakke.com>
+Date:   Wed, 5 Dec 2018 20:09:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181205185550.GK3536@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+In-Reply-To: <20181205154032.GT9144@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -74,43 +66,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018-12-05 11:55 a.m., Jerome Glisse wrote:
-> So now once next type of device shows up with the exact same thing
-> let say FPGA, we have to create a new subsystem for them too. Also
-> this make the userspace life much much harder. Now userspace must
-> go parse PCIE, subsystem1, subsystem2, subsystemN, NUMA, ... and
-> merge all that different information together and rebuild the
-> representation i am putting forward in this patchset in userspace.
+On 05.12.2018 16:40, Ville Syrjälä wrote:
+> On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
+>> On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
+>>> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+>>>
+>>> Since commit 1455cf8dbfd0 ("driver core: emit uevents when
+>>> device is bound to a driver") the kernel started emitting
+>>> "bind" and "unbind" uevents which confuse the hid2hci
+>>> udev rules.
+>>>
+>>> The symptoms on an affected machine (Dell E5400 in my case)
+>>> include bluetooth devices not appearing and udev hogging
+>>> the cpu as it's busy processing a constant stream of these
+>>> "bind"+"unbind" uevents.
+>> What is causing a "stream" of bind and unbind events?  This only happens
+>> when a device is attached to a driver or removed from a driver, which is
+>> caused by something else happening.
+> Not sure if it's just due to this thing causing devices to
+> appear/disappear during bind/unbind events or what.
+>
+>> This should not be a normal
+>> occurance, unless something odd is happening to your hardware?
+> It's not specific to my hardware. Lot's of people are affected.
+> See eg.
+> https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
+>
+> Acutally looking through that bug it seems someone else noticed
+> hid2hci failing lot in the logs. So maybe it's just that we already
+> switched the mode during "add", and then we try to redo the same
+> thing during "bind" which fails, and that then causes and unbind?
+> Dunno, udev is beyond me.
+>
+>
+There is another bluetooth scenario where a cpu core peaks at 100%.
+This is when a bluetooth keyboard goes out to lunch/suspends/disappears.
+No idea if this is related to the original issue, asking forgiveness if 
+it is not.
+I have found it challenging to attract any attention to the problem, 
+despite it not being an entirely new or uncommon occurence.
 
-Yes. But seeing such FPGA links aren't common yet and there isn't really
-much in terms of common FPGA infrastructure in the kernel (which are
-hard seeing the hardware is infinitely customization) you can let the
-people developing FPGA code worry about it and come up with their own
-solution. Buses between FPGAs may end up never being common enough for
-people to care, or they may end up being so weird that they need their
-own description independent of GPUS, or maybe when they become common
-they find a way to use the GPU link subsystem -- who knows. Don't try to
-design for use cases that don't exist yet.
+Google the following terms: bluetooth keyboard bluetoothd linux 100% cpu
 
-Yes, userspace will have to know about all the buses it cares to find
-links over. Sounds like a perfect thing for libhms to do.
 
-> There is no telling that kernel won't be able to provide quirk and
-> workaround because some merging is actually illegal on a given
-> platform (like some link from a subsystem is not accessible through
-> the PCI connection of one of the device connected to that link).
 
-These are all just different individual problems which need different
-solutions not grand new design concepts.
+By chance, I discovered a supposed fix for this on github today. I have 
+not had the chance to test it (or if it even applies) yet:
 
-> So it means userspace will have to grow its own database or work-
-> around and quirk and i am back in the situation i am in today.
+https://github.com/peak3d/bluez/commit/9cc3c1afd793e40b1a0cdc4a13e08b5e2575759e
 
-No, as I've said, quirks are firmly the responsibility of kernels.
-Userspace will need to know how to work with the different buses and
-CPU/node information but there really isn't that many of these to deal
-with and this is a much easier approach than trying to come up with a
-new API that can wrap the nuances of all existing and potential future
-bus types we may have to deal with.
+Could someone please shine a light on the sanity of this patch?
 
-Logan
+
+
+Dag B
