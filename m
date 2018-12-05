@@ -2,149 +2,118 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40842C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 04:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4352FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 04:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD9822084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 04:36:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9822084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F0B572084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 04:38:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXjYdT2F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B572084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbeLEEg3 (ORCPT
+        id S1726893AbeLEEiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 23:36:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38560 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725909AbeLEEg3 (ORCPT
+        Tue, 4 Dec 2018 23:38:04 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44322 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbeLEEiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 23:36:29 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB54Z3rj141667
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Dec 2018 23:36:28 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p63surde7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:36:28 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 5 Dec 2018 04:36:27 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Dec 2018 04:36:21 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB54aKUm22020198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 04:36:20 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 124BD6E056;
-        Wed,  5 Dec 2018 04:36:20 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 911376E04C;
-        Wed,  5 Dec 2018 04:36:04 +0000 (GMT)
-Received: from [9.85.73.253] (unknown [9.85.73.253])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Dec 2018 04:36:04 +0000 (GMT)
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-To:     Jerome Glisse <jglisse@redhat.com>, Andi Kleen <ak@linux.intel.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <balbirs@au1.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <20181203233509.20671-3-jglisse@redhat.com> <875zw98bm4.fsf@linux.intel.com>
- <20181204182421.GC2937@redhat.com>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Wed, 5 Dec 2018 10:06:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 4 Dec 2018 23:38:04 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so8394539pgr.11;
+        Tue, 04 Dec 2018 20:38:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=le6ae74zufL4m2Y6XwHzvjNGgrkfyQ/r81b+srxBU+Y=;
+        b=lXjYdT2F+sIHuaKTsH61XxcVPU55Z4AcqqoeBhdrrwVxD1MzHgA8CKCrcLXFOO4i9v
+         SwX7Ai1L8hT7rZocqog798MtAa/kqZoqyZMXrgxKrYVNcjDRjqw9VMmqH7LhkedypekA
+         6/PcwLa32ENucRDzL40zTGW+NS9t0tqOhl9xd4DiAmESj9BNbsnlTCIAPFnRV+G9rRUH
+         diKuDh1UTt05tctaoQNwv7vyKgQm/fJ1C675600Z+O3aLTKepCRg0ckSZXllCBZJO4DT
+         yHlPU/JmJxNUqxlNgI4DLtyEGBiFDWWEbRiARZJTjI4LCDHG2jBqOxhr9MDqZXNnDpoS
+         x4wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=le6ae74zufL4m2Y6XwHzvjNGgrkfyQ/r81b+srxBU+Y=;
+        b=ZL7uHBBT4Pabnak9y79Iu8F+4/yXV6HRSQr63tJQpE3SqnGAGow3i+IKbFmvhGBodF
+         /pJR0QZafZGGSZbR2wk9d+oU154SM17FEuZsVEb/D3BXi05gXURdufDAYvZtJhSjN0Ei
+         rZH2F4pEbC2oOqDRf9c3/Mgt42l1tDmaMaX2AllLt3z0Ism3PuJc22/TPcqhruvmUb2K
+         qyj2mhOZGSNL0qoTmUkTf51Su1V6dyDpMgtaz0Ef00AAoHobgEYor5c2Kqg5l1L1z1oC
+         qYmMwU7X0WHv62K09IScKOi7vmTj1A22rYqYru3c/8A9xRzDXM++jdBy8nm+lxPkOLAe
+         sftA==
+X-Gm-Message-State: AA+aEWY+GP9m3LrDbaYZAlsOYMFI2c4oa3oxQBoVTFZdr+ZhJqwIKCOT
+        RvrDVLBZdKLfwhJ8usQAbqAKCtCAsjbPiDSBv2w=
+X-Google-Smtp-Source: AFSGD/WuDIP+AyUFPnfgQVvexY5yaZZVC3sivr7bJu8/Qsljb4TOVGbJRzEbCeoVT6LnFDUGNhHEuH4rSwxci+a64eo=
+X-Received: by 2002:a63:7154:: with SMTP id b20mr19153212pgn.342.1543984683221;
+ Tue, 04 Dec 2018 20:38:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204182421.GC2937@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18120504-0012-0000-0000-000016E4A024
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010173; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127161; UDB=6.00585442; IPR=6.00907296;
- MB=3.00024452; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-05 04:36:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120504-0013-0000-0000-00005557B37A
-Message-Id: <72f1141b-ffb5-71cb-8404-b55510b30267@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-05_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812050041
+References: <5bec5342.1c69fb81.b02fa.ace9@mx.google.com> <CAJr6mf1d=tviauDfd4Hq_750mGiypheUxHhQEv_tsdR_TrTkNA@mail.gmail.com>
+In-Reply-To: <CAJr6mf1d=tviauDfd4Hq_750mGiypheUxHhQEv_tsdR_TrTkNA@mail.gmail.com>
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Date:   Wed, 5 Dec 2018 10:07:51 +0530
+Message-ID: <CAJr6mf1wqNq02e89U85u=h1Ge0MSzAOk+wQc9q_gWurEZzWZUw@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+To:     satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 11:54 PM, Jerome Glisse wrote:
-> On Tue, Dec 04, 2018 at 09:06:59AM -0800, Andi Kleen wrote:
->> jglisse@redhat.com writes:
->>
->>> +
->>> +To help with forward compatibility each object as a version value and
->>> +it is mandatory for user space to only use target or initiator with
->>> +version supported by the user space. For instance if user space only
->>> +knows about what version 1 means and sees a target with version 2 then
->>> +the user space must ignore that target as if it does not exist.
->>
->> So once v2 is introduced all applications that only support v1 break.
->>
->> That seems very un-Linux and will break Linus' "do not break existing
->> applications" rule.
->>
->> The standard approach that if you add something incompatible is to
->> add new field, but keep the old ones.
-> 
-> No that's not how it is suppose to work. So let says it is 2018 and you
-> have v1 memory (like your regular main DDR memory for instance) then it
-> will always be expose a v1 memory.
-> 
-> Fast forward 2020 and you have this new type of memory that is not cache
-> coherent and you want to expose this to userspace through HMS. What you
-> do is a kernel patch that introduce the v2 type for target and define a
-> set of new sysfs file to describe what v2 is. On this new computer you
-> report your usual main memory as v1 and your new memory as v2.
-> 
-> So the application that only knew about v1 will keep using any v1 memory
-> on your new platform but it will not use any of the new memory v2 which
-> is what you want to happen. You do not have to break existing application
-> while allowing to add new type of memory.
-> 
+On Fri, Nov 23, 2018 at 8:13 PM Sabyasachi Gupta
+<sabyasachi.linux@gmail.com> wrote:
+>
+> On Wed, Nov 14, 2018 at 10:24 PM Sabyasachi Gupta
+> <sabyasachi.linux@gmail.com> wrote:
+> >
+> > Replaced vmalloc + memset with vzalloc
+> >
+> > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+>
+> Any comment on this patch?
 
-So the knowledge that v1 is coherent and v2 is non-coherent is within 
-the application? That seems really complicated from application point of 
-view. Rill that v1 and v2 definition be arch and system dependent?
+Any comment on this patch?
 
-if we want to encode properties of a target and initiator we should do 
-that as files within these directory. Something like 'is_cache_coherent'
-in the target director can be used to identify whether the target is 
-cache coherent or not?
-
--aneesh
-
+>
+> > ---
+> > v2: Removed additional braces
+> >
+> >  drivers/scsi/fnic/fnic_trace.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+> > index 8271785..bf0fd2a 100644
+> > --- a/drivers/scsi/fnic/fnic_trace.c
+> > +++ b/drivers/scsi/fnic/fnic_trace.c
+> > @@ -468,14 +468,13 @@ int fnic_trace_buf_init(void)
+> >         fnic_max_trace_entries = (trace_max_pages * PAGE_SIZE)/
+> >                                           FNIC_ENTRY_SIZE_BYTES;
+> >
+> > -       fnic_trace_buf_p = (unsigned long)vmalloc((trace_max_pages * PAGE_SIZE));
+> > +       fnic_trace_buf_p = (unsigned long)vzalloc(trace_max_pages * PAGE_SIZE);
+> >         if (!fnic_trace_buf_p) {
+> >                 printk(KERN_ERR PFX "Failed to allocate memory "
+> >                                   "for fnic_trace_buf_p\n");
+> >                 err = -ENOMEM;
+> >                 goto err_fnic_trace_buf_init;
+> >         }
+> > -       memset((void *)fnic_trace_buf_p, 0, (trace_max_pages * PAGE_SIZE));
+> >
+> >         fnic_trace_entries.page_offset =
+> >                 vmalloc(array_size(fnic_max_trace_entries,
+> > --
+> > 2.7.4
+> >
