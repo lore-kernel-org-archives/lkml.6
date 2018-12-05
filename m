@@ -2,134 +2,104 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18732C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC097C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA1FD20892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1FD20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B01820989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:57:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="G12lQFwY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B01820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbeLESz4 (ORCPT
+        id S1728190AbeLES5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:55:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbeLESz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:55:56 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5967D30917AF;
-        Wed,  5 Dec 2018 18:55:55 +0000 (UTC)
-Received: from redhat.com (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A0FD648A6;
-        Wed,  5 Dec 2018 18:55:52 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 13:55:51 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-Message-ID: <20181205185550.GK3536@redhat.com>
-References: <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
- <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
- <20181205180756.GI3536@redhat.com>
- <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
- <20181205183314.GJ3536@redhat.com>
- <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
+        Wed, 5 Dec 2018 13:57:02 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32798 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLES5B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 13:57:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v1-v6so19369215ljd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:57:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wZOr/mhE9Kfb0RBNcY+siwCL0pWWKCAToqOSDZBCDVw=;
+        b=G12lQFwYUeVZSReZv3g4IQo+Hb3NL1xCyF+/qh+W/gC4Vc8Jn99luIlMWg/NLFKqzq
+         sU2uuTaZApMHjvD0jF1UeOAVDUCabQwG+pESMGVSZ3Umd+1CKSHDXItbVklrS7NUs74l
+         wb8gMxV240IJ2+57+7uCNYCNzxtjfcdd4kKCcadjFyjL8FwZJQXaZ22fpxLztc3TMpmS
+         /FdXb2sE0UyEUG4P2D0gcF9YIzCjgxnxeJAMp8u/aF69kx503g5dXeoJ0ZAx3BdYbII9
+         g9M3fPhMahQ4io8zgORHDhUTw5fPOLIP/27xDf50ZJeV3BwcQ/2dfBpf7koSEd/XDMdA
+         wcZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=wZOr/mhE9Kfb0RBNcY+siwCL0pWWKCAToqOSDZBCDVw=;
+        b=Zr4O/I+tOIHNTNEpDNL8Py7aYKmc+OjXD1y9aXB2IdofAnnR5bleLlF0vaGbghrGbH
+         d6/t0VMbOQ7EKmEa5gr29wR6MJT6YY4vmJmUvMZXKhWfnjdw3ejQgGacg1LcX6IQJXrl
+         wdjrehGG1XiS/0Hzc02cLaSjcosJ0L+9Iu5uXYaj4njyoIMsVQ8xACd2HyiZsmZKqAf9
+         ioa4ZT+YtmbbnIOqAIwsVj6iT9A/OSiY7x6ztF/y5CwZo7QP7sFdh5x2rypJDMnWrBsZ
+         yyK3UIF+Z4ZZIoicBedHm1ikjJk9/5g30UxR6KY/ihtxjQTwWw1H/dmj3qX8ffbV+Gyc
+         QMow==
+X-Gm-Message-State: AA+aEWYNiG0g3SoWl0FFUq87Spp6OMX6yFcfg6CQuhyGnvcASFiODwrc
+        RNgqa4wOumsJpko9moTphij1Yw==
+X-Google-Smtp-Source: AFSGD/X58N7NxjS1I4tzou6u8avIQLvMEq5yufz1ex+ZtsfJ7AL0aEhjibP4Rm59AydnuavfNJRccw==
+X-Received: by 2002:a2e:9694:: with SMTP id q20-v6mr16375808lji.173.1544036219535;
+        Wed, 05 Dec 2018 10:56:59 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.81.157])
+        by smtp.gmail.com with ESMTPSA id z15-v6sm4345080ljb.9.2018.12.05.10.56.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 10:56:58 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
+ <1543828720-18345-3-git-send-email-masonccyang@mxic.com.tw>
+ <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <8de55806-ee08-69c6-df1b-45b1eba607a6@cogentembedded.com>
+Date:   Wed, 5 Dec 2018 21:56:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 05 Dec 2018 18:55:55 +0000 (UTC)
+In-Reply-To: <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 11:48:37AM -0700, Logan Gunthorpe wrote:
-> 
-> 
-> On 2018-12-05 11:33 a.m., Jerome Glisse wrote:
-> > If i add a a fake driver for those what would i do ? under which
-> > sub-system i register them ? How i express the fact that they
-> > connect device X,Y and Z with some properties ?
-> 
-> Yes this is exactly what I'm suggesting. I wouldn't call it a fake
-> driver, but a new struct device describing an actual device in the
-> system. It would be a feature of the GPU subsystem seeing this is a
-> feature of GPUs. Expressing that the new devices connect to a specific
-> set of GPUs is not a hard problem to solve.
-> 
-> > This is not PCIE ... you can not discover bridges and child, it
-> > not a tree like structure, it is a random graph (which depends
-> > on how the OEM wire port on the chips).
-> 
-> You must be able to discover that these links exist and register a
-> device with the system. Where else do you get the information currently?
-> The suggestion doesn't change anything to do with how you interact with
-> hardware, only how you describe the information within the kernel.
-> 
-> > So i have not pre-existing driver, they are not in sysfs today and
-> > they do not need a driver. Hence why i proposed what i proposed
-> > a sysfs hierarchy where i can add those "virtual" object and shows
-> > how they connect existing device for which we have a sysfs directory
-> > to symlink.
-> 
-> So add a new driver -- that's what I've been suggesting all along.
-> Having a driver not exist is no reason to not create one. I'd suggest
-> that if you want them to show up in the sysfs hierarchy then you do need
-> some kind of driver code to create a struct device. Just because the
-> kernel doesn't have to interact with them is no reason not to create a
-> struct device. It's *much* easier to create a new driver subsystem than
-> a whole new userspace API.
+On 12/04/2018 09:19 PM, Marek Vasut wrote:
 
-So now once next type of device shows up with the exact same thing
-let say FPGA, we have to create a new subsystem for them too. Also
-this make the userspace life much much harder. Now userspace must
-go parse PCIE, subsystem1, subsystem2, subsystemN, NUMA, ... and
-merge all that different information together and rebuild the
-representation i am putting forward in this patchset in userspace.
+>> Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
+> 
+> RPC is SPI and HF controller, it is not a pure SPI controller.
+> 
+> How does this deal with the HF part ? Keep in mind the bindings are ABI
+> and it will be difficult to redo them later.
 
-There is no telling that kernel won't be able to provide quirk and
-workaround because some merging is actually illegal on a given
-platform (like some link from a subsystem is not accessible through
-the PCI connection of one of the device connected to that link).
+   Perhaps we need a "mode" prop, maybe w/vendor prefix? 
 
-So it means userspace will have to grow its own database or work-
-around and quirk and i am back in the situation i am in today.
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+[...]
 
-Not very convincing to me. What i am proposing here is a new common
-description provided by the kernel where we can reconciliate weird
-interaction.
-
-But i doubt i can convince you i will make progress on what i need
-today and keep working on sysfs.
-
-Cheers,
-Jérôme
+MBR, Sergei
