@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F264C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F566C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76112084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367E820878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:39:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIKh9zVo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76112084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QULMlWas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367E820878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbeLEJjq (ORCPT
+        id S1728539AbeLEJju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43912 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:39:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbeLEJjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:39:44 -0500
+        id S1727616AbeLEJjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:39:49 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A83922084C;
-        Wed,  5 Dec 2018 09:39:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1933D20851;
+        Wed,  5 Dec 2018 09:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002783;
-        bh=kYbBHPNA0BJ95HPT27pKF4De/+rzbTVWgzIp29GsCKk=;
+        s=default; t=1544002788;
+        bh=/n7UNaky7BxLd26DHMk6CiDStwxZAIYF7bRuZ4o+k98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GIKh9zVoL/ACNklOeXpPRB6i+knnO8PEM/r78klh6tfFZnJlYpRxb92zfYrF66Qcj
-         TZPbSdRow1JXLUrL/eIfUIgqa7j94TzRAMTJwjNWOCuMOshYi6F7nYwQqHBxWpbs0T
-         fZD4Nts/eqHef/dpXX6aGohRPxP+V2wnL0Ii1ghU=
+        b=QULMlWasAaTSnANtVPnj3+ja20qbojc5brOv2VN09ujv72lgryh0q1qPs7TqjsvRJ
+         ySuf+9l4497gTl05XlgW/p2ANsdqlkWNKZBTp0xFsj2cJQbPTbkjMlPh5k8qOx/t0R
+         IzPM+rgxTvj0dQQe9YdGIGeRGmMZjizoQQvbEGsw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xin Long <lucien.xin@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.19 067/123] ipvs: call ip_vs_dst_notifier earlier than ipv6_dev_notf
-Date:   Wed,  5 Dec 2018 04:34:59 -0500
-Message-Id: <20181205093555.5386-67-sashal@kernel.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 068/123] USB: omap_udc: use devm_request_irq()
+Date:   Wed,  5 Dec 2018 04:35:00 -0500
+Message-Id: <20181205093555.5386-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -55,57 +53,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit 2a31e4bd9ad255ee40809b5c798c4b1c2b09703b ]
+[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
 
-ip_vs_dst_event is supposed to clean up all dst used in ipvs'
-destinations when a net dev is going down. But it works only
-when the dst's dev is the same as the dev from the event.
+The current code fails to release the third irq on the error path
+(observed by reading the code), and we get also multiple WARNs with
+failing gadget drivers due to duplicate IRQ releases. Fix by using
+devm_request_irq().
 
-Now with the same priority but late registration,
-ip_vs_dst_notifier is always called later than ipv6_dev_notf
-where the dst's dev is set to lo for NETDEV_DOWN event.
-
-As the dst's dev lo is not the same as the dev from the event
-in ip_vs_dst_event, ip_vs_dst_notifier doesn't actually work.
-Also as these dst have to wait for dest_trash_timer to clean
-them up. It would cause some non-permanent kernel warnings:
-
-  unregister_netdevice: waiting for br0 to become free. Usage count = 3
-
-To fix it, call ip_vs_dst_notifier earlier than ipv6_dev_notf
-by increasing its priority to ADDRCONF_NOTIFY_PRIORITY + 5.
-
-Note that for ipv4 route fib_netdev_notifier doesn't set dst's
-dev to lo in NETDEV_DOWN event, so this fix is only needed when
-IP_VS_IPV6 is defined.
-
-Fixes: 7a4f0761fce3 ("IPVS: init and cleanup restructuring")
-Reported-by: Li Shuang <shuali@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 62eefea48973..518364f4abcc 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -3980,6 +3980,9 @@ static void __net_exit ip_vs_control_net_cleanup_sysctl(struct netns_ipvs *ipvs)
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index 3a16431da321..1c77218c82af 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2867,8 +2867,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 		udc->clr_halt = UDC_RESET_EP;
  
- static struct notifier_block ip_vs_dst_notifier = {
- 	.notifier_call = ip_vs_dst_event,
-+#ifdef CONFIG_IP_VS_IPV6
-+	.priority = ADDRCONF_NOTIFY_PRIORITY + 5,
-+#endif
- };
+ 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
+-	status = request_irq(pdev->resource[1].start, omap_udc_irq,
+-			0, driver_name, udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
++				  omap_udc_irq, 0, driver_name, udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[1].start, status);
+@@ -2876,20 +2876,20 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	}
  
- int __net_init ip_vs_control_net_init(struct netns_ipvs *ipvs)
+ 	/* USB "non-iso" IRQ (PIO for all but ep0) */
+-	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
+-			0, "omap_udc pio", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
++				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[2].start, status);
+-		goto cleanup2;
++		goto cleanup1;
+ 	}
+ #ifdef	USE_ISO
+-	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
+-			0, "omap_udc iso", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
++				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[3].start, status);
+-		goto cleanup3;
++		goto cleanup1;
+ 	}
+ #endif
+ 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
+@@ -2902,22 +2902,11 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	create_proc_file();
+ 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+ 			omap_udc_release);
+-	if (status)
+-		goto cleanup4;
+-
+-	return 0;
++	if (!status)
++		return 0;
+ 
+-cleanup4:
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-cleanup3:
+-	free_irq(pdev->resource[2].start, udc);
+-#endif
+-
+-cleanup2:
+-	free_irq(pdev->resource[1].start, udc);
+-
+ cleanup1:
+ 	kfree(udc);
+ 	udc = NULL;
+@@ -2961,12 +2950,6 @@ static int omap_udc_remove(struct platform_device *pdev)
+ 
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-	free_irq(pdev->resource[3].start, udc);
+-#endif
+-	free_irq(pdev->resource[2].start, udc);
+-	free_irq(pdev->resource[1].start, udc);
+-
+ 	if (udc->dc_clk) {
+ 		if (udc->clk_requested)
+ 			omap_udc_enable_clock(0);
 -- 
 2.17.1
 
