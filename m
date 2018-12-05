@@ -2,100 +2,184 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E930C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6F5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5E6206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB4BC206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ9arSXj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5E6206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkoleT5F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4BC206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbeLEKKZ (ORCPT
+        id S1728466AbeLEKKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:10:25 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37615 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727547AbeLEKKW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:10:22 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so17782959lja.4;
-        Wed, 05 Dec 2018 02:10:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r62MrpJX66i93GmARzE9Kvl65GC2p5x52kpOSU8Me8E=;
-        b=dJ9arSXjGr31stBDtxr9oNF4WWeD3E+ky7Rym6BMr4Z1X4qEwlU2U+Ddyva05Mj1EW
-         4xwhTsLbKCCcbA0TEjSCBIN0Hjin4yUP7mQHlvvEj5aDguuwx3FJAmW/78ykqPfdNlB1
-         MXG29x7iukiORuswDfmuKHSK7xaceGqAxVchfv5vhV3lbpyGt8Uev48tmwTc0rwCc3BJ
-         imhJ6SDubdFfSqaQTAcNUvsxs4y3O5NmZKmS/V+RmhD4RJzvL8lAVN42O9zVfuH0UcDE
-         YShDsID4VWX24ZN7xLLlRG8BuFjoMfYe6Dmo3r9g3knGim3XEtBAoATt/AVjy2QIvpAB
-         5RlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r62MrpJX66i93GmARzE9Kvl65GC2p5x52kpOSU8Me8E=;
-        b=ntZb26iwsAYhpTAKmehy2R4sf76UwSixMMEQmZwxt+Qr/6BkOTc1e5Ls7dxwZipgVt
-         Beivwe0LRcbF1o7lvWmSh/08Sun8Ny7WaGLD1ZHnxesfOEPJ2vA7Qt/luiW83ZUJ+8Qs
-         XCKBY2tXRc8GC0Y4C4WKE1zqlRh/I6hCW43ON9h0ZRldijkvZmvQ8jbKxiZuhsYvkJTZ
-         Cw8gIH4c+7ocLZ22+4DDIeQE8NVZsoOMfGOPRdKH//9KKglTnNWF/9K6D7wWuzg5z/xm
-         Skx0qYpG+y/IvE+b2sxPnvpjW5s3NsRgbJvwJFPCEPFBfsBUg735UuPInR+b6geHHMi8
-         D6kA==
-X-Gm-Message-State: AA+aEWah4My7rnCZqb1mxegBAbltIjhdOFGiDxjwRyHxeHj+nr3KJ0x/
-        ARFn3mN/F0wQN0yRptSigf8pVQip
-X-Google-Smtp-Source: AFSGD/Ugw5IViXzJzVbFj/9B2MQl9Zz7POQZyRFKTFlPRTkzsVzZzIeruiKh3CuTcYzwSpjGlpV6hA==
-X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr14933730ljb.126.1544004619291;
-        Wed, 05 Dec 2018 02:10:19 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id x11sm3847188lfd.81.2018.12.05.02.10.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 02:10:18 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUU8K-0004JQ-QR; Wed, 05 Dec 2018 11:10:20 +0100
-Date:   Wed, 5 Dec 2018 11:10:20 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-usb@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        Florian Zumbiehl <florz@florz.de>
-Subject: Re: [PATCH] USB: serial: console: fix reported terminal settings
-Message-ID: <20181205101020.GB15689@localhost>
-References: <20181204155904.GC18087@localhost>
- <20181204160036.24625-1-johan@kernel.org>
- <20181204161518.GA17941@kroah.com>
- <20181204163155.GD18087@localhost>
- <4e395eb4-739a-05df-e14d-e32f9cfefdd3@linux.intel.com>
- <20181205095049.GA15689@localhost>
- <20181205100545.GA23483@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205100545.GA23483@kroah.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Wed, 5 Dec 2018 05:10:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeLEJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:38:27 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAFEC2084C;
+        Wed,  5 Dec 2018 09:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002706;
+        bh=GqLQZJr8Xffhbfiua6elJmhjQ7rnVOBWoJTPXzG6pOw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GkoleT5FwFX8SttVKa7HELPJSHH5vTzx8NTilLrKeWBcFDe7AFiRNsG9ARxSqN9By
+         GqC420eDzJsPE+i9vq79f8zvSECrvnlozK2jEgdb62Q5Z0+Mmgz6X1Z5H5pu9/8HIt
+         uBG/vH5Jby1FgHiJEAqSqpLcbCfwa2eePRWvZk4Q=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 044/123] perf tools: Restore proper cwd on return from mnt namespace
+Date:   Wed,  5 Dec 2018 04:34:36 -0500
+Message-Id: <20181205093555.5386-44-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 11:05:45AM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Dec 05, 2018 at 10:50:49AM +0100, Johan Hovold wrote:
+From: Jiri Olsa <jolsa@kernel.org>
 
-> > Note that the changes to tty are trivial; I'm just renaming and
-> > exporting an existing helper.
-> 
-> Yeah, I have no objections to them.  We can take them in my usb tree.
+[ Upstream commit b01c1f69c8660eaeab7d365cd570103c5c073a02 ]
 
-Thanks. Can I add your ack to the patch as well?
+When reporting on 'record' server we try to retrieve/use the mnt
+namespace of the profiled tasks. We use following API with cookie to
+hold the return namespace, roughly:
 
-Johan
+  nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
+    setns(newns, 0);
+  ...
+  new ns related open..
+  ...
+  nsinfo__mountns_exit(struct nscookie *nc)
+    setns(nc->oldns)
+
+Once finished we setns to old namespace, which also sets the current
+working directory (cwd) to "/", trashing the cwd we had.
+
+This is mostly fine, because we use absolute paths almost everywhere,
+but it screws up 'perf diff':
+
+  # perf diff
+  failed to open perf.data: No such file or directory  (try 'perf record' first)
+  ...
+
+Adding the current working directory to be part of the cookie and
+restoring it in the nsinfo__mountns_exit call.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
+Link: http://lkml.kernel.org/r/20181101170001.30019-1-jolsa@kernel.org
+[ No need to check for NULL args for free(), use zfree() for struct members ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/namespaces.c | 17 +++++++++++++++--
+ tools/perf/util/namespaces.h |  1 +
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index cf8bd123cf73..aed170bd4384 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -18,6 +18,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <asm/bug.h>
+ 
+ struct namespaces *namespaces__new(struct namespaces_event *event)
+ {
+@@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	char curpath[PATH_MAX];
+ 	int oldns = -1;
+ 	int newns = -1;
++	char *oldcwd = NULL;
+ 
+ 	if (nc == NULL)
+ 		return;
+@@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
+ 		return;
+ 
++	oldcwd = get_current_dir_name();
++	if (!oldcwd)
++		return;
++
+ 	oldns = open(curpath, O_RDONLY);
+ 	if (oldns < 0)
+-		return;
++		goto errout;
+ 
+ 	newns = open(nsi->mntns_path, O_RDONLY);
+ 	if (newns < 0)
+@@ -210,11 +216,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (setns(newns, CLONE_NEWNS) < 0)
+ 		goto errout;
+ 
++	nc->oldcwd = oldcwd;
+ 	nc->oldns = oldns;
+ 	nc->newns = newns;
+ 	return;
+ 
+ errout:
++	free(oldcwd);
+ 	if (oldns > -1)
+ 		close(oldns);
+ 	if (newns > -1)
+@@ -223,11 +231,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 
+ void nsinfo__mountns_exit(struct nscookie *nc)
+ {
+-	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
++	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
+ 		return;
+ 
+ 	setns(nc->oldns, CLONE_NEWNS);
+ 
++	if (nc->oldcwd) {
++		WARN_ON_ONCE(chdir(nc->oldcwd));
++		zfree(&nc->oldcwd);
++	}
++
+ 	if (nc->oldns > -1) {
+ 		close(nc->oldns);
+ 		nc->oldns = -1;
+diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
+index cae1a9a39722..d5f46c09ea31 100644
+--- a/tools/perf/util/namespaces.h
++++ b/tools/perf/util/namespaces.h
+@@ -38,6 +38,7 @@ struct nsinfo {
+ struct nscookie {
+ 	int			oldns;
+ 	int			newns;
++	char			*oldcwd;
+ };
+ 
+ int nsinfo__init(struct nsinfo *nsi);
+-- 
+2.17.1
+
