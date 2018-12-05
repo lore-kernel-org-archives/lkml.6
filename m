@@ -2,120 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6699C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08817C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7023C206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7023C206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C490B20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:32:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SDVRmLJo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C490B20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbeLERa6 (ORCPT
+        id S1728183AbeLERcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:30:58 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:34016 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727429AbeLERa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:30:56 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUavY-00086E-Dt; Wed, 05 Dec 2018 10:25:37 -0700
-To:     Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Wed, 5 Dec 2018 12:32:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48150 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727475AbeLERcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:32:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RdrY3P1cNmaV9ItIQ4yjB9qAqpkVJ/dzzD9kY8jmt5c=; b=SDVRmLJotdymrXNnDKMsNc3TZ
+        aILEa+7Dn/LsKJz2L8u+TeGH3qaM9XHE85ijGedcmvmC4UvYmkNs+aGM91FbEpfWmVonSkLeWZxHD
+        5DhlHwsLLJ2FnzM/jbr/LIS/4uuxvrlKsWQaBf/sojsW9vphIyoCS/DUBuNIMDg1z0N0gZnp9fG/J
+        zcAR/q3jM+D3P6PzFTGgB6wNf6VgkFs1mhRKPbiCbytkMQSB0DoN85a2BPUUrbuVTc8pFtKPVFH72
+        +nQ409q6abyprryoQ4m8DqmcDS1WhrYIsQhGk10/0j/El7cHOKapqQvmJxu8eCNSx8vdJ1BPBrCS3
+        ybCbzuULw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUb1l-00088G-HT; Wed, 05 Dec 2018 17:32:01 +0000
+Date:   Wed, 5 Dec 2018 09:32:01 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-References: <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
- <20181204201347.GK2937@redhat.com>
- <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
- <20181204205902.GM2937@redhat.com>
- <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
- <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <CAPcyv4ihEesx1G1on6JA8qZ6RooOsgO2CL_=1gXVMXpMJW_N9w@mail.gmail.com>
- <20181205023724.GF3045@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2f53e0c0-a8af-b003-5bd7-a341431908df@deltatee.com>
-Date:   Wed, 5 Dec 2018 10:25:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        yi.z.zhang@linux.intel.com, Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH RFC 7/7] mm: better document PG_reserved
+Message-ID: <20181205173201.GA11646@bombadil.infradead.org>
+References: <20181205122851.5891-1-david@redhat.com>
+ <20181205122851.5891-8-david@redhat.com>
+ <20181205143510.GA17232@bombadil.infradead.org>
+ <46d0e90f-f0bb-815e-7a5b-4429de1c502a@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205023724.GF3045@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46d0e90f-f0bb-815e-7a5b-4429de1c502a@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-12-04 7:37 p.m., Jerome Glisse wrote:
->>
->> This came up before for apis even better defined than HMS as well as
->> more limited scope, i.e. experimental ABI availability only for -rc
->> kernels. Linus said this:
->>
->> "There are no loopholes. No "but it's been only one release". No, no,
->> no. The whole point is that users are supposed to be able to *trust*
->> the kernel. If we do something, we keep on doing it.
->>
->> And if it makes it harder to add new user-visible interfaces, then
->> that's a *good* thing." [1]
->>
->> The takeaway being don't land work-in-progress ABIs in the kernel.
->> Once an application depends on it, there are no more incompatible
->> changes possible regardless of the warnings, experimental notices, or
->> "staging" designation. DAX is experimental because there are cases
->> where it currently does not work with respect to another kernel
->> feature like xfs-reflink, RDMA. The plan is to fix those, not continue
->> to hide behind an experimental designation, and fix them in a way that
->> preserves the user visible behavior that has already been exposed,
->> i.e. no regressions.
->>
->> [1]: https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2017-August/004742.html
+On Wed, Dec 05, 2018 at 04:05:12PM +0100, David Hildenbrand wrote:
+> On 05.12.18 15:35, Matthew Wilcox wrote:
+> > On Wed, Dec 05, 2018 at 01:28:51PM +0100, David Hildenbrand wrote:
+> >> I don't see a reason why we have to document "Some of them might not even
+> >> exist". If there is a user, we should document it. E.g. for balloon
+> >> drivers we now use PG_offline to indicate that a page might currently
+> >> not be backed by memory in the hypervisor. And that is independent from
+> >> PG_reserved.
+> > 
+> > I think you're confused by the meaning of "some of them might not even
+> > exist".  What this means is that there might not be memory there; maybe
+> > writes to that memory will be discarded, or maybe they'll cause a machine
+> > check.  Maybe reads will return ~0, or 0, or cause a machine check.
+> > We just don't know what's there, and we shouldn't try touching the memory.
 > 
-> So i guess i am heading down the vXX road ... such is my life :)
+> If there are users, let's document it. And I need more details for that :)
+> 
+> 1. machine check: if there is a HW error, we set PG_hwpoison (except
+> ia64 MCA, see the list)
+> 
+> 2. Writes to that memory will be discarded
+> 
+> Who is the user of that? When will we have such pages right now?
+> 
+> 3. Reads will return ~0, / 0?
+> 
+> I think this is a special case of e.g. x86? But where do we have that,
+> are there any user?
 
-I recommend against it. I really haven't been convinced by any of your
-arguments for having a second topology tree. The existing topology tree
-in sysfs already better describes the links between hardware right now,
-except for the missing GPU links (and those should be addressable within
-the GPU community). Plus, maybe, some other enhancements to sockets/numa
-node descriptions if there's something missing there.
+When there are gaps in the physical memory.  As in, if you put that
+physical address on the bus (or in a packet), no device will respond
+to it.  Look:
 
-Then, 'hbind' is another issue but I suspect it would be better
-implemented as an ioctl on existing GPU interfaces. I certainly can't
-see any benefit in using it myself.
+00000000-00000fff : Reserved
+00001000-00057fff : System RAM
+00058000-00058fff : Reserved
+00059000-0009dfff : System RAM
+0009e000-000fffff : Reserved
 
-It's better to take an approach that would be less controversial with
-the community than to brow beat them with a patch set 20+ times until
-they take it.
-
-Logan
+Those examples I gave are examples of how various different architectures
+respond to "no device responded to this memory access".
 
