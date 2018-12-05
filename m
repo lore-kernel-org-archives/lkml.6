@@ -2,136 +2,95 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E06C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EACD9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E2020989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E2020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id B2855214DB
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:03:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyH5TdlM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2855214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeLEKCm (ORCPT
+        id S1729354AbeLEJpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:02:42 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40333 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbeLEJpe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:34 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d3so16431487edx.7;
-        Wed, 05 Dec 2018 01:45:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TV1XO0Uved8LFFNzA4LL71DcJa0tScM4mubEOFV4mR0=;
-        b=KroFkHR7ALGcBlw8163R8xnciUG6WPFtjqky3uiikrA/EN5XPUxRbdv2CyVViavt7w
-         5LJ1LKjSeyIV4qFU9M2A52wuF10Nsc99aB3c7A6DMFPjBj9dpS4N6hOgf9amOW7pMdJ8
-         ZURTVtI1mbzqvZRpaXY1EJpJhOIZFywh1ydbOOzu3FKZh++/T/Y5eLkH7zovA+PaYXLt
-         c3b1WqVkQQuJtAPcisg/XVELyhgxTrSjZcoVEfzIHnvN8KFRDKvUU+r3J+2g+zdyJODb
-         0pO4tDnM+zRSaUZ089c8QxsnIw+7oViODSXfnqmpkrlrB+LBN6BLOAPbwbaOPzT0h0iA
-         JEZw==
-X-Gm-Message-State: AA+aEWayT4w6+EolP/+xoZae2GJdrbnMaISYEjnXWMJUhKpoKQWsSn/D
-        xi6fgyPEtblxXTL0jw/okV4YGJpu73g=
-X-Google-Smtp-Source: AFSGD/Uv+7Q6Jef/bi4d+SascgkzjfEmLCGxmooTsf3roYegEsokS/4knjZwj50691todaY2EhcbAg==
-X-Received: by 2002:a50:b0e5:: with SMTP id j92mr19431224edd.188.1544003131995;
-        Wed, 05 Dec 2018 01:45:31 -0800 (PST)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
-        by smtp.gmail.com with ESMTPSA id e53sm5424517ede.90.2018.12.05.01.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 01:45:31 -0800 (PST)
-Received: by mail-wm1-f48.google.com with SMTP id m22so12185932wml.3;
-        Wed, 05 Dec 2018 01:45:30 -0800 (PST)
-X-Received: by 2002:a1c:c008:: with SMTP id q8mr13866947wmf.99.1544003130312;
- Wed, 05 Dec 2018 01:45:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com> <20181205092444.29497-8-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20181205092444.29497-8-paul.kocialkowski@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 5 Dec 2018 17:45:18 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
-Message-ID: <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/15] arm64: dts: allwinner: h5: Add system-control
- node with SRAM C1
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 04:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729331AbeLEJpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:07 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76BA62133F;
+        Wed,  5 Dec 2018 09:45:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544003107;
+        bh=/4F0mHo4Mfp5x9WyIclLAc0+i2VoR3YmjeFuRvg1RJ8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UyH5TdlM692+KpljvSv8XO9iEWvXOFPe8Hq8PAMJqs+w536XwCAxoTNQlvCZsGgBU
+         GTaO3BlHXh+QGSPvOog5KzyGrhPpNWWWce03WQH2PDRCoBwxsMxy8ITr4hYxGtCB4m
+         i9Mh4LH2+i49PCJ/O6l+tUTO6ctOlWNHT5s8eWBI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Martynas Pumputis <m@lambda.lt>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 32/69] bpf: fix check of allowed specifiers in bpf_trace_printk
+Date:   Wed,  5 Dec 2018 04:42:10 -0500
+Message-Id: <20181205094247.6556-32-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
+References: <20181205094247.6556-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 5:25 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Add the H5-specific system control node description to its device-tree
-> with support for the SRAM C1 section, that will be used by the video
-> codec node later on.
->
-> The CPU-side SRAM address was obtained empirically while the size was
-> taken from the documentation. They may not be entirely accurate.
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> index b41dc1aab67d..42bfb560b367 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> @@ -94,6 +94,28 @@
->         };
->
->         soc {
-> +               system-control@1c00000 {
-> +                       compatible = "allwinner,sun50i-h5-system-control";
-> +                       reg = <0x01c00000 0x1000>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges;
-> +
-> +                       sram_c1: sram@1d00000 {
-> +                               compatible = "mmio-sram";
-> +                               reg = <0x00018000 0x1c000>;
+From: Martynas Pumputis <m@lambda.lt>
 
-0x1d00000 or 0x18000?
+[ Upstream commit 1efb6ee3edea57f57f9fb05dba8dcb3f7333f61f ]
 
-> +                               #address-cells = <1>;
-> +                               #size-cells = <1>;
-> +                               ranges = <0 0x00018000 0x1c000>;
+A format string consisting of "%p" or "%s" followed by an invalid
+specifier (e.g. "%p%\n" or "%s%") could pass the check which
+would make format_decode (lib/vsprintf.c) to warn.
 
-Same here.
+Fixes: 9c959c863f82 ("tracing: Allow BPF programs to call bpf_trace_printk()")
+Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
+Signed-off-by: Martynas Pumputis <m@lambda.lt>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/trace/bpf_trace.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> +
-> +                               ve_sram: sram-section@0 {
-> +                                       compatible = "allwinner,sun50i-h5-sram-c1",
-> +                                                    "allwinner,sun4i-a10-sram-c1";
-> +                                       reg = <0x000000 0x1c000>;
-> +                               };
-> +                       };
-> +               };
-> +
->                 mali: gpu@1e80000 {
->                         compatible = "allwinner,sun50i-h5-mali", "arm,mali-450";
->                         reg = <0x01e80000 0x30000>;
-> --
-> 2.19.2
->
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 6350f64d5aa4..f9dd8fd055a6 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -161,11 +161,13 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
+ 			i++;
+ 		} else if (fmt[i] == 'p' || fmt[i] == 's') {
+ 			mod[fmt_cnt]++;
+-			i++;
+-			if (!isspace(fmt[i]) && !ispunct(fmt[i]) && fmt[i] != 0)
++			/* disallow any further format extensions */
++			if (fmt[i + 1] != 0 &&
++			    !isspace(fmt[i + 1]) &&
++			    !ispunct(fmt[i + 1]))
+ 				return -EINVAL;
+ 			fmt_cnt++;
+-			if (fmt[i - 1] == 's') {
++			if (fmt[i] == 's') {
+ 				if (str_seen)
+ 					/* allow only one '%s' per fmt string */
+ 					return -EINVAL;
+-- 
+2.17.1
+
