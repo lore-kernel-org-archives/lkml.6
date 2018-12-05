@@ -2,209 +2,93 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2768CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C63EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3CA206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12081206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:11:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Id+BhgQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3CA206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oupvfbcI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPAFGFX/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12081206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbeLEKLT (ORCPT
+        id S1728298AbeLEKLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:11:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbeLEJh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:57 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        Wed, 5 Dec 2018 05:11:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33068 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLEKLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:11:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EDD51612F3; Wed,  5 Dec 2018 10:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544004689;
+        bh=dh9ObBy7Oqfk20TVh1hAXsBltiW7p6iPVpmKKNSpEFo=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=oupvfbcItvt1QQpQDQLUF9P4yUG9tk/TaRsh1Gaum7cDfSMnEduB78NG52SLm+xY+
+         E2hoMggnOeZgEdFVZZR/Q18FUzB30ER8ouW4Nprgp7ZGkC6a7NO7S4ahCEo9oOqoB/
+         MrZQo3G5L6MUSFa1169Kf7sdhiFdiJ7D1KxMns2w=
+Received: from [10.79.128.218] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5466D20850;
-        Wed,  5 Dec 2018 09:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002676;
-        bh=Jt4w9/WL3BNnlvX1kWyVTI89wbX77IbIJ5zf9WB/cik=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Id+BhgQ/PD8CjkgR5tcC537S7Zqx3DVPRMhQL0GrYXl2ypPyVF2GX/aA5EWEEroG
-         3eUiiHKAdVyCsyVuLrzuCI1h3xWZ21Mtm+ihrXGphNNjndQMAmA7BaJkW7iRqqvOit
-         sHQ64cMVRu7fOf9EF9VZn8TT4mQDK76hIVogsUE0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 035/123] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
-Date:   Wed,  5 Dec 2018 04:34:27 -0500
-Message-Id: <20181205093555.5386-35-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
-References: <20181205093555.5386-1-sashal@kernel.org>
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 064B961343;
+        Wed,  5 Dec 2018 10:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544004688;
+        bh=dh9ObBy7Oqfk20TVh1hAXsBltiW7p6iPVpmKKNSpEFo=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=HPAFGFX/8YJqCpS4hp1T5QIe3sBT6suCnsx9rcDU9bYNDkL9BA0+K5hLBz5qRBWEs
+         HzYBlqAR82DGcu6kkTDlFhBeosLw1XLNWtaGIXKIF7XNVK4GhovBM34JtKHOC+VEI8
+         xXQBfUBqrcMh0/4rT7k3H9LEA5u4VJYlC9JW76Lk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 064B961343
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v5 4/8] soc: qcom: rpmpd: Add support for get/set
+ performance state
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
+        ulf.hansson@linaro.org, viresh.kumar@linaro.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181204052119.806-1-rnayak@codeaurora.org>
+ <20181204052119.806-5-rnayak@codeaurora.org>
+ <154396526967.88331.13652897075952274639@swboyd.mtv.corp.google.com>
+ <d9317471-fb81-482a-22c1-4a7b466a1df4@codeaurora.org>
+Message-ID: <c1676ab0-5981-52be-18f3-44ee266e195d@codeaurora.org>
+Date:   Wed, 5 Dec 2018 15:41:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+MIME-Version: 1.0
+In-Reply-To: <d9317471-fb81-482a-22c1-4a7b466a1df4@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
+On 12/5/2018 12:33 PM, Rajendra Nayak wrote:
+>>
+>>> +               return 0;
+>>> +       }
+>>> +
+>>> +       of_node_put(np);
+>>
+>> This same code exists twice. Perhaps a helper needs to exist for
+>> qcom_rpm_get_performance() to pull the number out of the DT.
+> 
+> Sure I can make both drivers use a common helper instead of duplicating it.
 
-The machine driver fails to probe in next-20181113 with:
-
-[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
-[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
-...
-[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
-[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
-[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
-[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
-
-Bisect pointed to a merge commit:
-first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
-
-and a diff between a working kernel does not reveal anything which would
-explain the change in behavior.
-
-Further investigation showed that on the second try of loading fails
-because the dai_link->platform is no longer NULL and it might be pointing
-to uninitialized memory.
-
-The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
-abe_twl6040 struct, which is dynamically allocated every time the driver
-probes.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
-
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index d5ae9eb8c756..fed45b41f9d3 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -36,6 +36,8 @@
- #include "../codecs/twl6040.h"
- 
- struct abe_twl6040 {
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link dai_links[2];
- 	int	jack_detection;	/* board can detect jack events */
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
-@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
- 				ARRAY_SIZE(dmic_audio_map));
- }
- 
--/* Digital audio interface glue - connects codec <--> CPU */
--static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
--	{
--		.name = "TWL6040",
--		.stream_name = "TWL6040",
--		.codec_dai_name = "twl6040-legacy",
--		.codec_name = "twl6040-codec",
--		.init = omap_abe_twl6040_init,
--		.ops = &omap_abe_ops,
--	},
--	{
--		.name = "DMIC",
--		.stream_name = "DMIC Capture",
--		.codec_dai_name = "dmic-hifi",
--		.codec_name = "dmic-codec",
--		.init = omap_abe_dmic_init,
--		.ops = &omap_abe_dmic_ops,
--	},
--};
--
--/* Audio machine driver */
--static struct snd_soc_card omap_abe_card = {
--	.owner = THIS_MODULE,
--
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
--};
--
- static int omap_abe_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	struct snd_soc_card *card = &omap_abe_card;
-+	struct snd_soc_card *card;
- 	struct device_node *dai_node;
- 	struct abe_twl6040 *priv;
- 	int num_links = 0;
-@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	card->dev = &pdev->dev;
--
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
- 	if (priv == NULL)
- 		return -ENOMEM;
- 
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = twl6040_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
-+	card->dapm_routes = audio_map;
-+	card->num_dapm_routes = ARRAY_SIZE(audio_map);
-+
- 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
- 		dev_err(&pdev->dev, "Card name is not provided\n");
- 		return -ENODEV;
-@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "McPDM node is not provided\n");
- 		return -EINVAL;
- 	}
--	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
--	abe_twl6040_dai_links[0].platform_of_node = dai_node;
-+
-+	priv->dai_links[0].name = "DMIC";
-+	priv->dai_links[0].stream_name = "TWL6040";
-+	priv->dai_links[0].cpu_of_node = dai_node;
-+	priv->dai_links[0].platform_of_node = dai_node;
-+	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
-+	priv->dai_links[0].codec_name = "twl6040-codec";
-+	priv->dai_links[0].init = omap_abe_twl6040_init;
-+	priv->dai_links[0].ops = &omap_abe_ops;
- 
- 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
- 	if (dai_node) {
- 		num_links = 2;
--		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
--		abe_twl6040_dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].name = "TWL6040";
-+		priv->dai_links[1].stream_name = "DMIC Capture";
-+		priv->dai_links[1].cpu_of_node = dai_node;
-+		priv->dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].codec_dai_name = "dmic-hifi";
-+		priv->dai_links[1].codec_name = "dmic-codec";
-+		priv->dai_links[1].init = omap_abe_dmic_init;
-+		priv->dai_links[1].ops = &omap_abe_dmic_ops;
- 	} else {
- 		num_links = 1;
- 	}
-@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	card->dai_link = abe_twl6040_dai_links;
-+	card->dai_link = priv->dai_links;
- 	card->num_links = num_links;
- 
- 	snd_soc_card_set_drvdata(card, priv);
--- 
-2.17.1
-
+which would mean I will need to create a new file just to define the
+common helper. Does that seem like an overkill?
