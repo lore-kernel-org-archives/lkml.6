@@ -2,113 +2,129 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D88C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC0FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01B732081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:22:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B732081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CFD02083F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQRmxA1p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFD02083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeLEOWA (ORCPT
+        id S1727708AbeLEOYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:22:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:24339 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEOWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:22:00 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C7B59653C4;
-        Wed,  5 Dec 2018 14:21:59 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-56.pek2.redhat.com [10.72.12.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 870C06014F;
-        Wed,  5 Dec 2018 14:21:49 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        x86@kernel.org, akpm@linux-foundation.org, bhe@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-References: <20181202030839.29945-1-lijiang@redhat.com>
- <20181202030839.29945-2-lijiang@redhat.com> <20181203150809.GA4794@zn.tnic>
- <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
- <20181205101653.GA6940@dhcp-128-65.nay.redhat.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <72c311b4-1946-0bcf-54d9-9fcd7f6e630c@redhat.com>
-Date:   Wed, 5 Dec 2018 22:21:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Dec 2018 09:24:11 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43679 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeLEOYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:24:11 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x1so12135697vsc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 06:24:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W9/iKsVpde2V2Et7J3sIMYUKDqYSqXKRQQWbaSLSum8=;
+        b=XQRmxA1pB20uL2/ElRKIEU9uQiKxLPf07Dprt11PDi8AgWCo74HfPmRVFNCBibgsDz
+         r4aL+QyG/9dC/itTox7LuRJc5YhSo2il3n9fOteJatEN3/uzv3FgTOqsi0N3WIBZQPf1
+         47+405KoYxiL1QfppcpXWTAu/PrOKL1hoqzNY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W9/iKsVpde2V2Et7J3sIMYUKDqYSqXKRQQWbaSLSum8=;
+        b=VHmQZ0a6abeW0pQqvmkPEQWwBbNexLxsk+F1WgUZwjqXnxY+NfKx7ayLcPY6Hx4/eS
+         dqJXttu4xREeA2kgVN5yfKQqju3zSaJkk2eU1RtNgqIHz/wNUXVN1kie8Z73SrB0uvS3
+         lvchKYWnIDrEWZJ1SqJfh9dEooEPt62SyacnEzC/itMfIYwp7GEQzHayq5JbdYKU+eym
+         QfNnB5NG9vqruH+aXxheBNp1oifxkj0bnWWhSTk9C46Hj999eN2K+R4H94/B7rCUxhK7
+         36LaHB6THX83EeWRq4QmZ+cSy9NPHBn6w6ppBNZYAl11PRa7IonoVYCwKkfAv9KzFkZm
+         tRvA==
+X-Gm-Message-State: AA+aEWZc4A6d+sjUu3x886+mMMseB3kFFMsO/Bl8kmy1+IIsxYPI/i0B
+        9kk/n0aQOPxqlc0lAOsTrUAhtFIVu8kncQ3XeqNczI0D
+X-Google-Smtp-Source: AFSGD/Wunv4Lo7JWEVD6KycDxYREJTH33HihWzvREVapUqZ5SJ14L4hsr5rmzU7LN7Y58vIoeKggi53ISu2HhwjfQcQ=
+X-Received: by 2002:a67:7685:: with SMTP id r127mr10762107vsc.35.1544019849310;
+ Wed, 05 Dec 2018 06:24:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181205101653.GA6940@dhcp-128-65.nay.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 05 Dec 2018 14:22:00 +0000 (UTC)
+References: <1541583041-17461-1-git-send-email-ludovic.Barre@st.com>
+ <1541583041-17461-2-git-send-email-ludovic.Barre@st.com> <CAPDyKFpLTEwrBagJrd98Zyrd_pwJa9Zkgsi+geZainQV+OgpOQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFpLTEwrBagJrd98Zyrd_pwJa9Zkgsi+geZainQV+OgpOQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 5 Dec 2018 15:23:33 +0100
+Message-ID: <CAPDyKFp06tiMVgKyKLLKKwGtDPkAKuGWo=NaS+j=3oWGq-UV_A@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] mmc: mmci: send stop command if sbc error issue
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年12月05日 18:16, Dave Young 写道:
->>>> +init_uts_ns
->>>> +===========
->>>> +This is the UTS namespace, which is used to isolate two specific elements
->>>> +of the system that relate to the uname system call. The UTS namespace is
->>>> +named after the data structure used to store information returned by the
->>>> +uname system call.
->>>
->>> Those non-obvious exports should also have a short explanation why
->>> they're part of VMCOREINFO.
->>>
->>>> +
->>>> +node_online_map
->>>> +===============
->>>> +It is a macro definition, actually it is an arrary node_states[N_ONLINE],
->>>> +and it represents the set of online node in a system, one bit position
->>>> +per node number.
->>>
->>> Ditto.
->>>
->>> So yeah, people can find out what those things are but I think it is
->>> more important to state here *why* they're part of VMCOREINFO and how
->>> they're used and why they're exported.
->>>
->>
->> This is a good question.
->>
->> For these two *why*, it should be easy to understand. Because user-space tools
->> need to know basic information, such as the symbol values, field offset, structure
->> size, etc. Otherwise, these tools won't know how to analyze the memory of the crash
->> kernel.
->>
->> For the second question 'how they are used', we can get the answer from user-space
->> tools, such as makedumpfile, crash tools. Therefore, it may not need to explain any
->> more in kernel document. On the other hand, if we must put these contents into kernel
->> document, i have to say, that would be a hard task.
-> 
-> It should be a good chance to learn how makedumpfile works :),  Maybe it is
-> hard to get *all* of them, but it would be good to dig and find the
-> thing you can find then explain it.  And leave those *unknown* part as
-> FIXME or TODO, people can add description later. 
-> 
+On Tue, 20 Nov 2018 at 10:42, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On 7 November 2018 at 10:30, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> > From: Ludovic Barre <ludovic.barre@st.com>
+> >
+> > Refer to "4.15 set block count command" of sd specification:
+> > Host needs to issue CMD12 if any error is detected in
+> > the CMD18 and CMD25 operations.
+> >
+> > In sbc case, the data->stop is fill by framework.
+> >
+> > Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> > ---
+> >  drivers/mmc/host/mmci.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> > index 82bab35..13fa640 100644
+> > --- a/drivers/mmc/host/mmci.c
+> > +++ b/drivers/mmc/host/mmci.c
+> > @@ -1190,11 +1190,10 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+> >                         /* The error clause is handled above, success! */
+> >                         data->bytes_xfered = data->blksz * data->blocks;
+> >
+> > -               if (!data->stop || host->mrq->sbc) {
+> > +               if (!data->stop || (host->mrq->sbc && !data->error))
+> >                         mmci_request_end(host, data->mrq);
+> > -               } else {
+> > +               else
+> >                         mmci_start_command(host, data->stop, 0);
+>
+> This looks correct to me!
+>
+> Although, just wanted to double check that you tested this for a case
+> where we have host->mrq->sbc set and got an error in data->error? I
+> guess it can be tricky, so I was thinking of manually trying to
+> instruct the code, to set an error in data->error, at some point to
+> trigger this code. That would at least give us some confidence that it
+> works as expected.
 
-Thank you, Dave.
+I did some manual tests to trigger the error path. As far as I can
+tell, it works as expected and I observes that the core is able to
+recover and re-send the request.
 
-It looks like a good idea.
+[...]
 
+So, I have added my tested-by tag and applied this for next. Thanks!
 
-Regards,
-Lianbo
+In regards to patch2/2 I am awaiting your update.
 
-> Added Kazu in cc as well..
-> > Thanks
-> Dave
-> 
+Kind regards
+Uffe
