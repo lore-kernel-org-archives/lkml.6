@@ -4,83 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33E9C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C70C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980422083F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1DA92064A
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:24:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f9x34NV+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980422083F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jsG7XPwT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DA92064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbeLEOYa (ORCPT
+        id S1727825AbeLEOYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:24:30 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:44329 "EHLO
+        Wed, 5 Dec 2018 09:24:39 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45061 "EHLO
         mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbeLEOY3 (ORCPT
+        with ESMTP id S1727606AbeLEOYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:24:29 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d19so7140642uaq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 06:24:28 -0800 (PST)
+        Wed, 5 Dec 2018 09:24:39 -0500
+Received: by mail-ua1-f68.google.com with SMTP id e16so7135019uam.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 06:24:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vU+1DymT0hEbhZE+aC5foMQklWH3FSZCCg/zl0KH5/o=;
-        b=f9x34NV+1XndHnc3GjC/kpOcNdD147sghGSZiyTkpxwClkvi9brq8hjb+HIQybVc51
-         cSBb3w+ooGhaCKYkqsCMXHJ4YD2QsSZyZGijksAht1Vyh518QA2p0YqJ2dkUSh4GlDth
-         tLCQKEADc2AlhXfjalidDimT1VP7q2IzwdXJw=
+        bh=2uCIeG7sBnASqCzvyLV/gHpV16Vx6IMI9GaXxGzmgSA=;
+        b=jsG7XPwTT8XlvZCzB7A8VlAQ7SuJ+ZRrkTt7Yo6MuKnK47w3eitewbr0FIYV2ldt8K
+         1QWiL5KeX0JMd6OXyQRslQwbwTGWWcE5UunbUyBQ566aZG1boB0yh+58nZX07eXBNu//
+         q+sRjkM54A8YBbmUajdj6NC2T0YbNY3obh1TU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vU+1DymT0hEbhZE+aC5foMQklWH3FSZCCg/zl0KH5/o=;
-        b=LQFFl2VFk4z8C0T4NhMwROarS+uzkfXp1/dDnLyQvjYxJLBau3EY59d4B/YazcTKBh
-         bwElmei5+Ml8wF8FfQuVs/XmrgOxK1w1p7owFOjOwDDwHPwLJQysEDW2mWobryhXIZMq
-         16a9RZ5wrJDc1E8AgQcJJpmanVnRQerL8hTjUIChY33PQub3XM3J5yNikbTmtnvIj0wB
-         UnxbpAT7dl/cwmDry2Mk3I7ZpH5ufu4xO9FguIekbegf1p02sK+p+V9Uafo9yYDQtgId
-         fLadtcKStX3Pc/GxnIfIMUZT5sUqKG6acjjTxq8labr5vkWzPoLEg+3eGaoFlMDcxFcI
-         1QHg==
-X-Gm-Message-State: AA+aEWbK3fjSh7e0HdjAZocS6f17znYyUsYnfnQTUqOeW43JG05jSA4r
-        ilYo8wSwjr+79t3BA0zDuHgm+PRl9LPi9YJnCQsLCYhB
-X-Google-Smtp-Source: AFSGD/UAcGwOxBo05xwx2+fT13TPm66Iy+FPvgInC1AkScYYfUq8QMqv/baih8Nvh+jjXKVBTnbvQOoYJ+rdYh+vkEk=
-X-Received: by 2002:ab0:526:: with SMTP id 35mr11276901uax.25.1544019867917;
- Wed, 05 Dec 2018 06:24:27 -0800 (PST)
+        bh=2uCIeG7sBnASqCzvyLV/gHpV16Vx6IMI9GaXxGzmgSA=;
+        b=gK71c3G1LivlfelOq57T7NuYj4RIh0gXP2FC1pu8HBamqJqzknAd12nSKLRYbDypwD
+         fUbkYlcSqZe/eYPWcSXZxWUWGcYoXbnyMwUXMxLGCv6DhqK3DO+Y+SwWqGK1i5hYUYQw
+         DEIXwr50HRdptMoq3bjB6phfeFzNSD3f7UA1WyAsT5P8uF8wh9XJICl4qp45Og4MaGmC
+         5HptAzouOpVtFSwOlP2pwCjP0Vm6Y4nyZ8l+ItYQK2N+uR21vXOaDc3FeLiMS6JZxiuz
+         AXrAO2IoxQlOEVp7UChkHB3PO4D3/lpPQelOruBtk9HJS827S471nO7a+EQl3309QnQ3
+         vYrg==
+X-Gm-Message-State: AA+aEWZbpbYh6LhuB+IAXPGskQ/ttbovVVITqm6m/04ifz3LL6t1ij+Z
+        LjfczZDpntXoJlPS6Z8lKBFvf+HPJbC8wIv7BY/SLw==
+X-Google-Smtp-Source: AFSGD/XWprS0KuzDishFKLZCQvZRWpVTF1U7TzhocEBZ9iRJm8Rzk3N2ruVLl4PJPn0yGB5Ik7w1iyWIfbfRjxKibvE=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr11454574uan.107.1544019878263;
+ Wed, 05 Dec 2018 06:24:38 -0800 (PST)
 MIME-Version: 1.0
-References: <1542879319-2196-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1542879319-2196-1-git-send-email-hofrat@osadl.org>
+References: <20181128223428.177313-1-evgreen@chromium.org> <20181128223428.177313-2-evgreen@chromium.org>
+In-Reply-To: <20181128223428.177313-2-evgreen@chromium.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 5 Dec 2018 15:23:52 +0100
-Message-ID: <CAPDyKFpWevQkGncmeJjnsusTBWOc6xecUGsP_8oUMeAwwF4D7Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: meson-mx-sdio: check devm_kasprintf for failure
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
+Date:   Wed, 5 Dec 2018 15:24:02 +0100
+Message-ID: <CAPDyKFp5Bsp4Mhkkj+tMOn22BhtaS+m_o2Aeo25iyGQJAgOPbw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: mmc: sdhci-msm: Clarify register requirements
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        DTML <devicetree@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 at 10:40, Nicholas Mc Guire <hofrat@osadl.org> wrote:
+On Wed, 28 Nov 2018 at 23:34, Evan Green <evgreen@chromium.org> wrote:
 >
-> devm_kasprintf() may return NULL on failure of internal allocation thus
-> the assignments to  init.name  are not safe if not checked. On error
-> meson_mx_mmc_register_clks() returns negative values so -ENOMEM in the
-> (unlikely) failure case of devm_kasprintf() should be fine here.
+> In sdhci-msm-v5 and beyond, the MCI registers are removed, so there is only
+> one register region required.
 >
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: ed80a13bb4c4 ("mmc: meson-mx-sdio: Add a driver for the Amlogic Meson8 and Meson8b SoCs")
+> Signed-off-by: Evan Green <evgreen@chromium.org>
 
 Applied for next, thanks!
 
@@ -89,40 +87,22 @@ Uffe
 
 > ---
 >
-> Problem located with an experimental coccinelle script
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Patch was compile tested with: multi_v7_defconfig (implies ARCH_MESON=y &
-> MMC_MESON_MX_SDIO=y)
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index b72871ac90cb2..da4edb146a983 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -25,7 +25,7 @@ Required properties:
 >
-> Patch is against 4.20-rc3 (localversion-next is next-20181122)
->
->  drivers/mmc/host/meson-mx-sdio.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/mmc/host/meson-mx-sdio.c b/drivers/mmc/host/meson-mx-sdio.c
-> index abe253c..ec980bd 100644
-> --- a/drivers/mmc/host/meson-mx-sdio.c
-> +++ b/drivers/mmc/host/meson-mx-sdio.c
-> @@ -596,6 +596,9 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
->         init.name = devm_kasprintf(host->controller_dev, GFP_KERNEL,
->                                    "%s#fixed_factor",
->                                    dev_name(host->controller_dev));
-> +       if (!init.name)
-> +               return -ENOMEM;
-> +
->         init.ops = &clk_fixed_factor_ops;
->         init.flags = 0;
->         init.parent_names = &clk_fixed_factor_parent;
-> @@ -612,6 +615,9 @@ static int meson_mx_mmc_register_clks(struct meson_mx_mmc_host *host)
->         clk_div_parent = __clk_get_name(host->fixed_factor_clk);
->         init.name = devm_kasprintf(host->controller_dev, GFP_KERNEL,
->                                    "%s#div", dev_name(host->controller_dev));
-> +       if (!init.name)
-> +               return -ENOMEM;
-> +
->         init.ops = &clk_divider_ops;
->         init.flags = CLK_SET_RATE_PARENT;
->         init.parent_names = &clk_div_parent;
+>  - reg: Base address and length of the register in the following order:
+>         - Host controller register map (required)
+> -       - SD Core register map (required)
+> +       - SD Core register map (required for msm-v4 and below)
+>  - interrupts: Should contain an interrupt-specifiers for the interrupts:
+>         - Host controller interrupt (required)
+>  - pinctrl-names: Should contain only one value - "default".
 > --
-> 2.1.4
+> 2.18.1
 >
