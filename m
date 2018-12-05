@@ -2,55 +2,57 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50043C04EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870FAC04EB9
 	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DCC12082B
+	by mail.kernel.org (Postfix) with ESMTP id 4E41D20892
 	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1544029854;
-	bh=NUw1fk7q7GvxWFuDglC9KlvVPPsDUfs0pATG1R3Cm6Y=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=p6GDphhG9y9G1mFD6D9fPNAhsLKrmX/aOC6lAaWcQaDylTdoxffuyxr5marAYP9cf
-	 a7iiNPUhxINS/1WyYlDq3h/WJKSS9rZ9xThxkndBxh8sbquUrWPEF9pyXzmGPA5bBb
-	 fmt0DvxvVCp2gbvVU3ELFR5DxTNXBio+fvRxzvCc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCC12082B
+	bh=3QlyFyNAQNVmYXoSBpoiUugYEyRybp1epUI7v4kNzdM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=zjmmbOdqE1vkg/JO/LaZiONXeuzGKBMm54da4Pyhmqo227iQyxAfT5t0fIGbq0/FH
+	 xbPlX1XgyImaIC20VrdoTtwD6hy7MlyCrDIwHFW2Mi202fRZa9DwP1dxBHCjqmlRSz
+	 x9XFB7WO5fT0LwWt1LluG6IiopN6cySc8YUnBmHA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E41D20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeLERKp (ORCPT
+        id S1728212AbeLERKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:10:45 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34497 "EHLO
+        Wed, 5 Dec 2018 12:10:52 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34512 "EHLO
         mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLERKo (ORCPT
+        with ESMTP id S1728101AbeLERKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:10:44 -0500
-Received: by mail-qt1-f196.google.com with SMTP id r14so23150805qtp.1;
-        Wed, 05 Dec 2018 09:10:43 -0800 (PST)
+        Wed, 5 Dec 2018 12:10:50 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r14so23151119qtp.1;
+        Wed, 05 Dec 2018 09:10:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MmxXP+gvK+D3Ckwyuxl2hWToPpepYtFxqwWJNwlDxLY=;
-        b=B4TDiO5hXTOnljrXLfmbsqKzfOJ2eZIpAACwl5VtV7nuT60Gicuvq1T/qVzkqnlmjU
-         d4fmwX3DXlLm9xP1Hp/3ayroejQ6oQfifGE1ggyfX0DJzEmCrM6yCwtm8rxUxY7m3mQy
-         lzLtUsW7LmzihdOCbeCfrXFD+gJWzjit6THFOtKj0oK6/vdObUNllQnCpRrhgNBONj69
-         1X1DNIjxdJqUMms3ugXZd8A8clzSn6cCK0zjsN4EgtJjvQ01fp4x69vRduwYRDErZUrH
-         wsl2BYzVVPaSZiX2Jj41gnzZPhWwVFM5KCe0RGEwx+DctT5JvdnnJ2pYYisXZ8eltRP8
-         XaKQ==
-X-Gm-Message-State: AA+aEWbjH9wqgOAkTSkyBnLv4X1vR9SIepZzGusYEZaP4ysu3b3MfGE0
-        zMKn+CRQbCYTI/jyrdSYeXDyDzP3nqA=
-X-Google-Smtp-Source: AFSGD/UGDUBAR2ERGo69cjIR/4M/qo78BURrNVddf54YHjWNppOy6SzevLcT7YW8biDFhSrDWayvqg==
-X-Received: by 2002:aed:39a1:: with SMTP id m30mr23602334qte.354.1544029842939;
-        Wed, 05 Dec 2018 09:10:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yhzi5kKdtpnLnQnoN/OzRVY2uwNyEMQKDjxD+gi2Ssw=;
+        b=gOg9Fc6n2fnQThU1tvg5daDEZeB/MLoGPj4/yK1F9DQ490/iFcQXqYqQOLC7gD73O8
+         X7sppWfnGpvP1oBtuOsX5R34KaHw+625iwPyJb2WUC/r3/PlyK3gTY6V/KX3MbfvDduB
+         2M9tEx7ftyhFQArL+aqAaCmjMFHOSDuOuITiEgShzsLJEZz1CyVNEB8voUso0LNVdugw
+         QXAA4RzFlYlcR4ANl3a0/dXJt6LNGhVew4rgIoVGwJPnMjBYW6LmZBTnKLsgpBbMWETt
+         CoMeSJNNCG62tFpuY1Oj/3cQXYmZQwsxX1So+hCm2abliEY8HhHWyRbNwREVmbXVNeYF
+         Q0Ew==
+X-Gm-Message-State: AA+aEWYZ6Xu4/S94oOvrLnI/gb2oXTduNh5YndaJGMT8YOeQPdVc9Lqo
+        X0Pq1+BUTYstkJJDgpylaok=
+X-Google-Smtp-Source: AFSGD/X7VCGirOhd5E3l5IA44SqoV8VrdijN1bdh9tG39NLskOzpjWM6iUXiU7QiIjha2cMHeNijNw==
+X-Received: by 2002:ac8:2b42:: with SMTP id 2mr23617439qtv.255.1544029848329;
+        Wed, 05 Dec 2018 09:10:48 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.41
+        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 09:10:42 -0800 (PST)
+        Wed, 05 Dec 2018 09:10:47 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -58,144 +60,206 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH v6 00/14] block: always associate blkg and refcount cleanup
-Date:   Wed,  5 Dec 2018 12:10:25 -0500
-Message-Id: <20181205171039.73066-1-dennis@kernel.org>
+Subject: [PATCH 04/14] blkcg: introduce common blkg association logic
+Date:   Wed,  5 Dec 2018 12:10:29 -0500
+Message-Id: <20181205171039.73066-5-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20181205171039.73066-1-dennis@kernel.org>
+References: <20181205171039.73066-1-dennis@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+There are 3 ways blkg association can happen: association with the
+current css, with the page css (swap), or from the wbc css (writeback).
 
-This is a minor update addressing the feedback from Mike and Josef.
+This patch handles how association is done for the first case where we
+are associating bsaed on the current css. If there is already a blkg
+associated, the css will be reused and association will be redone as the
+request_queue may have changed.
 
-v6:
-0005: Address Mike's feedback for the flush bio comment.
-0006: Add a WARN_ONCE() for blkg fallback suggested by Josef.
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+---
+ block/bio.c           | 62 ++++++++++++++++++++++++++++++++++++-------
+ block/blk-iolatency.c | 10 ++-----
+ block/blk-throttle.c  |  6 ++---
+ include/linux/bio.h   |  5 +++-
+ 4 files changed, 62 insertions(+), 21 deletions(-)
 
-From v5:
-A special case with dm is the flush bio which is statically initialized
-before the block device is opened and associated with a disk. This
-caused blkg association to throw a NPE. 0005 addresses this case by
-moving association to be on the flush path.
+diff --git a/block/bio.c b/block/bio.c
+index 5c9828524adc..452b8e79b998 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -2009,7 +2009,21 @@ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css)
+ EXPORT_SYMBOL_GPL(bio_associate_blkcg);
+ 
+ /**
+- * bio_associate_blkg - associate a bio with the a blkg
++ * bio_disassociate_blkg - puts back the blkg reference if associated
++ * @bio: target bio
++ *
++ * Helper to disassociate the blkg from @bio if a blkg is associated.
++ */
++void bio_disassociate_blkg(struct bio *bio)
++{
++	if (bio->bi_blkg) {
++		blkg_put(bio->bi_blkg);
++		bio->bi_blkg = NULL;
++	}
++}
++
++/**
++ * __bio_associate_blkg - associate a bio with the a blkg
+  * @bio: target bio
+  * @blkg: the blkg to associate
+  *
+@@ -2022,12 +2036,42 @@ EXPORT_SYMBOL_GPL(bio_associate_blkcg);
+  * A reference will be taken on the @blkg and will be released when @bio is
+  * freed.
+  */
+-int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
++static void __bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+ {
+-	if (unlikely(bio->bi_blkg))
+-		return -EBUSY;
++	bio_disassociate_blkg(bio);
++
+ 	bio->bi_blkg = blkg_try_get_closest(blkg);
+-	return 0;
++}
++
++/**
++ * bio_associate_blkg - associate a bio with a blkg
++ * @bio: target bio
++ *
++ * Associate @bio with the blkg found from the bio's css and request_queue.
++ * If one is not found, bio_lookup_blkg() creates the blkg.  If a blkg is
++ * already associated, the css is reused and association redone as the
++ * request_queue may have changed.
++ */
++void bio_associate_blkg(struct bio *bio)
++{
++	struct request_queue *q = bio->bi_disk->queue;
++	struct blkcg *blkcg;
++	struct blkcg_gq *blkg;
++
++	rcu_read_lock();
++
++	bio_associate_blkcg(bio, NULL);
++	blkcg = bio_blkcg(bio);
++
++	if (!blkcg->css.parent) {
++		__bio_associate_blkg(bio, q->root_blkg);
++	} else {
++		blkg = blkg_lookup_create(blkcg, q);
++
++		__bio_associate_blkg(bio, blkg);
++	}
++
++	rcu_read_unlock();
+ }
+ 
+ /**
+@@ -2040,10 +2084,7 @@ void bio_disassociate_task(struct bio *bio)
+ 		css_put(bio->bi_css);
+ 		bio->bi_css = NULL;
+ 	}
+-	if (bio->bi_blkg) {
+-		blkg_put(bio->bi_blkg);
+-		bio->bi_blkg = NULL;
+-	}
++	bio_disassociate_blkg(bio);
+ }
+ 
+ /**
+@@ -2055,6 +2096,9 @@ void bio_clone_blkcg_association(struct bio *dst, struct bio *src)
+ {
+ 	if (src->bi_css)
+ 		WARN_ON(bio_associate_blkcg(dst, src->bi_css));
++
++	if (src->bi_blkg)
++		__bio_associate_blkg(dst, src->bi_blkg);
+ }
+ EXPORT_SYMBOL_GPL(bio_clone_blkcg_association);
+ #endif /* CONFIG_BLK_CGROUP */
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index 46e86c34cf79..cdbd10564e66 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -472,21 +472,15 @@ static void check_scale_change(struct iolatency_grp *iolat)
+ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
+ {
+ 	struct blk_iolatency *blkiolat = BLKIOLATENCY(rqos);
+-	struct blkcg *blkcg;
+ 	struct blkcg_gq *blkg;
+-	struct request_queue *q = rqos->q;
+ 	bool issue_as_root = bio_issue_as_root_blkg(bio);
+ 
+ 	if (!blk_iolatency_enabled(blkiolat))
+ 		return;
+ 
+-	rcu_read_lock();
+-	bio_associate_blkcg(bio, NULL);
+-	blkcg = bio_blkcg(bio);
+-	blkg = blkg_lookup_create(blkcg, q);
++	bio_associate_blkg(bio);
++	blkg = bio->bi_blkg;
+ 	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+-	bio_associate_blkg(bio, blkg);
+-	rcu_read_unlock();
+ 
+ 	while (blkg && blkg->parent) {
+ 		struct iolatency_grp *iolat = blkg_to_lat(blkg);
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index d648d6720f46..228c3a007ebc 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -2115,10 +2115,10 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
+ }
+ #endif
+ 
+-static void blk_throtl_assoc_bio(struct throtl_grp *tg, struct bio *bio)
++static void blk_throtl_assoc_bio(struct bio *bio)
+ {
+ #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
+-	bio_associate_blkg(bio, tg_to_blkg(tg));
++	bio_associate_blkg(bio);
+ 	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
+ #endif
+ }
+@@ -2143,7 +2143,7 @@ bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
+ 
+ 	throtl_update_latency_buckets(td);
+ 
+-	blk_throtl_assoc_bio(tg, bio);
++	blk_throtl_assoc_bio(bio);
+ 	blk_throtl_update_idletime(tg);
+ 
+ 	sq = &tg->service_queue;
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 056fb627edb3..62715a5a4f32 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -511,12 +511,15 @@ static inline int bio_associate_blkcg_from_page(struct bio *bio,
+ 
+ #ifdef CONFIG_BLK_CGROUP
+ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
+-int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
++void bio_disassociate_blkg(struct bio *bio);
++void bio_associate_blkg(struct bio *bio);
+ void bio_disassociate_task(struct bio *bio);
+ void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
+ #else	/* CONFIG_BLK_CGROUP */
+ static inline int bio_associate_blkcg(struct bio *bio,
+ 			struct cgroup_subsys_state *blkcg_css) { return 0; }
++static inline void bio_disassociate_blkg(struct bio *bio) { }
++static inline void bio_associate_blkg(struct bio *bio) { }
+ static inline void bio_disassociate_task(struct bio *bio) { }
+ static inline void bio_clone_blkcg_association(struct bio *dst,
+ 			struct bio *src) { }
+-- 
+2.17.1
 
-With v4 moving association to piggyback off of bio_set_dev(), this
-caused a NPE to be thrown by the special case above. I was overly
-cautious with v4 and added the bio_has_queue() check which is now
-removed in v5.
-
-Also, the addition of bio_set_dev_only() wasn't quite right due to
-writeback and swap sharing the same bio init paths in many places. The
-safer thing to do is double association for those paths and in a follow
-up series split out the bio init paths.
-
-Changes in v5: 
-All:  Fixed minor grammar and syntactic issues.
-0004: Removed bio_has_queue() for being overly cautious.
-0005: New, properly addressed the static flush_bio in md. 
-0006: Removed the rcu lock in blkcg_bio_issue_check() as the bio will
-      own a ref on the blkg so it is unnecessary.
-0011: Consolidated bio_associate_blkg_from_css() (removed __ version).
-
-From v4:
-This is respin of v3 [1] with fixes for the errors reported in [2] and
-[3]. v3 was reverted in [4].
-
-The issue in [3] was that bio->bi_disk->queue and blkg->q were out
-of sync. So when I changed blk_get_rl() to use blkg->q, the wrong queue
-was returned and elevator from q->elevator->type threw a NPE. Note, with
-v4.21, the old block stack was removed and so this patch was dropped. I
-did backport this to v4.20 and verified this series does not encounter
-the error.
-
-The biggest changes in v4 are when association occurs and clearly
-defining the cases where association should happen.
-  1. Association is now done when the device is set to keep blkg->q and
-     bio->bi_disk->queue in sync.
-  2. When a bio is submitted directly to the device, it will not be
-     associated with a blkg. This is because a blkg represents the
-     relationship between a blkcg and a request_queue. Going directly to
-     the device means the request_queue may not exist meaning no blkg
-     will exist.
-
-The patch updating blk_get_rl() was dropped (v3 10/12). The patch to
-always associate a blkg from v3 (v3 04/12) was fixed and split into
-patches 0004 and 0005. 0011 is new removing bio_disassociate_task().
-
-Summarizing the ideas of this series:
-  1. Gracefully handle blkg failure to create by walking up the blkg
-     tree rather than fall through to root.
-  2. Associate a bio with a blkg in core logic rather than per
-     controller logic.
-  3. Rather than have a css and blkg reference, hold just a blkg ref
-     as it also holds a css ref.
-  4. Switch to percpu ref counting for blkg.
-
-[1] https://lore.kernel.org/lkml/20180911184137.35897-1-dennisszhou@gmail.com/ 
-[2] https://lore.kernel.org/lkml/13987.1539646128@turing-police.cc.vt.edu/
-[3] https://marc.info/?l=linux-cgroups&m=154110436103723
-[4] https://lore.kernel.org/lkml/20181101212410.47569-1-dennis@kernel.org/
-
-This patchset contains the following 14 patches:
-  0001-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
-  0002-blkcg-update-blkg_lookup_create-to-do-locking.patch
-  0003-blkcg-convert-blkg_lookup_create-to-find-closest-blk.patch
-  0004-blkcg-introduce-common-blkg-association-logic.patch
-  0005-dm-set-flush-bio-device-on-demand.patch
-  0006-blkcg-associate-blkg-when-associating-a-device.patch
-  0007-blkcg-consolidate-bio_issue_init-to-be-a-part-of-cor.patch
-  0008-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
-  0009-blkcg-associate-writeback-bios-with-a-blkg.patch
-  0010-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
-  0011-blkcg-remove-additional-reference-to-the-css.patch
-  0012-blkcg-remove-bio_disassociate_task.patch
-  0013-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
-  0014-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
-
-This patchset is on top of linux-block#for-4.21/block 154989e45fd8.
-
-diffstats below:
-
-Dennis Zhou (14):
-  blkcg: fix ref count issue with bio_blkcg() using task_css
-  blkcg: update blkg_lookup_create() to do locking
-  blkcg: convert blkg_lookup_create() to find closest blkg
-  blkcg: introduce common blkg association logic
-  dm: set the static flush bio device on demand
-  blkcg: associate blkg when associating a device
-  blkcg: consolidate bio_issue_init() to be a part of core
-  blkcg: associate a blkg for pages being evicted by swap
-  blkcg: associate writeback bios with a blkg
-  blkcg: remove bio->bi_css and instead use bio->bi_blkg
-  blkcg: remove additional reference to the css
-  blkcg: remove bio_disassociate_task()
-  blkcg: change blkg reference counting to use percpu_ref
-  blkcg: rename blkg_try_get() to blkg_tryget()
-
- Documentation/admin-guide/cgroup-v2.rst |   8 +-
- block/bfq-cgroup.c                      |   4 +-
- block/bfq-iosched.c                     |   2 +-
- block/bio.c                             | 156 +++++++++++++++---------
- block/blk-cgroup.c                      |  95 ++++++++++++---
- block/blk-iolatency.c                   |  24 +---
- block/blk-throttle.c                    |  11 --
- block/bounce.c                          |   3 +-
- drivers/block/loop.c                    |   5 +-
- drivers/md/dm.c                         |  12 +-
- drivers/md/raid0.c                      |   2 +-
- fs/buffer.c                             |  10 +-
- fs/ext4/page-io.c                       |   2 +-
- include/linux/bio.h                     |  29 +++--
- include/linux/blk-cgroup.h              | 125 +++++++++++++------
- include/linux/blk_types.h               |   7 +-
- include/linux/cgroup.h                  |   2 +
- include/linux/writeback.h               |   5 +-
- kernel/cgroup/cgroup.c                  |  48 ++++++--
- kernel/trace/blktrace.c                 |   4 +-
- mm/page_io.c                            |   2 +-
- 21 files changed, 367 insertions(+), 189 deletions(-)
-
-Thanks,
-Dennis
