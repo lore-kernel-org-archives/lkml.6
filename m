@@ -2,113 +2,148 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C4FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D940C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 053D62133F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ilz7cmTV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053D62133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 584D3208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:58:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584D3208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeLEW6S (ORCPT
+        id S1728724AbeLEW6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:58:18 -0500
-Received: from ozlabs.org ([203.11.71.1]:37859 "EHLO ozlabs.org"
+        Wed, 5 Dec 2018 17:58:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58414 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbeLEW6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:58:18 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727337AbeLEW6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:58:34 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439Dfc01n8z9s1c;
-        Thu,  6 Dec 2018 09:58:15 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544050696;
-        bh=7235hw7rLxli5r5+cwe3EPN8zwzUs8O2xgN66+hxBrQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ilz7cmTVXz3t9+0ua1dgEaf5BtU4MwhH+uyg76GNaYatcVXIG2+SyCdEa93OvV328
-         DxCkazEjokqNDhdv4fp06bczbfzKSLIEEFOWK40GBuEgBXcqxc/r5hlwledghwRziR
-         uljqjs6OnbOrJfKjJGsiiLLoOcRgvxHOsse+k9oIuS7Kn6/VfYCMxY+74hUMshN09E
-         szGLVFwS8FlNVadRCeBAhWhMp3McFd6vzKXzA/WKNL4YnBsaNWu4R1tlEGrp/0tz36
-         Z9EVGFl2hWPy/6qVOhHQLDhGaDGS+LrZVKbYIWhH1zEOH8FPHFaW4GBvy5gxx4nVk6
-         nJp0vW08Fd5mA==
-Date:   Thu, 6 Dec 2018 09:58:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Guy Levi(SW)" <guyle@mellanox.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 9AC203C2CEB;
+        Wed,  5 Dec 2018 22:58:33 +0000 (UTC)
+Received: from redhat.com (ovpn-116-101.phx2.redhat.com [10.3.116.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5EE1160565;
+        Wed,  5 Dec 2018 22:58:30 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 17:58:28 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Changbin Du <changbin.du@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Message-ID: <20181206095815.6e814057@canb.auug.org.au>
-In-Reply-To: <AM0PR05MB533192C82AA04E89004251A1C7A80@AM0PR05MB5331.eurprd05.prod.outlook.com>
-References: <20181204114731.48b18bfc@canb.auug.org.au>
-        <20181204015247.GR12288@mellanox.com>
-        <AM0PR05MB533192C82AA04E89004251A1C7A80@AM0PR05MB5331.eurprd05.prod.outlook.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+Message-ID: <20181205225828.GL3536@redhat.com>
+References: <20181204235630.GQ2937@redhat.com>
+ <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
+ <20181205023116.GD3045@redhat.com>
+ <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
+ <20181205180756.GI3536@redhat.com>
+ <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
+ <20181205183314.GJ3536@redhat.com>
+ <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
+ <20181205185550.GK3536@redhat.com>
+ <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5Ab73ZpnT+cYVFrA54Iz_/Q"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 05 Dec 2018 22:58:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5Ab73ZpnT+cYVFrA54Iz_/Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 05, 2018 at 12:10:10PM -0700, Logan Gunthorpe wrote:
+> 
+> 
+> On 2018-12-05 11:55 a.m., Jerome Glisse wrote:
+> > So now once next type of device shows up with the exact same thing
+> > let say FPGA, we have to create a new subsystem for them too. Also
+> > this make the userspace life much much harder. Now userspace must
+> > go parse PCIE, subsystem1, subsystem2, subsystemN, NUMA, ... and
+> > merge all that different information together and rebuild the
+> > representation i am putting forward in this patchset in userspace.
+> 
+> Yes. But seeing such FPGA links aren't common yet and there isn't really
+> much in terms of common FPGA infrastructure in the kernel (which are
+> hard seeing the hardware is infinitely customization) you can let the
+> people developing FPGA code worry about it and come up with their own
+> solution. Buses between FPGAs may end up never being common enough for
+> people to care, or they may end up being so weird that they need their
+> own description independent of GPUS, or maybe when they become common
+> they find a way to use the GPU link subsystem -- who knows. Don't try to
+> design for use cases that don't exist yet.
+> 
+> Yes, userspace will have to know about all the buses it cares to find
+> links over. Sounds like a perfect thing for libhms to do.
 
-Hi Guy,
+So just to be clear here is how i understand your position:
+"Single coherent sysfs hierarchy to describe something is useless
+ let's git rm drivers/base/"
 
-On Wed, 5 Dec 2018 12:25:57 +0000 "Guy Levi(SW)" <guyle@mellanox.com> wrote:
->
-> >=20
-> > Huh. So apparently every compiler that tested this patch (0-day, mine,
-> > the submitters) optimized this call away because is_atomic_response()
-> > always returns 0: meaning mlx5_get_atomic_laddr is never callable and
-> > can be deleted entirely, including the call to mlx5_get_send_wqe.
-> >=20
-> > Not sure what compiler setup will hit this, but it is clearly wrong
-> > code.. =20
->=20
-> Flag -o0  ?
+While i am arguing that "hey the /sys/bus/node/devices/* is nice
+but it just does not cut it for all this new hardware platform
+if i add new nodes there for my new memory i will break tons of
+existing application. So what about a new hierarchy that allow
+to describe those new hardware platform in a single place like
+today node thing"
 
-No, but the kbuild tree contains a change that allows turning off of
-gcc's autoinlining and the CONFIG option guarding that gets turned on
-for allmodconfig builds among others.
 
-Masahiro, should CONFIG_NO_AUTO_INLINE maybe need to be off unless
-explicitly enabled (like CONFIG_DEBUG_INFO and others)?
+> 
+> > There is no telling that kernel won't be able to provide quirk and
+> > workaround because some merging is actually illegal on a given
+> > platform (like some link from a subsystem is not accessible through
+> > the PCI connection of one of the device connected to that link).
+> 
+> These are all just different individual problems which need different
+> solutions not grand new design concepts.
+> 
+> > So it means userspace will have to grow its own database or work-
+> > around and quirk and i am back in the situation i am in today.
+> 
+> No, as I've said, quirks are firmly the responsibility of kernels.
+> Userspace will need to know how to work with the different buses and
+> CPU/node information but there really isn't that many of these to deal
+> with and this is a much easier approach than trying to come up with a
+> new API that can wrap the nuances of all existing and potential future
+> bus types we may have to deal with.
 
---=20
+No can do that is what i am trying to explain. So if i bus 1 in a
+sub-system A and usualy that kind of bus can serve a bridge for
+PCIE ie a CPU can access device behind it by going through a PCIE
+device first. So now the userspace libary have this knowledge
+bake in. Now if a platform has a bug for whatever reasons where
+that does not hold, the kernel has no way to tell userspace that
+there is an exception there. It is up to userspace to have a data
+base of quirks.
+
+Kernel see all those objects in isolation in your scheme. While in
+what i am proposing there is only one place and any device that
+participate in this common place can report any quirks so that a
+coherent view is given to user space.
+
+If we have gazillion of places where all this informations is spread
+around than we have no way to fix weird inter-action between any
+of those.
+
 Cheers,
-Stephen Rothwell
-
---Sig_/5Ab73ZpnT+cYVFrA54Iz_/Q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwIWAcACgkQAVBC80lX
-0Gxe3Qf9HENVqAcv4gfugjd3DGVnBI8YGNjVCcY4Sr2FmgDhz6I5kEyhafsBDjIf
-Na4JTAJtcpI61N4HPUnO27DRiMJRqy1NJb2PRzGw6LRzDv5qWusd8IJe/JLrUr7i
-XcK55bPzwiVSfIWJqeJQ45RKOFs4P7XOaJbiShdH1ojUmCAqDSrMsqgCCM3zrFz2
-SDCzoAPsY7jtTvZ+VCr1AOCHc6Cq42Yt56h5m/3dXAxClgV1fLtIVudNdumjBrD0
-baW655RGtacqRiqxF03QVHhnRP8FUyzZ1qEiirJAM8GSSO1Wf/RwkGYFENEx2r6y
-vV/oa2/jIF/Qf3kHsCNyGHp4mV7xRg==
-=p1vQ
------END PGP SIGNATURE-----
-
---Sig_/5Ab73ZpnT+cYVFrA54Iz_/Q--
+Jérôme
