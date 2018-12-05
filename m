@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76987C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5263BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4511920850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4511920850
+	by mail.kernel.org (Postfix) with ESMTP id 2399D20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2399D20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeLEIwT (ORCPT
+        id S1727543AbeLEIwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:52:19 -0500
+        Wed, 5 Dec 2018 03:52:25 -0500
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727500AbeLEIwP (ORCPT
+        by vger.kernel.org with ESMTP id S1727458AbeLEIwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:52:15 -0500
+        Wed, 5 Dec 2018 03:52:13 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 5 Dec 2018 00:52:04 -0800
+ 15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 45F6D41396;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 37C1841390;
         Wed,  5 Dec 2018 00:52:05 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -42,10 +42,13 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v7 14/14] module: Prevent module removal racing with text_poke()
-Date:   Tue, 4 Dec 2018 17:34:08 -0800
-Message-ID: <20181205013408.47725-15-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v7 12/14] x86/alternative: Remove the return value of text_poke_*()
+Date:   Tue, 4 Dec 2018 17:34:06 -0800
+Message-ID: <20181205013408.47725-13-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
@@ -58,45 +61,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems dangerous to allow code modifications to take place
-concurrently with module unloading. So take the text_mutex while the
-memory of the module is freed.
+The return value of text_poke_early() and text_poke_bp() is useless.
+Remove it.
 
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- kernel/module.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/include/asm/text-patching.h |  4 ++--
+ arch/x86/kernel/alternative.c        | 11 ++++-------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 57c5b23746e7..b45754961143 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -64,6 +64,7 @@
- #include <linux/bsearch.h>
- #include <linux/dynamic_debug.h>
- #include <linux/audit.h>
-+#include <linux/memory.h>
- #include <uapi/linux/module.h>
- #include "module-internal.h"
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index a75eed841eed..c90678fd391a 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ #define __parainstructions_end	NULL
+ #endif
  
-@@ -2181,6 +2182,9 @@ static void free_module(struct module *mod)
- 	synchronize_sched();
- 	mutex_unlock(&module_mutex);
+-extern void *text_poke_early(void *addr, const void *opcode, size_t len);
++extern void text_poke_early(void *addr, const void *opcode, size_t len);
  
-+	/* Protect against patching of the module while it is being removed */
-+	mutex_lock(&text_mutex);
-+
- 	/* This may be empty, but that's OK */
- 	module_restore_mappings(&mod->init_layout);
- 	module_arch_freeing_init(mod);
-@@ -2194,6 +2198,7 @@ static void free_module(struct module *mod)
- 	/* Finally, free the core (containing the module structure) */
- 	module_restore_mappings(&mod->core_layout);
- 	module_memfree(mod->core_layout.base);
-+	mutex_unlock(&text_mutex);
+ /*
+  * Clear and restore the kernel write-protection flag on the local CPU.
+@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 18415e3b6000..2740ad2c6f21 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
+ 
+ extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
+ extern s32 __smp_locks[], __smp_locks_end[];
+-void *text_poke_early(void *addr, const void *opcode, size_t len);
++void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Are we looking at a near JMP with a 1 or 4-byte displacement.
+@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
+  * instructions. And on the local CPU you need to be protected again NMI or MCE
+  * handlers seeing an inconsistent instruction while you patch.
+  */
+-void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-				       size_t len)
++void __init_or_module text_poke_early(void *addr, const void *opcode,
++				      size_t len)
+ {
+ 	unsigned long flags;
+ 
+@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 		 * that causes hangs on some VIA CPUs.
+ 		 */
+ 	}
+-	return addr;
  }
  
- void *__symbol_get(const char *symbol)
+ __ro_after_init struct mm_struct *poking_mm;
+@@ -893,7 +892,7 @@ int poke_int3_handler(struct pt_regs *regs)
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ {
+ 	unsigned char int3 = 0xcc;
+ 
+@@ -935,7 +934,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	 * the writing of the new instruction.
+ 	 */
+ 	bp_patching_in_progress = false;
+-
+-	return addr;
+ }
+ 
 -- 
 2.17.1
 
