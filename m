@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DE8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1E2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC66206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC66206B7
+	by mail.kernel.org (Postfix) with ESMTP id 18DD8206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DD8206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbeLEIio (ORCPT
+        id S1727590AbeLEIir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:38:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36342 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:38:47 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36295 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727414AbeLEIh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727410AbeLEIh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 03:37:58 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5101420E96; Wed,  5 Dec 2018 09:37:56 +0100 (CET)
+        id EC83320E8F; Wed,  5 Dec 2018 09:37:55 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 172C020E1D;
-        Wed,  5 Dec 2018 09:37:30 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id D62EC20D17;
+        Wed,  5 Dec 2018 09:37:28 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 20/22] drm/sun4i: Make COEF_RDY conditional
-Date:   Wed,  5 Dec 2018 09:37:01 +0100
-Message-Id: <20181205083703.21488-21-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 15/22] drm/sun4i: layer: Add tiled modifier support and helper
+Date:   Wed,  5 Dec 2018 09:36:56 +0100
+Message-Id: <20181205083703.21488-16-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,52 +50,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+This introduces a list of supported modifiers for the driver, that
+includes the Allwinner tiled modifier, as well as a format_mod_supported
+callback.
 
-The COEF_RDY bit isn't found in all the SoCs featuring some variant of the
-frontend.
+The callback uses both the backend and frontend helpers to indicate
+per-format modifier support (including for the linear modifier).
 
-Add it to our quirks structure.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 9 +++++----
- drivers/gpu/drm/sun4i/sun4i_frontend.h | 1 +
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_layer.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 7a1095b004d4..86c5033102b9 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -96,10 +96,11 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
- 			     sun4i_frontend_vert_coef[i]);
- 	}
- 
--	regmap_write_bits(frontend->regs,
--			  SUN4I_FRONTEND_FRM_CTRL_REG,
--			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
--			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
-+	if (frontend->data->has_coef_rdy)
-+		regmap_write_bits(frontend->regs,
-+				  SUN4I_FRONTEND_FRM_CTRL_REG,
-+				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
-+				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
+diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
+index 8cf8ca997b1d..c5a999ca1d72 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_layer.c
++++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+@@ -114,6 +114,13 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
+ 	sun4i_backend_layer_enable(backend, layer->id, true);
  }
  
- int sun4i_frontend_init(struct sun4i_frontend *frontend)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index 01e68bb11c98..e332bc1c6b68 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -114,6 +114,7 @@ struct reset_control;
- 
- struct sun4i_frontend_data {
- 	bool	has_coef_access_ctrl;
-+	bool	has_coef_rdy;
++static bool sun4i_layer_format_mod_supported(struct drm_plane *plane,
++					     uint32_t format, uint64_t modifier)
++{
++	return sun4i_backend_format_is_supported(format, modifier) ||
++	       sun4i_frontend_format_is_supported(format, modifier);
++}
++
+ static const struct drm_plane_helper_funcs sun4i_backend_layer_helper_funcs = {
+ 	.prepare_fb	= drm_gem_fb_prepare_fb,
+ 	.atomic_disable	= sun4i_backend_layer_atomic_disable,
+@@ -127,6 +134,7 @@ static const struct drm_plane_funcs sun4i_backend_layer_funcs = {
+ 	.disable_plane		= drm_atomic_helper_disable_plane,
+ 	.reset			= sun4i_backend_layer_reset,
+ 	.update_plane		= drm_atomic_helper_update_plane,
++	.format_mod_supported	= sun4i_layer_format_mod_supported,
  };
  
- struct sun4i_frontend {
+ static const uint32_t sun4i_layer_formats[] = {
+@@ -157,6 +165,12 @@ static const uint32_t sun4i_layer_formats[] = {
+ 	DRM_FORMAT_YVYU,
+ };
+ 
++static const uint64_t sun4i_layer_modifiers[] = {
++	DRM_FORMAT_MOD_LINEAR,
++	DRM_FORMAT_MOD_ALLWINNER_TILED,
++	DRM_FORMAT_MOD_INVALID
++};
++
+ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
+ 						struct sun4i_backend *backend,
+ 						enum drm_plane_type type)
+@@ -173,7 +187,7 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
+ 				       &sun4i_backend_layer_funcs,
+ 				       sun4i_layer_formats,
+ 				       ARRAY_SIZE(sun4i_layer_formats),
+-				       NULL, type, NULL);
++				       sun4i_layer_modifiers, type, NULL);
+ 	if (ret) {
+ 		dev_err(drm->dev, "Couldn't initialize layer\n");
+ 		return ERR_PTR(ret);
 -- 
 2.19.2
 
