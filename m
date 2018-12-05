@@ -2,156 +2,167 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59C4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B6AC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE9A20645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:22:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kgCam7tA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE9A20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C3EF720892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3EF720892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeLESWE (ORCPT
+        id S1727796AbeLESYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:22:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46028 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbeLESWD (ORCPT
+        Wed, 5 Dec 2018 13:24:37 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46866 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLESYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:22:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a14so10437776plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:22:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FVLcth+zve8W7kZxNyGn8rpNinwxID8cOavPYQSqwts=;
-        b=kgCam7tA0eMY0XXt46aDp8ig7QGiNW9BUhL8hTvZHSxqRp6M/ZLJpdGGkkOljnc/cN
-         rTCz+V12g17zADlUNYA5TMrsztTAyuFKzzbsPPJ19x+WuNDpPZC6GfIS1WNKkQuXGpwz
-         k6hpiahvEELTp57CfEcqtiDOcn3wGkAAwj9SOph6cfmXnumBni3Jet/K014Uqr3sL63w
-         YMWKqIk4ukAEr2l+F9nRGmZ9pNre8Oh4C63zAVVAVTg991Zc4uaRfzQgZ15G8ye0yoDX
-         gs4+ZBBojxehXuzAcH8apu4ek4eySlU0uCPXJQw3If8HxmeLWXBhskAsrNAI55Y+lhT3
-         /iWA==
+        Wed, 5 Dec 2018 13:24:37 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so19224530ljh.13;
+        Wed, 05 Dec 2018 10:24:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FVLcth+zve8W7kZxNyGn8rpNinwxID8cOavPYQSqwts=;
-        b=fsPSGUjfKZXSwI9vaBtHycp9squjuiYKCNyyOkEULqvsG7fcMFaYFHhz2xporDuACN
-         q/iYq4NDAgp1mjQ4Qx2f02JlGQsWj/vWBmen6H4OJ7faORkD7uao+UQeDPK+M3AFri+T
-         2rcvYtVRcSkLInzhmovzwUOKIfp/kCsQeU0j5xq/zI//yLSSsurrkaoI7ODwhnHfPoik
-         AnFhINxeSx8XCLT4QtoUO5tadqda1vDThYFHUQF/wTHu00etISgiHvEJlTT3ImaLlUvK
-         GYBvWabsMUdcxXC1S9kJbZRHpGwz6gnmIl/oKjX7Siu3RCldFFuQU/LoMy9Z7h/oZlow
-         KSQQ==
-X-Gm-Message-State: AA+aEWbjUsY0IJQh6pNZ+1r8NMpYpbfl1EHe1cBKBypThxviCJKpQN10
-        jHuuolzuDXKFWahYuXx423V/IiFYRMJ154FlrPwMZg==
-X-Google-Smtp-Source: AFSGD/Wi9BMXahehLr+8WB6jiJzmP/eUMkEtF+wPuZKmyeTRRGER2RJTk3IUYznC/2FRZ24UZh7Rq78AJltqlqpFoEE=
-X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr24955859pll.320.1544034122740;
- Wed, 05 Dec 2018 10:22:02 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LEpiSlqrR7Ad0w48eDX/Xp8zFO8FXef8bg6emoIDpa8=;
+        b=lnheG1kBLy3c6f1YbQRGp32feLqH1KM1FQmjXHBietEk4jCDM5BeqEUl1Kpls9THvh
+         Ust51j4VU1ISufOKspcsO0AsSVNy3wq+4EwrSLkeyUfGcfUDhgzw3zzHU8pH/hsYyiN5
+         HJvlZYfLbl9FdOVa7Q9x3q5iteu3crb293zUzoxi7VVmZ4YfJF3VpMBjZWv9eTmlzx5i
+         OJfcVMHIecUpNZ133wsvT49Q+PczqZ6Qn34SmM9WquwTvJqTe37+dgNJHcFYuGzqeoQI
+         UsaGgPhvC7u2czGJXgWWkadVzdnVTMDkAfZS5XEp2TM8RSCs/7LE1MXzc0nK5DvVi8My
+         TcBQ==
+X-Gm-Message-State: AA+aEWbNM6q2AB52pyK+4znH37eoW2SHnd1dSHErg2qWCwvXMrMtPtJi
+        urgYC3iGw8yQGt6Wy3SO/zY=
+X-Google-Smtp-Source: AFSGD/UeriZm3dGS9tCBzpYxA7rpbmXrfQX1F0JOK2nh+CYjH42tAqUmnMIrE7uZXc1Fi7e+azPNoQ==
+X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr16364333lja.58.1544034274785;
+        Wed, 05 Dec 2018 10:24:34 -0800 (PST)
+Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
+        by smtp.gmail.com with ESMTPSA id l21-v6sm3877851ljj.48.2018.12.05.10.24.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 10:24:34 -0800 (PST)
+Date:   Wed, 5 Dec 2018 20:24:30 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
+        cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
+        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
+        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 10/10] clk: bd718x7: Initial support for ROHM
+ bd71837/bd71847 PMIC clock
+Message-ID: <20181205182430.GG31204@localhost.localdomain>
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <b1a7aa06389ccd46f60db3e63bdf1e9ce9781d49.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <154403090130.88331.18352581261422337586@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20181205014213.943-1-natechancellor@gmail.com>
- <20181205014213.943-2-natechancellor@gmail.com> <CAKv+Gu-N9j5X4WoFDbQrzeOCfBaNm6ujXe_fAruusE_kWdj8iQ@mail.gmail.com>
- <20181205080645.GA11936@flashbox> <CAKv+Gu9Nq51Fj_14MYS6MEm0VPHOJB1CBFkCHmyC8Wt0=NWpRg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9Nq51Fj_14MYS6MEm0VPHOJB1CBFkCHmyC8Wt0=NWpRg@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 5 Dec 2018 10:21:51 -0800
-Message-ID: <CAKwvOdno9AdzNvMVmzqV7y+_u_z7VgfbRvKm73rRZ+iUuraYtw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: Wrap '--pic-veneer' with ld-option
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux@armlinux.org.uk,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Peter Smith <peter.smith@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154403090130.88331.18352581261422337586@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 12:10 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> (+ Arnd)
->
-> On Wed, 5 Dec 2018 at 09:06, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> >
-> > On Wed, Dec 05, 2018 at 08:37:05AM +0100, Ard Biesheuvel wrote:
-> > > On Wed, 5 Dec 2018 at 02:42, Nathan Chancellor <natechancellor@gmail.com> wrote:
-> > > >
-> > > > This flag is not supported by lld:
-> > > >
-> > > >     ld.lld: error: unknown argument: --pic-veneer
-> > > >
-> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > >
-> > > Hi Nate,
-> > >
-> > > Does this mean ld.lld is guaranteed to produce position independent
-> > > veneers if you build kernels that are bigger than the typical range of
-> > > a relative branch?
+Thanks again Stephen.
 
-(+ Peter) who might be able to answer this.
+On Wed, Dec 05, 2018 at 09:28:21AM -0800, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-12-04 03:39:38)
+> > diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+> > new file mode 100644
+> > index 000000000000..d486859526ed
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-bd718x7.c
+> > @@ -0,0 +1,131 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// Copyright (C) 2018 ROHM Semiconductors
+> > +// bd71837.c  -- ROHM BD71837MWV clock driver
+> 
+> This isn't even the name of the file. Please remove. Also, only the SPDX
+> tag is supposed to have // on it and the other things should be normal
+> /* */ comment style.
 
-> > >
-> >
-> > Hi Ard,
-> >
-> > Honestly, I'm not quite sure. I saw your commit that introduced this
-> > flag and I wasn't quite sure what to make of it for lld. What
-> > configuration would I use to verify and what would I check for?
-> >
->
-> Try building allyesconfig, and check the resulting binary for veneers
-> (which have 'veneer' in the symbol name, at least when ld.bfd emits
-> them). These veneers should not take the [virtual] address of the
-> branch target directly, but take a PC relative offset (as in the
-> example in the commit log of that patch you are referring to)
+I'll drop this name.
 
-Not sure clang can compile an arm32 allyesconfig (haven't tried
-personally, yet, TODO), but we could try gcc+lld.
+> 
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/init.h>
+> > +#include <linux/err.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/mfd/rohm-bd718x7.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/regmap.h>
+> [....]
+> > +
+> > +static int bd71837_clk_probe(struct platform_device *pdev)
+> > +{
+> > +       struct bd718xx_clk *c;
+> > +       int rval = -ENOMEM;
+> > +       const char *parent_clk;
+> > +       struct device *parent = pdev->dev.parent;
+> > +       struct bd718xx *mfd = dev_get_drvdata(parent);
+> > +       struct clk_init_data init = {
+> > +               .name = "bd718xx-32k-out",
+> > +               .ops = &bd71837_clk_ops,
+> > +       };
+> > +
+> > +       c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> > +       if (!c)
+> > +               return -ENOMEM;
+> > +
+> > +       init.num_parents = 1;
+> > +       parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+> > +
+> > +       init.parent_names = &parent_clk;
+> > +       if (!parent_clk) {
+> > +               dev_err(&pdev->dev, "No parent clk found\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       c->reg = BD718XX_REG_OUT32K;
+> > +       c->mask = BD718XX_OUT32K_EN;
+> > +       c->mfd = mfd;
+> > +       c->pdev = pdev;
+> > +       c->hw.init = &init;
+> > +
+> > +       of_property_read_string_index(parent->of_node,
+> > +                                     "clock-output-names", 0, &init.name);
+> > +
+> > +       rval = devm_clk_hw_register(&pdev->dev, &c->hw);
+> > +       if (!rval) {
+> > +               rval = devm_clk_hw_register_clkdev(&pdev->dev,
+> > +                                                  &c->hw, init.name, NULL);
+> 
+> Do you plan to use the clkdev lookup? This driver looks fairly DT
+> dependent, so I would prefer to remove the clkdev part and only add it
+> later if anyone needs it.
 
->
-> > Additionally, I have filed an LLVM bug for the lld developers to
-> > check and see if this is a flag they should support:
-> >
-> > https://bugs.llvm.org/show_bug.cgi?id=39886
-> >
-> > Thanks for the quick reply,
-> > Nathan
-> >
-> > > > ---
-> > > >  arch/arm/Makefile | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> > > > index e2a0baf36766..4fab2aa29570 100644
-> > > > --- a/arch/arm/Makefile
-> > > > +++ b/arch/arm/Makefile
-> > > > @@ -10,7 +10,7 @@
-> > > >  #
-> > > >  # Copyright (C) 1995-2001 by Russell King
-> > > >
-> > > > -LDFLAGS_vmlinux        := --no-undefined -X --pic-veneer
-> > > > +LDFLAGS_vmlinux        := --no-undefined -X $(call ld-option,--pic-veneer)
-> > > >  ifeq ($(CONFIG_CPU_ENDIAN_BE8),y)
-> > > >  LDFLAGS_vmlinux        += --be8
-> > > >  KBUILD_LDFLAGS_MODULE  += --be8
-> > > > --
-> > > > 2.20.0.rc1
-> > > >
+Right. We depend heavily on DT so I guess I can drop the clkdev portion.
 
-
+> > +               if (rval)
+> > +                       dev_warn(&pdev->dev, "Failed to register clkdev\n");
+> > +               if (parent->of_node) {
+> > +                       rval = devm_of_clk_add_hw_provider(&pdev->dev,
+> > +                                            of_clk_hw_simple_get, &c->hw);
+> > +                       if (rval)
+> > +                               dev_err(&pdev->dev,
+> > +                                       "adding clk provider failed\n");
+> > +               }
 
 -- 
-Thanks,
-~Nick Desaulniers
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
