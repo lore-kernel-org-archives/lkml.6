@@ -2,119 +2,192 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C88F3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3279EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E06420879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LC7UiFC5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E06420879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id EB05B20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB05B20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeLETbE (ORCPT
+        id S1728547AbeLETbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:31:04 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51182 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLETbD (ORCPT
+        Wed, 5 Dec 2018 14:31:07 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:41107 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728189AbeLETbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:31:03 -0500
-Received: by mail-it1-f195.google.com with SMTP id z7so23260250iti.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+VLMRUHlbZnRncuw0g8QgA4tl13hFpm296+rm37XvpI=;
-        b=LC7UiFC5HwTn2963xkCRYAsyQplGwpjb20dJBrZ8WXrDm28sm6xwFkH0zMdGZq4/3h
-         fiRp7+zlqUqcX/vjApYYkfUfGQrfUBEME9u8xzkE4lHQ9A8I2aM1FIWngMWwDhTZUXYG
-         XO6HwMQ26mm2Dq94hFnnY53jzgLM3v/c+7ORclWmjXF3MT5xZ3zsWLxpA7ITFv2Zr3ZB
-         ss74cmnwoMGA1se7LSQ1i7G2f1arAZ9J2JihbhFWBjFnr/MmiYbQsy+QZ4GRkDcnUtT6
-         M973QIyZqOMXTNNkffJQIlDIBFTT1KeSmBkQVL6xcMNplxUEyGFsPJjA/WTVaJpS0t2K
-         e7NQ==
+        Wed, 5 Dec 2018 14:31:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id 123so17547182itv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:31:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+VLMRUHlbZnRncuw0g8QgA4tl13hFpm296+rm37XvpI=;
-        b=k0cgiVFr9LfcSPxtMqRUro0Of80hY9FWsIhuQa0l5Bn5k9AS2W9IKBE7i5Nm694Psf
-         FWvQBLeUwEuaiyG1qj1VIRKeK1qMn8fU6Uok1r8kN0779m95wAGAmqpJ68diUmZfvrf7
-         NvlMivFz7XqeWgRAkGgg/u8oNYGVtkk/5tLVeX0SI0+EkA4Q+vVEn0sEp11apKgWSkP9
-         8xZoZqtSov7rcdMWwzCVmsyT5XusUYj/0fV7R4lKfm17JeY9mh74fu1+cF5PnJacrE8K
-         mUeWx5Ej+S8WKG6fTjaVgmVRehcdVtoMZBNbiMdVekTIv535AjgPPdNqpfG0T/OP/CKf
-         SZqA==
-X-Gm-Message-State: AA+aEWYk3xUeslmP+WLmQmRnN/IpZ5VAnsJd8rP71Zx4PP0/ra0LU9Wx
-        i1aJBC22k0/i1yaUDVBvwrv8ew==
-X-Google-Smtp-Source: AFSGD/XEsZvp+qtpCOJf99LMiUJNPljbRqcM+Mg+rF4AVIXwFlyMKS2hNAvaJmdC5tWDFP2aCJ2Q4g==
-X-Received: by 2002:a02:89a4:: with SMTP id p33mr23749124jaj.0.1544038262375;
-        Wed, 05 Dec 2018 11:31:02 -0800 (PST)
-Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id z10sm9009189ioh.20.2018.12.05.11.31.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 11:31:01 -0800 (PST)
-Date:   Wed, 5 Dec 2018 12:30:59 -0700
-From:   Yu Zhao <yuzhao@google.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: fix amd_iommu=force_isolation
-Message-ID: <20181205193059.GA224713@google.com>
-References: <20181204223716.214159-1-yuzhao@google.com>
- <20181205160955.p3juusqdxarmo2yc@8bytes.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=o/5q+EiSW/dgkrwWBnQBXqJ1QIoBjGhjPebH4qn/PGk=;
+        b=oJWfSODp3saE0ZVAMQj2ON+DzEWTYM8M0lm4AFDRMNBC3ruRGbfdufDLwsRLus6vXc
+         OKWjJhHUTqFu5ao08E+5lsP/sfPTDXcDWU7snfvRHkRsq9zzcu9EfWsiOB/ItPUTB+7f
+         P+QsnfP1Fo5j28QC3Zd8teJuxCIU/LULZCTTnEfDE+PzukYwTCVvG2LA9FNSIb8SHdyD
+         /GrOXo0YnQrRu4FOcLMc7RXEakddmD9tEb+dFpgEFThFWL9Td3dt8OZQ7TCfVojnY2HM
+         A8IBMJhxN/IV53ru92Xw0t+rzBJy1ruY+Umlm82tijBk/ZNyZduPzH+Bwzugd2MmfhWr
+         PpLA==
+X-Gm-Message-State: AA+aEWb9TznmOBNK5G69febXl5lZk1n8qex2/vqQhOPLpV4R2PJfJW5W
+        7zCvf4Tm3G3T/53LjpGeOh/A4V7kuqAlKfJ/YxF9UBcAF6wX
+X-Google-Smtp-Source: AFSGD/UDHVdrzYkQc32Devnm1eEsYc4v/fE1C0OjkJjdEtEFMR9GgZ533CxMtvh8FMZYeVOd+iztA0ottBedGwFz3HXC5oyhf9gN
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205160955.p3juusqdxarmo2yc@8bytes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:6212:: with SMTP id d18mr13400849itc.29.1544038263094;
+ Wed, 05 Dec 2018 11:31:03 -0800 (PST)
+Date:   Wed, 05 Dec 2018 11:31:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000311344057c4b6cc3@google.com>
+Subject: KMSAN: kernel-infoleak in sctp_getsockopt
+From:   syzbot <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:09:55PM +0100, Joerg Roedel wrote:
-> On Tue, Dec 04, 2018 at 03:37:16PM -0700, Yu Zhao wrote:
-> > The parameter is still there but it's ignored. We need to check its
-> > value before deciding to go into passthrough mode for AMD IOMMU.
-> > 
-> > Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
-> > 
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > ---
-> >  drivers/iommu/amd_iommu.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> > index 1167ff0416cf..3e4219e6cff0 100644
-> > --- a/drivers/iommu/amd_iommu.c
-> > +++ b/drivers/iommu/amd_iommu.c
-> > @@ -2195,7 +2195,8 @@ static int amd_iommu_add_device(struct device *dev)
-> >  
-> >  	BUG_ON(!dev_data);
-> >  
-> > -	if (iommu_pass_through || dev_data->iommu_v2)
-> > +	if (iommu_pass_through ||
-> > +	    (!amd_iommu_force_isolation && dev_data->iommu_v2))
-> 
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
+Hello,
 
-Actually this is what we want. We occasionally use this parameter
-to isolate v2 device when debugging memory corruption that we
-suspect is caused by DMA. It helped us before. Now with the patch,
-we caught another v2 device doing DMA write to memory areas that
-it's not supposed to.
+syzbot found the following crash on:
 
-> I think the force_isolation parameter does not make sense anymore today
-> and should be removed.
+HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_CSUM o..
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e84a47400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56b48b46dafe4516
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad5d327e6936a2e284be
+compiler:       clang version 8.0.0 (trunk 343298)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103cd225400000
 
-Could you please suggest an alternative? Otherwise, we won't be able
-to force v2 device out of direct mapping for the reason mentioned
-above.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
 
-Thank you.
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x32d/0x480 lib/dump_stack.c:113
+  kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+  kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+  kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+  _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+  copy_to_user include/linux/uaccess.h:183 [inline]
+  sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+  sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+  __sys_getsockopt+0x489/0x550 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
+RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
+RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
+R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
+R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
+
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+  kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+  kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+  sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
+  sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+  sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
+  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+  __sys_getsockopt+0x489/0x550 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+  kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+  kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+  sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
+  sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+  sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
+  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+  __sys_getsockopt+0x489/0x550 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+  kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
+  kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
+  __kmalloc+0x14c/0x4d0 mm/slub.c:3825
+  kmalloc include/linux/slab.h:551 [inline]
+  sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
+  notifier_call_chain kernel/notifier.c:93 [inline]
+  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
+  atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
+  inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:107
+  ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
+  inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
+  inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
+  rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
+  netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+  __sys_sendmsg net/socket.c:2154 [inline]
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Bytes 32-35 of 2100 are uninitialized
+Memory access of size 2100 starts at ffff888185d8b000
+Data copied to user address 0000000020001108
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
