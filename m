@@ -3,132 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD37AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780BAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D982081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D982081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 473A020850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473A020850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeLENmV (ORCPT
+        id S1727573AbeLENnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:42:21 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:45058 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727025AbeLENmV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:42:21 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB5DcdiF024547;
-        Wed, 5 Dec 2018 07:40:20 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2p3qktq6uk-1;
-        Wed, 05 Dec 2018 07:40:20 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 1FF10611C8B6;
-        Wed,  5 Dec 2018 07:43:57 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 5 Dec 2018
- 13:40:19 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wB5DeGC0002184; Wed,
- 5 Dec 2018 13:40:16 GMT
-Date:   Wed, 5 Dec 2018 13:40:16 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cory Maccarrone <darkstar6262@gmail.com>,
-        David Dajun Chen <dchen@diasemi.com>,
-        Dong Aisheng <dong.aisheng@linaro.org>,
-        Eric Miao <eric.miao@marvell.com>,
-        Graeme Gregory <gg@slimlogic.co.uk>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        <jinyoungp@nvidia.com>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        Mattias NILSSON <mattias.i.nilsson@stericsson.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Mike Rapoport <mike@compulab.co.il>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-Message-ID: <20181205134016.GE16508@imbe.wolfsonmicro.main>
-References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
- <20181205113535.GX16508@imbe.wolfsonmicro.main>
- <CACRpkdZs0uSrsY66X67=h=BPy=P_5korWVM8kDbzTXrhrvKvcQ@mail.gmail.com>
+        Wed, 5 Dec 2018 08:43:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727025AbeLENnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:43:19 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CDBC307DAA2;
+        Wed,  5 Dec 2018 13:43:18 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F24919741;
+        Wed,  5 Dec 2018 13:43:18 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id A24FB2208FC; Wed,  5 Dec 2018 08:43:17 -0500 (EST)
+Date:   Wed, 5 Dec 2018 08:43:17 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181205134317.GA11337@redhat.com>
+References: <f84bbe0b-f4c1-50e0-8c84-a6589154b3ae@tycho.nsa.gov>
+ <CAJfpegtBDTMbmKd6eDxRmtSJjGN6CnpGK_QPNSsxjkOoeu=1pQ@mail.gmail.com>
+ <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
+ <20181204151549.GA21509@redhat.com>
+ <20181204152248.GB21509@redhat.com>
+ <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
+ <20181204154243.GA16818@redhat.com>
+ <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
+ <20181204161747.GC16818@redhat.com>
+ <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZs0uSrsY66X67=h=BPy=P_5korWVM8kDbzTXrhrvKvcQ@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812050125
+In-Reply-To: <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 05 Dec 2018 13:43:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:48:47PM +0100, Linus Walleij wrote:
-> On Wed, Dec 5, 2018 at 12:36 PM Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> > On Sun, Dec 02, 2018 at 11:23:07PM -0500, Paul Gortmaker wrote:
-> > > The solution to #4 is similar - we delete the ".remove" function and
-> > > the binding into the platform_driver struct.  However, since the same
-> > > ".remove" function could also be triggered by an "unbind" (such as for
-> > > pass-through of a device to a guest instance)  - so we also explicitly
-> > > disable any unbind for the driver.
-> > >
-> > > The unbind mask allows us to ensure we will see if there was some odd
-> > > corner case out there that was relying on it.  Typically it would be a
-> > > multi-port ethernet card passing a port through to a guest, so a
-> > > sensible use case in MFD drivers seems highly unlikely.  This same
-> > > solution has already been used in multiple other mainline subsystems.
-> > >
-> >
-> > I guess if this is a general direction thing, but it does seem
-> > that module unload is not the only reason one might ever unbind a
-> > driver. So are we sure we want to remove the option to unbind
-> > these drivers? Certainly for testing it is sometimes useful.
+On Tue, Dec 04, 2018 at 11:49:16AM -0500, Stephen Smalley wrote:
+> On 12/4/18 11:17 AM, Vivek Goyal wrote:
+> > On Tue, Dec 04, 2018 at 11:05:46AM -0500, Stephen Smalley wrote:
+> > > On 12/4/18 10:42 AM, Vivek Goyal wrote:
+> > > > On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
+> > > > > On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > 
+> > > > > > Having said that, this still create little anomaly when mknod to client
+> > > > > > is not allowed on context label. So a device file, which is on lower
+> > > > > > and client can not open it for read/write on host, it can now be opened
+> > > > > > for read/write because mounter will allow access. So why it is different
+> > > > > > that regular copy up. Well, in regular copy up, we created a copy of
+> > > > > > the original object and allowed writing to that object (cp --preserve=all)
+> > > > > > model. But in case of device file, writes will go to same original
+> > > > > > object. (And not a separate copy).
+> > > > > 
+> > > > > That's true.
+> > > > > 
+> > > > > In that sense copy up of special file should result in upper having
+> > > > > the same label as of lower, right?
+> > > > 
+> > > > I guess that might be reasonable (if this behavior is a concern). So even
+> > > > after copy up, client will not be able to read/write a device if it was
+> > > > not allowed on lower.
+> > > > 
+> > > > Stephen, what do you think about retaining label of lower for device
+> > > > files during copy up. What about socket/fifo.
+> > > 
+> > > We don't check client task access to the upper inode label, only to the
+> > > overlay, right?  So the client is still free to access the device through
+> > > the overlay even if we preserve the lower inode label on the upper inode?
+> > > What do we gain?
+> > 
+> > That's only with latest code and Miklos said he will revert it for 4.20.
+> > 
+> > IOW, I am assuming that we will continue to check access to a file
+> > on upper in the context of mounter. Otherwise, client will be able to access
+> > files on upper/ which even mounter can't access.
 > 
-> I personally never understood why these attributes are even
-> present on non-modular drivers.
+> I was assuming we're talking about the proposed solution, where we check
+> client access to the overlay (unchanged), mounter access to lower
+> (unchanged), copy-up if denied (new), mounter access to upper (new in the
+> sense that previously we didn't copy-up on denials).
 > 
-> If testing is about exercising unbind/bind to reintialize
-> the code through a new call to .probe(), why would the developer
-> not take it all the way through and make it a module?
-> It just looks like a half-measure.
-> 
+> In that situation, propagating the lower inode label to the upper inode only
+> impacts the mounter checks, and in that case makes copy-up pointless - if it
+> wasn't allowed to lower it won't be allowed to upper.  If it is allowed,
+> then client task is free to access the device regardless as long as it has
+> permissions to the overlay inode.  So I don't see what we gain by
+> propagating the lower inode label to the upper inode in the context mount
+> case, and it creates an inconsistency between special files and regular
+> ones.
 
-Well I guess in someways it is a half-measure. I vaguely seem to
-remember some dependency nightmare that can make it really hard
-to have the MFD allowed as a module in some cases, I can't
-remember the exact details but probably why some of these are not
-modules.
+If we agree on retaining lower label of lower device file on copy up, then
+I am assuming we will change rule c) to copy up only non device files.
+(because if you don't have access on lower, you will not have access
+even after copy up).
 
-I certainly don't strongly object to removing the ability to
-unbind these drivers, just wanted to make sure everyone is
-aligned that it's a good thing to do. Does kinda remove a couple
-of debugging options (debugging things like drivers interfering
-with each other) and the last chance restart the driver and see
-if that helps rescue something.
+There are other paths where copy up happnes. Like link or when file 
+metadata (ownership, permissions, timestmap) changes. In those cases,
+if we retain the lower label over copy up, it probably will help.
 
-Thanks,
-Charles
+IOW, just by creating a link to a device, one will not get access to
+a device on upper which could not be accessed on lower.
+
+Device files are special anyway. In regular files we are creating a 
+copy and user writes to copy. But that's not the case with device
+files. So I guess these will have to be treated differently.
+
+Thanks
+Vivek
