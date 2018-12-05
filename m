@@ -2,95 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF062C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A80C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9A720645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:15:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544040935;
-	bh=NZnSMlwBg6i7YvR2M4DxLhwKgdBp3bAnZCeOYkeJncA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RXKcTemQsngGa7m+RVW1tb7lThdjmJTtwWeF2PfgZcR3wG4oZHE5+v/2r9Gdov8sk
-	 ykZ4xRpkf4VXTP4abB1EuOfK78mNQIkMtwRh8uWsrUAppQ4uYRo6uFstwFtSieSAmS
-	 6dFyPP87QS720KU9mY5mJ+L0o5ceXzP9ke5yHKR4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9A720645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6FF90208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF90208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbeLEUPe (ORCPT
+        id S1728381AbeLEUR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:15:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52096 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727257AbeLEUPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:15:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C8923ACAB;
-        Wed,  5 Dec 2018 20:15:31 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 21:15:28 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        s.priebe@profihost.ag, mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [patch 1/2 for-4.20] mm, thp: restore node-local hugepage
- allocations
-Message-ID: <20181205201528.GW1286@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1812031545560.161134@chino.kir.corp.google.com>
- <20181204073535.GV31738@dhcp22.suse.cz>
- <alpine.DEB.2.21.1812041355100.157466@chino.kir.corp.google.com>
- <20181205073434.GT1286@dhcp22.suse.cz>
- <alpine.DEB.2.21.1812051120550.240991@chino.kir.corp.google.com>
+        Wed, 5 Dec 2018 15:17:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727402AbeLEUR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:17:56 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 46501C075D6C;
+        Wed,  5 Dec 2018 20:17:56 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5E61B6910B;
+        Wed,  5 Dec 2018 20:17:55 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 15:17:54 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 08/11] livepatch: Remove Nop structures when unused
+Message-ID: <20181205201754.cvvywqlmxwgcbqzt@redhat.com>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-9-pmladek@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812051120550.240991@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181129094431.7801-9-pmladek@suse.com>
+User-Agent: Mutt/1.6.2-neo (2016-08-08)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 05 Dec 2018 20:17:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-12-18 11:24:53, David Rientjes wrote:
-> On Wed, 5 Dec 2018, Michal Hocko wrote:
+On Thu, Nov 29, 2018 at 10:44:28AM +0100, Petr Mladek wrote:
+> Replaced patches are removed from the stack when the transition is
+> finished. It means that Nop structures will never be needed again
+> and can be removed. Why should we care?
 > 
-> > > > At minimum do not remove the cleanup part which consolidates the gfp
-> > > > hadnling to a single place. There is no real reason to have the
-> > > > __GFP_THISNODE ugliness outside of alloc_hugepage_direct_gfpmask.
-> > > > 
-> > > 
-> > > The __GFP_THISNODE usage is still confined to 
-> > > alloc_hugepage_direct_gfpmask() for the thp fault path, we no longer set 
-> > > it in alloc_pages_vma() as done before the cleanup.
-> > 
-> > Why should be new_page any different?
-> > 
+>   + Nop structures make false feeling that the function is patched
+                     ^^^^^^^^^^^^^^^^^^
+re-wording suggestion: "give the impression"
+
+>     even though the ftrace handler has no effect.
 > 
-> To match alloc_new_node_page() which does it correctly and does not change 
-> the behavior of mbind() that the cleanup did, which used 
-> alloc_hugepage_vma() to get the __GFP_THISNODE behavior.  If there is a 
-> reason mbind() is somehow different wrt allocating hugepages locally, I 
-> think that should be a separate patch, but the goal of this patch is to 
-> revert all the behavioral change that caused hugepages to be allocated 
-> remotely.
+>   + Ftrace handlers are not completely for free. They cause slowdown that
+                                         ^^^^^^^^
+re-wording suggesions: "free" or "do not come for free"
 
-If the __GFP_THISNODE should be really used then it should be applied to
-all other types of pages. Not only THP. And as such done in a separate
-patch. Not a part of the revert. The cleanup was meant to unify THP
-allocations and that is why I object to reverting it as a part of this
-work.
+>     might be visible in some workloads. The ftrace-related slowdown might
+>     actually be the reason why the function is not longer patched in
+                                                 ^^^^^^^^^^
+s/not longer/no longer
 
--- 
-Michal Hocko
-SUSE Labs
+>     the new cumulative patch. One would expect that cumulative patch
+>     would allow to solve these problems as well.
+            ^^^^^^^^^^^^^^
+re-wording suggestion: "help solve"
+
+> 
+>   + Cumulative patches are supposed to replace any earlier version of
+>     the patch. The amount of NOPs depends on which version was replaced.
+>     This multiplies the amount of scenarios that might happen.
+> 
+>     One might say that NOPs are innocent. But there are even optimized
+>     NOP instructions for different processor, for example, see
+                                     ^^^^^^^^^
+s/processor/processors
+
+>     arch/x86/kernel/alternative.c. And klp_ftrace_handler() is much
+>     more complicated.
+> 
+>   + It sounds natural to clean up a mess that is not longer needed.
+                                                   ^^^^^^^^^^
+s/not longer/no longer
+
+>     It could only be worse if we do not do it.
+> 
+> This patch allows to unpatch and free the dynamic structures independently
+> when the transition finishes.
+> 
+> The free part is a bit tricky because kobject free callbacks are called
+> asynchronously. We could not wait for them easily. Fortunately, we do
+> not have to. Any further access can be avoided by removing them from
+> the dynamic lists.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+
+-- Joe
