@@ -2,120 +2,139 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03544C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CE1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD0A720878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:47:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9bpSjXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0A720878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 45A6020878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:48:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A6020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeLEOrm (ORCPT
+        id S1727904AbeLEOr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:47:42 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46729 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeLEOrm (ORCPT
+        Wed, 5 Dec 2018 09:47:59 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35538 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeLEOr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:47:42 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so18547438ljh.13;
-        Wed, 05 Dec 2018 06:47:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mxVwoIMwpFomTJ8PWao4eAF2MERZp30vta5Iv5s786E=;
-        b=O9bpSjXqmpeX6W8+/4TQD8NB0EwhODkWAwtaqQ+/TCQ/OGi/x1opXa3SLQhMMsANjN
-         OuoHsr0eykZ+Nf2JdKnkxwL8TEPwTeeNnrVfMwfYJeRLzAwM2wJFy303WRzSBUcqFOkg
-         3o+oqdAj7y10mnZWuUFAcmcF8NVd2Sh3KpaBijMFxYej1CckTo3WvWQRF070/HyKjy5U
-         5GYELUZ3DNj0SfaosFtT7TJkL1RrA41t4p0fTkFoHb787ManEw2OHSS/6+tg8wSdffP6
-         RbNzsZSGFj+hcis6+rjOSByhlUILlln6K3i4CtVP6yiXO72a3nGB7YNY+02344lwLyy8
-         r7cQ==
+        Wed, 5 Dec 2018 09:47:59 -0500
+Received: by mail-vs1-f66.google.com with SMTP id e7so12227676vsc.2;
+        Wed, 05 Dec 2018 06:47:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mxVwoIMwpFomTJ8PWao4eAF2MERZp30vta5Iv5s786E=;
-        b=lMqfzPyAWeDs7JzWAfSgSFN0yfDubj6LGOww+wDJ0L/jU1V8eR7Zr+1cU5S05pp+K8
-         YmvHTt/8yLMgfINhNwI4q8Qo+RCtQiyMz5VFoUT+TqxnzrKndpOuIOeizrHbkBN6BS1f
-         8DsXoRa1qr0EN65yuIooRSv+FGbi2hJzDBHhmOgmy001CKhvM8wg/ZypbtCokIRAqgRJ
-         oVY6MOr+Z2spdvVU1BkR5bo4Uwo5zuxkV88C5Vmv01XfsZLNlQ5xEUCKBxy/LIlC2zrD
-         g86b+C6D/ZpCdxw35gvZPkSx32M7FIUQ4zYZ8UvLCHpSU0SZ8ONtonOQdOTM0M9T2JTj
-         AB2Q==
-X-Gm-Message-State: AA+aEWalZHCSlN4y1ofSnGZNI/L7BQPlvBwIX+4D/ZU0cWQf3Bpn6QkU
-        3VvfDvAO8jhAKBUl1mdJnTs=
-X-Google-Smtp-Source: AFSGD/W3GDR/qmpnfwTfJi0FXy/0mnRSulTOBspICZdFKMWK62eSWihTG6PMbShTi5HXLOSXGVh9Wg==
-X-Received: by 2002:a2e:2b85:: with SMTP id r5-v6mr15376802ljr.91.1544021259003;
-        Wed, 05 Dec 2018 06:47:39 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm3796559ljk.53.2018.12.05.06.47.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 06:47:37 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUYSh-0003vJ-PH; Wed, 05 Dec 2018 15:47:40 +0100
-Date:   Wed, 5 Dec 2018 15:47:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH 1/5] gnss: sirf: write data to gnss only when the gnss
- device is open
-Message-ID: <20181205144739.GE15689@localhost>
-References: <20181118215801.12280-1-andreas@kemnade.info>
- <20181118215801.12280-2-andreas@kemnade.info>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N4N2sZNH53i6D9yRmiCx9A+jnggLmHj8GKEOX/5FTrU=;
+        b=syT0Cxd7iRsE6xxv81HldcaU5rcJwGRyThmoW1uaFEwCCS5GLOo0sUht3GViYaOlDQ
+         ZG08GL4dKfbT30ZvwrHoetmxEi9f2MH672VbjGUQocW7rRNZH2TV4144pOKXUoeVQIfT
+         votsd3vgZhMxnRJgR7G6m4YjD+Avxy+BDIxhL31mIR3wzRjAxiTV+tPVKQb+cpM8fRTB
+         6p6hxgF/+/uVfqhoaR2v22nheRIvW8yw6Ot1laZS/9uPA0ZYGo0Adr8Hr+ayMEiYuvrc
+         qtpdf+dCutSdTbeW9Y4oXisYfPaNn9xrldXr8WtWuJyDWt7ZIQ6fGGeqG0XJ9tLA66LF
+         AyqQ==
+X-Gm-Message-State: AA+aEWbyR8JtTLk47J4TusiJRd0cD3UnVJ+cGxCnD/huqxQKsseZXzq6
+        /emScrQSSuyfLcHDRuHBuZN/hBwi/4Ewy1RiGTz9Kw==
+X-Google-Smtp-Source: AFSGD/Uy+i6JE9+hiJGclbeIZTeGcdjkd4MCajWCRvlYpZr8AXZ0fXFsHNvyQb/TGAszNCY9o2NxiJlfS3SKFXdg5vA=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr10935737vsp.166.1544021277718;
+ Wed, 05 Dec 2018 06:47:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118215801.12280-2-andreas@kemnade.info>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com>
+ <20181205.221146.969453990167463340.anemo@mba.ocn.ne.jp> <CAMuHMdU9zXXSaPHKvfG3A73h3CTsb9H2RT_gWt-Ne=qQ+HKShQ@mail.gmail.com>
+ <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com>
+In-Reply-To: <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 5 Dec 2018 15:47:45 +0100
+Message-ID: <CAMuHMdXyfEVOWoBOx0Ywm6vw5oQ6eHNXFhQBKTfRSBOmPYGM6Q@mail.gmail.com>
+Subject: Re: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
+To:     trondmy@hammerspace.com
+Cc:     Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-mips@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 10:57:57PM +0100, Andreas Kemnade wrote:
-> The api forbids writing data there otherwise. Prepare for the
-> serdev_open()/close() being a part of runtime pm.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  drivers/gnss/sirf.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
- 
-> @@ -73,6 +76,7 @@ static void sirf_close(struct gnss_device *gdev)
->  	serdev_device_close(serdev);
->  
->  	pm_runtime_put(&serdev->dev);
-> +	data->opened = false;
->  }
->  
->  static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
-> @@ -105,7 +109,17 @@ static int sirf_receive_buf(struct serdev_device *serdev,
->  	struct sirf_data *data = serdev_device_get_drvdata(serdev);
->  	struct gnss_device *gdev = data->gdev;
->  
-> -	return gnss_insert_raw(gdev, buf, count);
-> +	/*
-> +	 * we might come here everytime when runtime is resumed
-> +	 * and data is received. Two cases are possible
-> +	 * 1. device is opened during initialisation
-> +	 * 2. kernel is compiled without runtime pm
-> +	 *    and device is opened all the time
-> +	 */
-> +	if (data->opened)
-> +		return gnss_insert_raw(gdev, buf, count);
+Hi Trond,
 
-This can race with sirf_close() when you move serdev handling out of
-sirf_open()/close(). Not sure how best to handle that yet.
+On Wed, Dec 5, 2018 at 2:45 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
+> On Wed, 2018-12-05 at 14:41 +0100, Geert Uytterhoeven wrote:
+> > On Wed, Dec 5, 2018 at 2:11 PM Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+> > wrote:
+> > > On Tue, 4 Dec 2018 14:53:07 +0100, Geert Uytterhoeven <
+> > > geert@linux-m68k.org> wrote:
+> > > > I found similar crashes in a report from 2006, but of course the
+> > > > code
+> > > > has changed too much to apply the solution proposed there
+> > > > (
+> > > > https://www.linux-mips.org/archives/linux-mips/2006-09/msg00169.html
+> > > > ).
+> > > >
+> > > > Userland is Debian 8 (the last release supporting "old" MIPS).
+> > > > My kernel is based on v4.20.0-rc5, but the issue happens with
+> > > > v4.20-rc1,
+> > > > too.
+> > > >
+> > > > However, I noticed it works in v4.19! Hence I've bisected this,
+> > > > to commit
+> > > > 277e4ab7d530bf28 ("SUNRPC: Simplify TCP receive code by switching
+> > > > to using
+> > > > iterators").
+> > > >
+> > > > Dropping the ",tcp" part from the nfsroot parameter also fixes
+> > > > the issue.
+> > > >
+> > > > Given RBTX4927 is little endian, just like my arm/arm64 boards,
+> > > > it's probably
+> > > > not an endianness issue.  Sparse didn't show anything suspicious
+> > > > before/after
+> > > > the guilty commit.
+> > > >
+> > > > Do you have a clue?
+> > >
+> > > If it was a cache issue, disabling i-cache or d-cache completely
+> > > might
+> > > help understanding the problem.  I added TXx9 specific "icdisable"
+> > > and
+> > > "dcdisable" kernel options for debugging long ago.
+> > >
+> > > I hope these options still works correctly with recent kernel but
+> > > not
+> > > sure.
+> > >
+> > > Also, disabling i-cache makes your board VERY slow, of course.
+> >
+> > Thanks!
+> >
+> > When using these options, I do see a slowdown in early boot, but the
+> > issue
+> > is still there.
+> >
+> > My next guess is an unaligned access not using {get,put}_unaligned(),
+> > which
+> > doesn't seem to work on tx4927, but doesn't cause an exception
+> > neither.
+>
+> Can you try my linux-next branch on git.linux-nfs.org? It contains a
+> fixes for a hang that results from the above commit.
+>
+> git pull git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
 
-Johan
+Thanks for the suggestion, but unfortunately it doesn't help.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
