@@ -2,122 +2,149 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39490C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED070C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4EDF20834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Hnwck0yS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4EDF20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id AF35420834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:15:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF35420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbeLEBO4 (ORCPT
+        id S1726836AbeLEBPY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:14:56 -0500
-Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:31968
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725979AbeLEBO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:14:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ad/Nh4sGlCMYJ8f/cN0cMcg4DcXE7WUX7sFOXPRW23E=;
- b=Hnwck0yS4T+Kw0jPQD54O02nObFut5/eg+cr70LLckADOjDU4g5Au0xinnmL5MwZVgRuVG89ZDVtjgAwT0w8aglzulaf3iW9WnWljGXXScof7myvh40treVGus0YFPfg6iK033bY+lagUJ39gDm5ddWKpbeXlZRS+k4V1kY+yhs=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3785.eurprd04.prod.outlook.com (52.134.71.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Wed, 5 Dec 2018 01:14:51 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
- 01:14:51 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: dts: imx6qdl-sabresd: add egalax touch screen
- support on i2c2 bus
-Thread-Topic: [PATCH] ARM: dts: imx6qdl-sabresd: add egalax touch screen
- support on i2c2 bus
-Thread-Index: AQHUi67sJwvwp2WEqEW/kmuV/wO8IaVuXjqAgAD6JlA=
-Date:   Wed, 5 Dec 2018 01:14:51 +0000
-Message-ID: <DB3PR0402MB3916CF664E069CB81550B5F0F5A80@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1543913303-6216-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5D_GTWvLUjJaPSmhPqgjadJh_4pTZqHKz92=1ZAeYkstg@mail.gmail.com>
-In-Reply-To: <CAOMZO5D_GTWvLUjJaPSmhPqgjadJh_4pTZqHKz92=1ZAeYkstg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3785;6:WTk4U3BoYSbusJQyHMjgjKu0De1UtoKRw604lLMK8diLGXSOkG3Lx110ydaJbWLUh8yclN44D/+ZtQV1ZDyodmqbTvzrbDU6k/J0N2MWaZhoUNmJ/z1xbAWlwBiW3fJA8pfYh13SoJR0b57C5dHOCB53xAOG1ywldXGcDOqPDZ95TpMNnKDc45Mb/DD9Mz2AfXSHwkYzLuj5OwftD/9fYvjcP/Jf1DzeElRbjiwSzM0KIydZVurpI4trITRG1blZcBjaktJRV7su2KQYqL0J+EkUkCW28HWa4yogKCimHng2RfGDFmhAe0Ttr2t4J9X29lE2GOWzg3ATStS9WArLHadz/BNe5ohaeEh4J4imdppR6orj5RshZ74BcdGd21H4CN9K0LlARzEkVE2EzKjnGdU0A1nclo7SLMPx7rij9HnAFoHnlYN615pmAc9o3eglmWBNijBAFWIh3X5iQLhM7A==;5:omcgXOXgQguJKLxedTYdXFMgFV0iXUJmKIBVmypJ0ANf8pqXEVTlWiDk4v9UU95nkfRWtElG1yUx9bc//NQo05RDj2iwvfvWI6/ufZkg6C95ZX5z4k5a5z+NI3shrmzmwCgi/85k4VrIgFNTx2vJdcsJYIwm5EOJ1SjiuybF0L0=;7:v8drgnoVTVxnurqDfPoyfmbOebXGDo6NzO6/yqI5ewHz3GTTE5tzXQd/mkTwDdrISZu6QNSy6kwRDQ+bx/vtlj1TwHFtCawHbv8At2cg9YKBlVNtHMkwnnHJBHE59idhMAERYnhuI0yoEv7FS4wmEg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ccb5705c-58ef-45d6-93fe-08d65a4f0eed
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3785;
-x-ms-traffictypediagnostic: DB3PR0402MB3785:
-x-microsoft-antispam-prvs: <DB3PR0402MB37851FF8BF62B94C22EDC6F7F5A80@DB3PR0402MB3785.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501517)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3785;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3785;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(366004)(346002)(39860400002)(396003)(13464003)(189003)(199004)(5660300001)(105586002)(186003)(486006)(33656002)(66066001)(106356001)(99286004)(53936002)(53546011)(6506007)(6916009)(54906003)(55016002)(26005)(1411001)(76176011)(68736007)(7736002)(305945005)(7696005)(9686003)(97736004)(3846002)(6116002)(229853002)(86362001)(102836004)(6246003)(39060400002)(316002)(478600001)(71200400001)(71190400001)(256004)(2906002)(44832011)(6436002)(446003)(11346002)(476003)(81166006)(81156014)(8676002)(4326008)(74316002)(25786009)(8936002)(14454004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3785;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xbfkEc2EJ4+64QwizkiAMbkfZU8B/C1UtFtLLrvHbSLc+aGvQsDQoa+wWnelFL6Mohf2nDmy72VcIzCqBu0Qn3NaLFvXR7vNacpySGC6AMaMwK6dFdvKwy6vehf9jCZVmS0cMBiGt/lmoWHhv9thE/3j6oZcHxmFfbKC4vrIQhuQ+0nySPplkGzbiN5YXrdiNjj0Bkl4FMNMucafY4v/P0Tq1x6Ff45Ie5CnUooChoYTliYMlyeEdP66aK5orbpSEYaIIMwf4d9fa0X4fLpCp+0Fg0rRtW0i0hJRr79n+t+PBhN19xt5ju60PEhBuSeJE79B0/fAc7qlrgebWUkpVmawN2p/TFfx5dsvUPjm0hU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 4 Dec 2018 20:15:24 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:56348 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725979AbeLEBPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:15:24 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gULmR-0003oX-QU; Tue, 04 Dec 2018 18:15:12 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+References: <20181204185725.GE2937@redhat.com>
+ <de7c1099-2717-6396-bf56-c4ab4085ee83@deltatee.com>
+ <20181204192221.GG2937@redhat.com>
+ <f759cc28-309d-930c-da7d-34144a4d5517@deltatee.com>
+ <20181204201347.GK2937@redhat.com>
+ <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
+ <20181204205902.GM2937@redhat.com>
+ <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
+ <20181204215146.GO2937@redhat.com>
+ <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
+ <20181204235630.GQ2937@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
+Date:   Tue, 4 Dec 2018 18:15:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccb5705c-58ef-45d6-93fe-08d65a4f0eed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 01:14:51.7860
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3785
+In-Reply-To: <20181204235630.GQ2937@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCkJlc3QgUmVnYXJkcyENCkFuc29uIEh1YW5nDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
-LS0tLS0NCj4gRnJvbTogRmFiaW8gRXN0ZXZhbSBbbWFpbHRvOmZlc3RldmFtQGdtYWlsLmNvbV0N
-Cj4gU2VudDogMjAxOOW5tDEy5pyINOaXpSAxODoxOQ0KPiBUbzogQW5zb24gSHVhbmcgPGFuc29u
-Lmh1YW5nQG54cC5jb20+DQo+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBT
-YXNjaGEgSGF1ZXINCj4gPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+OyBTYXNjaGEgSGF1ZXIgPGtl
-cm5lbEBwZW5ndXRyb25peC5kZT47IEZhYmlvDQo+IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1Abnhw
-LmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+Ow0KPiBNYXJrIFJ1dGxhbmQg
-PG1hcmsucnV0bGFuZEBhcm0uY29tPjsgbW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVgN
-Cj4gLyBNWEMgQVJNIEFSQ0hJVEVDVFVSRSA8bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnPjsgb3Blbg0KPiBsaXN0Ok9QRU4gRklSTVdBUkUgQU5EIEZMQVRURU5FRCBERVZJQ0Ug
-VFJFRSBCSU5ESU5HUw0KPiA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1rZXJu
-ZWwgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4
-LWlteEBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBBUk06IGR0czogaW14NnFkbC1z
-YWJyZXNkOiBhZGQgZWdhbGF4IHRvdWNoIHNjcmVlbg0KPiBzdXBwb3J0IG9uIGkyYzIgYnVzDQo+
-IA0KPiBIaSBBbnNvbiwNCj4gDQo+IE9uIFR1ZSwgRGVjIDQsIDIwMTggYXQgNjo1NCBBTSBBbnNv
-biBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4gPiBBZGQgZWdh
-bGF4IHRvdWNoIHNjcmVlbiBzdXBwb3J0IG9uIGkyYzIgYnVzLg0KPiANCj4gUGxlYXNlIGltcHJv
-dmUgdGhlIGNvbW1pdCBsb2cgc2F5aW5nIHRoYXQgdGhpcyBuZXdseSBpbnRyb2R1Y2VkIHRvdWNo
-c2NyZWVuDQo+IGNvbnRyb2xsZXIgaXMgY29ubmVjdGVkIHRvIExWRFMwIGFuZCB0aGUgZXhpc3Rp
-bmcgb25lIG9uDQo+IEkyQzMgaXMgY29ubmVjdGVkIHRvIExWRFMxLg0KPiANCj4gVGhhbmtzDQoN
-ClRoYW5rcyBGYWJpbywgZG9uZSBpbiBWMiBwYXRjaC4NCg0KQW5zb24uDQoNCg0K
+
+
+On 2018-12-04 4:56 p.m., Jerome Glisse wrote:
+> One example i have is 4 nodes (CPU socket) each nodes with 8 GPUs and
+> two 8 GPUs node connected through each other with fast mesh (ie each
+> GPU can peer to peer to each other at the same bandwidth). Then this
+> 2 blocks are connected to the other block through a share link.
+> 
+> So it looks like:
+>     SOCKET0----SOCKET1-----SOCKET2----SOCKET3
+>     |          |           |          |
+>     S0-GPU0====S1-GPU0     S2-GPU0====S1-GPU0
+>     ||     \\//            ||     \\//
+>     ||     //\\            ||     //\\
+>     ...    ====...    -----...    ====...
+>     ||     \\//            ||     \\//
+>     ||     //\\            ||     //\\
+>     S0-GPU7====S1-GPU7     S2-GPU7====S3-GPU7
+
+Well the existing NUMA node stuff tells userspace which GPU belongs to
+which socket (every device in sysfs already has a numa_node attribute).
+And if that's not good enough we should work to improve how that works
+for all devices. This problem isn't specific to GPUS or devices with
+memory and seems rather orthogonal to an API to bind to device memory.
+
+> How the above example would looks like ? I fail to see how to do it
+> inside current sysfs. Maybe by creating multiple virtual device for
+> each of the inter-connect ? So something like
+> 
+> link0 -> device:00 which itself has S0-GPU0 ... S0-GPU7 has child
+> link1 -> device:01 which itself has S1-GPU0 ... S1-GPU7 has child
+> link2 -> device:02 which itself has S2-GPU0 ... S2-GPU7 has child
+> link3 -> device:03 which itself has S3-GPU0 ... S3-GPU7 has child
+
+I think the "links" between GPUs themselves would be a bus. In the same
+way a NUMA node is a bus. Each device in sysfs would then need a
+directory or something to describe what "link bus(es)" they are a part
+of. Though there are other ways to do this: a GPU driver could simply
+create symlinks to other GPUs inside a "neighbours" directory under the
+device path or something like that.
+
+The point is that this seems like it is specific to GPUs and could
+easily be solved in the GPU community without any new universal concepts
+or big APIs.
+
+And for applications that need topology information, a lot of it is
+already there, we just need to fill in the gaps with small changes that
+would be much less controversial. Then if you want to create a libhms
+(or whatever) to help applications parse this information out of
+existing sysfs that would make sense.
+
+> My proposal is to do HMS behind staging for a while and also avoid
+> any disruption to existing code path. See with people living on the
+> bleeding edge if they get interested in that informations. If not then
+> i can strip down my thing to the bare minimum which is about device
+> memory.
+
+This isn't my area or decision to make, but it seemed to me like this is
+not what staging is for. Staging is for introducing *drivers* that
+aren't up to the Kernel's quality level and they all reside under the
+drivers/staging path. It's not meant to introduce experimental APIs
+around the kernel that might be revoked at anytime.
+
+DAX introduced itself by marking the config option as EXPERIMENTAL and
+printing warnings to dmesg when someone tries to use it. But, to my
+knowledge, DAX also wasn't creating APIs with the intention of changing
+or revoking them -- it was introducing features using largely existing
+APIs that had many broken corner cases.
+
+Do you know of any precedents where big APIs were introduced and then
+later revoked or radically changed like you are proposing to do?
+
+Logan
+
+
+
