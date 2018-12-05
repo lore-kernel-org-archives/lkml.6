@@ -2,114 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02E0C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE74C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE11206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:02:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gbOQg2P3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jK9qJ8kl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE11206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D75AE20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:06:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75AE20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeLEICT (ORCPT
+        id S1727027AbeLEIGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:02:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57768 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbeLEICS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:02:18 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 01D9060397; Wed,  5 Dec 2018 08:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543996938;
-        bh=AOe1NMnRup7AswQew0AJMN+3caEDVm8bDKls8jNNNGY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gbOQg2P3pmEyxw6e6ZPnx219bmT1qyh9rpxyQBu20xwcKqC3/q+i91o7PoRUd3m90
-         8ytE/ZGO+x49EuuAoYZrbEsB1uF7Ibv+l4RkRrcdJNoQCNFYqLy5KUz+vTKMeN2iWP
-         YSo9T9yMMxCoq3Us2nTWOyISpvDVFvRNdZv0bk2E=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4921C60397;
-        Wed,  5 Dec 2018 08:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543996937;
-        bh=AOe1NMnRup7AswQew0AJMN+3caEDVm8bDKls8jNNNGY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jK9qJ8klmw7oiwEY7RpBuaB8oywrP0GEUnncc7iuWba2j4akNKP6186MsCBZnfmBd
-         jp1Dm4Nk2rnTtbgq9vTyAU0O4Kig9ZhXfQiVM/XwQMOXnPZJX08J90yKevsQ0eo/CA
-         iYv9hPB8MtPSrIijEfmuLctquryuytxOmEqJfDZ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4921C60397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH] clk: qcom: Remove LPASS_CC config for GCC lpass clocks
-Date:   Wed,  5 Dec 2018 13:32:00 +0530
-Message-Id: <1543996920-17029-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 5 Dec 2018 03:06:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:28499 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726102AbeLEIGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:06:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 00:06:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
+   d="scan'208";a="127233262"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Dec 2018 00:06:15 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gUSCF-000D6Z-6G; Wed, 05 Dec 2018 16:06:15 +0800
+Date:   Wed, 5 Dec 2018 16:06:00 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: drivers/mfd/madera-core.c:158:2-3: Unneeded semicolon
+Message-ID: <201812051658.GR1ik3XL%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GCC lpass clocks are updated as protected, so clean up the ifdefers.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0072a0c14d5b7cb72c611d396f143f5dcd73ebe2
+commit: b04e68d16605dcde1c21b5df5f86a5372e53ae97 mfd: madera: Don't use regmap_read_poll_timeout to poll for BOOT_DONE
+date:   6 weeks ago
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/mfd/madera-core.c:158:2-3: Unneeded semicolon
+
+vim +158 drivers/mfd/madera-core.c
+
+   137	
+   138	static int madera_wait_for_boot(struct madera *madera)
+   139	{
+   140		ktime_t timeout;
+   141		unsigned int val;
+   142		int ret = 0;
+   143	
+   144		/*
+   145		 * We can't use an interrupt as we need to runtime resume to do so,
+   146		 * so we poll the status bit. This won't race with the interrupt
+   147		 * handler because it will be blocked on runtime resume.
+   148		 * The chip could NAK a read request while it is booting so ignore
+   149		 * errors from regmap_read.
+   150		 */
+   151		timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
+   152		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
+   153		while (!(val & MADERA_BOOT_DONE_STS1) &&
+   154		       !ktime_after(ktime_get(), timeout)) {
+   155			usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
+   156				     MADERA_BOOT_POLL_INTERVAL_USEC);
+   157			regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
+ > 158		};
+   159	
+   160		if (!(val & MADERA_BOOT_DONE_STS1)) {
+   161			dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
+   162			ret = -ETIMEDOUT;
+   163		}
+   164	
+   165		/*
+   166		 * BOOT_DONE defaults to unmasked on boot so we must ack it.
+   167		 * Do this even after a timeout to avoid interrupt storms.
+   168		 */
+   169		regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
+   170			     MADERA_BOOT_DONE_EINT1);
+   171	
+   172		pm_runtime_mark_last_busy(madera->dev);
+   173	
+   174		return ret;
+   175	}
+   176	
+
 ---
- drivers/clk/qcom/gcc-sdm845.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index c782e62..ba8ff99 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3153,8 +3153,6 @@ enum {
- 	},
- };
-
--/* TODO: Remove after DTS updated to protect these */
--#ifdef CONFIG_SDM_LPASSCC_845
- static struct clk_branch gcc_lpass_q6_axi_clk = {
- 	.halt_reg = 0x47000,
- 	.halt_check = BRANCH_HALT,
-@@ -3182,7 +3180,6 @@ enum {
- 		},
- 	},
- };
--#endif
-
- static struct gdsc pcie_0_gdsc = {
- 	.gdscr = 0x6b004,
-@@ -3484,10 +3481,8 @@ enum {
- 	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
- 	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
- 	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
--#ifdef CONFIG_SDM_LPASSCC_845
- 	[GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
- 	[GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
--#endif
- };
-
- static const struct qcom_reset_map gcc_sdm845_resets[] = {
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
