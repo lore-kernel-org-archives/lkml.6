@@ -7,141 +7,88 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91299C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D907C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5815D20661
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C777214F1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLl7QWvD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5815D20661
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCSh3Um2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C777214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbeLEJx6 (ORCPT
+        id S1729607AbeLEJzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:53:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60650 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:55:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbeLEJx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:53:56 -0500
+        id S1727271AbeLEJzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:55:20 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0A2A2082B;
-        Wed,  5 Dec 2018 09:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7325F20661;
+        Wed,  5 Dec 2018 09:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003635;
-        bh=Gj1XP6HVnpEpmyu7AfozOicVf2oFGcbSgdhBBGPnJ/E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SLl7QWvDxY0IDikHS2mjOI9spqg1Ffubf6ATOVZWXtui80HhAuFEIu4g3C0sUsaIo
-         WQY94ZE3Fh2i7sLskEzy5aRrXRcV2JkZ6QdoAWc04HyKGcuUsNuEPtAuknD7xeFUPi
-         tJGVAxYg2VkWCJQ4srVnMPhamvstaSUCoNEgBIik=
+        s=default; t=1544003719;
+        bh=ZBkZQS9Ls4EgNzaYVDGAQEJ6U/wuGIllDXMF4ki6YOA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pCSh3Um2xCN1kHCqlET/hMr0/po8kN+R8Y8JVgMyDsGAU6Tsi6GZQN7xJo6jtj6WP
+         Sy217KXghR6MGwc5Oa17i2IVe/5YyLbv0yJ4zpyXpHrjBDGKF/U0xmFlaC0WScn/n7
+         C/KLVccEAnBCC6tzcUBNBKEPXhx6t+M8OWzq7ucY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.4 24/33] drm/ast: fixed reading monitor EDID not stable issue
-Date:   Wed,  5 Dec 2018 04:51:22 -0500
-Message-Id: <20181205095131.7685-24-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 01/26] ARM: OMAP2+: prm44xx: Fix section annotation on omap44xx_prm_enable_io_wakeup
+Date:   Wed,  5 Dec 2018 04:54:05 -0500
+Message-Id: <20181205095430.8019-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205095131.7685-1-sashal@kernel.org>
-References: <20181205095131.7685-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Y.C. Chen" <yc_chen@aspeedtech.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 300625620314194d9e6d4f6dda71f2dc9cf62d9f ]
+[ Upstream commit eef3dc34a1e0b01d53328b88c25237bcc7323777 ]
 
-v1: over-sample data to increase the stability with some specific monitors
-v2: refine to avoid infinite loop
-v3: remove un-necessary "volatile" declaration
+When building the kernel with Clang, the following section mismatch
+warning appears:
 
-[airlied: fix two checkpatch warnings]
+WARNING: vmlinux.o(.text+0x38b3c): Section mismatch in reference from
+the function omap44xx_prm_late_init() to the function
+.init.text:omap44xx_prm_enable_io_wakeup()
+The function omap44xx_prm_late_init() references
+the function __init omap44xx_prm_enable_io_wakeup().
+This is often because omap44xx_prm_late_init lacks a __init
+annotation or the annotation of omap44xx_prm_enable_io_wakeup is wrong.
 
-Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1542858988-1127-1-git-send-email-yc_chen@aspeedtech.com
+Remove the __init annotation from omap44xx_prm_enable_io_wakeup so there
+is no more mismatch.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_mode.c | 36 ++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
+ arch/arm/mach-omap2/prm44xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 21085f669e21..b19ba1792607 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -968,9 +968,21 @@ static int get_clock(void *i2c_priv)
+diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
+index 0958d070d3db..46e29afe1c09 100644
+--- a/arch/arm/mach-omap2/prm44xx.c
++++ b/arch/arm/mach-omap2/prm44xx.c
+@@ -333,7 +333,7 @@ void omap44xx_prm_reconfigure_io_chain(void)
+  * to occur, WAKEUPENABLE bits must be set in the pad mux registers, and
+  * omap44xx_prm_reconfigure_io_chain() must be called.  No return value.
+  */
+-static void __init omap44xx_prm_enable_io_wakeup(void)
++static void omap44xx_prm_enable_io_wakeup(void)
  {
- 	struct ast_i2c_chan *i2c = i2c_priv;
- 	struct ast_private *ast = i2c->dev->dev_private;
--	uint32_t val;
-+	uint32_t val, val2, count, pass;
-+
-+	count = 0;
-+	pass = 0;
-+	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+	do {
-+		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+		if (val == val2) {
-+			pass++;
-+		} else {
-+			pass = 0;
-+			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+		}
-+	} while ((pass < 5) && (count++ < 0x10000));
+ 	s32 inst = omap4_prmst_get_prm_dev_inst();
  
--	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4;
- 	return val & 1 ? 1 : 0;
- }
- 
-@@ -978,9 +990,21 @@ static int get_data(void *i2c_priv)
- {
- 	struct ast_i2c_chan *i2c = i2c_priv;
- 	struct ast_private *ast = i2c->dev->dev_private;
--	uint32_t val;
-+	uint32_t val, val2, count, pass;
-+
-+	count = 0;
-+	pass = 0;
-+	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+	do {
-+		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+		if (val == val2) {
-+			pass++;
-+		} else {
-+			pass = 0;
-+			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+		}
-+	} while ((pass < 5) && (count++ < 0x10000));
- 
--	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5;
- 	return val & 1 ? 1 : 0;
- }
- 
-@@ -993,7 +1017,7 @@ static void set_clock(void *i2c_priv, int clock)
- 
- 	for (i = 0; i < 0x10000; i++) {
- 		ujcrb7 = ((clock & 0x01) ? 0 : 1);
--		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfe, ujcrb7);
-+		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf4, ujcrb7);
- 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x01);
- 		if (ujcrb7 == jtemp)
- 			break;
-@@ -1009,7 +1033,7 @@ static void set_data(void *i2c_priv, int data)
- 
- 	for (i = 0; i < 0x10000; i++) {
- 		ujcrb7 = ((data & 0x01) ? 0 : 1) << 2;
--		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfb, ujcrb7);
-+		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf1, ujcrb7);
- 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x04);
- 		if (ujcrb7 == jtemp)
- 			break;
 -- 
 2.17.1
 
