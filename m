@@ -7,83 +7,89 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5259C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAE9C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E0D206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F089B21508
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwPkOsQY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E0D206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xNIATncS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F089B21508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbeLEKGT (ORCPT
+        id S1728896AbeLEJlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:06:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46062 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728263AbeLEJlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:32 -0500
+        id S1728866AbeLEJlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:12 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6CCA20989;
-        Wed,  5 Dec 2018 09:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C50020850;
+        Wed,  5 Dec 2018 09:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002892;
-        bh=JUM+duHqmpBjUL36ybvUdijy+WP12OKfOZq0c8jRchQ=;
+        s=default; t=1544002872;
+        bh=eoHLYA56TQzq13+OjMk3Nh3vGGd1TDLvN91q6O0ApIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mwPkOsQYByd3y0RngJSTyrGclG1nN0hnCGyr71goSiuBirnCvdZKI2O1pGleaS/Ta
-         Hh4bRXjfH5qGt0s1tUwLunNJWRYHKxrpSO3yorK/xFbkfeRZ4BFIOLvNGhmULtgWU8
-         sPiQelAq8vqam+awLHFPe/ohrHD/fIJDCJmXTquE=
+        b=xNIATncSmw2e56U8xd6z0DEKvi5AN0VnFmrt2mYvqTNrBAAFNZV5hwiF+dMu9hcjR
+         LawO4cXcLdT61fkPrlB+ppOKHJaALFNIYckG71nBbY2Gyf2tMJfvC6wfNnVLUWTRWr
+         f7A0ttTQj1FBGF7pbfXTbaS3p9lHJJ1fCapK1ZPo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Srikanth Boddepalli <boddepalli.srikanth@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 101/123] xen: xlate_mmu: add missing header to fix 'W=1' warning
-Date:   Wed,  5 Dec 2018 04:35:33 -0500
-Message-Id: <20181205093555.5386-101-sashal@kernel.org>
+Cc:     Josh Elsasser <jelsasser@appneta.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 095/123] ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
+Date:   Wed,  5 Dec 2018 04:35:27 -0500
+Message-Id: <20181205093555.5386-95-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
+From: Josh Elsasser <jelsasser@appneta.com>
 
-[ Upstream commit 72791ac854fea36034fa7976b748fde585008e78 ]
+[ Upstream commit a8bf879af7b1999eba36303ce9cc60e0e7dd816c ]
 
-Add a missing header otherwise compiler warns about missed prototype:
+Add the two 1000BaseLX enum values to the X550's check for 1Gbps modules,
+allowing the core driver code to establish a link over this SFP type.
 
-drivers/xen/xlate_mmu.c:183:5: warning: no previous prototype for 'xen_xlate_unmap_gfn_range?' [-Wmissing-prototypes]
-  int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
-      ^~~~~~~~~~~~~~~~~~~~~~~~~
+This is done by the out-of-tree driver but the fix wasn't in mainline.
 
-Signed-off-by: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x SFP+”)
+Fixes: 6a14ee0cfb19 ("ixgbe: Add X550 support function pointers")
+Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/xlate_mmu.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-index 23f1387b3ef7..e7df65d32c91 100644
---- a/drivers/xen/xlate_mmu.c
-+++ b/drivers/xen/xlate_mmu.c
-@@ -36,6 +36,7 @@
- #include <asm/xen/hypervisor.h>
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+index a8148c7126e5..9772016222c3 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+@@ -2248,7 +2248,9 @@ static s32 ixgbe_get_link_capabilities_X550em(struct ixgbe_hw *hw,
+ 		*autoneg = false;
  
- #include <xen/xen.h>
-+#include <xen/xen-ops.h>
- #include <xen/page.h>
- #include <xen/interface/xen.h>
- #include <xen/interface/memory.h>
+ 		if (hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
+-		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1) {
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core1) {
+ 			*speed = IXGBE_LINK_SPEED_1GB_FULL;
+ 			return 0;
+ 		}
 -- 
 2.17.1
 
