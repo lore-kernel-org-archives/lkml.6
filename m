@@ -2,117 +2,130 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C6DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0615C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C59FB2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:01:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C59FB2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9CE9A20851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cdedmqF3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE9A20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbeLEJBv (ORCPT
+        id S1727372AbeLEJCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:01:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:52970 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbeLEJBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:01:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 01:01:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="asc'?scan'208";a="123096314"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Dec 2018 01:01:45 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Johan Hovold <johan@kernel.org>,
-        Jaejoong Kim <climbbb.kim@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        martin.petersen@oracle.com, Bart Van Assche <bvanassche@acm.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Ian King <colin.king@canonical.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v.anuragkumar@gmail.com, Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: Re: [PATCH v7 05/10] usb: dwc3: make controller clear transfer resources after complete
-In-Reply-To: <1543662811-5194-6-git-send-email-anurag.kumar.vulisha@xilinx.com>
-References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1543662811-5194-6-git-send-email-anurag.kumar.vulisha@xilinx.com>
-Date:   Wed, 05 Dec 2018 11:01:37 +0200
-Message-ID: <878t142vpq.fsf@linux.intel.com>
+        Wed, 5 Dec 2018 04:02:16 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41367 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbeLEJCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:02:15 -0500
+Received: by mail-vs1-f68.google.com with SMTP id t17so11603036vsc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 01:02:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KI78R0hXaOeWcuoDkaVQTTSv3meh467bNNdqylZXYJY=;
+        b=cdedmqF3C3iDa5yfxJRh+wyQVbt6gmagl/lqYjqpLv7gXu8z0Xn+6gGetKvcrD5gSz
+         Ibs/24r9rPiUn8Ie7fYJVEx8vKPyQYX/JWQ4orhEdXmMZdEZWxDAE6WAX7JHSib97hos
+         lZ1BPIB62SUWcZcU2/Z72t3x/CJkxhQcOG+Rw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KI78R0hXaOeWcuoDkaVQTTSv3meh467bNNdqylZXYJY=;
+        b=Okr1ChjLuTlixSnpBhx9SAHn/Q/+JhCAUQmu3gH1QGsd1q0iu+lUJ4vOzegT9ebi3O
+         NxkqHj9OsyFsOGH/3L0oPzxRDEf5z6AnKLdt+6/sh8MwJN8okPVnRUNGpJxH2CLxdSp9
+         OLqeO68kxc8foRmxHxV+/LA1JoUf6WDKOjTXcT3V9ESBAKq348nd61Jkc6cY8nF4qu3F
+         DYRyZU44l++/oTyYPfNDabOdYl2gSyz8XeOcbXMLx+dW6R9XexFz4QyQUrzv19ES15Uz
+         bncFf/W9dnjKYrkWmp3cOKI3cqRYsBz1kLMhgvjcd4P1tIjGMtBjXjUn8pJRgMaiFCp5
+         I5fA==
+X-Gm-Message-State: AA+aEWY5LprJEmZuvTPxopwyp1HgAyU2+5yzOQaE80pWbzi+92/j+FsU
+        KRFz9zYJviY1LjqSwYTTGO/El64X4gthWkYNynUefQ==
+X-Google-Smtp-Source: AFSGD/Xcf911SxrTWiYkylnAA71wKt+utPOAzor1GubuwrEa61cmy+Tms1g+0S77AususxjVkqxm9uCtXtCQE/nHM2o=
+X-Received: by 2002:a67:a205:: with SMTP id l5mr10314385vse.9.1544000534267;
+ Wed, 05 Dec 2018 01:02:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20181127120041.90759-1-cychiang@chromium.org> <20181128093411.GC4272@dell>
+ <20181203111919.GL26661@dell> <CAFv8NwLEQ7EUSTRfAf42w2BY0aEPi_pjcMkPzzCNb=17pfzQXw@mail.gmail.com>
+In-Reply-To: <CAFv8NwLEQ7EUSTRfAf42w2BY0aEPi_pjcMkPzzCNb=17pfzQXw@mail.gmail.com>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Wed, 5 Dec 2018 17:01:47 +0800
+Message-ID: <CAFv8NwLZc7YmCbFi-4nCOG5GUwrRbc+JdXLBKv2JA8d6eC3SDg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mfd: cros_ec: Add commands to control codec
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
+        tzungbi@chromium.org, rohitkr@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Lee,
+
+I tried to apply this patch based on
+for-mfd-next branch of mfd tree (
+git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git )
+Then, I tried to compile all modules by
+
+ ARCH=3Dx86_64 make allyesconfig
+ ARCH=3Dx86_64 make -j64
+
+There was no error.
+Could you please let me know what was the error when you failed to
+apply this patch ?
+
+Thanks!
 
 
-Hi,
 
-Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
-> @@ -2487,6 +2497,11 @@ static void dwc3_endpoint_interrupt(struct dwc3 *d=
-wc,
->  	}
->=20=20
->  	switch (event->endpoint_event) {
-> +	case DWC3_DEPEVT_XFERCOMPLETE:
-> +		if (!dep->stream_capable)
-> +			break;
-> +		dep->flags &=3D ~DWC3_EP_TRANSFER_STARTED;
-> +		/* Fall Through */
 
-instead, let's add a proper handler for this:
 
-dwc3_gadget_endpoint_transfer_complete(dep, event);
-
-That handler should be "self-sufficient". IOW, we shouldn't have this
-fall through here. This means that the other patch where you modify
-dwc3_gadget_transfer_in_progress() shouldn't be necessary, since that
-event shouldn't run for stream capable endpoints.
-
-While rewriting the patches, please rebase on my testing/next as I have
-applied a few of the patches in this series.
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwHk/EACgkQzL64meEa
-mQZUHg/+PRlIWWGQLUO9kDDrS7skRCVrHgyE3hR6y3QggB0XgQj2F7+soB1TlxRC
-BJdjXDQiiJtFm69Du80UbD4XMDre/2EGiv8JHIIigvVjkHENzF5cNu4nzBfjpEbF
-keb17zVbkXK5ffDq/KemVag+a0uu5DNp1JYOVL3jqD1EJhkYiVFFfoL4/uAICgw9
-bk5TuoZiWtoLKiXpeAa5Bx8ZEAB7lgw6GFkNsUQRvchO/7uyidmRv99J4Hm9l2Ld
-q6CU2izuswPyzepiRuZzvdNJPd3gQvsIfpyjsR7poMm6gEdCCgruOgT2r4eawX41
-1t1Kzf0BigyG27nkoRgK7YYVZ3GvefGiA3ybnEut+qY+pEJ4+oIFYWkYXf9mILON
-KpG4lYxk0F7ItGZWm+/86DflGTJl4UIjWcdnmcd3DXjME+cTuOr4g+70HYZfrw56
-F4Sh+scpOOwMRAiJ4XbwIuj78VyFykpWi4zTpKkgkWtey9I3e9sFFABOzMuOo0yW
-SyAufcpXZhU5qUSAPInU0CoF0rexZzcWTJuamvVnlL53AImZmxNTxRb8bRsq3unD
-/AiMlI+XMSFoBK4238NSCN8D4FFtAkYculLyg71G6DhrwQyyYzRodcqHusLqA6Va
-uw61Z08aH+nnc/Fq7jHy3mvc2WuAqnmKxNSo0A2l62CwIQO6jJU=
-=PHEt
------END PGP SIGNATURE-----
---=-=-=--
+On Tue, Dec 4, 2018 at 9:46 AM Cheng-yi Chiang <cychiang@chromium.org> wrot=
+e:
+>
+> On Mon, Dec 3, 2018 at 7:19 PM Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > On Wed, 28 Nov 2018, Lee Jones wrote:
+> >
+> > > On Tue, 27 Nov 2018, Cheng-Yi Chiang wrote:
+> > >
+> > > > Add EC host commands to control codec on EC.
+> > > >
+> > > > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> > > > ---
+> > > >  include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++=
+++++
+> > > >  1 file changed, 94 insertions(+)
+> > >
+> > > Applied, thanks.
+> >
+> > Turns out that this does not actually apply.
+> >
+> > What is it based on?
+>
+> Hi Lee,
+> I am sorry about that!
+> The patch series was based on Mark Brown's tree (
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git )
+> for-next branch.
+> I will rebase it on upstream master branch in v2 when I address other
+> comments in codec driver.
+> Thanks!
+>
+> >
+> > --
+> > Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> > Linaro Services Technical Lead
+> > Linaro.org =E2=94=82 Open source software for ARM SoCs
+> > Follow Linaro: Facebook | Twitter | Blog
