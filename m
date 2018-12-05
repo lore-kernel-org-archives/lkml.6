@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9681EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890A4C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF6A20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F18D20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:37:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZP8T3FaY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF6A20878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZmHa9hP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F18D20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeLEJhg (ORCPT
+        id S1728043AbeLEJhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:37:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727994AbeLEJhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:31 -0500
+        id S1728021AbeLEJhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:37:36 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50FB920851;
-        Wed,  5 Dec 2018 09:37:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 143312084C;
+        Wed,  5 Dec 2018 09:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002651;
-        bh=AEiYBnLeLCRKd65wPxauWAf1zR3bwxbO5t6Mj0KHlzc=;
+        s=default; t=1544002655;
+        bh=45qWXggnbEiZ9tYExoP4s8/LevdnzRKWsO2UFe9Jux0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZP8T3FaYAhaB6Kg03UNWVONiV+IRYaJ/8PlTtzJX/DKKNgdnx6HPHZOO4uyZLLdPs
-         0OorqIR5GGMmrD/UguuAE40yxgcfzGunlRAP5B+W/7GZHQEqJLLh2lRpYd6w3dEZgp
-         hhHE5kH7PIamgcHGnMJp5pUkh42jey4wVU/iCQu8=
+        b=AZmHa9hPBvQ1/lhNHeVphau/UYIa5bAOLxjI0H9NgaFGtCNRqx4Yq65zj4+B4jtTI
+         nz+25AgsIm0DA2/4F/MiJVS1x6ausQ3B8bxEIJ8HCWdw2rIfvYkK/k4hJhg8Z7CPVq
+         2aFB1GCwNB9qTCX6LldYHEGrhNLmh5lPjQ/Owia4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 027/123] hwmon (ina2xx) Fix NULL id pointer in probe()
-Date:   Wed,  5 Dec 2018 04:34:19 -0500
-Message-Id: <20181205093555.5386-27-sashal@kernel.org>
+Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 029/123] ASoC: rockchip: add missing slave_config setting for I2S
+Date:   Wed,  5 Dec 2018 04:34:21 -0500
+Message-Id: <20181205093555.5386-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,68 +54,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-[ Upstream commit 70df9ebbd82c794ddfbb49d45b337f18d5588dc2 ]
+[ Upstream commit 16a8ee4c80b45984b6de1f90a49edcf336b7c621 ]
 
-When using DT configurations, the id pointer might turn out to
-be NULL. Then the driver encounters NULL pointer access:
+This patch adds missing prepare_sleve_config that is needed for
+setup the DMA slave channel for I2S.
 
-  Unable to handle kernel read from unreadable memory at vaddr 00000018
-  [...]
-  PC is at ina2xx_probe+0x114/0x200
-  LR is at ina2xx_probe+0x10c/0x200
-  [...]
-  Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-
-The reason is that i2c core returns the id pointer by matching
-id_table with client->name, while the client->name is actually
-using the name from the first string in the DT compatible list,
-not the best one. So i2c core would fail to match the id_table
-if the best matched compatible string isn't the first one, and
-then would return a NULL id pointer.
-
-This probably should be fixed in i2c core. But it doesn't hurt
-to make the driver robust. So this patch fixes it by using the
-"chip" that's added to unify both DT and non-DT configurations.
-
-Additionally, since id pointer could be null, so as id->name:
-  ina2xx 10-0047: power monitor (null) (Rshunt = 1000 uOhm)
-  ina2xx 10-0048: power monitor (null) (Rshunt = 10000 uOhm)
-
-So this patch also fixes NULL name pointer, using client->name
-to play safe and to align with hwmon->name.
-
-Fixes: bd0ddd4d0883 ("hwmon: (ina2xx) Add OF device ID table")
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/ina2xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/rockchip/rockchip_pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-index 71d3445ba869..c2252cf452f5 100644
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -491,7 +491,7 @@ static int ina2xx_probe(struct i2c_client *client,
- 	}
+diff --git a/sound/soc/rockchip/rockchip_pcm.c b/sound/soc/rockchip/rockchip_pcm.c
+index f77538319221..7029e0b85f9e 100644
+--- a/sound/soc/rockchip/rockchip_pcm.c
++++ b/sound/soc/rockchip/rockchip_pcm.c
+@@ -32,6 +32,7 @@ static const struct snd_pcm_hardware snd_rockchip_hardware = {
  
- 	data->groups[group++] = &ina2xx_group;
--	if (id->driver_data == ina226)
-+	if (chip == ina226)
- 		data->groups[group++] = &ina226_group;
+ static const struct snd_dmaengine_pcm_config rk_dmaengine_pcm_config = {
+ 	.pcm_hardware = &snd_rockchip_hardware,
++	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
+ 	.prealloc_buffer_size = 32 * 1024,
+ };
  
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
-@@ -500,7 +500,7 @@ static int ina2xx_probe(struct i2c_client *client,
- 		return PTR_ERR(hwmon_dev);
- 
- 	dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
--		 id->name, data->rshunt);
-+		 client->name, data->rshunt);
- 
- 	return 0;
- }
 -- 
 2.17.1
 
