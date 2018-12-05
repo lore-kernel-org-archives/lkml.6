@@ -2,108 +2,87 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7B1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2483AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8077020878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8077020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E628B20892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E628B20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbeLEOpf (ORCPT
+        id S1727751AbeLEOpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:45:35 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46579 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbeLEOpf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:45:35 -0500
-Received: by mail-qt1-f194.google.com with SMTP id y20so22455891qtm.13;
-        Wed, 05 Dec 2018 06:45:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uo3YjoIkwTYwSiqy/1VkqllPwcYFwGVyfV392Qe87oI=;
-        b=PMO4hVRhyxrgh/DqO8l71X1DsW2HnluHPbjGVYNtMyoKxc37HRYy4vPYsytcCUK7nd
-         /gD6sv69Te18Rm/OT8AjSP0l/iKbMFHnYzR6W1MKkVvFAl48kPXYKvaaOsMwPFrdZVhO
-         frl6BspqFs5+FwVJoizZFmLsrUX927Es3jjahHtWqbWUE9E05HvoPD6s4U67U1N9qMhb
-         Zgc6ZiFW6Kl51QtlisGv36Gaq+AV6JgK2kR5mbuerBcZ+82YAjWTeEE/ba+z550hI/tF
-         geS1VlTlS9tS106t7ICM1xtN0ZLlMp3hOvfG/QEXf1hcUE+E4Irb0rh/zRQHaFpwbKKd
-         fE0A==
-X-Gm-Message-State: AA+aEWZgNDdmxh2CBTBJXBe7T/eLAWMOpmcBL+5JS9E+U7xa8OMZ0OGF
-        6A9tFx+LIpCfQifwtehCW9ByxS6BOgYMbIpRJv8=
-X-Google-Smtp-Source: AFSGD/VDl6+Z0bR+uy5B3YqRBsCEzQMGbxG3q7Cr8DwbsQXesJVc9XNIK7p0z3qrmzELhMA/+b5gCkLHVXb6D6HyF/c=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr23215735qtr.319.1544021133415;
- Wed, 05 Dec 2018 06:45:33 -0800 (PST)
+        Wed, 5 Dec 2018 09:45:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:55974 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727025AbeLEOpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:45:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A06B180D;
+        Wed,  5 Dec 2018 06:45:45 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6F1C13F59C;
+        Wed,  5 Dec 2018 06:45:45 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 2F5D71AE0BC3; Wed,  5 Dec 2018 14:46:06 +0000 (GMT)
+Date:   Wed, 5 Dec 2018 14:46:06 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
+ and improve debugging
+Message-ID: <20181205144605.GA16171@arm.com>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-4-drinkcat@chromium.org>
+ <20181205135406.GA29031@infradead.org>
+ <1d211576-9153-cca1-5cd0-8c9881bd3fa4@arm.com>
+ <20181205144308.GA28409@infradead.org>
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-2-brendanhiggins@google.com> <20181130031438.GQ4922@garbanzo.do-not-panic.com>
- <e2ed9df2-c06b-f0d3-d50a-d03166f586df@cambridgegreys.com>
-In-Reply-To: <e2ed9df2-c06b-f0d3-d50a-d03166f586df@cambridgegreys.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 5 Dec 2018 15:45:10 +0100
-Message-ID: <CAK8P3a2HrOTYv7qCJH1XGVxZ2HDqwkHqRWaAJ93nWc5p8LnCig@mail.gmail.com>
-Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
-To:     anton.ivanov@cambridgegreys.com
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-nvdimm@lists.01.org, Richard Weinberger <richard@nod.at>,
-        knut.omang@oracle.com,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Joel Stanley <joel@jms.id.au>, Jeff Dike <jdike@addtoit.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kees Cook <keescook@google.com>, linux-um@lists.infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Lawall <julia.lawall@lip6.fr>, levinsasha928@gmail.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        kunit-dev@googlegroups.com, gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205144308.GA28409@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 2:42 PM Anton Ivanov
-<anton.ivanov@cambridgegreys.com> wrote:
-> On 30/11/2018 03:14, Luis Chamberlain wrote:
-> > On Wed, Nov 28, 2018 at 11:36:18AM -0800, Brendan Higgins wrote:
-> > Then for the UML stuff, I think if we *really* accept that UML will
-> > always be a viable option we should probably consider now throwing these
-> > things under drivers/platform/uml/. This follows the pattern of arch
-> > specific drivers. Whether or not we end up with a complete userspace
->
-> UML platform drivers predate that and are under arch/um/drivers/
->
-> We should either keep to current convention or consider relocating the
-> existing ones - having things spread in different places around the tree
-> is not good in the long run (UML already has a few of those under the
-> x86 tree, let's not increase the number).
+On Wed, Dec 05, 2018 at 06:43:08AM -0800, Christoph Hellwig wrote:
+> On Wed, Dec 05, 2018 at 02:40:06PM +0000, Robin Murphy wrote:
+> > 32-bit Arm doesn't have ZONE_DMA32, but has (or at least had at the time) a
+> > 2GB ZONE_DMA. Whether we actually need that or not depends on how this all
+> > interacts with LPAE and highmem, but I'm not sure of those details off-hand.
+> 
+> Well, arm32 can't address more than 32-bits in the linear kernel
+> mapping, so GFP_KERNEL should be perfectly fine there if the limit
+> really is 32-bits and not 31 or smaller because someone stole a bit
+> or two somewhere.
 
-I don't mind the current location much, but if we move drivers, we should
-move the into the appropriate subsystems based on what they do, rather
-than having a new place with a mix of things.
+I'm not sure that's necessarily true on the physical side. Wasn't there a
+keystone SoC with /all/ the coherent memory above 4GB?
 
-E.g. the tty drivers should all be in drivers/tty/ and the network drivers in
-drivers/net. To paraphrase what you said above: having tty drivers spread in
-different places around the tree is not good in the long run. We have long
-ago moved from organizing drivers by bus interface to organizing drivers
-by class, uml and drivers/platform are just exceptions to this rule.
-
-          Arnd
+Will
