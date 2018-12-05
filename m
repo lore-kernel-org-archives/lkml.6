@@ -2,161 +2,165 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE99FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC07C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCFE214DB
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCFE214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id A4A95213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1czJvSF2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A95213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbeLEJuO (ORCPT
+        id S1729691AbeLEJuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 04:50:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729664AbeLEJuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 04:50:14 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36504 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbeLEJuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:50:12 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so16475357edb.3;
-        Wed, 05 Dec 2018 01:50:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z/cbHVmOnR4ssoA0Bz+FRdDV0r+8venf015r/nDfnhU=;
-        b=ENN6TNi74Mub0yMwoDMN5ILIcY7YNLDf1gQ4nDbIgkg64gSNVRbGsG7mOJJmmP4jJi
-         1uiFN1skohwl+D1x3Q0pc1eAFCVwn8r9HKZFJlAsGuad0uYdjb1XETCNCx1RUQpFHG7B
-         V05ZvBUv944up7ENhyopx7strGgBy2LCzPXlWeJjGUt3pZ6KUrLX4jZiE8ZdIP/A8hqL
-         jDL9BvKJvpjO6NsudO7TX9MbvLeafqcI6CG+vjlXPw1KC88MgyIFFFMNelnwf3LAl//R
-         TRwik1Q2Cf7qncb6AmWc+KDVA/671SBt929NTi44fjU0hF0hN2roytyHWmETbIQzNGUv
-         ob3Q==
-X-Gm-Message-State: AA+aEWZUQv6dXFtr3Bncbv1l89rV5Y+b20d1KDUoFJZ9LzF4QDyU+jsX
-        lY6RjfyQZOnW9eq3D8YKdj/wEDeK/24=
-X-Google-Smtp-Source: AFSGD/XwX9bg+xrOas/8A2jiafEZmA7SOjVQuZ+a9cX4xm4/wvnDMFCxLQz/92qhpBnAOU694vlYeQ==
-X-Received: by 2002:aa7:c5d0:: with SMTP id h16mr20976757eds.107.1544003409743;
-        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
-        by smtp.gmail.com with ESMTPSA id e26-v6sm3050901ejb.29.2018.12.05.01.50.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
-Received: by mail-wr1-f49.google.com with SMTP id z5so18937579wrt.11;
-        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
-X-Received: by 2002:a5d:4f10:: with SMTP id c16mr21994267wru.177.1544003408999;
- Wed, 05 Dec 2018 01:50:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
- <20181205092444.29497-8-paul.kocialkowski@bootlin.com> <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
- <edf44a24633ecaf59a7d5bea1f4acffdd0ae01a3.camel@bootlin.com>
-In-Reply-To: <edf44a24633ecaf59a7d5bea1f4acffdd0ae01a3.camel@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 5 Dec 2018 17:49:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67tgp_tD_Pkx1Qkc=d__saZUMwwmE44uCCeLgVM2HWmUQ@mail.gmail.com>
-Message-ID: <CAGb2v67tgp_tD_Pkx1Qkc=d__saZUMwwmE44uCCeLgVM2HWmUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/15] arm64: dts: allwinner: h5: Add system-control
- node with SRAM C1
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1952A2133F;
+        Wed,  5 Dec 2018 09:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544003412;
+        bh=amUT9GjTM901smL7DC2fgXieVwzdBZ+uvClEFM1bDHI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1czJvSF2Bef4C6NVgjDM+2Lgk6uQ5Vue7gHGd1o8U9KYHt7ji3boe7L7hE0BxG0kv
+         QxayNoxui6EEiRUIK+iwjmPjJukW3uHk2m8usfm5528U97VA9tHYjzneuby9xqHVwW
+         QanOXGdUCoQ1+1TwlmA5sMnPv+ORgy2yA6FdF9Ss=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 23/45] USB: omap_udc: fix crashes on probe error and module removal
+Date:   Wed,  5 Dec 2018 04:46:44 -0500
+Message-Id: <20181205094706.7225-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
+References: <20181205094706.7225-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 5:48 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Hi,
->
-> On Wed, 2018-12-05 at 17:45 +0800, Chen-Yu Tsai wrote:
-> > On Wed, Dec 5, 2018 at 5:25 PM Paul Kocialkowski
-> > <paul.kocialkowski@bootlin.com> wrote:
-> > > Add the H5-specific system control node description to its device-tree
-> > > with support for the SRAM C1 section, that will be used by the video
-> > > codec node later on.
-> > >
-> > > The CPU-side SRAM address was obtained empirically while the size was
-> > > taken from the documentation. They may not be entirely accurate.
-> > >
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > ---
-> > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++++
-> > >  1 file changed, 22 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > index b41dc1aab67d..42bfb560b367 100644
-> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-> > > @@ -94,6 +94,28 @@
-> > >         };
-> > >
-> > >         soc {
-> > > +               system-control@1c00000 {
-> > > +                       compatible = "allwinner,sun50i-h5-system-control";
-> > > +                       reg = <0x01c00000 0x1000>;
-> > > +                       #address-cells = <1>;
-> > > +                       #size-cells = <1>;
-> > > +                       ranges;
-> > > +
-> > > +                       sram_c1: sram@1d00000 {
-> > > +                               compatible = "mmio-sram";
-> > > +                               reg = <0x00018000 0x1c000>;
-> >
-> > 0x1d00000 or 0x18000?
->
-> For the H5, I found the VE SRAM area to be mapped to 0x18000 on the CPU
-> side (when testing with devmem), unlike the A64, H3 and others. I was
-> rather surprised about this as well!
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-I'm actually referring to the node name that still says 1d00000.
+[ Upstream commit 99f700366fcea1aa2fa3c49c99f371670c3c62f8 ]
 
-ChenYu
+We currently crash if usb_add_gadget_udc_release() fails, since the
+udc->done is not initialized until in the remove function.
+Furthermore, on module removal the udc data is accessed although
+the release function is already triggered by usb_del_gadget_udc()
+early in the function.
 
->
-> > > +                               #address-cells = <1>;
-> > > +                               #size-cells = <1>;
-> > > +                               ranges = <0 0x00018000 0x1c000>;
-> >
-> > Same here.
-> >
-> > > +
-> > > +                               ve_sram: sram-section@0 {
-> > > +                                       compatible = "allwinner,sun50i-h5-sram-c1",
-> > > +                                                    "allwinner,sun4i-a10-sram-c1";
-> > > +                                       reg = <0x000000 0x1c000>;
-> > > +                               };
-> > > +                       };
-> > > +               };
-> > > +
-> > >                 mali: gpu@1e80000 {
-> > >                         compatible = "allwinner,sun50i-h5-mali", "arm,mali-450";
-> > >                         reg = <0x01e80000 0x30000>;
-> > > --
-> > > 2.19.2
->
-> Cheers,
->
-> Paul
->
-> --
-> Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> Embedded Linux and kernel engineering
-> https://bootlin.com
->
+Fix by rewriting the release and remove functions, basically moving
+all the cleanup into the release function, and doing the completion
+only in the module removal case.
+
+The patch fixes omap_udc module probe with a failing gadged, and also
+allows the removal of omap_udc. Tested by running "modprobe omap_udc;
+modprobe -r omap_udc" in a loop.
+
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/usb/gadget/udc/omap_udc.c | 50 ++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index 2945408f0eec..2a23b21fe153 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2612,9 +2612,22 @@ omap_ep_setup(char *name, u8 addr, u8 type,
+ 
+ static void omap_udc_release(struct device *dev)
+ {
+-	complete(udc->done);
++	pullup_disable(udc);
++	if (!IS_ERR_OR_NULL(udc->transceiver)) {
++		usb_put_phy(udc->transceiver);
++		udc->transceiver = NULL;
++	}
++	omap_writew(0, UDC_SYSCON1);
++	remove_proc_file();
++	if (udc->dc_clk) {
++		if (udc->clk_requested)
++			omap_udc_enable_clock(0);
++		clk_put(udc->hhc_clk);
++		clk_put(udc->dc_clk);
++	}
++	if (udc->done)
++		complete(udc->done);
+ 	kfree(udc);
+-	udc = NULL;
+ }
+ 
+ static int
+@@ -2919,12 +2932,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	create_proc_file();
+-	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+-			omap_udc_release);
+-	if (!status)
+-		return 0;
+-
+-	remove_proc_file();
++	return usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
++					  omap_udc_release);
+ 
+ cleanup1:
+ 	kfree(udc);
+@@ -2951,36 +2960,15 @@ static int omap_udc_remove(struct platform_device *pdev)
+ {
+ 	DECLARE_COMPLETION_ONSTACK(done);
+ 
+-	if (!udc)
+-		return -ENODEV;
+-
+-	usb_del_gadget_udc(&udc->gadget);
+-	if (udc->driver)
+-		return -EBUSY;
+-
+ 	udc->done = &done;
+ 
+-	pullup_disable(udc);
+-	if (!IS_ERR_OR_NULL(udc->transceiver)) {
+-		usb_put_phy(udc->transceiver);
+-		udc->transceiver = NULL;
+-	}
+-	omap_writew(0, UDC_SYSCON1);
+-
+-	remove_proc_file();
++	usb_del_gadget_udc(&udc->gadget);
+ 
+-	if (udc->dc_clk) {
+-		if (udc->clk_requested)
+-			omap_udc_enable_clock(0);
+-		clk_put(udc->hhc_clk);
+-		clk_put(udc->dc_clk);
+-	}
++	wait_for_completion(&done);
+ 
+ 	release_mem_region(pdev->resource[0].start,
+ 			pdev->resource[0].end - pdev->resource[0].start + 1);
+ 
+-	wait_for_completion(&done);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
+
