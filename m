@@ -2,123 +2,110 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC82C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E372FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10CE7214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A0CD214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:04:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOLRwa/W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10CE7214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="FKKMG3LO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0CD214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbeLEKEb (ORCPT
+        id S1729172AbeLEKEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729199AbeLEJoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:44:20 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E8FB20878;
-        Wed,  5 Dec 2018 09:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003059;
-        bh=pYu29ZH9NJBqEBZf4VNr+I89WOlpyMe75wbvj3itLb4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oOLRwa/W1/NYqTjVijriq5tZCRbOVQ+0d8CRosTELDtuYIyqiFrgSMHbQuC/rOyXd
-         enNQbz0h3jtsayzmUkqAUq9Gs82oKaMKHoIDAS6lsyNQHCww0VXNm01jEsIbyS+Vh5
-         1AHp+Keu0W+WzS/Y+4f/N4XdqC3SoFjT4l5ixCPE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 17/69] netfilter: xt_hashlimit: fix a possible memory leak in htable_create()
-Date:   Wed,  5 Dec 2018 04:41:55 -0500
-Message-Id: <20181205094247.6556-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
-References: <20181205094247.6556-1-sashal@kernel.org>
+        Wed, 5 Dec 2018 05:04:44 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:36928 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729178AbeLEJoK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544003048;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Us0Y6iG1zqYJFobUUSTAv7ZQZM1Eimv3YTkHhrcbeVI=;
+        b=FKKMG3LOp6BniIlEhS5Sw7MCBTxYvG47JkpH+qIHzt/PwiJYozMLz7kOy1zcXC6aNY
+        HIfNQtjbcc0Qh8hySP3TVUjUz/GwHfSKB8ie9W1ZTs7rm8+xWQ0P31s39C7XCCcBjGQk
+        xFv/ODzDjmepxhGwz4c8WTr8jdniVI+jzgAfoAqo1lvoHYXzKx8Uk0kzyxQmLummM4/E
+        XAGZe533nCXayqvDaPsNyuCaDtl26fpXprdLK4h2h424jVRAr11AM0oO0UxAjLNFj4Ss
+        XzTGah7d8cSpjuI3Dgg1+6rN84QamEf2Eabs3cA4Stti7cPT3fATV6/Cap8S+q/C54oq
+        P7ig==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkJh/ARs/ll0LP9pYXILmPj+77/lQ=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:6972:d6c3:ba77:3810]
+        by smtp.strato.de (RZmta 44.6 AUTH)
+        with ESMTPSA id 404b20uB59i6eZb
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 5 Dec 2018 10:44:06 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <87zhttfonk.fsf@concordia.ellerman.id.au>
+ <4d4e3cdd-d1a9-affe-0f63-45b8c342bbd6@xenosoft.de>
+ <20181129170351.GC27951@lst.de>
+ <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
+ <20181130105346.GB26765@lst.de>
+ <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
+ <20181130131056.GA5211@lst.de>
+ <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
+ <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
+ <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
+ <20181204142426.GA2743@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
+Date:   Wed, 5 Dec 2018 10:44:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+MIME-Version: 1.0
+In-Reply-To: <20181204142426.GA2743@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+On 04 December 2018 at 3:24PM, Christoph Hellwig wrote:
+> On Tue, Dec 04, 2018 at 10:53:39AM +0100, Christian Zigotzky wrote:
+>> I don't know why this kernel doesn't recognize the hard disks connected to
+>> my physical P5020 board and why the onboard ethernet on my PASEMI board
+>> doesn't work. (dma_direct_map_page: overflow)
+> Do you know if this actually works for the baseline before my patches?
+> E.g. with commit 721c01ba8b46ddb5355bd6e6b3bbfdabfdf01e97 ?
+>
+Hi Christoph,
 
-[ Upstream commit b4e955e9f372035361fbc6f07b21fe2cc6a5be4a ]
+Thanks for your reply. I undid all dma mapping commits with the 
+following command:
 
-In the htable_create(), hinfo is allocated by vmalloc()
-So that if error occurred, hinfo should be freed.
+git checkout 721c01ba8b46ddb5355bd6e6b3bbfdabfdf01e97
 
-Fixes: 11d5f15723c9 ("netfilter: xt_hashlimit: Create revision 2 to support higher pps rates")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/xt_hashlimit.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+After that I compiled the kernels with this code for my P5020 board 
+(Cyrus) and for my PASEMI board (Nemo) today.
 
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 0c034597b9b8..fe8e8a1622b5 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -295,9 +295,10 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
- 
- 	/* copy match config into hashtable config */
- 	ret = cfg_copy(&hinfo->cfg, (void *)cfg, 3);
--
--	if (ret)
-+	if (ret) {
-+		vfree(hinfo);
- 		return ret;
-+	}
- 
- 	hinfo->cfg.size = size;
- 	if (hinfo->cfg.max == 0)
-@@ -814,7 +815,6 @@ hashlimit_mt_v1(const struct sk_buff *skb, struct xt_action_param *par)
- 	int ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
--
- 	if (ret)
- 		return ret;
- 
-@@ -830,7 +830,6 @@ hashlimit_mt_v2(const struct sk_buff *skb, struct xt_action_param *par)
- 	int ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
--
- 	if (ret)
- 		return ret;
- 
-@@ -920,7 +919,6 @@ static int hashlimit_mt_check_v1(const struct xt_mtchk_param *par)
- 		return ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
--
- 	if (ret)
- 		return ret;
- 
-@@ -939,7 +937,6 @@ static int hashlimit_mt_check_v2(const struct xt_mtchk_param *par)
- 		return ret;
- 
- 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
--
- 	if (ret)
- 		return ret;
- 
--- 
-2.17.1
+Result: PASEMI onboard ethernet works again and the P5020 board boots.
+
+It seems the dma mapping commits are the problem.
+
+@All
+Could you please test Christoph's kernel on your PASEMI and NXP boards? 
+Download:
+
+'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
+
+Thanks,
+Christian
 
