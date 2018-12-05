@@ -2,92 +2,143 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8572C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E2EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE3B20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:40:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE3B20850
+	by mail.kernel.org (Postfix) with ESMTP id 2E5C7206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:41:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5C7206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeLEOkN (ORCPT
+        id S1727683AbeLEOlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:40:13 -0500
-Received: from foss.arm.com ([217.140.101.70]:55752 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEOkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:40:13 -0500
+        Wed, 5 Dec 2018 09:41:11 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55828 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727025AbeLEOlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:41:10 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FD2380D;
-        Wed,  5 Dec 2018 06:40:12 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E4E63F59C;
-        Wed,  5 Dec 2018 06:40:08 -0800 (PST)
-Subject: Re: [PATCH v4 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
- and improve debugging
-To:     Christoph Hellwig <hch@infradead.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E632580D;
+        Wed,  5 Dec 2018 06:41:09 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B61A83F59C;
+        Wed,  5 Dec 2018 06:41:09 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 778D51AE0BC3; Wed,  5 Dec 2018 14:41:30 +0000 (GMT)
+Date:   Wed, 5 Dec 2018 14:41:30 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Robin Murphy <robin.murphy@arm.com>,
         Christoph Lameter <cl@linux.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, hch@infradead.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Levin Alexander <Alexander.Levin@microsoft.com>,
         Huaisheng Ye <yehs1@lenovo.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
-        Matthew Wilcox <willy@infradead.org>
-References: <20181205054828.183476-1-drinkcat@chromium.org>
- <20181205054828.183476-4-drinkcat@chromium.org>
- <20181205135406.GA29031@infradead.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <1d211576-9153-cca1-5cd0-8c9881bd3fa4@arm.com>
-Date:   Wed, 5 Dec 2018 14:40:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Yong Wu <yong.wu@mediatek.com>, Tomasz Figa <tfiga@google.com>,
+        yingjoe.chen@mediatek.com, Hsin-Yi Wang <hsinyi@chromium.org>,
+        Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page
+ tables
+Message-ID: <20181205144130.GA16121@arm.com>
+References: <20181111090341.120786-1-drinkcat@chromium.org>
+ <CANMq1KDxmRcWhtaJbrLHqx6yPGkNaK7WNYYf+iFjH1e8XdrwRg@mail.gmail.com>
+ <b99dd00f-fe1c-1cac-8ee3-5b0c1af9a92e@suse.cz>
+ <CANMq1KDzKJqJwGsW3A90JY_0kgDtAMjOikT-3C9zQG01=3dibQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205135406.GA29031@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANMq1KDzKJqJwGsW3A90JY_0kgDtAMjOikT-3C9zQG01=3dibQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/12/2018 13:54, Christoph Hellwig wrote:
-> On Wed, Dec 05, 2018 at 01:48:28PM +0800, Nicolas Boichat wrote:
->> IOMMUs using ARMv7 short-descriptor format require page tables
->> (level 1 and 2) to be allocated within the first 4GB of RAM, even
->> on 64-bit systems.
+On Wed, Dec 05, 2018 at 10:04:00AM +0800, Nicolas Boichat wrote:
+> On Tue, Dec 4, 2018 at 10:35 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+> >
+> > On 12/4/18 10:37 AM, Nicolas Boichat wrote:
+> > > On Sun, Nov 11, 2018 at 5:04 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> > >>
+> > >> This is a follow-up to the discussion in [1], to make sure that the page
+> > >> tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
+> > >> physical address space.
+> > >>
+> > >> [1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
+> > >
+> > > Hi everyone,
+> > >
+> > > Let's try to summarize here.
+> > >
+> > > First, we confirmed that this is a regression, and IOMMU errors happen
+> > > on 4.19 and linux-next/master on MT8173 (elm, Acer Chromebook R13).
+> > > The issue most likely starts from ad67f5a6545f ("arm64: replace
+> > > ZONE_DMA with ZONE_DMA32"), i.e. 4.15, and presumably breaks a number
+> > > of Mediatek platforms (and maybe others?).
+> > >
+> > > We have a few options here:
+> > > 1. This series [2], that adds support for GFP_DMA32 slab caches,
+> > > _without_ adding kmalloc caches (since there are no users of
+> > > kmalloc(..., GFP_DMA32)). I think I've addressed all the comments on
+> > > the 3 patches, and AFAICT this solution works fine.
+> > > 2. genalloc. That works, but unless we preallocate 4MB for L2 tables
+> > > (which is wasteful as we usually only need a handful of L2 tables),
+> > > we'll need changes in the core (use GFP_ATOMIC) to allow allocating on
+> > > demand, and as it stands we'd have no way to shrink the allocation.
+> > > 3. page_frag [3]. That works fine, and the code is quite simple. One
+> > > drawback is that fragments in partially freed pages cannot be reused
+> > > (from limited experiments, I see that IOMMU L2 tables are rarely
+> > > freed, so it's unlikely a whole page would get freed). But given the
+> > > low number of L2 tables, maybe we can live with that.
+> > >
+> > > I think 2 is out. Any preference between 1 and 3? I think 1 makes
+> > > better use of the memory, so that'd be my preference. But I'm probably
+> > > missing something.
+> >
+> > I would prefer 1 as well. IIRC you already confirmed that alignment
+> > requirements are not broken for custom kmem caches even in presence of
+> > SLUB debug options (and I would say it's a bug to be fixed if they
+> > weren't).
 > 
->> +#ifdef CONFIG_ZONE_DMA32
->> +#define ARM_V7S_TABLE_GFP_DMA GFP_DMA32
->> +#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA32
->> +#else
->> +#define ARM_V7S_TABLE_GFP_DMA GFP_DMA
->> +#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA
->> +#endif
+> > I just asked (and didn't get a reply I think) about your
+> > ability to handle the GFP_ATOMIC allocation failures. They should be
+> > rare when only single page allocations are needed for the kmem cache.
+> > But in case they are not an option, then preallocating would be needed,
+> > thus probably option 2.
 > 
-> How does using GFP_DMA make sense based on the above?  If the system
-> has more than 32-bits worth of RAM it should be using GFP_DMA32, else
-> GFP_KERNEL, not GFP_DMA for an arch defined small addressability pool.
+> Oh, sorry, I missed your question.
+> 
+> I don't have a full answer, but:
+> - The allocations themselves are rare (I count a few 10s of L2 tables
+> at most on my system, I assume we rarely have >100), and yes, we only
+> need a single page, so the failures should be exceptional.
+> - My change is probably not making anything worse: I assume that even
+> with the current approach using GFP_DMA slab caches on older kernels,
+> failures could potentially happen. I don't think we've seen those. If
+> we are really concerned about this, maybe we'd need to modify
+> mtk_iommu_map to not hold a spinlock (if that's possible), so we don't
+> need to use GFP_ATOMIC. I suggest we just keep an eye on such issues,
+> and address them if they show up (we can even revisit genalloc at that
+> stage).
 
-32-bit Arm doesn't have ZONE_DMA32, but has (or at least had at the 
-time) a 2GB ZONE_DMA. Whether we actually need that or not depends on 
-how this all interacts with LPAE and highmem, but I'm not sure of those 
-details off-hand.
+I think the spinlock is the least of our worries: the map/unmap routines
+can be called in irq context and may need to allocate second-level tables.
 
-Robin.
+Will
