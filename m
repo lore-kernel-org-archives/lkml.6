@@ -2,409 +2,96 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0FBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7203FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605432081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BBBB2081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t19vjbZk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605432081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I0SYMCax"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBBB2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeLECJJ (ORCPT
+        id S1726734AbeLECKy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:09:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41134 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725841AbeLECJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:09:08 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so8252051pgh.8;
-        Tue, 04 Dec 2018 18:09:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1HTqcRg109yBoRBf4IlllOM7oZ1nGlmIjYuYTvL83eo=;
-        b=t19vjbZkc2FVvZ4LL5zrnknNRVEVWzLaDyft2GOa07+HJGxeBo2zkXcxoYbQnhfisT
-         uLJGGuHAXej8UYqmgGFa/dzn6U+pbcbFyc4JGbAnnIWXp6Yu3a0Z8uokMtT+wiva2reM
-         0p6dWlFnzVaHZ37x+KLSXNr7Jxprq42EuG3gUM6YcuOpVer288q4YXeiwQI888H6woHH
-         e09idV3cRX147FP+N83bHZUUn5eRHnJtX6j1X770ThliXIt5sKxTaG6ULigj+s8RIFal
-         9EQIQtOmwLQIGu5NVGmaG1yGWxcEl7/DR+D8MXx4CP9VlKZpXLtDb3KXdLPI3SSBxPr5
-         7u0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1HTqcRg109yBoRBf4IlllOM7oZ1nGlmIjYuYTvL83eo=;
-        b=L9i882/mgHVVSFqA1EtFLySaIEM7FS7qmq4ri/UjnDWgbBHgtVkcPtTNX8kKMituXK
-         HmZrJphVUc3Nv9QnThj+6NHGfAsVgTGRP0x7/gJIkWUuizfdfBsIXMzzYq84yewdVhr9
-         vLg/h8vv7rAouN9K+pXSpPo2rdKv4Oiq9o0BFTr4iMsv/k5AfrwZ2HDnlxGi/uJu2YaX
-         +UJ7B5THpT9YfiE4YgaEb3OUKRuns2BF/Gd23OPEvO4oakuWASAIkLjBeDqKScfrpUAt
-         AWDaIiWdv+F1Xa6TkYsY5j5gXs/4ucGmrA0LzVwdvEhtQyOnVzZ7O0xdgMzJ+wO2IMkD
-         ZFsg==
-X-Gm-Message-State: AA+aEWabdicR5nlcHxJYr/JDcqzQpRFAMBlB37YJu+raAW6H08Exv+jn
-        mg1xsqxT1185wx7V4iErtEY=
-X-Google-Smtp-Source: AFSGD/UP4Ku//vShIZ6zgNW9ho8rFICUJFs5qNaJYNt808JHvZ+gM8oXkQTkS+qn4unJTpp5cDMR5g==
-X-Received: by 2002:a62:5003:: with SMTP id e3mr23198919pfb.23.1543975747295;
-        Tue, 04 Dec 2018 18:09:07 -0800 (PST)
-Received: from [10.2.19.70] ([208.91.2.1])
-        by smtp.gmail.com with ESMTPSA id i62sm21264149pge.44.2018.12.04.18.09.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 18:09:06 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <b82861c1c335056169d28e8d451b60a9e96af706.camel@intel.com>
-Date:   Tue, 4 Dec 2018 18:09:04 -0800
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <453CE980-0EB6-47B1-9973-9761A14B0B0D@gmail.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <20181128000754.18056-2-rick.p.edgecombe@intel.com>
- <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
- <20181204160304.GB7195@arm.com>
- <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
- <A5ABCA50-12F0-4A19-B499-3927D59BF589@gmail.com>
- <e70c618d10ddbb834b7a3bbdd6e2bebed0f8719d.camel@intel.com>
- <843E4326-3426-4AEC-B0F7-2DC398A6E59A@gmail.com>
- <3dc0492f209c630e40e93e9c657722041da0ed29.camel@intel.com>
- <D092D8BE-711E-4BB4-B179-E897A8354120@gmail.com>
- <b82861c1c335056169d28e8d451b60a9e96af706.camel@intel.com>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Tue, 4 Dec 2018 21:10:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:57895 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbeLECKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 21:10:53 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 438hzG6nqpz9s6w;
+        Wed,  5 Dec 2018 13:10:50 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543975851;
+        bh=ka//mFHanEEku5Tdz9+82pLkMl7qRpMjJ2fezgsmX9Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=I0SYMCax55eZ15jBX5lcQ//Rh3AVS4w75nhcL2IYH2oamspFrPi3qAf66Mf6Wzm6C
+         ge5fZK1VuVucF0a0fLvYvC9qkL8JMfO0zCpWHr/chN0xN6qe4Pb0uPYB+Bs2a32LZ+
+         PNJ1j4cs6MgjIwCEdugXl/SZwwqrOnArgI+GYGVFlPOMVH8mGJNe6tBLRvhIOq2q1y
+         ACIVKegqTEtDzbWnHVCU1X/Nv1KWsf4xaqe2t0awkdkzdRtnc+bvUX+xLRF+kZKiaE
+         bIy35OI5mX7kAW0oM+ESNsPoXU0DREqR3gybpz5bnxgqKMcVDGFTA7Kw0yEtgJCTY9
+         /70GWaxNgTrGQ==
+Date:   Wed, 5 Dec 2018 13:10:50 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
+ tree
+Message-ID: <20181205131050.40ab2924@canb.auug.org.au>
+In-Reply-To: <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
+References: <20181205120706.294b9422@canb.auug.org.au>
+        <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vG645c4b6W9KXzOY2s6rz7x"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 4, 2018, at 5:45 PM, Edgecombe, Rick P =
-<rick.p.edgecombe@intel.com> wrote:
->=20
-> On Tue, 2018-12-04 at 16:53 -0800, Nadav Amit wrote:
->>> On Dec 4, 2018, at 4:29 PM, Edgecombe, Rick P =
-<rick.p.edgecombe@intel.com>
->>> wrote:
->>>=20
->>> On Tue, 2018-12-04 at 16:01 -0800, Nadav Amit wrote:
->>>>> On Dec 4, 2018, at 3:51 PM, Edgecombe, Rick P <
->>>>> rick.p.edgecombe@intel.com>
->>>>> wrote:
->>>>>=20
->>>>> On Tue, 2018-12-04 at 12:36 -0800, Nadav Amit wrote:
->>>>>>> On Dec 4, 2018, at 12:02 PM, Edgecombe, Rick P <
->>>>>>> rick.p.edgecombe@intel.com>
->>>>>>> wrote:
->>>>>>>=20
->>>>>>> On Tue, 2018-12-04 at 16:03 +0000, Will Deacon wrote:
->>>>>>>> On Mon, Dec 03, 2018 at 05:43:11PM -0800, Nadav Amit wrote:
->>>>>>>>>> On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <
->>>>>>>>>> rick.p.edgecombe@intel.com>
->>>>>>>>>> wrote:
->>>>>>>>>>=20
->>>>>>>>>> Since vfree will lazily flush the TLB, but not lazily free =
-the
->>>>>>>>>> underlying
->>>>>>>>>> pages,
->>>>>>>>>> it often leaves stale TLB entries to freed pages that could
->>>>>>>>>> get
->>>>>>>>>> re-
->>>>>>>>>> used.
->>>>>>>>>> This is
->>>>>>>>>> undesirable for cases where the memory being freed has =
-special
->>>>>>>>>> permissions
->>>>>>>>>> such
->>>>>>>>>> as executable.
->>>>>>>>>=20
->>>>>>>>> So I am trying to finish my patch-set for preventing transient
->>>>>>>>> W+X
->>>>>>>>> mappings
->>>>>>>>> from taking space, by handling kprobes & ftrace that I missed
->>>>>>>>> (thanks
->>>>>>>>> again
->>>>>>>>> for
->>>>>>>>> pointing it out).
->>>>>>>>>=20
->>>>>>>>> But all of the sudden, I don=E2=80=99t understand why we have =
-the
->>>>>>>>> problem
->>>>>>>>> that
->>>>>>>>> this
->>>>>>>>> (your) patch-set deals with at all. We already change the
->>>>>>>>> mappings
->>>>>>>>> to
->>>>>>>>> make
->>>>>>>>> the memory writable before freeing the memory, so why can=E2=80=99=
-t we
->>>>>>>>> make
->>>>>>>>> it
->>>>>>>>> non-executable at the same time? Actually, why do we make the
->>>>>>>>> module
->>>>>>>>> memory,
->>>>>>>>> including its data executable before freeing it???
->>>>>>>>=20
->>>>>>>> Yeah, this is really confusing, but I have a suspicion it's a
->>>>>>>> combination
->>>>>>>> of the various different configurations and hysterical raisins. =
-We
->>>>>>>> can't
->>>>>>>> rely on module_alloc() allocating from the vmalloc area (see
->>>>>>>> nios2)
->>>>>>>> nor
->>>>>>>> can we rely on disable_ro_nx() being available at build time.
->>>>>>>>=20
->>>>>>>> If we *could* rely on module allocations always using =
-vmalloc(),
->>>>>>>> then
->>>>>>>> we could pass in Rick's new flag and drop disable_ro_nx()
->>>>>>>> altogether
->>>>>>>> afaict -- who cares about the memory attributes of a mapping
->>>>>>>> that's
->>>>>>>> about
->>>>>>>> to disappear anyway?
->>>>>>>>=20
->>>>>>>> Is it just nios2 that does something different?
->>>>>>>>=20
->>>>>>>> Will
->>>>>>>=20
->>>>>>> Yea it is really intertwined. I think for x86, set_memory_nx
->>>>>>> everywhere
->>>>>>> would
->>>>>>> solve it as well, in fact that was what I first thought the =
-solution
->>>>>>> should
->>>>>>> be
->>>>>>> until this was suggested. It's interesting that from the other
->>>>>>> thread
->>>>>>> Masami
->>>>>>> Hiramatsu referenced, set_memory_nx was suggested last year and
->>>>>>> would
->>>>>>> have
->>>>>>> inadvertently blocked this on x86. But, on the other =
-architectures I
->>>>>>> have
->>>>>>> since
->>>>>>> learned it is a bit different.
->>>>>>>=20
->>>>>>> It looks like actually most arch's don't re-define set_memory_*, =
-and
->>>>>>> so
->>>>>>> all
->>>>>>> of
->>>>>>> the frob_* functions are actually just noops. In which case
->>>>>>> allocating
->>>>>>> RWX
->>>>>>> is
->>>>>>> needed to make it work at all, because that is what the =
-allocation
->>>>>>> is
->>>>>>> going
->>>>>>> to
->>>>>>> stay at. So in these archs, set_memory_nx won't solve it because =
-it
->>>>>>> will
->>>>>>> do
->>>>>>> nothing.
->>>>>>>=20
->>>>>>> On x86 I think you cannot get rid of disable_ro_nx fully because
->>>>>>> there
->>>>>>> is
->>>>>>> the
->>>>>>> changing of the permissions on the directmap as well. You don't =
-want
->>>>>>> some
->>>>>>> other
->>>>>>> caller getting a page that was left RO when freed and then =
-trying to
->>>>>>> write
->>>>>>> to
->>>>>>> it, if I understand this.
->>>>>>>=20
->>>>>>> The other reasoning was that calling set_memory_nx isn't doing =
-what
->>>>>>> we
->>>>>>> are
->>>>>>> actually trying to do which is prevent the pages from getting
->>>>>>> released
->>>>>>> too
->>>>>>> early.
->>>>>>>=20
->>>>>>> A more clear solution for all of this might involve refactoring =
-some
->>>>>>> of
->>>>>>> the
->>>>>>> set_memory_ de-allocation logic out into __weak functions in =
-either
->>>>>>> modules
->>>>>>> or
->>>>>>> vmalloc. As Jessica points out in the other thread though, =
-modules
->>>>>>> does
->>>>>>> a
->>>>>>> lot
->>>>>>> more stuff there than the other module_alloc callers. I think it =
-may
->>>>>>> take
->>>>>>> some
->>>>>>> thought to centralize AND make it optimal for every
->>>>>>> module_alloc/vmalloc_exec
->>>>>>> user and arch.
->>>>>>>=20
->>>>>>> But for now with the change in vmalloc, we can block the =
-executable
->>>>>>> mapping
->>>>>>> freed page re-use issue in a cross platform way.
->>>>>>=20
->>>>>> Please understand me correctly - I didn=E2=80=99t mean that your =
-patches are
->>>>>> not
->>>>>> needed.
->>>>>=20
->>>>> Ok, I think I understand. I have been pondering these same things =
-after
->>>>> Masami
->>>>> Hiramatsu's comments on this thread the other day.
->>>>>=20
->>>>>> All I did is asking - how come the PTEs are executable when they =
-are
->>>>>> cleared
->>>>>> they are executable, when in fact we manipulate them when the =
-module
->>>>>> is
->>>>>> removed.
->>>>>=20
->>>>> I think the directmap used to be RWX so maybe historically its =
-trying to
->>>>> return
->>>>> it to its default state? Not sure.
->>>>>=20
->>>>>> I think I try to deal with a similar problem to the one you =
-encounter
->>>>>> -
->>>>>> broken W^X. The only thing that bothered me in regard to your =
-patches
->>>>>> (and
->>>>>> only after I played with the code) is that there is still a time-
->>>>>> window in
->>>>>> which W^X is broken due to disable_ro_nx().
->>>>>=20
->>>>> Totally agree there is overlap in the fixes and we should sync.
->>>>>=20
->>>>> What do you think about Andy's suggestion for doing the vfree =
-cleanup in
->>>>> vmalloc
->>>>> with arch hooks? So the allocation goes into vfree fully setup and
->>>>> vmalloc
->>>>> frees
->>>>> it and on x86 resets the direct map.
->>>>=20
->>>> As long as you do it, I have no problem ;-)
->>>>=20
->>>> You would need to consider all the callers of module_memfree(), and
->>>> probably
->>>> to untangle at least part of the mess in pageattr.c . If you are up =
-to it,
->>>> just say so, and I=E2=80=99ll drop this patch. All I can say is =
-=E2=80=9Cgood luck with
->>>> all
->>>> that=E2=80=9D.
->>>=20
->>> I thought you were trying to prevent having any memory that at any =
-time was
->>> W+X,
->>> how does vfree help with the module load time issues, where it =
-starts WRX on
->>> x86?
->>=20
->> I didn=E2=80=99t say it does. The patch I submitted before [1] should =
-deal with the
->> issue of module loading, and I still think it is required. I also =
-addressed
->> the kprobe and ftrace issues that you raised.
->>=20
->> Perhaps it makes more sense that I will include the patch I proposed =
-for
->> module cleanup to make the patch-set =E2=80=9Ccomplete=E2=80=9D. If =
-you finish the changes
->> you propose before the patch is applied, it could be dropped. I just =
-want to
->> get rid of this series, as it keeps collecting more and more patches.
->>=20
->> I suspect it will not be the last version anyhow.
->>=20
->> [1] https://lkml.org/lkml/2018/11/21/305
->=20
-> That seems fine.
->=20
-> And not to make it any more complicated, but how much different is a =
-W+X mapping
-> from a RW mapping that is about to turn X? Can't an attacker with the =
-ability to
-> write to the module space just write and wait a short time? If that is =
-the
-> threat model, I think there may still be additional work to do here =
-even after
-> you found all the W+X cases.
+--Sig_/vG645c4b6W9KXzOY2s6rz7x
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I agree that a complete solution may require to block any direct write =
-onto
-a code-page. When I say =E2=80=9Ccomplete=E2=80=9D, I mean for a threat =
-model in which
-dangling pointers are used to inject code, but not to run existing =
-ROP/JOP
-gadgets. (I didn=E2=80=99t think too deeply on the threat-model, so =
-perhaps it needs
-to be further refined).
+Hi Doug,
 
-I think the first stage is to make everybody go through a unified =
-interface
-(text_poke() and text_poke_early()). ftrace, for example, uses an
-independent mechanism to change the code.
+On Tue, 04 Dec 2018 20:33:08 -0500 Doug Ledford <dledford@redhat.com> wrote:
+>
+> FWIW this will go away in a day or two.  I merged mlx5-next into rdma
+> for-next in order to take a series that depended on it.
 
-Eventually, after boot text_poke_early() should not be used, and =
-text_poke()
-(or something similar) should be used instead. Alternatively, when =
-module
-text is loaded, a hash value can be computed and calculated over it.
+Understood, thanks.
 
-Since Igor Stoppa wants to use the infrastructure that is included in =
-the
-first patches, and since I didn=E2=80=99t intend this patch-set to be a =
-full
-solution for W^X (I was pushed there by tglx+Andy [1]), it may be enough
-as a first step.
+--=20
+Cheers,
+Stephen Rothwell
 
-[1] https://lore.kernel.org/patchwork/patch/1006293/#1191341
+--Sig_/vG645c4b6W9KXzOY2s6rz7x
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwHM6oACgkQAVBC80lX
+0GzOJwf/SCt5nIq9akTUi/0Js6T48he9Lzl2FF6YTU4b9Z6l4Nhv6NCIjS5siEOS
+j7HifJEBkW+zwzIXVjGq1U9ZMrBy8ZJQSux16x60B4Er5RuYp4VmsbDGdmmP8D8A
+ESmtQdoQEKnr3I4G3qkEhveJPBSc2DKlkLXCOxH2f9SJc6A5xY9z6KboUT7ebJ9W
+9t+gbv49UxkU+mVh4muRVnYbA8KK3/iBHc0NnZxaUQZpl/chgAe2YEYyaOd2XmOi
+/VWtPeuJOSVrSMJuBMovA7BQHAkjR6sQUK6DCqKVTO+qhG94n1kSkyzSxo+S0LMp
+jwgm3hCToxPRhv7vBWdHdd/DOmlSlg==
+=6VdL
+-----END PGP SIGNATURE-----
+
+--Sig_/vG645c4b6W9KXzOY2s6rz7x--
