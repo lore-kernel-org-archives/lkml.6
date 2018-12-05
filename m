@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6E1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B76C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C733C20645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:48:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C733C20645
+	by mail.kernel.org (Postfix) with ESMTP id 7E93520892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:48:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E93520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbeLEXsh (ORCPT
+        id S1729039AbeLEXsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:48:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58460 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 18:48:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728917AbeLEXsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:48:32 -0500
+        id S1728936AbeLEXsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:48:33 -0500
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 591B720645;
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E48206B7;
         Wed,  5 Dec 2018 23:48:31 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gUgu6-0000Ci-Cs; Wed, 05 Dec 2018 18:48:30 -0500
-Message-Id: <20181205234830.298163662@goodmis.org>
+        id 1gUgu6-0000Dm-Mm; Wed, 05 Dec 2018 18:48:30 -0500
+Message-Id: <20181205234830.603417496@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Dec 2018 18:48:02 -0500
+Date:   Wed, 05 Dec 2018 18:48:04 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -41,9 +41,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Tom Zanussi <zanussi@kernel.org>,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [for-next][PATCH 13/30] function_graph: Have profiler use new helper
- ftrace_graph_get_ret_stack()
+        Joe Lawrence <joe.lawrence@redhat.com>
+Subject: [for-next][PATCH 15/30] scripts/recordmcount.{c,pl}: support -ffunction-sections .text.*
+ section names
 References: <20181205234749.372720574@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,113 +52,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Joe Lawrence <joe.lawrence@redhat.com>
 
-The ret_stack processing is going to change, and that is going
-to break anything that is accessing the ret_stack directly. One user is the
-function graph profiler. By using the ftrace_graph_get_ret_stack() helper
-function, the profiler can access the ret_stack entry without relying on the
-implementation details of the stack itself.
+When building with -ffunction-sections, the compiler will place each
+function into its own ELF section, prefixed with ".text".  For example,
+a simple test module with functions test_module_do_work() and
+test_module_wq_func():
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+  % objdump --section-headers test_module.o | awk '/\.text/{print $2}'
+  .text
+  .text.test_module_do_work
+  .text.test_module_wq_func
+  .init.text
+  .exit.text
+
+Adjust the recordmcount scripts to look for ".text" as a section name
+prefix.  This will ensure that those functions will be included in the
+__mcount_loc relocations:
+
+  % objdump --reloc --section __mcount_loc test_module.o
+  OFFSET           TYPE              VALUE
+  0000000000000000 R_X86_64_64       .text.test_module_do_work
+  0000000000000008 R_X86_64_64       .text.test_module_wq_func
+  0000000000000010 R_X86_64_64       .init.text
+
+Link: http://lkml.kernel.org/r/1542745158-25392-2-git-send-email-joe.lawrence@redhat.com
+
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/ftrace.h |  3 +++
- kernel/trace/fgraph.c  | 11 +++++++++++
- kernel/trace/ftrace.c  | 21 +++++++++++----------
- 3 files changed, 25 insertions(+), 10 deletions(-)
+ scripts/recordmcount.c  |  2 +-
+ scripts/recordmcount.pl | 13 +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 21c80491ccde..98e141c71ad0 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -785,6 +785,9 @@ extern int
- function_graph_enter(unsigned long ret, unsigned long func,
- 		     unsigned long frame_pointer, unsigned long *retp);
- 
-+struct ftrace_ret_stack *
-+ftrace_graph_get_ret_stack(struct task_struct *task, int idx);
-+
- unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
- 				    unsigned long ret, unsigned long *retp);
- 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 90fcefcaff2a..a3704ec8b599 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -232,6 +232,17 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
- 	return ret;
- }
- 
-+struct ftrace_ret_stack *
-+ftrace_graph_get_ret_stack(struct task_struct *task, int idx)
-+{
-+	idx = current->curr_ret_stack - idx;
-+
-+	if (idx >= 0 && idx <= task->curr_ret_stack)
-+		return &current->ret_stack[idx];
-+
-+	return NULL;
-+}
-+
- /**
-  * ftrace_graph_ret_addr - convert a potentially modified stack return address
-  *			   to its original value
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index d06fe588e650..8ef9fc226037 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -792,7 +792,7 @@ void ftrace_graph_graph_time_control(bool enable)
- 
- static int profile_graph_entry(struct ftrace_graph_ent *trace)
+diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+index 895c40e8679f..a50a2aa963ad 100644
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -397,7 +397,7 @@ static uint32_t (*w2)(uint16_t);
+ static int
+ is_mcounted_section_name(char const *const txtname)
  {
--	int index = current->curr_ret_stack;
-+	struct ftrace_ret_stack *ret_stack;
+-	return strcmp(".text",           txtname) == 0 ||
++	return strncmp(".text",          txtname, 5) == 0 ||
+ 		strcmp(".init.text",     txtname) == 0 ||
+ 		strcmp(".ref.text",      txtname) == 0 ||
+ 		strcmp(".sched.text",    txtname) == 0 ||
+diff --git a/scripts/recordmcount.pl b/scripts/recordmcount.pl
+index f599031260d5..68841d01162c 100755
+--- a/scripts/recordmcount.pl
++++ b/scripts/recordmcount.pl
+@@ -142,6 +142,11 @@ my %text_sections = (
+      ".text.unlikely" => 1,
+ );
  
- 	function_profile_call(trace->func, 0, NULL, NULL);
++# Acceptable section-prefixes to record.
++my %text_section_prefixes = (
++     ".text." => 1,
++);
++
+ # Note: we are nice to C-programmers here, thus we skip the '||='-idiom.
+ $objdump = 'objdump' if (!$objdump);
+ $objcopy = 'objcopy' if (!$objcopy);
+@@ -519,6 +524,14 @@ while (<IN>) {
  
-@@ -800,14 +800,16 @@ static int profile_graph_entry(struct ftrace_graph_ent *trace)
- 	if (!current->ret_stack)
- 		return 0;
+ 	# Only record text sections that we know are safe
+ 	$read_function = defined($text_sections{$1});
++	if (!$read_function) {
++	    foreach my $prefix (keys %text_section_prefixes) {
++	        if (substr($1, 0, length $prefix) eq $prefix) {
++	            $read_function = 1;
++	            last;
++	        }
++	    }
++	}
+ 	# print out any recorded offsets
+ 	update_funcs();
  
--	if (index >= 0 && index < FTRACE_RETFUNC_DEPTH)
--		current->ret_stack[index].subtime = 0;
-+	ret_stack = ftrace_graph_get_ret_stack(current, 0);
-+	if (ret_stack)
-+		ret_stack->subtime = 0;
- 
- 	return 1;
- }
- 
- static void profile_graph_return(struct ftrace_graph_ret *trace)
- {
-+	struct ftrace_ret_stack *ret_stack;
- 	struct ftrace_profile_stat *stat;
- 	unsigned long long calltime;
- 	struct ftrace_profile *rec;
-@@ -825,16 +827,15 @@ static void profile_graph_return(struct ftrace_graph_ret *trace)
- 	calltime = trace->rettime - trace->calltime;
- 
- 	if (!fgraph_graph_time) {
--		int index;
--
--		index = current->curr_ret_stack;
- 
- 		/* Append this call time to the parent time to subtract */
--		if (index)
--			current->ret_stack[index - 1].subtime += calltime;
-+		ret_stack = ftrace_graph_get_ret_stack(current, 1);
-+		if (ret_stack)
-+			ret_stack->subtime += calltime;
- 
--		if (current->ret_stack[index].subtime < calltime)
--			calltime -= current->ret_stack[index].subtime;
-+		ret_stack = ftrace_graph_get_ret_stack(current, 0);
-+		if (ret_stack && ret_stack->subtime < calltime)
-+			calltime -= ret_stack->subtime;
- 		else
- 			calltime = 0;
- 	}
 -- 
 2.19.1
 
