@@ -2,172 +2,125 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E0DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5105EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5DE206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5DE206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EB1F213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:31:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p58LzHK6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB1F213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeLEW2d (ORCPT
+        id S1727965AbeLEWbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:28:33 -0500
-Received: from mga07.intel.com ([134.134.136.100]:14110 "EHLO mga07.intel.com"
+        Wed, 5 Dec 2018 17:31:24 -0500
+Received: from ozlabs.org ([203.11.71.1]:41137 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbeLEW2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:28:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 14:28:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,319,1539673200"; 
-   d="scan'208";a="125431878"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Dec 2018 14:28:31 -0800
-Subject: [PATCH v2] tools/testing/nvdimm: Align test resources to 128M
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Vishal Verma <vishal.l.verma@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 05 Dec 2018 14:15:57 -0800
-Message-ID: <154404811026.277309.7171897179868103531.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154308521932.237140.13650270234597178173.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154308521932.237140.13650270234597178173.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1727358AbeLEWbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:31:24 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 439D3W0f27z9s6w;
+        Thu,  6 Dec 2018 09:31:18 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544049081;
+        bh=BS0YAF8xRnTL/HcSSSF+9ISlZ92HtPVR9l2LfcYli+8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=p58LzHK6bWHFYjo5Hgx0wWt3aQfd5+7YwxXTBsomJjLntOlrPhdZEsS/nShY6WZnd
+         d6Bz0lLzC+nC6PHt5nk63OTjh6qYFG3/SuVuSMISKWJk2EJpXHTm6gg0GFQMJ4Me2I
+         hW5jQOgkEm5Gpp0RA1U1NjgF8Yws8yn/vesx/cS9kaAC7xKymhRuTUgPnBjznwe3jL
+         E6yqZcLk5ZItt6pRbDGMjS+f44jrMm0KonE7xpYwzZ8DDnrWxAzi9sbj3jmu2tMth5
+         y6DcrE3YhEDZZ1Kgq94GLTD6prYC1iXLt+prfb4IUI8Thu7HAkdd5jk9vO63AjYf6k
+         OLZicDZAE4X9Q==
+Date:   Thu, 6 Dec 2018 09:31:06 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Linux-Next <linux-next@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: Add Thunderbolt tree to linux-next
+Message-ID: <20181206093106.70511c41@canb.auug.org.au>
+In-Reply-To: <20181205113736.GM2469@lahna.fi.intel.com>
+References: <20181205113736.GM2469@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/oIojDWPp.l3UCbgSPrOrW/G"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for libnvdimm growing new restrictions to detect section
-conflicts between persistent memory regions, enable nfit_test to
-allocate aligned resources. Use a gen_pool to allocate nfit_test's fake
-resources in a separate address space from the virtual translation of
-the same.
+--Sig_/oIojDWPp.l3UCbgSPrOrW/G
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Tested-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes in v2:
-* Fix intermittent crash from stale vmalloc() alias usage (Vishal)
+Hi Mika,
 
- tools/testing/nvdimm/test/nfit.c |   35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+On Wed, 5 Dec 2018 13:37:36 +0200 Mika Westerberg <mika.westerberg@linux.in=
+tel.com> wrote:
+>
+> I maintain the Thunderbolt tree that gets merged to mainline via Greg's
+> char-misc tree. I would like to get the tree included in linux-next to
+> get wider coverage before it hits Greg's tree.
+>=20
+> Can you please include branches 'fixes' and 'next' from:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git
+>    =20
+> in linux-next?
 
-diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
-index 01ec04bf91b5..6c16ac36d482 100644
---- a/tools/testing/nvdimm/test/nfit.c
-+++ b/tools/testing/nvdimm/test/nfit.c
-@@ -15,6 +15,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/workqueue.h>
- #include <linux/libnvdimm.h>
-+#include <linux/genalloc.h>
- #include <linux/vmalloc.h>
- #include <linux/device.h>
- #include <linux/module.h>
-@@ -215,6 +216,8 @@ struct nfit_test {
- 
- static struct workqueue_struct *nfit_wq;
- 
-+static struct gen_pool *nfit_pool;
-+
- static struct nfit_test *to_nfit_test(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -1132,6 +1135,9 @@ static void release_nfit_res(void *data)
- 	list_del(&nfit_res->list);
- 	spin_unlock(&nfit_test_lock);
- 
-+	if (resource_size(&nfit_res->res) >= DIMM_SIZE)
-+		gen_pool_free(nfit_pool, nfit_res->res.start,
-+				resource_size(&nfit_res->res));
- 	vfree(nfit_res->buf);
- 	kfree(nfit_res);
- }
-@@ -1144,7 +1150,7 @@ static void *__test_alloc(struct nfit_test *t, size_t size, dma_addr_t *dma,
- 			GFP_KERNEL);
- 	int rc;
- 
--	if (!buf || !nfit_res)
-+	if (!buf || !nfit_res || !*dma)
- 		goto err;
- 	rc = devm_add_action(dev, release_nfit_res, nfit_res);
- 	if (rc)
-@@ -1164,6 +1170,8 @@ static void *__test_alloc(struct nfit_test *t, size_t size, dma_addr_t *dma,
- 
- 	return nfit_res->buf;
-  err:
-+	if (*dma && size >= DIMM_SIZE)
-+		gen_pool_free(nfit_pool, *dma, size);
- 	if (buf)
- 		vfree(buf);
- 	kfree(nfit_res);
-@@ -1172,9 +1180,16 @@ static void *__test_alloc(struct nfit_test *t, size_t size, dma_addr_t *dma,
- 
- static void *test_alloc(struct nfit_test *t, size_t size, dma_addr_t *dma)
- {
-+	struct genpool_data_align data = {
-+		.align = SZ_128M,
-+	};
- 	void *buf = vmalloc(size);
- 
--	*dma = (unsigned long) buf;
-+	if (size >= DIMM_SIZE)
-+		*dma = gen_pool_alloc_algo(nfit_pool, size,
-+				gen_pool_first_fit_align, &data);
-+	else
-+		*dma = (unsigned long) buf;
- 	return __test_alloc(t, size, dma, buf);
- }
- 
-@@ -2839,6 +2854,17 @@ static __init int nfit_test_init(void)
- 		goto err_register;
- 	}
- 
-+	nfit_pool = gen_pool_create(ilog2(SZ_4M), NUMA_NO_NODE);
-+	if (!nfit_pool) {
-+		rc = -ENOMEM;
-+		goto err_register;
-+	}
-+
-+	if (gen_pool_add(nfit_pool, SZ_4G, SZ_4G, NUMA_NO_NODE)) {
-+		rc = -ENOMEM;
-+		goto err_register;
-+	}
-+
- 	for (i = 0; i < NUM_NFITS; i++) {
- 		struct nfit_test *nfit_test;
- 		struct platform_device *pdev;
-@@ -2894,6 +2920,9 @@ static __init int nfit_test_init(void)
- 	return 0;
- 
-  err_register:
-+	if (nfit_pool)
-+		gen_pool_destroy(nfit_pool);
-+
- 	destroy_workqueue(nfit_wq);
- 	for (i = 0; i < NUM_NFITS; i++)
- 		if (instances[i])
-@@ -2917,6 +2946,8 @@ static __exit void nfit_test_exit(void)
- 	platform_driver_unregister(&nfit_test_driver);
- 	nfit_test_teardown();
- 
-+	gen_pool_destroy(nfit_pool);
-+
- 	for (i = 0; i < NUM_NFITS; i++)
- 		put_device(&instances[i]->pdev.dev);
- 	class_destroy(nfit_test_dimm);
+Added from today (well the fixes tree will be added tomorrow - but it
+was empty anyway).
 
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/oIojDWPp.l3UCbgSPrOrW/G
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwIUaoACgkQAVBC80lX
+0Gw6/wf/eeq8inNICyvIiS/ArSdmLq1BElOUfZzGDsKENAYxVzz4b4VSpPmEFS8+
+067yF+QywrGndq669ByOSwBu4Z57BFZnL8W4UvRzkhjK1Pv2rF4e+SLTv2yCoLGy
+gVjYgHKl+mtzgB7I6RHHDRwy2GfP66p4N6vqYMn7fjspguCKsFcqnffSZpxKpJO1
+j6iyOWwmluqMnQnaPT54Yev0BXoAUBXHDE0khHpac+J+ZFWBDywV5ATqYYukGvvb
+mWoPEX6wyugdR6N0FjqX/JAjBtvz6cWEh86bZOaWfTncBMoQi+Op7+juS8JbbVL7
+j+o+ahyvDk5iyixrY0O2skXCi/GqYg==
+=Bbp1
+-----END PGP SIGNATURE-----
+
+--Sig_/oIojDWPp.l3UCbgSPrOrW/G--
