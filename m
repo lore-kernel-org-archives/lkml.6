@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49720C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8A8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4F52084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A459C20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xS9Hx3N4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4F52084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3Q2BtXE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A459C20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbeLEJlM (ORCPT
+        id S1728879AbeLEJlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbeLEJlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:08 -0500
+        id S1728834AbeLEJlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:10 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D47B20851;
-        Wed,  5 Dec 2018 09:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF5212084C;
+        Wed,  5 Dec 2018 09:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002867;
-        bh=bY6Ylx66IlaBG8SCByZRLnVhgpCmvt378GrqAosWWeM=;
+        s=default; t=1544002869;
+        bh=hyJLhqa2IEnucNwAcFZxSeXXLiZx3SXdVoLSc1Z+GFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xS9Hx3N45Rp9NfkIikYISY3tPDxC2LXqYUPXbLYCvE5PrR7BckylEOQNaOs4iiv7p
-         uvPyaqxHacGurlGWw32HK2tnRMzoH35TgJFdDRfyJrIPOpFXBjfwvBIfJDEiO5F7yM
-         V5oBhyLVb+olg+4XPW8IvslAPiDxJnBLFamn0Z9s=
+        b=I3Q2BtXEKqvWaRJlDDrrf4ath35gpnOirqPI/w4dbr7qtmOygo8AT7f3o8w2+FB1D
+         cFdSFtrRWVLS5D7shQ26BDVOTUEfc9fAOMJ/OWMTLOLF3ASJQiUQdb8QGxAc7nI/Tk
+         bdtW4cV//XsqmAVgSlQVJT5H0nTCjpXm1EfAayCw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        Shantanu Goel <sgoel01@yahoo.com>,
-        Daniel Axtens <dja@axtens.net>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 093/123] cachefiles: Fix page leak in cachefiles_read_backing_file while vmscan is active
-Date:   Wed,  5 Dec 2018 04:35:25 -0500
-Message-Id: <20181205093555.5386-93-sashal@kernel.org>
+Cc:     Yunjian Wang <wangyunjian@huawei.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 094/123] igb: fix uninitialized variables
+Date:   Wed,  5 Dec 2018 04:35:26 -0500
+Message-Id: <20181205093555.5386-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -54,86 +52,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+From: Yunjian Wang <wangyunjian@huawei.com>
 
-[ Upstream commit 9a24ce5b66f9c8190d63b15f4473600db4935f1f ]
+[ Upstream commit e4c39f7926b4de355f7df75651d75003806aae09 ]
 
-[Description]
+This patch fixes the variable 'phy_word' may be used uninitialized.
 
-In a heavily loaded system where the system pagecache is nearing memory
-limits and fscache is enabled, pages can be leaked by fscache while trying
-read pages from cachefiles backend.  This can happen because two
-applications can be reading same page from a single mount, two threads can
-be trying to read the backing page at same time.  This results in one of
-the threads finding that a page for the backing file or netfs file is
-already in the radix tree.  During the error handling cachefiles does not
-clean up the reference on backing page, leading to page leak.
-
-[Fix]
-The fix is straightforward, to decrement the reference when error is
-encountered.
-
-  [dhowells: Note that I've removed the clearance and put of newpage as
-   they aren't attested in the commit message and don't appear to actually
-   achieve anything since a new page is only allocated is newpage!=NULL and
-   any residual new page is cleared before returning.]
-
-[Testing]
-I have tested the fix using following method for 12+ hrs.
-
-1) mkdir -p /mnt/nfs ; mount -o vers=3,fsc <server_ip>:/export /mnt/nfs
-2) create 10000 files of 2.8MB in a NFS mount.
-3) start a thread to simulate heavy VM presssure
-   (while true ; do echo 3 > /proc/sys/vm/drop_caches ; sleep 1 ; done)&
-4) start multiple parallel reader for data set at same time
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   ..
-   ..
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-5) finally check using cat /proc/fs/fscache/stats | grep -i pages ;
-   free -h , cat /proc/meminfo and page-types -r -b lru
-   to ensure all pages are freed.
-
-Reviewed-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Shantanu Goel <sgoel01@yahoo.com>
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-[dja: forward ported to current upstream]
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/intel/igb/e1000_i210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 40f7595aad10..db233588a69a 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -535,7 +535,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
- 					    netpage->index, cachefiles_gfp);
- 		if (ret < 0) {
- 			if (ret == -EEXIST) {
-+				put_page(backpage);
-+				backpage = NULL;
- 				put_page(netpage);
-+				netpage = NULL;
- 				fscache_retrieval_complete(op, 1);
- 				continue;
- 			}
-@@ -608,7 +611,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
- 					    netpage->index, cachefiles_gfp);
- 		if (ret < 0) {
- 			if (ret == -EEXIST) {
-+				put_page(backpage);
-+				backpage = NULL;
- 				put_page(netpage);
-+				netpage = NULL;
- 				fscache_retrieval_complete(op, 1);
- 				continue;
- 			}
+diff --git a/drivers/net/ethernet/intel/igb/e1000_i210.c b/drivers/net/ethernet/intel/igb/e1000_i210.c
+index c54ebedca6da..c393cb2c0f16 100644
+--- a/drivers/net/ethernet/intel/igb/e1000_i210.c
++++ b/drivers/net/ethernet/intel/igb/e1000_i210.c
+@@ -842,6 +842,7 @@ s32 igb_pll_workaround_i210(struct e1000_hw *hw)
+ 		nvm_word = E1000_INVM_DEFAULT_AL;
+ 	tmp_nvm = nvm_word | E1000_INVM_PLL_WO_VAL;
+ 	igb_write_phy_reg_82580(hw, I347AT4_PAGE_SELECT, E1000_PHY_PLL_FREQ_PAGE);
++	phy_word = E1000_PHY_PLL_UNCONF;
+ 	for (i = 0; i < E1000_MAX_PLL_TRIES; i++) {
+ 		/* check current state directly from internal PHY */
+ 		igb_read_phy_reg_82580(hw, E1000_PHY_PLL_FREQ_REG, &phy_word);
 -- 
 2.17.1
 
