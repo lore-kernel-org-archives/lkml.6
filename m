@@ -2,165 +2,77 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B14AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E77EC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A6B20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:24:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="a7uzzRoJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A6B20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 070BD20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544030713;
+	bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=zEc5TNVick398mrLGMGL7DMN4L+msy7p4kSgCioKqEOSKZU//SoEKqOMHCbJCSjUs
+	 CDHjkT0dRscAfjocbGNcwOrNhast4KZcDXnHrwu4CMJiQ3o8pQzM770cDHEIV0AnJq
+	 UZzFW5wzVeWbFdYAnqesOkM4LGUGVkh3LuXYi0rA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070BD20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeLERYn (ORCPT
+        id S1728196AbeLERZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:24:43 -0500
-Received: from mail.efficios.com ([167.114.142.138]:34514 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeLERYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:24:42 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 265509FE7D;
-        Wed,  5 Dec 2018 12:24:41 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id e-wNZEF1XMty; Wed,  5 Dec 2018 12:24:40 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8D25A9FE75;
-        Wed,  5 Dec 2018 12:24:40 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8D25A9FE75
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1544030680;
-        bh=tAO7DXb3rVFPA4jINYxWvYHi+QXJ6YxyFgAnD3Q+47k=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=a7uzzRoJe033C61VJfDOpQuFq7ns0U7TSpWG0CRJLPqE5wwD5toClSSvhHuSUFRcc
-         VeTaGzInbUA4KPjR4vPwIDBc89wZ8h3xuMT53gefMld29Xm7sDi0nd1/IKFWwpCcrr
-         cfEdheHy/yJlmZm4juL/f0E7J1U9xJxKpgeFL2pJ0AuTf/L/uEFvLZxHEeFhFNAJN3
-         uIfQ8H6kqEtQVpLOlKjDH7zwqXbmtmlN/8G9ThezRIqrF5WUL3bL0dC+W+K0lAHDg7
-         s90iSf3PGJRXZl0K5I1f8zZNBsENd+L9WIIhnhEEBWlqbQ7kaoGuvEYfWc7+JhU16G
-         d++YACtJGWW+A==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id sbMC47hApzJb; Wed,  5 Dec 2018 12:24:40 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 6DA619FE6E;
-        Wed,  5 Dec 2018 12:24:40 -0500 (EST)
-Date:   Wed, 5 Dec 2018 12:24:40 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <210288020.19588.1544030680384.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181126170758.GP23599@brightrain.aerifal.cx>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com> <20181123183558.GM23599@brightrain.aerifal.cx> <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com> <87bm6cqm31.fsf@oldenburg.str.redhat.com> <688718071.12798.1543247469553.JavaMail.zimbra@efficios.com> <1284855405.12857.1543249851299.JavaMail.zimbra@efficios.com> <20181126170758.GP23599@brightrain.aerifal.cx>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Wed, 5 Dec 2018 12:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbeLERZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:25:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA2A20878;
+        Wed,  5 Dec 2018 17:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544030710;
+        bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=YBuVnp8wqbmwcRpe5EJjESQvF/928Cyg4+MP7nUw6MR+1hQk+vTg+OCDUgW4M43yY
+         Dr4m129doVz6QpIV7sV+UopY+wgITwxM18uIlVyOEyw6O42ydMGOCbEso9TMkdfSqz
+         Y8+f6iWzchDt6GE72mwMqbs9vLEfLYYCWv1lrcL8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: 5b1Qx0E+myfJ6lch14/JRVcvr2UF6g==
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154403071006.88331.16284741533378833854@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 06/10] clk: clk-hi655x: Free of_provider at remove
+Date:   Wed, 05 Dec 2018 09:25:10 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Matti Vaittinen (2018-12-04 03:37:29)
+> use devm variant for of_provider registration so provider is freed
+> at exit.
+> =
 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
 
------ On Nov 26, 2018, at 12:07 PM, Rich Felker dalias@libc.org wrote:
+Applied to clk-next
 
-> On Mon, Nov 26, 2018 at 11:30:51AM -0500, Mathieu Desnoyers wrote:
->> ----- On Nov 26, 2018, at 10:51 AM, Mathieu Desnoyers
->> mathieu.desnoyers@efficios.com wrote:
->> 
->> > ----- On Nov 26, 2018, at 3:28 AM, Florian Weimer fweimer@redhat.com wrote:
->> > 
->> >> * Mathieu Desnoyers:
->> >> 
->> >>> Using a "weak" symbol in early adopter libraries is important, so they
->> >>> can be loaded together into the same process without causing loader
->> >>> errors due to many definitions of the same strong symbol.
->> >> 
->> >> This is not how ELF dynamic linking works.  If the symbol name is the
->> >> same, one definition interposes the others.
->> >> 
->> >> You need to ensure that the symbol has the same size everywhere, though.
->> >> There are some tricky interactions with symbol versions, too.  (The
->> >> interposing libraries must not use symbol versioning.)
->> > 
->> > I was under the impression that loading the same strong symbol into an
->> > application multiple times would cause some kind of warning if non-weak. I did
->> > some testing to figure out which case I remembered would cause this.
->> > 
->> > When compiling with "-fno-common", dynamic and static linking work fine, but
->> > trying to add multiple instances of a given symbol into a single object fails
->> > with:
->> > 
->> > /tmp/ccSakXZV.o:(.bss+0x0): multiple definition of `a'
->> > /tmp/ccQBJBOo.o:(.bss+0x0): first defined here
->> > 
->> > Even if the symbol has the same size.
->> > 
->> > So considering that we don't care about compiling into a single object here,
->> > and only care about static and dynamic linking of libraries, indeed the "weak"
->> > symbol is not useful.
->> > 
->> > So let's make __rseq_abi and __rseq_refcount strong symbols then ?
->> 
->> Actually, looking into ld(1) --warn-common, it looks like "weak" would be
->> cleaner
->> after all, especially for __rseq_abi which we needs to be initialized to a
->> specific
->> value, which is therefore not a common symbol.
->> 
->> "      --warn-common
->>            Warn when a common symbol is combined with another common symbol or with a
->>            symbol definition.  Unix
->>            linkers allow this somewhat sloppy practice, but linkers on some other operating
->>            systems do not.
->>            This option allows you to find potential problems from combining global symbols.
->>            Unfortunately,
->>            some C libraries use this practice, so you may get some warnings about symbols
->>            in the libraries as
->>            well as in your programs."
->> 
->> Thoughts ?
-> 
-> AFAIK this has nothing to do with dynamic linking.
-
-Reading through the ELF specification, it seems to imply that "weak" only affects the link
-editor behavior when combining relocatable objects, not the behavior of the dynamic linker.
-Is that what you refer to when you say "weak" has nothing to do with dynamic linking ?
-
-If that interpretation is correct, then indeed I should remove the "weak" from the __rseq_abi
-and __rseq_refcount.
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
