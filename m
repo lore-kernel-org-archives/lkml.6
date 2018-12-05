@@ -2,76 +2,153 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F84EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFCEC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4815320989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4815320989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 51456214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:00:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESY6gSM+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51456214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbeLEKAY (ORCPT
+        id S1729657AbeLEJuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:00:24 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:34711 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729674AbeLEJuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:50:16 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 438v9L0L8hz1qwBs;
-        Wed,  5 Dec 2018 10:50:14 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 438v9K6j0Lz1qrnh;
-        Wed,  5 Dec 2018 10:50:13 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id en4AMrb1qkYx; Wed,  5 Dec 2018 10:50:13 +0100 (CET)
-X-Auth-Info: N+cS8wxj1rbgWRO8hJDuD4Bk3pIAad2C2cJQUviV8mg=
-Received: from crub (p508DE362.dip0.t-ipconnect.de [80.141.227.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 5 Dec 2018 04:50:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729315AbeLEJuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:50:09 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed,  5 Dec 2018 10:50:12 +0100 (CET)
-Date:   Wed, 5 Dec 2018 10:50:08 +0100
-From:   Anatolij Gustschin <agust@denx.de>
-To:     atull@kernel.org
-Cc:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, broonie@kernel.org, mdf@kernel.org
-Subject: Re: [PATCH v3 3/3] fpga: Add fpga manager driver for ARRI Altera
- FPP
-Message-ID: <20181205105008.4a32956c@crub>
-In-Reply-To: <20181127175438.16116-4-agust@denx.de>
-References: <20181127175438.16116-1-agust@denx.de>
-        <20181127175438.16116-4-agust@denx.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mail.kernel.org (Postfix) with ESMTPSA id C29582082B;
+        Wed,  5 Dec 2018 09:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544003408;
+        bh=BkjNCTm8cYwpA7HGrnq9GU96PRQtDvAZIo7URNGdMtk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ESY6gSM+YmXmsPVxRs1zLErgHHYYj0IeaMf3fSUUDaLnrkbZUlAS7aZdx1cCOF4Uu
+         V9XAC0qv25AKC3TyB9soZ5Vb3R7iu0j+LLCwReOy4YUP5MeuEkya75wHaz1CFoUZTt
+         xq+MbAiEZywYbS1xsLxLUfQKK/u7ucpjp569a+B4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 22/45] USB: omap_udc: use devm_request_irq()
+Date:   Wed,  5 Dec 2018 04:46:43 -0500
+Message-Id: <20181205094706.7225-22-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
+References: <20181205094706.7225-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-On Tue, 27 Nov 2018 18:54:38 +0100
-Anatolij Gustschin agust@denx.de wrote:
+[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
 
->Add FPGA manager driver for loading ARRI Altera FPGAs via fast
->passive parallel (FPP) interface using FTDI FT232H chip.
+The current code fails to release the third irq on the error path
+(observed by reading the code), and we get also multiple WARNs with
+failing gadget drivers due to duplicate IRQ releases. Fix by using
+devm_request_irq().
 
-Ping. Is this patch okay? I suppose that it will go via usb tree
-as part of the whole series (you send fpga driver patches to Greg
-anyway). Can you ack this patch or is there something that should
-be changed? I'd like to see it merged in v4.21, so if there are
-issues with this patch, I'll try to address it before it is to late.
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-Thanks,
-Anatolij
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index a8709f9e5648..2945408f0eec 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2886,8 +2886,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 		udc->clr_halt = UDC_RESET_EP;
+ 
+ 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
+-	status = request_irq(pdev->resource[1].start, omap_udc_irq,
+-			0, driver_name, udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
++				  omap_udc_irq, 0, driver_name, udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[1].start, status);
+@@ -2895,20 +2895,20 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* USB "non-iso" IRQ (PIO for all but ep0) */
+-	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
+-			0, "omap_udc pio", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
++				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[2].start, status);
+-		goto cleanup2;
++		goto cleanup1;
+ 	}
+ #ifdef	USE_ISO
+-	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
+-			0, "omap_udc iso", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
++				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[3].start, status);
+-		goto cleanup3;
++		goto cleanup1;
+ 	}
+ #endif
+ 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
+@@ -2921,22 +2921,11 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	create_proc_file();
+ 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+ 			omap_udc_release);
+-	if (status)
+-		goto cleanup4;
+-
+-	return 0;
++	if (!status)
++		return 0;
+ 
+-cleanup4:
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-cleanup3:
+-	free_irq(pdev->resource[2].start, udc);
+-#endif
+-
+-cleanup2:
+-	free_irq(pdev->resource[1].start, udc);
+-
+ cleanup1:
+ 	kfree(udc);
+ 	udc = NULL;
+@@ -2980,12 +2969,6 @@ static int omap_udc_remove(struct platform_device *pdev)
+ 
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-	free_irq(pdev->resource[3].start, udc);
+-#endif
+-	free_irq(pdev->resource[2].start, udc);
+-	free_irq(pdev->resource[1].start, udc);
+-
+ 	if (udc->dc_clk) {
+ 		if (udc->clk_requested)
+ 			omap_udc_enable_clock(0);
+-- 
+2.17.1
+
