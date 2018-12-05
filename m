@@ -2,101 +2,93 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB17C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF207C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 774682082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2kcGKFpt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774682082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C26C20659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:15:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C26C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbeLEKMV (ORCPT
+        id S1727599AbeLEKPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:12:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728009AbeLEJhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:37:34 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7B8F20850;
-        Wed,  5 Dec 2018 09:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002653;
-        bh=HR1cO4J51+ardDHb2i7e6cHJE6RkAn6CM6plKeHba+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2kcGKFptd3IXkJdDxFGzrBY3v1t27ZhohQ8ho+bmaxH/LxAXIRj2PID7SHrK1Xy/Q
-         s4GYE5JqqNKk5OVncSEZxXTh9sclgRJB7uG5hiZgLZ93dtO4HJ+9w/ikkUBNqyjS5M
-         K0hsPmqPaIB0DZUF2WPrsawXbOEnuRmFtp+gkW6g=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 028/123] hwmon: (raspberrypi) Fix initial notify
-Date:   Wed,  5 Dec 2018 04:34:20 -0500
-Message-Id: <20181205093555.5386-28-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
-References: <20181205093555.5386-1-sashal@kernel.org>
+        Wed, 5 Dec 2018 05:15:16 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:42555 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726171AbeLEKPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:15:16 -0500
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 4123D1C229B
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 10:15:14 +0000 (GMT)
+Received: (qmail 11397 invoked from network); 5 Dec 2018 10:15:14 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.245.71])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 5 Dec 2018 10:15:13 -0000
+Date:   Wed, 5 Dec 2018 10:15:12 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
+ regressions
+Message-ID: <20181205101512.GY23260@techsingularity.net>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com>
+ <20181204073850.GW31738@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1812041415270.159770@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1812041415270.159770@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+On Tue, Dec 04, 2018 at 02:25:54PM -0800, David Rientjes wrote:
+> On Tue, 4 Dec 2018, Michal Hocko wrote:
+> 
+> > > This fixes a 13.9% of remote memory access regression and 40% remote
+> > > memory allocation regression on Haswell when the local node is fragmented
+> > > for hugepage sized pages and memory is being faulted with either the thp
+> > > defrag setting of "always" or has been madvised with MADV_HUGEPAGE.
+> > > 
+> > > The usecase that initially identified this issue were binaries that mremap
+> > > their .text segment to be backed by transparent hugepages on startup.
+> > > They do mmap(), madvise(MADV_HUGEPAGE), memcpy(), and mremap().
+> > 
+> > Do you have something you can share with so that other people can play
+> > and try to reproduce?
+> > 
+> 
+> This is a single MADV_HUGEPAGE usecase, there is nothing special about it.  
+> It would be the same as if you did mmap(), madvise(MADV_HUGEPAGE), and 
+> faulted the memory with a fragmented local node and then measured the 
+> remote access latency to the remote hugepage that occurs without setting 
+> __GFP_THISNODE.  You can also measure the remote allocation latency by 
+> fragmenting the entire system and then faulting.
+> 
 
-[ Upstream commit 35fdc3902179366489a12cae4cb3ccc3b95f0afe ]
+I'll make the same point as before, the form the fragmentation takes
+matters as well as the types of pages that are resident and whether
+they are active or not. It affects the level of work the system does
+as well as the overall success rate of operations (be it reclaim, THP
+allocation, compaction, whatever). This is why a reproduction case that is
+representative of the problem you're facing on the real workload matters
+would have been helpful because then any alternative proposal could have
+taken your workload into account during testing.
 
-In case an under-voltage happens before probing the driver wont
-write the critical warning into the kernel log. So don't init
-of last_throttled during probe and fix this issue.
-
-Fixes: 74d1e007915f ("hwmon: Add support for RPi voltage sensor")
-Reported-by: "Noralf Trønnes" <noralf@tronnes.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hwmon/raspberrypi-hwmon.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/hwmon/raspberrypi-hwmon.c b/drivers/hwmon/raspberrypi-hwmon.c
-index be5ba4690895..0d0457245e7d 100644
---- a/drivers/hwmon/raspberrypi-hwmon.c
-+++ b/drivers/hwmon/raspberrypi-hwmon.c
-@@ -115,7 +115,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rpi_hwmon_data *data;
--	int ret;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -124,11 +123,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
- 	/* Parent driver assure that firmware is correct */
- 	data->fw = dev_get_drvdata(dev->parent);
- 
--	/* Init throttled */
--	ret = rpi_firmware_property(data->fw, RPI_FIRMWARE_GET_THROTTLED,
--				    &data->last_throttled,
--				    sizeof(data->last_throttled));
--
- 	data->hwmon_dev = devm_hwmon_device_register_with_info(dev, "rpi_volt",
- 							       data,
- 							       &rpi_chip_info,
 -- 
-2.17.1
-
+Mel Gorman
+SUSE Labs
