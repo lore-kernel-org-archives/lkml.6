@@ -2,155 +2,131 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15537C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD37C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C352E20834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:27:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="eFnPJ62w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C352E20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D0F820834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:29:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D0F820834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbeLEA1A (ORCPT
+        id S1726624AbeLEA3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:27:00 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39441 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbeLEA07 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:26:59 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so13173289otl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:26:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1KwpwloZKWw2r288NR2PSotNAVR8VQ9kiMJsfd3nibY=;
-        b=eFnPJ62wB08z7V8csIVZJdAadTp6k1yMVyIZpCT0Nafn54N5yNTv9jxEP3MYhoURXl
-         HFtc2oVgrb/QqbRoZj8hrme/U007glVODlp9llUectox/l3F9iagdwfNaV/6TZyzy0iH
-         bK/qTp7nezDCqrVymoCFSafplLlWCKwOzLmH1BF4DMpR73kQE3lU09vl8RLdl9y+Ej86
-         JsbmjbUh4+KkxZ8RKimvzW92dmp/1NJConeURM8GDTWtEPwra3IpeTaJPah9dk4SX0wY
-         +dzjpJG/6WTBMvGn6t7gbwmwmplIRv/OKkoXCN3fpyqFY8UMzlFjHKUuKyUI7qYuoaiB
-         3q1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1KwpwloZKWw2r288NR2PSotNAVR8VQ9kiMJsfd3nibY=;
-        b=MIVorPWgYiWsXWal0+Ay/TMKRdEvbsONu8JIuH71xNe9BxlGigAv4oUTDEJPbE09vJ
-         22NTwf1tjTW0680sJSSMFxs9tR0ELvWEUwsOhSOnJIi6Z+3PjoIcG0TDfgiNoyYOoFn5
-         IFBGL+xe4axCQx2qbP6JHehO/DGOSn/6kV1Fp4rapm0F0kS7k/L+FC41JyhbptkCzgYE
-         DtY4rr6kk7jTpK5okypX5wqQQAcYOXUy0dxlAUjB0HwKp96Gb7oHUUjC+9PlvnnRVYA9
-         g2qPsYUgZAaXb4RBLgSq6Fd7cHpGpiOSiQqkIBsMgy7IHxu2bmyTQgQrCo2hHIHwrRMl
-         EK8g==
-X-Gm-Message-State: AA+aEWar9r0VywEpgbGbwN76ZCNK2aX1mwRbCZxKlwT2oW4N8p9nDGUk
-        fFDcz+YLjTPeJzgxTPb16swh8betVt1oe62qeZDB0A==
-X-Google-Smtp-Source: AFSGD/VLMKzBX1LQT0+RqHpyklwZYHPbFlACAD/7oT63eG/1ar+LAG8QbPGsK3hEIJSmj1/19GUQmqzulcLU4WQA4Qk=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr14354977oti.367.1543969618737;
- Tue, 04 Dec 2018 16:26:58 -0800 (PST)
+        Tue, 4 Dec 2018 19:29:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726048AbeLEA3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 19:29:20 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B01793001943;
+        Wed,  5 Dec 2018 00:29:19 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39F4C6B8EC;
+        Wed,  5 Dec 2018 00:29:16 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 19:29:14 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+Message-ID: <20181205002914.GS2937@redhat.com>
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <9d745b99-22e3-c1b5-bf4f-d3e83113f57b@intel.com>
+ <20181204184919.GD2937@redhat.com>
+ <20163c1e-00f1-7e02-82c0-7730ceabb9f2@intel.com>
+ <20181204215711.GP2937@redhat.com>
+ <ed96fdb0-d8b6-e19b-fe45-532042b712c6@intel.com>
 MIME-Version: 1.0
-References: <154386493754.27193.1300965403157243427.stgit@ahduyck-desk1.amr.corp.intel.com>
- <154386513120.27193.7977541941078967487.stgit@ahduyck-desk1.amr.corp.intel.com>
- <CAPcyv4gZkx9zRsKkVhrmPG7SyjPEycp0neFnECmSADZNLuDOpQ@mail.gmail.com>
- <97943d2ed62e6887f4ba51b985ef4fb5478bc586.camel@linux.intel.com>
- <CAPcyv4i=FL4f34H2_1mgWMk=UyyaXFaKPh5zJSnFNyN3cBoJhA@mail.gmail.com>
- <2a3f70b011b56de2289e2f304b3d2d617c5658fb.camel@linux.intel.com>
- <CAPcyv4hPDjHzKd4wTh8Ujv-xL8YsJpcFXOp5ocJ-5fVJZ3=vRw@mail.gmail.com>
- <30ab5fa569a6ede936d48c18e666bc6f718d50db.camel@linux.intel.com>
- <CAPcyv4izGr4dLs_Xpa1wbqJRrHZVEKFWQNb2Qo2Ej_xbEXhbTg@mail.gmail.com>
- <dd7296db5996f15cc3e666d008f209f5f24fa98e.camel@linux.intel.com>
- <20181204182428.11bec385@gnomeregan.cam.corp.google.com> <bb141157ac8bc4a99883800d757aa037a7402b10.camel@linux.intel.com>
-In-Reply-To: <bb141157ac8bc4a99883800d757aa037a7402b10.camel@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 4 Dec 2018 16:26:46 -0800
-Message-ID: <CAPcyv4ix4aHyivwCiw0YNMxLjRJeqDX3x3m1q1JhyMPCEMOJtQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] mm: Add support for exposing if dev_pagemap
- supports refcount pinning
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Barret Rhoden <brho@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        KVM list <kvm@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, rkrcmar@redhat.com,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ed96fdb0-d8b6-e19b-fe45-532042b712c6@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 05 Dec 2018 00:29:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 4:01 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> On Tue, 2018-12-04 at 18:24 -0500, Barret Rhoden wrote:
-> > Hi -
-> >
-> > On 2018-12-04 at 14:51 Alexander Duyck
-> > <alexander.h.duyck@linux.intel.com> wrote:
-> >
-> > [snip]
-> >
-> > > > I think the confusion arises from the fact that there are a few MMIO
-> > > > resources with a struct page and all the rest MMIO resources without.
-> > > > The problem comes from the coarse definition of pfn_valid(), it may
-> > > > return 'true' for things that are not System-RAM, because pfn_valid()
-> > > > may be something as simplistic as a single "address < X" check. Then
-> > > > PageReserved is a fallback to clarify the pfn_valid() result. The
-> > > > typical case is that MMIO space is not caught up in this linear map
-> > > > confusion. An MMIO address may or may not have an associated 'struct
-> > > > page' and in most cases it does not.
-> > >
-> > > Okay. I think I understand this somewhat now. So the page might be
-> > > physically there, but with the reserved bit it is not supposed to be
-> > > touched.
-> > >
-> > > My main concern with just dropping the bit is that we start seeing some
-> > > other uses that I was not certain what the impact would be. For example
-> > > the functions like kvm_set_pfn_accessed start going in and manipulating
-> > > things that I am not sure should be messed with for a DAX page.
-> >
-> > One thing regarding the accessed and dirty bits is that we might want
-> > to have DAX pages marked dirty/accessed, even if we can't LRU-reclaim
-> > or swap them.  I don't have a real example and I'm fairly ignorant
-> > about the specifics here.  But one possibility would be using the A/D
-> > bits to detect changes to a guest's memory for VM migration.  Maybe
-> > there would be issues with KSM too.
-> >
-> > Barret
->
-> I get that, but the issue is that the code associated with those bits
-> currently assumes you are working with either an anonymous swap backed
-> page or a page cache page. We should really be updating that logic now,
-> and then enabling DAX to access it rather than trying to do things the
-> other way around which is how this feels.
+On Tue, Dec 04, 2018 at 03:58:23PM -0800, Dave Hansen wrote:
+> On 12/4/18 1:57 PM, Jerome Glisse wrote:
+> > Fully correct mind if i steal that perfect summary description next time
+> > i post ? I am so bad at explaining thing :)
+> 
+> Go for it!
+> 
+> > Intention is to allow program to do everything they do with mbind() today
+> > and tomorrow with the HMAT patchset and on top of that to also be able to
+> > do what they do today through API like OpenCL, ROCm, CUDA ... So it is one
+> > kernel API to rule them all ;)
+> 
+> While I appreciate the exhaustive scope of such a project, I'm really
+> worried that if we decided to use this for our "HMAT" use cases, we'll
+> be bottlenecked behind this project while *it* goes through 25 revisions
+> over 4 or 5 years like HMM did.
+> 
+> So, should we just "park" the enhancements to the existing NUMA
+> interfaces and infrastructure (think /sys/devices/system/node) and wait
+> for this to go in?  Do we try to develop them in parallel and make them
+> consistent?  Or, do we just ignore each other and make Andrew sort it
+> out in a few years? :)
 
-Agree. I understand the concern about unintended side effects of
-dropping PageReserved for dax pages, but they simply don't fit the
-definition of the intended use of PageReserved. We've already had
-fallout from legacy code paths doing the wrong thing with dax pages
-where PageReserved wouldn't have helped. For example, see commit
-6e2608dfd934 "xfs, dax: introduce xfs_dax_aops", or commit
-6100e34b2526 "mm, memory_failure: Teach memory_failure() about
-dev_pagemap pages". So formerly teaching kvm about these page
-semantics and dropping the reliance on a side effect of PageReserved()
-seems the right direction.
+Let have a battle with giant foam q-tip at next LSF/MM and see who wins ;)
 
-That said, for mark_page_accessed(), it does not look like it will
-have any effect on dax pages. PageLRU will be false,
-__lru_cache_activate_page() will not find a page on a percpu pagevec,
-and workingset_activation() won't find an associated memcg. I would
-not be surprised if mark_page_accessed() is already being called today
-via the ext4 + dax use case.
+More seriously i think you should go ahead with Keith HMAT patchset and
+make progress there. In HMAT case you can grow and evolve the NUMA node
+infrastructure to address your need and i believe you are doing it in
+a sensible way. But i do not see a path for what i am trying to achieve
+in that framework. If anyone have any good idea i would welcome it.
+
+In the meantime i hope i can make progress with my proposal here under
+staging. Once i get enough stuff working in userspace and convince guinea
+pig (i need to find a better name for those poor people i will coerce
+in testing this ;)) then i can have some hard evidence of what thing in
+my proposal is useful on some concret case with open source stack from
+top to bottom. It might means stripping down what i am proposing today
+to what turns out to be useful. Then start a discussion about merging the
+kernel underlying code into one (while preserving all existing API) and
+getting out of staging with real syscall we will have to die with.
+
+I know that at the very least the hbind() and hpolicy() syscall would
+be successful as the HPC folks have been been dreaming of this. The
+topology thing is harder to know, they are some users today but i can
+not say how much more interest it can spark outside of this very small
+community that is HPC.
+
+Cheers,
+Jérôme
