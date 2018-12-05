@@ -2,99 +2,200 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DB1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50043C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4024720879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ZKOHGnEA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4024720879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DCC12082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544029854;
+	bh=NUw1fk7q7GvxWFuDglC9KlvVPPsDUfs0pATG1R3Cm6Y=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=p6GDphhG9y9G1mFD6D9fPNAhsLKrmX/aOC6lAaWcQaDylTdoxffuyxr5marAYP9cf
+	 a7iiNPUhxINS/1WyYlDq3h/WJKSS9rZ9xThxkndBxh8sbquUrWPEF9pyXzmGPA5bBb
+	 fmt0DvxvVCp2gbvVU3ELFR5DxTNXBio+fvRxzvCc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCC12082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbeLERGo (ORCPT
+        id S1727958AbeLERKp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:06:44 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:38520 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbeLERGk (ORCPT
+        Wed, 5 Dec 2018 12:10:45 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34497 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbeLERKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:06:40 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 591A124E1686;
-        Wed,  5 Dec 2018 09:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544029600; bh=4XRcn4REUHkeWQGTsmdIle/D+obVlEkXO8SDsM3ssNQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZKOHGnEAomWWsW4olwx7lkjd9sinSQel9O50T7Qbw9J1RqtM2YJgOMN+IsYf3W8N6
-         AITkeEqHF6W75/J8OddQWnMgizisVhCL5dwLP+slfU7529ncCedAnc28qfhK6CoRS0
-         yJy8G4s+w1HhRWwPt7ibmMUksXwj+FuLfO2EgwGmpPI14Ns583jjE3DKzeuMk6b1Ax
-         tdgZ4x9qFnWd/eSygAMrYHI1St6iKyzbHMtSpVrLj3wgnpMFGYv0Vlnx+mEW1CNIK8
-         tRxWqjKUukJQBScTquNzf2R/9wcWaMdbl28C8wwxXhw6wi/KZOtDetvW5wO8NsS080
-         Jkkj6rg4i2+fQ==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 83A4159D3;
-        Wed,  5 Dec 2018 09:06:37 -0800 (PST)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 5/5] ARC: perf: remove useless ifdefs
-Date:   Wed,  5 Dec 2018 20:06:09 +0300
-Message-Id: <20181205170609.18690-6-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
-References: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
+        Wed, 5 Dec 2018 12:10:44 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r14so23150805qtp.1;
+        Wed, 05 Dec 2018 09:10:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MmxXP+gvK+D3Ckwyuxl2hWToPpepYtFxqwWJNwlDxLY=;
+        b=B4TDiO5hXTOnljrXLfmbsqKzfOJ2eZIpAACwl5VtV7nuT60Gicuvq1T/qVzkqnlmjU
+         d4fmwX3DXlLm9xP1Hp/3ayroejQ6oQfifGE1ggyfX0DJzEmCrM6yCwtm8rxUxY7m3mQy
+         lzLtUsW7LmzihdOCbeCfrXFD+gJWzjit6THFOtKj0oK6/vdObUNllQnCpRrhgNBONj69
+         1X1DNIjxdJqUMms3ugXZd8A8clzSn6cCK0zjsN4EgtJjvQ01fp4x69vRduwYRDErZUrH
+         wsl2BYzVVPaSZiX2Jj41gnzZPhWwVFM5KCe0RGEwx+DctT5JvdnnJ2pYYisXZ8eltRP8
+         XaKQ==
+X-Gm-Message-State: AA+aEWbjH9wqgOAkTSkyBnLv4X1vR9SIepZzGusYEZaP4ysu3b3MfGE0
+        zMKn+CRQbCYTI/jyrdSYeXDyDzP3nqA=
+X-Google-Smtp-Source: AFSGD/UGDUBAR2ERGo69cjIR/4M/qo78BURrNVddf54YHjWNppOy6SzevLcT7YW8biDFhSrDWayvqg==
+X-Received: by 2002:aed:39a1:: with SMTP id m30mr23602334qte.354.1544029842939;
+        Wed, 05 Dec 2018 09:10:42 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 05 Dec 2018 09:10:42 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH v6 00/14] block: always associate blkg and refcount cleanup
+Date:   Wed,  5 Dec 2018 12:10:25 -0500
+Message-Id: <20181205171039.73066-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ifdef around 'arc_pmu_match' structure declaration is useless
-as we refer to 'arc_pmu_match' in several places which aren't
-guarded with ifdef.
+Hi everyone,
 
-Nevertheless 'ARC' option selects 'OF' unconditionally so we
-can simply get rid of this ifdef.
+This is a minor update addressing the feedback from Mike and Josef.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/kernel/perf_event.c | 2 --
- 1 file changed, 2 deletions(-)
+v6:
+0005: Address Mike's feedback for the flush bio comment.
+0006: Add a WARN_ONCE() for blkg fallback suggested by Josef.
 
-diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
-index b6207090aaa7..7786c1f005fb 100644
---- a/arch/arc/kernel/perf_event.c
-+++ b/arch/arc/kernel/perf_event.c
-@@ -643,14 +643,12 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
- 	return perf_pmu_register(&arc_pmu->pmu, "arc_pmu", PERF_TYPE_RAW);
- }
- 
--#ifdef CONFIG_OF
- static const struct of_device_id arc_pmu_match[] = {
- 	{ .compatible = "snps,arc700-pct" },
- 	{ .compatible = "snps,archs-pct" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, arc_pmu_match);
--#endif
- 
- static struct platform_driver arc_pmu_driver = {
- 	.driver	= {
--- 
-2.14.5
+From v5:
+A special case with dm is the flush bio which is statically initialized
+before the block device is opened and associated with a disk. This
+caused blkg association to throw a NPE. 0005 addresses this case by
+moving association to be on the flush path.
 
+With v4 moving association to piggyback off of bio_set_dev(), this
+caused a NPE to be thrown by the special case above. I was overly
+cautious with v4 and added the bio_has_queue() check which is now
+removed in v5.
+
+Also, the addition of bio_set_dev_only() wasn't quite right due to
+writeback and swap sharing the same bio init paths in many places. The
+safer thing to do is double association for those paths and in a follow
+up series split out the bio init paths.
+
+Changes in v5: 
+All:  Fixed minor grammar and syntactic issues.
+0004: Removed bio_has_queue() for being overly cautious.
+0005: New, properly addressed the static flush_bio in md. 
+0006: Removed the rcu lock in blkcg_bio_issue_check() as the bio will
+      own a ref on the blkg so it is unnecessary.
+0011: Consolidated bio_associate_blkg_from_css() (removed __ version).
+
+From v4:
+This is respin of v3 [1] with fixes for the errors reported in [2] and
+[3]. v3 was reverted in [4].
+
+The issue in [3] was that bio->bi_disk->queue and blkg->q were out
+of sync. So when I changed blk_get_rl() to use blkg->q, the wrong queue
+was returned and elevator from q->elevator->type threw a NPE. Note, with
+v4.21, the old block stack was removed and so this patch was dropped. I
+did backport this to v4.20 and verified this series does not encounter
+the error.
+
+The biggest changes in v4 are when association occurs and clearly
+defining the cases where association should happen.
+  1. Association is now done when the device is set to keep blkg->q and
+     bio->bi_disk->queue in sync.
+  2. When a bio is submitted directly to the device, it will not be
+     associated with a blkg. This is because a blkg represents the
+     relationship between a blkcg and a request_queue. Going directly to
+     the device means the request_queue may not exist meaning no blkg
+     will exist.
+
+The patch updating blk_get_rl() was dropped (v3 10/12). The patch to
+always associate a blkg from v3 (v3 04/12) was fixed and split into
+patches 0004 and 0005. 0011 is new removing bio_disassociate_task().
+
+Summarizing the ideas of this series:
+  1. Gracefully handle blkg failure to create by walking up the blkg
+     tree rather than fall through to root.
+  2. Associate a bio with a blkg in core logic rather than per
+     controller logic.
+  3. Rather than have a css and blkg reference, hold just a blkg ref
+     as it also holds a css ref.
+  4. Switch to percpu ref counting for blkg.
+
+[1] https://lore.kernel.org/lkml/20180911184137.35897-1-dennisszhou@gmail.com/ 
+[2] https://lore.kernel.org/lkml/13987.1539646128@turing-police.cc.vt.edu/
+[3] https://marc.info/?l=linux-cgroups&m=154110436103723
+[4] https://lore.kernel.org/lkml/20181101212410.47569-1-dennis@kernel.org/
+
+This patchset contains the following 14 patches:
+  0001-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
+  0002-blkcg-update-blkg_lookup_create-to-do-locking.patch
+  0003-blkcg-convert-blkg_lookup_create-to-find-closest-blk.patch
+  0004-blkcg-introduce-common-blkg-association-logic.patch
+  0005-dm-set-flush-bio-device-on-demand.patch
+  0006-blkcg-associate-blkg-when-associating-a-device.patch
+  0007-blkcg-consolidate-bio_issue_init-to-be-a-part-of-cor.patch
+  0008-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
+  0009-blkcg-associate-writeback-bios-with-a-blkg.patch
+  0010-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
+  0011-blkcg-remove-additional-reference-to-the-css.patch
+  0012-blkcg-remove-bio_disassociate_task.patch
+  0013-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
+  0014-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
+
+This patchset is on top of linux-block#for-4.21/block 154989e45fd8.
+
+diffstats below:
+
+Dennis Zhou (14):
+  blkcg: fix ref count issue with bio_blkcg() using task_css
+  blkcg: update blkg_lookup_create() to do locking
+  blkcg: convert blkg_lookup_create() to find closest blkg
+  blkcg: introduce common blkg association logic
+  dm: set the static flush bio device on demand
+  blkcg: associate blkg when associating a device
+  blkcg: consolidate bio_issue_init() to be a part of core
+  blkcg: associate a blkg for pages being evicted by swap
+  blkcg: associate writeback bios with a blkg
+  blkcg: remove bio->bi_css and instead use bio->bi_blkg
+  blkcg: remove additional reference to the css
+  blkcg: remove bio_disassociate_task()
+  blkcg: change blkg reference counting to use percpu_ref
+  blkcg: rename blkg_try_get() to blkg_tryget()
+
+ Documentation/admin-guide/cgroup-v2.rst |   8 +-
+ block/bfq-cgroup.c                      |   4 +-
+ block/bfq-iosched.c                     |   2 +-
+ block/bio.c                             | 156 +++++++++++++++---------
+ block/blk-cgroup.c                      |  95 ++++++++++++---
+ block/blk-iolatency.c                   |  24 +---
+ block/blk-throttle.c                    |  11 --
+ block/bounce.c                          |   3 +-
+ drivers/block/loop.c                    |   5 +-
+ drivers/md/dm.c                         |  12 +-
+ drivers/md/raid0.c                      |   2 +-
+ fs/buffer.c                             |  10 +-
+ fs/ext4/page-io.c                       |   2 +-
+ include/linux/bio.h                     |  29 +++--
+ include/linux/blk-cgroup.h              | 125 +++++++++++++------
+ include/linux/blk_types.h               |   7 +-
+ include/linux/cgroup.h                  |   2 +
+ include/linux/writeback.h               |   5 +-
+ kernel/cgroup/cgroup.c                  |  48 ++++++--
+ kernel/trace/blktrace.c                 |   4 +-
+ mm/page_io.c                            |   2 +-
+ 21 files changed, 367 insertions(+), 189 deletions(-)
+
+Thanks,
+Dennis
