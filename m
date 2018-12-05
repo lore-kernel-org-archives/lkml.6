@@ -2,76 +2,142 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBC2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE62EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90C3A206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pAwBncT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C3A206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B54C206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B54C206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeLEJcb (ORCPT
+        id S1727509AbeLEJcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:32:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbeLEJca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:32:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EA342082B;
-        Wed,  5 Dec 2018 09:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002350;
-        bh=AWQJilW1v2LUnMGgKQ7SK8iwjqOrj9MZ86LPr9xVc2U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pAwBncT7gHYgf1y2KW5x7V2fIQsKeIJBx1hfLm24muDDWd0LUj8e9pXmElyIccbMG
-         EPf5ydAdrGYQypT9xwWyCPvu4iTcQaadOo54NgKFQ2h4aq0inygB166kDl/x51pfNd
-         k+m3NS0oHLFmGjJRcBC7OH8HnDd37sHFpx4Uz6Xs=
-Date:   Wed, 5 Dec 2018 10:32:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        rajatxjain@gmail.com, dtor@google.com, raghuram.hegde@intel.com,
-        chethan.tumkur.narayan@intel.com, sukumar.ghorai@intel.com
-Subject: Re: [PATCH v3 1/5] usb: split code locating ACPI companion into port
- and device
-Message-ID: <20181205093228.GA1817@kroah.com>
-References: <20181117010748.24347-1-rajatja@google.com>
- <20181121235020.29461-1-rajatja@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121235020.29461-1-rajatja@google.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+        Wed, 5 Dec 2018 04:32:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726102AbeLEJcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:32:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 823EEB67B;
+        Wed,  5 Dec 2018 09:32:39 +0000 (UTC)
+Date:   Wed, 05 Dec 2018 10:32:38 +0100
+Message-ID: <s5hsgzcuxmx.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Kailang <kailang@realtek.com>
+Cc:     "Jian-Hong Pan" <jian-hong@endlessm.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "Hui Wang" <hui.wang@canonical.com>,
+        "Chris Chiu" <chiu@endlessm.com>,
+        "Daniel Drake" <drake@endlessm.com>,
+        "linux@endlessm.com" <linux@endlessm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
+In-Reply-To: <6FAB7C47BCF00940BB0999A99BE3547A184200B5@RTITMBSV02.realtek.com.tw>
+References: <20181205064856.19380-1-jian-hong@endlessm.com>
+        <6FAB7C47BCF00940BB0999A99BE3547A184200B5@RTITMBSV02.realtek.com.tw>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 03:50:16PM -0800, Rajat Jain wrote:
-> From: Dmitry Torokhov <dtor@chromium.org>
+On Wed, 05 Dec 2018 10:06:14 +0100,
+Kailang wrote:
 > 
-> In preparation for handling embedded USB devices let's split
-> usb_acpi_find_companion() into usb_acpi_find_companion_for_device() and
-> usb_acpi_find_companion_for_port().
-> 
-> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+> Sorry!!
+> Don't change this.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hm, should I apply these series or not?
+
+
+thanks,
+
+Takashi
+
+> 
+> -----Original Message-----
+> From: Kailang 
+> Sent: Wednesday, December 5, 2018 4:52 PM
+> To: 'Jian-Hong Pan' <jian-hong@endlessm.com>; Jaroslav Kysela <perex@perex.cz>; Takashi Iwai <tiwai@suse.com>
+> Cc: Hui Wang <hui.wang@canonical.com>; alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org; linux@endlessm.com; Chris Chiu <chiu@endlessm.com>; Daniel Drake <drake@endlessm.com>
+> Subject: RE: [PATCH 1/4] ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
+> 
+> Hi Jian Hong,
+> 
+> Please also try to change model to ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC.
+> 
+> +		.chain_id = ALC269_FIXUP_HEADSET_MIC  ==> change to  ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
+> 
+> BR,
+> Kailang
+> -----Original Message-----
+> From: Jian-Hong Pan <jian-hong@endlessm.com> 
+> Sent: Wednesday, December 5, 2018 2:49 PM
+> To: Jaroslav Kysela <perex@perex.cz>; Takashi Iwai <tiwai@suse.com>
+> Cc: Kailang <kailang@realtek.com>; Hui Wang <hui.wang@canonical.com>; alsa-devel@alsa-project.org; linux-kernel@vger.kernel.org; linux@endlessm.com; Chris Chiu <chiu@endlessm.com>; Jian-Hong Pan <jian-hong@endlessm.com>; Daniel Drake <drake@endlessm.com>
+> Subject: [PATCH 1/4] ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
+> 
+> From: Chris Chiu <chiu@endlessm.com>
+> 
+> Acer Aspire U27-880(AIO) with ALC286 codec can not detect headset mic and internal mic not working either. It needs the similar quirk like Sony laptops to fix headphone jack sensing and enables use of the internal microphone.
+> 
+> Unfortunately jack sensing for the headset mic is still not working.
+> 
+> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> Signed-off-by: Daniel Drake <drake@endlessm.com>
+> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+> ---
+>  sound/pci/hda/patch_realtek.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c index c0b289ba397f..f21d52eb2ed3 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -5516,6 +5516,7 @@ enum {
+>  	ALC221_FIXUP_HP_HEADSET_MIC,
+>  	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+>  	ALC295_FIXUP_HP_AUTO_MUTE,
+> +	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
+>  };
+>  
+>  static const struct hda_fixup alc269_fixups[] = { @@ -6393,6 +6394,15 @@ static const struct hda_fixup alc269_fixups[] = {
+>  		.type = HDA_FIXUP_FUNC,
+>  		.v.func = alc_fixup_auto_mute_via_amp,
+>  	},
+> +	[ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE] = {
+> +		.type = HDA_FIXUP_PINS,
+> +		.v.pins = (const struct hda_pintbl[]) {
+> +			{ 0x18, 0x01a1913c }, /* use as headset mic, without its own jack detect */
+> +			{ }
+> +		},
+> +		.chained = true,
+> +		.chain_id = ALC269_FIXUP_HEADSET_MIC
+> +	},
+>  };
+>  
+>  static const struct snd_pci_quirk alc269_fixup_tbl[] = { @@ -7071,6 +7081,10 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
+>  		{0x14, 0x90170110},
+>  		{0x19, 0x04a11040},
+>  		{0x21, 0x04211020}),
+> +	SND_HDA_PIN_QUIRK(0x10ec0286, 0x1025, "Acer", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
+> +		{0x12, 0x90a60130},
+> +		{0x17, 0x90170110},
+> +		{0x21, 0x02211020}),
+>  	SND_HDA_PIN_QUIRK(0x10ec0288, 0x1028, "Dell", ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
+>  		{0x12, 0x90a60120},
+>  		{0x14, 0x90170110},
+> --
+> 2.11.0
+> 
+> 
