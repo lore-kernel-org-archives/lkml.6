@@ -2,171 +2,115 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5FEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 594BCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C93120645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:05:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="S+KBbCVL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C93120645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BBDA20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBDA20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeLETFv (ORCPT
+        id S1727924AbeLETKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:05:51 -0500
-Received: from mail-eopbgr720056.outbound.protection.outlook.com ([40.107.72.56]:33569
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728238AbeLETFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:05:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HrdsTYcK1ASjCaGDNlDZPRvbBKr1wA0Q2MArxiYlIQg=;
- b=S+KBbCVLoCNbKDkmaGBtyXE0PegU965+k0JtsQTFHY67g8HemZzQas8PagMQputoB1xoQq3eU7LiF++WkGFaKp8/0UOmQ/yaZJ2yxtE0sImMEIC6strAb8tM1fPc09Al9DC9ndrA8R/bhJlGpIrlvfZVO9aXFMWlofJKyWwWTAA=
-Received: from BL0PR02MB5633.namprd02.prod.outlook.com (20.177.241.80) by
- BL0PR02MB4548.namprd02.prod.outlook.com (10.167.180.225) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 5 Dec 2018 19:05:02 +0000
-Received: from BL0PR02MB5633.namprd02.prod.outlook.com
- ([fe80::68ed:9ca9:c7da:d76d]) by BL0PR02MB5633.namprd02.prod.outlook.com
- ([fe80::68ed:9ca9:c7da:d76d%2]) with mapi id 15.20.1404.019; Wed, 5 Dec 2018
- 19:05:02 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Johan Hovold <johan@kernel.org>,
-        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Wed, 5 Dec 2018 14:10:23 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:35036 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbeLETKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:10:23 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gUcYn-0001BO-Jp; Wed, 05 Dec 2018 12:10:14 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Roger Quadros <rogerq@ti.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Colin Ian King <colin.king@canonical.com>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
-        Thinh Nguyen <thinhn@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
-Subject: RE: [PATCH v7 05/10] usb: dwc3: make controller clear transfer
- resources after complete
-Thread-Topic: [PATCH v7 05/10] usb: dwc3: make controller clear transfer
- resources after complete
-Thread-Index: AQHUiWbtSjqus2M3jkO9VscWv2prA6Vv33OAgACnyJA=
-Date:   Wed, 5 Dec 2018 19:05:01 +0000
-Message-ID: <BL0PR02MB56339BB8AD013857534BF09EA7A80@BL0PR02MB5633.namprd02.prod.outlook.com>
-References: <1543662811-5194-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1543662811-5194-6-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <878t142vpq.fsf@linux.intel.com>
-In-Reply-To: <878t142vpq.fsf@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [182.18.177.170]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BL0PR02MB4548;6:u+8moCXYKv0Dpzem0htgVctA3wsLFf4JR3ZzyCNV1vLJr0Msneljm8ZAnmhOGdK92WL01zekxlCJRUlcGI97VS862i32056gXbScB5YuKqwIlovGJrdNGYR78VBdL0RBwwVOodgmvrs/JyJMtErLYaoGOY5l1C7Zxu0Sa/sT/cc9fJVroY0cMnuVlwRpXRo0kt+xe0Ok0J177H3km5haKRCoR4BMaS0mPcrbiKB88/bx6vTNpwSkFa8GwPDCIpwSo7TqVsm5dP2m5sTRwLX0r9KCoyNsFTNkoWFB0T+9S0ZNmx1RcUlWNNXtR71Fk9vnBrwKCb+/hSRn8WVzXDdof8K/Rz8+klZ7HWZ6e8gIVt52MhSWnb65hjCPkr4TaZwcFYKOSqGrfbbIxLY8bVQB6GaCf8V0WAC5GbkTfZ3+l0yw5i3xZVaGUPndSZsUaFlSauPnTekiKWK4+7Z7Fe1cGQ==;5:iOuqKgsXrHqt579BzoKLg/22iiVMosNKMrw9CYBOtdjBslWUKJKH8jLIocRBmpabymYWJwYkzkdhV4Mtzy12QFtGse43wfcUU4N9bSrwua5HpNZ0EiXDO3fVLuVPGySTvlggS5G1BmhjmeR2iyaBjML1XJnFk6OM9xsV/Rgay6Q=;7:A7I1HMHJvmKKBe2Q9N5X6VQbFW8S0YoTEjHI63nW7N3XtWPfAhH1Fd5veL/1aCX/wJoEmUeDnqnSM4YOXJyT2AMoQvSG5zJmV7PMw4rA7FRDnvztj5J1Hh8nyYoeAJW5izmr6JN3VwKFA1KnB46kXA==
-x-ms-office365-filtering-correlation-id: 0dc6442c-8c28-44ad-5282-08d65ae48f4a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BL0PR02MB4548;
-x-ms-traffictypediagnostic: BL0PR02MB4548:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BL0PR02MB454859F88C722D65272FF02DA7A80@BL0PR02MB4548.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BL0PR02MB4548;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4548;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(136003)(39860400002)(366004)(346002)(396003)(376002)(13464003)(189003)(199004)(476003)(6116002)(33656002)(11346002)(53936002)(446003)(3846002)(2501003)(6246003)(39060400002)(105586002)(107886003)(106356001)(2171002)(7416002)(8936002)(81166006)(81156014)(229853002)(8676002)(186003)(74316002)(7736002)(305945005)(66066001)(6436002)(25786009)(76176011)(2906002)(7696005)(97736004)(26005)(99286004)(5660300001)(9686003)(68736007)(6506007)(102836004)(55016002)(316002)(86362001)(14454004)(54906003)(110136005)(486006)(71200400001)(256004)(71190400001)(4326008)(478600001)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4548;H:BL0PR02MB5633.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: bS8TIdps8UM1CKjpYsiWTThAf4zguxDJSL8i42Y3lSjOwqC6Bg+Ni35MksU/bW4wVS27mTZXShQQE9v1RSO4DNMJXS30ierb3eSFZNUw0Lehyy7XBIIb3ltDgaInf/tLWmJ8R9J8ZabfAfsjqW68P6IboQBWZbplPupYysgboGCppDDTmewyDusMhWyKAJJhtyoWTS1DNOp7Bwp+LyxgZHKK7heutGxoh9LpY2cvTeQc/q+pEt2PRBPJ4kQaHuAH5H+AulOSD+BaI2Q09GWn3gcrNEb9/Oi8catFJoFVPY3OEkxdMv0guku2Wp8sYB1pivAmCC5qrAj1V59ArixJ1SM09mK61RnFS+/bHc0QGNU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+References: <20181204215146.GO2937@redhat.com>
+ <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
+ <20181204235630.GQ2937@redhat.com>
+ <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
+ <20181205023116.GD3045@redhat.com>
+ <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
+ <20181205180756.GI3536@redhat.com>
+ <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
+ <20181205183314.GJ3536@redhat.com>
+ <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
+ <20181205185550.GK3536@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
+Date:   Wed, 5 Dec 2018 12:10:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc6442c-8c28-44ad-5282-08d65ae48f4a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 19:05:02.0058
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4548
+In-Reply-To: <20181205185550.GK3536@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, balbirs@au1.ibm.com, haggaie@mellanox.com, dave.hansen@intel.com, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, ak@linux.intel.com, dan.j.williams@intel.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
+ documentation
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-HI Felipe,
->-----Original Message-----
->From: Felipe Balbi [mailto:balbi@kernel.org]
->Sent: Wednesday, December 05, 2018 2:32 PM
->To: Anurag Kumar Vulisha <anuragku@xilinx.com>; Greg Kroah-Hartman
-><gregkh@linuxfoundation.org>; Shuah Khan <shuah@kernel.org>; Alan Stern
-><stern@rowland.harvard.edu>; Johan Hovold <johan@kernel.org>; Jaejoong Kim
-><climbbb.kim@gmail.com>; Benjamin Herrenschmidt <benh@kernel.crashing.org>=
-;
->Roger Quadros <rogerq@ti.com>; Manu Gautam <mgautam@codeaurora.org>;
->martin.petersen@oracle.com; Bart Van Assche <bvanassche@acm.org>; Mike
->Christie <mchristi@redhat.com>; Matthew Wilcox <willy@infradead.org>; Coli=
-n Ian
->King <colin.king@canonical.com>
->Cc: linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
->v.anuragkumar@gmail.com; Thinh Nguyen <thinhn@synopsys.com>; Tejas Jogleka=
-r
-><tejas.joglekar@synopsys.com>; Ajay Yugalkishore Pandey <APANDEY@xilinx.co=
-m>;
->Anurag Kumar Vulisha <anuragku@xilinx.com>
->Subject: Re: [PATCH v7 05/10] usb: dwc3: make controller clear transfer re=
-sources
->after complete
->
->
->Hi,
->
->Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
->> @@ -2487,6 +2497,11 @@ static void dwc3_endpoint_interrupt(struct dwc3 *=
-dwc,
->>  	}
->>
->>  	switch (event->endpoint_event) {
->> +	case DWC3_DEPEVT_XFERCOMPLETE:
->> +		if (!dep->stream_capable)
->> +			break;
->> +		dep->flags &=3D ~DWC3_EP_TRANSFER_STARTED;
->> +		/* Fall Through */
->
->instead, let's add a proper handler for this:
->
->dwc3_gadget_endpoint_transfer_complete(dep, event);
->
->That handler should be "self-sufficient". IOW, we shouldn't have this
->fall through here. This means that the other patch where you modify
->dwc3_gadget_transfer_in_progress() shouldn't be necessary, since that
->event shouldn't run for stream capable endpoints.
->
 
-Thanks for  your suggestion, will implement the changes as said and send
-the patches
+On 2018-12-05 11:55 a.m., Jerome Glisse wrote:
+> So now once next type of device shows up with the exact same thing
+> let say FPGA, we have to create a new subsystem for them too. Also
+> this make the userspace life much much harder. Now userspace must
+> go parse PCIE, subsystem1, subsystem2, subsystemN, NUMA, ... and
+> merge all that different information together and rebuild the
+> representation i am putting forward in this patchset in userspace.
 
->While rewriting the patches, please rebase on my testing/next as I have
->applied a few of the patches in this series.=20
+Yes. But seeing such FPGA links aren't common yet and there isn't really
+much in terms of common FPGA infrastructure in the kernel (which are
+hard seeing the hardware is infinitely customization) you can let the
+people developing FPGA code worry about it and come up with their own
+solution. Buses between FPGAs may end up never being common enough for
+people to care, or they may end up being so weird that they need their
+own description independent of GPUS, or maybe when they become common
+they find a way to use the GPU link subsystem -- who knows. Don't try to
+design for use cases that don't exist yet.
 
-Okay , will rebase on top of testing/next and send the patches
+Yes, userspace will have to know about all the buses it cares to find
+links over. Sounds like a perfect thing for libhms to do.
 
-Best Regards,
-Anurag Kumar Vulisha
+> There is no telling that kernel won't be able to provide quirk and
+> workaround because some merging is actually illegal on a given
+> platform (like some link from a subsystem is not accessible through
+> the PCI connection of one of the device connected to that link).
+
+These are all just different individual problems which need different
+solutions not grand new design concepts.
+
+> So it means userspace will have to grow its own database or work-
+> around and quirk and i am back in the situation i am in today.
+
+No, as I've said, quirks are firmly the responsibility of kernels.
+Userspace will need to know how to work with the different buses and
+CPU/node information but there really isn't that many of these to deal
+with and this is a much easier approach than trying to come up with a
+new API that can wrap the nuances of all existing and potential future
+bus types we may have to deal with.
+
+Logan
