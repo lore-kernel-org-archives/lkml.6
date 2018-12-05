@@ -2,161 +2,112 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B43C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBF4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2CCA206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:17:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuvnwFu+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2CCA206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 065A1206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:18:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065A1206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeLEHR7 (ORCPT
+        id S1727152AbeLEHSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:17:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeLEHR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:17:58 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A94F8206B7;
-        Wed,  5 Dec 2018 07:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543994277;
-        bh=0IvXpJeJXu00HIXTSp7TLtsxyalDAfaE1CTqqwJAClI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=SuvnwFu+33tIF6EMqfOWZ09Bn5zPP617pnLZmbYEBdwhpwiTR0i7IfuqfVqetzs0d
-         ZOOweqAARe4nwgntMDHh6ZFyiRSNCzocNwjbD3oYf+hHETHvJ7z9J/pXXon+oy965x
-         5Hdyc0Vek7HafgnrqoA5eWjDcj6qRdW5pyMl6z4o=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 5 Dec 2018 02:18:03 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37343 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726820AbeLEHSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 02:18:00 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CC4C8777999D8;
+        Wed,  5 Dec 2018 15:17:57 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 5 Dec 2018 15:17:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Priit Laes <plaes@plaes.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linux-wireless@vger.kernel.org>, <b43-dev@lists.infradead.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH] b43: remove set but not used variables 'tx_pwr_state,tmp2'
+Date:   Wed, 5 Dec 2018 07:26:06 +0000
+Message-ID: <1543994766-7057-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204193416.24661-1-sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
- <20181204193416.24661-1-sboyd@kernel.org>
-Message-ID: <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-Date:   Tue, 04 Dec 2018 23:17:57 -0800
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Adding Dinh's korg email)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I also wonder if this driver is even used anymore or maybe we can delete
-it?
+drivers/net/wireless/broadcom/b43/phy_n.c: In function 'b43_nphy_op_recalc_txpower':
+drivers/net/wireless/broadcom/b43/phy_n.c:5898:7: warning:
+ variable 'tx_pwr_state' set but not used [-Wunused-but-set-variable]
 
-Quoting Stephen Boyd (2018-12-04 11:34:16)
-> This driver creates a gate clk with the possibility to have multiple
-> parents. That can cause problems if the common clk framework tries to
-> call the get_parent() op and gets back a number that's larger than the
-> number of parents the clk says it supports in
-> clk_init_data::num_parents. Let's duplicate the clk_ops structure each
-> time this function is called and drop the get/set parent ops when there
-> is only one parent. This allows the framework to consider a number
-> larger than clk_init_data::num_parents as an error condition of the
-> get_parent() clk op, clearing the way for proper code.
-> =
+drivers/net/wireless/broadcom/b43/phy_n.c:6047:20: warning:
+ variable 'tmp2' set but not used [-Wunused-but-set-variable]
 
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/socfpga/clk-gate.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> =
+'tx_pwr_state' never used since introduction in commit
+8615eb2870f1 ("b43: N-PHY: support setting custom TX power")
 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gat=
-e.c
-> index aa7a6e6a15b6..73e03328d5c5 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -176,8 +176,7 @@ static struct clk_ops gateclk_ops =3D {
->         .set_parent =3D socfpga_clk_set_parent,
->  };
->  =
+'tmp2' not used any more since commit c002831a07dd ("b43: N-PHY: use helper
+for checking IPA")
 
-> -static void __init __socfpga_gate_init(struct device_node *node,
-> -       const struct clk_ops *ops)
-> +void __init socfpga_gate_init(struct device_node *node)
->  {
->         u32 clk_gate[2];
->         u32 div_reg[3];
-> @@ -188,12 +187,17 @@ static void __init __socfpga_gate_init(struct devic=
-e_node *node,
->         const char *clk_name =3D node->name;
->         const char *parent_name[SOCFPGA_MAX_PARENTS];
->         struct clk_init_data init;
-> +       struct clk_ops *ops;
->         int rc;
->  =
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/broadcom/b43/phy_n.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
->         socfpga_clk =3D kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
->         if (WARN_ON(!socfpga_clk))
->                 return;
->  =
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index 7d30036..77d7cd5 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -5895,7 +5895,6 @@ static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
+ 	struct ieee80211_channel *channel = dev->wl->hw->conf.chandef.chan;
+ 	struct b43_ppr *ppr = &nphy->tx_pwr_max_ppr;
+ 	u8 max; /* qdBm */
+-	bool tx_pwr_state;
+ 
+ 	if (nphy->tx_pwr_last_recalc_freq == channel->center_freq &&
+ 	    nphy->tx_pwr_last_recalc_limit == phy->desired_txpower)
+@@ -5931,7 +5930,6 @@ static enum b43_txpwr_result b43_nphy_op_recalc_txpower(struct b43_wldev *dev,
+ 	b43_ppr_apply_min(dev, ppr, INT_TO_Q52(8));
+ 
+ 	/* Apply */
+-	tx_pwr_state = nphy->txpwrctrl;
+ 	b43_mac_suspend(dev);
+ 	b43_nphy_tx_power_ctl_setup(dev);
+ 	if (dev->dev->core_rev == 11 || dev->dev->core_rev == 12) {
+@@ -6044,7 +6042,6 @@ static int b43_phy_initn(struct b43_wldev *dev)
+ 	u8 tx_pwr_state;
+ 	struct nphy_txgains target;
+ 	u16 tmp;
+-	enum nl80211_band tmp2;
+ 	bool do_rssi_cal;
+ 
+ 	u16 clip[2];
+@@ -6138,7 +6135,6 @@ static int b43_phy_initn(struct b43_wldev *dev)
+ 		b43_phy_write(dev, B43_NPHY_DUP40_BL, 0x9A4);
+ 	}
+ 
+-	tmp2 = b43_current_band(dev->wl);
+ 	if (b43_nphy_ipa(dev)) {
+ 		b43_phy_set(dev, B43_NPHY_PAPD_EN0, 0x1);
+ 		b43_phy_maskset(dev, B43_NPHY_EPS_TABLE_ADJ0, 0x007F,
 
-> +       ops =3D kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
-> +       if (WARN_ON(!ops))
-> +               return;
-> +
->         rc =3D of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
->         if (rc)
->                 clk_gate[0] =3D 0;
-> @@ -202,8 +206,8 @@ static void __init __socfpga_gate_init(struct device_=
-node *node,
->                 socfpga_clk->hw.reg =3D clk_mgr_base_addr + clk_gate[0];
->                 socfpga_clk->hw.bit_idx =3D clk_gate[1];
->  =
 
-> -               gateclk_ops.enable =3D clk_gate_ops.enable;
-> -               gateclk_ops.disable =3D clk_gate_ops.disable;
-> +               ops->enable =3D clk_gate_ops.enable;
-> +               ops->disable =3D clk_gate_ops.disable;
->         }
->  =
 
->         rc =3D of_property_read_u32(node, "fixed-divider", &fixed_div);
-> @@ -234,6 +238,11 @@ static void __init __socfpga_gate_init(struct device=
-_node *node,
->         init.flags =3D 0;
->  =
-
->         init.num_parents =3D of_clk_parent_fill(node, parent_name, SOCFPG=
-A_MAX_PARENTS);
-> +       if (init.num_parents < 2) {
-> +               ops->get_parent =3D NULL;
-> +               ops->set_parent =3D NULL;
-> +       }
-> +
->         init.parent_names =3D parent_name;
->         socfpga_clk->hw.hw.init =3D &init;
->  =
-
-> @@ -246,8 +255,3 @@ static void __init __socfpga_gate_init(struct device_=
-node *node,
->         if (WARN_ON(rc))
->                 return;
->  }
-> -
-> -void __init socfpga_gate_init(struct device_node *node)
-> -{
-> -       __socfpga_gate_init(node, &gateclk_ops);
-> -}
