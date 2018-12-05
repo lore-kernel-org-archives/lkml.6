@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB97EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D283EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A9721508
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97257214F1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yTNlo8/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A9721508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/DJZYrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97257214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbeLEJ4f (ORCPT
+        id S1730072AbeLEJ4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:56:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34998 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:56:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730258AbeLEJ4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:56:31 -0500
+        id S1730271AbeLEJ4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:56:35 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B32442151B;
-        Wed,  5 Dec 2018 09:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9749C21508;
+        Wed,  5 Dec 2018 09:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003789;
-        bh=el/L03UMwo0zMawL56ZGr3Aia3TArSasG7rN+DFaGK8=;
+        s=default; t=1544003794;
+        bh=b0IHSgUSy50pbIqeRaEhsU5t430F0nvR2rNARyjafG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yTNlo8/bUNz2lR4K0V1hCLYTDEJfhEcEnL7Cl5mZLZkjCFOla/DIJONQb39VNTAEY
-         q/xaQeTdsPapUp1Pz55Fe5pnzEj/Ce/trVZ2tix6DcY+4HKAFS6LnK8NI+QcnOwsih
-         k2LTgQmOG9b7hWVvv12gpEdAn8/Zrlw9dGJnEfpA=
+        b=T/DJZYrhdjx3Ppep4iiz1ssRF63eNEVy7nvBQwCjSi/Rt3PXie1rRj6QqPrLMSS+R
+         PuWZYE+B4qUeNnKyyrPKsETR8O4zbGj+RF5E8jREs+KBpg5Kzfxxz5ouXIndcZ/dWq
+         x3nlGJb8g8YjIcLXtIJz3+0cqb27WoF//UqYX7IU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     NeilBrown <neilb@suse.com>, David Howells <dhowells@redhat.com>,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 19/26] fscache: fix race between enablement and dropping of object
-Date:   Wed,  5 Dec 2018 04:54:23 -0500
-Message-Id: <20181205095430.8019-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 21/26] unifdef: use memcpy instead of strncpy
+Date:   Wed,  5 Dec 2018 04:54:25 -0500
+Message-Id: <20181205095430.8019-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -52,74 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit c5a94f434c82529afda290df3235e4d85873c5b4 ]
+[ Upstream commit 38c7b224ce22c25fed04007839edf974bd13439d ]
 
-It was observed that a process blocked indefintely in
-__fscache_read_or_alloc_page(), waiting for FSCACHE_COOKIE_LOOKING_UP
-to be cleared via fscache_wait_for_deferred_lookup().
+New versions of gcc reasonably warn about the odd pattern of
 
-At this time, ->backing_objects was empty, which would normaly prevent
-__fscache_read_or_alloc_page() from getting to the point of waiting.
-This implies that ->backing_objects was cleared *after*
-__fscache_read_or_alloc_page was was entered.
+	strncpy(p, q, strlen(q));
 
-When an object is "killed" and then "dropped",
-FSCACHE_COOKIE_LOOKING_UP is cleared in fscache_lookup_failure(), then
-KILL_OBJECT and DROP_OBJECT are "called" and only in DROP_OBJECT is
-->backing_objects cleared.  This leaves a window where
-something else can set FSCACHE_COOKIE_LOOKING_UP and
-__fscache_read_or_alloc_page() can start waiting, before
-->backing_objects is cleared
+which really doesn't make sense: the strncpy() ends up being just a slow
+and odd way to write memcpy() in this case.
 
-There is some uncertainty in this analysis, but it seems to be fit the
-observations.  Adding the wake in this patch will be handled correctly
-by __fscache_read_or_alloc_page(), as it checks if ->backing_objects
-is empty again, after waiting.
+There was a comment about _why_ the code used strncpy - to avoid the
+terminating NUL byte, but memcpy does the same and avoids the warning.
 
-Customer which reported the hang, also report that the hang cannot be
-reproduced with this fix.
-
-The backtrace for the blocked process looked like:
-
-PID: 29360  TASK: ffff881ff2ac0f80  CPU: 3   COMMAND: "zsh"
- #0 [ffff881ff43efbf8] schedule at ffffffff815e56f1
- #1 [ffff881ff43efc58] bit_wait at ffffffff815e64ed
- #2 [ffff881ff43efc68] __wait_on_bit at ffffffff815e61b8
- #3 [ffff881ff43efca0] out_of_line_wait_on_bit at ffffffff815e625e
- #4 [ffff881ff43efd08] fscache_wait_for_deferred_lookup at ffffffffa04f2e8f [fscache]
- #5 [ffff881ff43efd18] __fscache_read_or_alloc_page at ffffffffa04f2ffe [fscache]
- #6 [ffff881ff43efd58] __nfs_readpage_from_fscache at ffffffffa0679668 [nfs]
- #7 [ffff881ff43efd78] nfs_readpage at ffffffffa067092b [nfs]
- #8 [ffff881ff43efda0] generic_file_read_iter at ffffffff81187a73
- #9 [ffff881ff43efe50] nfs_file_read at ffffffffa066544b [nfs]
-#10 [ffff881ff43efe70] __vfs_read at ffffffff811fc756
-#11 [ffff881ff43efee8] vfs_read at ffffffff811fccfa
-#12 [ffff881ff43eff18] sys_read at ffffffff811fda62
-#13 [ffff881ff43eff50] entry_SYSCALL_64_fastpath at ffffffff815e986e
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fscache/object.c | 3 +++
- 1 file changed, 3 insertions(+)
+ scripts/unifdef.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index da032daf0e0d..f878db8710f8 100644
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -691,6 +691,9 @@ static const struct fscache_state *fscache_drop_object(struct fscache_object *ob
- 
- 	if (awaken)
- 		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_INVALIDATING);
-+	if (test_and_clear_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags))
-+		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_LOOKING_UP);
-+
- 
- 	/* Prevent a race with our last child, which has to signal EV_CLEARED
- 	 * before dropping our spinlock.
+diff --git a/scripts/unifdef.c b/scripts/unifdef.c
+index 7493c0ee51cc..db00e3e30a59 100644
+--- a/scripts/unifdef.c
++++ b/scripts/unifdef.c
+@@ -395,7 +395,7 @@ usage(void)
+  * When we have processed a group that starts off with a known-false
+  * #if/#elif sequence (which has therefore been deleted) followed by a
+  * #elif that we don't understand and therefore must keep, we edit the
+- * latter into a #if to keep the nesting correct. We use strncpy() to
++ * latter into a #if to keep the nesting correct. We use memcpy() to
+  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
+  *
+  * When we find a true #elif in a group, the following block will
+@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
+ static void Itrue (void) { Ftrue();  ignoreon(); }
+ static void Ifalse(void) { Ffalse(); ignoreon(); }
+ /* modify this line */
+-static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
++static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
+ static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
+ static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
+ static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
 -- 
 2.17.1
 
