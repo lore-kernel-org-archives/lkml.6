@@ -2,114 +2,151 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF57C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4106C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E160E2087F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B808420672
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:03:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="aPeUsASA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E160E2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mLWw7zfp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mLWw7zfp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B808420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbeLEHCX (ORCPT
+        id S1727122AbeLEHDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:02:23 -0500
-Received: from host.euro-space.net ([87.117.239.2]:33466 "EHLO
-        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbeLEHCX (ORCPT
+        Wed, 5 Dec 2018 02:03:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50530 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEHDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:02:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
-        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=MUwZ4/xXouELJhOt4zikfgXQ+QMNK1eM/6meihPAHSM=; b=aPeUsASAxnhfQgD45XVInLKTY4
-        VEB79OnLMCtfisp0X6qjVTsFsjs9/x94gf2HUbbSVFF5mgO71r/7zkjb1lnl6Kk2D4ihR36fwlMc9
-        Bmv/0q9ZqZ8lDeeWDuj0+lIDDCHslMgOlGzWC33dcokzaQT0WdccNj2XGZ8QA+v/dnQqaVdHnO7ml
-        t179rtzdtlV1j6YDVBSv9XYFfBRqvJnRcqJmBH1/RYZpuX6ub+MFdDYCRWmbI24ZeVzvDF8UzWlDo
-        y1GJXD+qQhzfJ9LiLqVgwPo04m8NGVLjY2tQeaeU4ZqQbK7n8iVRLadeIXhJjMMjopzlXCrHLBiN5
-        pNhJ6SjQ==;
-Received: from x2f62ea7.dyn.telefonica.de ([2.246.46.167]:33156 helo=[192.168.1.3])
-        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <kmarinushkin@birdec.tech>)
-        id 1gURCN-00006S-CI; Wed, 05 Dec 2018 07:02:19 +0000
-Subject: Re: [resend PATCH] dt-bindings: sound: Add documentation for pcm3060
- property out-single-ended
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20181115071253.22558-1-kmarinushkin@birdec.tech>
- <20181204214313.GA7847@bogus>
-From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
-Message-ID: <7cbf1452-354f-07d6-2310-cadc4358433e@birdec.tech>
-Date:   Wed, 5 Dec 2018 08:04:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 5 Dec 2018 02:03:20 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 742DD60807; Wed,  5 Dec 2018 07:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543993399;
+        bh=EUx0oNDaDQThY35jjZcjZ3Wdh0Mpi2SsP/MQfLe1gGQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mLWw7zfpgyrKu+LFZpyxXik+sKurxvxCOfSBPDomBbT+Y8uSdq2ks3RpeC6C+A7Q5
+         HEqqLvXZSLsRjgdCtOXVh4HPw8M7P9vvu/dXC+HPxfmkMjvT6Ojb4bJe0Rlcp6lpmv
+         5gBKCYPrk4DlMH/Jgbii4QqUcEafv5UkukJeV2tQ=
+Received: from [10.79.128.218] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3FF156014B;
+        Wed,  5 Dec 2018 07:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543993399;
+        bh=EUx0oNDaDQThY35jjZcjZ3Wdh0Mpi2SsP/MQfLe1gGQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mLWw7zfpgyrKu+LFZpyxXik+sKurxvxCOfSBPDomBbT+Y8uSdq2ks3RpeC6C+A7Q5
+         HEqqLvXZSLsRjgdCtOXVh4HPw8M7P9vvu/dXC+HPxfmkMjvT6Ojb4bJe0Rlcp6lpmv
+         5gBKCYPrk4DlMH/Jgbii4QqUcEafv5UkukJeV2tQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3FF156014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v5 4/8] soc: qcom: rpmpd: Add support for get/set
+ performance state
+To:     Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
+        ulf.hansson@linaro.org, viresh.kumar@linaro.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181204052119.806-1-rnayak@codeaurora.org>
+ <20181204052119.806-5-rnayak@codeaurora.org>
+ <154396526967.88331.13652897075952274639@swboyd.mtv.corp.google.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <d9317471-fb81-482a-22c1-4a7b466a1df4@codeaurora.org>
+Date:   Wed, 5 Dec 2018 12:33:14 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181204214313.GA7847@bogus>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <154396526967.88331.13652897075952274639@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - host.euro-space.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - birdec.tech
-X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
-X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Rob,
 
-Mark already applied this patch, with a slightly modified subject:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-next&id=fd7de6370cb62b147185834d60069568a21acacd
-
-Best Regards,
-Kirill
-
-On 12/04/18 22:43, Rob Herring wrote:
-> On Thu, 15 Nov 2018 08:12:53 +0100, Kirill Marinushkin wrote:
->> Output of pcm3060 codec may be configured as single-ended or differential
->>
->> Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
->> Cc: devicetree@vger.kernel.org
->> ---
->> Hello Mark,
->>
->> yesterday there was a misunderstanding: when I wrote you
->>
->>> I think you forgot one patch in the series
->>
->> you accidently applied the already-applied patch instead of the forgotten
->> one. To avoid the confusion, in this e-mail I resend you the proper
->> forgotten patch in a separate mailing thread.
->>
->> Please apply this patch for-next.
->>
->> Best Regards,
->> Kirill
->> ---
->>  Documentation/devicetree/bindings/sound/pcm3060.txt | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
+On 12/5/2018 4:44 AM, Stephen Boyd wrote:
+> Quoting Rajendra Nayak (2018-12-03 21:21:15)
+>> @@ -221,6 +224,47 @@ static int rpmpd_power_off(struct generic_pm_domain *domain)
+>>          return ret;
+>>   }
+>>   
+>> +static int rpmpd_set_performance(struct generic_pm_domain *domain,
+>> +                                unsigned int state)
+>> +{
+>> +       int ret = 0;
+>> +       struct rpmpd *pd = domain_to_rpmpd(domain);
+>> +
+>> +       mutex_lock(&rpmpd_lock);
+>> +
+>> +       if (state > MAX_RPMPD_STATE)
+>> +               goto out;
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Does this need to be under the mutex lock? Doesn't look like it.
+
+Nope, will move it out.
+
 > 
+>> +
+>> +       pd->corner = state;
+>> +
+>> +       if (!pd->enabled && (pd->key != KEY_FLOOR_CORNER))
+> 
+> Please drop useless parenthesis.
+
+sure
+
+> 
+>> +               goto out;
+>> +
+>> +       ret = rpmpd_aggregate_corner(pd);
+>> +
+>> +out:
+>> +       mutex_unlock(&rpmpd_lock);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +static unsigned int rpmpd_get_performance(struct generic_pm_domain *genpd,
+>> +                                         struct dev_pm_opp *opp)
+>> +{
+>> +       struct device_node *np;
+>> +       unsigned int corner = 0;
+>> +
+>> +       np = dev_pm_opp_get_of_node(opp);
+>> +       if (of_property_read_u32(np, "qcom,level", &corner)) {
+>> +               pr_err("%s: missing 'qcom,level' property\n", __func__);
+> 
+> We leak np reference here, assuming dev_pm_opp_get_of_node() returns an
+> of_node_get() pointer to the caller.
+
+good catch, will fix.
+
+> 
+>> +               return 0;
+>> +       }
+>> +
+>> +       of_node_put(np);
+> 
+> This same code exists twice. Perhaps a helper needs to exist for
+> qcom_rpm_get_performance() to pull the number out of the DT.
+
+Sure I can make both drivers use a common helper instead of duplicating it.
+
+> 
+>> +
+>> +       return corner;
+>> +}
