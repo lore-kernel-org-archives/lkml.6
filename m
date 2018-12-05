@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A121C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA4FC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB8C20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEA35214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRR05m4y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB8C20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQo6JH2v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA35214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbeLEJpa (ORCPT
+        id S1729085AbeLEJpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50260 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:45:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeLEJp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:26 -0500
+        id S1729402AbeLEJpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:30 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBC8820878;
-        Wed,  5 Dec 2018 09:45:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4634E2087F;
+        Wed,  5 Dec 2018 09:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003125;
-        bh=Wn9OKzUbKI0/ji237hMKT73/yq85aYcvz1ZwsQRcub4=;
+        s=default; t=1544003130;
+        bh=u7dB6fkuX+Ld8J18Lmf6n8xTerIJ8Ms12iJ1nt8evCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JRR05m4yDt+Tn/p0Wsfyq8NmZ9/a338LVI+9HoiVdbgmevQnzNvh2p7AlgAQ27DKV
-         A5C8Jp+dnH5Y9CtUKnD9SqiFIa2p+SCLJd+bw8UCuesYSAVbJrCTnjXDxgjWDtO9uf
-         5S35hkctUQ4tRTxAB+A1EKBmwe4H9/h9i5cvLjg4=
+        b=HQo6JH2v5fm3TlOFikN4lmFsJltN4Dt2PbySQBtfoIa6ZVQwsGK01HE1jniljI4FA
+         7dmB1WhdP39/0YmUgrlv5NaxopKFTRpqkw2yGHoUpfBI3CskQHQa49D5xm2SLns0PF
+         T3qOtsI/8hNIHVrq0IJZZZS9a5LQ2wwp6FKZqq1U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 37/69] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
-Date:   Wed,  5 Dec 2018 04:42:15 -0500
-Message-Id: <20181205094247.6556-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 38/69] USB: omap_udc: fix rejection of out transfers when DMA is used
+Date:   Wed,  5 Dec 2018 04:42:16 -0500
+Message-Id: <20181205094247.6556-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -55,11 +55,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
+[ Upstream commit 069caf5950dfa75d0526cd89c439ff9d9d3136d8 ]
 
-On Palm TE nothing happens when you try to use gadget drivers and plug
-the USB cable. Fix by adding the board to the vbus sense quirk list.
+Commit 387f869d2579 ("usb: gadget: u_ether: conditionally align
+transfer size") started aligning transfer size only if requested,
+breaking omap_udc DMA mode. Set quirk_ep_out_aligned_size to restore
+the old behaviour.
 
+Fixes: 387f869d2579 ("usb: gadget: u_ether: conditionally align transfer size")
 Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
@@ -68,17 +71,17 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 9060b3af27ff..c8facc8aa87e 100644
+index c8facc8aa87e..ee0b87a0773c 100644
 --- a/drivers/usb/gadget/udc/omap_udc.c
 +++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2037,6 +2037,7 @@ static inline int machine_without_vbus_sense(void)
- {
- 	return machine_is_omap_innovator()
- 		|| machine_is_omap_osk()
-+		|| machine_is_omap_palmte()
- 		|| machine_is_sx1()
- 		/* No known omap7xx boards with vbus sense */
- 		|| cpu_is_omap7xx();
+@@ -2661,6 +2661,7 @@ omap_udc_setup(struct platform_device *odev, struct usb_phy *xceiv)
+ 	udc->gadget.speed = USB_SPEED_UNKNOWN;
+ 	udc->gadget.max_speed = USB_SPEED_FULL;
+ 	udc->gadget.name = driver_name;
++	udc->gadget.quirk_ep_out_aligned_size = 1;
+ 	udc->transceiver = xceiv;
+ 
+ 	/* ep0 is special; put it right after the SETUP buffer */
 -- 
 2.17.1
 
