@@ -2,114 +2,78 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9F4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EACCC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18EF92082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:19:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBEK0eyf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18EF92082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6373020659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6373020659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbeLELTa (ORCPT
+        id S1727605AbeLELU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:19:30 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46405 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeLELTa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:19:30 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y20so21728504qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 03:19:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8CHfiRwxEDOflDsQ1UB4C3wvULIvrMVzWwFsjRMLPAQ=;
-        b=WBEK0eyfX09plNYhK++Zga/wk11dSY0KVQOOVuoZE7j6Vd1ayw9QaLxIG94CIsSCYO
-         /nAuZnrEAJcrTFRiw8CSSMMZeu48sRhbekzIRQsgoF/Rqn40EeGrkuv+smTXG+mYaGfm
-         6hFInu5St5kQRFiq6uujHCzntYHPhX63kKELynEvxawGr30Bvd78yOkUw3aqVD71Nk5r
-         z3By8DHiiWzEwMx0kAdP4qt13PPyo+RXhfu0i2LxX7xd0RutHe7P8QyKeUDUTTOqqgRu
-         ihXHVckipdKO6kOx0x3Vm8r2rCeJzKmMMZ+qr/fbkbL5Sx9+iv0eVsXs8uH6bgK8rHxO
-         4Zeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8CHfiRwxEDOflDsQ1UB4C3wvULIvrMVzWwFsjRMLPAQ=;
-        b=V2yNKNJ3aQcOlxSCFvaCWFZ8nL8kyE1krFHWQtsoMh8o9M6ewhOVuuErZ9HBDePuCX
-         ynkGPHGCK4pAk3NLb/9fZbjH6dqjzqSEIElCQpNy0MQT3ylvea+XIPIo85ohMRXCNHB1
-         NJ16D5E7ovJmAzQfjoB8jOtzrk/y58U2Nv6zzvSoaucapWFzXwVy7N0zN1JlSnhZQUko
-         QWYWnHzfhRFZ326X3wvvbw/fUumkb5X8tyEW1PK3aoiMfIQrF4eovWE4z2TVfrpYOKvJ
-         hNTXSqJ/u31Swylhf6ZjfBNbWhxQPDwHFpN5kbYixV+EROfWwxvgpgH8oWBJd9DN0RGq
-         EVHg==
-X-Gm-Message-State: AA+aEWavagy1wFOpEePhZIxMqgKELUXI7pIks/mzizGT/3WGlUfGBtOu
-        HkOtilVV1lFtJdY0vig5X/4=
-X-Google-Smtp-Source: AFSGD/WfcnxquOLZm7fHFspCBRjIkrlKZ5wZ0EA4ErshlCdu3tKPo8xT1HezNHepvoClrIaBvH/zFg==
-X-Received: by 2002:a0c:c993:: with SMTP id b19mr22225456qvk.126.1544008769237;
-        Wed, 05 Dec 2018 03:19:29 -0800 (PST)
-Received: from localhost.localdomain ([201.82.144.36])
-        by smtp.gmail.com with ESMTPSA id k62sm9960189qte.86.2018.12.05.03.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 03:19:28 -0800 (PST)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     shawnguo@kernel.org
-Cc:     cphealy@gmail.com, linux-kernel@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH v2] ARM: dts: vf610-zii-scu4-aib: Add HI8435 support
-Date:   Wed,  5 Dec 2018 09:19:35 -0200
-Message-Id: <1544008775-24128-1-git-send-email-festevam@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 5 Dec 2018 06:20:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:52422 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbeLELUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:20:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4D6A80D;
+        Wed,  5 Dec 2018 03:20:54 -0800 (PST)
+Received: from [10.1.34.157] (p8cg001049571a15.cambridge.arm.com [10.1.34.157])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A6A93F575;
+        Wed,  5 Dec 2018 03:20:51 -0800 (PST)
+Subject: Re: [LKP] [mm] 19717e78a0: stderr.if(target_node==NUMA_NO_NODE){
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        akpm@linux-foundation.org, jiangqi903@gmail.com,
+        hverkuil@xs4all.nl, vkoul@kernel.org, lkp@01.org
+References: <20181205050057.GB23332@shao2-debian>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <d75d097f-78a5-865e-a80a-b1e6faeff337@arm.com>
+Date:   Wed, 5 Dec 2018 16:50:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181205050057.GB23332@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the vf610-zii-scu4-aib board there is a hi8435 (32-channel
-discrete-to-digital SPI sensor device) in the DSPI0 bus.
+On 12/05/2018 10:30 AM, kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 19717e78a04d51512cf0e7b9b09c61f06b2af071 ("[PATCH V2] mm: Replace all open encodings for NUMA_NO_NODE")
+> url: https://github.com/0day-ci/linux/commits/Anshuman-Khandual/mm-Replace-all-open-encodings-for-NUMA_NO_NODE/20181126-203831
+> 
+> 
+> in testcase: perf-sanity-tests
+> with following parameters:
+> 
+> 	perf_compiler: gcc
+> 	ucode: 0x7000013
+> 
+> 
+> 
+> on test machine: 16 threads Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz with 8G memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
 
-Add support for it.
-
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Chris Healy <cphealy@gmail.com>
----
-Changes since v1:
-- Put status as the last propert
-- Use a generic node name
-
- arch/arm/boot/dts/vf610-zii-scu4-aib.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-index 52bac14..de6dfa5 100644
---- a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-+++ b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
-@@ -397,6 +397,20 @@
- 	};
- };
- 
-+&dspi0 {
-+	pinctrl-0 = <&pinctrl_dspi0>;
-+	pinctrl-names = "default";
-+	bus-num = <0>;
-+	status = "okay";
-+
-+	adc@5 {
-+		compatible = "holt,hi8435";
-+		reg = <5>;
-+		gpios = <&gpio5 3 GPIO_ACTIVE_HIGH>;
-+		spi-max-frequency = <1000000>;
-+	};
-+};
-+
- &dspi1 {
- 	bus-num = <1>;
- 	pinctrl-names = "default";
--- 
-2.7.4
-
+The fix (in Andrew's staging tree) from Stephen Rothwell which adds <linux/numa.h>
+definitions to <tools/include/linux/numa.h> should fix this.
