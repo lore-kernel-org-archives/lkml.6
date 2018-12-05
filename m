@@ -4,85 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C47BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07B120851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07B120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D298420850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D298420850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeLEIck (ORCPT
+        id S1727208AbeLEIhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:32:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56070 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 03:37:38 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36146 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbeLEIck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:32:40 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 622433082B23;
-        Wed,  5 Dec 2018 08:32:40 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC8BF6012C;
-        Wed,  5 Dec 2018 08:32:38 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 09:32:36 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     christoffer.dall@arm.com, marc.zyngier@arm.com,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kvm/arm: return 0 when the number of objects is not less
- than min
-Message-ID: <20181205083236.5tzhnxfhi4h4nknn@kamzik.brq.redhat.com>
-References: <1543972551-60951-1-git-send-email-peng.hao2@zte.com.cn>
+        id S1726768AbeLEIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:37:38 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CF0FA20E22; Wed,  5 Dec 2018 09:37:35 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7C404207BF;
+        Wed,  5 Dec 2018 09:37:25 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 01/22] drm/fourcc: Add format info helpers for checking YUV planes disposition
+Date:   Wed,  5 Dec 2018 09:36:42 +0100
+Message-Id: <20181205083703.21488-2-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
+References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543972551-60951-1-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 05 Dec 2018 08:32:40 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:15:51AM +0800, Peng Hao wrote:
-> Return 0 when there is enough kvm_mmu_memory_cache object.
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  virt/kvm/arm/mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index ed162a6..fcda0ce 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -127,7 +127,7 @@ static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
->  	while (cache->nobjs < max) {
->  		page = (void *)__get_free_page(PGALLOC_GFP);
->  		if (!page)
-> -			return -ENOMEM;
-> +			return cache->nobjs >= min ? 0 : -ENOMEM;
+It is often useful to check whether the DRM format info retrieved from
+the DRM framebuffer matches a specific YUV planes disposition.
 
-This condition will never be true here, as the exact same condition is
-already checked above, and if it had been true, then we wouldn't be here.
+This introduces helpers to quickly check that a provided format info
+matches a YUV format with a specific disposition, in commonly-used
+terminology.
 
-What problem are you attempting to solve?
+The intent of providing helpers taking the format info instead of the
+fourcc alone is to avoid the overhead of iterating through all formats
+when the whole format info structure is available. As a result, these
+helpers are very simple so they are made inline.
 
->  		cache->objects[cache->nobjs++] = page;
->  	}
->  	return 0;
-> -- 
-> 1.8.3.1
-> 
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+---
+ include/drm/drm_fourcc.h | 42 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+index bcb389f04618..01cd353d9302 100644
+--- a/include/drm/drm_fourcc.h
++++ b/include/drm/drm_fourcc.h
+@@ -143,6 +143,48 @@ struct drm_format_name_buf {
+ 	char str[32];
+ };
+ 
++/**
++ * drm_format_info_is_yuv_packed - check that the format info matches a YUV
++ * format with data laid in a single plane
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a packed YUV format.
++ */
++static inline bool
++drm_format_info_is_yuv_packed(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_semiplanar - check that the format info matches a YUV
++ * format with data laid in two planes (luminance and chrominance)
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a semiplanar YUV format.
++ */
++static inline bool
++drm_format_info_is_yuv_semiplanar(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 2;
++}
++
++/**
++ * drm_format_info_is_yuv_planar - check that the format info matches a YUV
++ * format with data laid in three planes (one for each YUV component)
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a planar YUV format.
++ */
++static inline bool
++drm_format_info_is_yuv_planar(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->num_planes == 3;
++}
++
+ const struct drm_format_info *__drm_format_info(u32 format);
+ const struct drm_format_info *drm_format_info(u32 format);
+ const struct drm_format_info *
+-- 
+2.19.2
+
