@@ -2,95 +2,113 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D855AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F25C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55AA20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55AA20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ab.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 2853C20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2853C20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeLEUbo (ORCPT
+        id S1728519AbeLEUbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:31:44 -0500
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:45456 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLEUbn (ORCPT
+        Wed, 5 Dec 2018 15:31:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728372AbeLEUby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:31:43 -0500
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wB5KUotb026532
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Dec 2018 05:30:50 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB5KUo5i022167;
-        Thu, 6 Dec 2018 05:30:50 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB5KUoQa016274;
-        Thu, 6 Dec 2018 05:30:50 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.139] [10.38.151.139]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-375347; Thu, 6 Dec 2018 05:29:15 +0900
-Received: from BPXM09GP.gisp.nec.co.jp ([10.38.151.201]) by
- BPXC11GP.gisp.nec.co.jp ([10.38.151.139]) with mapi id 14.03.0319.002; Thu, 6
- Dec 2018 05:29:15 +0900
-From:   Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-To:     lijiang <lijiang@redhat.com>, Borislav Petkov <bp@alien8.de>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: RE: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Thread-Topic: [PATCH 1/2 v2] kdump: add the vmcoreinfo documentation
-Thread-Index: AQHUjKXemQXNLRGc+UGdsBH5ZuUNaqVwM/AQ
-Date:   Wed, 5 Dec 2018 20:29:14 +0000
-Message-ID: <4AE2DC15AC0B8543882A74EA0D43DBEC0356426E@BPXM09GP.gisp.nec.co.jp>
-References: <20181202030839.29945-1-lijiang@redhat.com>
- <20181202030839.29945-2-lijiang@redhat.com> <20181203150809.GA4794@zn.tnic>
- <779dbae7-f6e2-e9e4-bdd0-0a9e6ec62487@redhat.com>
- <20181205113032.GF29510@zn.tnic>
- <3d1a7e68-34c5-d118-fe09-7c9bc14cce84@redhat.com>
-In-Reply-To: <3d1a7e68-34c5-d118-fe09-7c9bc14cce84@redhat.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [143.101.133.146]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-TM-AS-MML: disable
+        Wed, 5 Dec 2018 15:31:54 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB5KUoPX106752
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Dec 2018 15:31:53 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p6nsbr1g0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:31:52 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 5 Dec 2018 20:31:51 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Dec 2018 20:31:47 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB5KVk5l9568652
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Dec 2018 20:31:46 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5FB354C046;
+        Wed,  5 Dec 2018 20:31:46 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 689A54C044;
+        Wed,  5 Dec 2018 20:31:45 +0000 (GMT)
+Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Dec 2018 20:31:45 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Wed, 05 Dec 2018 15:31:44 -0500
+In-Reply-To: <20181204234024.GC1233@linux.intel.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+         <20181204082138.24600-5-roberto.sassu@huawei.com>
+         <20181204234024.GC1233@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120520-0008-0000-0000-0000029D6F4D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120520-0009-0000-0000-00002207D3B8
+Message-Id: <1544041904.4017.8.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=916 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812050180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+PiBHZW5lcmF0aW5nIFZNQ09SRUlORk8gaXMgZWFzeSBpbiB0aGUgZmlyc3Qga2VybmVsLCBm
-b3IgZXhhbXBsZToNCj4gPj4gIyBtYWtlZHVtcGZpbGUgLWcgVk1DT1JFSU5GTyAteCB2bWxpbnV4
-DQo+ID4NCj4gPiBJIGdldDoNCj4gPg0KPiA+ICQgbWFrZWR1bXBmaWxlIC1nIFZNQ09SRUlORk8g
-LXggdm1saW51eA0KPiA+IFRoZSBrZXJuZWwgdmVyc2lvbiBpcyBub3Qgc3VwcG9ydGVkLg0KPiA+
-IFRoZSBtYWtlZHVtcGZpbGUgb3BlcmF0aW9uIG1heSBiZSBpbmNvbXBsZXRlLg0KPiA+DQo+ID4g
-VGhlIHZtY29yZWluZm8gaXMgc2F2ZWQgdG8gVk1DT1JFSU5GTy4NCj4gPg0KPiA+IG1ha2VkdW1w
-ZmlsZSBDb21wbGV0ZWQuDQo+ID4NCj4gPiBCdXQgdGhlIHRleHQgZmlsZSBsb29rcyBvayBBRkFJ
-Q1QuIFBsZWFzZSBhZGQgdGhhdCBjb21tYW5kIHRvIHRoZQ0KPiA+IGRvY3VtZW50YXRpb24gZmls
-ZS4NCj4gPg0KDQpQbGVhc2Ugbm90ZSB0aGF0IHRoaXMgVk1DT1JFSU5GTyBpcyBnZW5lcmF0ZWQg
-ZnJvbSB0aGUgaW5mb3JtYXRpb24gaW4NCnRoZSB2bWxpbnV4IG9ubHksIG5vdCBmcm9tIHRoZSBy
-dW5uaW5nIGtlcm5lbCBhbmQgL3Byb2Mva2NvcmUuIFNvIGlmDQp3ZSBhZGQgYSBjb21tYW5kIHRv
-IGR1bXAgaXQgZnJvbSBydW5uaW5nIGtlcm5lbCwgaXQncyBub3Qgc3VpdGFibGUuDQoNCihUaGlz
-IHN3aXRjaCBpcyBpbnRlbmRlZCB0byBtYWtlIGEgZGF0YSB0aGF0IGlzIHVzZWQgaW5zdGVhZCBv
-ZiB2bWxpbnV4DQogd2hlbiB2bWNvcmUgZGlkbid0IGhhdmUgVk1DT1JFSU5GTyBhbmQgbWFrZWR1
-bXBmaWxlIGlzIGluIGEgc2l0dWF0aW9uDQogdGhhdCB3ZSBkb24ndCBoYXZlIHZtbGludXguIFBs
-ZWFzZSBzZWUgdGhlIGV4cGxhbmF0aW9uIG9mIHRoZSAtaSBhbmQNCiAtZyBvcHRpb25zIGluIG1h
-a2VmdW1wZmlsZSg4KS4pDQoNCm1ha2VkdW1wZmlsZSBkb2Vzbid0IGhhdmUgYW55IHN3aXRjaCB3
-aGljaCBkdW1wcyBWTUNPUkVJTkZPIGZyb20ga2NvcmUNCmZvciBub3cuIChJJ20gdGhpbmtpbmcg
-dG8gaGF2ZSBtYWtlZHVtcGZpbGUgZHVtcCBpdCBhcyBkZWJ1ZyBtZXNzYWdlLA0KdGhvdWdoLikN
-Cg0KVGhhbmtzLA0KS2F6dQ0KDQo=
+On Tue, 2018-12-04 at 15:40 -0800, Jarkko Sakkinen wrote:
+> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+> > Currently the TPM driver allows other kernel subsystems to read only the
+> > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+> > hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+> > RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+> > the new parameter is expected to be always not NULL.
+> > 
+> > Due to the API change, IMA functions have been modified.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+
+It's up & running and the measurement list verifies against the TPM
+PCR.  Although this system has two algorithms enabled, all of the PCRs
+are allocated for one algorithm and none for the other.  I'm still
+looking around for another system with PCR 10 enabled for multiple
+algorithms.
+
+Mimi
 
