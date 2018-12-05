@@ -2,74 +2,64 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BF3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15504C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1304620878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94D52084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="E9vEOv8x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1304620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Xe/M04di"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94D52084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeLEGLX (ORCPT
+        id S1727069AbeLEGLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:11:23 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40182 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbeLEGLW (ORCPT
+        Wed, 5 Dec 2018 01:11:50 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:48625 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeLEGLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:11:22 -0500
-Received: by mail-oi1-f195.google.com with SMTP id t204so16548060oie.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=69WA/I3zwn0/ypVd6dNleHo8JVCihI7rGphv4pngRv8=;
-        b=E9vEOv8xi9hTfnwJLSLE4+i6cgxWHZWWM82HU+UqYNKLkbv3Dw1/V5VS7+TuiwkjKr
-         FhH/x0qSyeLhg0LTmaUd9ypWcj9dmIO/VVza1sIfg/cMtWNKMuvhyn/17cS/e5Eg3JGw
-         Um1Z7uP3NwLNXqaIF2cignYiv1k2EG4sXh85LUA46BF3dTgfrjj9elqC4pS/8MyyaO9V
-         J1l7ICgktaEhwNu00HhHFXyj9TiLKqmoipsjQO6uRF0Udu2TAt/gYgQHl1x/BXBLEhFq
-         WU8GOLx8nBkbFzWIHQ3r0bjFJhGLDWpBOu19zF/DO4U5MGHT5yXro2zuMO63S8+A1lWN
-         gjyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=69WA/I3zwn0/ypVd6dNleHo8JVCihI7rGphv4pngRv8=;
-        b=Sqf1ZJWVI+YFGb+d0rcKzbLzMbCv0U3q2Yrv06KKasAHzj5SZpcqyU39luwjL7U0vW
-         MF9J37OhpvB3XAYohqnvezxjEpG+vhyUfzWPKlZyYHbwVWjzptoevb8B292wR1rLk2Kw
-         1HHu7cAlPcjIyLoLShGqdy1JmbJibYqM0sJ4LlH4q5x3a7Z27na3zekAfF+SxrSk8m8T
-         0s3s3Fh+tCYbrbLhniu1O4Eda9qN9GTrKy8plnHM0glZWpPpzRkNHq+iPi4pjx7gCMd5
-         Bfpnop/VarL0l3UGO8nOqPaEAc8Ck8KcNavExqp/verjW8mj2q1S0PCm3zA9wAP7wrpE
-         Sh/g==
-X-Gm-Message-State: AA+aEWYM0nzEocRWaXq+5gnHrWhOgOe73+DMz8F/Ng5tQvZLkzVW2wTQ
-        cvPrSatkqdPFe/+ZBgqczkeAB6NFF5jLLMVov3NpYw==
-X-Google-Smtp-Source: AFSGD/WMFxMai8PCLwbByIRB/JTJIVh5oY/PqKGgSnFiIYX1vtYsn8f1L+D9xDJxwnmi/YNBC/BlJytzvZEMLt+9vEQ=
-X-Received: by 2002:aca:5205:: with SMTP id g5mr14826046oib.149.1543990281681;
- Tue, 04 Dec 2018 22:11:21 -0800 (PST)
+        Wed, 5 Dec 2018 01:11:50 -0500
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id wB56BQ5x024859
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Dec 2018 15:11:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wB56BQ5x024859
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1543990287;
+        bh=HOQIBPGxhmfjxUen8ioHXZgbxEuLiOVnO/JS61x0USQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Xe/M04dimj1bHZhD2o/dlyg6NyDy2J+a3Mbt5YxqnRbxdI18Yfwfejpgqht++mFWm
+         crm3+DidCLhevi4fJMDSKg0/hGDFmeQbR1tJaZ1CmZvd8DNog4JGtGANsqx0Lur9B2
+         wQRWfGnVl4/KgnKw5ijmgJJXx9vde2bzByuJsFgEryvgv3uRyDP0rVGxu+UeZZYyNj
+         eF+8PpVcjbgYTIZsm9XFdRHZuYjzIQB9nBZV4QM/IRQdOddDy68vb8QSELpS9E+88X
+         Ew12ISN0uOcxZ4H3m/eHDwVic3H/8ZVYBLb/reS9DscTInMgmvyVCUZqXL54T2UtiB
+         o6vWvTKzttFoQ==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id p9so6700110uaa.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:11:26 -0800 (PST)
+X-Gm-Message-State: AA+aEWZ1BV1g4Ri0boiMTX4qBScP2/58V+O8uwHTf8c3/oXBWSUHA+v1
+        EfErqI0tF1FN2AJfaecxWvDmSOgcR0q6FIk9ukc=
+X-Google-Smtp-Source: AFSGD/V8TYOySbnK3Q3JEcoDcvNmIlvrqcB9xj38JpuJa9wGpx/4Y41gKiP8cmawpwgXe29z+mII3roXXXfs6nm5Osw=
+X-Received: by 2002:a9f:3193:: with SMTP id v19mr10593921uad.55.1543990285835;
+ Tue, 04 Dec 2018 22:11:25 -0800 (PST)
 MIME-Version: 1.0
-References: <154353682674.1676897.15440708268545845062.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181130154902.GL10377@bombadil.infradead.org> <CAPcyv4iE375mP7eJP4nb76shWNaATy6FcZYi800wZ3iAJE8G8g@mail.gmail.com>
- <20181130162435.GM10377@bombadil.infradead.org> <CAPcyv4gBwtCxN4xTncsyShMwMzNiLG3SxKA-frYh9Fn-f6QV=g@mail.gmail.com>
- <CAPcyv4gDO7sUJgE5kKe=VC5uUG36QaUrkb6tCrtnaFMkgdSYGw@mail.gmail.com>
- <20181130195021.GN10377@bombadil.infradead.org> <CAPcyv4iqA84WbE8pE=Yi15Q0T8JUXnPZss27HqhQTP08F9sTrQ@mail.gmail.com>
- <CAPcyv4jFwpsiMTwj3tzbQ4NjV_XnO5-2hTqKYOaWtRCGtT=T+g@mail.gmail.com> <20181205013444.GX10377@bombadil.infradead.org>
-In-Reply-To: <20181205013444.GX10377@bombadil.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 4 Dec 2018 22:11:10 -0800
-Message-ID: <CAPcyv4jqfws-LQOwemQm9Xt0wp7_R6K9KxWvKriDjEeUmRJ9zQ@mail.gmail.com>
-Subject: Re: [PATCH] dax: Fix Xarray conversion of dax_unlock_mapping_entry()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+References: <1543978802-24196-1-git-send-email-yamada.masahiro@socionext.com> <de8a06d6-11c5-19ea-07a6-37f8624c8b66@oracle.com>
+In-Reply-To: <de8a06d6-11c5-19ea-07a6-37f8624c8b66@oracle.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 5 Dec 2018 15:10:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR2HXGXr0YvkqO8eC3hNeVK=oVMOwrn08PgVNFH79Yq=w@mail.gmail.com>
+Message-ID: <CAK7LNAR2HXGXr0YvkqO8eC3hNeVK=oVMOwrn08PgVNFH79Yq=w@mail.gmail.com>
+Subject: Re: [PATCH] x86/build: fix compiler support check for CONFIG_RETPOLINE
+To:     zhenzhong.duan@oracle.com
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Meelis Roos <mroos@linux.ee>, "H. Peter Anvin" <hpa@zytor.com>,
+        Borislav Petkov <bp@alien8.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,232 +67,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 5:35 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Dec 5, 2018 at 3:08 PM Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
 >
-> On Mon, Dec 03, 2018 at 07:33:43PM -0800, Dan Williams wrote:
-> > On Fri, Nov 30, 2018 at 12:05 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > -void dax_unlock_mapping_entry(struct page *page)
-> > > > +void dax_unlock_mapping_entry(struct page *page, dax_entry_t entry)
-> > >
-> > > Let's not require the page to be passed back, it can be derived:
-> > >
-> > >     page = pfn_to_page(dax_to_pfn((void*) entry));
-> > >
-> > > A bit more symmetric that way and canonical with other locking schemes
-> > > that return a cookie.
+>
+> On 2018/12/5 11:00, Masahiro Yamada wrote:
+> > It is wrong to add CONFIG option diagnostic to the Makefile parse
+> > stage.
 > >
-> > The patch does not apply on top of the pending fixes. could resend on
-> > top of the current libnvdimm-fixes branch [1]?
+> > Once you are hit by the error about non-retpoline compiler, the
+> > compilation still breaks even after disabling CONFIG_RETPOLINE.
 > >
-> > I think because we are changing the calling convention to take return
-> > a locked dax_entry_t type, I feel like we should go back to the
-> > originally proposed names of these interfaces. I.e.
+> > The easiest fix is to move this check to the "archprepare" like commit
+> > 829fe4aa9ac1 ("x86: Allow generating user-space headers without a
+> > compiler") did.
 > >
-> >     dax_entry_t dax_lock_page(struct page *page)
+> > Link: https://lkml.org/lkml/2018/12/4/206
+> > Reported-by: Meelis Roos <mroos@linux.ee>
+> > Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
 > >
-> >     void dax_unlock_page(dax_entry_t entry)
+> >   arch/x86/Makefile | 14 ++++++++------
+> >   1 file changed, 8 insertions(+), 6 deletions(-)
 > >
-> > Yes, it introduces an entry-to-pfn and pfn-to-page conversion.
-> > However, If I can't convince you to drop the page argument, lets at
-> > least do the name change. I.e. offload the responsibility of conveying
-> > that this is not the traditional page lock to the fact that a
-> > dax_entry is returned and passed back to the unlock routine.
+> > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> > index f5d7f41..ae0148b 100644
+> > --- a/arch/x86/Makefile
+> > +++ b/arch/x86/Makefile
+> > @@ -219,12 +219,7 @@ KBUILD_CFLAGS += -Wno-sign-compare
+> >   KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+> >
+> >   # Avoid indirect branches in kernel to deal with Spectre
+> > -ifdef CONFIG_RETPOLINE
+> > -ifeq ($(RETPOLINE_CFLAGS),)
+> > -  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+> > -endif
+> > -  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+> > -endif
+> > +KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
 >
-> From: Matthew Wilcox <willy@infradead.org>
-> Date: Fri, 30 Nov 2018 11:05:06 -0500
-> Subject: [PATCH] dax: Change lock/unlock API
+> Is it better to also move "# Avoid indirect branches in kernel to deal
+> with Spectre"
 >
-> Return the unlock cookie from dax_lock_page() and pass it to
-> dax_unlock_page().  This fixes a bug where dax_unlock_page() was
-> assuming that the page was PMD-aligned if the entry was a PMD entry.
+> and "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)"?
 >
-> Debugged-by: Dan Williams <dan.j.williams@intel.com>
-> Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> Seems unconditionaly using "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)" will
+> have compiler
+>
+> using "__x86_indirect_thunk_\reg" call even ifCONFIG_RETPOLINE is
+> disabled. I guess
+>
+> link process will fail?
 
-Looks good, passes testing. I did fix up the changelog a bit to make
-it clearer that this is a fix, not new development, and included more
-details about the failing signature from my initial fix. No code
-changes. I'll push it out to libnvdimm-fixes for -next to pick up.
 
----
+Good catch.
 
-dax: Fix unlock mismatch with updated API
+I will send v2.
 
-Internal to dax_unlock_mapping_entry(), dax_unlock_entry() is used to
-store a replacement entry in the Xarray at the given xas-index with the
-DAX_LOCKED bit clear. When called, dax_unlock_entry() expects the unlocked
-value of the entry relative to the current Xarray state to be specified.
+Thanks.
 
-In most contexts dax_unlock_entry() is operating in the same scope as
-the matched dax_lock_entry(). However, in the dax_unlock_mapping_entry()
-case the implementation needs to recall the original entry. In the case
-where the original entry is a 'pmd' entry it is possible that the pfn
-performed to do the lookup is misaligned to the value retrieved in the
-Xarray.
 
-Change the api to return return the unlock cookie from dax_lock_page()
-and pass it to dax_unlock_page(). This fixes a bug where
-dax_unlock_page() was assuming that the page was PMD-aligned if the
-entry was a PMD entry with signatures like:
 
- WARNING: CPU: 38 PID: 1396 at fs/dax.c:340 dax_insert_entry+0x2b2/0x2d0
- RIP: 0010:dax_insert_entry+0x2b2/0x2d0
- [..]
- Call Trace:
-  dax_iomap_pte_fault.isra.41+0x791/0xde0
-  ext4_dax_huge_fault+0x16f/0x1f0
-  ? up_read+0x1c/0xa0
-  __do_fault+0x1f/0x160
-  __handle_mm_fault+0x1033/0x1490
-  handle_mm_fault+0x18b/0x3d0
+> Thanks
+>
+> Zhenzhong
+>
+> >
+> >   archscripts: scripts_basic
+> >       $(Q)$(MAKE) $(build)=arch/x86/tools relocs
+> > @@ -307,6 +302,13 @@ ifndef CC_HAVE_ASM_GOTO
+> >       @echo Compiler lacks asm-goto support.
+> >       @exit 1
+> >   endif
+> > +ifdef CONFIG_RETPOLINE
+> > +ifeq ($(RETPOLINE_CFLAGS),)
+> > +     @echo "You are building kernel with non-retpoline compiler." >&2
+> > +     @echo "Please update your compiler." >&2
+> > +     @false
+> > +endif
+> > +endif
+> >
+> >   archclean:
+> >       $(Q)rm -rf $(objtree)/arch/i386
 
-Link: https://lkml.kernel.org/r/20181130154902.GL10377@bombadil.infradead.org
-Fixes: 9f32d221301c ("dax: Convert dax_lock_mapping_entry to XArray")
-Reported-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
----
 
-> ---
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 3f592dc18d67..48132eca3761 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -379,20 +379,20 @@ static struct page *dax_busy_page(void *entry)
->   * @page: The page whose entry we want to lock
->   *
->   * Context: Process context.
-> - * Return: %true if the entry was locked or does not need to be locked.
-> + * Return: A cookie to pass to dax_unlock_page() or 0 if the entry could
-> + * not be locked.
->   */
-> -bool dax_lock_mapping_entry(struct page *page)
-> +dax_entry_t dax_lock_page(struct page *page)
->  {
->         XA_STATE(xas, NULL, 0);
->         void *entry;
-> -       bool locked;
->
->         /* Ensure page->mapping isn't freed while we look at it */
->         rcu_read_lock();
->         for (;;) {
->                 struct address_space *mapping = READ_ONCE(page->mapping);
->
-> -               locked = false;
-> +               entry = NULL;
->                 if (!mapping || !dax_mapping(mapping))
->                         break;
->
-> @@ -403,7 +403,7 @@ bool dax_lock_mapping_entry(struct page *page)
->                  * otherwise we would not have a valid pfn_to_page()
->                  * translation.
->                  */
-> -               locked = true;
-> +               entry = (void *)~0UL;
->                 if (S_ISCHR(mapping->host->i_mode))
->                         break;
->
-> @@ -426,23 +426,18 @@ bool dax_lock_mapping_entry(struct page *page)
->                 break;
->         }
->         rcu_read_unlock();
-> -       return locked;
-> +       return (dax_entry_t)entry;
->  }
->
-> -void dax_unlock_mapping_entry(struct page *page)
-> +void dax_unlock_page(struct page *page, dax_entry_t cookie)
->  {
->         struct address_space *mapping = page->mapping;
->         XA_STATE(xas, &mapping->i_pages, page->index);
-> -       void *entry;
->
->         if (S_ISCHR(mapping->host->i_mode))
->                 return;
->
-> -       rcu_read_lock();
-> -       entry = xas_load(&xas);
-> -       rcu_read_unlock();
-> -       entry = dax_make_entry(page_to_pfn_t(page), dax_is_pmd_entry(entry));
-> -       dax_unlock_entry(&xas, entry);
-> +       dax_unlock_entry(&xas, (void *)cookie);
->  }
->
->  /*
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 450b28db9533..0dd316a74a29 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -7,6 +7,8 @@
->  #include <linux/radix-tree.h>
->  #include <asm/pgtable.h>
->
-> +typedef unsigned long dax_entry_t;
-> +
->  struct iomap_ops;
->  struct dax_device;
->  struct dax_operations {
-> @@ -88,8 +90,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
->                 struct block_device *bdev, struct writeback_control *wbc);
->
->  struct page *dax_layout_busy_page(struct address_space *mapping);
-> -bool dax_lock_mapping_entry(struct page *page);
-> -void dax_unlock_mapping_entry(struct page *page);
-> +dax_entry_t dax_lock_page(struct page *page);
-> +void dax_unlock_page(struct page *page, dax_entry_t cookie);
->  #else
->  static inline bool bdev_dax_supported(struct block_device *bdev,
->                 int blocksize)
-> @@ -122,14 +124,14 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
->         return -EOPNOTSUPP;
->  }
->
-> -static inline bool dax_lock_mapping_entry(struct page *page)
-> +static inline dax_entry_t dax_lock_page(struct page *page)
->  {
->         if (IS_DAX(page->mapping->host))
-> -               return true;
-> -       return false;
-> +               return ~0UL;
-> +       return 0;
->  }
->
-> -static inline void dax_unlock_mapping_entry(struct page *page)
-> +static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
->  {
->  }
->  #endif
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 0cd3de3550f0..7c72f2a95785 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1161,6 +1161,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->         LIST_HEAD(tokill);
->         int rc = -EBUSY;
->         loff_t start;
-> +       dax_entry_t cookie;
->
->         /*
->          * Prevent the inode from being freed while we are interrogating
-> @@ -1169,7 +1170,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->          * also prevents changes to the mapping of this pfn until
->          * poison signaling is complete.
->          */
-> -       if (!dax_lock_mapping_entry(page))
-> +       cookie = dax_lock_page(page);
-> +       if (!cookie)
->                 goto out;
->
->         if (hwpoison_filter(page)) {
-> @@ -1220,7 +1222,7 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->         kill_procs(&tokill, flags & MF_MUST_KILL, !unmap_success, pfn, flags);
->         rc = 0;
->  unlock:
-> -       dax_unlock_mapping_entry(page);
-> +       dax_unlock_page(page, cookie);
->  out:
->         /* drop pgmap ref acquired in caller */
->         put_dev_pagemap(pgmap);
+-- 
+Best Regards
+Masahiro Yamada
