@@ -2,132 +2,147 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE5AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E0EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADE320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8382720879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:52:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="atG+wfkN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADE320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hOoEG+u9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8382720879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbeLEAvg (ORCPT
+        id S1726693AbeLEAw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:51:36 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45898 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbeLEAvg (ORCPT
+        Tue, 4 Dec 2018 19:52:56 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:51918 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeLEAw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:51:36 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so9083197pfd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=/UOZRCzp8o93LV/zBJgnh/YA7nPwCovq44EnVRi0VQY=;
-        b=atG+wfkNdf+yFgbTamkezUr5E/3chGK32+6EPmHxG/HvbfrJLvroV9tPEcVOgDQsdm
-         SQPCymQuZucruHUujK9LHSXCHnR2wLoaCUf2zC7f1iDuz5O4vDSHZddVYs3CZVEoTTtt
-         Y9SQ4YA3Lu40lr8gCbYYPn4KUXCS4KTKI3qEYSfbF7tRQ53Cg2JaUpdYYqF8RhTmBzUZ
-         5gdiw3kfQMtlX25h1z49bgBCNX7JuPe7NkoYGjj0/7l+ZXX3lw5s/3wNtwujqNJvzaEJ
-         mQJPsTYZEhqygYetY7AW1D1WVwjAp3pqMPxlXGrymvypOP+px9ATqxGhK8C3lIa80TyX
-         H1bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=/UOZRCzp8o93LV/zBJgnh/YA7nPwCovq44EnVRi0VQY=;
-        b=IzOnJuPFD5Tn9/bte2ZyE9pqqiJ9ozv80Hr2SIb5yd1YqtGGgVF/BAQqWwMPgXfrrh
-         IujjWbn4jX7sj/B3GNTLZvyi90oor7HCgHO/U/irAsoLo5TTLOei9zjmZGEGalNruJ7r
-         XAVtYEzF/uGff1IBEWNVAtGiOfAqSiPMKG3QJp4rjYD5M8G68GqLYwnmh58FUsOktTQV
-         HiV0JYr/boVAwTJTUdefjdmi65Q/g7y/718I6HglvDps1ui/FuiET7wT3mTrArPzZD+4
-         dx26Q5OOcXphRcrXrV7x/I6wY0A2ulEqcD1bmsLPx7BhH9ZpZI4OH/qZc6xow6JNT/Ut
-         ggdw==
-X-Gm-Message-State: AA+aEWbXZiSLldeuL8la+ZizKVkmy2PifntboQmLKxGchVaEu9fcvn19
-        bkkKJbrxdtX3ADzKuo/LE1MsJw==
-X-Google-Smtp-Source: AFSGD/Xqk7EtQdo6NJyHGtu0xUA/IzsmeksJ8+xYl7i6kJxHa6KU71T1CpLnd0HHoWdqrPHaN2jLlA==
-X-Received: by 2002:a62:d0c1:: with SMTP id p184mr22113582pfg.245.1543971095199;
-        Tue, 04 Dec 2018 16:51:35 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id r12sm18045914pgv.83.2018.12.04.16.51.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 16:51:34 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        carlo@caione.org, linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 0/6] 32-bit Meson: add the ARM TWD and Global Timers
-In-Reply-To: <20181123195311.4578-1-martin.blumenstingl@googlemail.com>
-References: <20181123195311.4578-1-martin.blumenstingl@googlemail.com>
-Date:   Tue, 04 Dec 2018 16:51:33 -0800
-Message-ID: <7hwooobxt6.fsf@baylibre.com>
+        Tue, 4 Dec 2018 19:52:56 -0500
+X-Greylist: delayed 1465 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Dec 2018 19:52:55 EST
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB50O5NI035362;
+        Wed, 5 Dec 2018 00:28:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=33GdwUmihCsk2pSLE+DYtnsRLJxJNlmd2rViK+KqI5E=;
+ b=hOoEG+u99nYARz4VJgCd95n0xRscQOnQ8RGHZvGMC+39tl5RP7nNcz9g0hm0T4cSqLkl
+ MlRLlIlHPoc+LjQwRKNj8UVd/vKhWQuutZyo3UcvKqakDc48ebQCm2RsZSqCDecBJU+i
+ U+9KtLaQ2eVjXrkdv1e0I8fNtzLBxhC5QJjYIVOv00ICWGv7wY+vA0DTpCte5T/ExsEF
+ LTukuDA23rZX0qCo4crAQRbJ6gAyfWCR27yZ+JdcVY4px9YYxDMWi608z6VFMjeqez1n
+ Pv/g4tuuC73It5uxHh33THsD2teVByCT78XQxL4/NXKPYsuZQcRU6PW2C9uOkPdpdpgL +w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2p3ftf3h7f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Dec 2018 00:28:15 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB50SDG5002651
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Dec 2018 00:28:13 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB50S9Q8030679;
+        Wed, 5 Dec 2018 00:28:12 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Dec 2018 16:28:09 -0800
+Subject: Re: [Xen-devel][PATCH v2 1/3] xen: Introduce shared buffer helpers
+ for page directory...
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        jgross@suse.com
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20181130074205.20496-1-andr2000@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <ab1b0d28-f3a1-41ec-82df-2474553dbefe@oracle.com>
+Date:   Tue, 4 Dec 2018 19:28:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181130074205.20496-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=650
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812050002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+On 11/30/18 2:42 AM, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>
+> based frontends. Currently the frontends which implement
+> similar code for sharing big buffers between frontend and
+> backend are para-virtualized DRM and sound drivers.
+> Both define the same way to share grant references of a
+> data buffer with the corresponding backend with little
+> differences.
+>
+> Move shared code into a helper module, so there is a single
+> implementation of the same functionality for all.
+>
+> This patch introduces code which is used by sound and display
+> frontend drivers without functional changes with the intention
+> to remove shared code from the corresponding drivers.
+>
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-> The 32-bit Meson SoCs use Cortex-A9 or Cortex-A5 cores. These come
-> with the ARM TWD ("Timer Watchdog") which contains a timer and a
-> watchdog as well as the ARM Global Timer.
->
-> This enables the corresponding configs for the 32-bit Meson target.
-> Additionally this adds and enables the ARM TWD timer. The Global
-> Timer is added but currently disabled because it's clock input is
-> the PERIPH clock which is derived from the CPU clock. Thus the rate
-> of the PERIPH clock will change when changing the CPU frequency.
-> Unfortunately the Global Timer driver doesn't handle clocks with
-> changing rates yet (unlike the TWD timer), thus we keep it disabled
-> for now.
->
-> The whole series is inspired by an almost 3 year old patch from
-> Carlo: [0]
->
->
-> Dependencies:
-> - I build this on top of my other series "ARM: dts: meson: add the
->   timer interrupts and clocks" from [1]
-> - CLKID_PERIPH requires updated clock driver headers. Neil provided
->   a tag which includes the updated headers: [2]
+Acked-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-I pulled this branch into v4.21/dt
-
-> - There is no runtime dependency on the PERIPH clock as we don't
->   have CPU frequency scaling support enabled yet. In case the TWD
->   timer driver can't find the clock it falls back to auto-detecting
->   the clock rate at boot time. This is safe as long as we don't have
->   .dts patches in place which allow changing the CPU clock rate. Once
->   we enable CPU frequency scaling support for the PERIPH clock becomes
->   mandatory so the TWD timer driver knows about changes to the PERIPH
->   clock (which is derived from the CPU clock).
->
->
-> [0] https://patchwork.kernel.org/patch/7797581/
-> [1] https://patchwork.kernel.org/cover/10687005/
-> [2] http://lists.infradead.org/pipermail/linux-amlogic/2018-November/009136.html
->
->
-> Martin Blumenstingl (6):
->   ARM: meson: select HAVE_ARM_TWD and ARM_GLOBAL_TIMER
-
-Applied to v4.21/defconfig
-
->   ARM: dts: meson: group the Cortex-A5 / Cortex-A9 peripherals
->   ARM: dts: meson8: add the ARM TWD timer
->   ARM: dts: meson8: add the Cortex-A9 global timer
->   ARM: dts: meson8b: add the ARM TWD timer
->   ARM: dts: meson8b: add the Cortex-A5 global timer
-
-Applied to v4.21/dt
-
-Kevin
