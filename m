@@ -2,97 +2,231 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E995C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D7EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C026920879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="y0H/WKgI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C026920879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 57CF1205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544030827;
+	bh=1m7ftA8gG4N6kHxIRA252VIzIJPqAz7a4tFTC19L/Ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0U4Dn09hzohD+B2Lj99eCH1xnhSpEU97pdxBp1GacnclcymoNuTG8jsqbg7ED6Y2E
+	 3fJWbTQalSJVUvsvGSYwZlP4q1AEbEsULX5DqmZD7rzlfTv7E5lWIrDrEqah2iZ9tu
+	 qTGDGQAbCaOCVOcyBsNGlh4tvmEevXGb8d7osRQM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CF1205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeLER1D (ORCPT
+        id S1728350AbeLER1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:27:03 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36751 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbeLER1C (ORCPT
+        Wed, 5 Dec 2018 12:27:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59092 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbeLER1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:27:02 -0500
-Received: by mail-it1-f195.google.com with SMTP id c9so21456703itj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:27:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y0JPiAN+MBquXGfcJsu1JHXuGc4PyL3a4dgPwNvkMYo=;
-        b=y0H/WKgIG3fgpLuvX1P/6QIfqMmu3n8qDBR5XkzCgiibl8hKJ0mzZ5jrA1YKg6MBP3
-         fNFyqsHyzvhIz3m8MD1wXzw/0eapZy9CJyVJ2BuqUnZait/20SoOx3mHpRTE0J04ARQT
-         pH+3diooIJka0Q/pjSO1pyFeg4UZpTK4B6AX3WBaushjf9RhtUGRdNtaCb6yxNpXSIKF
-         rSzyuTKnnSrhIzhUfLIu6rZ2xDXC1veiBcwLLjq5xhSW4XaMFMPLjBkDRb4KIE9s0iyr
-         KC6fy01zZa4IMt64xDp//xGHfUPCyqX004da1J37r8+8UmpDP5SrNA7CODEbo9RKvGSj
-         fKMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y0JPiAN+MBquXGfcJsu1JHXuGc4PyL3a4dgPwNvkMYo=;
-        b=DTFLCnpS7qVKOZuv3vmbuT3Eq3tVU868o2RKHisQid6s1ZPaKhGPcGpwc+EYV7zgiF
-         EIqwhVRJePygNNLUHZk0JYPvYpKpBJn9cCr/qH5+dU7Fc7lfIBkXA/gPlD7vwzSpB8pM
-         Uhj0CKHB4XiGLfLOsRaWlaF566m9kYlwW+sVr9q32gdKoeyXIbbvdeiUoRPxFXK2CF0e
-         xSq9kro6i/uUuJEnEUu7+5IDPRfeuZu79Gwe2YE34s68HMn5TkZ64RgnLbcYyCLoF2ug
-         qwzWtt6fr7yWR8nCd0Qt857IAws043guuS/fKmGLECHuZcSsrg6vrH5x0ohuu2iTWGXr
-         w11w==
-X-Gm-Message-State: AA+aEWbBt2Ip3OU8xaoIITgXXz+Dshr1rvOIRtbvWbN1XfnZM310slIs
-        85rtmHa8RNkBMIyMLjwYtF7IkGN0gHc=
-X-Google-Smtp-Source: AFSGD/XjdAwBPI21SMkwWG4mJrZXybV70GhbDKyTZP0ySTSrBTD13kc2ysIUzffRFKzqAecq7Q2qew==
-X-Received: by 2002:a02:4511:: with SMTP id y17mr22357236jaa.56.1544030820781;
-        Wed, 05 Dec 2018 09:27:00 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id t194sm10545943iof.3.2018.12.05.09.26.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 09:26:59 -0800 (PST)
-Subject: Re: [PATCH v6 00/14] block: always associate blkg and refcount
- cleanup
-To:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181205171039.73066-1-dennis@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4505f5f5-144d-39aa-24ac-477604c43212@kernel.dk>
-Date:   Wed, 5 Dec 2018 10:26:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 12:27:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NFkjVIfWSibnirUgBf+GzbIa1g+CKd7TZrRFG2Brysc=; b=VzH0j7FRRSrRwBKdwIdqO6eGj
+        /AEZCiyr5NLoiBVVwjr+TSarzCwQ0+t/mpyRO3dMmkjh8Vn52HF3SIA0cUc7aQNLpB+HvJ8OJqBpI
+        pGpnwbXJ4CCbboQGpE0JJxSYwj0SrDHDCjzvcSZTWSPQByheaMwPgIZCj+ZVyzVXT06Zo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gUaww-00063c-19; Wed, 05 Dec 2018 17:27:02 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 773511125340; Wed,  5 Dec 2018 17:27:01 +0000 (GMT)
+Date:   Wed, 5 Dec 2018 17:27:01 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181205172701.GH6205@sirena.org.uk>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20181205171039.73066-1-dennis@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="a8sldprk+5E/pDEv"
+Content-Disposition: inline
+In-Reply-To: <20181205082251.GE31204@localhost.localdomain>
+X-Cookie: Real Users never use the Help key.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 10:10 AM, Dennis Zhou wrote:
-> Hi everyone,
-> 
-> This is a minor update addressing the feedback from Mike and Josef.
-> 
-> v6:
-> 0005: Address Mike's feedback for the flush bio comment.
-> 0006: Add a WARN_ONCE() for blkg fallback suggested by Josef.
 
-Thanks Dennis, applied for 4.21.
+--a8sldprk+5E/pDEv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jens Axboe
+On Wed, Dec 05, 2018 at 10:22:51AM +0200, Matti Vaittinen wrote:
+> On Tue, Dec 04, 2018 at 05:21:37PM +0000, Mark Brown wrote:
+> > On Fri, Nov 30, 2018 at 10:59:08AM +0200, Matti Vaittinen wrote:
 
+> > This sounds exactly like the wm831x which uses cascaded irqchips for
+> > this, though not regmap-irq.
+
+> Yep. I guess I could do cascaded chips - but I would like to use the
+> regmap-irq for this driver. Maybe we could change regmap-irq so that it
+> would be possible to not give the DT node from regmap for this chip?
+> This was actually my first thought - but then I felt that having two irq
+> chips for one device is a bit hacky - and hence I decided to see how
+> regmap-irq could be changed to support the 'main irq status' register
+> usage. I think this 'main register' setup is pretty common design.
+
+I'm not sure I see it as particularly hacky - it's using features that
+the frameworks provide to do the fan out, that just seems like making
+use of existing framework features.
+
+> > I suspect the idiomatic way to handle this in DT is to make DT nodes
+> > (and devices) for the subfunction interrupt controllers and expose the
+> > internal structure of the chip to the DT.
+
+> Yes. This would be one approach - but I am not sure how DT guys see
+> this. I may be wrong but I have a feeling Rob prefers having only one DT
+> node describing single device. But for me it would make sense to have
+> own node for GPIO - especially because the GPIO is only IRQ controller
+
+Well, it kind of depends if you see the sub-interrupt controllers as
+independent devices or not (at the hardware level they will be).
+
+> which really is visible outside the chip. But here we still hit the same
+> problem if we want to use regmap-irq. Regmap-irq still knows only the
+> i2c device DT node. Currently there is no way to tell regmap-irq to use
+> the sub-node.
+
+If they're full subdevices you'd be pointing at the relevant platform
+device anyway.
+
+> >  This does make some sense as
+> > the individual interrupt controllers within the chip are clearly
+> > reusable IP blocks though it means that the chip starts looking a bit
+> > weird externally so perhaps that's not ideal and your suggestion makes
+> > sense.
+
+> So I take this as a suggestion to continue tinkering with the 'main irq
+> register support'. Or how do you see my suggestion of making iot
+> possible to instruct the regmap-irq to not use DT for 'main irq
+> controller'? Then we could probably do cascaded controllers where only
+> the controller handling the externally visible 'sub-irqs' would be
+> bound to DT? The pitfall here is case where more than one sub-irq
+> controllers needs to be exposed to other devices. In that sense the
+> 'main irq thing' would have better 'case coverage' =3D) (Wow, what a fancy
+> words, maybe I am turning into a manager here :p )
+
+I'm on the fence about the main controller idea.
+
+> > > + * @main_status: Base main status register address. For chips which =
+have
+> > > + *		 interrupts arranged in separate sub-irq blocks with own IRQ
+> > > + *		 registers and which have a main IRQ registers indicating
+> > > + *		 sub-irq blocks with unhandled interrupts. For such chips fill
+> > > + *		 sub-irq register information in status_base, mask_base and
+> > > + *		 ack_base.
+> > > + * @sub_reg_offsets: arrays of mappings from main register bits to s=
+ub irq
+> > > + *		 registers. First item in array describes the registers
+> > > + *		 for first main status bit. Second array for second bit etc.
+> > > + *		 Offset is given as sub register status offset to status_base.
+> > > + *		 Should contain num_regs arrays. Can be provided for chips with
+> > > + *		 more complex mapping than 1.st bit to 1.st sub-reg, 2.nd bit to
+> > > + *		 2.nd sub-reg, ...
+
+> > This interface feels a little awkward in that we define the sub
+> > interrupts in this separate array and require them all to be in separate
+> > single registers which probably won't be true in general (IIRC it wasn't
+> > how the wm831x worked).
+
+> So my implementation here was just the simplest solution to 'glue' the
+> main status register on top of existing implementation. If we do it this
+> way, then the 'main status register' is completely optional - chip would
+> work just fine even without the 'main register' - main register only
+> saves some reads as subregisters with no irqs can be left unread. But
+> you are correct - this only supports limited amount of HWs. Many chips I
+> have seen (prior to the one I am now working with) actually require
+> acking also the main status register. They also may support masking the
+> main status register. But I guess trying to support all such cases would
+> make the regmap-irq really complex and hard to understand.
+
+Right, it's that sort of thing that makes me want to just cascade the
+interrupt controllers - at some point you just end up with as fully
+featured an interrupt controller distributing to other fully featured
+interrupt controllers.
+
+> > How about instead we have the individual
+> > interrupts mark which main status bits flag them, then build up a
+> > mapping in the other direction during init of subregisters to read?
+
+> I am not sure if I understand your idea correctly - but for me it feels
+> that the 'main status register' is only benefical when we can do direct
+> mapping from main register bit/value to sub-register(s).=20
+
+The mapping isn't guaranteed to be a 1:1 mapping - one way this hardware
+gets structured is that the central interrupt controller is saying which
+IP block is flagging an interrupt rather than which register has an
+interrupt set in it.  You can then have either more than one detailed
+status register for that IP or several smaller IPs reporting through a
+single detailed status register.  I've also seen some interrupts
+represented directly in the main status if there's some need for a fast
+path.
+
+> But as we must really read whole sub register at once, it really does
+> not matter which interrupts inside the sub register did activate the
+> main status - we go through all bits in the sub register anyways. Hence
+> it may not be needed to have mapping from individual interrupts to the
+> main status register value? I guess looping through all the sub
+> register bits is negligible source of latency compared to the time the
+> register access takes. So identifying the sub register(s) based on main
+> status is the thing - not mapping the individual interrupts in sub
+> register(s), right? I think that having to specify the main status
+> register value for each interrupt would be quite a overkill.
+
+Right, it's about working out which subregister to read - the point is
+you can do this by adding a link in either direction, I'm suggesting
+doing it from the individual interrupt to the main register since we
+already have individual data structures for those and it feels less
+likely to run into hard to represent corner cases.
+
+>  * @main_status: Optional base main status register address. Some chips h=
+ave
+>  *		 "main status register(s)" which indicate actual irq registers
+>  *		 with unhandled interrupts. Provide main status register
+>  *		 address here to avoid reading irq registers with no
+>  *		 active interrupts. Mapping from main status value to
+>  *		 interrupt register can be provided in sub_reg_offsets.
+
+> Perhaps this would clarify that the status_base, mask_base, ack_base,
+> etc. should still be used normally?
+
+Probably.
+
+--a8sldprk+5E/pDEv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwICmQACgkQJNaLcl1U
+h9BX4gf/aF1S0pjstxYcjB++RclZZfYA5j4LOY/4DGo6vmN/HL3v6gPZtyWYfNVP
+Qpal0FqlIXU1FaVPQrD2lue3FGMNqvtMzke1UM1HTTjDdsaPYf9mrK2IK3VPtuef
+3kVcCq8vUbslYf4YfJqAHTiwd/6ZSeY+WrGokFkVVp52RROZ6zBK2AMxSc/bCXlr
+H6UrorlK9mN/9nsiwF+BkrawWNZGbmqsMTWsvDGyWQovZi3U+PGFee5fQ3ShkI4k
+3RKR7N7UDj2eMpM8SLp00EJ7uSQzG1pxXgJWFwJzsq9LhK1Ck1KBk7IIhEgzHaXy
+23DQOj/xXcNWANLvYj+1UJYhQ4C6nw==
+=NQYQ
+-----END PGP SIGNATURE-----
+
+--a8sldprk+5E/pDEv--
