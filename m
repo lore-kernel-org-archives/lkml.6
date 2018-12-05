@@ -2,135 +2,119 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0027FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B7CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C534C2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C534C2084C
+	by mail.kernel.org (Postfix) with ESMTP id 314112084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:29:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314112084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeLEM2l (ORCPT
+        id S1727840AbeLEM3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:28:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41392 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 07:29:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40842 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbeLEM2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:28:40 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1727809AbeLEM3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:29:13 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3676930B7B9F;
-        Wed,  5 Dec 2018 12:28:40 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DC0485C57E;
-        Wed,  5 Dec 2018 12:28:38 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 13:28:38 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     acme@kernel.org, jolsa@kernel.org,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf, tools: Support srccode output
-Message-ID: <20181205122838.GH2950@krava>
-References: <20181204001848.24769-1-andi@firstfloor.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181204001848.24769-1-andi@firstfloor.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 05 Dec 2018 12:28:40 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A6FB307D975;
+        Wed,  5 Dec 2018 12:29:11 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-117-65.ams2.redhat.com [10.36.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BC0A82719;
+        Wed,  5 Dec 2018 12:28:52 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        David Hildenbrand <david@redhat.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        David Airlie <airlied@linux.ie>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        James Morse <james.morse@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Tobias Klauser <tklauser@distanz.ch>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH RFC 0/7] mm: PG_reserved cleanups and documentation
+Date:   Wed,  5 Dec 2018 13:28:44 +0100
+Message-Id: <20181205122851.5891-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 05 Dec 2018 12:29:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 04:18:48PM -0800, Andi Kleen wrote:
-> From: Andi Kleen <ak@linux.intel.com>
-> 
-> When looking at PT or brstackinsn traces with perf script
-> it can be very useful to see the source code. This adds a simple
-> facility to print them with perf script, if the information
-> is available through dwarf
-> 
-> % perf record ...
-> % perf script -F insn,ip,sym,srccode
-> ...
-> 
->           4004c6 main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004c6 main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004cd main
-> 5               for (i = 0; i < 10000000; i++)
->            4004b3 main
-> 6                       v++;
-> 
-> % perf record -b ...
-> % perf script -F insn,ip,sym,srccode,brstackinsn
-> 
-> ...
->        main+22:
->         0000000000400543        insn: e8 ca ff ff ff            # PRED
-> |18                     f1();
->         f1:
->         0000000000400512        insn: 55
-> |10       {
->         0000000000400513        insn: 48 89 e5
->         0000000000400516        insn: b8 00 00 00 00
-> |11             f2();
->         000000000040051b        insn: e8 d6 ff ff ff            # PRED
->         f2:
->         00000000004004f6        insn: 55
-> |5        {
->         00000000004004f7        insn: 48 89 e5
->         00000000004004fa        insn: 8b 05 2c 0b 20 00
-> |6              c = a / b;
->         0000000000400500        insn: 8b 0d 2a 0b 20 00
->         0000000000400506        insn: 99
->         0000000000400507        insn: f7 f9
->         0000000000400509        insn: 89 05 29 0b 20 00
->         000000000040050f        insn: 90
-> |7        }
->         0000000000400510        insn: 5d
->         0000000000400511        insn: c3                        # PRED
->         f1+14:
->         0000000000400520        insn: b8 00 00 00 00
-> |12             f2();
->         0000000000400525        insn: e8 cc ff ff ff            # PRED
->         f2:
->         00000000004004f6        insn: 55
-> |5        {
->         00000000004004f7        insn: 48 89 e5
->         00000000004004fa        insn: 8b 05 2c 0b 20 00
-> |6              c = a / b;
-> 
-> Not supported for callchains currently, would need some
-> layout changes there.
+I was recently going over all users of PG_reserved. Short story: it is
+difficult and sometimes not really clear if setting/checking for
+PG_reserved is only a relict from the past. Easy to break things.
 
-nice, works nicely, especialy with --xed
+I had way more cleanups in this series inititally,
+but some architectures take PG_reserved as a way to apply a different
+caching strategy (for MMIO pages). So I decided to only include the most
+obvious changes (that are less likely to break something).
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+So let's see if the documentation update for PG_reserved I crafted
+actually covers most cases or if there is plenty more.
 
-I need to check, but is there a way to make this work with
-perf-with-kcore script? looks like we endup with kcore and
-won't allow vmlinux lookups for debug info
+Most notably, for device memory we can hopefully soon stop setting
+it PG_reserved
 
-thanks,
-jirka
+I only briefly tested this on s390x.
+
+David Hildenbrand (7):
+  agp: efficeon: no need to set PG_reserved on GATT tables
+  s390/vdso: don't clear PG_reserved
+  powerpc/vdso: don't clear PG_reserved
+  riscv/vdso: don't clear PG_reserved
+  m68k/mm: use __ClearPageReserved()
+  arm64: kexec: no need to ClearPageReserved()
+  mm: better document PG_reserved
+
+ arch/arm64/kernel/machine_kexec.c |  1 -
+ arch/m68k/mm/memory.c             |  2 +-
+ arch/powerpc/kernel/vdso.c        |  2 --
+ arch/riscv/kernel/vdso.c          |  1 -
+ arch/s390/kernel/vdso.c           |  2 --
+ drivers/char/agp/efficeon-agp.c   |  2 --
+ include/linux/page-flags.h        | 18 ++++++++++++++++--
+ 7 files changed, 17 insertions(+), 11 deletions(-)
+
+-- 
+2.17.2
+
