@@ -2,161 +2,94 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A82DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85A2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68FF42082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FF42082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A76A206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="FtPHwnlI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A76A206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeLEJdJ (ORCPT
+        id S1727526AbeLEJdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:33:09 -0500
-Received: from smtp.eu.citrix.com ([185.25.65.24]:9887 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEJdJ (ORCPT
+        Wed, 5 Dec 2018 04:33:50 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34054 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEJdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:33:09 -0500
-X-IronPort-AV: E=Sophos;i="5.56,317,1539648000"; 
-   d="scan'208";a="82813116"
-Date:   Wed, 5 Dec 2018 10:32:23 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Chao Gao <chao.gao@intel.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        <xen-devel@lists.xenproject.org>, Jan Beulich <jbeulich@suse.com>
-Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing a
- device
-Message-ID: <20181205093223.dncg4nq4dh6xmrhk@mac>
-References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
+        Wed, 5 Dec 2018 04:33:50 -0500
+Received: by mail-vs1-f68.google.com with SMTP id y27so11684321vsi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 01:33:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=su09Cbt6Xx31FBn6gNVpS4hjSbTzP/LQHocf1e1bTYk=;
+        b=FtPHwnlICdhqIqLaGZZ06xzVw6DsaK/bCsYJrCxuEf63UqjIoz4TtaysE0mIqQzExv
+         41MF9sG0nQH45I7vb9T7ig/eX1JHGyFZxO4QzHHnZvNJHWwoeOE2NLfrzVcsShDzUSKj
+         Ktc8BQ8jocrnE1ze3Nw1Dgel2FUfFQWymqFWjpid+IweClEln+jNzAQxBNhZ2sphJN9O
+         Ehhk9VA8Mwo5EjNoL7mfV+uUZB1TQJU2h0dUcVMchLVPTFw9RfhW9wnbaZCiW5NpKBf8
+         amyLRyY0LlQPN6Yot1j6OaCSYwzGSOqG8E8rfJEeGF4K/zDWf2EzODEXSz/vhqCXlxdw
+         GekA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=su09Cbt6Xx31FBn6gNVpS4hjSbTzP/LQHocf1e1bTYk=;
+        b=WlrXNjUGhweDsYzrHn+OHz/QLl0HBHoFvBiFZ/LY/ORPsZuK1Gt64LK2RQVlDLqWA2
+         DQYjMbRAwpn+Uycq8ce/4DFWihjrojfTpAlx6dNbsVIN+rvR69QOjcXdakVHjoLLbNlO
+         usXQREcMhGUuMuf09puN5jsrAtaW1yl73lBrs0IQy4DgOdPowi2pSJ+kC4CmrMIGdvBO
+         piCRZ1GmBkmt3MQHKvgFD1zNnwmZA0p6NU0qhZfbTMxIejWVeRuL/RLMrQhDTWfl5EIF
+         a7nw9v34geP3NUDE0RZLLTh0ceRKl26M73Xj9sBJ2h3nP4Qk3EBnlAeT6sFJktPQkrgy
+         MHag==
+X-Gm-Message-State: AA+aEWbantrlKho9wKyNBHzztTohb6a0FbaPQIwnCQD9Gh0wTe96Rlby
+        k8EzYroucVJ5TGn05eQalvXJrKy1QL3sqR2IbBgPWg==
+X-Google-Smtp-Source: AFSGD/WW9rQ8aqSud6GqyFGGaF+L9WmNWcUzXxNIyQM7/RtF2dOyFEDu/wrT+qT/anu8hAYn8BHtLMWB6hLsjVP3CtU=
+X-Received: by 2002:a67:5bdc:: with SMTP id w89mr10367707vsg.109.1544002428791;
+ Wed, 05 Dec 2018 01:33:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+References: <20181205074212.31104-1-jian-hong@endlessm.com>
+ <20181205074212.31104-2-jian-hong@endlessm.com> <6FAB7C47BCF00940BB0999A99BE3547A18420099@RTITMBSV02.realtek.com.tw>
+In-Reply-To: <6FAB7C47BCF00940BB0999A99BE3547A18420099@RTITMBSV02.realtek.com.tw>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Wed, 5 Dec 2018 17:33:12 +0800
+Message-ID: <CAPpJ_ed5qbhxUONdoACcQhH8jv1J_vvw4M-Vp4QwDsgQ1w8Vdw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ALSA: hda/realtek: ALC294 mic and headset-mode fixups
+ for ASUS X542UN
+To:     Kailang Yang <kailang@realtek.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, tiwai@suse.com,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Chris Chiu <chiu@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
-> I find some pass-thru devices don't work any more across guest reboot.
-> Assigning it to another guest also meets the same issue. And the only
-> way to make it work again is un-binding and binding it to pciback.
-> Someone reported this issue one year ago [1]. More detail also can be
-> found in [2].
-> 
-> The root-cause is Xen's internal MSI-X state isn't reset properly
-> during reboot or re-assignment. In the above case, Xen set maskall bit
-> to mask all MSI interrupts after it detected a potential security
-> issue. Even after device reset, Xen didn't reset its internal maskall
-> bit. As a result, maskall bit would be set again in next write to
-> MSI-X message control register.
-> 
-> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
-> internal state of a device, we employ it to fix this issue rather than
-> introducing another dedicated sub-hypercall.
-> 
-> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
-> the device's msix and pirq has been created. This limitation prevents
-> us calling this function when detaching a device from a guest during
-> guest shutdown. Thus it is called right before calling
-> PHYSDEVOPS_prepare_msix().
+Kailang <kailang@realtek.com> =E6=96=BC 2018=E5=B9=B412=E6=9C=885=E6=97=A5 =
+=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:36=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Jian-Hong,
+>
+> Could you test to change the model to ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC=
+?
+>
+> .chain_id =3D ALC256_FIXUP_ASUS_HEADSET_MODE  =3D=3D> change to ALC269_FI=
+XUP_HEADSET_MODE_NO_HP_MIC
 
-s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
-() at the end of the hypercall name since it's not a function.
+According to the comment
+https://patchwork.kernel.org/patch/10713087/#22360253 , should I try
+ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC on this model?
 
-I'm also wondering why the release can't be done when the device is
-detached from the guest (or the guest has been shut down). This makes
-me worry about the raciness of the attach/detach procedure: if there's
-a state where pciback assumes the device has been detached from the
-guest, but there are still pirqs bound, an attempt to attach to
-another guest in such state will fail.
-
-> [1]: https://lists.xenproject.org/archives/html/xen-devel/2017-09/
->      msg02520.html
-> [2]: https://lists.xen.org/archives/html/xen-devel/2018-11/msg01616.html
-> 
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
->  drivers/xen/xen-pciback/pci_stub.c | 49 ++++++++++++++++++++++++++++++++++++++
->  drivers/xen/xen-pciback/pciback.h  |  1 +
->  drivers/xen/xen-pciback/xenbus.c   | 10 ++++++++
->  3 files changed, 60 insertions(+)
-> 
-> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-> index 59661db..f8623d0 100644
-> --- a/drivers/xen/xen-pciback/pci_stub.c
-> +++ b/drivers/xen/xen-pciback/pci_stub.c
-> @@ -87,6 +87,55 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
->  	return psdev;
->  }
->  
-> +/*
-> + * Reset Xen internal MSI-X state by invoking PHYSDEVOP_{release, prepare}_msix.
-> + */
-> +int pcistub_msix_reset(struct pci_dev *dev)
-> +{
-> +#ifdef CONFIG_PCI_MSI
-> +	if (dev->msix_cap) {
-> +		struct physdev_pci_device ppdev = {
-> +			.seg = pci_domain_nr(dev->bus),
-> +			.bus = dev->bus->number,
-> +			.devfn = dev->devfn
-> +		};
-> +		int err;
-> +		u16 val;
-> +
-> +		/*
-> +		 * Do a write first to flush Xen's internal state to hardware
-> +		 * such that the following read can infer whether MSI-X maskall
-> +		 * bit is set by Xen.
-> +		 */
-> +		pci_read_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, &val);
-> +		pci_write_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, val);
-> +
-> +		pci_read_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, &val);
-> +		if (!(val & PCI_MSIX_FLAGS_MASKALL))
-> +			return 0;
-
-I would just perform a reset regardless of the maskall value, which
-would also allow you to skip the read/write dance that you do above.
-
-ATM we are only concerned about the maskall bit, but there's no reason
-why prepare/release couldn't do more stuff in the future.
-
-> +
-> +		pr_info("Reset MSI-X state for device %04x:%02x:%02x.%d\n",
-> +			ppdev.seg, ppdev.bus, PCI_SLOT(ppdev.devfn),
-> +			PCI_FUNC(ppdev.devfn));
-> +
-> +		err = HYPERVISOR_physdev_op(PHYSDEVOP_release_msix, &ppdev);
-> +		if (err) {
-> +			dev_warn(&dev->dev, "MSI-X release failed (%d)\n",
-> +				 err);
-
-This is a warn, while the message below is an err, any reason for
-the difference in log level?
-
-> +			return err;
-> +		}
-> +
-> +		err = HYPERVISOR_physdev_op(PHYSDEVOP_prepare_msix, &ppdev);
-> +		if (err) {
-> +			dev_err(&dev->dev, "MSI-X preparation failed (%d)\n",
-> +				err);
-> +			return err;
-
-Thanks, Roger.
+Jian-Hong Pan
