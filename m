@@ -2,283 +2,167 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A1EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B41C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A65820834
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F07520851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:04:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CrN9zrmW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D3INFZXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A65820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eepc9sIc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F07520851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbeLECBw (ORCPT
+        id S1726852AbeLECEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:01:52 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:38018 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbeLECBw (ORCPT
+        Tue, 4 Dec 2018 21:04:13 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37505 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeLECEM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:01:52 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9CD15602F4; Wed,  5 Dec 2018 02:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543975311;
-        bh=TvxMm7Sucx55ikDA538u6b6ED7efkicwLBxo8pQRcaM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CrN9zrmWbZjmiOiwt5EIZCLlelJSlhjiMUNzSPDjuBWbPMf26esPEWdDM11MC3XHs
-         OMjtHur0bEg2wwkLghbY6FfdnciF/TiaeoPnt5Hs1o60LqLtz5BGdD3sFfYaYbsme6
-         rAhJf8usk0kRSrt+Ffvqb8i/7BUFcLHXylL85pIU=
-Received: from [10.46.162.234] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 25055602F4;
-        Wed,  5 Dec 2018 02:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543975310;
-        bh=TvxMm7Sucx55ikDA538u6b6ED7efkicwLBxo8pQRcaM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=D3INFZXM1bSnM0aBs31u2AUdzyLZ5q5Zk+C0Z/7o4uH7rvNLVRVCv5MBIsQwL18H2
-         fE5dCU9nNx/9HSuFzYYL6+F3bOuzSmX4nnoGloShyBkTL9hWdE/hfwNPZxPoZ1h8L1
-         BnY9HNb/MFz68DErx3XNXcyCIEPRvHekhtZI4ACY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25055602F4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org, elder@linaro.org
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
- <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
- <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <9f2f7aed-0dd1-3cea-fe90-9de75ff657ed@codeaurora.org>
-Date:   Tue, 4 Dec 2018 18:01:49 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 4 Dec 2018 21:04:12 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5so9257385plr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:04:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i3JsgtrqAN5H4/62bquhrPpBfGUUSoPEdhvl1dbkYbs=;
+        b=eepc9sIcinu14ossbMKi6r5YOGzfTM3eRYX44Tmcrg+WP+3cog+CDlnsHvBF92H0Bv
+         teD19ZRIfdpYf8yGAd0ZcRf7H3jJyym+Bxprtk4Vf21KZhcFOhZkwBKr94o+NaEZDTCS
+         CTeIjO31zPInUobd4PhnZ25h/Z4WMldOfKbbQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i3JsgtrqAN5H4/62bquhrPpBfGUUSoPEdhvl1dbkYbs=;
+        b=rgKXwkb9CRNvkF74WUpwTy5q1+vvOQSuU2KJ9/AUKjsyOCiVr+BfPttCv3wb/S3PpD
+         5+tfUbk2i1ECEyUWlpEhw78sLkZj6yKxNcK9qtN8szVA/dm4syZg7Y0liYNOH6V4oI/3
+         Hgv9WzOYZEJKxtgMme/pv3nnxGlCQ8aUq/yzwOCC+X2u6ZKijGKkEjsaUaV5EAOIebig
+         1TEK3YRfLeuid+MVWviOKIbP0xEAhW67C8m00lXdNmHEBiUPCiM10LAynuiHiX9BpRzy
+         Di6/oSG2g+n8A74l3FKfvJXLYZal0kOMLjNegbS87x/ax5uWwIYK4tBiQAxes/P9w7d8
+         6W3A==
+X-Gm-Message-State: AA+aEWbCxLI208zDPNV4zyp3heY4YDkA3AWedn4+8TJNy2iV/AwmJwKg
+        e16qzuTWfrCjUsljis/D64OgB3Jvusk01NCF7C/REA==
+X-Google-Smtp-Source: AFSGD/XkSLlsQ2LyQJlYMf6he297+QTPtJacZ8h5UKZsc5Chi+WrL+4hsQ58t0vMNLCbflwAyopTZFDzg1MUY7WX3tc=
+X-Received: by 2002:a17:902:2904:: with SMTP id g4mr22170720plb.39.1543975451744;
+ Tue, 04 Dec 2018 18:04:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181111090341.120786-1-drinkcat@chromium.org>
+ <CANMq1KDxmRcWhtaJbrLHqx6yPGkNaK7WNYYf+iFjH1e8XdrwRg@mail.gmail.com> <b99dd00f-fe1c-1cac-8ee3-5b0c1af9a92e@suse.cz>
+In-Reply-To: <b99dd00f-fe1c-1cac-8ee3-5b0c1af9a92e@suse.cz>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Wed, 5 Dec 2018 10:04:00 +0800
+Message-ID: <CANMq1KDzKJqJwGsW3A90JY_0kgDtAMjOikT-3C9zQG01=3dibQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, hch@infradead.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Yong Wu <yong.wu@mediatek.com>, Tomasz Figa <tfiga@google.com>,
+        yingjoe.chen@mediatek.com, Hsin-Yi Wang <hsinyi@chromium.org>,
+        Daniel Kurtz <djkurtz@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the quick feedback!
-
-
-On 12/4/2018 11:24 AM, Stephen Boyd wrote:
-> Quoting David Dai (2018-12-03 19:50:13)
->> Add IPA clock support by extending the current clk rpmh driver to support
->> clocks that are managed by a different type of RPMh resource known as
->> Bus Clock Manager(BCM).
-> Yes, but why? Does the IPA driver need to set clk rates and that somehow
-> doesn't work as a bandwidth request?
+On Tue, Dec 4, 2018 at 10:35 PM Vlastimil Babka <vbabka@suse.cz> wrote:
 >
->> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->> ---
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> index 9f4fc77..42e2cd2 100644
->> --- a/drivers/clk/qcom/clk-rpmh.c
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -18,6 +18,32 @@
->>   #define CLK_RPMH_ARC_EN_OFFSET         0
->>   #define CLK_RPMH_VRM_EN_OFFSET         4
->>   
->> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
->> +#define BCM_TCS_CMD_VALID_SHIFT                29
->> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
->> +#define BCM_TCS_CMD_VOTE_SHIFT         0
->> +
->> +#define BCM_TCS_CMD(valid, vote) \
->> +       (BCM_TCS_CMD_COMMIT_MASK |\
-> Nitpick: Add space before the \ and align them all up on the right side
-> of the page.
-Ok.
+> On 12/4/18 10:37 AM, Nicolas Boichat wrote:
+> > On Sun, Nov 11, 2018 at 5:04 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> >>
+> >> This is a follow-up to the discussion in [1], to make sure that the page
+> >> tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
+> >> physical address space.
+> >>
+> >> [1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
+> >
+> > Hi everyone,
+> >
+> > Let's try to summarize here.
+> >
+> > First, we confirmed that this is a regression, and IOMMU errors happen
+> > on 4.19 and linux-next/master on MT8173 (elm, Acer Chromebook R13).
+> > The issue most likely starts from ad67f5a6545f ("arm64: replace
+> > ZONE_DMA with ZONE_DMA32"), i.e. 4.15, and presumably breaks a number
+> > of Mediatek platforms (and maybe others?).
+> >
+> > We have a few options here:
+> > 1. This series [2], that adds support for GFP_DMA32 slab caches,
+> > _without_ adding kmalloc caches (since there are no users of
+> > kmalloc(..., GFP_DMA32)). I think I've addressed all the comments on
+> > the 3 patches, and AFAICT this solution works fine.
+> > 2. genalloc. That works, but unless we preallocate 4MB for L2 tables
+> > (which is wasteful as we usually only need a handful of L2 tables),
+> > we'll need changes in the core (use GFP_ATOMIC) to allow allocating on
+> > demand, and as it stands we'd have no way to shrink the allocation.
+> > 3. page_frag [3]. That works fine, and the code is quite simple. One
+> > drawback is that fragments in partially freed pages cannot be reused
+> > (from limited experiments, I see that IOMMU L2 tables are rarely
+> > freed, so it's unlikely a whole page would get freed). But given the
+> > low number of L2 tables, maybe we can live with that.
+> >
+> > I think 2 is out. Any preference between 1 and 3? I think 1 makes
+> > better use of the memory, so that'd be my preference. But I'm probably
+> > missing something.
 >
->> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |\
->> +       ((cpu_to_le32(vote) &\
->> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
->> +
->> +/**
->> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
->> + * @unit: divisor used to convert Hz value to an RPMh msg
->> + * @width: multiplier used to convert Hz value to an RPMh msg
->> + * @vcd: virtual clock domain that this bcm belongs to
->> + * @reserved: reserved to pad the struct
->> + */
->> +
-> Nitpick: Please remove the newline between comment and struct.
-Ok.
->> +struct bcm_db {
->> +       u32 unit;
->> +       u16 width;
->> +       u8 vcd;
->> +       u8 reserved;
-> These would need __le32 and __le16 for the byte swap.
-Ok.
->> +};
->> +
->>   /**
->>    * struct clk_rpmh - individual rpmh clock data structure
->>    * @hw:                        handle between common and hardware-specific interfaces
->> @@ -210,6 +249,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->>          .recalc_rate    = clk_rpmh_recalc_rate,
->>   };
->>   
->> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       u32 cmd_state;
->> +       int ret;
->> +
->> +       cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
->> +
->> +       if (c->last_sent_aggr_state == cmd_state)
->> +               return 0;
->> +
->> +       cmd.addr = c->res_addr;
->> +       cmd.data = BCM_TCS_CMD(enable, cmd_state);
->> +
->> +       ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
->> +       if (ret) {
->> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
->> +                       c->res_name, ret);
->> +               return ret;
->> +       }
->> +
->> +       c->last_sent_aggr_state = cmd_state;
->> +
->> +       return 0;
->> +}
->> +
->> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret = 0;
-> Don't initialize variables and then reassign them right after.
-Ok.
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +       ret = clk_rpmh_bcm_send_cmd(c, true);
->> +       mutex_unlock(&rpmh_clk_lock);
->> +
->> +       return ret;
->> +};
->> +
->> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +       clk_rpmh_bcm_send_cmd(c, false);
->> +       mutex_unlock(&rpmh_clk_lock);
->> +};
->> +
->> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                unsigned long parent_rate)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       c->aggr_state = rate / (c->aux_data.unit * 1000);
->> +
->> +       if (clk_hw_is_prepared(hw)) {
-> Why do we need to check is_prepared? Add a comment indicating we can't
-> send the request when the clk is disabled?
+> I would prefer 1 as well. IIRC you already confirmed that alignment
+> requirements are not broken for custom kmem caches even in presence of
+> SLUB debug options (and I would say it's a bug to be fixed if they
+> weren't).
 
-Since the BCM only takes in numerical values as part of its msg (as 
-opposed to enable or disable of some sort), this is so that we don't 
-actually enable the clock if it hasn't been prepared yet. Sending a 
-value of zero vs a non-zero would be the equivalent turning the clocks 
-on and off and the behavior I'm trying to emulate here is to only change 
-the rate in the system if the clock is on.
+> I just asked (and didn't get a reply I think) about your
+> ability to handle the GFP_ATOMIC allocation failures. They should be
+> rare when only single page allocations are needed for the kmem cache.
+> But in case they are not an option, then preallocating would be needed,
+> thus probably option 2.
+
+Oh, sorry, I missed your question.
+
+I don't have a full answer, but:
+- The allocations themselves are rare (I count a few 10s of L2 tables
+at most on my system, I assume we rarely have >100), and yes, we only
+need a single page, so the failures should be exceptional.
+- My change is probably not making anything worse: I assume that even
+with the current approach using GFP_DMA slab caches on older kernels,
+failures could potentially happen. I don't think we've seen those. If
+we are really concerned about this, maybe we'd need to modify
+mtk_iommu_map to not hold a spinlock (if that's possible), so we don't
+need to use GFP_ATOMIC. I suggest we just keep an eye on such issues,
+and address them if they show up (we can even revisit genalloc at that
+stage).
+
+Anyway, I'll clean up patches for 1 (mostly commit message changes
+based on the comments in the threads) and resend.
+
+Thanks,
+
+> > [2] https://patchwork.kernel.org/cover/10677529/, 3 patches
+> > [3] https://patchwork.codeaurora.org/patch/671639/
+> >
+> > Thanks,
+> >
+> > Nicolas
+> >
 >
->> +               mutex_lock(&rpmh_clk_lock);
->> +               clk_rpmh_bcm_send_cmd(c, true);
-> This function is always inside mutex_lock()/unlock() pair, so push the
-> lock into the function?
-Makes sense, done.
->
->> +               mutex_unlock(&rpmh_clk_lock);
->> +       }
->> +
->> +       return 0;
->> +};
->> +
->> +static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                               unsigned long *parent_rate)
->> +{
->> +       return rate;
->> +}
->> +
->> +static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
->> +                                       unsigned long prate)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       return c->aggr_state * c->aux_data.unit * 1000;
-> What is 1000 for?
-The unit is in order of Khz, I can do the conversion for KHz to Hz the 
-time when we fetch the aux data.
->
->> +}
->> +
->> +static const struct clk_ops clk_rpmh_bcm_ops = {
->> +       .prepare        = clk_rpmh_bcm_prepare,
->> +       .unprepare      = clk_rpmh_bcm_unprepare,
->> +       .set_rate       = clk_rpmh_bcm_set_rate,
->> +       .round_rate     = clk_rpmh_round_rate,
->> +       .recalc_rate    = clk_rpmh_bcm_recalc_rate,
->> +};
->> +
->>   /* Resource name must match resource id present in cmd-db. */
->>   DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
->>   DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
->> @@ -275,6 +402,21 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->>                                  rpmh_clk->res_name);
->>                          return -ENODEV;
->>                  }
-> Nitpick: Please add newline here.
-Ok.
->> +               aux_data_len = cmd_db_read_aux_data_len(rpmh_clk->res_name);
->> +               if (aux_data_len == sizeof(struct bcm_db)) {
->> +                       ret = cmd_db_read_aux_data(rpmh_clk->res_name,
->> +                                                  (u8 *)&rpmh_clk->aux_data,
-> Is the cast necessary? And I would just pick out the data you need from
-> the aux_data instead of storing it forever (with the padding) in the
-> rpmh_clk structure.
-
-Sounds reasonable, the only thing we need from the aux_data is just the 
-unit in this case.
-
->> +                                                  sizeof(struct bcm_db));
->> +                       if (ret < 0) {
->> +                               dev_err(&pdev->dev, "aux data read failure for %s (%d)\n",
->> +                               rpmh_clk->res_name, ret);
->> +                               return ret;
->> +                       }
->> +                       rpmh_clk->aux_data.unit =
->> +                                       le32_to_cpu(rpmh_clk->aux_data.unit);
->> +                       rpmh_clk->aux_data.width =
->> +                                       le16_to_cpu(rpmh_clk->aux_data.width);
->> +               }
-> Nitpick: Newline here too.
-Ok.
->>                  rpmh_clk->res_addr += res_addr;
->>                  rpmh_clk->dev = &pdev->dev;
->>   
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
