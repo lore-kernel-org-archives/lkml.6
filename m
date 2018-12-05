@@ -2,166 +2,107 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A48C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0990C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B912082D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B368C214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:27:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QHCI2yVL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B912082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4lz65tY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B368C214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728195AbeLET1e (ORCPT
+        id S1728403AbeLET1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:27:34 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:41830 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLET1d (ORCPT
+        Wed, 5 Dec 2018 14:27:42 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50496 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbeLET1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:27:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LFJn1UEgu7qruDBYY7f07dl0/ndfGC7Ev9Idmq2934Q=; b=QHCI2yVL9fFKnAMHLbLj5pD1N4
-        tX6wczw5yScz1gDbv2JjSABo0hoyabsgZWxemz4dm5NF+nVjS3x4Kc5DPi7sNHPpejBYtCfRyK1xx
-        0Dxzi1SXKhcroOuAnEvbnL28jG1zFOBJBqJ94mraeuAETFk8moDaGWEpXrZE0DiMGzBjDnz8Af6Th
-        Y7VYlT5OK3yW+onb7MZMlTwLCESeCwqjBpEFDQPJUW4Q8lV5CXNxu2+pkCEODP9SvQs5y2htkCPUD
-        wlfvYtS03tlANQxGg8SJ2aSsMCQz4JhKlhje3sF1KXKkuMtlEJZrZ5GxMi5S3oCU64Z//TiYU3JLg
-        3LmmZu8g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUcpH-0007eE-Tk; Wed, 05 Dec 2018 19:27:16 +0000
-Subject: Re: [PATCH] x86/fault: Print "SUPERVISOR" and "READ" when decoding
- #PF oops
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-References: <20181205163624.1842-1-sean.j.christopherson@intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fcffaedd-5057-19ca-52fc-76d35cae7535@infradead.org>
-Date:   Wed, 5 Dec 2018 11:27:13 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 5 Dec 2018 14:27:41 -0500
+Received: by mail-it1-f193.google.com with SMTP id z7so23243746iti.0;
+        Wed, 05 Dec 2018 11:27:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oLotLyKcPlEXHkBT7sWl5hhytgzI2XZBOs+20YWdxLs=;
+        b=i4lz65tYDPpQ/de04sFBKCEbhj4/Ik0tpaHEnVM8r5wnImRVWnbdkZPuObohoatAAl
+         XaC+pKn3VyFbo3i/xIwAn0BZgBvF1hg+OF5zuknTt9Wga7UUTa9zWVc++na+WZ/meXs+
+         L6j3xu/5vB4W2EBSgsMPXc+xkj3RGrpGOwSwtT6i7JB036ti3Q5QdLHpwOqHTG3Wc6it
+         aV+AtIgdbWnYDo+XMBUnW9nz38Nh4JMZWaOpq80mVL3ZXsSkl3QNpH6Tj0K3S6vea8E6
+         FLEf3IW7wBLSKUCEPy07+5dxkDaQ9GDo55+Vu8rZwGwy/YRcpJZ3MRrJUiRrm/K4skKH
+         0xNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oLotLyKcPlEXHkBT7sWl5hhytgzI2XZBOs+20YWdxLs=;
+        b=OncAyDnhPXsfXGj9T9mWrt7izMkz2txF9qOc4k3SgSLDuE6ZGYpBwdCN/peotFFOsA
+         Hli969cTZKMb9A/g/FAd15izUr/3/kSWiZmQeY50SK4slZg79B2GVeVTCShbEqiCvAur
+         VR9AxsAJGEzfbPsIkUKbAR/BofKYEXEd+uhf1LyGwq2M4oqtxX3P0Cq7LOhsqWPD/iVA
+         Zq+RfuvAD0qM2hY+5YwW7CCQ0SAIwvePh3jRjDJ6u4FHqkuFsJzirfMy0/UNxzwRnG1z
+         tEMg3Blfdx/pIIKzXwj7U8bUD5BBPYtrlRPnB2480pglUW773oDvgMMlfbEVu2/mz8A/
+         03Jw==
+X-Gm-Message-State: AA+aEWbshYjmj6GiSLCKiTRe7vuCDn7PMCWMSSy90n5rPzw8Ieg+JSMx
+        Vz9PhnndYZgjmODJIQy5ba4wklFj39Gr5ncf2zo=
+X-Google-Smtp-Source: AFSGD/UIJN+bcf9F2k9hQ3j3mL3k6mDpjnUTJy7RopY0RxbEe5cJbzBNNmABnoMGt6UmjG9KMlwzRrgMKdPrrDKdkiY=
+X-Received: by 2002:a02:a906:: with SMTP id n6mr22607991jam.123.1544038060675;
+ Wed, 05 Dec 2018 11:27:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181205163624.1842-1-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181109000800.15431-1-jprvita@gmail.com> <83CA40B2-1AF3-49FA-9F94-C84A3C916583@holtmann.org>
+ <CA+A7VXXfdyLWMpNaEzUzDe6PiktOKb5oJrufYrGeTyXyXChQfw@mail.gmail.com>
+In-Reply-To: <CA+A7VXXfdyLWMpNaEzUzDe6PiktOKb5oJrufYrGeTyXyXChQfw@mail.gmail.com>
+From:   =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date:   Wed, 5 Dec 2018 11:27:04 -0800
+Message-ID: <CA+A7VXX2fA5gC1_-nwFDswvB+we3R69ZTNiGDmrO+sftRdxxpg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel WiFi
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 8:36 AM, Sean Christopherson wrote:
-> ...instead of manually handling the case where error_code=0, e.g. to
-> display "[SUPERVISOR] [READ]" instead of "normal kernel read fault".
-> 
-> This makes the zero case consistent with all other messages and also
-> provides additional information for other error code combinations,
-> e.g. error_code==1 will display "[PROT] [SUPERVISOR] [READ]" instead
-> of simply "[PROT]".
-> 
-> Print unique names for the negative cases as opposed to e.g. "[!USER]"
-> to avoid mixups due to users missing a single "!" character, and to be
-> more concise for the !INSTR && !WRITE case.
-> 
-> Print "SUPERVISOR" in favor of "KERNEL" to reduce the likelihood that
-> the message is misinterpreted as a generic kernel/software error and
-> to be consistent with the SDM's nomenclature.
-> 
-> An alternative to passing a negated error code to err_str_append() would
-> be to expand err_str_append() to take a second string for the negative
-> test, but that approach complicates handling the "[READ]" case, which
-> looks for !INSTR && !WRITE, e.g. it would require an extra call to
-> err_str_append() and logic in err_str_append() to allow null messages
-> for both the positive and negative tests.  Printing "[INSTR] [READ]"
-> wouldn't be the end of the world, but a little bit of trickery in the
-> kernel is a relatively small price to pay in exchange for the ability
-> to unequivocally know the access type by reading a single word.
-> 
-> Now that all components of the message use the [<code>] format,
-> explicitly state that it's the error *code* that's being printed and
-> group the err_str_append() calls by type so that the resulting print
-> messages are consistent, e.g. the deciphered codes will always be:
-> 
->     [PROT] [USER|SUPERVISOR] [WRITE|INSTR|READ] [RSDV] [PK]
+Hello Marcel,
 
-                                                   RSVD
-but it's correct in the patch.
-BTW, what does PK mean?
+On Fri, Nov 9, 2018 at 4:36 PM Jo=C3=A3o Paulo Rechi Vita <jprvita@gmail.co=
+m> wrote:
+>
+> Hello Marcel,
+>
+> On Thu, Nov 8, 2018 at 11:49 PM Marcel Holtmann <marcel@holtmann.org> wro=
+te:
+> >
+> > our hardware teams from the Bluetooth and WiFi side really need to look=
+ at this.
 
-thanks.
+Were you able to get attention from the hardware teams with the logs
+I've provided? Are there any news or an idea of when / if we can
+expect this to be fixed in firmware? If not, do you have suggestions
+for an alternative solution?
 
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/mm/fault.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 2ff25ad33233..0b4ce5d2b461 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -609,7 +609,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
->   */
->  static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
->  {
-> -	if (error_code & mask) {
-> +	if ((error_code & mask) == mask) {
->  		if (buf[0])
->  			strcat(buf, " ");
->  		strcat(buf, txt);
-> @@ -655,13 +655,16 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
->  	 * zero delimiter must fit into err_txt[].
->  	 */
->  	err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
-> -	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
->  	err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
-> -	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
-> +	err_str_append(~error_code, err_txt, X86_PF_USER, "[SUPERVISOR]");
-> +	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
->  	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
-> +	err_str_append(~error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR,
-> +							  "[READ]");
-> +	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
->  	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
->  
-> -	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-> +	pr_alert("#PF error code: %s\n", err_txt);
->  
->  	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
->  		struct desc_ptr idt, gdt;
-> 
+Thanks,
 
-
--- 
-~Randy
+--
+Jo=C3=A3o Paulo Rechi Vita
+http://about.me/jprvita
