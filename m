@@ -2,125 +2,119 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2E0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049F9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF3EF206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:21:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3EF206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BA5842082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:22:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkJICTC7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5842082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeLEKVn (ORCPT
+        id S1727598AbeLEKW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:21:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbeLEKVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:21:43 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E5E5B8553D;
-        Wed,  5 Dec 2018 10:21:42 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B4BCB19C7D;
-        Wed,  5 Dec 2018 10:21:41 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 11:21:40 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf vendor events intel: Fix Load_Miss_Real_Latency on
- SKL/SKX
-Message-ID: <20181205102140.GC2950@krava>
-References: <20181120050635.4215-1-andi@firstfloor.org>
+        Wed, 5 Dec 2018 05:22:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47020 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeLEKWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:22:55 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so14278950lfc.13;
+        Wed, 05 Dec 2018 02:22:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1l/0ojyAiKky3zgZMFV1e488sd/4sXLGN9k23hLWbio=;
+        b=ZkJICTC7+KgKFKtXHXOAGaorjXgnOYlL+WadRCXwuohBEH/QxMbQcHFO0+Ihw7HTiE
+         Y0ISX+vL0k+b2Ge+8SRt2/Y8yR2iZQ3RP2fF80K1F1wZfCQjyBqO+X9LYUqc7gx53s47
+         SNo3kP3wA7J8FNoFjxLNNmEjWmjK6KjZd6q4llnqQgRtBLZ+0IugNaw+cq5C2ap7oFNh
+         xidVM/HEu2YvOA/OdtQNAzPuav1iwSiBFnd/6M8Cc9IT2NidZH4Rp6ZjX7/fHHhrmMN4
+         I18qRu4H6c991rfkTDMTYWESgJQQyyPBm1YxUm/kckUaa45NFS7k+Ybupc5HcTtbVzPV
+         OBuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=1l/0ojyAiKky3zgZMFV1e488sd/4sXLGN9k23hLWbio=;
+        b=C793LCjHubdJyH+1NIeai1xmN9I0k37Ap4TsgFgnbiV9R0+SDzrT10Um8ibb8OsKgM
+         nMH8pvtI0OhW53KXH27zd3CqEVAy5fl0ST/tmbocCVJPS4JZeK+yfLdswNnwuSx4HII1
+         hQVIVHAWaZAkq5gDswh41EjyyGX4W7Tg1SEUDLm7RtF8EFfxkWh8G5bD9KKJsM+Pxv2g
+         ATUkhQaYnUV7p6zoAUvSUbXJD+Kuw3LXFZQpRRFUc6TG6iTftENtNDJhxftyJj/Sig/C
+         dH0cckxiz7A7qHkkzvZ4OUHedca00sceavk/DXOqD6DAGkEvxNu/NJgecqARNbSmnmNZ
+         yRjA==
+X-Gm-Message-State: AA+aEWYzwkSr+4Un0FHs+F382Uj6SLHW98I64/9qcBgWFptSVXbX3qYl
+        SHKZzAU+C1OC4ouqxCs04pb6YsNe
+X-Google-Smtp-Source: AFSGD/VurSiUvT9h9EM10+r2S9CIc7UoKszfKgQKxbnwaPCM35Y3glEaw4xrUoUTdepRs1Mo3R8qng==
+X-Received: by 2002:a19:914b:: with SMTP id y11mr13132212lfj.98.1544005373159;
+        Wed, 05 Dec 2018 02:22:53 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id z64sm3422200lff.39.2018.12.05.02.22.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 02:22:52 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@xi.terra>)
+        id 1gUUKU-0005WJ-TD; Wed, 05 Dec 2018 11:22:54 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>,
+        Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] gnss: sirf: fix activation retry handling
+Date:   Wed,  5 Dec 2018 11:21:49 +0100
+Message-Id: <20181205102149.21167-1-johan@kernel.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120050635.4215-1-andi@firstfloor.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 05 Dec 2018 10:21:43 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:06:35PM -0800, Andi Kleen wrote:
-> From: Andi Kleen <ak@linux.intel.com>
-> 
-> Fix incorrect event names for the Load_Miss_Real_Latency metric for
-> Skylake and Skylake Server.
-> 
-> Fixes https://github.com/andikleen/pmu-tools/issues/158
+Fix activation helper which would return -ETIMEDOUT even if the last
+retry attempt was successful.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Also change the semantics of the retries variable so that it actually
+holds the number of retries (rather than tries).
 
-thanks,
-jirka
+Fixes: d2efbbd18b1e ("gnss: add driver for sirfstar-based receivers")
+Cc: stable <stable@vger.kernel.org>	# 4.19
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/gnss/sirf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> Before:
-> 
-> % perf stat -M Load_Miss_Real_Latency true
-> event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
->                                   \___ parser error
-> 
->  Usage: perf stat [<options>] [<command>]
-> 
->     -M, --metrics <metric/metric group list>
->                           monitor specified metrics or metric groups (separated by ,)
-> 
-> After:
-> 
-> % perf stat -M Load_Miss_Real_Latency true
-> 
->  Performance counter stats for 'true':
-> 
->            279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
->              4,784      mem_load_uops_retired.l1_miss
->             15,188      mem_load_uops_retired.hit_lfb
-> 
->        0.000899640 seconds time elapsed
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> ---
->  tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
->  tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-> index 36c903faed0b..71e9737f4614 100644
-> --- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-> +++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-> @@ -73,7 +73,7 @@
->      },
->      {
->          "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
-> -        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-> +        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
->          "MetricGroup": "Memory_Bound;Memory_Lat",
->          "MetricName": "Load_Miss_Real_Latency"
->      },
-> diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-> index 36c903faed0b..71e9737f4614 100644
-> --- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-> +++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-> @@ -73,7 +73,7 @@
->      },
->      {
->          "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
-> -        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-> +        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
->          "MetricGroup": "Memory_Bound;Memory_Lat",
->          "MetricName": "Load_Miss_Real_Latency"
->      },
-> -- 
-> 2.17.2
-> 
+diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+index 71d014edd167..2c22836d3ffd 100644
+--- a/drivers/gnss/sirf.c
++++ b/drivers/gnss/sirf.c
+@@ -168,7 +168,7 @@ static int sirf_set_active(struct sirf_data *data, bool active)
+ 	else
+ 		timeout = SIRF_HIBERNATE_TIMEOUT;
+ 
+-	while (retries-- > 0) {
++	do {
+ 		sirf_pulse_on_off(data);
+ 		ret = sirf_wait_for_power_state(data, active, timeout);
+ 		if (ret < 0) {
+@@ -179,9 +179,9 @@ static int sirf_set_active(struct sirf_data *data, bool active)
+ 		}
+ 
+ 		break;
+-	}
++	} while (retries--);
+ 
+-	if (retries == 0)
++	if (retries < 0)
+ 		return -ETIMEDOUT;
+ 
+ 	return 0;
+-- 
+2.19.2
+
