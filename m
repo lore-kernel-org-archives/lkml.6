@@ -2,352 +2,150 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC8BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05509C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B63320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:06:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuL2qdnE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B63320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C6AC02082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AC02082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeLEOG6 (ORCPT
+        id S1727531AbeLEOIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:06:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEOG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:06:57 -0500
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE212087F;
-        Wed,  5 Dec 2018 14:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544018816;
-        bh=qyYD9nSwLer4Uz87oUIOgQIAIclr96yNjXhXskrf75k=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LuL2qdnECboiMVoxi0gkKg4Y5leqvVyIuSGDqOULwQSa17sWGKEYAY6iHnwpbgTn+
-         CgDebYdEWRT6p3mWK77jgdut+TYjtrnSo5v1ejP+2yc+wsOFK7Qd/si1pOHUQz26gO
-         BbJhgKqArbwbfOdd4e6JbxfDyDOKs0VkcaGHjpBE=
-Received: by mail-lj1-f172.google.com with SMTP id e5-v6so18457698lja.4;
-        Wed, 05 Dec 2018 06:06:55 -0800 (PST)
-X-Gm-Message-State: AA+aEWZr0t9xt9Z87y8AugmxyYGEEjMb+7d2yRxaWPsPvHUVMRJa6nH6
-        q4wrRe16jf9sa2JU36f0HORsiHO67Xbw5BzeAh4=
-X-Google-Smtp-Source: AFSGD/XWzW66RRyUKV9tYJD5ySQMIUjJxTjzdYfF87BgIYchP/GSFSnlNHUrEw5gkZQpee6ZxWKjPunbhNfmi/jBqJk=
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr17640562lji.60.1544018813993;
- Wed, 05 Dec 2018 06:06:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20181204194025.2719-1-linux.amoon@gmail.com>
-In-Reply-To: <20181204194025.2719-1-linux.amoon@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 5 Dec 2018 15:06:42 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcT-x0JWVw2CaxHzSthxbp3sDRcsa4Nc5gHYqUy98b_yw@mail.gmail.com>
-Message-ID: <CAJKOXPcT-x0JWVw2CaxHzSthxbp3sDRcsa4Nc5gHYqUy98b_yw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-To:     linux.amoon@gmail.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 09:08:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726918AbeLEOIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:08:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BFDE3ACD9;
+        Wed,  5 Dec 2018 14:08:17 +0000 (UTC)
+Date:   Wed, 05 Dec 2018 15:08:16 +0100
+Message-ID: <s5htvjst6b3.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Alexander Kappner <agk@godking.net>
+Cc:     Jim.Qu@amd.com, bhelgaas@google.com, guneshwor.o.singh@intel.com,
+        perex@perex.cz, hdegoede@redhat.com, lukas@wunner.de,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [snd_hda_intel] snd_hda_intel causes high CPU lockup and system instability if mic disabled in BIOS on Lenovo P50
+In-Reply-To: <alpine.DEB.2.11.1812011117340.26587@REDDOT>
+References: <alpine.DEB.2.11.1811251505140.20766@REDDOT>
+        <s5hpnus6yb5.wl-tiwai@suse.de>
+        <alpine.DEB.2.11.1811262126040.2578@REDDOT>
+        <s5h8t1ey7tn.wl-tiwai@suse.de>
+        <alpine.DEB.2.11.1812011117340.26587@REDDOT>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 at 20:40, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Add suspend-to-mem node to regulator core to be enabled or disabled
-> during system suspend and also support changing the regulator operating
-> mode during runtime and when the system enter sleep mode.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> Tested on Odroid U3+
-> ---
->  .../boot/dts/exynos4412-odroid-common.dtsi    | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 2caa3132f34e..837713a2ec3b 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -285,6 +285,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
+On Sat, 01 Dec 2018 20:33:16 +0100,
+Alexander Kappner wrote:
+> 
+> On Tue, 27 Nov 2018, Takashi Iwai wrote:
+> 
+> > On Tue, 27 Nov 2018 06:34:02 +0100,
+> > Alexander Kappner wrote:
+> >>
+> >>
+> >>
+> >>
+> >> On Mon, 26 Nov 2018, Takashi Iwai wrote:
+> >>
+> >>> On Mon, 26 Nov 2018 00:17:15 +0100,
+> >>> Alexander Kappner wrote:
+> >>>>
+> >>>> My Lenovo P50 laptop has a BIOS option to disable the microphone. When
+> >>>> this option gets chosen, the snd_hda_intel driver causes high CPU load
+> >>>> on a single kworker thread, spinning on "process_unsol_events", and
+> >>>> system
+> >>>> instability. This behavior occurs from the time that the snd_hda_intel
+> >>>> module is loaded, irrespective of whether anything is attempting to access
+> >>>> the mic. The sound output still works.
+> >>>>
+> >>>> When in this state, the module cannot be removed cleanly; attempting to
+> >>>> remove it (even without rmmod -f) triggers an oops.
+> >>>>
+> >>>> I have attached two exemplary dmesg outputs. Strangely enough, the exact
+> >>>> location of the oops varies, but further up the call chain, I always see
+> >>>> process_unsol_events.
+> >>>>
+> >>>> When the mic is not disabled in the BIOS, the module works stable,
+> >>>> regardless whether or not the mic is muted in ALSA.
+> >>>>
+> >>>> I wasn't able to pinpoint the root cause. Any pointers on where to
+> >>>> start? Much appreciated.
+> >>>
+> >>> Could you load snd-hda-intel driver with probe_only=1 option, and give
+> >>> alsa-info.sh output (run it with --no-upload option)?  This should
+> >>> leave only the codec probing without configuring, so we can see the
+> >>> codec widget contents and check the emulator.
+> >>>
+> >>>
+> >>> thanks,
+> >>>
+> >>> Takashi
+> >>>
+> >>
+> >> Hi Takashi,
+> >>
+> >> thank you for looking into this. Please see quoted below the output of
+> >> alsa-info.sh (after "modprobe snd_hda_intel probe_only=1").
+> >
+> > This is the state where BIOS disabled the mic, right?
+> > It seems that BIOS doesn't change the pin configuration.  The pin NID
+> > 0x18 and 0x19 still show up as the mic jack and dock mic jack, as well
+> > as the built-in mic on NID 0x12.  And I couldn't see anything wrong in
+> > the emulator with this input.
+> >
+> > When BIOS disables the mic, how is supposed?  Does it disable all
+> > mics, including built-in one?
+> >
+> > Could you check alsa-info.sh outputs on both BIOS mic disable and
+> > enabled (but keep probe_only=1 option in both cases)?
+> >
+> > Also alsa-info.sh outputs on both cases without probe_only=1 would be
+> > helpful, too.
+> >
+> >
+> > thanks,
+> >
+> > Takashi
+> >
+> Hi Takashi,
+> 
+> as requestd, please see attached four files, reflecting each
+> combination of probe_only and mic enabled/disabled. To answer your
+> question -- yes, the initial file I had sent reflected the mic
+> disabled state.
+> 
+> The BIOS option definitely disables the internal microphone. I could
+> not test whether it would also disable other microphones
+> (e.g. externally connected) since I do not have an external mic, but I
+> will find out.
 
-Driver does not support suspend_enable so this will be noop. We could
-add this for DT-correctness (and full description of HW) but then I
-need explanation why this regulator has to stay on during suspend.
+Hrm, that's strange.  The mic_enabled_default.txt shows "Mic Jack"
+false while the mic_disabled_default.txt shows "Mic Jack" true.
+It sounds like other way round.  Could you confirm this behavior?
 
->                         };
->
->                         ldo3_reg: LDO3 {
-> @@ -292,6 +295,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
+In anyway, there seems no difference in the pin configs or such
+between BIOS mic enable/disable.  So this shouldn't be the cause.
 
-The same but with suspend_disable.
+And I noticed that you're testing 4.19-rc4.  Could you test with 4.19
+final or 4.19.y stable, at least?
 
-I am not saying that these are wrong but I would be happy to see
-explanations why you chosen these particular properties.
 
->                         };
->
->                         ldo4_reg: LDO4 {
-> @@ -299,6 +305,9 @@
->                                 regulator-min-microvolt = <2800000>;
->                                 regulator-max-microvolt = <2800000>;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo5_reg: LDO5 {
-> @@ -307,6 +316,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo6_reg: LDO6 {
-> @@ -314,6 +326,9 @@
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo7_reg: LDO7 {
-> @@ -321,18 +336,27 @@
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo8_reg: LDO8 {
->                                 regulator-name = "VDD10_HDMI_1.0V";
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo10_reg: LDO10 {
->                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo11_reg: LDO11 {
-> @@ -340,6 +364,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo12_reg: LDO12 {
-> @@ -348,6 +375,9 @@
->                                 regulator-max-microvolt = <3300000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo13_reg: LDO13 {
-> @@ -356,6 +386,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo14_reg: LDO14 {
-> @@ -364,6 +397,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo15_reg: LDO15 {
-> @@ -372,6 +408,9 @@
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo16_reg: LDO16 {
-> @@ -380,6 +419,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo20_reg: LDO20 {
-> @@ -387,6 +429,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo21_reg: LDO21 {
-> @@ -394,6 +439,9 @@
->                                 regulator-min-microvolt = <2800000>;
->                                 regulator-max-microvolt = <2800000>;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
+thanks,
 
-That's unusual setting... enabled in suspend but not necessarily
-during work (no always-on).
-
-> +                               };
->                         };
->
->                         ldo22_reg: LDO22 {
-> @@ -411,6 +459,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck1_reg: BUCK1 {
-> @@ -419,6 +470,9 @@
->                                 regulator-max-microvolt = <1100000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-
-This is seriously wrong so I have doubts whether you tested the
-changes or you know what is happening with them. If you turn off
-memory bus regulator off, how the memory will work in
-Suspend-to-Memory mode?
-
->                         };
->
->                         buck2_reg: BUCK2 {
-> @@ -427,6 +481,9 @@
->                                 regulator-max-microvolt = <1350000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         buck3_reg: BUCK3 {
-> @@ -435,6 +492,9 @@
->                                 regulator-max-microvolt = <1050000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-
-Looks suspicious as well.
-
-Best regards,
-Krzysztof
-
-> +                               };
->                         };
->
->                         buck4_reg: BUCK4 {
-> @@ -442,6 +502,9 @@
->                                 regulator-min-microvolt = <900000>;
->                                 regulator-max-microvolt = <1100000>;
->                                 regulator-microvolt-offset = <50000>;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck5_reg: BUCK5 {
-> @@ -450,6 +513,9 @@
->                                 regulator-max-microvolt = <1200000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck6_reg: BUCK6 {
-> @@ -458,6 +524,9 @@
->                                 regulator-max-microvolt = <1350000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck7_reg: BUCK7 {
-> @@ -465,6 +534,9 @@
->                                 regulator-min-microvolt = <2000000>;
->                                 regulator-max-microvolt = <2000000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck8_reg: BUCK8 {
-> --
-> 2.19.2
->
+Takashi
