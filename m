@@ -2,128 +2,94 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60204C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AD2C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3F3206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:02:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3F3206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E768D2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iP5l4oLH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E768D2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeLEPCd (ORCPT
+        id S1727936AbeLEPDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:02:33 -0500
-Received: from foss.arm.com ([217.140.101.70]:56350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbeLEPCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:02:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7764180D;
-        Wed,  5 Dec 2018 07:02:32 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 474343F5AF;
-        Wed,  5 Dec 2018 07:02:32 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 07DF41AE0BC5; Wed,  5 Dec 2018 15:02:52 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 15:02:52 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        vladimir.murzin@arm.com, Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH v2 1/7] arm64: capabilities: Merge entries for
- ARM64_WORKAROUND_CLEAN_CACHE
-Message-ID: <20181205150252.GB16171@arm.com>
-References: <1543598286-2663-1-git-send-email-suzuki.poulose@arm.com>
- <1543598286-2663-2-git-send-email-suzuki.poulose@arm.com>
+        Wed, 5 Dec 2018 10:03:34 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47972 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727195AbeLEPDd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:03:33 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5F3VHd081753;
+        Wed, 5 Dec 2018 09:03:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544022211;
+        bh=q5c/Lbrqo0t5hmKdDSwCb3RqbYsiZ21G4JAcQ2rcrks=;
+        h=From:To:CC:Subject:Date;
+        b=iP5l4oLHBh2SPsidhbEZ8XwjnNEmQXKKlurjZa3JkscuHx25MvLfWt5VmJqoTHhBn
+         F1acsbtdvRPkBfZ7cLs5KfjknsuvYGAxvlUn6E+gFp5dc+5GUjR9b5kPKnEpN0TRht
+         cxk8TUZeljqunHVNL4qdLZgRWa7T0rEGmEJeJUhs=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5F3Vg3085401
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Dec 2018 09:03:31 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
+ Dec 2018 09:03:31 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 5 Dec 2018 09:03:31 -0600
+Received: from dlelxv97.itg.ti.com (dlelxv97.itg.ti.com [172.17.2.193])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5F3VqJ002239;
+        Wed, 5 Dec 2018 09:03:31 -0600
+Received: from localhost.localdomain (vboxa0400828d.dhcp.ti.com [172.22.237.247])
+        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5F3S9q023981;
+        Wed, 5 Dec 2018 09:03:29 -0600
+From:   Roger Quadros <rogerq@ti.com>
+To:     <kishon@ti.com>
+CC:     <robh+dt@kernel.org>, <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 0/4] phy: ti: Add AM654 USB2 support
+Date:   Wed, 5 Dec 2018 17:03:22 +0200
+Message-ID: <1544022206-2300-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543598286-2663-2-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 05:18:00PM +0000, Suzuki K Poulose wrote:
-> We have two entries for ARM64_WORKAROUND_CLEAN_CACHE capability :
-> 
-> 1) ARM Errata 826319, 827319, 824069, 819472 on A53 r0p[012]
-> 2) ARM Errata 819472 on A53 r0p[01]
-> 
-> Both have the same work around. Merge these entries to avoid
-> duplicate entries for a single capability. Add a new Kconfig
-> entry to control the "capability" entry to make it easier
-> to handle combinations of the CONFIGs.
-> 
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Andre Przywara <andre.przywara@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/Kconfig               |  7 +++++++
->  arch/arm64/include/asm/cputype.h |  1 +
->  arch/arm64/kernel/cpu_errata.c   | 28 ++++++++++++++++------------
->  3 files changed, 24 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 787d785..ad69e15 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -313,9 +313,13 @@ menu "Kernel Features"
->  
->  menu "ARM errata workarounds via the alternatives framework"
->  
-> +config ARM64_WORKAROUND_CLEAN_CACHE
-> +	def_bool n
-> +
->  config ARM64_ERRATUM_826319
->  	bool "Cortex-A53: 826319: System might deadlock if a write cannot complete until read data is accepted"
->  	default y
-> +	select ARM64_WORKAROUND_CLEAN_CACHE
->  	help
->  	  This option adds an alternative code sequence to work around ARM
->  	  erratum 826319 on Cortex-A53 parts up to r0p2 with an AMBA 4 ACE or
-> @@ -337,6 +341,7 @@ config ARM64_ERRATUM_826319
->  config ARM64_ERRATUM_827319
->  	bool "Cortex-A53: 827319: Data cache clean instructions might cause overlapping transactions to the interconnect"
->  	default y
-> +	select ARM64_WORKAROUND_CLEAN_CACHE
->  	help
->  	  This option adds an alternative code sequence to work around ARM
->  	  erratum 827319 on Cortex-A53 parts up to r0p2 with an AMBA 5 CHI
-> @@ -358,6 +363,7 @@ config ARM64_ERRATUM_827319
->  config ARM64_ERRATUM_824069
->  	bool "Cortex-A53: 824069: Cache line might not be marked as clean after a CleanShared snoop"
->  	default y
-> +	select ARM64_WORKAROUND_CLEAN_CACHE
->  	help
->  	  This option adds an alternative code sequence to work around ARM
->  	  erratum 824069 on Cortex-A53 parts up to r0p2 when it is connected
-> @@ -380,6 +386,7 @@ config ARM64_ERRATUM_824069
->  config ARM64_ERRATUM_819472
->  	bool "Cortex-A53: 819472: Store exclusive instructions might cause data corruption"
->  	default y
-> +	select ARM64_WORKAROUND_CLEAN_CACHE
->  	help
->  	  This option adds an alternative code sequence to work around ARM
->  	  erratum 819472 on Cortex-A53 parts up to r0p1 with an L2 cache
-> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-> index 12f93e4d..2e26375 100644
-> --- a/arch/arm64/include/asm/cputype.h
-> +++ b/arch/arm64/include/asm/cputype.h
-> @@ -151,6 +151,7 @@ struct midr_range {
->  		.rv_max = MIDR_CPU_VAR_REV(v_max, r_max),	\
->  	}
->  
-> +#define MIDR_REV_RANGE(m, v, r_min, r_max) MIDR_RANGE(m, v, r_min, v, r_max)
+Hi Kishon,
 
-What's the point of this macro?
+This series extends omap-usb2 PHY driver to be used
+for AM654 USB2 PHY.
 
-Will
+cheers,
+-roger
+
+Roger Quadros (4):
+  phy: ti: usb2: Fix logic on -EPROBE_DEFER
+  phy: ti: Don't depend on OMAP_OCP2SCP
+  dt-bindings: phy: ti: Add support for AM654x USB2 PHY
+  phy: ti: usb2: Add support for AM654 USB2 PHY
+
+ Documentation/devicetree/bindings/phy/ti-phy.txt |   1 +
+ drivers/phy/ti/Kconfig                           |   6 +-
+ drivers/phy/ti/phy-omap-usb2.c                   | 105 ++++++++++++++---------
+ 3 files changed, 67 insertions(+), 45 deletions(-)
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
