@@ -2,92 +2,105 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F95C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB711C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC60214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC60214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E121213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E121213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeLERzS (ORCPT
+        id S1727872AbeLER4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:55:18 -0500
-Received: from mga09.intel.com ([134.134.136.24]:41942 "EHLO mga09.intel.com"
+        Wed, 5 Dec 2018 12:56:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39998 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbeLERzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:55:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:55:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
-   d="scan'208";a="257070458"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga004.jf.intel.com with ESMTP; 05 Dec 2018 09:55:17 -0800
-Message-ID: <19c9f0fe83a857d5858c386a08ca2ddeba7cf27b.camel@linux.intel.com>
-Subject: Re: [mm PATCH v6 6/7] mm: Add reserved flag setting to
- set_page_links
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Date:   Wed, 05 Dec 2018 09:55:17 -0800
-In-Reply-To: <20181205172225.GT1286@dhcp22.suse.cz>
-References: <154361452447.7497.1348692079883153517.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <154361479877.7497.2824031260670152276.stgit@ahduyck-desk1.amr.corp.intel.com>
-         <20181205172225.GT1286@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727297AbeLER4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:56:48 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 837DA1E32B;
+        Wed,  5 Dec 2018 17:56:48 +0000 (UTC)
+Received: from krava (unknown [10.43.17.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 25BC82AAA2;
+        Wed,  5 Dec 2018 17:56:38 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 18:56:38 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
+        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181205175638.GD3836@krava>
+References: <20181205160509.1168-1-jolsa@kernel.org>
+ <20181205160509.1168-2-jolsa@kernel.org>
+ <20181205123503.4b8e0484@vmware.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205123503.4b8e0484@vmware.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 05 Dec 2018 17:56:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-05 at 18:22 +0100, Michal Hocko wrote:
-> On Fri 30-11-18 13:53:18, Alexander Duyck wrote:
-> > Modify the set_page_links function to include the setting of the reserved
-> > flag via a simple AND and OR operation. The motivation for this is the fact
-> > that the existing __set_bit call still seems to have effects on performance
-> > as replacing the call with the AND and OR can reduce initialization time.
-> > 
-> > Looking over the assembly code before and after the change the main
-> > difference between the two is that the reserved bit is stored in a value
-> > that is generated outside of the main initialization loop and is then
-> > written with the other flags field values in one write to the page->flags
-> > value. Previously the generated value was written and then then a btsq
-> > instruction was issued.
-> > 
-> > On my x86_64 test system with 3TB of persistent memory per node I saw the
-> > persistent memory initialization time on average drop from 23.49s to
-> > 19.12s per node.
+On Wed, Dec 05, 2018 at 12:35:03PM -0500, Steven Rostedt wrote:
+> On Wed,  5 Dec 2018 17:05:02 +0100
+> Jiri Olsa <jolsa@kernel.org> wrote:
 > 
-> I have tried to explain why the whole reserved bit doesn't make much
-> sense in this code several times already. You keep ignoring that and
-> that is highly annoying. Especially when you add a tricky code to
-> optimize something that is not really needed.
+> > diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+> > index 3b2490b81918..e55cf9169a03 100644
+> > --- a/arch/x86/entry/common.c
+> > +++ b/arch/x86/entry/common.c
+> > @@ -60,6 +60,32 @@ static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
+> >  	}
+> >  }
+> >  
+> > +static void trace_block_syscall(struct pt_regs *regs, bool enter)
+> > +{
+> > +	current->perf_blocked = true;
+> > +
+> > +	do {
+> > +		schedule_timeout(100 * HZ);
+> > +		current->perf_blocked_cnt = 0;
+> > +
+> > +		if (enter) {
+> > +			/* perf syscalls:* enter */
+> > +			perf_trace_syscall_enter(regs);
+> > +
+> > +			/* perf raw_syscalls:* enter */
+> > +			perf_trace_sys_enter(&event_sys_enter, regs, regs->orig_ax);
+> > +		} else {
+> > +			/* perf syscalls:* enter */
+> > +			perf_trace_syscall_exit(regs);
+> > +
+> > +			/* perf raw_syscalls:* enter */
+> > +			perf_trace_sys_exit(&event_sys_exit, regs, regs->ax);
+> > +		}
+> > +	} while (current->perf_blocked_cnt);
 > 
-> Based on that I am not going to waste my time on other patches in this
-> series to review and give feedback which might be ignored again.
+> I was thinking, if the process reading the perf buffer dies, how do we
+> tell this task to continue on?
 
-I got your explanation. However Andrew had already applied the patches
-and I had some outstanding issues in them that needed to be addressed.
-So I thought it best to send out this set of patches with those fixes
-before the code in mm became too stale. I am still working on what to
-do about the Reserved bit, and plan to submit it as a follow-up set.
+when the tracer process dies, its event will get uninstalled from the
+trace_event_call::perf_events list, so the next iteration of above loop
+won't get any blocked event and it will leave (assuming there's just
+single event)
 
-
-
+jirka
