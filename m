@@ -2,139 +2,196 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA0FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4796C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70143214E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:08:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70143214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A434208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544033306;
+	bh=AdxxxPnOcjREvb9W8NYtxBz4JkZjT/OIdHruqqVzkbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YKzQTT1wnZXooqf+kX7yd5TGPlsnf0lO6F69TYsCY5ucGkA39Q0fEb5HRz0nYb3Y8
+	 kWdgVmIXHiMnsTydBmq0S5M0HXF3FSY1vegdBa4DcSPrasg6N1BqN8TYXcdG0RbJp8
+	 IR6jfAw+QQzGfNrglyN+ds7CpnKFmwiLDOLc0fAk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A434208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbeLESID (ORCPT
+        id S1728300AbeLESIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:08:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56776 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbeLESIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:08:02 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39BB1307D860;
-        Wed,  5 Dec 2018 18:08:01 +0000 (UTC)
-Received: from redhat.com (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EC0F26109E;
-        Wed,  5 Dec 2018 18:07:58 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 13:07:57 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
-        "Koenig, Christian" <christian.koenig@amd.com>,
-        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
-Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS)
- documentation
-Message-ID: <20181205180756.GI3536@redhat.com>
-References: <20181204201347.GK2937@redhat.com>
- <2f146730-1bf9-db75-911d-67809fc7afef@deltatee.com>
- <20181204205902.GM2937@redhat.com>
- <e4d8bf6b-5b2c-58a5-577b-66d02f2342c1@deltatee.com>
- <20181204215146.GO2937@redhat.com>
- <c5cf87e8-9104-c2e6-9646-188f66fec581@deltatee.com>
- <20181204235630.GQ2937@redhat.com>
- <b77849e1-e05a-1071-7c48-ac93191e3134@deltatee.com>
- <20181205023116.GD3045@redhat.com>
- <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
+        Wed, 5 Dec 2018 13:08:25 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35681 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727388AbeLESIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 13:08:24 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z9so10401305pfi.2;
+        Wed, 05 Dec 2018 10:08:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3Ja7hW5IOKOjyKwPtVqxuCHI1rWJCEkmX/08bAhWFFk=;
+        b=EHJa+4N3aFKDvWborfIOss70kTRfLI0BNU11yQaBLrmFKUxXYX1WHYSrs1Fa2wtFBd
+         2r20wSorDOIs+UhNSMvJIdrgoWJ5O8anmHmbuyiPYi3h1HlEct84Vu6gnCHkI8wIAXQF
+         tsS5Bn0vl40vEgRLrJpkxFASGJF8MJIdP3+CwN01Pjvrhyxm5hd207Aox3QWZLfkVO9F
+         +Wp8ozPGlYZ9Kt2CWjuHr2dQvEHFIZiue0jJd44rLlLMfAklzKBkHJzspQI1J1mH58XO
+         XCVxtxDRxxiHXj6LjWsWlPTHYna5DrE062SxY6T92BSI5QI2PTUZ3PB2pcdLjVaOZH/n
+         5+cA==
+X-Gm-Message-State: AA+aEWY2ILflV8HD8RPO9Gzq3R/AeodjK5bfuj+e+wgQmcS7mZJcWMKf
+        J+IgI4sySQDrFZ1sDvOfQ+A=
+X-Google-Smtp-Source: AFSGD/UW7yRICIpZP8dETtYacB2ohjCKrFK85VBHVjV6gYwUbihfILWxzT7Db4W5l2xqYvMgwTmxvQ==
+X-Received: by 2002:a62:8f8c:: with SMTP id n134mr25784507pfd.137.1544033303359;
+        Wed, 05 Dec 2018 10:08:23 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id n66sm45373122pfk.19.2018.12.05.10.08.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 10:08:22 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 05 Dec 2018 10:08:18 -0800
+Date:   Wed, 5 Dec 2018 10:08:18 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     cheng.lin130@zte.com.cn
+Cc:     keescook@chromium.org, akpm@linux-foundation.org,
+        ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        wang.yi59@zte.com.cn
+Subject: Re: Re: Re: [PATCH] proc/sysctl: fix return error
+ forproc_doulongvec_minmax
+Message-ID: <20181205180818.GA28501@garbanzo.do-not-panic.com>
+References: <20181203201436.GO28501@garbanzo.do-not-panic.com>
+ <201812051510071985717@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a5ae63ff-a913-25af-4648-4ebf91775412@deltatee.com>
+In-Reply-To: <201812051510071985717@zte.com.cn>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 05 Dec 2018 18:08:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 10:41:56AM -0700, Logan Gunthorpe wrote:
+On Wed, Dec 05, 2018 at 03:10:07PM +0800, cheng.lin130@zte.com.cn wrote:
+> > On Mon, Dec 03, 2018 at 01:12:39PM +0800, cheng.lin130@zte.com.cn wrote:
+> > > >Cheng, thanks for the patch!
+> > > >
+> > > >On Fri, Nov 30, 2018 at 02:35:17PM +0800, Cheng Lin wrote:
+> > > >> If the number of input parameters is less than the total
+> > > >> parameters, an INVAL error will be returned.
+> > > >
+> > > >Do you mean EINVAL?
+> > > >
+> > > Yes, it's EINVAL.
+> > 
+> > Please adjust the commit log.
+> > 
+> > > >> This patch ensure no error returned in this condition, just
+> > > >> like other interfaces do.
+> > > >
+> > > >Have an actual example to reproduce?
+> > > >
+> > > >Luis
+> > > >
+> > > We use proc_doulongvec_minmax to pass up to two parameters with kern_table.
+> > > e.g.
+> >         {
+> > >                 .procname       = "monitor_signals",
+> > >                 .data           = &monitor_sigs,
+> > >                 .maxlen         = 2*sizeof(unsigned long),
+> > >                 .mode           = 0644,
+> > >                 .proc_handler   = proc_doulongvec_minmax,
+> > >         },
+> > >
+> > > Reproduce:
+> > > When passing two parameters, it's work normal. But passing only one parameter, an error "Invalid argument"(EINVAL) is returned.
+> > > [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+> > > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+> > > 1       2
+> > > [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+> > > -bash: echo: write error: Invalid argument
+> > > [root@cl150 ~]# echo $?
+> > > 1
+> > > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+> > > 3       2
+> > > [root@cl150 ~]#
+> > >
+> > > The following is the result after apply this patch. No error is returned when the number of input parameters is less than the total parameters.
+> > > [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+> > > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+> > > 1       2
+> > > [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+> > > [root@cl150 ~]# echo $?
+> > > 0
+> > > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+> > > 3       2
+> > > [root@cl150 ~]#
+> > 
+> > This would be good to have in the commit log as well. But your patch
+> > only addresses one of the proc users, there are a few other checks like
+> > this that would also need to be expanded for this. So please expand
+> > your patch to cover the other cases as well.
 > 
+> I have done the check for the interfaces exported in kernel/sysctl.c.
+> EXPORT_SYMBOL(proc_dointvec);
+> EXPORT_SYMBOL(proc_douintvec);
+> EXPORT_SYMBOL(proc_dointvec_jiffies);
+> EXPORT_SYMBOL(proc_dointvec_minmax);
+> EXPORT_SYMBOL_GPL(proc_douintvec_minmax);
+> EXPORT_SYMBOL(proc_dointvec_userhz_jiffies);
+> EXPORT_SYMBOL(proc_dointvec_ms_jiffies);
+> EXPORT_SYMBOL(proc_dostring);
+> EXPORT_SYMBOL(proc_doulongvec_minmax);
+> EXPORT_SYMBOL(proc_doulongvec_ms_jiffies_minmax);
 > 
-> On 2018-12-04 7:31 p.m., Jerome Glisse wrote:
-> > How can i express multiple link, or memory that is only accessible
-> > by a subset of the devices/CPUs. In today model they are back in
-> > assumption like everyone can access all the node which do not hold
-> > in what i am trying to do.
+> The function call relationship is as follows. There are three processing functions dealing with digital parameters, __do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
 > 
-> Well multiple links are easy when you have a 'link' bus. Just add
-> another link device under the bus.
-
-So you are telling do what i am doing in this patchset but not under
-HMS directory ?
-
+> proc_dointvec------------------------------|
+> proc_dointvec_jiffies----------------------|
+> proc_dointvec_minmax------------------|
+> proc_dointvec_userhz_jiffies------------|
+> proc_dointvec_ms_jiffies-----------------|-> do_proc_dointvec----|-> __do_proc_dointvec
 > 
-> Technically, the accessibility issue is already encoded in sysfs. For
-> example, through the PCI tree you can determine which ACS bits are set
-> and determine which devices are behind the same root bridge the same way
-> we do in the kernel p2pdma subsystem. This is all bus specific which is
-> fine, but if we want to change that, we should have a common way for
-> existing buses to describe these attributes in the existing tree. The
-> new 'link' bus devices would have to have some way to describe cases if
-> memory isn't accessible in some way across it.
-
-What i am looking at is much more complex than just access bit. It
-is a whole set of properties attach to each path (can it be cache
-coherent ? can it do atomic ? what is the access granularity ? what
-is the bandwidth ? is it dedicated link ? ...)
-
+> proc_douintvec-----------------------------|
+> proc_douintvec_minmax-----------------|-> do_proc_douintvec---|->	__do_proc_douintvec
 > 
-> But really, I would say the kernel is responsible for telling you when
-> memory is accessible to a list of initiators, so it should be part of
-> the checks in a theoretical hbind api. This is already the approach
-> p2pdma takes in-kernel: we have functions that tell you if two PCI
-> devices can talk to each other and we have functions to give you memory
-> accessible by a set of devices. What we don't have is a special tree
-> that p2pdma users have to walk through to determine accessibility.
+> proc_doulongvec_minmax---------------|
+> proc_doulongvec_ms_jiffies_minmax--|-> do_proc_doulongvec_minmax----|-> __do_proc_doulongvec_minmax
 
-You do not need it, but i do need it they are user out there that are
-already depending on the information by getting it through non standard
-way. I do want to provide a standard way for userspace to get this.
-They are real user out there and i believe their would be more user
-if we had a standard way to provide it. You do not believe in it fine.
-I will do more work in userspace and more example and i will come back
-with more hard evidence until i convince enough people.
+OK
 
+> This patch deals with  __do_proc_doulongvec_minmax, just as
+> __do_proc_dointvec does, adding a check for parameters 'left'. In
+> __do_proc_douintvec, its code implementation explicitly does not
+> support multiple inputs.  static int __do_proc_douintvec(...){
+> 		...
+>         /*
+>          * Arrays are not supported, keep this simple. *Do not* add
+>          * support for them.
+>          */
+>         if (vleft != 1) {
+>                 *lenp = 0;
+>                 return -EINVAL;
+> 		...
+> 		}
 > 
-> In my eye's, you are just conflating a bunch of different issues that
-> are better solved independently in the existing frameworks we have. And
-> if they were tackled individually, you'd have a much easier time getting
-> them merged one by one.
+> 		
+> So, just __do_proc_doulongvec_minmax has the problem.  And most use of
+> proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
+> parameter.
 
-I don't think i can convince you otherwise. They are user that use topology
-please looks at the links i provided, those folks have running program
-_today_ they rely on non standard API and would like to move toward standard
-API it would improve their life.
+The above text, up to my OK, is useful information for the commit log,
+please add that.
 
-On top of that i argue that more people would use that information if it
-were available to them. I agree that i have no hard evidence to back that
-up and that it is just a feeling but you can not disprove me either as
-this is a chicken and egg problem, you can not prove people will not use
-an API if the API is not there to be use.
+> It's well hidden.
 
-Cheers,
-Jérôme
+You mean that the issue is not widely spread? If so please add that
+comment to the commit log, and resubmit a v2.
+
+  Luis
+
+> Typical multi-parameter applications for
+> proc_dointvec, such as /proc/sys/kernel/printk.
