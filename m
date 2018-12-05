@@ -2,111 +2,173 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77066C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794F9C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5BF213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:59:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nJV447WM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5BF213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 490A3208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490A3208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeLER7q (ORCPT
+        id S1728034AbeLESAt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:59:46 -0500
-Received: from mail-eopbgr80043.outbound.protection.outlook.com ([40.107.8.43]:3072
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727402AbeLER7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:59:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SY8yRBBSE5BBymmR35/sa1FnkUAXicRrtcDEumoxqqw=;
- b=nJV447WMeyqD7SWubEIUDpyUB/z6jG4tG8nK1/ilaDMNxa6jq9pEmGCHSEuEDSSwbj/PujJukRF6qWww468D8KR2H1G22yKaQVvl5bvhQi7ANecrROoa+SkDUMIuqn0WpJ8mnevHbqkLfmJM0TE5v+71b0cjI7tdK8/rj1FVknw=
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com (52.134.90.16) by
- AM0PR04MB5266.eurprd04.prod.outlook.com (20.177.42.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 5 Dec 2018 17:59:41 +0000
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::f038:ecc0:3ab5:3bbd]) by AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::f038:ecc0:3ab5:3bbd%4]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
- 17:59:41 +0000
-From:   York Sun <york.sun@nxp.com>
-To:     Tracy Smith <tlsmith3777@gmail.com>, "bp@alien8.de" <bp@alien8.de>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "util-linux@vger.kernel.org" <util-linux@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: edac driver injection of uncorrected errors & utils
-Thread-Topic: edac driver injection of uncorrected errors & utils
-Thread-Index: AQHUh0sNWF6V8PY2qUSDyCw1nmqn1g==
-Date:   Wed, 5 Dec 2018 17:59:41 +0000
-Message-ID: <AM0PR04MB3971D326D037CFB2497B1A559AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
-References: <CAChUvXNO_8Frw1igaEAHSxmdtTy7MJVm8W1NpUqZ6tFD0hXwhA@mail.gmail.com>
- <0BF2A47F-7F33-4E4D-A566-23AF2F4CCD52@theinkpens.com>
- <CAChUvXMVHxhawLFPFzz_0+iFxjQ+dRwpTsCGo95oc8Y+7a-2DQ@mail.gmail.com>
- <AM0PR04MB3971FBCF6CB23BE778D39EED9AD80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXPCfwfHrntJHWpsydYZE=P692Axd0pFE+GjZCXtx1fgog@mail.gmail.com>
- <CAChUvXMWZ-LYyqnczM-bt9cDP0r1XT+F1dcYuRHiVcx=QR7_Jw@mail.gmail.com>
- <AM0PR04MB3971768EA5D50D7045B462619AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXN8rZqxBaV2qbdR8uymsmZAk_Jnc2kxSUf+kBf76QHV9A@mail.gmail.com>
- <AM0PR04MB3971FFCCDAF29E7DF0F0EE159AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNz=XR37EeVRJFnF195BGgjPgCeFv6nbjR3yV2_mQwxBQ@mail.gmail.com>
- <20181128234415.GH16830@zn.tnic>
- <CAChUvXPgntzMbAhcg8y2HJyyZWwaqNPe66efmpfyHLgN1JSW_w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=york.sun@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5266;6:kRoYOovWtDbeMI0TPUzx3WbUGzW9R8EtFxTQR4cLfshGFqykD/ymJEGPamIM4Wfgm9eRWpCL+3GIt10UqBuF8W4GJS6gR6pLPYV0aq4Ty08LtChoz3ZLCGItraotv77ezs5BFestUKwCULjm331gDAp9oDKmKGYzpEuutogKDwBQGTp4DZ5JMjRXl6lQ9i6i9w3NP2kG8LUUk/eJewHJA5Q7P+N6cwVXF7lnsdId3LjeyQCYYUJRT7cD8Qu8DEiGzcdgmeZph4JQZp0lTeNwJQh99jeQb4h4r/bTyCTHV7dEGMmXZENJtM1zF9LTN8gbdjhS5T7TPHnWLtSJ+qY/9IaKjN7mkN45lT2jB56VWYDzt5MPNQ68/aZKCPtkHs4TVoIrahss+PovvWiGTDPBhXURoNZqLHr0+B14QOVrA3CXrNICc4NOckF8z8u0zTOxzuppf0X6QK0+hoVocK9fcg==;5:1s2gSll3uA5kueZk8Z5y46NBwv+k9obhP8BS/Ph/bmB2sgZ/FJehTbHJ8zSPLCxBJgB2RUNGqzvumnha9GtTEwInTxRSeiIxxxJxXdOnmQp/yyAKA/rw4TXaA6ikLe6awtlYL7a1Q5e3tsFLcOBJISPTdHdC1Tx+yNUeg/1HB4w=;7:nWzIunBgY6jahj0WKiXNVQgV2Nx20j4Xe+ApTpn0TnzgXXWXulbS0WOboKNjLqW8DcyqT22wjGZjBhO3FzjkMWj6rRQhEOgHs5yJ6kgKd7eeQoq4sQQhwpoNvE/Q85XT9Xm9RX+8Y+fw0olqYwMVSQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3ef7fa59-d5c3-4f0e-fb58-08d65adb6e4f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5266;
-x-ms-traffictypediagnostic: AM0PR04MB5266:
-x-microsoft-antispam-prvs: <AM0PR04MB5266DC87C1C77262668E4F679AA80@AM0PR04MB5266.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5266;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5266;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(376002)(39860400002)(189003)(199004)(3846002)(316002)(33656002)(446003)(6116002)(26005)(478600001)(110136005)(6436002)(54906003)(74316002)(186003)(102836004)(476003)(71200400001)(14454004)(486006)(99286004)(97736004)(6506007)(44832011)(76176011)(4326008)(66066001)(39060400002)(53546011)(2501003)(305945005)(7736002)(7696005)(71190400001)(81156014)(81166006)(8936002)(9686003)(8676002)(6246003)(2906002)(25786009)(53936002)(256004)(55016002)(68736007)(86362001)(229853002)(93886005)(106356001)(5660300001)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5266;H:AM0PR04MB3971.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9LqnDIzqEHzSf2wbGJ+Vwl0EpS3UNeolYaWWxrATiEWDjmUzsw4jt/uuTPFMSOnMhZZXcIPrDITjActfg5WHPtBpfGC6L0Q1EejbutxK47k+d+ZDPdBQDEeoEHg9T4pWPV22xp1lddkegu0ApKPjHQmXgjZgc9KvaTxFTMlpBw6/SXSlI0KeLwrOrCTsp89Ddsprnqbb+XsMT2u6VkKu41v0aDNmZB+agjy6jwQFO0K0cRty9KVEF2AEfg8aseIUjgG+ed7byNpWTR58AZWlBZZkHgOnl5LeApWfDuhawkYUNdG7xJTM6NCw7zBcF9CE98HyO0bpwLFmj/AOTWjq6i1GAe8VCExZZ86cGPoPGbM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Dec 2018 13:00:49 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50608 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeLESAs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 13:00:48 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 9E7FA2725B2
+Received: by earth.universe (Postfix, from userid 1000)
+        id CF17D3C08D6; Wed,  5 Dec 2018 19:00:42 +0100 (CET)
+Date:   Wed, 5 Dec 2018 19:00:42 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, oskari@lemmela.net,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 0/8] AXP8x3 AC and battery power supply support
+Message-ID: <20181205180042.fr5npvtwuvt2c6q3@earth.universe>
+References: <20181120175211.3913-1-oskari@lemmela.net>
+ <CAGb2v65Bwve25jwdGHHK9j03RxQ3tKwme51762DjyQK2femG6g@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ef7fa59-d5c3-4f0e-fb58-08d65adb6e4f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 17:59:41.3326
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5266
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xnlkjubit7aft5id"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65Bwve25jwdGHHK9j03RxQ3tKwme51762DjyQK2femG6g@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 8:38 AM, Tracy Smith wrote:=0A=
-> This is more directed toward York for layerscape. I see some edac code=0A=
-> that seem to do periodic scrubs based on intervals or scrub rate, but=0A=
-> that is not needed for the layerscape driver to correct errors because=0A=
-> errors are scrubbed when found by the edac scrub block or is it=0A=
-> because the memory controller itself does the correction/scrubbing=0A=
-> when an error is found?=0A=
-=0A=
-Single-bit errors are corrected by memory controller without involving=0A=
-software.=0A=
-=0A=
-York=0A=
+
+--xnlkjubit7aft5id
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Nov 30, 2018 at 04:31:28PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Nov 21, 2018 at 1:52 AM Oskari Lemmela <oskari@lemmela.net> wrote:
+> >
+> > AXP813 AC power supply support with input current and
+> > voltage limiting support.
+> >
+> > AXP803 AC and battery power supply support.
+> >
+> > Changes in v6:
+> > * Collected tags
+> > * Rebase to master
+> > * Dropped AXP803 compatible patches
+> >
+> > Changes in v5:
+> > * Return correct input current limit for values 0x6 and 0x7
+> > * Add specific compatibles for AXP803
+> > * Change commit messages
+> > * Add Vasily Khoruzhick Pinebook DTS patch
+> >
+> > Changes in v4:
+> > * Change order of axp20x-gpio in axp20x.c
+> > * Fix indentation and spaces to tabs in axp20x.c
+> >
+> > Changes in v3:
+> > * Reorder ac_power_supply DT node
+> > * Rename axp20x_ac_power_set_property function
+> > * Split mfd commit
+> >
+> > Changes in v2:
+> > * Reuse axp813 compatibles for axp803
+> > * Refactor axp20x_ac_power.c
+> >
+> >
+> > Oskari Lemmela (7):
+> >   dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
+> >   ARM: dts: axp81x: add AC power supply subnode
+> >   arm64: dts: allwinner: axp803: add AC and battery power supplies
+> >   arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
+> >   power: supply: add AC power supply driver for AXP813
+> >   mfd: axp20x: Add AC power supply cell for AXP813
+> >   mfd: axp20x: Add supported cells for AXP803
+> >
+> > Vasily Khoruzhick (1):
+> >   arm64: dts: allwinner: a64: pinebook: enable power supplies
+>=20
+> Since this series has been fully reviewed, and the devices it
+> adds/enables aren't critical, i.e. won't cause the system to fail
+> if the drivers are missing, I've merged the dts patches for 4.21.
+>=20
+> Hopefully Sebastian and Lee will get around to merging the driver
+> patches.
+
+I queued the power-supply driver changes and prepared a signed
+immutable tag for Lee:
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-su=
+pply.git tags/psy-mfd-axp813-immutable-for-v4.21-signed
+
+for you to fetch changes up to 7693b5643fd2d682de90733b67fc8032b9646911:
+
+  power: supply: add AC power supply driver for AXP813 (2018-12-05 18:49:32=
+ +0100)
+
+----------------------------------------------------------------
+Immutable branch between mfd and power-supply for driver
+changes related to axp813.
+
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+----------------------------------------------------------------
+Oskari Lemmela (2):
+      dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
+      power: supply: add AC power supply driver for AXP813
+
+ .../bindings/power/supply/axp20x_ac_power.txt      |  3 +
+ drivers/power/supply/axp20x_ac_power.c             | 94 ++++++++++++++++++=
+++++
+ include/linux/mfd/axp20x.h                         |  1 +
+ 3 files changed, 98 insertions(+)
+
+--xnlkjubit7aft5id
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwIEkoACgkQ2O7X88g7
++pp4IA//c/ChZY6UHh9Rulc+1lkt/+KeQcJh9PpdFVZFJqr0zC+5B6VtMGXartdt
+lswJovpYhjmy4kXT06kqD0MmJHh29s+a76Fj4DV1c+uUglhec1AuRwFviGXBZg7y
+ush9s2FgUsPl9JBlQdElJb06oEKqsPDZ5iRssPloJngzMFg3xLdunnLW59Vv5XBq
+qg2umsW1UWKKtaSKnYQ8aSQ6wmNBOERPcvYkOjiPRL943Bn0Od73GVxcR0lOtWqR
+8v/f7Ah8qtnYWm1QPdNO2O9Hb67/gF6GKhTjI9YqdNe4Qcmp1rVoB0PPVjAlBUBD
+XZIvs5HT2YQaqtoFmkSfyHxovYbeu1bIe8ZNaZMF2++UVTRA9kB5pIy2ScMlvYmR
+DwiwRSiaJ125tnR8tTtMzJGAnrE36EAT/C9fKhW3+uq7/b0M/pqjgaMorKNOCw6u
+1VfCPY8vQN5ke5ib5My/V4HyHaRJ95OdlzOaRwZ9EqjSthOYk1IWx2ehZeTOFIuB
+XNLvR1dt4PeyYqpK5G5NG87XCvMjkF7/YWRC+zRu1R8UYHzAFzJMQG+jHXbYd7AO
+BGMFtO7cJ1eRcg6VfpigKrs6laFoaScKnhf/Y5yPrBqlkyw7WO35bYqaICush93x
+5HfcOMuR/iDnHuNf1aIQRUWc928lq5gaykdewbaWluKI+b7o8aY=
+=WNDV
+-----END PGP SIGNATURE-----
+
+--xnlkjubit7aft5id--
