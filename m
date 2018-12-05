@@ -2,154 +2,118 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B48C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B9EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6290214DA
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5YeU5nqF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6290214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 58B4320989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B4320989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbeLEBa3 (ORCPT
+        id S1726661AbeLEBdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:30:29 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33304 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeLEBa3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:30:29 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB51U6cU107783;
-        Wed, 5 Dec 2018 01:30:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=1xiN7I09VyO4c2+nC+ZscZSj1nC+2Out6RoPt9dywqU=;
- b=5YeU5nqFslsQPGJfj6k5pBtOPfIFFXRgMuXrRIgHM7twEESdlGg+mkrEbMg9vug0K1m6
- GyB7SjVZxkB97VFlad952TSpZAfP2TnGQRUloRpcNRVvsAsKLhEl3FM++Qvesyta5LaZ
- xFmijwFQrB5kUmrTZ3ej5Muq64PvGOnMg5IpAGQDN9XhCNWX3fJ+DBVesYlTq7s5200q
- nvp+9nn9M0Thcr7OSIyb8gZDOfJy0xRk/rR7juUeYbxYuQnqESYc6TgxFpAXoFEXnlEU
- XDUmILgafSNSkYfwkBlD9KJ7LYmY1kccqlfWtZpfBtxPJ/A0am7zU6bnzKNdlVM9c+Yl 7g== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hqtyrtr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 01:30:13 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB51UCDO017511
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 01:30:12 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB51UA1M000354;
-        Wed, 5 Dec 2018 01:30:10 GMT
-Received: from [10.191.22.183] (/10.191.22.183)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Dec 2018 17:30:10 -0800
-Subject: Re: Compiling with old gcc breaks when CONFIG_RETPOLINE is off
-To:     Meelis Roos <mroos@linux.ee>, Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Cc:     LKML <linux-kernel@vger.kernel.org>, yamada.masahiro@socionext.com
-References: <6eeee8da-82ac-f527-9278-7ebcc8756ea1@linux.ee>
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <3f72d5fa-cfed-e1a0-4f6c-90f8d1de1ace@oracle.com>
-Date:   Wed, 5 Dec 2018 09:30:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <6eeee8da-82ac-f527-9278-7ebcc8756ea1@linux.ee>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050012
+        Tue, 4 Dec 2018 20:33:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56118 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725979AbeLEBdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 20:33:11 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BDCF8C057E06;
+        Wed,  5 Dec 2018 01:33:10 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-112-74.rdu2.redhat.com [10.10.112.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B46623844;
+        Wed,  5 Dec 2018 01:33:09 +0000 (UTC)
+Message-ID: <a15a43d96bdbfc7201df2ea00e813fb4c0a323a1.camel@redhat.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma
+ tree
+From:   Doug Ledford <dledford@redhat.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 04 Dec 2018 20:33:08 -0500
+In-Reply-To: <20181205120706.294b9422@canb.auug.org.au>
+References: <20181205120706.294b9422@canb.auug.org.au>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ODxKlQt9+ykmbI0CeVSH"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 05 Dec 2018 01:33:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Meelis,
 
-Could you try below change? It force syncconfig for  any 'make *config"
+--=-ODxKlQt9+ykmbI0CeVSH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-so that autoconf.h and auto.conf are always updated.
+FWIW this will go away in a day or two.  I merged mlx5-next into rdma
+for-next in order to take a series that depended on it.
 
-diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
-index 98e0c7a..802875b 100644
---- a/scripts/kconfig/conf.c
-+++ b/scripts/kconfig/conf.c
-@@ -38,7 +38,7 @@ enum input_mode {
+On Wed, 2018-12-05 at 12:07 +1100, Stephen Rothwell wrote:
+> Hi Leon,
+>=20
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>=20
+>   drivers/infiniband/hw/mlx5/main.c
+>   drivers/infiniband/hw/mlx5/mlx5_ib.h
+>=20
+> between commit:
+>=20
+>   36e235c88299 ("RDMA/mlx5: Use the uapi disablement APIs instead of code=
+")
+>=20
+> from the rdma tree and commit:
+>=20
+>   81773ce5f07f ("RDMA/mlx5: Use stages for callback to setup and release =
+DEVX")
+>=20
+> from the mlx5-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
-  static int indent = 1;
-  static int tty_stdio;
--static int sync_kconfig;
-+static int sync_kconfig = 1;
-  static int conf_cnt;
-  static char line[PATH_MAX];
-  static struct menu *rootEntry;
-@@ -506,11 +506,11 @@ int main(int ac, char **av)
-                          * Suppress distracting "configuration written 
-to ..."
-                          */
-                         conf_set_message_callback(NULL);
--                       sync_kconfig = 1;
-                         break;
-                 case defconfig:
-                 case savedefconfig:
-                         defconfig_file = optarg;
-+                       sync_kconfig = 0;
-                         break;
-                 case randconfig:
-                 {
-@@ -537,13 +537,15 @@ int main(int ac, char **av)
-                         srand(seed);
-                         break;
-                 }
-+               case listnewconfig:
-+                       sync_kconfig = 0;
-+                       /* fall through */
-                 case oldaskconfig:
-                 case oldconfig:
-                 case allnoconfig:
-                 case allyesconfig:
-                 case allmodconfig:
-                 case alldefconfig:
--               case listnewconfig:
-                 case olddefconfig:
-                         break;
-                 case '?':
+--=-ODxKlQt9+ykmbI0CeVSH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Thanks
+-----BEGIN PGP SIGNATURE-----
 
-Zhenzhong
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlwHKtQACgkQuCajMw5X
+L92fpQ//T8hLm2O9WblvQt6R4t4H+uYtr2UAo/Q2GU5/riOpZ+UJKV2iYCIgvl/V
+ce+wl4DxWneKjkBtCcJczlXs4oXEE37NstOGNZog/bj4h8TKuX8XQBrm28BoBFCe
+5DziJigSvBJHQnXR+FPmVt8xnJ4ZAjmH93LcA5j3Mue5ua+e23YfQ8M56Lz/OM7/
+mdDp3Ady7kH86tqDYJ2m4m2RFvz+pt3WzkIa7XyVTPKtogAQ0T680LsyJWvMG26c
+FBtNMNbA8JswwzQJU5yoJWh7BVZSNE4GHJrID8HOmop5fkvVTW1H2YUr2sozBFtJ
+yyE7qO9y9CKpiGltN7FSzuneTo0RgtXkauMh5VA4kWd3mGG6AGtugVzw4DpfVT10
+x5wQHUM+367Q13ZvwI3S6y3h9aLvDsrm9Iz7JHwIUKM+IYa1Ak2JagAqAgm6aK8m
+BQksWiWqDMwY5acKwe3zNSs3S7WWmBwEmLt+3bJSDEcvTe9Tn8Tt0AwNEKstLpBT
+eXlXj1fGc5KjVzOHssA6Mtb1epFZQ5hN7oesqxIh6C2KSZh7jrQOfkf3XjPBiDTz
+9Cc7gSeSWOXIQGWErLuDpGekzWSLsnee20u+GeitC4qH8D2yWW6gKFCM+DgOeVBe
+Tku6ODcthETaxaR20iVtAlOXVUYmNN0TM6IhKh4/bGOs1nFlwWE=
+=e5a9
+-----END PGP SIGNATURE-----
 
-On 2018/12/4 17:58, Meelis Roos wrote:
-> Just tried 4.20-rc5 on an old K6-2 PC with gcc 5.3.1, got an error 
-> about non-retpoline compiler,
-> turned CONFIG_RETPOLINE off and retried.
->
-> To my surprise, compilation still breaks with
-> arch/x86/Makefile:224: *** You are building kernel with non-retpoline 
-> compiler, please update your compiler..  Stop.
->
-> As I read the Makefile, it should error only when CONFIG_RETPOLINE is 
-> enabled, but it still breaks.
->
-> $ grep -r CONFIG_RETPOLINE .config
-> # CONFIG_RETPOLINE is not set
->
-> $ grep -r CONFIG_RETPOLINE include/
-> include/generated/autoconf.h:#define CONFIG_RETPOLINE 1
-> include/config/auto.conf:CONFIG_RETPOLINE=y
->
-> So the headers have not been updated yet, maybe?
->
+--=-ODxKlQt9+ykmbI0CeVSH--
+
