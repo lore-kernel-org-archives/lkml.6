@@ -2,183 +2,158 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E81C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B60C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 994322081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:39:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="S0skCL9r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994322081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 7FC4D20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC4D20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbeLENjb (ORCPT
+        id S1727454AbeLENlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:39:31 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41754 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbeLENja (ORCPT
+        Wed, 5 Dec 2018 08:41:20 -0500
+Received: from ivanoab6.miniserver.com ([5.153.251.140]:60878 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbeLENlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:39:30 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 70so9036769pgh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 05:39:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=+XAQonzhCNLkgQlokuTYmawobRYE4+g+xNZscTgpuT8=;
-        b=S0skCL9rgOJ96U32C/8n8x0W64y0RXn9ZNJmDqvT7LIcfBrlOZB0KcRmWbAiAHWz9n
-         xlThDKkjTdB5/qoH5GvCZst5Pi0gQ43Eww+hPECrPAKLsXxM7pZQRZwXHOFV9VxdsNsA
-         Sl8YSrvPKi1uaJ30GNmNyl+OPP4Td4zsVuTmLxmYy8pZl/2vuAVM5JUhEUzk73Ww9/vJ
-         9HaVn9+g1NtH90hWdXNfzS77trJiltuybUD85N6nbCcG8EvCvHKAhxcDmJZr3aSieIGz
-         m5CxfIvqCEU7FS2IInKCfW/7ZE5wvCfIK8vontrpjAbi7SQmqHY+aZ8HhkoW3CAgfkwQ
-         dLHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+XAQonzhCNLkgQlokuTYmawobRYE4+g+xNZscTgpuT8=;
-        b=V4VBLDe3Xa4lKwLreN/D3tLMaDMeBP2+aknvlSbjw8pPb8YnNP/ivF4YPWX9W2vpxJ
-         MPLUf5pccqh4s22RcJ59yN4TtA5QUJnC1n+Dt/YG15Bg+J3OjPvmMssB0mx/w7g0jQdX
-         jgt9IUPtdWxfUzcrrwxH4JzgYvR/oakqbuxBI3cmWjG+SyML+nUuOBu1YM1FhM+Hp+Zu
-         54s/2pkYgu7hXGk4ZJd8OBe9u0uCnYyqLkVqTwTDf4cj6wo4krR4BP+q6fpWE9GrdPVq
-         oQHg8X6j6of+dfKxREM1tVcF4i644expRbyLk2fK0bUqe11X0cZ1J/QTII23TH7JrF/1
-         ja7w==
-X-Gm-Message-State: AA+aEWZyXSQ0eiJNc2/o/OdFYAkA5FS7OkxdHFzCrl3IT5nFpafjgAkB
-        MPAif0GldoJ/+1QD1PhmOjTva5vXrGs=
-X-Google-Smtp-Source: AFSGD/UcIleevaKjpQhyFqV7oaocqfqiaVCJXnuR4BYHJReGyOAWhNVTnayQzldlMpkNHlZbyNQYww==
-X-Received: by 2002:a62:4b4d:: with SMTP id y74mr24175497pfa.186.1544017169222;
-        Wed, 05 Dec 2018 05:39:29 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id j6sm31673181pfg.126.2018.12.05.05.39.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 05:39:27 -0800 (PST)
-Subject: Re: Kernel crashes after 529262d56dbe "block: remove ->poll_fn"
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>, hch@lst.de, sagi@grimberg.me,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <0bd2d36e-bef0-b836-7039-124ae4d346a6@virtuozzo.com>
- <c374e085-a86b-6df3-2142-74968f067bc7@kernel.dk>
- <5e8d3302-a7d0-3483-6540-f0b87c237f7d@virtuozzo.com>
- <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
-Message-ID: <a6efd5b2-3190-54e7-ad4c-06f9ac441641@kernel.dk>
-Date:   Wed, 5 Dec 2018 06:39:26 -0700
+        Wed, 5 Dec 2018 08:41:20 -0500
+X-Greylist: delayed 1498 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 08:41:19 EST
+Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1gUX1a-00066a-6V; Wed, 05 Dec 2018 13:15:34 +0000
+Received: from wyvern.kot-begemot.co.uk ([192.168.3.72])
+        by smaug.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1gUX1U-0007WA-NC; Wed, 05 Dec 2018 13:15:33 +0000
+Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     brakmo@fb.com, dri-devel@lists.freedesktop.org,
+        Alexander.Levin@microsoft.com, linux-kselftest@vger.kernel.org,
+        shuah@kernel.org, robh@kernel.org, frowand.list@gmail.com,
+        linux-nvdimm@lists.01.org, richard@nod.at, knut.omang@oracle.com,
+        kieran.bingham@ideasonboard.com, joel@jms.id.au, jdike@addtoit.com,
+        Tim.Bird@sony.com, keescook@google.com,
+        linux-um@lists.infradead.org, rostedt@goodmis.org,
+        julia.lawall@lip6.fr, levinsasha928@gmail.com,
+        dan.j.williams@intel.com, kunit-dev@googlegroups.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        daniel@ffwll.ch, mpe@ellerman.id.au, joe@perches.com,
+        khilman@baylibre.com
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-2-brendanhiggins@google.com>
+ <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Organization: Cambridge Greys
+Message-ID: <e2ed9df2-c06b-f0d3-d50a-d03166f586df@cambridgegreys.com>
+Date:   Wed, 5 Dec 2018 13:15:28 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+In-Reply-To: <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 6:20 AM, Jens Axboe wrote:
-> On 12/5/18 6:05 AM, Kirill Tkhai wrote:
->> On 05.12.2018 15:45, Jens Axboe wrote:
->>> On 12/5/18 5:19 AM, Kirill Tkhai wrote:
->>>> Hi,
->>>>
->>>> commit 529262d56dbe from today linux-next makes my kernel crash:
->>>>
->>>> Author: Christoph Hellwig <hch@lst.de>
->>>> Date:   Sun Dec 2 17:46:26 2018 +0100
->>>>
->>>>     block: remove ->poll_fn
->>>>
->>>> Traceback is below, config and reproducer (not minimal, just a random one populating swap) are attached.
->>>>
->>>> [   29.097612] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
->>>> [   29.098730] #PF error: [INSTR]
->>>> [   29.099104] PGD 0 P4D 0 
->>>> [   29.099425] Oops: 0010 [#1] PREEMPT SMP
->>>> [   29.099879] CPU: 3 PID: 925 Comm: bash Not tainted 4.20.0-rc5-next-20181205+ #244
->>>> [   29.100658] RIP: 0010:          (null)
->>>> [   29.101100] Code: Bad RIP value.
->>>> [   29.101480] RSP: 0000:ffffc9000023fb80 EFLAGS: 00010202
->>>> [   29.102061] RAX: ffffffff8182d0e0 RBX: ffff88807ceee000 RCX: 0000000000000000
->>>> [   29.102818] RDX: ffff88807d560f40 RSI: 0000000000000000 RDI: ffff88807ceee000
->>>> [   29.103661] RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000002000
->>>> [   29.104560] R10: 00000000ffffffff R11: ffff88807c854150 R12: 0000000000000000
->>>> [   29.105458] R13: 0000000000000002 R14: ffff88807d7236c0 R15: ffffc9000023fe20
->>>> [   29.106438] FS:  00007faba91d7740(0000) GS:ffff88807db80000(0000) knlGS:0000000000000000
->>>> [   29.107304] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> [   29.107917] CR2: ffffffffffffffd6 CR3: 000000007a172000 CR4: 00000000000006a0
->>>> [   29.109401] Call Trace:
->>>> [   29.110017]  ? blk_poll+0x27c/0x340
->>>> [   29.110691]  ? submit_bio+0x40/0x120
->>>> [   29.111278]  ? swap_readpage+0x148/0x190
->>>> [   29.111924]  ? read_swap_cache_async+0x53/0x60
->>>> [   29.112670]  ? swap_cluster_readahead+0x231/0x2b0
->>>> [   29.113310]  ? swapin_readahead+0x2ce/0x400
->>>> [   29.113878]  ? pagecache_get_page+0x2b/0x210
->>>> [   29.114416]  ? do_swap_page+0x42c/0x800
->>>> [   29.114919]  ? __handle_mm_fault+0x544/0xdd0
->>>> [   29.115455]  ? handle_mm_fault+0x112/0x230
->>>> [   29.115978]  ? __do_page_fault+0x196/0x410
->>>> [   29.116501]  ? __put_user_4+0x19/0x20
->>>> [   29.116990]  ? page_fault+0x5/0x20
->>>> [   29.117451]  ? page_fault+0x1b/0x20
->>>> [   29.117925] CR2: 0000000000000000
->>>> [   29.118472] ---[ end trace 0faa4ddc190b41fa ]---
->>>
->>> Can you try this? The swap read-in poll attempts looks totally
->>> incorrect.
->>>
->>>
->>> diff --git a/mm/page_io.c b/mm/page_io.c
->>> index 5bdfd21c1bd9..f3455f9f8dc7 100644
->>> --- a/mm/page_io.c
->>> +++ b/mm/page_io.c
->>> @@ -401,6 +401,8 @@ int swap_readpage(struct page *page, bool synchronous)
->>>  	get_task_struct(current);
->>>  	bio->bi_private = current;
->>>  	bio_set_op_attrs(bio, REQ_OP_READ, 0);
->>> +	if (synchronous)
->>> +		bio->bi_opf |= REQ_HIPRI;
->>>  	count_vm_event(PSWPIN);
->>>  	bio_get(bio);
->>>  	qc = submit_bio(bio);
->>> @@ -411,7 +413,7 @@ int swap_readpage(struct page *page, bool synchronous)
->>>  			break;
->>>  
->>>  		if (!blk_poll(disk->queue, qc, true))
->>> -			break;
->>> +			io_schedule();
->>>  	}
->>>  	__set_current_state(TASK_RUNNING);
->>>  	bio_put(bio);
->>
->> Still crashes:
-> 
-> What device is this?
+On 30/11/2018 03:14, Luis Chamberlain wrote:
+> On Wed, Nov 28, 2018 at 11:36:18AM -0800, Brendan Higgins wrote:
+>> +#define module_test(module) \
+>> +		static int module_kunit_init##module(void) \
+>> +		{ \
+>> +			return kunit_run_tests(&module); \
+>> +		} \
+>> +		late_initcall(module_kunit_init##module)
+> Here in lies an assumption that suffices. I'm inclined to believe we
+> need new initcall level here so to ensure we *do* run after all the
+> respective kernels iniut calls. Otherwise we're left at the whims of
+> link order for kunit. For instance if a kunit test relies on frameworks
+> which are also late_initcall() we'd have complete incompatibility with
+> anything linked *after* kunit.
+>
+>> diff --git a/kunit/Kconfig b/kunit/Kconfig
+>> new file mode 100644
+>> index 0000000000000..49b44c4f6630a
+>> --- /dev/null
+>> +++ b/kunit/Kconfig
+>> @@ -0,0 +1,17 @@
+>> +#
+>> +# KUnit base configuration
+>> +#
+>> +
+>> +menu "KUnit support"
+>> +
+>> +config KUNIT
+>> +	bool "Enable support for unit tests (KUnit)"
+>> +	depends on UML
+> Consider using:
+>
+> if UML
+>     ...
+> endif
+>
+> That allows the depends to be done once.
+>
+>> +	help
+>> +	  Enables support for kernel unit tests (KUnit), a lightweight unit
+>> +	  testing and mocking framework for the Linux kernel. These tests are
+>> +	  able to be run locally on a developer's workstation without a VM or
+>> +	  special hardware.
+>
+> Some mention of UML may be good here?
+>
+>> For more information, please see
+>> +	  Documentation/kunit/
+>> +
+>> +endmenu
+> I'm a bit conflicted here. This currently depends on UML but yet you
+> noted on RFC v2 that your intention is to liberate kunit from UML and
+> ideally allow unit tests to depend only on userspace. I've addressed
+> tests using both selftests kernels drivers and also re-written kernel
+> APIs to userspace to test there. I think we may need to live with both.
+>
+> Then for the UML stuff, I think if we *really* accept that UML will
+> always be a viable option we should probably consider now throwing these
+> things under drivers/platform/uml/. This follows the pattern of arch
+> specific drivers. Whether or not we end up with a complete userspace
 
-This might also help...
+UML platform drivers predate that and are under arch/um/drivers/
 
+We should either keep to current convention or consider relocating the 
+existing ones - having things spread in different places around the tree 
+is not good in the long run (UML already has a few of those under the 
+x86 tree, let's not increase the number).
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 0b3874bdbc6a..81f1b105946b 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -606,8 +606,7 @@ struct request_queue {
- 				 (1 << QUEUE_FLAG_ADD_RANDOM))
- 
- #define QUEUE_FLAG_MQ_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
--				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
--				 (1 << QUEUE_FLAG_POLL))
-+				 (1 << QUEUE_FLAG_SAME_COMP))
- 
- void blk_queue_flag_set(unsigned int flag, struct request_queue *q);
- void blk_queue_flag_clear(unsigned int flag, struct request_queue *q);
+> component independent of UML may implicate having a shared component
+> somewhere else.
+>
+> Likewise, I realize the goal is to *avoid* using a virtual machine for
+> these tests, but would it in any way make sense to share kunit to be
+> supported for other architectures to allow easier-to-write tests as
+> well?
+>
+>    Luis
+>
+> _______________________________________________
+> linux-um mailing list
+> linux-um@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-um
+>
 
 -- 
-Jens Axboe
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
 
