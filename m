@@ -2,125 +2,96 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55E5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8AAC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B592320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 813E720879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:54:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="ylyQcqMw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813E720879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeLEPyJ (ORCPT
+        id S1728100AbeLEPyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:54:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEPyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:54:09 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AD7A307D915;
-        Wed,  5 Dec 2018 15:54:08 +0000 (UTC)
-Received: from redhat.com (ovpn-116-101.phx2.redhat.com [10.3.116.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C257B827B6;
-        Wed,  5 Dec 2018 15:53:59 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 10:53:57 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/mmu_notifier: use structure for
- invalidate_range_start/end calls
-Message-ID: <20181205155357.GA3536@redhat.com>
-References: <20181203201817.10759-1-jglisse@redhat.com>
- <20181203201817.10759-3-jglisse@redhat.com>
- <20181205110416.GE22304@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205110416.GE22304@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 05 Dec 2018 15:54:08 +0000 (UTC)
+        Wed, 5 Dec 2018 10:54:17 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38070 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbeLEPyP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:54:15 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so10259973plb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 07:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=392UV8beoUasC1QsWmvdHjNMQmpl1CoCyfHmO/0uTmo=;
+        b=ylyQcqMw9j+b4BL38Wg1nZB76lTbCWoe3t6/bCr363B6z5lcq/DVpqFpzyrArmY4QY
+         Lqe8Hn4o8ENQOrPLyxh+w9/BtbmhzMtwjsVm91TcnPnKxc4GRN00FCeLiBvNbIMNVA8H
+         KbxhlTvNUpshXXYdVjZZPzuiF4ldoSZ7lQfp8PN3lASdtNDob+HGUELCZGSdueNxHywV
+         a95U9p50JQgWrJ/OShmk2+tKvuFl31AGk4ysROQ926UA4NxdnmH2P3mCNv1/7VaBW2FH
+         wvLGiMF5xVMwwN0o6G7Pg8TWaCiGC744rseRJuq91WCyddNRfqNFatNvktWoS+FoTcU9
+         EKHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=392UV8beoUasC1QsWmvdHjNMQmpl1CoCyfHmO/0uTmo=;
+        b=JDgX6Tg7rtEnVPiu7UBt+Dpa835LzlyQXG3VAsGxcaHWB1z0hZvQqjvmkv8tYdDHDH
+         /1MCVoGBnA5x49VtOm1sKR9cRHzdD5ceG87+Md+PMx+GRyXwLwRgqN09hxXm09H2U5Bu
+         bDygS70WodNKYtyj10Hkn3G4Dopha8HFkTe7AA4MePJIiWRz9g1BAl6y5WfzDBG9jqHy
+         I6aAJ81p+MeegERPUE1OM7rfdMd72ei0LoBnIWwYLgn3rfJd/f6smRMNQRaLUCXfxDGN
+         sHtyJzvTv/CAjFiYXrjj8th4+Jvvbk02Z7azGKhXFb8mHrpQRDC2t5zmKmycyXjg7k1l
+         /02w==
+X-Gm-Message-State: AA+aEWbH8XPh6aE9Cy1KU/42DDoaqJ+22+wAk5Tq5XyM+QGSbLCLWnkX
+        QD+3oRxpw4DvxGwgIxobLLDHPQ==
+X-Google-Smtp-Source: AFSGD/UgMsz4FzFXYZHsWTfS9QDiJ4jHQBbc2QTiEAm0C5NL1NKXycQ9/jEXwFFFgONk70kccdGVjw==
+X-Received: by 2002:a17:902:820d:: with SMTP id x13mr25460830pln.229.1544025254174;
+        Wed, 05 Dec 2018 07:54:14 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:7429:683f:7a90:8a4d:4c99? ([2601:646:c200:7429:683f:7a90:8a4d:4c99])
+        by smtp.gmail.com with ESMTPSA id w184sm22949391pgd.34.2018.12.05.07.54.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 07:54:13 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 6/5] x86/fault: Clean up the page fault oops decoder a bit
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <20181205152336.GA31197@linux.intel.com>
+Date:   Wed, 5 Dec 2018 07:54:11 -0800
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C853E326-E758-4B9B-98DF-73C00D5244B6@amacapital.net>
+References: <cover.1542841400.git.luto@kernel.org> <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org> <20181122084119.GA44720@gmail.com> <20181127153202.GA27075@linux.intel.com> <CALCETrW00oTpXOONwbONHHuiyqp9QbNMe0gvVgf8X3_X0fidqw@mail.gmail.com> <20181205152336.GA31197@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:04:16PM +0100, Jan Kara wrote:
-> Hi Jerome!
-> 
-> On Mon 03-12-18 15:18:16, jglisse@redhat.com wrote:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > To avoid having to change many call sites everytime we want to add a
-> > parameter use a structure to group all parameters for the mmu_notifier
-> > invalidate_range_start/end cakks. No functional changes with this
-> > patch.
-> 
-> Two suggestions for the patch below:
-> 
-> > @@ -772,7 +775,8 @@ static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
-> >  		 * call mmu_notifier_invalidate_range_start() on our behalf
-> >  		 * before taking any lock.
-> >  		 */
-> > -		if (follow_pte_pmd(vma->vm_mm, address, &start, &end, &ptep, &pmdp, &ptl))
-> > +		if (follow_pte_pmd(vma->vm_mm, address, &range,
-> > +				   &ptep, &pmdp, &ptl))
-> >  			continue;
-> 
-> The change of follow_pte_pmd() arguments looks unexpected. Why should that
-> care about mmu notifier range? I see it may be convenient but it doesn't look
-> like a good API to me.
 
-Saddly i do not see a way around that one this is because of fs/dax.c
-which does the mmu_notifier_invalidate_range_end while follow_pte_pmd
-do the mmu_notifier_invalidate_range_start
 
-follow_pte_pmd does adjust the start and end address so that the dax
-function does not have the logic to find those address. So instead of
-duplicating that follow_pte_pmd inside the dax code i rather passed
-around the range struct to follow_pte_pmd.
 
-> 
-> > @@ -1139,11 +1140,15 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
-> >  				downgrade_write(&mm->mmap_sem);
-> >  				break;
-> >  			}
-> > -			mmu_notifier_invalidate_range_start(mm, 0, -1);
-> > +
-> > +			range.start = 0;
-> > +			range.end = -1UL;
-> > +			range.mm = mm;
-> > +			mmu_notifier_invalidate_range_start(&range);
-> 
-> Also how about providing initializer for struct mmu_notifier_range? Or
-> something like DECLARE_MMU_NOTIFIER_RANGE? That will make sure that
-> unused arguments for particular notification places have defined values and
-> also if you add another mandatory argument (like you do in your third
-> patch), you just add another argument to the initializer and that way
-> the compiler makes sure you haven't missed any place. Finally the code will
-> remain more compact that way (less lines needed to initialize the struct).
+> +       err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]", NULL)=
+;
+> +       err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   , NULL)=
+;
+> +       err_str_append(error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR, N=
+ULL,
+> +                                                         "[READ]");
 
-That is what i do in v2 :)
+Ah, I see the issue.  OTOH, printing [READ] [INSTR] wouldn=E2=80=99t be so b=
+ad, either.
 
-Thank you for looking to all this.
-
-Cheers,
-Jérôme
