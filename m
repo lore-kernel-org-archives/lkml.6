@@ -2,109 +2,213 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78F9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FBCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2AA2082D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:09:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHDf6Oky"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2AA2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 329342082D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329342082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeLEPJk (ORCPT
+        id S1727948AbeLEPKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:09:40 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37233 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeLEPJk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:09:40 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e5-v6so18663099lja.4;
-        Wed, 05 Dec 2018 07:09:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8iLLBeQDhV8Tszwawl8dd2d7JvZqYxaJoo0YXAX88DI=;
-        b=nHDf6OkyEQUX9D6ZbC4GNg7Vu4FwftZ/J8+I3MYIjkN+9MKNhRNJPRxq0kWW1ITk1J
-         +OrrMKCbZjP+GPGR6IyOHevyNAx3FzYvVNYVgCFFzl8RIeqdnIJJwJvJHp2rjuoZKfAe
-         APMIn+5etInFua28keWQnaDoic8iaDlHnucn7z89ypuUE1vLtDedZ+/mH21FPvXd349W
-         z7bwTT2T1ZHERnBALUm7oTkK0+U4a7cy7z8lhMqcONT/m8yDf2lpyeRCcJbKLUm5PhBm
-         H0SYeOgo+GV1keyXl0fBAAyQ6T5KSzOugb+6j7ujP1sYSaYbq5bvV9NFdJ31GO2DuiT/
-         F3aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8iLLBeQDhV8Tszwawl8dd2d7JvZqYxaJoo0YXAX88DI=;
-        b=iDSgQPG+WVTPuCgjofrVIGoBSXU0HuBwsGUgFzRbscWmWnt7puH03qGg3zYksFPNyc
-         jemB6TYEBKlMbLKeb80ZFXfpwhh1DjXCavsZbv2Dzl3d/+kGSJz9t3S+FrW++bwpL1EP
-         NdXyZHRhfId27DBx1VzaWbgNG9RENHOpbBG0s/IqE1dag8KZxYfiRguSmLnYDUkt+RRx
-         3lsQZhQ+HTmCY9FAxxUaUW3bXQNsyOJSYOJXOrVAMt1SAOjf7uZ9/n8/p3Ec89poqe2v
-         dDpAcIAHgdYzcAsvqybPa8EjZfmL6Y9TdTXvqi+c+6NYInsWOh9+au5h4TPtp2s/gE8o
-         LpmA==
-X-Gm-Message-State: AA+aEWbVpzJAD7ZA6BUjFmrLmaZ5f/G1MP6cR+7sH9p++veTEfsdOxob
-        noZAoY9BaCd1O9eVhd0oyoE=
-X-Google-Smtp-Source: AFSGD/XosVtYTsUwirfVAaYSrWY6Sb+IeZX/Xma9iEcp3GuI5Nv2qalPNrtN8bTodzXUR8//yGEeDw==
-X-Received: by 2002:a2e:7c13:: with SMTP id x19-v6mr16091313ljc.83.1544022578230;
-        Wed, 05 Dec 2018 07:09:38 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id j12-v6sm3853504ljh.66.2018.12.05.07.09.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 07:09:36 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUYnz-00043A-9Y; Wed, 05 Dec 2018 16:09:39 +0100
-Date:   Wed, 5 Dec 2018 16:09:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH RFC 5/5] dt-bindings: gnss: add lna-supply property
-Message-ID: <20181205150939.GI15689@localhost>
-References: <20181118215801.12280-1-andreas@kemnade.info>
- <20181118215801.12280-6-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118215801.12280-6-andreas@kemnade.info>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Wed, 5 Dec 2018 10:10:07 -0500
+Received: from mga07.intel.com ([134.134.136.100]:24816 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727094AbeLEPKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:10:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 07:10:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
+   d="scan'208";a="98869048"
+Received: from jinbaowa-mobl1.ccr.corp.intel.com ([10.249.170.100])
+  by orsmga008.jf.intel.com with ESMTP; 05 Dec 2018 07:10:02 -0800
+Message-ID: <1544022595.2841.45.camel@intel.com>
+Subject: Re: [PATCH v2 02/11] thermal: add irq-mode configuration for trip
+ point
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net, b.zolnierkie@samsung.com,
+        krzk@kernel.org
+Date:   Wed, 05 Dec 2018 23:09:55 +0800
+In-Reply-To: <1541610593-28542-3-git-send-email-l.luba@partner.samsung.com>
+References: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
+         <CGME20181107171036eucas1p13253d56b463c8f888ab8f8e418635297@eucas1p1.samsung.com>
+         <1541610593-28542-3-git-send-email-l.luba@partner.samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 10:58:01PM +0100, Andreas Kemnade wrote:
-> Add lna-supply property.
+On 三, 2018-11-07 at 18:09 +0100, Lukasz Luba wrote:
+> This patch adds support irq mode in trip point.
+> When that flag is set in DT, there is no need for polling
+> in thermal framework. Crossing the trip point will rise an IRQ.
+> The naming convention for tip point 'type' can be confussing
+> and 'passive' (whic is passive cooling) might be interpretted
+> wrongly.
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> This mechanism prevents from missue and adds explicit setting
+> for hardware which support interrupts for pre-configured temperature
+> threshold.
+> 
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/thermal/of-thermal.c   | 17 +++++++++++++++++
+>  drivers/thermal/thermal_core.c | 10 ++++++++--
+>  include/linux/thermal.h        |  5 +++++
+>  3 files changed, 30 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.txt b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> index 1be7597ae884..9614774d14bc 100644
-> --- a/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> +++ b/Documentation/devicetree/bindings/gnss/sirfstar.txt
-> @@ -30,6 +30,7 @@ Optional properties:
->  - sirf,wakeup-gpios	: GPIO used to determine device power state
->  			  (pin name: RFPWRUP, WAKEUP)
->  - timepulse-gpios	: Time pulse GPIO (pin name: 1PPS, TM)
-> +- lna-supply		: Separate supply for a LNA
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-
+> thermal.c
+> index 4bfdb4a..1a75946a 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -312,6 +312,20 @@ static int of_thermal_get_trip_type(struct
+> thermal_zone_device *tz, int trip,
+>  	return 0;
+>  }
+>  
+> +static int
+> +of_thermal_get_trip_irq_mode(struct thermal_zone_device *tz, int
+> trip,
+> +			     bool *mode)
+> +{
+> +	struct __thermal_zone *data = tz->devdata;
+> +
+> +	if (trip >= data->ntrips || trip < 0)
+> +		return -EDOM;
+> +
+> +	*mode = data->trips[trip].irq_mode;
+> +
+> +	return 0;
+> +}
+> +
+>  static int of_thermal_get_trip_temp(struct thermal_zone_device *tz,
+> int trip,
+>  				    int *temp)
+>  {
+> @@ -394,6 +408,7 @@ static struct thermal_zone_device_ops
+> of_thermal_ops = {
+>  	.set_mode = of_thermal_set_mode,
+>  
+>  	.get_trip_type = of_thermal_get_trip_type,
+> +	.get_trip_irq_mode = of_thermal_get_trip_irq_mode,
+>  	.get_trip_temp = of_thermal_get_trip_temp,
+>  	.set_trip_temp = of_thermal_set_trip_temp,
+>  	.get_trip_hyst = of_thermal_get_trip_hyst,
+> @@ -827,6 +842,8 @@ static int thermal_of_populate_trip(struct
+> device_node *np,
+>  		return ret;
+>  	}
+>  
+> +	trip->irq_mode = of_property_read_bool(np, "irq-mode");
+> +
+>  	/* Required for cooling map matching */
+>  	trip->np = np;
+>  	of_node_get(np);
+> diff --git a/drivers/thermal/thermal_core.c
+> b/drivers/thermal/thermal_core.c
+> index 39fc812..6d41e08 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -406,6 +406,7 @@ static void handle_critical_trips(struct
+> thermal_zone_device *tz,
+>  static void handle_thermal_trip(struct thermal_zone_device *tz, int
+> trip)
+>  {
+>  	enum thermal_trip_type type;
+> +	bool irq_mode = false;
+>  
+>  	/* Ignore disabled trip points */
+>  	if (test_bit(trip, &tz->trips_disabled))
+> @@ -419,9 +420,14 @@ static void handle_thermal_trip(struct
+> thermal_zone_device *tz, int trip)
+>  		handle_non_critical_trips(tz, trip);
+>  	/*
+>  	 * Alright, we handled this trip successfully.
+> -	 * So, start monitoring again.
+> +	 * So, start monitoring in polling mode if
+> +	 * trip is not using irq HW support.
+>  	 */
+> -	monitor_thermal_zone(tz);
+> +	if (tz->ops->get_trip_irq_mode)
+> +		tz->ops->get_trip_irq_mode(tz, trip, &irq_mode);
+> +
+> +	if (!irq_mode)
+> +		monitor_thermal_zone(tz);
+>  }
+>  
+handle_thermal_trip() is called from thermal_zone_device_update(), and
+it is invoked for every trip points.
+say, you have a passive trip point 1 that supports irq_mode, and
+another passive trip point 2 that does not support irq_mode,
+monitor_thermal_zone() is still called in handle_thermal_trip(tz, 2),
+and the passive timer will be activated anyway, do I miss something?
 
-"Supply for external LNA"?
+thanks,
+rui
 
-And please keep the entries sorted.
-
->  
->  Example:
-
-Johan
+>  static void update_temperature(struct thermal_zone_device *tz)
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index 5f4705f..b064565 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -103,6 +103,7 @@ struct thermal_zone_device_ops {
+>  		enum thermal_device_mode);
+>  	int (*get_trip_type) (struct thermal_zone_device *, int,
+>  		enum thermal_trip_type *);
+> +	int (*get_trip_irq_mode) (struct thermal_zone_device *, int,
+> bool *);
+>  	int (*get_trip_temp) (struct thermal_zone_device *, int, int
+> *);
+>  	int (*set_trip_temp) (struct thermal_zone_device *, int,
+> int);
+>  	int (*get_trip_hyst) (struct thermal_zone_device *, int, int
+> *);
+> @@ -196,6 +197,7 @@ struct thermal_zone_device {
+>  	struct thermal_attr *trip_temp_attrs;
+>  	struct thermal_attr *trip_type_attrs;
+>  	struct thermal_attr *trip_hyst_attrs;
+> +	struct thermal_attr *trip_irq_mode_attrs;
+>  	void *devdata;
+>  	int trips;
+>  	unsigned long trips_disabled;	/* bitmap for disabled
+> trips */
+> @@ -364,6 +366,8 @@ struct thermal_zone_of_device_ops {
+>   * @temperature: temperature value in miliCelsius
+>   * @hysteresis: relative hysteresis in miliCelsius
+>   * @type: trip point type
+> + * @irq_mode: to not use polling in framework set support of HW irq
+> (which will
+> + *	      be triggered when temperature reaches this level).
+>   */
+>  
+>  struct thermal_trip {
+> @@ -371,6 +375,7 @@ struct thermal_trip {
+>  	int temperature;
+>  	int hysteresis;
+>  	enum thermal_trip_type type;
+> +	bool irq_mode;
+>  };
+>  
+>  /* Function declarations */
