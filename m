@@ -2,78 +2,86 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D93FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9475C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4CF6208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:04:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="HOJG1t2s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4CF6208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 9928920645
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:05:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9928920645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeLETEA (ORCPT
+        id S1728234AbeLETFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:04:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59272 "EHLO mail.skyhub.de"
+        Wed, 5 Dec 2018 14:05:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57452 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbeLETD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:03:59 -0500
-Received: from zn.tnic (p200300EC2BC09900ED3DB18DCE3E6DEF.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:9900:ed3d:b18d:ce3e:6def])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727402AbeLETFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:05:08 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7694F1EC0BA2;
-        Wed,  5 Dec 2018 20:03:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544036638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=kAPA4uSupwkzbxl3zVwAPfGw9r7IX7xp+JMX3WI/ayI=;
-        b=HOJG1t2sGaH41B/rTjUXf04YrRO7xU0stPKqVSr9vLIKBImkryRJXdP6RaGkW6hfON6yjQ
-        on9AHGgORCRn2s28kJ1CSCbVYBkeGTB4hxprE6dT42YFWBnASQc9l+PtiVJ/kLcc+P8hon
-        W1hwsK9YdhcYpYtFbO/6HIgdRHrtjdc=
-Date:   Wed, 5 Dec 2018 20:03:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>, X86 ML <x86@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH] x86/mce: Streamline MCE subsystem's naming
-Message-ID: <20181205190355.GP29510@zn.tnic>
-References: <20181205141323.14995-1-bp@alien8.de>
- <20181205163037.GC109259@gmail.com>
- <20181205170006.GK29510@zn.tnic>
- <20181205180158.GA64770@gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id DACE34E928;
+        Wed,  5 Dec 2018 19:05:07 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E7A2F60BEE;
+        Wed,  5 Dec 2018 19:05:06 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 14:05:06 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 04/11] livepatch: Refuse to unload only livepatches
+ available during a forced transition
+Message-ID: <20181205190506.o7feg4y7m7t7eyp7@redhat.com>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-5-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205180158.GA64770@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181129094431.7801-5-pmladek@suse.com>
+User-Agent: Mutt/1.6.2-neo (2016-08-08)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 05 Dec 2018 19:05:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 07:01:58PM +0100, Ingo Molnar wrote:
-> Oh - I thought we'd have arch/x86/mce/ or so?
+On Thu, Nov 29, 2018 at 10:44:24AM +0100, Petr Mladek wrote:
+> module_put() is currently never called in klp_complete_transition() when
+> klp_force is set. As a result, we might keep the reference count even when
+> klp_enable_patch() fails and klp_cancel_transition() is called.
 > 
-> There's machine check events that are not tied to any particular CPU, 
-> correct? So this would be the right conceptual level - and it would also 
-> remove the somewhat redundant 'kernel' part.
+> This might make an assumption that a module might get blocked in some
+             ^^^^^^^^^^^^^^^^^^
+re-wording suggestion: "give the impression"
 
-Well, all the MCE events reported are some way or the other tied to the
-CPU and they're reported in the CPU's MCA banks so I think we want
+> strange init state. Fortunately, it is not the case. The reference count
+> is ignored when mod->init fails and erroneous modules are always removed.
+> 
+> Anyway, this might make some confusion. Instead, this patch moves
+                     ^^^^^^^^^^^^^^^^^^^
+re-wording suggestions: "create confusion" or "be confusing"
 
-	arch/x86/cpu/mce/
+> the global klp_forced flag into struct klp_patch. As a result,
+> we block only modules that might still be in use after a forced
+> transition. Newly loaded livepatches might be eventually completely
+> removed later.
+> 
+> It is not a big deal. But the code is at least consistent with
+> the reality.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+-- Joe
