@@ -2,229 +2,129 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8822EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C64AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F80D2146D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F80D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D7E7208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:38:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a9fTMQO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D7E7208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbeLEThf (ORCPT
+        id S1728373AbeLETip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:37:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43966 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728373AbeLEThe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:37:34 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F3EC30832C7;
-        Wed,  5 Dec 2018 19:37:34 +0000 (UTC)
-Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1D2E8648A6;
-        Wed,  5 Dec 2018 19:37:33 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 14:37:32 -0500
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v14 07/11] livepatch: Add atomic replace
-Message-ID: <20181205193732.qu25oh5xrqg7am36@redhat.com>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-8-pmladek@suse.com>
+        Wed, 5 Dec 2018 14:38:45 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:58212 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbeLETip (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:38:45 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB5JXv44144904;
+        Wed, 5 Dec 2018 19:38:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=e8hy47dV//26XronhAG0ev1PSKIm7aRevaWciGMuMeM=;
+ b=a9fTMQO5uXJpAa275Fe/HlqCT1Txdg3o91gB6VCQgA+eHdAIKKuXQ3JDNUTgCs71bPOP
+ 5uu52ob1SMjjmOgNappq2bEyUZLC0vaL9df1RYRuIjPDLOCV/AZ8zsswtLLv6UT/wuij
+ t368hkmMr2Yq+u0M1h5qsQeCmjhUlIFmjDA//AB8j0oxPWcSI5maSwNhDJ70oJ5rG2EY
+ yX9nMBeTKcacTnB9QGHFExGtpkvxMMWTE2PjcTDgLw1RJGgiqGjbUIrbLcuI2QBAZgKL
+ b3XRYo3y8J+yNK/59MrfcJRYz9Q9WVWd2PEwbof04e+IuoUvkKJIox9qPL7Z0MUC771H Dw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2p3ftf8cs9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Dec 2018 19:38:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB5Jc0sH022496
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Dec 2018 19:38:01 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB5JbvaN031530;
+        Wed, 5 Dec 2018 19:37:57 GMT
+Received: from [10.39.220.54] (/10.39.220.54)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Dec 2018 11:37:57 -0800
+Subject: Re: [PATCH] /proc/kpagecount: return 0 for special pages that are
+ never mapped
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        adobriyan@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
+        sfr@canb.auug.org.au, kirill.shutemov@linux.intel.com,
+        rppt@linux.vnet.ibm.com, mhocko@suse.com,
+        alexander.h.duyck@linux.intel.com, hannes@cmpxchg.org,
+        miles.chen@mediatek.com, n-horiguchi@ah.jp.nec.com
+References: <1543963526-27917-1-git-send-email-anthony.yznaga@oracle.com>
+ <20181205004836.GU10377@bombadil.infradead.org>
+ <fa5b667d-ccfb-b11a-2aeb-b1007651f9ec@oracle.com>
+ <20181205012534.GW10377@bombadil.infradead.org>
+From:   Anthony Yznaga <anthony.yznaga@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <540f7690-5fcd-04d6-edb3-a44ebd09e70c@oracle.com>
+Date:   Wed, 5 Dec 2018 11:40:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129094431.7801-8-pmladek@suse.com>
-User-Agent: Mutt/1.6.2-neo (2016-08-08)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 05 Dec 2018 19:37:34 +0000 (UTC)
+In-Reply-To: <20181205012534.GW10377@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812050171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:44:27AM +0100, Petr Mladek wrote:
-> From: Jason Baron <jbaron@akamai.com>
-> 
-> Sometimes we would like to revert a particular fix. Currently, this
-> is not easy because we want to keep all other fixes active and we
-> could revert only the last applied patch.
-> 
-> One solution would be to apply new patch that implemented all
-> the reverted functions like in the original code. It would work
-> as expected but there will be unnecessary redirections. In addition,
-> it would also require knowing which functions need to be reverted at
-> build time.
-> 
-> Another problem is when there are many patches that touch the same
-> functions. There might be dependencies between patches that are
-> not enforced on the kernel side. Also it might be pretty hard to
-> actually prepare the patch and ensure compatibility with the other
-> patches.
-> 
-> Atomic replace && cumulative patches:
-> 
-> A better solution would be to create cumulative patch and say that
-> it replaces all older ones.
-> 
-> This patch adds a new "replace" flag to struct klp_patch. When it is
-> enabled, a set of 'nop' klp_func will be dynamically created for all
-> functions that are already being patched but that will no longer be
-> modified by the new patch. They are used as a new target during
-> the patch transition.
-> 
-> The idea is to handle Nops' structures like the static ones. When
-> the dynamic structures are allocated, we initialize all values that
-> are normally statically defined.
-> 
-> The only exception is "new_func" in struct klp_func. It has to point
-> to the original function and the address is known only when the object
-> (module) is loaded. Note that we really need to set it. The address is
-> used, for example, in klp_check_stack_func().
-> 
-> Nevertheless we still need to distinguish the dynamically allocated
-> structures in some operations. For this, we add "nop" flag into
-> struct klp_func and "dynamic" flag into struct klp_object. They
-> need special handling in the following situations:
-> 
->   + The structures are added into the lists of objects and functions
->     immediately. In fact, the lists were created for this purpose.
-> 
->   + The address of the original function is known only when the patched
->     object (module) is loaded. Therefore it is copied later in
->     klp_init_object_loaded().
-> 
->   + The ftrace handler must not set PC to func->new_func. It would cause
->     infinite loop because the address points back to the beginning of
->     the original function.
-> 
->   + The various free() functions must free the structure itself.
-> 
-> Note that other ways to detect the dynamic structures are not considered
-> safe. For example, even the statically defined struct klp_object might
-> include empty funcs array. It might be there just to run some callbacks.
-> 
-> Special callbacks handling:
-> 
-> The callbacks from the replaced patches are _not_ called by intention.
-> It would be pretty hard to define a reasonable semantic and implement it.
-> 
-> It might even be counter-productive. The new patch is cumulative. It is
-> supposed to include most of the changes from older patches. In most cases,
-> it will not want to call pre_unpatch() post_unpatch() callbacks from
-> the replaced patches. It would disable/break things for no good reasons.
-> Also it should be easier to handle various scenarios in a single script
-> in the new patch than think about interactions caused by running many
-> scripts from older patches. Not to say that the old scripts even would
-> not expect to be called in this situation.
-> 
-> Removing replaced patches:
-> 
-> One nice effect of the cumulative patches is that the code from the
-> older patches is no longer used. Therefore the replaced patches can
-> be removed. It has several advantages:
-> 
->   + Nops' structs will not longer be necessary and might be removed.
-                         ^^^^^^^^^^
-s/not longer/no longer
-
->     This would save memory, restore performance (no ftrace handler),
->     allow clear view on what is really patched.
-> 
->   + Disabling the patch will cause using the original code everywhere.
->     Therefore the livepatch callbacks could handle only one scenario.
->     Note that the complication is already complex enough when the patch
->     gets enabled. It is currently solved by calling callbacks only from
->     the new cumulative patch.
-> 
->   + The state is clean in both the sysfs interface and lsmod. The modules
->     with the replaced livepatches might even get removed from the system.
-> 
-> Some people actually expected this behavior from the beginning. After all
-> a cumulative patch is supposed to "completely" replace an existing one.
-> It is like when a new version of an application replaces an older one.
-> 
-> This patch does the first step. It removes the replaced patches from
-> the list of patches. It is safe. The consistency model ensures that
-> they are not longer used. By other words, each process works only with
-           ^^^^^^^^^^
-s/not longer/no longer
 
 
-> the structures from klp_transition_patch.
-> 
-> The removal is done by a special function. It combines actions done by
-> __disable_patch() and klp_complete_transition(). But it is a fast
-> track without all the transaction-related stuff.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Split, reuse existing code, simplified]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Miroslav Benes <mbenes@suse.cz>
-> ---
+On 12/04/2018 05:25 PM, Matthew Wilcox wrote:
+> On Tue, Dec 04, 2018 at 05:18:32PM -0800, anthony.yznaga@oracle.com wrote:
+>> On 12/04/2018 04:48 PM, Matthew Wilcox wrote:
+>>> On Tue, Dec 04, 2018 at 02:45:26PM -0800, Anthony Yznaga wrote:
+>>>> +static inline int page_has_type(struct page *page)
+>>>> +{
+>>>> +	return (PageType(page, 0) &&
+>>>> +	       ((page->page_type & PAGE_TYPE_ALL) != PAGE_TYPE_ALL));
+>>>> +}
+>>>> +
+>>> I think this is a bit complex, and a bit of a pain to update as we add
+>>> new page types.  How about this?
+>>>
+>>> 	return (int)page_type < -128;
+>>>
+>>> (I'm open to appropriate #defines to make this more obvious that it's ~0x7F)
+>> I thought about having this:
+>>
+>> #define PAGE_TYPE_END    0xffffff80
+>>
+>> static int inline page_has_type(struct page *page)
+>> {
+>>     return page->page_type > PAGE_TYPE_BASE &&
+>>            page->page_type < PAGE_TYPE_END;
+>> }
+>>
+>> But I opted for the additional complexity to avoid more false-positives from
+>> possibly corrupted values.  I'm certainly fine with a simple approach, though.
+> The way I'm thinking about this field is that usually it's _mapcount
+> which is 0xffffffff to represent 0.  We allow a certain small amount
+> of underflow and still treat it as a mapcount.  We also allow for some
+> amount of overflow.  So to be utterly precise, what you had there would
+> have been fine, but for simplicity, I'd rather just do a signed compare
+> against -128.
+The signed compare does not allow for mapcount overflow.  Is that acceptable?
+False-positives would be benign for /proc/kpagecount though from a debug
+perspective it could be helpful to see overflowed mapcounts.  Some future
+caller would need separate consideration.
 
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 
-> diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
-> index d849af312576..ba6e83a08209 100644
-> --- a/Documentation/livepatch/livepatch.txt
-> +++ b/Documentation/livepatch/livepatch.txt
-> @@ -15,8 +15,9 @@ Table of Contents:
->  5. Livepatch life-cycle
->     5.1. Loading
->     5.2. Enabling
-> -   5.3. Disabling
-> -   5.4. Removing
-> +   5.3. Replacing
-> +   5.4. Disabling
-> +   5.5. Removing
->  6. Sysfs
->  7. Limitations
->  
-> @@ -300,8 +301,12 @@ into three levels:
->  5. Livepatch life-cycle
->  =======================
->  
-> -Livepatching can be described by four basic operations:
-> -loading, enabling, disabling, removing.
-> +Livepatching can be described by five basic operations:
-> +loading, enabling, replacing, disabling, removing.
-> +
-> +Where the replacing and the disabling operations are mutually
-> +exclusive. They have the same result for the given patch but
-> +not for the system.
->  
->  
->  5.1. Loading
-> @@ -347,7 +352,23 @@ to '0'.
->      the "Consistency model" section.
->  
->  
-> -5.3. Disabling
-> +5.3. Replacing
-> +--------------
-> +
-> +All enabled patches might get replaced by a cumulative patch that
-> +has the .replace flag set.
-> +
-> +Once the new patch is enabled and the 'transition" finishes then
-                                         ^          ^
-single quotes paired with double quotes
 
--- Joe
