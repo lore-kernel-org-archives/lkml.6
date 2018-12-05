@@ -2,152 +2,451 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8A9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC0DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62EBC206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:25:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA0BF206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txIEH2uk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62EBC206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JywHDAOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0BF206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbeLEGZG (ORCPT
+        id S1727032AbeLEG0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:25:06 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37721 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726941AbeLEGZF (ORCPT
+        Wed, 5 Dec 2018 01:26:03 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52846 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbeLEG0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:25:05 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so17242539lja.4;
-        Tue, 04 Dec 2018 22:25:03 -0800 (PST)
+        Wed, 5 Dec 2018 01:26:03 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r11-v6so11892153wmb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:26:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5QY/1Ml4Uba9OMC9jYH1RXCMD6KPLn2BRWMhqIvwP7c=;
-        b=txIEH2ukOndvOgoKSZhp/DeUAu+mxzNmLHemDyKVpRZ2JtuYH+mxswhVn402cukVGH
-         YlYOdcq+PipTjH9weKcyYJ/MHBMowZdzUojWQcEn0cwoO5w/hFQ+n//YRYGhbh+V0Kul
-         J9/GbGF+19Qmre2/7R/wJNX9DxXnp3hn4i5JOCcg6WI2zh2mvJ54OzJzGr59vSiGoYs3
-         SjMuqYO2EXLBn5WFAOShTHbHZiNmwZYsdfyTZfx2QDTKPZY+5YBy5knABQEbqDhGt5iA
-         qFxKDCcrd7W8v6XMOhyJOvaWVS7lCvnHEQnrkTNPUlK6q1//PTps4aTSje589VbGsJrr
-         Sz7w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=OKE3eiuEwcdk/JC0f6L/ZZGuDVT+ONvpzut2FqPNY6o=;
+        b=JywHDAOchDnZCtw86gpzweznqcLBOsXpO/ngT0V8gcBC08OJ8nMmKpHG0JFSyr4l9m
+         8O10WwXy5jyKZjAIH+r/x5REXAiyn8WWAAqvSILZuiFtFaBoA6NX9MM4bT5FfZZtAwCk
+         PP0AhRKJo2BsZ5qr+oSHbbwyMiH1mFEqS4Yzo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5QY/1Ml4Uba9OMC9jYH1RXCMD6KPLn2BRWMhqIvwP7c=;
-        b=LU+wFixNRn4Ic7TMgMZ5YPt9x0zY7i5HLhxkbCahtVkzbwzyFPjAZbB7ePCP6dK6zO
-         YA8ydSpz/HPkdrkG+Mw6QGehhrf87wXhyoR7yVi3vLOtCnty7kxL9l59knU3m8RYvmDT
-         Gtrgi8v+rSfw6EV5hKKFVYEfF43iC58UmcxE9UPSQWsdIHy5sktUP92tZb0Qkosk9akk
-         P6I6c1q/snh+VpunXnL90mKRrk+8QX4WRlgLBKrG9e5wp0n7pQZa4a6EL1ayQfEY1cDS
-         pthmeAxCsU8jR6NiDxPbNeGWS9t5eHLlgIJXawdVGBUqda3glRaBjJLbcAIMCYfO1VBQ
-         bM0Q==
-X-Gm-Message-State: AA+aEWa0hwWIhI2J8ZG23+XptbfPY+CkkylLQ/hr8qlwsHJMtSZ8EXwp
-        w15OfO5y5G9GMLG06UEf+Jk=
-X-Google-Smtp-Source: AFSGD/XCZ8UvG3pTdJfJI8e1cG8p6V31B5zTlKmgz6Rxbm0in+FzQ569RojS6OMoja/kVc2kjkljaQ==
-X-Received: by 2002:a2e:9694:: with SMTP id q20-v6mr14658588lji.173.1543991103049;
-        Tue, 04 Dec 2018 22:25:03 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id c88-v6sm2377482ljf.60.2018.12.04.22.25.01
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OKE3eiuEwcdk/JC0f6L/ZZGuDVT+ONvpzut2FqPNY6o=;
+        b=LNoqEkpwsQcnUlTAS4I7NqXrTSYiUjYlh26T3Zonrq5RgoM6V4xqZ6v4+QIQIle1ZW
+         09N7km8QZQTNFJjUTjHw3ryZkcb59TZFe8acw6IjVI5PuwDBblSIqBQnOycejpyZKhDB
+         nZuHUVreQjopu2UFMgmcv5Eiq3kN3LvFfTBxiOi6DHaPXcdNsO3w2PSakjEwDRQ+1bqa
+         Cxwrqbdk8vC2QBNXGO6uj6Fmvoxpk6n2xFym18VlY+eYEgwUXDJtFuQWCa90aJPVy3UW
+         4zlnuFdi7BWi2qC/k6S5qBAHNCsTEA85ouuF2eOVPHue8E1oTBedKEyrv/B0AoOZWerp
+         MLeg==
+X-Gm-Message-State: AA+aEWZUNuKcFFy9AkMZJ92i8LWHXn4fxDYIaPWCepEMdXTBjrCBOBEo
+        XqmCvLA0cZ+K9+GcDWQtsIDcGQ==
+X-Google-Smtp-Source: AFSGD/Wj5ZL+08o913mjopNm3y3Q2dE1QuLz2lxIfYhSwl4Hxr0LmUSsVRk5cM9/kvFEW4pRuY+bIA==
+X-Received: by 2002:a1c:da92:: with SMTP id r140mr15336675wmg.136.1543991159663;
+        Tue, 04 Dec 2018 22:25:59 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id l197sm9665767wma.44.2018.12.04.22.25.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 22:25:02 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUQcJ-00019l-Vq; Wed, 05 Dec 2018 07:25:04 +0100
-Date:   Wed, 5 Dec 2018 07:25:03 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-Message-ID: <20181205062503.GG18087@localhost>
-References: <20181130150247.26294-1-bgodavar@codeaurora.org>
- <20181130150247.26294-2-bgodavar@codeaurora.org>
+        Tue, 04 Dec 2018 22:25:58 -0800 (PST)
+Date:   Wed, 5 Dec 2018 14:25:50 +0800
+From:   leo.yan@linaro.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v2 1/2] perf cs-etm: Set branch instruction flags in
+ packet
+Message-ID: <20181205062550.GC15964@leoy-ThinkPad-X240s>
+References: <1541912876-20967-1-git-send-email-leo.yan@linaro.org>
+ <1541912876-20967-2-git-send-email-leo.yan@linaro.org>
+ <20181119222617.GA5628@xps15>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181130150247.26294-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119222617.GA5628@xps15>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 08:32:44PM +0530, Balakrishna Godavarthi wrote:
-> wcn3990 requires a power pulse to turn ON/OFF along with
-> regulators. Sometimes we are observing the power pulses are sent
-> out with some time delay, due to queuing these commands. This is
-> causing synchronization issues with chip, which intern delay the
-> chip setup or may end up with communication issues.
+On Mon, Nov 19, 2018 at 03:26:17PM -0700, Mathieu Poirier wrote:
+> On Sun, Nov 11, 2018 at 01:07:55PM +0800, Leo Yan wrote:
+> > The perf sample data contains flags to indicate the hardware trace data
+> > is belonging to which type branch instruction, thus this can be used to
+> > print out the human readable string.  Arm CoreSight ETM sample data is
+> > missed to set flags and it is always set to zeros, this results in perf
+> > tool skips to print string for instruction types.
+> > 
+> > Arm CoreSight ETM supports different kinds instruction of A64, A32 and
+> > T32; this patch is to set branch instruction flags in packet for these
+> > ISAs.
+> > 
+> > The brief idea for patch implementation is describe as below:
+> > 
+> > - For element with OCSD_GEN_TRC_ELEM_TRACE_ON type, it is taken as trace
+> >   beginning packet; for element with OCSD_GEN_TRC_ELEM_NO_SYNC or
+> >   OCSD_GEN_TRC_ELEM_EO_TRACE, these two kinds elements are used to set
+> >   for trace end;
+> > 
+> >   As Mike suggested the packet stream might have more than one two
+> >   TRACE_ON packets, the first one TRACE_ON packet indicates trace end
+> >   and the second one is taken as trace restarting.  We will handle this
+> >   special case in the upper layer with packet queue handling, which has
+> >   more context so it's more suitable fix up for it.  This will be
+> >   accomplished in the sequential patch.
+> > 
+> > - For instruction range packet, mainly base on three factors to decide
+> >   the branch instruction types:
+> > 
+> >   elem->last_i_type
+> >   elem->last_i_subtype
+> >   elem->last_instr_cond
+> > 
+> >   If the instruction is immediate branch but without link and return
+> >   flag, we consider it as function internal branch;  in fact the
+> >   immediate branch also can be used to invoke the function entry,
+> >   usually this is only used in assembly code to directly call a symbol
+> >   and don't expect to return back; after reviewing kernel normal
+> >   functions and user space programs, both of them are very seldom to use
+> >   immediate branch for function call.  On the other hand, if we want to
+> >   decide the immediate branch is for function branch jumping or for
+> >   function calling, we need to rely on the start address of next packet
+> >   and check the symbol offset for the start address,  this will
+> >   introduce much complexity in the implementation.  So for this version
+> >   we simply consider immediate branch as function internal branch.
+> >   Moreover, we rely on 'elem->last_instr_cond' to decide if the branch
+> >   instruction is a conditional branch or not.
+> > 
+> >   If the instruction is immediate branch with link, it's instruction
+> >   'BL' and which is used for function call.
+> > 
+> >   If the instruction is indirect branch and with subtype
+> >   OCSD_S_INSTR_V7_IMPLIED_RET, the decoders gives the hint the function
+> >   return for below cases related with A32/T32 instruction; set this
+> >   branch flag as function return (Thanks for Al's suggestion).
+> > 
+> >     BX R14
+> >     MOV PC, LR
+> >     POP {…, PC}
+> >     LDR PC, [SP], #offset
+> > 
+> >   If the instruction is indirect branch without link, this is
+> >   corresponding to instruction 'BR', this instruction usually is used
+> >   for dynamic link lib with below usage; so we think it's a return
+> >   instruction.
+> > 
+> >     0000000000000680 <.plt>:
+> >      680:   a9bf7bf0        stp     x16, x30, [sp, #-16]!
+> >      684:   90000090        adrp    x16, 10000 <__FRAME_END__+0xf630>
+> >      688:   f947fe11        ldr     x17, [x16, #4088]
+> >      68c:   913fe210        add     x16, x16, #0xff8
+> >      690:   d61f0220        br      x17
+> > 
+> >   If the instruction is indirect branch with link, e.g BLR, we think
+> >   it's a function call.
+> > 
+> >   For function return, ARMv8 introduces a dedicated instruction 'ret',
+> >   which has flag of OCSD_S_INSTR_V8_RET.
+> > 
+> > - For exception packets, this patch divides into three types:
+> > 
+> >   The first type of exception is caused by external logics like bus,
+> >   interrupt controller, debug module or PE reset or halt; this is
+> >   corresponding to flags "bcyi" which defined in doc perf-script.txt;
+> > 
+> >   The second type is for system call, this is set as "bcs" by following
+> >   definition in the doc;
+> > 
+> >   The third type is for CPU trap, data and instruction prefetch abort,
+> >   alignment abort; usually these exceptions are synchronous for CPU, so
+> >   set them as "bci" type.
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> v3:
->   * no change.
-> v2: 
->   * Updated function qca_send_power_pulse()
->   * addressed reviewer comments.
+> This is too long and needs to be broken down into pieces.  I would split this
+> patch in 3 heat, one for NO_SYNC and TRACE_ON, one for INSTR_RANGE and one for
+> ELEM_EXCEPTION/ELEM_EXCEPTION_RET. 
 
-Please make sure to include reviewers on CC when resending, and as
-someone else already mentioned, be a bit more specific about what
-changes you actually made in response to the review feedback you
-received.
+This makes sense, will split to 3 patches.
 
-> v1:
->  * initial patch
-> ---
->  drivers/bluetooth/hci_qca.c | 37 +++++++++++++------------------------
->  1 file changed, 13 insertions(+), 24 deletions(-)
+> > 
+> > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Cc: Mike Leach <mike.leach@linaro.org>
+> > Cc: Robert Walker <robert.walker@arm.com>
+> > Cc: Al Grant <Al.Grant@arm.com>
+> > Cc: Andi Kleen <andi@firstfloor.org>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 168 ++++++++++++++++++++++++
+> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |   1 +
+> >  2 files changed, 169 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > index d1a6cbc..0e50c52 100644
+> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > @@ -303,6 +303,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+> >  	decoder->packet_buffer[et].instr_count = 0;
+> >  	decoder->packet_buffer[et].last_instr_taken_branch = false;
+> >  	decoder->packet_buffer[et].last_instr_size = 0;
+> > +	decoder->packet_buffer[et].flags = 0;
 > 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index f036c8f98ea3..f5dd323c1967 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->  		hci_uart_set_baudrate(hu, speed);
->  }
->  
-> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
-> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->  {
-> -	struct hci_uart *hu = hci_get_drvdata(hdev);
-> -	struct qca_data *qca = hu->priv;
-> -	struct sk_buff *skb;
-> +	int ret;
->  
->  	/* These power pulses are single byte command which are sent
->  	 * at required baudrate to wcn3990. On wcn3990, we have an external
-> @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->  	 * save power. Disabling hardware flow control is mandatory while
->  	 * sending power pulses to SoC.
->  	 */
-> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
-> -
-> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
-> -	if (!skb)
-> -		return -ENOMEM;
-> -
-> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
->  	hci_uart_set_flow_control(hu, true);
-> +	ret = serdev_device_write(hu->serdev, &cmd, sizeof(cmd), 0);
+> Since PERF_IP_FLAG_BRANCH is '0', I would set this to UNINT32_MAX.
 
-You're still using 0 as a timeout here which is broken, as I already
-told you.
+PERF_IP_FLAG_BRANCH is bit 0 is set (so it's 1) but not 0.  If
+initialize value to UNINT32_MAX (0xFFFF,FFFF) that means all flags has
+been set and this will introduce confusion.  So will keep to init
+flags to 0.
 
-From 4.21 this will result in an indefinite timeout, but currently
-implies not to wait for a full write buffer to drain at all.
+> >  
+> >  	if (decoder->packet_count == MAX_BUFFER - 1)
+> >  		return OCSD_RESP_WAIT;
+> > @@ -437,6 +438,171 @@ cs_etm_decoder__buffer_exception_ret(struct cs_etm_decoder *decoder,
+> >  					     CS_ETM_EXCEPTION_RET);
+> >  }
+> >  
+> > +static void cs_etm_decoder__set_sample_flags(
+> > +				const void *context,
+> > +				const ocsd_generic_trace_elem *elem)
+> > +{
+> > +	struct cs_etm_decoder *decoder = (struct cs_etm_decoder *) context;
+> > +	struct cs_etm_packet *packet;
+> > +	u32 exc_num;
+> > +
+> > +	packet = &decoder->packet_buffer[decoder->tail];
+> > +
+> > +	switch (elem->elem_type) {
+> > +	case OCSD_GEN_TRC_ELEM_TRACE_ON:
+> > +		packet->flags = PERF_IP_FLAG_BRANCH |
+> > +				PERF_IP_FLAG_TRACE_BEGIN;
+> > +		break;
+> > +
+> > +	case OCSD_GEN_TRC_ELEM_NO_SYNC:
+> > +	case OCSD_GEN_TRC_ELEM_EO_TRACE:
+> > +		packet->flags = PERF_IP_FLAG_BRANCH |
+> > +				PERF_IP_FLAG_TRACE_END;
+> > +		break;
+> > +
+> > +	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
+> > +		/*
+> > +		 * Immediate branch instruction without neither link nor
+> > +		 * return flag, it's normal branch instruction within
+> > +		 * the function.
+> > +		 */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_NONE) {
+> > +			packet->flags = PERF_IP_FLAG_BRANCH;
+> > +
+> > +			if (elem->last_instr_cond)
+> > +				packet->flags |= PERF_IP_FLAG_CONDITIONAL;
+> > +		}
+> > +
+> > +		/*
+> > +		 * Immediate branch instruction with link (e.g. BL), this is
+> > +		 * branch instruction for function call.
+> > +		 */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_BR_LINK)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_CALL;
+> > +
+> > +		/*
+> > +		 * Indirect branch instruction with subtype of
+> > +		 * OCSD_S_INSTR_V7_IMPLIED_RET, this is explicit hint for
+> > +		 * function return for A32/T32.
+> > +		 */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_V7_IMPLIED_RET)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_RETURN;
+> > +
+> > +		/*
+> > +		 * Indirect branch instruction without link (e.g. BR), usually
+> > +		 * this is used for function return, especially for functions
+> > +		 * within dynamic link lib.
+> > +		 */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_NONE)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_RETURN;
+> > +
+> > +		/*
+> > +		 * Indirect branch instruction with link (e.g. BLR), this is
+> > +		 * branch instruction for function call.
+> > +		 */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_BR_LINK)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_CALL;
+> > +
+> > +		/* Return instruction for function return. */
+> > +		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
+> > +		    elem->last_i_subtype == OCSD_S_INSTR_V8_RET)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_RETURN;
+> 
+> I would swap the last to if() condition so that the (BRANCH | RETURN) flags
+> are all at the same place.
 
-As I also mentioned, you need to to make sure to call
-serdev_device_write_wakeup() in the write_wakup() path if you are going
-to use serdev_device_write() at all.
+Will follow this in new patch.
 
-Johan
+> > +
+> > +		break;
+> > +
+> > +	case OCSD_GEN_TRC_ELEM_EXCEPTION:
+> > +
+> > +#define OCSD_EXC_RESET			0
+> > +#define OCSD_EXC_DEBUG_HALT		1
+> > +#define OCSD_EXC_CALL			2
+> > +#define OCSD_EXC_TRAP			3
+> > +#define OCSD_EXC_SYSTEM_ERROR		4
+> > +#define OCSD_EXC_INST_DEBUG		6
+> > +#define OCSD_EXC_DATA_DEBUG		7
+> > +#define OCSD_EXC_ALIGNMENT		10
+> > +#define OCSD_EXC_INST_FAULT		11
+> > +#define OCSD_EXC_DATA_FAULT		12
+> > +#define OCSD_EXC_IRQ			14
+> > +#define OCSD_EXC_FIQ			15
+> 
+> Where did you get the above?  To me this is something that should come from the
+> library.
+
+The concept is coming from OpenCSD lib but OpenCSD doesn't define
+macros for them.
+
+Will polish this and add these macros into OpenCSD header file.
+
+> > +
+> > +		exc_num = decoder->exc_num[packet->cpu];
+> > +
+> > +		/*
+> > +		 * The exceptions are triggered by external signals
+> > +		 * from bus, interrupt controller, debug module,
+> > +		 * PE reset or halt.
+> > +		 */
+> > +		if (exc_num == OCSD_EXC_RESET ||
+> > +		    exc_num == OCSD_EXC_DEBUG_HALT ||
+> > +		    exc_num == OCSD_EXC_SYSTEM_ERROR ||
+> > +		    exc_num == OCSD_EXC_INST_DEBUG ||
+> > +		    exc_num == OCSD_EXC_DATA_DEBUG ||
+> > +		    exc_num == OCSD_EXC_IRQ ||
+> > +		    exc_num == OCSD_EXC_FIQ)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_CALL |
+> > +					PERF_IP_FLAG_ASYNC |
+> > +					PERF_IP_FLAG_INTERRUPT;
+> > +
+> > +		/* The exception is for system call. */
+> > +		if (exc_num == OCSD_EXC_CALL)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_CALL |
+> > +					PERF_IP_FLAG_SYSCALLRET;
+> > +
+> > +		/*
+> > +		 * The exception is introduced by trap, instruction &
+> > +		 * data fault or alignment errors.
+> > +		 */
+> > +		if (exc_num == OCSD_EXC_TRAP ||
+> > +		    exc_num == OCSD_EXC_ALIGNMENT ||
+> > +		    exc_num == OCSD_EXC_INST_FAULT ||
+> > +		    exc_num == OCSD_EXC_DATA_FAULT)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_CALL |
+> > +					PERF_IP_FLAG_INTERRUPT;
+> > +
+> > +		break;
+> > +
+> > +	case OCSD_GEN_TRC_ELEM_EXCEPTION_RET:
+> > +
+> > +		exc_num = decoder->exc_num[packet->cpu];
+> > +
+> > +		if (exc_num == OCSD_EXC_CALL)
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_RETURN |
+> > +					PERF_IP_FLAG_SYSCALLRET;
+> > +		else
+> > +			packet->flags = PERF_IP_FLAG_BRANCH |
+> > +					PERF_IP_FLAG_RETURN |
+> > +					PERF_IP_FLAG_INTERRUPT;
+> > +
+> > +		break;
+> > +
+> > +	case OCSD_GEN_TRC_ELEM_UNKNOWN:
+> > +	case OCSD_GEN_TRC_ELEM_PE_CONTEXT:
+> > +	case OCSD_GEN_TRC_ELEM_ADDR_NACC:
+> > +	case OCSD_GEN_TRC_ELEM_TIMESTAMP:
+> > +	case OCSD_GEN_TRC_ELEM_CYCLE_COUNT:
+> > +	case OCSD_GEN_TRC_ELEM_ADDR_UNKNOWN:
+> > +	case OCSD_GEN_TRC_ELEM_EVENT:
+> > +	case OCSD_GEN_TRC_ELEM_SWTRACE:
+> > +	case OCSD_GEN_TRC_ELEM_CUSTOM:
+> > +	default:
+> > +		break;
+> > +	}
+> > +}
+> > +
+> >  static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+> >  				const void *context,
+> >  				const ocsd_trc_index_t indx __maybe_unused,
+> > @@ -484,6 +650,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+> >  		break;
+> >  	}
+> >  
+> > +	cs_etm_decoder__set_sample_flags(context, elem);
+> > +
+> 
+> I was toying with the idea of setting the flags in each of the case statement
+> found in cs_etm_decoder__gen_trace_elem_printer().  But that would move more
+> code around and the end result would be the same so let's keep it that way until
+> we have a good reason to split it.
+
+Do you sugguest to keep current implementation rather than to
+split flags setting in each of the case statement in
+cs_etm_decoder__gen_trace_elem_printer()?
+
+I am not 100% sure if I understand correctly for "split it" (split flags
+setting vs split functions).  So please correct me if I misunderstand
+this.
+
+Thanks,
+Leo Yan
+
+> >  	return resp;
+> >  }
+> >  
+> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > index 0d1c18d..71df908 100644
+> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> > @@ -47,6 +47,7 @@ struct cs_etm_packet {
+> >  	u8 last_instr_taken_branch;
+> >  	u8 last_instr_size;
+> >  	int cpu;
+> > +	u32 flags;
+> >  };
+> >  
+> >  struct cs_etm_queue;
+> > -- 
+> > 2.7.4
+> > 
