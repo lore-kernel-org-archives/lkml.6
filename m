@@ -2,184 +2,103 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60188C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B9EC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2797A2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544029930;
-	bh=PV0Ye61K9NoS9k9IIjsbZfy0cYxZkqxIPextWCERfjE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mg6z8Q3z1NaVNamGcC+BI3Nw38S8RSKfNUv+zseRhqWBXQZJQlW5WW/srdDG1XUvu
-	 S1ajde0RBkOcbA2EHz70ttpTOfWFht3RlOVpjRMhn0XNTQN9fJcmdOz9y+Z9lqW741
-	 DtDzWYf4UKoDL9Uh1A9/gH47afBZE+lYwK0Jeb3Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2797A2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 605EF2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:12:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="N8kySNC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605EF2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbeLERMJ (ORCPT
+        id S1728463AbeLERMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:12:09 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37034 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLERKr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:10:47 -0500
-Received: by mail-qt1-f194.google.com with SMTP id z16so23112412qtq.4;
-        Wed, 05 Dec 2018 09:10:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vqrnr706mxcuTBSv4fGe89XMxxRx6O2pZFhgxbxRlLY=;
-        b=HJ2K4OG/kp6nh2SaNx8R/HNPKcZq8FZ5zTc8WUfLbHQIum2mAaKZJMkGza5D4kHkhw
-         R0YbNxnuNRpewUYG+QpVgLXBa6YV+GM7VP+oPObVfN8nC8dJ7DYxhTJEzCisJZ2p0/Ax
-         ShBh1nYdhbpmD+M7s1ljX5xrxAkBiuMS82D6iAgukkG05wuBfAnCO48abUYJZjhVYBlR
-         qHOUmXsCzJVGsl0z/yF+5UUEuKgEFnoYu5/luDYhxOXvIP8NY8HJcMXA/uFGDo7LpgVL
-         tPRtu9Alo843zh4ZQs7uLmi0mAXEaCMSRBmSWKhu/hGgG9KlfJ4P04GdXjtJpK/b471t
-         01Mw==
-X-Gm-Message-State: AA+aEWZy/C60p0rHDEQ3RnGcT8euMv5Ak4vf5/+9yQJXjy92VbCsH+Nu
-        fA6lLLBWpUX1ITSZP7gtGFc=
-X-Google-Smtp-Source: AFSGD/WOSiMR10JJCNI2QTdk+x4OzqvdnpvqKVPv63Kof9/sukSLAOXqBa4IB+5YO35skc7xUOtFCw==
-X-Received: by 2002:aed:3e49:: with SMTP id m9mr22360105qtf.99.1544029845858;
-        Wed, 05 Dec 2018 09:10:45 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 09:10:44 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 02/14] blkcg: update blkg_lookup_create() to do locking
-Date:   Wed,  5 Dec 2018 12:10:27 -0500
-Message-Id: <20181205171039.73066-3-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20181205171039.73066-1-dennis@kernel.org>
-References: <20181205171039.73066-1-dennis@kernel.org>
+        Wed, 5 Dec 2018 12:12:36 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42292 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727297AbeLERMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:12:35 -0500
+Received: from zn.tnic (p200300EC2BC09900993F789616C996F0.dip0.t-ipconnect.de [IPv6:2003:ec:2bc0:9900:993f:7896:16c9:96f0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 70EAF1EC04FB;
+        Wed,  5 Dec 2018 18:12:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544029953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=q8ZbivEMth9AESCMbOjzBjOAjdutp3qmUwboNDYX2Pg=;
+        b=N8kySNC/uh2Mi7hZsa30dCREZIxRRmNfJlaerFvwqIJESvEgHamp72sICfXf8kxcCTAJyg
+        dFAp+U7QDwhlq90KBL8vInrYmOeEqUTEwIBIf2+22NOvPxEpZPnU7SrKxZ0WPW1WA9BtkW
+        HVdaD9EMs+P3XIg4sfUFy0DKsGFxF6E=
+Date:   Wed, 5 Dec 2018 18:12:27 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tracy Smith <tlsmith3777@gmail.com>
+Cc:     york.sun@nxp.com, linux-edac@vger.kernel.org,
+        util-linux@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: edac driver injection of uncorrected errors & utils
+Message-ID: <20181205171226.GL29510@zn.tnic>
+References: <CAChUvXMVHxhawLFPFzz_0+iFxjQ+dRwpTsCGo95oc8Y+7a-2DQ@mail.gmail.com>
+ <AM0PR04MB3971FBCF6CB23BE778D39EED9AD80@AM0PR04MB3971.eurprd04.prod.outlook.com>
+ <CAChUvXPCfwfHrntJHWpsydYZE=P692Axd0pFE+GjZCXtx1fgog@mail.gmail.com>
+ <CAChUvXMWZ-LYyqnczM-bt9cDP0r1XT+F1dcYuRHiVcx=QR7_Jw@mail.gmail.com>
+ <AM0PR04MB3971768EA5D50D7045B462619AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
+ <CAChUvXN8rZqxBaV2qbdR8uymsmZAk_Jnc2kxSUf+kBf76QHV9A@mail.gmail.com>
+ <AM0PR04MB3971FFCCDAF29E7DF0F0EE159AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
+ <CAChUvXNz=XR37EeVRJFnF195BGgjPgCeFv6nbjR3yV2_mQwxBQ@mail.gmail.com>
+ <20181128234415.GH16830@zn.tnic>
+ <CAChUvXPgntzMbAhcg8y2HJyyZWwaqNPe66efmpfyHLgN1JSW_w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAChUvXPgntzMbAhcg8y2HJyyZWwaqNPe66efmpfyHLgN1JSW_w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To know when to create a blkg, the general pattern is to do a
-blkg_lookup() and if that fails, lock and do the lookup again, and if
-that fails finally create. It doesn't make much sense for everyone who
-wants to do creation to write this themselves.
+On Wed, Dec 05, 2018 at 10:37:52AM -0600, Tracy Smith wrote:
+> This was very helpful.
 
-This changes blkg_lookup_create() to do locking and implement this
-pattern. The old blkg_lookup_create() is renamed to
-__blkg_lookup_create().  If a call site wants to do its own error
-handling or already owns the queue lock, they can use
-__blkg_lookup_create(). This will be used in upcoming patches.
+I'm glad.
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
----
- block/blk-cgroup.c         | 28 +++++++++++++++++++++++++---
- block/blk-iolatency.c      |  2 +-
- include/linux/blk-cgroup.h |  4 +++-
- 3 files changed, 29 insertions(+), 5 deletions(-)
+Can you do me a favor pls and not top-post when replying on a mailing
+list?
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 63d226a084cd..b421a9457e05 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -249,7 +249,7 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
- }
- 
- /**
-- * blkg_lookup_create - lookup blkg, try to create one if not there
-+ * __blkg_lookup_create - lookup blkg, try to create one if not there
-  * @blkcg: blkcg of interest
-  * @q: request_queue of interest
-  *
-@@ -262,8 +262,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
-  * value on error.  If @q is dead, returns ERR_PTR(-EINVAL).  If @q is not
-  * dead and bypassing, returns ERR_PTR(-EBUSY).
-  */
--struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
--				    struct request_queue *q)
-+struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
-+				      struct request_queue *q)
- {
- 	struct blkcg_gq *blkg;
- 
-@@ -293,6 +293,28 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
- 	}
- }
- 
-+/**
-+ * blkg_lookup_create - find or create a blkg
-+ * @blkcg: target block cgroup
-+ * @q: target request_queue
-+ *
-+ * This looks up or creates the blkg representing the unique pair
-+ * of the blkcg and the request_queue.
-+ */
-+struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
-+				    struct request_queue *q)
-+{
-+	struct blkcg_gq *blkg = blkg_lookup(blkcg, q);
-+
-+	if (unlikely(!blkg)) {
-+		spin_lock_irq(&q->queue_lock);
-+		blkg = __blkg_lookup_create(blkcg, q);
-+		spin_unlock_irq(&q->queue_lock);
-+	}
-+
-+	return blkg;
-+}
-+
- static void blkg_destroy(struct blkcg_gq *blkg)
- {
- 	struct blkcg *blkcg = blkg->blkcg;
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index fe0c4ca312ff..e6f68f15dee9 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -486,7 +486,7 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
- 	blkg = blkg_lookup(blkcg, q);
- 	if (unlikely(!blkg)) {
- 		spin_lock_irq(&q->queue_lock);
--		blkg = blkg_lookup_create(blkcg, q);
-+		blkg = __blkg_lookup_create(blkcg, q);
- 		if (IS_ERR(blkg))
- 			blkg = NULL;
- 		spin_unlock_irq(&q->queue_lock);
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index f619307171a6..b3b1a8187d23 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -181,6 +181,8 @@ extern struct cgroup_subsys_state * const blkcg_root_css;
- 
- struct blkcg_gq *blkg_lookup_slowpath(struct blkcg *blkcg,
- 				      struct request_queue *q, bool update_hint);
-+struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
-+				      struct request_queue *q);
- struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
- 				    struct request_queue *q);
- int blkcg_init_queue(struct request_queue *q);
-@@ -799,7 +801,7 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 	blkg = blkg_lookup(blkcg, q);
- 	if (unlikely(!blkg)) {
- 		spin_lock_irq(&q->queue_lock);
--		blkg = blkg_lookup_create(blkcg, q);
-+		blkg = __blkg_lookup_create(blkcg, q);
- 		if (IS_ERR(blkg))
- 			blkg = NULL;
- 		spin_unlock_irq(&q->queue_lock);
+Thx.
+
+> Tracing through the code, it doesn't do a panic
+> before Linux crashes from multi-bit errors because as York has
+> indicated, this type of memory controller doesn't limit the number of
+> errors.
+> 
+> I do have a general question about single bit errors.  The EDAC driver
+> corrects single bit errors by doing a scrub, is this correct?  The
+> edac code does not do periodic scrubs, but I see scrubs when a
+> correctable error is found (edac_mc_scrub_block and edac_atomic_scrub
+> in edac_mc.c)?
+> 
+> This is more directed toward York for layerscape.
+
+Yes, this is all platform-specific as you can see that some arches
+implement that atomic scrubbing thing. Also, not every driver sets
+
+  mci->scrub_mode == SCRUB_SW_SRC
+
+in order to even do the scrubbing.
+
+HTH.
+
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
