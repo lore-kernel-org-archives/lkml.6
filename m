@@ -2,49 +2,50 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF68C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252B3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18AB320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C892420878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x02tyKTP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AB320878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kt2F0atP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C892420878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbeLEJoP (ORCPT
+        id S1729207AbeLEJoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:44:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48798 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729183AbeLEJoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:44:11 -0500
+        id S1728604AbeLEJoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:18 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD6B92087F;
-        Wed,  5 Dec 2018 09:44:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EB0F2133F;
+        Wed,  5 Dec 2018 09:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003050;
-        bh=Lj0rsSOW//qIR9sq9W2yxBzJ2RGengGZUNdR1epWxLE=;
+        s=default; t=1544003056;
+        bh=6mwhuvqEcdqTm9mmVI+qLS6YTOaYceZDwFEzO9F50Zo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x02tyKTPiFkV/wLd4oTvU4F1zu72+hwsVovmJFjsfnqh+G0SZ5hKvlIhFMDDSvfZP
-         N31dNsxslYdhD0LWkV0ogh2HWaRSJu23Kw6DUJjU1+WB0hLkqV4d9Ep9kVXEvo0bji
-         t2pF0/FsyKkw3xj5z9tLGGpua6l77LQCnQdEunqU=
+        b=Kt2F0atPe2kxO5oKKcv5fvf4PZ7wf5ui+b1tNVTpvDP/inoYYFXgvXMXM7uXiyAPm
+         59S3eWysFz8fTrrXdyG/ykq80BbuPi0KE1zRWKCUE/XPKniIYDWhpdnmNtlQf9V4xE
+         PJpYxTRnVHV7pJ7UbPWEZ1AGYWTFg/e0kQKQTHS4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/69] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
-Date:   Wed,  5 Dec 2018 04:41:52 -0500
-Message-Id: <20181205094247.6556-14-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/69] iio/hid-sensors: Fix IIO_CHAN_INFO_RAW returning wrong values for signed numbers
+Date:   Wed,  5 Dec 2018 04:41:54 -0500
+Message-Id: <20181205094247.6556-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,158 +54,369 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
+[ Upstream commit 0145b50566e7de5637e80ecba96c7f0e6fff1aad ]
 
-The machine driver fails to probe in next-20181113 with:
+Before this commit sensor_hub_input_attr_get_raw_value() failed to take
+the signedness of 16 and 8 bit values into account, returning e.g.
+65436 instead of -100 for the z-axis reading of an accelerometer.
 
-[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
-[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
-...
-[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
-[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
-[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
-[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
+This commit adds a new is_signed parameter to the function and makes all
+callers pass the appropriate value for this.
 
-Bisect pointed to a merge commit:
-first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
+While at it, this commit also fixes up some neighboring lines where
+statements were needlessly split over 2 lines to improve readability.
 
-and a diff between a working kernel does not reveal anything which would
-explain the change in behavior.
-
-Further investigation showed that on the second try of loading fails
-because the dai_link->platform is no longer NULL and it might be pointing
-to uninitialized memory.
-
-The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
-abe_twl6040 struct, which is dynamically allocated every time the driver
-probes.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+ drivers/hid/hid-sensor-custom.c                  |  2 +-
+ drivers/hid/hid-sensor-hub.c                     | 13 ++++++++++---
+ drivers/iio/accel/hid-sensor-accel-3d.c          |  5 ++++-
+ drivers/iio/gyro/hid-sensor-gyro-3d.c            |  5 ++++-
+ drivers/iio/humidity/hid-sensor-humidity.c       |  3 ++-
+ drivers/iio/light/hid-sensor-als.c               |  8 +++++---
+ drivers/iio/light/hid-sensor-prox.c              |  8 +++++---
+ drivers/iio/magnetometer/hid-sensor-magn-3d.c    |  8 +++++---
+ drivers/iio/orientation/hid-sensor-incl-3d.c     |  8 +++++---
+ drivers/iio/pressure/hid-sensor-press.c          |  8 +++++---
+ drivers/iio/temperature/hid-sensor-temperature.c |  3 ++-
+ drivers/rtc/rtc-hid-sensor-time.c                |  2 +-
+ include/linux/hid-sensor-hub.h                   |  4 +++-
+ 13 files changed, 52 insertions(+), 25 deletions(-)
 
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index 614b18d2f631..6fd143799534 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -36,6 +36,8 @@
- #include "../codecs/twl6040.h"
- 
- struct abe_twl6040 {
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link dai_links[2];
- 	int	jack_detection;	/* board can detect jack events */
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
-@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
- 				ARRAY_SIZE(dmic_audio_map));
- }
- 
--/* Digital audio interface glue - connects codec <--> CPU */
--static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
--	{
--		.name = "TWL6040",
--		.stream_name = "TWL6040",
--		.codec_dai_name = "twl6040-legacy",
--		.codec_name = "twl6040-codec",
--		.init = omap_abe_twl6040_init,
--		.ops = &omap_abe_ops,
--	},
--	{
--		.name = "DMIC",
--		.stream_name = "DMIC Capture",
--		.codec_dai_name = "dmic-hifi",
--		.codec_name = "dmic-codec",
--		.init = omap_abe_dmic_init,
--		.ops = &omap_abe_dmic_ops,
--	},
--};
--
--/* Audio machine driver */
--static struct snd_soc_card omap_abe_card = {
--	.owner = THIS_MODULE,
--
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
--};
--
- static int omap_abe_probe(struct platform_device *pdev)
+diff --git a/drivers/hid/hid-sensor-custom.c b/drivers/hid/hid-sensor-custom.c
+index 0bcf041368c7..574126b649e9 100644
+--- a/drivers/hid/hid-sensor-custom.c
++++ b/drivers/hid/hid-sensor-custom.c
+@@ -358,7 +358,7 @@ static ssize_t show_value(struct device *dev, struct device_attribute *attr,
+ 						sensor_inst->hsdev,
+ 						sensor_inst->hsdev->usage,
+ 						usage, report_id,
+-						SENSOR_HUB_SYNC);
++						SENSOR_HUB_SYNC, false);
+ 	} else if (!strncmp(name, "units", strlen("units")))
+ 		value = sensor_inst->fields[field_index].attribute.units;
+ 	else if (!strncmp(name, "unit-expo", strlen("unit-expo")))
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index faba542d1b07..b5bd5cb7d532 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -299,7 +299,8 @@ EXPORT_SYMBOL_GPL(sensor_hub_get_feature);
+ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+ 					u32 usage_id,
+ 					u32 attr_usage_id, u32 report_id,
+-					enum sensor_hub_read_flags flag)
++					enum sensor_hub_read_flags flag,
++					bool is_signed)
  {
- 	struct device_node *node = pdev->dev.of_node;
--	struct snd_soc_card *card = &omap_abe_card;
-+	struct snd_soc_card *card;
- 	struct device_node *dai_node;
- 	struct abe_twl6040 *priv;
- 	int num_links = 0;
-@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	struct sensor_hub_data *data = hid_get_drvdata(hsdev->hdev);
+ 	unsigned long flags;
+@@ -331,10 +332,16 @@ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+ 						&hsdev->pending.ready, HZ*5);
+ 		switch (hsdev->pending.raw_size) {
+ 		case 1:
+-			ret_val = *(u8 *)hsdev->pending.raw_data;
++			if (is_signed)
++				ret_val = *(s8 *)hsdev->pending.raw_data;
++			else
++				ret_val = *(u8 *)hsdev->pending.raw_data;
+ 			break;
+ 		case 2:
+-			ret_val = *(u16 *)hsdev->pending.raw_data;
++			if (is_signed)
++				ret_val = *(s16 *)hsdev->pending.raw_data;
++			else
++				ret_val = *(u16 *)hsdev->pending.raw_data;
+ 			break;
+ 		case 4:
+ 			ret_val = *(u32 *)hsdev->pending.raw_data;
+diff --git a/drivers/iio/accel/hid-sensor-accel-3d.c b/drivers/iio/accel/hid-sensor-accel-3d.c
+index 2238a26aba63..f573d9c61fc3 100644
+--- a/drivers/iio/accel/hid-sensor-accel-3d.c
++++ b/drivers/iio/accel/hid-sensor-accel-3d.c
+@@ -149,6 +149,7 @@ static int accel_3d_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 	struct hid_sensor_hub_device *hsdev =
+ 					accel_state->common_attributes.hsdev;
  
--	card->dev = &pdev->dev;
--
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
- 	if (priv == NULL)
- 		return -ENOMEM;
+@@ -158,12 +159,14 @@ static int accel_3d_read_raw(struct iio_dev *indio_dev,
+ 	case 0:
+ 		hid_sensor_power_state(&accel_state->common_attributes, true);
+ 		report_id = accel_state->accel[chan->scan_index].report_id;
++		min = accel_state->accel[chan->scan_index].logical_minimum;
+ 		address = accel_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 					accel_state->common_attributes.hsdev,
+ 					hsdev->usage, address, report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(&accel_state->common_attributes,
+diff --git a/drivers/iio/gyro/hid-sensor-gyro-3d.c b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+index c67ce2ac4715..d9192eb41131 100644
+--- a/drivers/iio/gyro/hid-sensor-gyro-3d.c
++++ b/drivers/iio/gyro/hid-sensor-gyro-3d.c
+@@ -111,6 +111,7 @@ static int gyro_3d_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
  
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = twl6040_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
-+	card->dapm_routes = audio_map;
-+	card->num_dapm_routes = ARRAY_SIZE(audio_map);
-+
- 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
- 		dev_err(&pdev->dev, "Card name is not provided\n");
- 		return -ENODEV;
-@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "McPDM node is not provided\n");
- 		return -EINVAL;
- 	}
--	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
--	abe_twl6040_dai_links[0].platform_of_node = dai_node;
-+
-+	priv->dai_links[0].name = "DMIC";
-+	priv->dai_links[0].stream_name = "TWL6040";
-+	priv->dai_links[0].cpu_of_node = dai_node;
-+	priv->dai_links[0].platform_of_node = dai_node;
-+	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
-+	priv->dai_links[0].codec_name = "twl6040-codec";
-+	priv->dai_links[0].init = omap_abe_twl6040_init;
-+	priv->dai_links[0].ops = &omap_abe_ops;
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -118,13 +119,15 @@ static int gyro_3d_read_raw(struct iio_dev *indio_dev,
+ 	case 0:
+ 		hid_sensor_power_state(&gyro_state->common_attributes, true);
+ 		report_id = gyro_state->gyro[chan->scan_index].report_id;
++		min = gyro_state->gyro[chan->scan_index].logical_minimum;
+ 		address = gyro_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 					gyro_state->common_attributes.hsdev,
+ 					HID_USAGE_SENSOR_GYRO_3D, address,
+ 					report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(&gyro_state->common_attributes,
+diff --git a/drivers/iio/humidity/hid-sensor-humidity.c b/drivers/iio/humidity/hid-sensor-humidity.c
+index 6e09c1acfe51..e53914d51ec3 100644
+--- a/drivers/iio/humidity/hid-sensor-humidity.c
++++ b/drivers/iio/humidity/hid-sensor-humidity.c
+@@ -75,7 +75,8 @@ static int humidity_read_raw(struct iio_dev *indio_dev,
+ 				HID_USAGE_SENSOR_HUMIDITY,
+ 				HID_USAGE_SENSOR_ATMOSPHERIC_HUMIDITY,
+ 				humid_st->humidity_attr.report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				humid_st->humidity_attr.logical_minimum < 0);
+ 		hid_sensor_power_state(&humid_st->common_attributes, false);
  
- 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
- 	if (dai_node) {
- 		num_links = 2;
--		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
--		abe_twl6040_dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].name = "TWL6040";
-+		priv->dai_links[1].stream_name = "DMIC Capture";
-+		priv->dai_links[1].cpu_of_node = dai_node;
-+		priv->dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].codec_dai_name = "dmic-hifi";
-+		priv->dai_links[1].codec_name = "dmic-codec";
-+		priv->dai_links[1].init = omap_abe_dmic_init;
-+		priv->dai_links[1].ops = &omap_abe_dmic_ops;
- 	} else {
- 		num_links = 1;
- 	}
-@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 		return IIO_VAL_INT;
+diff --git a/drivers/iio/light/hid-sensor-als.c b/drivers/iio/light/hid-sensor-als.c
+index 059d964772c7..95ca86f50434 100644
+--- a/drivers/iio/light/hid-sensor-als.c
++++ b/drivers/iio/light/hid-sensor-als.c
+@@ -93,6 +93,7 @@ static int als_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
  
--	card->dai_link = abe_twl6040_dai_links;
-+	card->dai_link = priv->dai_links;
- 	card->num_links = num_links;
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -102,8 +103,8 @@ static int als_read_raw(struct iio_dev *indio_dev,
+ 		case  CHANNEL_SCAN_INDEX_INTENSITY:
+ 		case  CHANNEL_SCAN_INDEX_ILLUM:
+ 			report_id = als_state->als_illum.report_id;
+-			address =
+-			HID_USAGE_SENSOR_LIGHT_ILLUM;
++			min = als_state->als_illum.logical_minimum;
++			address = HID_USAGE_SENSOR_LIGHT_ILLUM;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -116,7 +117,8 @@ static int als_read_raw(struct iio_dev *indio_dev,
+ 					als_state->common_attributes.hsdev,
+ 					HID_USAGE_SENSOR_ALS, address,
+ 					report_id,
+-					SENSOR_HUB_SYNC);
++					SENSOR_HUB_SYNC,
++					min < 0);
+ 			hid_sensor_power_state(&als_state->common_attributes,
+ 						false);
+ 		} else {
+diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
+index 73fced8a63b7..8c017abc4ee2 100644
+--- a/drivers/iio/light/hid-sensor-prox.c
++++ b/drivers/iio/light/hid-sensor-prox.c
+@@ -73,6 +73,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
  
- 	snd_soc_card_set_drvdata(card, priv);
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -81,8 +82,8 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+ 		switch (chan->scan_index) {
+ 		case  CHANNEL_SCAN_INDEX_PRESENCE:
+ 			report_id = prox_state->prox_attr.report_id;
+-			address =
+-			HID_USAGE_SENSOR_HUMAN_PRESENCE;
++			min = prox_state->prox_attr.logical_minimum;
++			address = HID_USAGE_SENSOR_HUMAN_PRESENCE;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -95,7 +96,8 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+ 				prox_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_PROX, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 			hid_sensor_power_state(&prox_state->common_attributes,
+ 						false);
+ 		} else {
+diff --git a/drivers/iio/magnetometer/hid-sensor-magn-3d.c b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+index 0e791b02ed4a..b495107bd173 100644
+--- a/drivers/iio/magnetometer/hid-sensor-magn-3d.c
++++ b/drivers/iio/magnetometer/hid-sensor-magn-3d.c
+@@ -163,21 +163,23 @@ static int magn_3d_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+ 	case 0:
+ 		hid_sensor_power_state(&magn_state->magn_flux_attributes, true);
+-		report_id =
+-			magn_state->magn[chan->address].report_id;
++		report_id = magn_state->magn[chan->address].report_id;
++		min = magn_state->magn[chan->address].logical_minimum;
+ 		address = magn_3d_addresses[chan->address];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 				magn_state->magn_flux_attributes.hsdev,
+ 				HID_USAGE_SENSOR_COMPASS_3D, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 		else {
+ 			*val = 0;
+ 			hid_sensor_power_state(
+diff --git a/drivers/iio/orientation/hid-sensor-incl-3d.c b/drivers/iio/orientation/hid-sensor-incl-3d.c
+index fd1b3696ee42..16c744bef021 100644
+--- a/drivers/iio/orientation/hid-sensor-incl-3d.c
++++ b/drivers/iio/orientation/hid-sensor-incl-3d.c
+@@ -111,21 +111,23 @@ static int incl_3d_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		hid_sensor_power_state(&incl_state->common_attributes, true);
+-		report_id =
+-			incl_state->incl[chan->scan_index].report_id;
++		report_id = incl_state->incl[chan->scan_index].report_id;
++		min = incl_state->incl[chan->scan_index].logical_minimum;
+ 		address = incl_3d_addresses[chan->scan_index];
+ 		if (report_id >= 0)
+ 			*val = sensor_hub_input_attr_get_raw_value(
+ 				incl_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_INCLINOMETER_3D, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 		else {
+ 			hid_sensor_power_state(&incl_state->common_attributes,
+ 						false);
+diff --git a/drivers/iio/pressure/hid-sensor-press.c b/drivers/iio/pressure/hid-sensor-press.c
+index 6848d8c80eff..1c49ef78f888 100644
+--- a/drivers/iio/pressure/hid-sensor-press.c
++++ b/drivers/iio/pressure/hid-sensor-press.c
+@@ -77,6 +77,7 @@ static int press_read_raw(struct iio_dev *indio_dev,
+ 	int report_id = -1;
+ 	u32 address;
+ 	int ret_type;
++	s32 min;
+ 
+ 	*val = 0;
+ 	*val2 = 0;
+@@ -85,8 +86,8 @@ static int press_read_raw(struct iio_dev *indio_dev,
+ 		switch (chan->scan_index) {
+ 		case  CHANNEL_SCAN_INDEX_PRESSURE:
+ 			report_id = press_state->press_attr.report_id;
+-			address =
+-			HID_USAGE_SENSOR_ATMOSPHERIC_PRESSURE;
++			min = press_state->press_attr.logical_minimum;
++			address = HID_USAGE_SENSOR_ATMOSPHERIC_PRESSURE;
+ 			break;
+ 		default:
+ 			report_id = -1;
+@@ -99,7 +100,8 @@ static int press_read_raw(struct iio_dev *indio_dev,
+ 				press_state->common_attributes.hsdev,
+ 				HID_USAGE_SENSOR_PRESSURE, address,
+ 				report_id,
+-				SENSOR_HUB_SYNC);
++				SENSOR_HUB_SYNC,
++				min < 0);
+ 			hid_sensor_power_state(&press_state->common_attributes,
+ 						false);
+ 		} else {
+diff --git a/drivers/iio/temperature/hid-sensor-temperature.c b/drivers/iio/temperature/hid-sensor-temperature.c
+index c01efeca4002..6ed5cd5742f1 100644
+--- a/drivers/iio/temperature/hid-sensor-temperature.c
++++ b/drivers/iio/temperature/hid-sensor-temperature.c
+@@ -76,7 +76,8 @@ static int temperature_read_raw(struct iio_dev *indio_dev,
+ 			HID_USAGE_SENSOR_TEMPERATURE,
+ 			HID_USAGE_SENSOR_DATA_ENVIRONMENTAL_TEMPERATURE,
+ 			temp_st->temperature_attr.report_id,
+-			SENSOR_HUB_SYNC);
++			SENSOR_HUB_SYNC,
++			temp_st->temperature_attr.logical_minimum < 0);
+ 		hid_sensor_power_state(
+ 				&temp_st->common_attributes,
+ 				false);
+diff --git a/drivers/rtc/rtc-hid-sensor-time.c b/drivers/rtc/rtc-hid-sensor-time.c
+index 2751dba850c6..3e1abb455472 100644
+--- a/drivers/rtc/rtc-hid-sensor-time.c
++++ b/drivers/rtc/rtc-hid-sensor-time.c
+@@ -213,7 +213,7 @@ static int hid_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	/* get a report with all values through requesting one value */
+ 	sensor_hub_input_attr_get_raw_value(time_state->common_attributes.hsdev,
+ 			HID_USAGE_SENSOR_TIME, hid_time_addresses[0],
+-			time_state->info[0].report_id, SENSOR_HUB_SYNC);
++			time_state->info[0].report_id, SENSOR_HUB_SYNC, false);
+ 	/* wait for all values (event) */
+ 	ret = wait_for_completion_killable_timeout(
+ 			&time_state->comp_last_time, HZ*6);
+diff --git a/include/linux/hid-sensor-hub.h b/include/linux/hid-sensor-hub.h
+index fc7aae64dcde..000de6da3b1b 100644
+--- a/include/linux/hid-sensor-hub.h
++++ b/include/linux/hid-sensor-hub.h
+@@ -177,6 +177,7 @@ int sensor_hub_input_get_attribute_info(struct hid_sensor_hub_device *hsdev,
+ * @attr_usage_id:	Attribute usage id as per spec
+ * @report_id:	Report id to look for
+ * @flag:      Synchronous or asynchronous read
++* @is_signed:   If true then fields < 32 bits will be sign-extended
+ *
+ * Issues a synchronous or asynchronous read request for an input attribute.
+ * Returns data upto 32 bits.
+@@ -190,7 +191,8 @@ enum sensor_hub_read_flags {
+ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+  					u32 usage_id,
+  					u32 attr_usage_id, u32 report_id,
+- 					enum sensor_hub_read_flags flag
++					enum sensor_hub_read_flags flag,
++					bool is_signed
+ );
+ 
+ /**
 -- 
 2.17.1
 
