@@ -7,44 +7,54 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83081C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FF8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4723B20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB9320878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="si1IDAX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4723B20878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDc4QaAn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB9320878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbeLEJov (ORCPT
+        id S1729296AbeLEJo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:44:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49512 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:44:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbeLEJot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:44:49 -0500
+        id S1728059AbeLEJoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:44:54 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4F6A20878;
-        Wed,  5 Dec 2018 09:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87367208E7;
+        Wed,  5 Dec 2018 09:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003088;
-        bh=2lYbqPCW/FmS3X6xllxlJ/I7djK/8WxUF758wEpBke4=;
+        s=default; t=1544003093;
+        bh=k3m4FbzSpMwzlFQPy+D37AqWNc1svZXeT65y/k+HLS4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=si1IDAX8eN6ehR2+QTr9dU7tnU6NkT65gDV4DPdgsGagjMgUwkHTjePw6jSyiUkak
-         aHtzZQC0MAYi1kmZvo9Ql8ZfZz/sXB4jajLwiKslsQis7NO93T49fiCiP+GJhthSIg
-         STt/TWof2FwmieOMdJU0CA5ZaWSuRBs5RFJ9GQz8=
+        b=oDc4QaAndugsXjYAetmoxy/biqb5R1cv1qYc4BFeKfvP5rgaeevt93tYSHpCSlWBN
+         2+Mamt0BYABkGN+CapGrzFTX9FBPnGKICLMwQBPnvHgaVpHU1+/Cv7aJENf1vzWhNB
+         xb4E201yGBzsVAiwPLf8ZLSIxf2RyadJp7TKkexQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kamal Heib <kamalheib1@gmail.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 26/69] RDMA/rdmavt: Fix rvt_create_ah function signature
-Date:   Wed,  5 Dec 2018 04:42:04 -0500
-Message-Id: <20181205094247.6556-26-sashal@kernel.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, stable@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 27/69] uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+Date:   Wed,  5 Dec 2018 04:42:05 -0500
+Message-Id: <20181205094247.6556-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,63 +63,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamal Heib <kamalheib1@gmail.com>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-[ Upstream commit 4f32fb921b153ae9ea280e02a3e91509fffc03d3 ]
+[ Upstream commit 09d3f015d1e1b4fee7e9bbdcf54201d239393391 ]
 
-rdmavt uses a crazy system that looses the type checking when assinging
-functions to struct ib_device function pointers. Because of this the
-signature to this function was not changed when the below commit revised
-things.
+Commit:
 
-Fix the signature so we are not calling a function pointer with a
-mismatched signature.
+  142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
 
-Fixes: 477864c8fcd9 ("IB/core: Let create_ah return extended response to user")
-Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+added the UPROBE_COPY_INSN flag, and corresponding smp_wmb() and smp_rmb()
+memory barriers, to ensure that handle_swbp() uses fully-initialized
+uprobes only.
+
+However, the smp_rmb() is mis-placed: this barrier should be placed
+after handle_swbp() has tested for the flag, thus guaranteeing that
+(program-order) subsequent loads from the uprobe can see the initial
+stores performed by prepare_uprobe().
+
+Move the smp_rmb() accordingly.  Also amend the comments associated
+to the two memory barriers to indicate their actual locations.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: stable@kernel.org
+Fixes: 142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
+Link: http://lkml.kernel.org/r/20181122161031.15179-1-andrea.parri@amarulasolutions.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rdmavt/ah.c | 4 +++-
- drivers/infiniband/sw/rdmavt/ah.h | 3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ kernel/events/uprobes.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/sw/rdmavt/ah.c b/drivers/infiniband/sw/rdmavt/ah.c
-index ba3639a0d77c..48ea5b8207f0 100644
---- a/drivers/infiniband/sw/rdmavt/ah.c
-+++ b/drivers/infiniband/sw/rdmavt/ah.c
-@@ -91,13 +91,15 @@ EXPORT_SYMBOL(rvt_check_ah);
-  * rvt_create_ah - create an address handle
-  * @pd: the protection domain
-  * @ah_attr: the attributes of the AH
-+ * @udata: pointer to user's input output buffer information.
-  *
-  * This may be called from interrupt context.
-  *
-  * Return: newly allocated ah
-  */
- struct ib_ah *rvt_create_ah(struct ib_pd *pd,
--			    struct rdma_ah_attr *ah_attr)
-+			    struct rdma_ah_attr *ah_attr,
-+			    struct ib_udata *udata)
- {
- 	struct rvt_ah *ah;
- 	struct rvt_dev_info *dev = ib_to_rvt(pd->device);
-diff --git a/drivers/infiniband/sw/rdmavt/ah.h b/drivers/infiniband/sw/rdmavt/ah.h
-index 16105af99189..25271b48a683 100644
---- a/drivers/infiniband/sw/rdmavt/ah.h
-+++ b/drivers/infiniband/sw/rdmavt/ah.h
-@@ -51,7 +51,8 @@
- #include <rdma/rdma_vt.h>
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 267f6ef91d97..01941cffa9c2 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -616,7 +616,7 @@ static int prepare_uprobe(struct uprobe *uprobe, struct file *file,
+ 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
+ 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
  
- struct ib_ah *rvt_create_ah(struct ib_pd *pd,
--			    struct rdma_ah_attr *ah_attr);
-+			    struct rdma_ah_attr *ah_attr,
-+			    struct ib_udata *udata);
- int rvt_destroy_ah(struct ib_ah *ibah);
- int rvt_modify_ah(struct ib_ah *ibah, struct rdma_ah_attr *ah_attr);
- int rvt_query_ah(struct ib_ah *ibah, struct rdma_ah_attr *ah_attr);
+-	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
++	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
+ 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
+ 
+  out:
+@@ -1910,10 +1910,18 @@ static void handle_swbp(struct pt_regs *regs)
+ 	 * After we hit the bp, _unregister + _register can install the
+ 	 * new and not-yet-analyzed uprobe at the same address, restart.
+ 	 */
+-	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
+ 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
+ 		goto out;
+ 
++	/*
++	 * Pairs with the smp_wmb() in prepare_uprobe().
++	 *
++	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
++	 * we must also see the stores to &uprobe->arch performed by the
++	 * prepare_uprobe() call.
++	 */
++	smp_rmb();
++
+ 	/* Tracing handlers use ->utask to communicate with fetch methods */
+ 	if (!get_utask())
+ 		goto out;
 -- 
 2.17.1
 
