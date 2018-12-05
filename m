@@ -2,803 +2,222 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D56BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C634C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B2520892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:20:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFnFb13k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B2520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B058120850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B058120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeLEIUK (ORCPT
+        id S1727114AbeLEIW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:20:10 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35235 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbeLEIUJ (ORCPT
+        Wed, 5 Dec 2018 03:22:57 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42432 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeLEIW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:20:09 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so14059043lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 00:20:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=qo59pa65k7u6J1vqLft7ywS0uHCF9Dh7yiCoQwNlKcw=;
-        b=WFnFb13khNtu+Dd87dtiSUNhv+NV2/hDOBEH6uohd4mEuMe/wh6gYRevJLeYhtpt2i
-         uzkOG3+X0N1Q3hvsUL2aClAvLONxBE1nTet8B4vzrQ1rsU5/8s40IEEUkFQsKbY0u+Om
-         OK/as5SppPtjHz/d2dQ3chKxW8L5uPhZ/mDZnk7+coXXrKhC87SUx2oo26Sw2XjNVnb5
-         Q+kyQZmzelFaEYVtQdBz7/oPHF5EjqzYkOMmLMWO4ZrkrbpZmduPfH01S5hF8QPqVWNQ
-         PdiSXu0jcZDg2uY8vXD41aSCUj2DACRm/Z2ooZ7L0Vf95o+dE/g99Yrx8JrH5N7AoWQ0
-         +K/Q==
+        Wed, 5 Dec 2018 03:22:57 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so17473346lja.9
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 00:22:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=qo59pa65k7u6J1vqLft7ywS0uHCF9Dh7yiCoQwNlKcw=;
-        b=dNPYEwIOYl4Q5lKU5C4mZyX0Ug9Zrh1+f6sh1sLMiqZUEyYYjJ0wgfW3MwHIy9oWas
-         /cKwoBW3D+rX7y+1O8n20a1Qqsqk6eJ9dMbMaJOT3fh6a0fIy/vsbFS5H7srgqEke6dA
-         MXzSHdqEfhyFrMAWmOiBzBm2mY/F7bNAlbfl7iWX2uyecjxfLnG8tL9VXPWaW1249alq
-         Hn8WUEFif64xjjtDft59CbbrMtU0xBe2eeL+PYCPgz4hFstUO5+eDDXwab1r4e2sZaml
-         lnGiRIwT0AuAFqwhNKLf3QLuln6Gpq+f/dkESVVi6XZs6T2k1/fMXzk6soh+c9YXspfK
-         i22Q==
-X-Gm-Message-State: AA+aEWao0Im7eFdkgSUN0twH4kEcqAIzku+kwXoBub61fXaPPLeNB0X9
-        oghx0RuF6kl0YpkFSRcXptE=
-X-Google-Smtp-Source: AFSGD/VMtprWuBrQKXIcNnHYKmgv4j/HX07hLuHYN2D6s4lP/tZUf7vrvLsXYC+Eze+ReAs0kZ4U5A==
-X-Received: by 2002:a19:4bc9:: with SMTP id y192mr13476496lfa.49.1543998005083;
-        Wed, 05 Dec 2018 00:20:05 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm3690469lji.17.2018.12.05.00.20.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 00:20:04 -0800 (PST)
-Subject: Re: [Xen-devel][PATCH v2 2/3] drm/xen-front: Use Xen common shared
- buffer implementation
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181130074205.20496-1-andr2000@gmail.com>
- <20181130074205.20496-2-andr2000@gmail.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <3c69d924-11e1-7037-bfa5-276d22b245fe@gmail.com>
-Date:   Wed, 5 Dec 2018 10:20:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BauKcVkOkrXCO3T15qQrevS+Ue8tEqZQXwwA3dKlOw8=;
+        b=AZNB2WabmqYU25U7/eqe9oqpIJZBFC92m0Ps4Fdd7MoYFvk7B6uhIqJGYSRZ2lj/TD
+         RBr21Hn6QJWCaLJq+iyVpanjHcW78DIEDEHsFp2QE/Akh5jpat4T6APsLNnSrICBecly
+         4LfEvT+SMZORFXjlMF0xxmen3iahvwtwKnZSOOTvYSCMVi30bVxdr73PsJFN7yVHX781
+         5moWM9old8EVo26dqaLqocVKTDbVDbSls1pU7Yp8fOy8Jly6Wu7UMw0cqPh6sALE7wEc
+         p+xfKmdAtM0Ul+dF7zL9IaLuAq34sVBu4TCDUbMEVpad8Gkh2az5UvS1mfcgrhrIKOeZ
+         Q/5g==
+X-Gm-Message-State: AA+aEWZ2uSKW5LX9HjG3+CDKrR53kJG/fkYSK5/2f6/v5YR4dBX+NN2X
+        QWQUd2Amsgy5whW0a37QfnVoZl1w
+X-Google-Smtp-Source: AFSGD/UhMVofAdP4ynZf1YgoX7lVacj6KPFxeElps7icfYsOB7jtpBuTxDp3CGmVI/lqRmQ9xhFCRQ==
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr16233902lji.133.1543998174016;
+        Wed, 05 Dec 2018 00:22:54 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id o72sm3515383lfg.33.2018.12.05.00.22.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 00:22:53 -0800 (PST)
+Date:   Wed, 5 Dec 2018 10:22:51 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181205082251.GE31204@localhost.localdomain>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20181130074205.20496-2-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204172137.GE6809@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Daniel!
+Hello Mark,
 
-Could you please ack/nack the patch, so either we can merge the
+Thank you for taking the time and checking this! Highly appreciated!
 
-series or I can address your comments if any
+On Tue, Dec 04, 2018 at 05:21:37PM +0000, Mark Brown wrote:
+> On Fri, Nov 30, 2018 at 10:59:08AM +0200, Matti Vaittinen wrote:
+> 
+> > IRQ handling is implemented so that each sub block has own
+> > status/ack/mask registers and then there is one main status
+> > register. When any of the sub blocks gets unmasked IRQ,
+> > corresponding 'main status register' bit is set in main status
+> > register.
+> 
+> This sounds exactly like the wm831x which uses cascaded irqchips for
+> this, though not regmap-irq.
 
-Thank you,
+Yep. I guess I could do cascaded chips - but I would like to use the
+regmap-irq for this driver. Maybe we could change regmap-irq so that it
+would be possible to not give the DT node from regmap for this chip?
+This was actually my first thought - but then I felt that having two irq
+chips for one device is a bit hacky - and hence I decided to see how
+regmap-irq could be changed to support the 'main irq status' register
+usage. I think this 'main register' setup is pretty common design.
 
-Oleksandr
+> > Problem I faced is that I don't know how to create two regmap-irq chips for
+> > the same i2c decvice - because the regmap-irq gets the DT node from regmnap
+> > - and thus both of the irq chips would have same DT node. My assumption is
+> > that the DT - xlate functionality for this setup would not be quite correct,
+> > right? I guess the "main irq" interrupts would be hookable via DT? But
+> > the devices are interested in "sub IRQs". So I thought that the correct
+> > solution would be to model the interrupts from this PMIC as just one
+> > irq-chip. So I wonder if addin this "main IRQ register" support for
+> 
+> I suspect the idiomatic way to handle this in DT is to make DT nodes
+> (and devices) for the subfunction interrupt controllers and expose the
+> internal structure of the chip to the DT.
 
-On 11/30/18 9:42 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> Use page directory based shared buffer implementation
-> now available as common code for Xen frontend drivers.
->
-> Remove flushing of shared buffer on page flip as this
-> workaround needs a proper fix.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/gpu/drm/xen/Kconfig               |   1 +
->   drivers/gpu/drm/xen/Makefile              |   1 -
->   drivers/gpu/drm/xen/xen_drm_front.c       |  65 ++--
->   drivers/gpu/drm/xen/xen_drm_front_gem.c   |   1 -
->   drivers/gpu/drm/xen/xen_drm_front_shbuf.c | 414 ----------------------
->   drivers/gpu/drm/xen/xen_drm_front_shbuf.h |  64 ----
->   6 files changed, 26 insertions(+), 520 deletions(-)
->   delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
->   delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
->
-> diff --git a/drivers/gpu/drm/xen/Kconfig b/drivers/gpu/drm/xen/Kconfig
-> index 4cca160782ab..f969d486855d 100644
-> --- a/drivers/gpu/drm/xen/Kconfig
-> +++ b/drivers/gpu/drm/xen/Kconfig
-> @@ -12,6 +12,7 @@ config DRM_XEN_FRONTEND
->   	select DRM_KMS_HELPER
->   	select VIDEOMODE_HELPERS
->   	select XEN_XENBUS_FRONTEND
-> +	select XEN_FRONT_PGDIR_SHBUF
->   	help
->   	  Choose this option if you want to enable a para-virtualized
->   	  frontend DRM/KMS driver for Xen guest OSes.
-> diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
-> index 712afff5ffc3..825905f67faa 100644
-> --- a/drivers/gpu/drm/xen/Makefile
-> +++ b/drivers/gpu/drm/xen/Makefile
-> @@ -4,7 +4,6 @@ drm_xen_front-objs := xen_drm_front.o \
->   		      xen_drm_front_kms.o \
->   		      xen_drm_front_conn.o \
->   		      xen_drm_front_evtchnl.o \
-> -		      xen_drm_front_shbuf.o \
->   		      xen_drm_front_cfg.o \
->   		      xen_drm_front_gem.o
->   
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-> index 6b6d5ab82ec3..4d3d36fc3a5d 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
-> @@ -19,6 +19,7 @@
->   #include <xen/xen.h>
->   #include <xen/xenbus.h>
->   
-> +#include <xen/xen-front-pgdir-shbuf.h>
->   #include <xen/interface/io/displif.h>
->   
->   #include "xen_drm_front.h"
-> @@ -26,28 +27,20 @@
->   #include "xen_drm_front_evtchnl.h"
->   #include "xen_drm_front_gem.h"
->   #include "xen_drm_front_kms.h"
-> -#include "xen_drm_front_shbuf.h"
->   
->   struct xen_drm_front_dbuf {
->   	struct list_head list;
->   	u64 dbuf_cookie;
->   	u64 fb_cookie;
-> -	struct xen_drm_front_shbuf *shbuf;
-> +
-> +	struct xen_front_pgdir_shbuf shbuf;
->   };
->   
-> -static int dbuf_add_to_list(struct xen_drm_front_info *front_info,
-> -			    struct xen_drm_front_shbuf *shbuf, u64 dbuf_cookie)
-> +static void dbuf_add_to_list(struct xen_drm_front_info *front_info,
-> +			     struct xen_drm_front_dbuf *dbuf, u64 dbuf_cookie)
->   {
-> -	struct xen_drm_front_dbuf *dbuf;
-> -
-> -	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
-> -	if (!dbuf)
-> -		return -ENOMEM;
-> -
->   	dbuf->dbuf_cookie = dbuf_cookie;
-> -	dbuf->shbuf = shbuf;
->   	list_add(&dbuf->list, &front_info->dbuf_list);
-> -	return 0;
->   }
->   
->   static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
-> @@ -62,15 +55,6 @@ static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
->   	return NULL;
->   }
->   
-> -static void dbuf_flush_fb(struct list_head *dbuf_list, u64 fb_cookie)
-> -{
-> -	struct xen_drm_front_dbuf *buf, *q;
-> -
-> -	list_for_each_entry_safe(buf, q, dbuf_list, list)
-> -		if (buf->fb_cookie == fb_cookie)
-> -			xen_drm_front_shbuf_flush(buf->shbuf);
-> -}
-> -
->   static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
->   {
->   	struct xen_drm_front_dbuf *buf, *q;
-> @@ -78,8 +62,8 @@ static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
->   	list_for_each_entry_safe(buf, q, dbuf_list, list)
->   		if (buf->dbuf_cookie == dbuf_cookie) {
->   			list_del(&buf->list);
-> -			xen_drm_front_shbuf_unmap(buf->shbuf);
-> -			xen_drm_front_shbuf_free(buf->shbuf);
-> +			xen_front_pgdir_shbuf_unmap(&buf->shbuf);
-> +			xen_front_pgdir_shbuf_free(&buf->shbuf);
->   			kfree(buf);
->   			break;
->   		}
-> @@ -91,8 +75,8 @@ static void dbuf_free_all(struct list_head *dbuf_list)
->   
->   	list_for_each_entry_safe(buf, q, dbuf_list, list) {
->   		list_del(&buf->list);
-> -		xen_drm_front_shbuf_unmap(buf->shbuf);
-> -		xen_drm_front_shbuf_free(buf->shbuf);
-> +		xen_front_pgdir_shbuf_unmap(&buf->shbuf);
-> +		xen_front_pgdir_shbuf_free(&buf->shbuf);
->   		kfree(buf);
->   	}
->   }
-> @@ -171,9 +155,9 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
->   			      u32 bpp, u64 size, struct page **pages)
->   {
->   	struct xen_drm_front_evtchnl *evtchnl;
-> -	struct xen_drm_front_shbuf *shbuf;
-> +	struct xen_drm_front_dbuf *dbuf;
->   	struct xendispl_req *req;
-> -	struct xen_drm_front_shbuf_cfg buf_cfg;
-> +	struct xen_front_pgdir_shbuf_cfg buf_cfg;
->   	unsigned long flags;
->   	int ret;
->   
-> @@ -181,28 +165,29 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
->   	if (unlikely(!evtchnl))
->   		return -EIO;
->   
-> +	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
-> +	if (!dbuf)
-> +		return -ENOMEM;
-> +
-> +	dbuf_add_to_list(front_info, dbuf, dbuf_cookie);
-> +
->   	memset(&buf_cfg, 0, sizeof(buf_cfg));
->   	buf_cfg.xb_dev = front_info->xb_dev;
-> +	buf_cfg.num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
->   	buf_cfg.pages = pages;
-> -	buf_cfg.size = size;
-> +	buf_cfg.pgdir = &dbuf->shbuf;
->   	buf_cfg.be_alloc = front_info->cfg.be_alloc;
->   
-> -	shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
-> -	if (IS_ERR(shbuf))
-> -		return PTR_ERR(shbuf);
-> -
-> -	ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
-> -	if (ret < 0) {
-> -		xen_drm_front_shbuf_free(shbuf);
-> -		return ret;
-> -	}
-> +	ret = xen_front_pgdir_shbuf_alloc(&buf_cfg);
-> +	if (ret < 0)
-> +		goto fail_shbuf_alloc;
->   
->   	mutex_lock(&evtchnl->u.req.req_io_lock);
->   
->   	spin_lock_irqsave(&front_info->io_lock, flags);
->   	req = be_prepare_req(evtchnl, XENDISPL_OP_DBUF_CREATE);
->   	req->op.dbuf_create.gref_directory =
-> -			xen_drm_front_shbuf_get_dir_start(shbuf);
-> +			xen_front_pgdir_shbuf_get_dir_start(&dbuf->shbuf);
->   	req->op.dbuf_create.buffer_sz = size;
->   	req->op.dbuf_create.dbuf_cookie = dbuf_cookie;
->   	req->op.dbuf_create.width = width;
-> @@ -221,7 +206,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
->   	if (ret < 0)
->   		goto fail;
->   
-> -	ret = xen_drm_front_shbuf_map(shbuf);
-> +	ret = xen_front_pgdir_shbuf_map(&dbuf->shbuf);
->   	if (ret < 0)
->   		goto fail;
->   
-> @@ -230,6 +215,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
->   
->   fail:
->   	mutex_unlock(&evtchnl->u.req.req_io_lock);
-> +fail_shbuf_alloc:
->   	dbuf_free(&front_info->dbuf_list, dbuf_cookie);
->   	return ret;
->   }
-> @@ -358,7 +344,6 @@ int xen_drm_front_page_flip(struct xen_drm_front_info *front_info,
->   	if (unlikely(conn_idx >= front_info->num_evt_pairs))
->   		return -EINVAL;
->   
-> -	dbuf_flush_fb(&front_info->dbuf_list, fb_cookie);
->   	evtchnl = &front_info->evt_pairs[conn_idx].req;
->   
->   	mutex_lock(&evtchnl->u.req.req_io_lock);
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> index c85bfe7571cb..53be4c7dc0a4 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> @@ -22,7 +22,6 @@
->   #include <xen/balloon.h>
->   
->   #include "xen_drm_front.h"
-> -#include "xen_drm_front_shbuf.h"
->   
->   struct xen_gem_object {
->   	struct drm_gem_object base;
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
-> deleted file mode 100644
-> index d333b67cc1a0..000000000000
-> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
-> +++ /dev/null
-> @@ -1,414 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0 OR MIT
-> -
-> -/*
-> - *  Xen para-virtual DRM device
-> - *
-> - * Copyright (C) 2016-2018 EPAM Systems Inc.
-> - *
-> - * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> - */
-> -
-> -#include <drm/drmP.h>
-> -
-> -#if defined(CONFIG_X86)
-> -#include <drm/drm_cache.h>
-> -#endif
-> -#include <linux/errno.h>
-> -#include <linux/mm.h>
-> -
-> -#include <asm/xen/hypervisor.h>
-> -#include <xen/balloon.h>
-> -#include <xen/xen.h>
-> -#include <xen/xenbus.h>
-> -#include <xen/interface/io/ring.h>
-> -#include <xen/interface/io/displif.h>
-> -
-> -#include "xen_drm_front.h"
-> -#include "xen_drm_front_shbuf.h"
-> -
-> -struct xen_drm_front_shbuf_ops {
-> -	/*
-> -	 * Calculate number of grefs required to handle this buffer,
-> -	 * e.g. if grefs are required for page directory only or the buffer
-> -	 * pages as well.
-> -	 */
-> -	void (*calc_num_grefs)(struct xen_drm_front_shbuf *buf);
-> -	/* Fill page directory according to para-virtual display protocol. */
-> -	void (*fill_page_dir)(struct xen_drm_front_shbuf *buf);
-> -	/* Claim grant references for the pages of the buffer. */
-> -	int (*grant_refs_for_buffer)(struct xen_drm_front_shbuf *buf,
-> -				     grant_ref_t *priv_gref_head, int gref_idx);
-> -	/* Map grant references of the buffer. */
-> -	int (*map)(struct xen_drm_front_shbuf *buf);
-> -	/* Unmap grant references of the buffer. */
-> -	int (*unmap)(struct xen_drm_front_shbuf *buf);
-> -};
-> -
-> -grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf)
-> -{
-> -	if (!buf->grefs)
-> -		return GRANT_INVALID_REF;
-> -
-> -	return buf->grefs[0];
-> -}
-> -
-> -int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf)
-> -{
-> -	if (buf->ops->map)
-> -		return buf->ops->map(buf);
-> -
-> -	/* no need to map own grant references */
-> -	return 0;
-> -}
-> -
-> -int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf)
-> -{
-> -	if (buf->ops->unmap)
-> -		return buf->ops->unmap(buf);
-> -
-> -	/* no need to unmap own grant references */
-> -	return 0;
-> -}
-> -
-> -void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf)
-> -{
-> -#if defined(CONFIG_X86)
-> -	drm_clflush_pages(buf->pages, buf->num_pages);
-> -#endif
-> -}
-> -
-> -void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf)
-> -{
-> -	if (buf->grefs) {
-> -		int i;
-> -
-> -		for (i = 0; i < buf->num_grefs; i++)
-> -			if (buf->grefs[i] != GRANT_INVALID_REF)
-> -				gnttab_end_foreign_access(buf->grefs[i],
-> -							  0, 0UL);
-> -	}
-> -	kfree(buf->grefs);
-> -	kfree(buf->directory);
-> -	kfree(buf);
-> -}
-> -
-> -/*
-> - * number of grefs a page can hold with respect to the
-> - * struct xendispl_page_directory header
-> - */
-> -#define XEN_DRM_NUM_GREFS_PER_PAGE ((PAGE_SIZE - \
-> -		offsetof(struct xendispl_page_directory, gref)) / \
-> -		sizeof(grant_ref_t))
-> -
-> -static int get_num_pages_dir(struct xen_drm_front_shbuf *buf)
-> -{
-> -	/* number of pages the page directory consumes itself */
-> -	return DIV_ROUND_UP(buf->num_pages, XEN_DRM_NUM_GREFS_PER_PAGE);
-> -}
-> -
-> -static void backend_calc_num_grefs(struct xen_drm_front_shbuf *buf)
-> -{
-> -	/* only for pages the page directory consumes itself */
-> -	buf->num_grefs = get_num_pages_dir(buf);
-> -}
-> -
-> -static void guest_calc_num_grefs(struct xen_drm_front_shbuf *buf)
-> -{
-> -	/*
-> -	 * number of pages the page directory consumes itself
-> -	 * plus grefs for the buffer pages
-> -	 */
-> -	buf->num_grefs = get_num_pages_dir(buf) + buf->num_pages;
-> -}
-> -
-> -#define xen_page_to_vaddr(page) \
-> -		((uintptr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
-> -
-> -static int backend_unmap(struct xen_drm_front_shbuf *buf)
-> -{
-> -	struct gnttab_unmap_grant_ref *unmap_ops;
-> -	int i, ret;
-> -
-> -	if (!buf->pages || !buf->backend_map_handles || !buf->grefs)
-> -		return 0;
-> -
-> -	unmap_ops = kcalloc(buf->num_pages, sizeof(*unmap_ops),
-> -			    GFP_KERNEL);
-> -	if (!unmap_ops) {
-> -		DRM_ERROR("Failed to get memory while unmapping\n");
-> -		return -ENOMEM;
-> -	}
-> -
-> -	for (i = 0; i < buf->num_pages; i++) {
-> -		phys_addr_t addr;
-> -
-> -		addr = xen_page_to_vaddr(buf->pages[i]);
-> -		gnttab_set_unmap_op(&unmap_ops[i], addr, GNTMAP_host_map,
-> -				    buf->backend_map_handles[i]);
-> -	}
-> -
-> -	ret = gnttab_unmap_refs(unmap_ops, NULL, buf->pages,
-> -				buf->num_pages);
-> -
-> -	for (i = 0; i < buf->num_pages; i++) {
-> -		if (unlikely(unmap_ops[i].status != GNTST_okay))
-> -			DRM_ERROR("Failed to unmap page %d: %d\n",
-> -				  i, unmap_ops[i].status);
-> -	}
-> -
-> -	if (ret)
-> -		DRM_ERROR("Failed to unmap grant references, ret %d", ret);
-> -
-> -	kfree(unmap_ops);
-> -	kfree(buf->backend_map_handles);
-> -	buf->backend_map_handles = NULL;
-> -	return ret;
-> -}
-> -
-> -static int backend_map(struct xen_drm_front_shbuf *buf)
-> -{
-> -	struct gnttab_map_grant_ref *map_ops = NULL;
-> -	unsigned char *ptr;
-> -	int ret, cur_gref, cur_dir_page, cur_page, grefs_left;
-> -
-> -	map_ops = kcalloc(buf->num_pages, sizeof(*map_ops), GFP_KERNEL);
-> -	if (!map_ops)
-> -		return -ENOMEM;
-> -
-> -	buf->backend_map_handles = kcalloc(buf->num_pages,
-> -					   sizeof(*buf->backend_map_handles),
-> -					   GFP_KERNEL);
-> -	if (!buf->backend_map_handles) {
-> -		kfree(map_ops);
-> -		return -ENOMEM;
-> -	}
-> -
-> -	/*
-> -	 * read page directory to get grefs from the backend: for external
-> -	 * buffer we only allocate buf->grefs for the page directory,
-> -	 * so buf->num_grefs has number of pages in the page directory itself
-> -	 */
-> -	ptr = buf->directory;
-> -	grefs_left = buf->num_pages;
-> -	cur_page = 0;
-> -	for (cur_dir_page = 0; cur_dir_page < buf->num_grefs; cur_dir_page++) {
-> -		struct xendispl_page_directory *page_dir =
-> -				(struct xendispl_page_directory *)ptr;
-> -		int to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
-> -
-> -		if (to_copy > grefs_left)
-> -			to_copy = grefs_left;
-> -
-> -		for (cur_gref = 0; cur_gref < to_copy; cur_gref++) {
-> -			phys_addr_t addr;
-> -
-> -			addr = xen_page_to_vaddr(buf->pages[cur_page]);
-> -			gnttab_set_map_op(&map_ops[cur_page], addr,
-> -					  GNTMAP_host_map,
-> -					  page_dir->gref[cur_gref],
-> -					  buf->xb_dev->otherend_id);
-> -			cur_page++;
-> -		}
-> -
-> -		grefs_left -= to_copy;
-> -		ptr += PAGE_SIZE;
-> -	}
-> -	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
-> -
-> -	/* save handles even if error, so we can unmap */
-> -	for (cur_page = 0; cur_page < buf->num_pages; cur_page++) {
-> -		buf->backend_map_handles[cur_page] = map_ops[cur_page].handle;
-> -		if (unlikely(map_ops[cur_page].status != GNTST_okay))
-> -			DRM_ERROR("Failed to map page %d: %d\n",
-> -				  cur_page, map_ops[cur_page].status);
-> -	}
-> -
-> -	if (ret) {
-> -		DRM_ERROR("Failed to map grant references, ret %d", ret);
-> -		backend_unmap(buf);
-> -	}
-> -
-> -	kfree(map_ops);
-> -	return ret;
-> -}
-> -
-> -static void backend_fill_page_dir(struct xen_drm_front_shbuf *buf)
-> -{
-> -	struct xendispl_page_directory *page_dir;
-> -	unsigned char *ptr;
-> -	int i, num_pages_dir;
-> -
-> -	ptr = buf->directory;
-> -	num_pages_dir = get_num_pages_dir(buf);
-> -
-> -	/* fill only grefs for the page directory itself */
-> -	for (i = 0; i < num_pages_dir - 1; i++) {
-> -		page_dir = (struct xendispl_page_directory *)ptr;
-> -
-> -		page_dir->gref_dir_next_page = buf->grefs[i + 1];
-> -		ptr += PAGE_SIZE;
-> -	}
-> -	/* last page must say there is no more pages */
-> -	page_dir = (struct xendispl_page_directory *)ptr;
-> -	page_dir->gref_dir_next_page = GRANT_INVALID_REF;
-> -}
-> -
-> -static void guest_fill_page_dir(struct xen_drm_front_shbuf *buf)
-> -{
-> -	unsigned char *ptr;
-> -	int cur_gref, grefs_left, to_copy, i, num_pages_dir;
-> -
-> -	ptr = buf->directory;
-> -	num_pages_dir = get_num_pages_dir(buf);
-> -
-> -	/*
-> -	 * while copying, skip grefs at start, they are for pages
-> -	 * granted for the page directory itself
-> -	 */
-> -	cur_gref = num_pages_dir;
-> -	grefs_left = buf->num_pages;
-> -	for (i = 0; i < num_pages_dir; i++) {
-> -		struct xendispl_page_directory *page_dir =
-> -				(struct xendispl_page_directory *)ptr;
-> -
-> -		if (grefs_left <= XEN_DRM_NUM_GREFS_PER_PAGE) {
-> -			to_copy = grefs_left;
-> -			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
-> -		} else {
-> -			to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
-> -			page_dir->gref_dir_next_page = buf->grefs[i + 1];
-> -		}
-> -		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
-> -		       to_copy * sizeof(grant_ref_t));
-> -		ptr += PAGE_SIZE;
-> -		grefs_left -= to_copy;
-> -		cur_gref += to_copy;
-> -	}
-> -}
-> -
-> -static int guest_grant_refs_for_buffer(struct xen_drm_front_shbuf *buf,
-> -				       grant_ref_t *priv_gref_head,
-> -				       int gref_idx)
-> -{
-> -	int i, cur_ref, otherend_id;
-> -
-> -	otherend_id = buf->xb_dev->otherend_id;
-> -	for (i = 0; i < buf->num_pages; i++) {
-> -		cur_ref = gnttab_claim_grant_reference(priv_gref_head);
-> -		if (cur_ref < 0)
-> -			return cur_ref;
-> -
-> -		gnttab_grant_foreign_access_ref(cur_ref, otherend_id,
-> -						xen_page_to_gfn(buf->pages[i]),
-> -						0);
-> -		buf->grefs[gref_idx++] = cur_ref;
-> -	}
-> -	return 0;
-> -}
-> -
-> -static int grant_references(struct xen_drm_front_shbuf *buf)
-> -{
-> -	grant_ref_t priv_gref_head;
-> -	int ret, i, j, cur_ref;
-> -	int otherend_id, num_pages_dir;
-> -
-> -	ret = gnttab_alloc_grant_references(buf->num_grefs, &priv_gref_head);
-> -	if (ret < 0) {
-> -		DRM_ERROR("Cannot allocate grant references\n");
-> -		return ret;
-> -	}
-> -
-> -	otherend_id = buf->xb_dev->otherend_id;
-> -	j = 0;
-> -	num_pages_dir = get_num_pages_dir(buf);
-> -	for (i = 0; i < num_pages_dir; i++) {
-> -		unsigned long frame;
-> -
-> -		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-> -		if (cur_ref < 0)
-> -			return cur_ref;
-> -
-> -		frame = xen_page_to_gfn(virt_to_page(buf->directory +
-> -					PAGE_SIZE * i));
-> -		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-> -		buf->grefs[j++] = cur_ref;
-> -	}
-> -
-> -	if (buf->ops->grant_refs_for_buffer) {
-> -		ret = buf->ops->grant_refs_for_buffer(buf, &priv_gref_head, j);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	gnttab_free_grant_references(priv_gref_head);
-> -	return 0;
-> -}
-> -
-> -static int alloc_storage(struct xen_drm_front_shbuf *buf)
-> -{
-> -	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
-> -	if (!buf->grefs)
-> -		return -ENOMEM;
-> -
-> -	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
-> -	if (!buf->directory)
-> -		return -ENOMEM;
-> -
-> -	return 0;
-> -}
-> -
-> -/*
-> - * For be allocated buffers we don't need grant_refs_for_buffer as those
-> - * grant references are allocated at backend side
-> - */
-> -static const struct xen_drm_front_shbuf_ops backend_ops = {
-> -	.calc_num_grefs = backend_calc_num_grefs,
-> -	.fill_page_dir = backend_fill_page_dir,
-> -	.map = backend_map,
-> -	.unmap = backend_unmap
-> -};
-> -
-> -/* For locally granted references we do not need to map/unmap the references */
-> -static const struct xen_drm_front_shbuf_ops local_ops = {
-> -	.calc_num_grefs = guest_calc_num_grefs,
-> -	.fill_page_dir = guest_fill_page_dir,
-> -	.grant_refs_for_buffer = guest_grant_refs_for_buffer,
-> -};
-> -
-> -struct xen_drm_front_shbuf *
-> -xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg)
-> -{
-> -	struct xen_drm_front_shbuf *buf;
-> -	int ret;
-> -
-> -	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
-> -	if (!buf)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	if (cfg->be_alloc)
-> -		buf->ops = &backend_ops;
-> -	else
-> -		buf->ops = &local_ops;
-> -
-> -	buf->xb_dev = cfg->xb_dev;
-> -	buf->num_pages = DIV_ROUND_UP(cfg->size, PAGE_SIZE);
-> -	buf->pages = cfg->pages;
-> -
-> -	buf->ops->calc_num_grefs(buf);
-> -
-> -	ret = alloc_storage(buf);
-> -	if (ret)
-> -		goto fail;
-> -
-> -	ret = grant_references(buf);
-> -	if (ret)
-> -		goto fail;
-> -
-> -	buf->ops->fill_page_dir(buf);
-> -
-> -	return buf;
-> -
-> -fail:
-> -	xen_drm_front_shbuf_free(buf);
-> -	return ERR_PTR(ret);
-> -}
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h b/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
-> deleted file mode 100644
-> index 7545c692539e..000000000000
-> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
-> +++ /dev/null
-> @@ -1,64 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> -
-> -/*
-> - *  Xen para-virtual DRM device
-> - *
-> - * Copyright (C) 2016-2018 EPAM Systems Inc.
-> - *
-> - * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> - */
-> -
-> -#ifndef __XEN_DRM_FRONT_SHBUF_H_
-> -#define __XEN_DRM_FRONT_SHBUF_H_
-> -
-> -#include <linux/kernel.h>
-> -#include <linux/scatterlist.h>
-> -
-> -#include <xen/grant_table.h>
-> -
-> -struct xen_drm_front_shbuf {
-> -	/*
-> -	 * number of references granted for the backend use:
-> -	 *  - for allocated/imported dma-buf's this holds number of grant
-> -	 *    references for the page directory and pages of the buffer
-> -	 *  - for the buffer provided by the backend this holds number of
-> -	 *    grant references for the page directory as grant references for
-> -	 *    the buffer will be provided by the backend
-> -	 */
-> -	int num_grefs;
-> -	grant_ref_t *grefs;
-> -	unsigned char *directory;
-> -
-> -	int num_pages;
-> -	struct page **pages;
-> -
-> -	struct xenbus_device *xb_dev;
-> -
-> -	/* these are the ops used internally depending on be_alloc mode */
-> -	const struct xen_drm_front_shbuf_ops *ops;
-> -
-> -	/* Xen map handles for the buffer allocated by the backend */
-> -	grant_handle_t *backend_map_handles;
-> -};
-> -
-> -struct xen_drm_front_shbuf_cfg {
-> -	struct xenbus_device *xb_dev;
-> -	size_t size;
-> -	struct page **pages;
-> -	bool be_alloc;
-> -};
-> -
-> -struct xen_drm_front_shbuf *
-> -xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg);
-> -
-> -grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf);
-> -
-> -int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf);
-> -
-> -int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf);
-> -
-> -void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf);
-> -
-> -void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf);
-> -
-> -#endif /* __XEN_DRM_FRONT_SHBUF_H_ */
+Yes. This would be one approach - but I am not sure how DT guys see
+this. I may be wrong but I have a feeling Rob prefers having only one DT
+node describing single device. But for me it would make sense to have
+own node for GPIO - especially because the GPIO is only IRQ controller
+which really is visible outside the chip. But here we still hit the same
+problem if we want to use regmap-irq. Regmap-irq still knows only the
+i2c device DT node. Currently there is no way to tell regmap-irq to use
+the sub-node.
+
+>  This does make some sense as
+> the individual interrupt controllers within the chip are clearly
+> reusable IP blocks though it means that the chip starts looking a bit
+> weird externally so perhaps that's not ideal and your suggestion makes
+> sense.
+
+So I take this as a suggestion to continue tinkering with the 'main irq
+register support'. Or how do you see my suggestion of making iot
+possible to instruct the regmap-irq to not use DT for 'main irq
+controller'? Then we could probably do cascaded controllers where only
+the controller handling the externally visible 'sub-irqs' would be
+bound to DT? The pitfall here is case where more than one sub-irq
+controllers needs to be exposed to other devices. In that sense the
+'main irq thing' would have better 'case coverage' =) (Wow, what a fancy
+words, maybe I am turning into a manager here :p )
+
+> > configuring IRQ pins as level triggered. So I thought we could add
+> > support for setting the type to level_low or level_high. This change
+> > would require adding 'supported_types' information to all drivers which
+> > are currently using regmap-irq for supporting type-setting - but quick
+> > grep for drivers allow me to think that it is currently only the 
+> > gpio-max77620 which uses the type setting in-tree.
+> 
+> That seems pluasible but definitely seems like a separate change.
+
+All right. I will create a separate patch (set) out of this.
+
+> 
+> > + * @main_status: Base main status register address. For chips which have
+> > + *		 interrupts arranged in separate sub-irq blocks with own IRQ
+> > + *		 registers and which have a main IRQ registers indicating
+> > + *		 sub-irq blocks with unhandled interrupts. For such chips fill
+> > + *		 sub-irq register information in status_base, mask_base and
+> > + *		 ack_base.
+> > + * @sub_reg_offsets: arrays of mappings from main register bits to sub irq
+> > + *		 registers. First item in array describes the registers
+> > + *		 for first main status bit. Second array for second bit etc.
+> > + *		 Offset is given as sub register status offset to status_base.
+> > + *		 Should contain num_regs arrays. Can be provided for chips with
+> > + *		 more complex mapping than 1.st bit to 1.st sub-reg, 2.nd bit to
+> > + *		 2.nd sub-reg, ...
+> 
+> This interface feels a little awkward in that we define the sub
+> interrupts in this separate array and require them all to be in separate
+> single registers which probably won't be true in general (IIRC it wasn't
+> how the wm831x worked).
+
+So my implementation here was just the simplest solution to 'glue' the
+main status register on top of existing implementation. If we do it this
+way, then the 'main status register' is completely optional - chip would
+work just fine even without the 'main register' - main register only
+saves some reads as subregisters with no irqs can be left unread. But
+you are correct - this only supports limited amount of HWs. Many chips I
+have seen (prior to the one I am now working with) actually require
+acking also the main status register. They also may support masking the
+main status register. But I guess trying to support all such cases would
+make the regmap-irq really complex and hard to understand.
+
+> How about instead we have the individual
+> interrupts mark which main status bits flag them, then build up a
+> mapping in the other direction during init of subregisters to read?
+
+I am not sure if I understand your idea correctly - but for me it feels
+that the 'main status register' is only benefical when we can do direct
+mapping from main register bit/value to sub-register(s). 
+
+But as we must really read whole sub register at once, it really does
+not matter which interrupts inside the sub register did activate the
+main status - we go through all bits in the sub register anyways. Hence
+it may not be needed to have mapping from individual interrupts to the
+main status register value? I guess looping through all the sub
+register bits is negligible source of latency compared to the time the
+register access takes. So identifying the sub register(s) based on main
+status is the thing - not mapping the individual interrupts in sub
+register(s), right? I think that having to specify the main status
+register value for each interrupt would be quite a overkill.
+
+So what do you think, would changing the
+> > + * @sub_reg_offsets: arrays of mappings from main register bits to sub irq
+> > + *		 registers. First item in array describes the registers
+> > + *		 for first main status bit. Second array for second bit etc.
+> > + *		 Offset is given as sub register status offset to status_base.
+> > + *		 Should contain num_regs arrays. Can be provided for chips with
+> > + *		 more complex mapping than 1.st bit to 1.st sub-reg, 2.nd bit to
+> > + *		 2.nd sub-reg, ...
+to
+
+@sub_reg_offsets: arrays of mappings from main register _value_ to to
+		  sub irq registers ...
+
+be the (simplest) way to go? And maybe changing the description for
+main_status to:
+
+ * @main_status: Optional base main status register address. Some chips have
+ *		 "main status register(s)" which indicate actual irq registers
+ *		 with unhandled interrupts. Provide main status register
+ *		 address here to avoid reading irq registers with no
+ *		 active interrupts. Mapping from main status value to
+ *		 interrupt register can be provided in sub_reg_offsets.
+
+Perhaps this would clarify that the status_base, mask_base, ack_base,
+etc. should still be used normally?
+
+Best Regards
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
