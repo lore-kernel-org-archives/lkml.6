@@ -7,45 +7,54 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62687C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C5AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6952133F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFEE214DA
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eou9bMvW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6952133F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZqvL8JJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFEE214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbeLEJtn (ORCPT
+        id S1729535AbeLEJtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55862 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbeLEJtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:49:42 -0500
+        id S1727872AbeLEJtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:49:47 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4364214C1;
-        Wed,  5 Dec 2018 09:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C56C2087F;
+        Wed,  5 Dec 2018 09:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003381;
-        bh=x8O9zkSRHe6K4p3Ddk+te8U1FacdDlttpbd3UrnDRpQ=;
+        s=default; t=1544003386;
+        bh=nqBCrYA9PUUopQ/x88PhbWWFBDMjiUidkxFoWXb4a+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eou9bMvWh3JWnzGcyXTK6mklYaaXsjrTVixnI9tc0TeLFel63Bux2FoHXj+vyMehO
-         hhqlNFycF13NhaPCOAM6OSy9/eQEeawPuu4tz6N5jAZgxq1JjVB59kIhZFYVYSNz5F
-         NLG+WqAisbhjCaMM78BTH77n65H57fDOSpkcHHhM=
+        b=pZqvL8JJNKFe9vn2zPUn5T5zFfywczAUhj8MzTC+O252XnlLQSs4M97pG6b+Z0HGJ
+         aMaRh/4jY5CeTL8MC62W6BnFMK/TuZygQMA72YmuPKSlL7T4KR33uquiT6k/V3+nFk
+         WsUyhfHpDUg5hg0TvQRKwB8y2onMD52lFjK0Nv3A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 15/45] RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
-Date:   Wed,  5 Dec 2018 04:46:36 -0500
-Message-Id: <20181205094706.7225-15-sashal@kernel.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, stable@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 16/45] uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+Date:   Wed,  5 Dec 2018 04:46:37 -0500
+Message-Id: <20181205094706.7225-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -54,67 +63,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Majd Dibbiny <majd@mellanox.com>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-[ Upstream commit 074fca3a18e7e1e0d4d7dcc9d7badc43b90232f4 ]
+[ Upstream commit 09d3f015d1e1b4fee7e9bbdcf54201d239393391 ]
 
-Currently, for IB_WR_LOCAL_INV WR, when the next fence is None, the
-current fence will be SMALL instead of Normal Fence.
+Commit:
 
-Without this patch krping doesn't work on CX-5 devices and throws
-following error:
+  142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
 
-The error messages are from CX5 driver are: (from server side)
-[ 710.434014] mlx5_0:dump_cqe:278:(pid 2712): dump error cqe
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434017] 00000000 00000000 00000000 00000000
-[ 710.434018] 00000000 93003204 100000b8 000524d2
-[ 710.434019] krping: cq completion failed with wr_id 0 status 4 opcode 128 vender_err 32
+added the UPROBE_COPY_INSN flag, and corresponding smp_wmb() and smp_rmb()
+memory barriers, to ensure that handle_swbp() uses fully-initialized
+uprobes only.
 
-Fixed the logic to set the correct fence type.
+However, the smp_rmb() is mis-placed: this barrier should be placed
+after handle_swbp() has tested for the flag, thus guaranteeing that
+(program-order) subsequent loads from the uprobe can see the initial
+stores performed by prepare_uprobe().
 
-Fixes: 6e8484c5cf07 ("RDMA/mlx5: set UMR wqe fence according to HCA cap")
-Signed-off-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Move the smp_rmb() accordingly.  Also amend the comments associated
+to the two memory barriers to indicate their actual locations.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: stable@kernel.org
+Fixes: 142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
+Link: http://lkml.kernel.org/r/20181122161031.15179-1-andrea.parri@amarulasolutions.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ kernel/events/uprobes.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index f8f7a2191b98..f89489b28575 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -3888,17 +3888,18 @@ int mlx5_ib_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 			goto out;
- 		}
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index a1de021dccba..fbfab5722254 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -608,7 +608,7 @@ static int prepare_uprobe(struct uprobe *uprobe, struct file *file,
+ 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
+ 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
  
--		if (wr->opcode == IB_WR_LOCAL_INV ||
--		    wr->opcode == IB_WR_REG_MR) {
-+		if (wr->opcode == IB_WR_REG_MR) {
- 			fence = dev->umr_fence;
- 			next_fence = MLX5_FENCE_MODE_INITIATOR_SMALL;
--		} else if (wr->send_flags & IB_SEND_FENCE) {
--			if (qp->next_fence)
--				fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
--			else
--				fence = MLX5_FENCE_MODE_FENCE;
--		} else {
--			fence = qp->next_fence;
-+		} else  {
-+			if (wr->send_flags & IB_SEND_FENCE) {
-+				if (qp->next_fence)
-+					fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
-+				else
-+					fence = MLX5_FENCE_MODE_FENCE;
-+			} else {
-+				fence = qp->next_fence;
-+			}
- 		}
+-	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
++	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
+ 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
  
- 		switch (ibqp->qp_type) {
+  out:
+@@ -1902,10 +1902,18 @@ static void handle_swbp(struct pt_regs *regs)
+ 	 * After we hit the bp, _unregister + _register can install the
+ 	 * new and not-yet-analyzed uprobe at the same address, restart.
+ 	 */
+-	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
+ 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
+ 		goto out;
+ 
++	/*
++	 * Pairs with the smp_wmb() in prepare_uprobe().
++	 *
++	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
++	 * we must also see the stores to &uprobe->arch performed by the
++	 * prepare_uprobe() call.
++	 */
++	smp_rmb();
++
+ 	/* Tracing handlers use ->utask to communicate with fetch methods */
+ 	if (!get_utask())
+ 		goto out;
 -- 
 2.17.1
 
