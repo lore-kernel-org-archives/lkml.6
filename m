@@ -2,121 +2,101 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04F3C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAA1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E6C20659
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E6C20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DBCA720672
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:50:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbYn6OOM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCA720672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeLEKrO (ORCPT
+        id S1727335AbeLEKuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:47:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:51610 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbeLEKrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:47:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D9BE80D;
-        Wed,  5 Dec 2018 02:47:13 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20FFC3F575;
-        Wed,  5 Dec 2018 02:47:11 -0800 (PST)
-Subject: Re: [PATCH v9 2/8] KVM: arm/arm64: Re-factor setting the Stage 2
- entry to exec on fault
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        kvmarm@lists.cs.columbia.edu
-Cc:     marc.zyngier@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        punitagrawal@gmail.com, linux-arm-kernel@lists.infradead.org
-References: <20181031175745.18650-1-punit.agrawal@arm.com>
- <20181031175745.18650-3-punit.agrawal@arm.com>
- <12212830-ffc6-a0e0-5de6-3e6a15ed7141@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <f078ae84-9906-4394-957f-8f041b08827f@arm.com>
-Date:   Wed, 5 Dec 2018 10:47:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 05:50:52 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:35821 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeLEKuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:50:52 -0500
+Received: by mail-yb1-f196.google.com with SMTP id z2-v6so8198032ybj.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 02:50:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PMF0bAzTBxyCkjK+bptI9nByQiftSOTnZNCdXVQwIUE=;
+        b=VbYn6OOMANHGd9NLXCgfWGN8LiC6/Hc5e8pfcuOR7Tcv28w3jcd0ZsAHxU13ohXU9k
+         6QmEi2cT7AG/YXWTDSLogpBHsh5cgsoChHAwYcPkchXpKGqnyqASrhYd/E+dCRm2eVpN
+         jJrcP3LlQV900grS6OjawLv8jhEeTyXTpTtY4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PMF0bAzTBxyCkjK+bptI9nByQiftSOTnZNCdXVQwIUE=;
+        b=NDp82AZ6TSVU3bRDY6ytdYeA2Tz1O2JTbMnclA99bzPmLM3BYQIu2x8DPMvABkZmWj
+         PCjQOlQGYHzs/LKEmaAIHkN8xcRyKwfOAtf8i1EXFzfFvz+X37bMu9lAZzQTI3omVG0D
+         xdO0LL2LFCMyobEO/F774G+tqQOMtZjf9bfUUpjsI842wEVL6+BHjCWHhS9d5chL9JaS
+         /hbZ+05sRFLZVw0liBn7QFuJQoJ/GjILUg9qwoINrMLtOC2azRoJ8/BvTZPYVfZTP460
+         Ls6G8uz2rrPnvgyScITqDHO+ZeKEtszbbn0NNpE2w64PKBLLAFp3XJrBSCU7Lcx4QyBy
+         MjNg==
+X-Gm-Message-State: AA+aEWYhqXwxyhQ0pZbaSa88Nw61cBSlpH1B/QbytzCFRAHioT82pK25
+        8XIyB2ko0vH4TBPHxEC3ijlif3h/74TrK9qsc3kROA==
+X-Google-Smtp-Source: AFSGD/UEhroe4SxxFb753u7dU/rk+gMhi2coWefX1lqAmAmzT+wXfSDdIO7/7mBsQm0pFnjBp2HeCt+T3uL7qtaV4tg=
+X-Received: by 2002:a25:2157:: with SMTP id h84-v6mr21892011ybh.198.1544007051334;
+ Wed, 05 Dec 2018 02:50:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <12212830-ffc6-a0e0-5de6-3e6a15ed7141@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181204194044.9506-1-anders.roxell@linaro.org> <20181204173258.6de70c66@vmware.local.home>
+In-Reply-To: <20181204173258.6de70c66@vmware.local.home>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 5 Dec 2018 11:50:40 +0100
+Message-ID: <CADYN=9JVZ0vRbon9DkxuUx4sYNMuCYyoYL1gydCLrdjRJGS4+g@mail.gmail.com>
+Subject: Re: [PATCH v3] tracing: add cond_resched to ftrace_replace_code()
+To:     rostedt@goodmis.org
+Cc:     mingo@redhat.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 4 Dec 2018 at 23:33, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Tue,  4 Dec 2018 20:40:44 +0100
+> Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> > When running in qemu on an kernel built with allmodconfig and debug
+> > options (in particular kcov and ubsan) enabled, ftrace_replace_code
+> > function call take minutes. The ftrace selftest calls
+> > ftrace_replace_code to look >40000 through
+> > ftrace_make_call/ftrace_make_nop, and these end up calling
+> > __aarch64_insn_write/aarch64_insn_patch_text_nosync.
+> >
+> > Microseconds add up because this is called in a loop for each dyn_ftrace
+> > record, and this triggers the softlockup watchdog unless we let it sleep
+> > occasionally.
+> >
+> > Rework so that we call cond_resched() if !irqs_disabled() && !preempt_count().
+>
+> This isn't urgent is it?
 
+No, it is not urgent. I'm trying to get allmodconfig to boot on arm64.
 
-On 03/12/2018 13:32, Anshuman Khandual wrote:
-> 
-> 
-> On 10/31/2018 11:27 PM, Punit Agrawal wrote:
->> Stage 2 fault handler marks a page as executable if it is handling an
->> execution fault or if it was a permission fault in which case the
->> executable bit needs to be preserved.
->>
->> The logic to decide if the page should be marked executable is
->> duplicated for PMD and PTE entries. To avoid creating another copy
->> when support for PUD hugepages is introduced refactor the code to
->> share the checks needed to mark a page table entry as executable.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>   virt/kvm/arm/mmu.c | 28 +++++++++++++++-------------
->>   1 file changed, 15 insertions(+), 13 deletions(-)
->>
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 59595207c5e1..6912529946fb 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1475,7 +1475,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   			  unsigned long fault_status)
->>   {
->>   	int ret;
->> -	bool write_fault, exec_fault, writable, force_pte = false;
->> +	bool write_fault, writable, force_pte = false;
->> +	bool exec_fault, needs_exec;
-> 
-> New line not required, still within 80 characters.
-> 
->>   	unsigned long mmu_seq;
->>   	gfn_t gfn = fault_ipa >> PAGE_SHIFT;
->>   	struct kvm *kvm = vcpu->kvm;
->> @@ -1598,19 +1599,25 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   	if (exec_fault)
->>   		invalidate_icache_guest_page(pfn, vma_pagesize);
->>   
->> +	/*
->> +	 * If we took an execution fault we have made the
->> +	 * icache/dcache coherent above and should now let the s2
-> 
-> Coherent or invalidated with invalidate_icache_guest_page ?
+> That is, it doesn't need a stable tag?
 
-We also do clean_dcache above if needed. So that makes sure
-the data is coherent. Am I missing something here ?
+Also I don't think its a regression, since clearly nobody has ever been
+able to boot an arm64 allmodconfig kernel or anything close to that.
 
-> 
->> +	 * mapping be executable.
->> +	 *
->> +	 * Write faults (!exec_fault && FSC_PERM) are orthogonal to
->> +	 * execute permissions, and we preserve whatever we have.
->> +	 */
-> 
-> Otherwise looks good.
-> 
-
-
-Suzuki
+Cheers,
+Anders
