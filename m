@@ -2,125 +2,155 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803E9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE0FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 374612082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C91BD213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="YPzmf7ti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374612082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KEyepbLf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91BD213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbeLEGhd (ORCPT
+        id S1727041AbeLEGim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:37:33 -0500
-Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:53162 "EHLO
-        rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeLEGhd (ORCPT
+        Wed, 5 Dec 2018 01:38:42 -0500
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:41662 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeLEGim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:37:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2284; q=dns/txt; s=iport;
-  t=1543991853; x=1545201453;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=0q3yJk6+Dg0kzx2TNIPNsM01isJwjE8OyjXAXbeV+yY=;
-  b=YPzmf7tisSjgFUff7pDSICyLNpJ14aQiAEhMuo0ZxWI2NUxwjZ4a+ysf
-   9pzxPzciAp0QGWUR0ifGxYUjqCjGJs5FgPq5c0gMWRj8EqhjO+YE1A+hh
-   ViF6LqQoV2Pd9encoNkl5BSvTtG6XiTZKUC0vihMhCzJ/UIP+HE6TTmV8
-   M=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ADAADIbgdc/5tdJa1kGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAQGBUQQBAQEBAQsBggOBaCcKg2+IGY12JYkSjjqBegsBAYR?=
- =?us-ascii?q?sAheCdCI0CQ0BAwEBAgEBAm0ohT0BBSMEDUUQAgEIGAICJgICAh8RFRACBAE?=
- =?us-ascii?q?NBYMhgWoDFaUBfDOIAw2CHIELixMXgUA/gTgME4JMgleFLjGCJgKJKIdYhGe?=
- =?us-ascii?q?KOi4JAo4Rgy4YkSwsiF2FdIlVAhEUgScfOIFVcBVlAYJBgicXjh1BMYsPgR8?=
- =?us-ascii?q?BAQ?=
-X-IronPort-AV: E=Sophos;i="5.56,317,1539648000"; 
-   d="scan'208";a="489561175"
-Received: from rcdn-core-4.cisco.com ([173.37.93.155])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 06:28:03 +0000
-Received: from XCH-ALN-011.cisco.com (xch-aln-011.cisco.com [173.36.7.21])
-        by rcdn-core-4.cisco.com (8.15.2/8.15.2) with ESMTPS id wB56S3Rp006969
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 06:28:03 GMT
-Received: from xch-aln-003.cisco.com (173.36.7.13) by XCH-ALN-011.cisco.com
- (173.36.7.21) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 5 Dec
- 2018 00:28:02 -0600
-Received: from xch-aln-003.cisco.com ([173.36.7.13]) by XCH-ALN-003.cisco.com
- ([173.36.7.13]) with mapi id 15.00.1395.000; Wed, 5 Dec 2018 00:28:02 -0600
-From:   "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     Souptick Joarder <jrdr.linux@gmail.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Subject: Re: [PATCH] drivers/scsi/snic/snic_trc.c: Use vzalloc
-Thread-Topic: [PATCH] drivers/scsi/snic/snic_trc.c: Use vzalloc
-Thread-Index: AQHUfQEKypWm+S61x0KEZqQ1RPx37qVd3rwAgBIzIoD//5nxAA==
-Date:   Wed, 5 Dec 2018 06:28:02 +0000
-Message-ID: <B16AE34C-4395-434E-98AD-C5F7AB818C49@cisco.com>
-References: <5beda000.1c69fb81.e6599.d3d8@mx.google.com>
- <CAJr6mf0rawk6rDRB7NzsTUXyqvt0U5J4SUnVYck2_-jh6D6MoQ@mail.gmail.com>
- <CAJr6mf2obk8MgPc3AO74EwsiXt66OZGni57Z8v3TgnePyACLmg@mail.gmail.com>
-In-Reply-To: <CAJr6mf2obk8MgPc3AO74EwsiXt66OZGni57Z8v3TgnePyACLmg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/f.22.0.170515
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.24.34.134]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B51B4681C3481C4DB5F0D1E9B56628A5@emea.cisco.com>
-Content-Transfer-Encoding: base64
+        Wed, 5 Dec 2018 01:38:42 -0500
+Received: by mail-wr1-f45.google.com with SMTP id x10so18382423wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:38:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YaiSxZ5zkOGPVEb7SNIkGxQnViLDgHomOE3rkzH+wJQ=;
+        b=KEyepbLfn5jgV2F/LPX1AhONZV1ZhSYUqc9vpS9PODTbg4yDlHzDBVaC2JHadV0X+Y
+         dudr3lrwALsby41XvGFezJtr7Ufsf+EBNykIzCiGWoQzNVcoBQO6GgScrd2VKLv4cqa3
+         5bOoUw1WU8SxOmPkr3ES8cwADkVOj+p69XXAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YaiSxZ5zkOGPVEb7SNIkGxQnViLDgHomOE3rkzH+wJQ=;
+        b=Gc9zzkoqXNEUOlsflC7zLKhzN//jWJUEZrs1pF+kN+otVP0IkmmgC4NSPrlJmmRKnl
+         Z56/OGw72AdnxqBGZ5B3eJfjP2djP6WJ4yb49JiSdNXPI1atPFY0x+eFfm1huTjg22q6
+         a/yktFQdU5ZG1Fmu57HFbBtPE2qYzLo2dd2mRZ0V2eR7xaw95doHl3YwyQ3jGujv10af
+         /z/obHYukCkucUDU5C4nKcDKQ0lk78yswJVK1NmK4ixJJH5a2RVMPb0HLP5Fpc5HwQ0p
+         kH/LztsdQu8ZDi3tcx8sN+xa1DvMjF0/Ve56Z6qV96hVUej+CUbyEM2IUlfJOVxr1VB2
+         W/7A==
+X-Gm-Message-State: AA+aEWZonRDTynZOOmdnx6b3AxrwBpXn9fp2bP3iSPAHwtMabvPOqFHB
+        BBglaKB62aX+go3hdW7YpCJUQA==
+X-Google-Smtp-Source: AFSGD/UIBxZhPvwSzO4XP9p0z5SPl3sTHAnRmegI2zn8LoIhY6PXVWK5gLRTW52hhnRmgK2M+jx1cA==
+X-Received: by 2002:a5d:49cd:: with SMTP id t13mr6227276wrs.144.1543991920382;
+        Tue, 04 Dec 2018 22:38:40 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id k135sm18248835wmd.42.2018.12.04.22.38.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 22:38:39 -0800 (PST)
+Date:   Wed, 5 Dec 2018 14:38:32 +0800
+From:   leo.yan@linaro.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v2 2/2] perf cs-etm: Add support sample flags
+Message-ID: <20181205063832.GD15964@leoy-ThinkPad-X240s>
+References: <1541912876-20967-1-git-send-email-leo.yan@linaro.org>
+ <1541912876-20967-3-git-send-email-leo.yan@linaro.org>
+ <20181119232202.GA7001@xps15>
+ <CANLsYkxQVpSP1D2M_bCni=nkZyo4qC=d33bWC1Xy0_vDfX9Agg@mail.gmail.com>
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 173.36.7.21, xch-aln-011.cisco.com
-X-Outbound-Node: rcdn-core-4.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkxQVpSP1D2M_bCni=nkZyo4qC=d33bWC1Xy0_vDfX9Agg@mail.gmail.com>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TG9va3MgZ29vZCB0byBtZS4NCg0KQWNrZWQtYnk6ICAgU2VzaWRoYXIgQmFkZGVsYSAgICAgPHNl
-YmFkZGVsQGNpc2NvLmNvbT4NCg0KT24gMTIvNC8xOCwgODozMyBQTSwgIlNhYnlhc2FjaGkgR3Vw
-dGEiIDxzYWJ5YXNhY2hpLmxpbnV4QGdtYWlsLmNvbT4gd3JvdGU6DQoNCiAgICBPbiBGcmksIE5v
-diAyMywgMjAxOCBhdCA4OjA3IFBNIFNhYnlhc2FjaGkgR3VwdGENCiAgICA8c2FieWFzYWNoaS5s
-aW51eEBnbWFpbC5jb20+IHdyb3RlOg0KICAgID4NCiAgICA+IE9uIFRodSwgTm92IDE1LCAyMDE4
-IGF0IDEwOjA0IFBNIFNhYnlhc2FjaGkgR3VwdGENCiAgICA+IDxzYWJ5YXNhY2hpLmxpbnV4QGdt
-YWlsLmNvbT4gd3JvdGU6DQogICAgPiA+DQogICAgPiA+IFJlcGxhY2VkIHZtYWxsb2MgKyBtZW1z
-ZXQgd2l0aCB2emFsbG9jDQogICAgPiA+DQogICAgPiA+IFNpZ25lZC1vZmYtYnk6IFNhYnlhc2Fj
-aGkgR3VwdGEgPHNhYnlhc2FjaGkubGludXhAZ21haWwuY29tPg0KICAgID4NCiAgICA+IEFueSBj
-b21tZW50IG9uIHRoaXMgcGF0Y2g/DQogICAgDQogICAgQW55IGNvbW1lbnQgb24gdGhpcyBwYXRj
-aD8NCiAgICANCiAgICA+DQogICAgPiA+IC0tLQ0KICAgID4gPiAgZHJpdmVycy9zY3NpL3NuaWMv
-c25pY190cmMuYyB8IDMgKy0tDQogICAgPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDIgZGVsZXRpb25zKC0pDQogICAgPiA+DQogICAgPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L3Njc2kvc25pYy9zbmljX3RyYy5jIGIvZHJpdmVycy9zY3NpL3NuaWMvc25pY190cmMuYw0KICAg
-ID4gPiBpbmRleCBmYzYwYzkzLi40NThlYWJhIDEwMDY0NA0KICAgID4gPiAtLS0gYS9kcml2ZXJz
-L3Njc2kvc25pYy9zbmljX3RyYy5jDQogICAgPiA+ICsrKyBiL2RyaXZlcnMvc2NzaS9zbmljL3Nu
-aWNfdHJjLmMNCiAgICA+ID4gQEAgLTEyNiw3ICsxMjYsNyBAQCBzbmljX3RyY19pbml0KHZvaWQp
-DQogICAgPiA+ICAgICAgICAgaW50IHRidWZfc3ogPSAwLCByZXQ7DQogICAgPiA+DQogICAgPiA+
-ICAgICAgICAgdGJ1Zl9zeiA9IChzbmljX3RyYWNlX21heF9wYWdlcyAqIFBBR0VfU0laRSk7DQog
-ICAgPiA+IC0gICAgICAgdGJ1ZiA9IHZtYWxsb2ModGJ1Zl9zeik7DQogICAgPiA+ICsgICAgICAg
-dGJ1ZiA9IHZ6YWxsb2ModGJ1Zl9zeik7DQogICAgPiA+ICAgICAgICAgaWYgKCF0YnVmKSB7DQog
-ICAgPiA+ICAgICAgICAgICAgICAgICBTTklDX0VSUigiRmFpbGVkIHRvIEFsbG9jYXRlIFRyYWNl
-IEJ1ZmZlciBTaXplLiAlZFxuIiwgdGJ1Zl9zeik7DQogICAgPiA+ICAgICAgICAgICAgICAgICBT
-TklDX0VSUigiVHJhY2UgRmFjaWxpdHkgbm90IGVuYWJsZWQuXG4iKTsNCiAgICA+ID4gQEAgLTEz
-NSw3ICsxMzUsNiBAQCBzbmljX3RyY19pbml0KHZvaWQpDQogICAgPiA+ICAgICAgICAgICAgICAg
-ICByZXR1cm4gcmV0Ow0KICAgID4gPiAgICAgICAgIH0NCiAgICA+ID4NCiAgICA+ID4gLSAgICAg
-ICBtZW1zZXQodGJ1ZiwgMCwgdGJ1Zl9zeik7DQogICAgPiA+ICAgICAgICAgdHJjLT5idWYgPSAo
-c3RydWN0IHNuaWNfdHJjX2RhdGEgKikgdGJ1ZjsNCiAgICA+ID4gICAgICAgICBzcGluX2xvY2tf
-aW5pdCgmdHJjLT5sb2NrKTsNCiAgICA+ID4NCiAgICA+ID4gLS0NCiAgICA+ID4gMi43LjQNCiAg
-ICA+ID4NCiAgICANCg0K
+On Tue, Nov 20, 2018 at 09:53:41AM -0700, Mathieu Poirier wrote:
+
+[...]
+
+> > > +static void cs_etm__fixup_flags(struct cs_etm_queue *etmq)
+> > > +{
+> > > +     /*
+> > > +      * Decoding stream might insert one TRACE_OFF packet in the
+> > > +      * middle of instruction packets, this means it doesn't
+> > > +      * contain the pair packets with TRACE_OFF and TRACE_ON.
+> > > +      * For this case, the instruction packet follows with
+> > > +      * TRACE_OFF packet so we need to fixup prev_packet with flag
+> > > +      * PERF_IP_FLAG_TRACE_BEGIN, this flag finally is used by the
+> > > +      * instruction packet to generate samples.
+> > > +      */
+> > > +     if (etmq->prev_packet->sample_type == CS_ETM_TRACE_OFF &&
+> > > +         etmq->packet->sample_type == CS_ETM_RANGE)
+> > > +             etmq->prev_packet->flags = PERF_IP_FLAG_BRANCH |
+> > > +                                        PERF_IP_FLAG_TRACE_BEGIN;
+> > > +
+> > > +     if (etmq->prev_packet->sample_type == CS_ETM_RANGE) {
+> > > +             /*
+> > > +              * When the exception packet is inserted, update flags
+> > > +              * so tell perf it is exception related branches.
+> > > +              */
+> > > +             if (etmq->packet->sample_type == CS_ETM_EXCEPTION ||
+> > > +                 etmq->packet->sample_type == CS_ETM_EXCEPTION_RET)
+> > > +                     etmq->prev_packet->flags = etmq->packet->flags;
+> > > +
+> > > +             /*
+> > > +              * The trace is discontinuous, weather this is caused by
+> > > +              * TRACE_ON packet or TRACE_OFF packet is coming, if the
+> > > +              * previous packet is instruction packet, simply set flag
+> > > +              * PERF_IP_FLAG_TRACE_END for previous packet.
+> > > +              */
+> > > +             if (etmq->packet->sample_type == CS_ETM_TRACE_ON ||
+> > > +                 etmq->packet->sample_type == CS_ETM_TRACE_OFF)
+> > > +                     etmq->prev_packet->flags |= PERF_IP_FLAG_TRACE_END;
+> > > +     }
+> > > +}
+> > > +
+> >
+> > I think it would be better to keep all the flag related processing in
+> > cs-etm-decoder.c so that things in cs-etm.c are only concered with dealing with
+> > perf.
+> >
+> > Look at function cs_etm__alloc_queue(), there you'll find "d_params.data = etmq".
+> >
+> > In function cs_etm_decoder__new(), decoder->data = d_params->data;
+> >
+> > This means that anywhere you have a decoder, decoder->data is an etmq.  I've
+> > used this profusely in my work on CPU-wide trace scenarios.  Because you're
+> > getting there ahead of me you'll need to fix the declaration of struct
+> > cs_etm_queue but that's easy.
+> 
+> I've been thinking further about this and manipulating the etmq packet
+> and prev_packet from the cs-etm-decoder.c won't work because all we
+> have at that time is the decoder's packet queue.  My goal is to
+> manipulate the flags in only one place - either in cs-etm.c or
+> cs-etm-decoder.c but not in both.  It might be worth trying to do the
+> implementation in cs-etm.c since there is already a lot of packet flow
+> intelligence happening there.
+
+Agree.  cs-etm.c has more context info than cs-etm-decoder.c, will
+try to refactor in single place in cs-etm.c.
+
+[...]
+
+Thanks,
+Leo Yan
