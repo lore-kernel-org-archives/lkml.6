@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6F3C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91299C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DF3214F1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5815D20661
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd/FV+X6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DF3214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLl7QWvD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5815D20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730078AbeLEJyH (ORCPT
+        id S1730053AbeLEJx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:54:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60754 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:53:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729776AbeLEJyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:54:03 -0500
+        id S1727767AbeLEJx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:53:56 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 034AB20661;
-        Wed,  5 Dec 2018 09:54:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0A2A2082B;
+        Wed,  5 Dec 2018 09:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003642;
-        bh=5TnshQd75SDqVQnWK5vns4Xr65u3ppkOEsOVeYJhd08=;
+        s=default; t=1544003635;
+        bh=Gj1XP6HVnpEpmyu7AfozOicVf2oFGcbSgdhBBGPnJ/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kd/FV+X6TdjPSZC3qJKIZCT+iagwmuxpdckHj7ooJRDsNsDhhF44vB647z9dgoMrt
-         PWwQ1t7OlK6kQdWhsXspGjApZUM1gy+6ZtogJtGrq2fU4QM7IAUdyhI/01u1ak5QaW
-         thOwGjxOeFp+Jbt+sBrfpRV4HaYvwKKhUZ2P7xOg=
+        b=SLl7QWvDxY0IDikHS2mjOI9spqg1Ffubf6ATOVZWXtui80HhAuFEIu4g3C0sUsaIo
+         WQY94ZE3Fh2i7sLskEzy5aRrXRcV2JkZ6QdoAWc04HyKGcuUsNuEPtAuknD7xeFUPi
+         tJGVAxYg2VkWCJQ4srVnMPhamvstaSUCoNEgBIik=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 27/33] fscache, cachefiles: remove redundant variable 'cache'
-Date:   Wed,  5 Dec 2018 04:51:25 -0500
-Message-Id: <20181205095131.7685-27-sashal@kernel.org>
+Cc:     "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.4 24/33] drm/ast: fixed reading monitor EDID not stable issue
+Date:   Wed,  5 Dec 2018 04:51:22 -0500
+Message-Id: <20181205095131.7685-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095131.7685-1-sashal@kernel.org>
 References: <20181205095131.7685-1-sashal@kernel.org>
@@ -53,39 +54,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "Y.C. Chen" <yc_chen@aspeedtech.com>
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+[ Upstream commit 300625620314194d9e6d4f6dda71f2dc9cf62d9f ]
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+v1: over-sample data to increase the stability with some specific monitors
+v2: refine to avoid infinite loop
+v3: remove un-necessary "volatile" declaration
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+[airlied: fix two checkpatch warnings]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1542858988-1127-1-git-send-email-yc_chen@aspeedtech.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/ast/ast_mode.c | 36 ++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 5b68cf526887..c05ab2ec0fef 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -963,11 +963,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
- void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 21085f669e21..b19ba1792607 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -968,9 +968,21 @@ static int get_clock(void *i2c_priv)
  {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
  
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4;
+ 	return val & 1 ? 1 : 0;
+ }
  
- 	_enter("%p,{%lu}", object, page->index);
+@@ -978,9 +990,21 @@ static int get_data(void *i2c_priv)
+ {
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
  
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5;
+ 	return val & 1 ? 1 : 0;
+ }
+ 
+@@ -993,7 +1017,7 @@ static void set_clock(void *i2c_priv, int clock)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((clock & 0x01) ? 0 : 1);
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfe, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf4, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x01);
+ 		if (ujcrb7 == jtemp)
+ 			break;
+@@ -1009,7 +1033,7 @@ static void set_data(void *i2c_priv, int data)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((data & 0x01) ? 0 : 1) << 2;
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfb, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf1, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x04);
+ 		if (ujcrb7 == jtemp)
+ 			break;
 -- 
 2.17.1
 
