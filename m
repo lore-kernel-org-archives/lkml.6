@@ -2,210 +2,216 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E06C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ACEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D55052054F
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0045C20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:50:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="imbLSuUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D55052054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bj8ToTz0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0045C20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeLEDlt (ORCPT
+        id S1726762AbeLEDuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 22:41:49 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34904 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbeLEDlq (ORCPT
+        Tue, 4 Dec 2018 22:50:01 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41568 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbeLEDuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 22:41:46 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d2so6618204ual.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:41:45 -0800 (PST)
+        Tue, 4 Dec 2018 22:50:00 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so18114232wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:49:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=claPucn+XJmQuNDr9GzOxYNtVSSdZHOjhhV3KuIo0kc=;
-        b=imbLSuUdrAQA+3eZTMnGhlCCedBfnUq0nH8VeWgXogzdRJPxVpsi6rdlN+L037ryt/
-         c3Bg09Qimd0+OuB8LKUrOzPW/Bgv8lKmtZzpVicVGuWesxKatrE6XgbZD2GlbsrjCd4/
-         yd0IeRC1t/Tzha8cYdMtMxxdHI5JaICl3xbAM=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MzhuMjMGrWaYPBgj7NxnknHks4PiChgmdxDKPESvPbc=;
+        b=bj8ToTz0U/XeuaDa194Kl5Fl8S7aXHODD+Ff7zXQmX6p4ifH4Y/OPI5I/f0rCJWtme
+         Yq0mg3AGrXPioOAY6IqTuIHcLHCulJcFpDRInk9BPvuscwmlAqwh+rWAvUA7jnT7idkZ
+         unhkBB09ZourdALAM9IH0NIgtUAL8XW52qnOg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=claPucn+XJmQuNDr9GzOxYNtVSSdZHOjhhV3KuIo0kc=;
-        b=fNb8FTkBXwmufJ1viA7/09ce/y5/zjXTV2rAv4ZyFqFYP+cOUzaJ2G2A1DB9lBXYdK
-         jfWSCzM4gXc8ABT/puXyfDyhxr6bf0gzhelFTiyyV8ST0g1vHtuycqdTzUe8BnhkGQi+
-         +SDmjqTS9wldJDLxeFVoV3OQLlwEyKb3nHO5V969p+INpw0DeubMRFE0Zd3ee2mLasck
-         6/gQkFAGbwxtTRLeIHbGzzpMUvcih1gUxqsnhtw9dSg/7ZQejJ4fpbgukRHJP+VadYVh
-         oWTkpIB2Eul9JB6xBKxVi5M8HXTlF2O8jGwfo5ISdGvNfiKqY8A2F4xmnw/+U47vnSUu
-         A5XA==
-X-Gm-Message-State: AA+aEWbG8RGjOwGizNBm8psmorSb3xxCYemA4z5VLmfm8JYjTr29cG7U
-        zOZhn9qwsMBlLONQXl8jqSqVy0MgMxw=
-X-Google-Smtp-Source: AFSGD/UZIghToGY9WkM3txadBHBnqweTtQrObQ5kCp7z5pOOfBk00D3W4NF1qTKjG3lwsBv13VLoaQ==
-X-Received: by 2002:ab0:44e7:: with SMTP id n94mr10555762uan.76.1543981304554;
-        Tue, 04 Dec 2018 19:41:44 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a75sm6629033vsi.4.2018.12.04.19.41.43
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MzhuMjMGrWaYPBgj7NxnknHks4PiChgmdxDKPESvPbc=;
+        b=ohiz6Pq/mf9VOcheEVyks2glpm1iXmuIBaZeXoKMoRP9T9A+8St7tLEnZdoUo5BWAb
+         aHjbFw2if1VfMQsYdK4LqTDtkK0bsFh+RFQyC7pUlrnOTCd0ySLXSB2dG+rzsrLOKvIn
+         lhHdrA269ZtQ7dxxVdQfFJnC/VOkNRr++eEgDMVE+GZ0R/hUeJCkgtBZyAZwH+tWmGn5
+         AR1ht9Xci5QwfkMY5UtLe6DjFVw01k8NTcygjQ+Ehb1nLH+2Q78tbzsZg7LHxIzdeb9F
+         RxonyE1rYmVq7Vq8KerGkx9P38KOJICZcDleb3lNhilr4XYEP7bKO/tWUxRsGUHeP9bw
+         vf0w==
+X-Gm-Message-State: AA+aEWbhKtlQ1wRl2j38M7ialm0zqqnNRof+WHBgTt0Sr/urjHhj5nla
+        RQO+mqidda5DWxxn6tr8VfXgDQ==
+X-Google-Smtp-Source: AFSGD/W5ZXFHJS9SIZlY4c7hLN0kpMIFwaRXz5fh+wyBPSX2RK0gyp5GQwHplqzUevvj1yrL7cQFEA==
+X-Received: by 2002:a5d:5351:: with SMTP id t17mr20015207wrv.288.1543981797276;
+        Tue, 04 Dec 2018 19:49:57 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id y13sm3195946wrn.73.2018.12.04.19.49.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 19:41:43 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id z3so11231733vsf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:41:43 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr8920678vsv.20.1543981302613;
- Tue, 04 Dec 2018 19:41:42 -0800 (PST)
+        Tue, 04 Dec 2018 19:49:56 -0800 (PST)
+Date:   Wed, 5 Dec 2018 11:49:50 +0800
+From:   leo.yan@linaro.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v1 5/5] perf cs-etm: Track exception number
+Message-ID: <20181205034950.GB15964@leoy-ThinkPad-X240s>
+References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
+ <1541912383-19915-6-git-send-email-leo.yan@linaro.org>
+ <20181119204749.GB608@xps15>
 MIME-Version: 1.0
-References: <20181127173839.34328-1-dianders@chromium.org> <20181127173839.34328-3-dianders@chromium.org>
- <20181203155724.7g37vp43e4fd4xqk@holly.lan>
-In-Reply-To: <20181203155724.7g37vp43e4fd4xqk@holly.lan>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 4 Dec 2018 19:41:28 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WS+9d6xeCx4xDqSQkPKPuRx6yATh=j_c1=uJpTdMVUqA@mail.gmail.com>
-Message-ID: <CAD=FV=WS+9d6xeCx4xDqSQkPKPuRx6yATh=j_c1=uJpTdMVUqA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, jhogan@kernel.org,
-        linux-hexagon@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
-        dalias@libc.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        paulus@samba.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        christophe.leroy@c-s.fr, mpe@ellerman.id.au, paul.burton@mips.com,
-        rkuo@codeaurora.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119204749.GB608@xps15>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Dec 3, 2018 at 7:57 AM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> On Tue, Nov 27, 2018 at 09:38:37AM -0800, Douglas Anderson wrote:
-> > When I had lockdep turned on and dropped into kgdb I got a nice splat
-> > on my system.  Specifically it hit:
-> >   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-> >
-> > Specifically it looked like this:
-> >   sysrq: SysRq : DEBUG
-> >   ------------[ cut here ]------------
-> >   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-> >   WARNING: CPU: 0 PID: 0 at .../kernel/locking/lockdep.c:2875 lockdep_hardirqs_on+0xf0/0x160
-> >   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0 #27
-> >   pstate: 604003c9 (nZCv DAIF +PAN -UAO)
-> >   pc : lockdep_hardirqs_on+0xf0/0x160
-> >   ...
-> >   Call trace:
-> >    lockdep_hardirqs_on+0xf0/0x160
-> >    trace_hardirqs_on+0x188/0x1ac
-> >    kgdb_roundup_cpus+0x14/0x3c
-> >    kgdb_cpu_enter+0x53c/0x5cc
-> >    kgdb_handle_exception+0x180/0x1d4
-> >    kgdb_compiled_brk_fn+0x30/0x3c
-> >    brk_handler+0x134/0x178
-> >    do_debug_exception+0xfc/0x178
-> >    el1_dbg+0x18/0x78
-> >    kgdb_breakpoint+0x34/0x58
-> >    sysrq_handle_dbg+0x54/0x5c
-> >    __handle_sysrq+0x114/0x21c
-> >    handle_sysrq+0x30/0x3c
-> >    qcom_geni_serial_isr+0x2dc/0x30c
-> >   ...
-> >   ...
-> >   irq event stamp: ...45
-> >   hardirqs last  enabled at (...44): [...] __do_softirq+0xd8/0x4e4
-> >   hardirqs last disabled at (...45): [...] el1_irq+0x74/0x130
-> >   softirqs last  enabled at (...42): [...] _local_bh_enable+0x2c/0x34
-> >   softirqs last disabled at (...43): [...] irq_exit+0xa8/0x100
-> >   ---[ end trace adf21f830c46e638 ]---
-> >
-> > Looking closely at it, it seems like a really bad idea to be calling
-> > local_irq_enable() in kgdb_roundup_cpus().  If nothing else that seems
-> > like it could violate spinlock semantics and cause a deadlock.
-> >
-> > Instead, let's use a private csd alongside
-> > smp_call_function_single_async() to round up the other CPUs.  Using
-> > smp_call_function_single_async() doesn't require interrupts to be
-> > enabled so we can remove the offending bit of code.
-> >
-> > In order to avoid duplicating this across all the architectures that
-> > use the default kgdb_roundup_cpus(), we'll add a "weak" implementation
-> > to debug_core.c.
-> >
-> > Looking at all the people who previously had copies of this code,
-> > there were a few variants.  I've attempted to keep the variants
-> > working like they used to.  Specifically:
-> > * For arch/arc we passed NULL to kgdb_nmicallback() instead of
-> >   get_irq_regs().
-> > * For arch/mips there was a bit of extra code around
-> >   kgdb_nmicallback()
-> >
-> > NOTE: In this patch we will still get into trouble if we try to round
-> > up a CPU that failed to round up before.  We'll try to round it up
-> > again and potentially hang when we try to grab the csd lock.  That's
-> > not new behavior but we'll still try to do better in a future patch.
-> >
-> > Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Mon, Nov 19, 2018 at 01:47:49PM -0700, Mathieu Poirier wrote:
+> On Sun, Nov 11, 2018 at 12:59:43PM +0800, Leo Yan wrote:
+> > When an exception packet comes, it contains the info for exception
+> > number; the exception number indicates the exception types, so from it
+> > we can know if the exception is taken for interrupt, system call or
+> > other traps, etc.  But because the exception return packet cannot
+> > delivery exception number correctly by decoder thus when prepare sample
+> > flags we cannot know what's type for exception return.
+> > 
+> > This patch adds a new 'exc_num' array in decoder structure to record
+> > exception number per CPU, the exception number is recorded in the array
+> > when the exception packet comes and this exception number can be used by
+> > exception return packet.  If detect there have discontinuous trace with
+> > TRACE_ON or TRACE_OFF packet, the exception number is set to invalid
+> > value.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
 > > ---
-> >
-> > Changes in v6:
-> > - Moved smp_call_function_single_async() error check to patch 3.
-> >
-> > Changes in v5:
-> > - Add a comment about get_irq_regs().
-> > - get_cpu() => raw_smp_processor_id() in kgdb_roundup_cpus().
-> > - for_each_cpu() => for_each_online_cpu()
-> > - Error check smp_call_function_single_async()
-> >
-> > Changes in v4: None
-> > Changes in v3:
-> > - No separate init call.
-> > - Don't round up the CPU that is doing the rounding up.
-> > - Add "#ifdef CONFIG_SMP" to match the rest of the file.
-> > - Updated desc saying we don't solve the "failed to roundup" case.
-> > - Document the ignored parameter.
-> >
-> > Changes in v2:
-> > - Removing irq flags separated from fixing lockdep splat.
-> > - Don't use smp_call_function (Daniel).
-> >
-> >  arch/arc/kernel/kgdb.c     | 10 ++--------
-> >  arch/arm/kernel/kgdb.c     | 12 -----------
-> >  arch/arm64/kernel/kgdb.c   | 12 -----------
-> >  arch/hexagon/kernel/kgdb.c | 27 -------------------------
-> >  arch/mips/kernel/kgdb.c    |  9 +--------
-> >  arch/powerpc/kernel/kgdb.c |  4 ++--
-> >  arch/sh/kernel/kgdb.c      | 12 -----------
->
-> Please could you re-send with the arch maintainers for these platforms
-> included in the Cc: of the patch description rather than just in the
-> e-mail header.
->
-> I'd like to make sure arch maintainers have a chance to opt out if they
-> want to (it's a weak symbol so an arch could chose not to use it).
->
-> Otherwise I shall start testing shortly!
+> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 67 ++++++++++++++++++++++---
+> >  1 file changed, 59 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > index b8cb7a3e..d1a6cbc 100644
+> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > @@ -43,6 +43,7 @@ struct cs_etm_decoder {
+> >  	u32 packet_count;
+> >  	u32 head;
+> >  	u32 tail;
+> > +	u32 *exc_num;
+> >  	struct cs_etm_packet packet_buffer[MAX_BUFFER];
+> >  };
+> >  
+> > @@ -368,24 +369,64 @@ static ocsd_datapath_resp_t
+> >  cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
+> >  				 const uint8_t trace_chan_id)
+> >  {
+> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > -					     CS_ETM_TRACE_OFF);
+> > +	int ret;
+> > +	struct cs_etm_packet *packet;
+> > +
+> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > +					    CS_ETM_TRACE_OFF);
+> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
+> > +		return ret;
+> > +
+> > +	packet = &decoder->packet_buffer[decoder->tail];
+> > +
+> > +	/* Clear execption number for discontinuous trace */
+> > +	decoder->exc_num[packet->cpu] = UINT32_MAX;
+> > +
+> > +	return ret;
+> >  }
+> >  
+> >  static ocsd_datapath_resp_t
+> >  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
+> >  				const uint8_t trace_chan_id)
+> >  {
+> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > -					     CS_ETM_TRACE_ON);
+> > +	int ret;
+> > +	struct cs_etm_packet *packet;
+> > +
+> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > +					    CS_ETM_TRACE_ON);
+> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
+> > +		return ret;
+> > +
+> > +	packet = &decoder->packet_buffer[decoder->tail];
+> > +
+> > +	/* Clear execption number for discontinuous trace */
+> > +	decoder->exc_num[packet->cpu] = UINT32_MAX;
+> > +
+> > +	return ret;
+> >  }
+> >  
+> >  static ocsd_datapath_resp_t
+> >  cs_etm_decoder__buffer_exception(struct cs_etm_decoder *decoder,
+> > +				 const ocsd_generic_trace_elem *elem,
+> >  				 const uint8_t trace_chan_id)
+> >  {
+> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > -					     CS_ETM_EXCEPTION);
+> > +	int ret;
+> > +	struct cs_etm_packet *packet;
+> > +
+> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> > +					    CS_ETM_EXCEPTION);
+> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
+> > +		return ret;
+> > +
+> > +	packet = &decoder->packet_buffer[decoder->tail];
+> > +
+> > +	/*
+> > +	 * Exception number is recorded per CPU and later can be used
+> > +	 * for exception return instruction analysis.
+> > +	 */
+> > +	decoder->exc_num[packet->cpu] = elem->exception_number;
+> 
+> Am I missing something or the information about the exception number that is
+> recorded here isn't used anywhere?
 
-OK, I did a repost of v6 with the Cc's and also the Acks I've received
-so far.  There are no code changes in the repost.  Please let me know
-if you have additional comments and thanks for your help.
+The exception number will be used to set branch flag patch [1].
+According to exception number we can know it's for system call,
+interrupt or other traps.
 
--Doug
+[1] http://archive.armlinux.org.uk/lurker/message/20181111.050755.d1c1b257.en.html
+
+> If you want to use this in perf report/script,
+> the exception number will have to be added to the cs_etm_packet struct.
+
+Actually before has discussed this with Mike but found it's hard to
+save the exception number in cs_etm_packet struct.  The reason is the
+exception packet contains the correct exception number, but the
+exception return packet doesn't contain exception number.  Thus this
+patch uses cs_etm_decoder struct to save exception number per CPU
+context when receive exception packet, and later the saved exception
+number will be used by exception return packet.
+
+Please see related discussion at the end of page [2].
+
+[2] https://lists.linaro.org/pipermail/coresight/2018-October/001832.html
+
+> I am done with the revision of this set.
+
+Thanks a lot for reviewing.
+
+[...]
+
+Thanks,
+Leo Yan
