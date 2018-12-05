@@ -2,140 +2,121 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D58C5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216A3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969E0208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544039361;
-	bh=S75QfcoRBleggQyU1suN9Y4s8+dMub0dnVnPHlFzMPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iDzzDiVcXRWLUVlVF/BgjJ1jlyDH8Q/p3raUAnUvdE16sngsQNUo3bkkCb7pxKrom
-	 cxd/hWAS6PyoeQQiLRjIAljttvdqU1Q70k33AYjafnhbx5JFc9kqbbF/B6zjKmncyH
-	 2cxH4WqjSg+FQQ408MLqN/bZl4Df6zI9JjLs2zOs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969E0208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D9C432133F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jJj09i/7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C432133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbeLETtU (ORCPT
+        id S1728492AbeLETt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbeLETtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:49:19 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A37620892;
-        Wed,  5 Dec 2018 19:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544039358;
-        bh=S75QfcoRBleggQyU1suN9Y4s8+dMub0dnVnPHlFzMPc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HRMEK2bcwTnlg/mBuwysmfwu9+mDenVDogynr3x49mPVRwVUORlNltf0XgCXcbQju
-         mF+fBJaHbr0B3+ip5wzPSNGwoOsODW89/7WzKAvCSR1f8+HYcf8NE12GaiJHpLJJ6y
-         J/hKcyi1me30lsrEZHwJfvm3ratGyoilsysE8zoQ=
-Date:   Wed, 5 Dec 2018 20:49:16 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     linux-bluetooth@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kay Sievers <kay.sievers@vrfy.org>,
-        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
-Message-ID: <20181205194916.GA20809@kroah.com>
-References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
- <20181204204117.14964-1-ville.syrjala@linux.intel.com>
- <20181205070621.GE16346@kroah.com>
- <20181205154032.GT9144@intel.com>
- <20181205192036.GB434@kroah.com>
- <20181205194051.GU9144@intel.com>
+        Wed, 5 Dec 2018 14:49:29 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41946 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbeLETt3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:49:29 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 70so9486852pgh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:49:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=D9D99FYJdZo2uJ7xtjuViYCT1QHw85VOll4TTwRjMIA=;
+        b=jJj09i/76kNT4ioMKbTLgHHVxQu51JbSHE0FaNFywijTbcps2Seg/+R0KKxZ0O341v
+         pl5n7kDJSFSrevjyjlw5KzmOFuv/d4aYfejgC/XdvnAf42x+ABB67ATJxuzFFtXdaLPS
+         PGI5DG0yI6bOAO7j1Aoo4kkpNxy/G9Z9Y5wc3P5JXR4oZ7xkRUVsK6lYSIX8RS2bWcNL
+         AR3g+yNg9aapdlheEHm0ncQP217O7gH/wnNoTdwhLotbLeMNvcBVsv57MWh3W8sv+qPf
+         bT31+79beZmC06zcs7l0J8VlepxcbVYYAVw7/mWl24erGpEcrhr7/1fLJtqN6MW0QeXu
+         09SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=D9D99FYJdZo2uJ7xtjuViYCT1QHw85VOll4TTwRjMIA=;
+        b=YPl1WZTZSI8sYdaXQ8QjQT7sRJjHTsiD3pvNmgsZomDgFXeBODvBHjzDv7L7KnsTyc
+         XDthbuYJ48P17scmozOLy2SVqs3kUqHhXUjT04dBwwz98GhLHY4w9/dNnTyfS/GhybN4
+         VnU3npvfq8lgvM+LpWJ4+lFo2tsDPiFOLJvlG3tP7ThLFvmjzzs+uZCVBUmnJ2G7bygO
+         JIt1rLHyTCppTMx64FFde7S0Puf0HZwdbv+RDS4kMOepiGhv/uNMZksBHhEmO57Bp4/F
+         IBE36WW1AWy5vkKpUEjkm6kWkuFz1nzFYuCGIOkjls+kutudEtmMqbGsKpuKc9KxJvc0
+         4/pg==
+X-Gm-Message-State: AA+aEWaB1jXnjqRQsGDkAPahzU+Isc2zfHCYiOpCy6QdvKPzBOHD2T+w
+        bZu8bGoM2DHFaX/v78HIDBkxyQ==
+X-Google-Smtp-Source: AFSGD/W6aHVy31bms2/0HFShV5n9vwcyjuRvoE+tvS/8Z+OKX9lYuf6IOREsLwnMaLeChJxNkhKu6Q==
+X-Received: by 2002:a62:6a88:: with SMTP id f130mr25972743pfc.201.1544039368101;
+        Wed, 05 Dec 2018 11:49:28 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id k129sm40161436pgk.29.2018.12.05.11.49.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 11:49:27 -0800 (PST)
+Date:   Wed, 5 Dec 2018 11:49:26 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        s.priebe@profihost.ag, mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
+ regressions
+In-Reply-To: <20181205090554.GX1286@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1812051142040.240991@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com> <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz> <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com> <20181205090554.GX1286@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205194051.GU9144@intel.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:40:51PM +0200, Ville Syrjälä wrote:
-> On Wed, Dec 05, 2018 at 08:20:36PM +0100, Greg Kroah-Hartman wrote:
-> > On Wed, Dec 05, 2018 at 05:40:32PM +0200, Ville Syrjälä wrote:
-> > > On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
-> > > > On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
-> > > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > > 
-> > > > > Since commit 1455cf8dbfd0 ("driver core: emit uevents when
-> > > > > device is bound to a driver") the kernel started emitting
-> > > > > "bind" and "unbind" uevents which confuse the hid2hci
-> > > > > udev rules.
-> > > > > 
-> > > > > The symptoms on an affected machine (Dell E5400 in my case)
-> > > > > include bluetooth devices not appearing and udev hogging
-> > > > > the cpu as it's busy processing a constant stream of these
-> > > > > "bind"+"unbind" uevents.
-> > > > 
-> > > > What is causing a "stream" of bind and unbind events?  This only happens
-> > > > when a device is attached to a driver or removed from a driver, which is
-> > > > caused by something else happening.
-> > > 
-> > > Not sure if it's just due to this thing causing devices to
-> > > appear/disappear during bind/unbind events or what.
-> > 
-> > Someone has to be telling the kernel to bind/unbind from a driver to
-> > a device, it doesn't do it on its own.  Look at your other rules/scripts
-> > for that.
-> > 
-> > Also note that the kernel has been doing this for over a year now (since
-> > 4.l4), what just happened in 4.19 to cause this to be an issue?
+On Wed, 5 Dec 2018, Michal Hocko wrote:
+
+> > The revert is certainly needed to prevent the regression, yes, but I 
+> > anticipate that Andrea will report back that patch 2 at least improves the 
+> > situation for the problem that he was addressing, specifically that it is 
+> > pointless to thrash any node or reclaim unnecessarily when compaction has 
+> > already failed.  This is what setting __GFP_NORETRY for all thp fault 
+> > allocations fixes.
 > 
-> It became an issue for me after I got a machine that suffers from
-> this. The regression has been present ever since commit 1455cf8dbfd0
-> ("driver core: emit uevents when device is bound to a driver").
+> Yes but earlier numbers from Mel and repeated again [1] simply show
+> that the swap storms are only handled in favor of an absolute drop of
+> THP success rate.
+>  
+
+As we've been over countless times, this is the desired effect for 
+workloads that fit on a single node.  We want local pages of the native 
+page size because they (1) are accessed faster than remote hugepages and 
+(2) are candidates for collapse by khugepaged.
+
+For applications that do not fit in a single node, we have discussed 
+possible ways to extend the API to allow remote faulting of hugepages, 
+absent remote fragmentation as well, then the long-standing behavior is 
+preserved and large applications can use the API to increase their thp 
+success rate.
+
+> Yes, this is understood. So we are getting worst of both. We have a
+> numa locality side effect of MADV_HUGEPAGE and we have a poor THP
+> utilization. So how come this is an improvement. Especially when the
+> reported regression hasn't been demonstrated on a real or repeatable
+> workload but rather a very vague presumably worst case behavior where
+> the access penalty is absolutely prevailing.
 > 
-> You need a Dell E5400 or something similar to see it since those
-> have these magic bluetooth devices or whatever.
 
-What does the kernel log say is going on?  Is the device "bouncing" from
-being added/removed from the system all the time?
-
-What makes this system "magic"?
-
-> > > > This should not be a normal
-> > > > occurance, unless something odd is happening to your hardware?
-> > > 
-> > > It's not specific to my hardware. Lot's of people are affected.
-> > > See eg. 
-> > > https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
-> > > 
-> > > Acutally looking through that bug it seems someone else noticed
-> > > hid2hci failing lot in the logs. So maybe it's just that we already
-> > > switched the mode during "add", and then we try to redo the same
-> > > thing during "bind" which fails, and that then causes and unbind?
-> > 
-> > You have to manually unbind the device, the kernel does not do that.  So
-> > perhaps you have a broken udev rule somewhere else that would do
-> > something odd like unbind/bind?
-> > 
-> > I don't see this happening on my systems, but hey, I know better than to
-> > run Ubuntu :)
-> 
-> As do I. And you don't see it because you don't have the right
-> hardware.
-
-Fair enough, what makes my hardware different from yours?
-
-thanks,
-
-greg k-h
+High thp utilization is not always better, especially when those hugepages 
+are accessed remotely and introduce the regressions that I've reported.  
+Seeking high thp utilization at all costs is not the goal if it causes 
+workloads to regress.
