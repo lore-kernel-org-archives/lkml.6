@@ -2,534 +2,136 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61D7C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71664C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80C7020851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C7020851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CAEA20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:37:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="moUa7ufk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAEA20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbeLEFhR (ORCPT
+        id S1727115AbeLEFhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 00:37:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42820 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbeLEFhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 00:37:15 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6B06307DAB0;
-        Wed,  5 Dec 2018 05:37:14 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-120-80.rdu2.redhat.com [10.10.120.80])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 746235C5DF;
-        Wed,  5 Dec 2018 05:37:11 +0000 (UTC)
-From:   jglisse@redhat.com
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 3/3] mm/mmu_notifier: contextual information for event triggering invalidation v2
-Date:   Wed,  5 Dec 2018 00:36:28 -0500
-Message-Id: <20181205053628.3210-4-jglisse@redhat.com>
-In-Reply-To: <20181205053628.3210-1-jglisse@redhat.com>
-References: <20181205053628.3210-1-jglisse@redhat.com>
+        Wed, 5 Dec 2018 00:37:39 -0500
+Received: from mail-oln040092001075.outbound.protection.outlook.com ([40.92.1.75]:59227
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbeLEFhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 00:37:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=49nlbjB/HVN4CbcTzKVYo25woRCnMJ1RH/9OpnFtFkc=;
+ b=moUa7ufkXRzI6GoQWum+KjY+nwVPKHWbussPclT05MTa1ZQEs9tM3lHt/7GBwIcQh8/mkVpybTUyTSj8Y+rgKKEXshLrWvXdqtoi/B82x2Hd/6LxXdW2lTnL9D9KjojkdFWz4qSez8aAhJNNCn93LAnGw4q88G7gp+JVjsMfs4VkJRw0gzS1i/uzslRArmBpslsTV1+EmTgPTDywCF0+wk1dYMQSDzQbMMQ+dYtUN11mXic3YqO/r4lvg6jayPOVuHQeF3KuD/4zRrjHcEWviF2Bo2xGnUV6D8CnUxnC+Emo5LnL4sfoqEfJR7EhmEJB77lM2pGo+T3LNnjRMu0x5w==
+Received: from BY2NAM01FT023.eop-nam01.prod.protection.outlook.com
+ (10.152.68.57) by BY2NAM01HT032.eop-nam01.prod.protection.outlook.com
+ (10.152.68.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1404.13; Wed, 5 Dec
+ 2018 05:37:37 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com (10.152.68.55) by
+ BY2NAM01FT023.mail.protection.outlook.com (10.152.69.191) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1404.13 via Frontend Transport; Wed, 5 Dec 2018 05:37:37 +0000
+Received: from BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::19ff:b7ea:dfaa:2ee3]) by BLUPR13MB0289.namprd13.prod.outlook.com
+ ([fe80::19ff:b7ea:dfaa:2ee3%2]) with mapi id 15.20.1404.019; Wed, 5 Dec 2018
+ 05:37:37 +0000
+From:   Yueyi Li <liyueyi@live.com>
+To:     Wei Yang <richard.weiyang@gmail.com>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] memblock: Anonotate memblock_is_reserved() with
+ __init_memblock.
+Thread-Topic: [PATCH v2] memblock: Anonotate memblock_is_reserved() with
+ __init_memblock.
+Thread-Index: AQHUiryuEY3GC2m5nk+tSrupm8LKDqVt5pqAgAG9JYA=
+Date:   Wed, 5 Dec 2018 05:37:37 +0000
+Message-ID: <BLUPR13MB02891C690507E91D0581E79FDFA80@BLUPR13MB0289.namprd13.prod.outlook.com>
+References: <BLUPR13MB02893411BF12EACB61888E80DFAE0@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <20181204030415.zpcvbzh5gxz5hxc6@master>
+In-Reply-To: <20181204030415.zpcvbzh5gxz5hxc6@master>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK0PR01CA0040.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3e::28) To BLUPR13MB0289.namprd13.prod.outlook.com
+ (2a01:111:e400:5951::22)
+x-incomingtopheadermarker: OriginalChecksum:B6EF4B677E25A9F0A1F6D6FE54D739BC0C73BC7D3A6864055C4F474FF0A3D000;UpperCasedChecksum:6642BB504BB443A7FB082DC89C5A307DAEE6F09306C58FCEAD0ADF4485CCD582;SizeAsReceived:7738;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [CeEi051hXt7cDS7P9xY52aTnRgD6aoho]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2NAM01HT032;6:a/L9r4bc5zfDE7hSL+rhBfkb3uLK7p9xa7kiTBOb44B7esFxhg2ZTMnNC9gtYVeVOGKtW6EK8Wt33xJ/uH7K5BmTod3eIfklBDZhUK5NIJIYRVVmrUf83MpEZAqXFbA4AfkrVLL3iHEuz3HQacOpeUfhi8RYEv8knUFzoCP+AelEqJ08W9BazlmvWIjMGCevTALqbeSbkiwVc/WTnjXcCGWkUeCk3/THKZAeLX+YwiGJUITE0kmItAwJ8Bt4hAWjwvmQqdGqCLads1rDGgNQWD1oZL4ZIEBVyRNts2+upEMJGce7XR1hf0YdEje6RCLCwGXFRtfDZiXG9ETEPLAyAevRrDKtI+FdQ2qftpCKBVllAIU3okyZcXX6+wIopQezaK+hoQkOHgv9NLk5lqSDNA7f1O521npITPksiWPhZyF4H8lrk7AOIgrpikAJ9O0XGDM9UIT0R2H/FxxIMYjVpA==;5:n9qpyfWtUAiZO/AgjkWPx5r3QHSzQtVMGiKCdCBHm7ILkIdFvtiCbk21P/j++P/egGUlBFeaNn7SW2auZWafbg4ttrmyqGGJKhKfysoXIIx41asrGR7NFXkCO5R6UzGCgvBen9twZFWIwdLTXi+yxxJhGpFj3OBAsS8VVcYTOgM=;7:u/4QJjB8CUcQ7LpUAKjqyufiBPYt1y6OgeKx3Ubnkd/uRsCVxVXt71YnSORrySMe7S9mnQkGDSEU8+gjsQJP+Fy0FdfJQA+dPKAoijmh2tCgcBMmYyARyKmaAwLIe5AQq/llldzMbZvICA4G3/U70g==
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:BY2NAM01HT032;
+x-ms-traffictypediagnostic: BY2NAM01HT032:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BY2NAM01HT032;BCL:0;PCL:0;RULEID:;SRVR:BY2NAM01HT032;
+x-microsoft-antispam-message-info: b9JYAZlNy651bcZj8I9cRWpYG4VT9JcaXIsNZv9XFGAILJ9VRCwyiICd+uKpsEYI
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <3F6DD7343CFD8C43BA08FE6D04863379@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 05 Dec 2018 05:37:15 +0000 (UTC)
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ce09e1e-5e28-468e-3c58-08d65a73c32f
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: f12efbb0-867f-4c93-8261-502eceebfafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 05:37:37.2520
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2NAM01HT032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
 
-CPU page table update can happens for many reasons, not only as a result
-of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
-as a result of kernel activities (memory compression, reclaim, migration,
-...).
+On 2018/12/4 11:04, Wei Yang wrote:
+> On Mon, Dec 03, 2018 at 04:00:08AM +0000, Yueyi Li wrote:
+>> Found warning:
+>>
+>> WARNING: EXPORT symbol "gsi_write_channel_scratch" [vmlinux] version gen=
+eration failed, symbol will not be versioned.
+>> WARNING: vmlinux.o(.text+0x1e0a0): Section mismatch in reference from th=
+e function valid_phys_addr_range() to the function .init.text:memblock_is_r=
+eserved()
+>> The function valid_phys_addr_range() references
+>> the function __init memblock_is_reserved().
+>> This is often because valid_phys_addr_range lacks a __init
+>> annotation or the annotation of memblock_is_reserved is wrong.
+>>
+>> Use __init_memblock instead of __init.
+> Not familiar with this error, the change looks good to me while have
+> some questions.
+>
+> 1. I don't see valid_phys_addr_range() reference memblock_is_reserved().
+>     This is in which file or arch?
 
-Users of mmu notifier API track changes to the CPU page table and take
-specific action for them. While current API only provide range of virtual
-address affected by the change, not why the changes is happening.
+Yes,  I modified valid_phys_addr_range() for some other debugging.
 
-This patchset adds event information so that users of mmu notifier can
-differentiate among broad category:
-    - UNMAP: munmap() or mremap()
-    - CLEAR: page table is cleared (migration, compaction, reclaim, ...)
-    - PROTECTION_VMA: change in access protections for the range
-    - PROTECTION_PAGE: change in access protections for page in the range
-    - SOFT_DIRTY: soft dirtyness tracking
+> 2. In case a function reference memblock_is_reserved(), should it has
+>     the annotation of __init_memblock too? Or just __init is ok? If my
+>     understanding is correct, annotation __init is ok. Well, I don't see
+>     valid_phys_addr_range() has an annotation.
+> 3. The only valid_phys_addr_range() reference some memblock function is
+>     the one in arch/arm64/mm/mmap.c. Do we suppose to add an annotation t=
+o
+>     this?
 
-Being able to identify munmap() and mremap() from other reasons why the
-page table is cleared is important to allow user of mmu notifier to
-update their own internal tracking structure accordingly (on munmap or
-mremap it is not longer needed to track range of virtual address as it
-becomes invalid).
+Actually, __init_memblock is null in arch arm64, this warning is due to
+CONFIG_DEBUG_SECTION_MISMATCH enabled,  the help text in lib/Kconfig.debug.
 
-Changes since v1:
-    - use mmu_notifier_range_init() helper to to optimize out the case
-      when mmu notifier is not enabled
-    - use kernel doc format for describing the enum values
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Acked-by: Christian König <christian.koenig@amd.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Ross Zwisler <zwisler@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Felix Kuehling <felix.kuehling@amd.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: kvm@vger.kernel.org
-Cc: linux-rdma@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
----
- fs/dax.c                     |  7 +++++++
- fs/proc/task_mmu.c           |  3 ++-
- include/linux/mmu_notifier.h | 35 +++++++++++++++++++++++++++++++++--
- kernel/events/uprobes.c      |  3 ++-
- mm/huge_memory.c             | 12 ++++++++----
- mm/hugetlb.c                 | 10 ++++++----
- mm/khugepaged.c              |  3 ++-
- mm/ksm.c                     |  6 ++++--
- mm/madvise.c                 |  3 ++-
- mm/memory.c                  | 18 ++++++++++++------
- mm/migrate.c                 |  5 +++--
- mm/mprotect.c                |  3 ++-
- mm/mremap.c                  |  3 ++-
- mm/oom_kill.c                |  2 +-
- mm/rmap.c                    |  6 ++++--
- 15 files changed, 90 insertions(+), 29 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 874085bacaf5..6056b03a1626 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -768,6 +768,13 @@ static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
- 
- 		address = pgoff_address(index, vma);
- 
-+		/*
-+		 * All the field are populated by follow_pte_pmd() except
-+		 * the event field.
-+		 */
-+		mmu_notifier_range_init(&range, NULL, 0, -1UL,
-+					MMU_NOTIFY_PROTECTION_PAGE);
-+
- 		/*
- 		 * Note because we provide start/end to follow_pte_pmd it will
- 		 * call mmu_notifier_invalidate_range_start() on our behalf
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index b3ddceb003bc..f68a9ebb0218 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1141,7 +1141,8 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
- 				break;
- 			}
- 
--			mmu_notifier_range_init(&range, mm, 0, -1UL);
-+			mmu_notifier_range_init(&range, mm, 0, -1UL,
-+						MMU_NOTIFY_SOFT_DIRTY);
- 			mmu_notifier_invalidate_range_start(&range);
- 		}
- 		walk_page_range(0, mm->highest_vm_end, &clear_refs_walk);
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 39b06772427f..d249e24acea5 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -25,10 +25,39 @@ struct mmu_notifier_mm {
- 	spinlock_t lock;
- };
- 
-+/**
-+ * enum mmu_notifier_event - reason for the mmu notifier callback
-+ * @MMU_NOTIFY_UNMAP: either munmap() that unmap the range or a mremap() that
-+ * move the range
-+ *
-+ * @MMU_NOTIFY_CLEAR: clear page table entry (many reasons for this like
-+ * madvise() or replacing a page by another one, ...).
-+ *
-+ * @MMU_NOTIFY_PROTECTION_VMA: update is due to protection change for the range
-+ * ie using the vma access permission (vm_page_prot) to update the whole range
-+ * is enough no need to inspect changes to the CPU page table (mprotect()
-+ * syscall)
-+ *
-+ * @MMU_NOTIFY_PROTECTION_PAGE: update is due to change in read/write flag for
-+ * pages in the range so to mirror those changes the user must inspect the CPU
-+ * page table (from the end callback).
-+ *
-+ * @MMU_NOTIFY_SOFT_DIRTY: soft dirty accounting (still same page and same
-+ * access flags)
-+ */
-+enum mmu_notifier_event {
-+	MMU_NOTIFY_UNMAP = 0,
-+	MMU_NOTIFY_CLEAR,
-+	MMU_NOTIFY_PROTECTION_VMA,
-+	MMU_NOTIFY_PROTECTION_PAGE,
-+	MMU_NOTIFY_SOFT_DIRTY,
-+};
-+
- struct mmu_notifier_range {
- 	struct mm_struct *mm;
- 	unsigned long start;
- 	unsigned long end;
-+	enum mmu_notifier_event event;
- 	bool blockable;
- };
- 
-@@ -320,11 +349,13 @@ static inline void mmu_notifier_mm_destroy(struct mm_struct *mm)
- static inline void mmu_notifier_range_init(struct mmu_notifier_range *range,
- 					   struct mm_struct *mm,
- 					   unsigned long start,
--					   unsigned long end)
-+					   unsigned long end,
-+					   enum mmu_notifier_event event)
- {
- 	range->mm = mm;
- 	range->start = start;
- 	range->end = end;
-+	range->event = event;
- }
- 
- #define ptep_clear_flush_young_notify(__vma, __address, __ptep)		\
-@@ -453,7 +484,7 @@ static inline void _mmu_notifier_range_init(struct mmu_notifier_range *range,
- 	range->end = end;
- }
- 
--#define mmu_notifier_range_init(range, mm, start, end) \
-+#define mmu_notifier_range_init(range, mm, start, end, event) \
- 	_mmu_notifier_range_init(range, start, end)
- 
- 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 1fc8a93709c3..a70c3204f25d 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -174,7 +174,8 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
- 	struct mmu_notifier_range range;
- 	struct mem_cgroup *memcg;
- 
--	mmu_notifier_range_init(&range, mm, addr, addr + PAGE_SIZE);
-+	mmu_notifier_range_init(&range, mm, addr, addr + PAGE_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 
- 	VM_BUG_ON_PAGE(PageTransHuge(old_page), old_page);
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c1d3ce809416..b8d9029890c5 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1183,7 +1183,8 @@ static vm_fault_t do_huge_pmd_wp_page_fallback(struct vm_fault *vmf,
- 	}
- 
- 	mmu_notifier_range_init(&range, vma->vm_mm, haddr,
--				haddr + HPAGE_PMD_SIZE);
-+				haddr + HPAGE_PMD_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-@@ -1347,7 +1348,8 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	__SetPageUptodate(new_page);
- 
- 	mmu_notifier_range_init(&range, vma->vm_mm, haddr,
--				haddr + HPAGE_PMD_SIZE);
-+				haddr + HPAGE_PMD_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	spin_lock(vmf->ptl);
-@@ -2027,7 +2029,8 @@ void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 	struct mmu_notifier_range range;
- 
- 	mmu_notifier_range_init(&range, vma->vm_mm, address & HPAGE_PUD_MASK,
--				(address & HPAGE_PUD_MASK) + HPAGE_PUD_SIZE);
-+				(address & HPAGE_PUD_MASK) + HPAGE_PUD_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 	ptl = pud_lock(vma->vm_mm, pud);
- 	if (unlikely(!pud_trans_huge(*pud) && !pud_devmap(*pud)))
-@@ -2243,7 +2246,8 @@ void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 	struct mmu_notifier_range range;
- 
- 	mmu_notifier_range_init(&range, vma->vm_mm, address & HPAGE_PMD_MASK,
--				(address & HPAGE_PMD_MASK) + HPAGE_PMD_SIZE);
-+				(address & HPAGE_PMD_MASK) + HPAGE_PMD_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 	ptl = pmd_lock(vma->vm_mm, pmd);
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index e7c179cbcd75..fd1395918bb3 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3246,7 +3246,7 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
- 
- 	if (cow) {
- 		mmu_notifier_range_init(&range, src, vma->vm_start,
--					vma->vm_end);
-+					vma->vm_end, MMU_NOTIFY_CLEAR);
- 		mmu_notifier_invalidate_range_start(&range);
- 	}
- 
-@@ -3357,7 +3357,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	/*
- 	 * If sharing possible, alert mmu notifiers of worst case.
- 	 */
--	mmu_notifier_range_init(&range, mm, start, end);
-+	mmu_notifier_range_init(&range, mm, start, end, MMU_NOTIFY_CLEAR);
- 	adjust_range_if_pmd_sharing_possible(vma, &range.start, &range.end);
- 	mmu_notifier_invalidate_range_start(&range);
- 	address = start;
-@@ -3625,7 +3625,8 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 	__SetPageUptodate(new_page);
- 	set_page_huge_active(new_page);
- 
--	mmu_notifier_range_init(&range, mm, haddr, haddr + huge_page_size(h));
-+	mmu_notifier_range_init(&range, mm, haddr, haddr + huge_page_size(h),
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	/*
-@@ -4345,7 +4346,8 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
- 	 * start/end.  Set range.start/range.end to cover the maximum possible
- 	 * range if PMD sharing is possible.
- 	 */
--	mmu_notifier_range_init(&range, mm, start, end);
-+	mmu_notifier_range_init(&range, mm, start, end,
-+				MMU_NOTIFY_PROTECTION_VMA);
- 	adjust_range_if_pmd_sharing_possible(vma, &range.start, &range.end);
- 
- 	BUG_ON(address >= end);
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 7736f6c37f19..331dc2738f48 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1016,7 +1016,8 @@ static void collapse_huge_page(struct mm_struct *mm,
- 	pte = pte_offset_map(pmd, address);
- 	pte_ptl = pte_lockptr(mm, pmd);
- 
--	mmu_notifier_range_init(&range, mm, address, address + HPAGE_PMD_SIZE);
-+	mmu_notifier_range_init(&range, mm, address, address + HPAGE_PMD_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 	pmd_ptl = pmd_lock(mm, pmd); /* probably unnecessary */
- 	/*
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 6239d2df7a8e..98a627c01eb0 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1051,7 +1051,8 @@ static int write_protect_page(struct vm_area_struct *vma, struct page *page,
- 	BUG_ON(PageTransCompound(page));
- 
- 	mmu_notifier_range_init(&range, mm, pvmw.address,
--				pvmw.address + PAGE_SIZE);
-+				pvmw.address + PAGE_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	if (!page_vma_mapped_walk(&pvmw))
-@@ -1138,7 +1139,8 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
- 	if (!pmd)
- 		goto out;
- 
--	mmu_notifier_range_init(&range, mm, addr, addr + PAGE_SIZE);
-+	mmu_notifier_range_init(&range, mm, addr, addr + PAGE_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	ptep = pte_offset_map_lock(mm, pmd, addr, &ptl);
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 21a7881a2db4..d220ad7087ed 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -472,7 +472,8 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
- 	range.end = min(vma->vm_end, end_addr);
- 	if (range.end <= vma->vm_start)
- 		return -EINVAL;
--	mmu_notifier_range_init(&range, mm, range.start, range.end);
-+	mmu_notifier_range_init(&range, mm, range.start, range.end,
-+				MMU_NOTIFY_CLEAR);
- 
- 	lru_add_drain();
- 	tlb_gather_mmu(&tlb, mm, range.start, range.end);
-diff --git a/mm/memory.c b/mm/memory.c
-index 574307f11464..893e3bc4b895 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1009,7 +1009,8 @@ int copy_page_range(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	is_cow = is_cow_mapping(vma->vm_flags);
- 
- 	if (is_cow) {
--		mmu_notifier_range_init(&range, src_mm, addr, end);
-+		mmu_notifier_range_init(&range, src_mm, addr, end,
-+					MMU_NOTIFY_PROTECTION_PAGE);
- 		mmu_notifier_invalidate_range_start(&range);
- 	}
- 
-@@ -1333,7 +1334,8 @@ void unmap_vmas(struct mmu_gather *tlb,
- {
- 	struct mmu_notifier_range range;
- 
--	mmu_notifier_range_init(&range, vma->vm_mm, start_addr, end_addr);
-+	mmu_notifier_range_init(&range, vma->vm_mm, start_addr,
-+				end_addr, MMU_NOTIFY_UNMAP);
- 	mmu_notifier_invalidate_range_start(&range);
- 	for ( ; vma && vma->vm_start < end_addr; vma = vma->vm_next)
- 		unmap_single_vma(tlb, vma, start_addr, end_addr, NULL);
-@@ -1355,7 +1357,8 @@ void zap_page_range(struct vm_area_struct *vma, unsigned long start,
- 	struct mmu_gather tlb;
- 
- 	lru_add_drain();
--	mmu_notifier_range_init(&range, vma->vm_mm, start, start + size);
-+	mmu_notifier_range_init(&range, vma->vm_mm, start,
-+				start + size, MMU_NOTIFY_CLEAR);
- 	tlb_gather_mmu(&tlb, vma->vm_mm, start, range.end);
- 	update_hiwater_rss(vma->vm_mm);
- 	mmu_notifier_invalidate_range_start(&range);
-@@ -1381,7 +1384,8 @@ static void zap_page_range_single(struct vm_area_struct *vma, unsigned long addr
- 	struct mmu_gather tlb;
- 
- 	lru_add_drain();
--	mmu_notifier_range_init(&range, vma->vm_mm, address, address + size);
-+	mmu_notifier_range_init(&range, vma->vm_mm, address,
-+				address + size, MMU_NOTIFY_CLEAR);
- 	tlb_gather_mmu(&tlb, vma->vm_mm, address, range.end);
- 	update_hiwater_rss(vma->vm_mm);
- 	mmu_notifier_invalidate_range_start(&range);
-@@ -2272,7 +2276,8 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
- 	__SetPageUptodate(new_page);
- 
- 	mmu_notifier_range_init(&range, mm, vmf->address & PAGE_MASK,
--				(vmf->address & PAGE_MASK) + PAGE_SIZE);
-+				(vmf->address & PAGE_MASK) + PAGE_SIZE,
-+				MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	/*
-@@ -4061,7 +4066,8 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 
- 		if (range) {
- 			mmu_notifier_range_init(range, mm, address & PMD_MASK,
--					     (address & PMD_MASK) + PMD_SIZE);
-+					     (address & PMD_MASK) + PMD_SIZE,
-+					     range->event);
- 			mmu_notifier_invalidate_range_start(range);
- 		}
- 		*ptlp = pmd_lock(mm, pmd);
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 74f5b3208c05..f02bb4b22c1a 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2316,7 +2316,7 @@ static void migrate_vma_collect(struct migrate_vma *migrate)
- 	mm_walk.private = migrate;
- 
- 	mmu_notifier_range_init(&range, mm_walk.mm, migrate->start,
--				migrate->end);
-+				migrate->end, MMU_NOTIFY_CLEAR);
- 	mmu_notifier_invalidate_range_start(&range);
- 	walk_page_range(migrate->start, migrate->end, &mm_walk);
- 	mmu_notifier_invalidate_range_end(&range);
-@@ -2725,7 +2725,8 @@ static void migrate_vma_pages(struct migrate_vma *migrate)
- 				notified = true;
- 
- 				mmu_notifier_range_init(&range, mm, addr,
--							migrate->end);
-+							migrate->end,
-+							MMU_NOTIFY_CLEAR);
- 				mmu_notifier_invalidate_range_start(&range);
- 			}
- 			migrate_vma_insert_page(migrate, addr, newpage,
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 36cb358db170..d5bbe5ca61ac 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -185,7 +185,8 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
- 
- 		/* invoke the mmu notifier if the pmd is populated */
- 		if (!range.start) {
--			mmu_notifier_range_init(&range, vma->vm_mm, addr, end);
-+			mmu_notifier_range_init(&range, vma->vm_mm, addr, end,
-+						MMU_NOTIFY_PROTECTION_VMA);
- 			mmu_notifier_invalidate_range_start(&range);
- 		}
- 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index def01d86e36f..386e3c492f6e 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -203,7 +203,8 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
- 	old_end = old_addr + len;
- 	flush_cache_range(vma, old_addr, old_end);
- 
--	mmu_notifier_range_init(&range, vma->vm_mm, old_addr, old_end);
-+	mmu_notifier_range_init(&range, vma->vm_mm, old_addr,
-+				old_end, MMU_NOTIFY_UNMAP);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	for (; old_addr < old_end; old_addr += extent, new_addr += extent) {
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 1eea8b04f27a..4ac95032b898 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -520,7 +520,7 @@ bool __oom_reap_task_mm(struct mm_struct *mm)
- 			struct mmu_gather tlb;
- 
- 			mmu_notifier_range_init(&range, mm, vma->vm_start,
--						vma->vm_end);
-+						vma->vm_end, MMU_NOTIFY_CLEAR);
- 			tlb_gather_mmu(&tlb, mm, range.start, range.end);
- 			if (mmu_notifier_invalidate_range_start_nonblock(&range)) {
- 				tlb_finish_mmu(&tlb, range.start, range.end);
-diff --git a/mm/rmap.c b/mm/rmap.c
-index c75f72f6fe0e..6ca019cdc789 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -898,7 +898,8 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 	 */
- 	mmu_notifier_range_init(&range, vma->vm_mm, address,
- 				min(vma->vm_end, address +
--				    (PAGE_SIZE << compound_order(page))));
-+				    (PAGE_SIZE << compound_order(page))),
-+				MMU_NOTIFY_PROTECTION_PAGE);
- 	mmu_notifier_invalidate_range_start(&range);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
-@@ -1373,7 +1374,8 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 	 */
- 	mmu_notifier_range_init(&range, vma->vm_mm, vma->vm_start,
- 				min(vma->vm_end, vma->vm_start +
--				    (PAGE_SIZE << compound_order(page))));
-+				    (PAGE_SIZE << compound_order(page))),
-+				MMU_NOTIFY_CLEAR);
- 	if (PageHuge(page)) {
- 		/*
- 		 * If sharing is possible, start and end will be adjusted
--- 
-2.17.2
-
+Thanks,
+Yueyi
