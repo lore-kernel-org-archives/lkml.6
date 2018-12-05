@@ -2,462 +2,222 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A0DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DBFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4BAE208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:11:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK/oiRM5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BAE208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2224E2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2224E2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbeLEQLd (ORCPT
+        id S1728368AbeLEQMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:11:33 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35391 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbeLEQLd (ORCPT
+        Wed, 5 Dec 2018 11:12:40 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50222 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728093AbeLEQMj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:11:33 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v6so17993081oif.2;
-        Wed, 05 Dec 2018 08:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RM0jifnXc+G3NF8Fp9TP8tFcZPa719v9l8BRJVmH86o=;
-        b=AK/oiRM5Yk9KocpLRVCRLC5iOhoAJ6bODTrF5Jf9XwiqHoA/X3+A6hBQuMLXoeseP3
-         obdJCKQTq9iM43kxBuy5SAyQUKeWlEAjWVu7bXWcIjfI6x22CMDY9CxqNnDHsYIMLEfk
-         YnM6uklEdPmwBtJhPtm36dHpl79CRErstWWGrRbOL813yrU2KYsiuUehLlaC9Og5JyRd
-         C5sMwDvH2NPwcr6Uo9W62PgsaSbHCBy4cOGjhUQnEqwJo9EvFQaF/nCu0vcMJUbhO3LK
-         pwsTtshHT1F8dw1gz+WYl4NiL0IuEiIJ7T4GaH15zNbKBWVeGsquXRBAu8gzB6ORS3b5
-         wdPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RM0jifnXc+G3NF8Fp9TP8tFcZPa719v9l8BRJVmH86o=;
-        b=rfUKeXe7TEQSKBT3+hHiL+aktgonmQRNV+YVhg3fYn3QADEtrzF4hOtMgMkey4wDjT
-         gsaT7u3YC6a80GdvXOiVbMUSyAFJkXoCYVVwZxzKK/vRtIm3n6D7taFItjjDn5zNc2ga
-         RVqX9ql7crF0vbgrEsoWQkDvcNdHNAL+m+AqjWdNwBty2VKigQqOkZsPFWJ198jzHiVf
-         arPx+hfe0/q7Z/qVRM2/4wuzqw0x0Ku1cNZvArSowqrQXXt1A6VHz6ErWhkMwr6FCKUF
-         oTeKkwBhN7fU1sh4VG+tGG5ZKr48+C2Gye+Sf9OeRjLndjSMJ4g+e73B3gBuXJ3fQxBg
-         8fGw==
-X-Gm-Message-State: AA+aEWaWs4hepbRLoHwPwSMVIELlwTU1FIMAbDOCNxnplJ4+hGbY/NNp
-        gaz/JZkPlEX/osajWRH7HtveICqdUNFtoGNHKnNYWPqL
-X-Google-Smtp-Source: AFSGD/VR5nmDnxBw8CMXD1NnWp5ZSpKNVHYpVp6+3OSn6Uibe+S3aUuo0SC71/FK244i7ZpaOp+uwS30vIFqb0MpiuE=
-X-Received: by 2002:aca:915:: with SMTP id 21mr15587827oij.163.1544026291486;
- Wed, 05 Dec 2018 08:11:31 -0800 (PST)
+        Wed, 5 Dec 2018 11:12:39 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: koike)
+        with ESMTPSA id BB09426069E
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        alexandros.frantzis@collabora.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, tomasz Figa <tfiga@chromium.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20181123215326.14274-1-helen.koike@collabora.com>
+ <20181127133418.GT9144@intel.com>
+From:   Helen Koike <helen.koike@collabora.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=helen.koike@collabora.com; keydata=
+ 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
+Message-ID: <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
+Date:   Wed, 5 Dec 2018 14:12:28 -0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181204194025.2719-1-linux.amoon@gmail.com> <CAJKOXPcT-x0JWVw2CaxHzSthxbp3sDRcsa4Nc5gHYqUy98b_yw@mail.gmail.com>
-In-Reply-To: <CAJKOXPcT-x0JWVw2CaxHzSthxbp3sDRcsa4Nc5gHYqUy98b_yw@mail.gmail.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Wed, 5 Dec 2018 21:41:19 +0530
-Message-ID: <CANAwSgSSOmTbqS4WUYZHXdB8XL5fjoiGbrh3unxufQ0gZXBPkQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181127133418.GT9144@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+Hi Ville
 
-Thanks for your review.
-.
-On Wed, 5 Dec 2018 at 19:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Tue, 4 Dec 2018 at 20:40, Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Add suspend-to-mem node to regulator core to be enabled or disabled
-> > during system suspend and also support changing the regulator operating
-> > mode during runtime and when the system enter sleep mode.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > Tested on Odroid U3+
-> > ---
-> >  .../boot/dts/exynos4412-odroid-common.dtsi    | 72 +++++++++++++++++++
-> >  1 file changed, 72 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > index 2caa3132f34e..837713a2ec3b 100644
-> > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > @@ -285,6 +285,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
->
-> Driver does not support suspend_enable so this will be noop. We could
-> add this for DT-correctness (and full description of HW) but then I
-> need explanation why this regulator has to stay on during suspend.
->
+On 11/27/18 11:34 AM, Ville Syrjälä wrote:
+> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
+>> Allow userspace to identify if the driver supports async update.
+> 
+> And what exactly is an "async update"?
 
-Well I tried to study the suspend/resume feature from
-*arch/arm/boot/dts/exynos4412-midas.dtsi*
-and them I tried to apply the same with this on Odroid-U3 boards and
-test these changes.
+I agree we are lacking docs on this, I'll send in the next version as
+soon as we agree on a name (please see below).
 
-> >                         };
-> >
-> >                         ldo3_reg: LDO3 {
-> > @@ -292,6 +295,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
->
-> The same but with suspend_disable.
->
-> I am not saying that these are wrong but I would be happy to see
-> explanations why you chosen these particular properties.
->
+For reference:
+https://lists.freedesktop.org/archives/dri-devel/2017-April/138586.html
 
-Well I was not aware on the regulator-always-on cannot be set to off
-in suspend mode.
-Will drop this in the future patch where regulator-always-on; is set.
+> 
+> I keep asking people to come up with the a better name for this, and to
+> document what it actually means. Recently I've been think we should
+> maybe just adopt the vulkan terminology (immediate/fifo/mailbox) to
+> avoid introducing yet another set of names for the same thing. We'd
+> still want to document things properly though.
 
-> >                         };
-> >
-> >                         ldo4_reg: LDO4 {
-> > @@ -299,6 +305,9 @@
-> >                                 regulator-min-microvolt = <2800000>;
-> >                                 regulator-max-microvolt = <2800000>;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo5_reg: LDO5 {
-> > @@ -307,6 +316,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo6_reg: LDO6 {
-> > @@ -314,6 +326,9 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo7_reg: LDO7 {
-> > @@ -321,18 +336,27 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo8_reg: LDO8 {
-> >                                 regulator-name = "VDD10_HDMI_1.0V";
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo10_reg: LDO10 {
-> >                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo11_reg: LDO11 {
-> > @@ -340,6 +364,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo12_reg: LDO12 {
-> > @@ -348,6 +375,9 @@
-> >                                 regulator-max-microvolt = <3300000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo13_reg: LDO13 {
-> > @@ -356,6 +386,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo14_reg: LDO14 {
-> > @@ -364,6 +397,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo15_reg: LDO15 {
-> > @@ -372,6 +408,9 @@
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo16_reg: LDO16 {
-> > @@ -380,6 +419,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo20_reg: LDO20 {
-> > @@ -387,6 +429,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo21_reg: LDO21 {
-> > @@ -394,6 +439,9 @@
-> >                                 regulator-min-microvolt = <2800000>;
-> >                                 regulator-max-microvolt = <2800000>;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
->
-> That's unusual setting... enabled in suspend but not necessarily
-> during work (no always-on).
->
+Another name it was suggested was "atomic amend", this feature basically
+allows userspace to complement an update previously sent (i.e. its in
+the queue and wasn't commited yet), it allows adding a plane update to
+the next commit. So what do you think in renaming it to "atomic amend"?
+Or do you suggest another name? I am not familiar with vulkan terminology.
 
-I kept the regulator required for emmc/sd card in
-regulator-on-in-suspend in suspend mode.
 
-> > +                               };
-> >                         };
-> >
-> >                         ldo22_reg: LDO22 {
-> > @@ -411,6 +459,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         buck1_reg: BUCK1 {
-> > @@ -419,6 +470,9 @@
-> >                                 regulator-max-microvolt = <1100000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
->
-> This is seriously wrong so I have doubts whether you tested the
-> changes or you know what is happening with them. If you turn off
-> memory bus regulator off, how the memory will work in
-> Suspend-to-Memory mode?
->
+Thanks
+Helen
 
-Well I did not find any issue in my testing but I might be wrong.
-Ok I will drop this changes in the next version of the patch where
-regulator-always-on is set.
-
-> >                         };
-> >
-> >                         buck2_reg: BUCK2 {
-> > @@ -427,6 +481,9 @@
-> >                                 regulator-max-microvolt = <1350000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         buck3_reg: BUCK3 {
-> > @@ -435,6 +492,9 @@
-> >                                 regulator-max-microvolt = <1050000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
->
-> Looks suspicious as well.
-
-Ok I will drop this changes in the next version of the patch where
-regulator-always-on is set.
-
->
-> Best regards,
-> Krzysztof
->
-
-Well I have tested this patch as following
-with only one issue, before enable suspend number of On-line cpu is 4
-after resume number of On-line cpu is 1.
-
-# lscpu
-Architecture:        armv7l
-Byte Order:          Little Endian
-CPU(s):              4
-On-line CPU(s) list: 0-3
-Thread(s) per core:  1
-Core(s) per socket:  4
-Socket(s):           1
-Vendor ID:           ARM
-Model:               0
-Model name:          Cortex-A9
-Stepping:            r3p0
-CPU max MHz:         1704.0000
-CPU min MHz:         200.0000
-BogoMIPS:            48.00
-Flags:               half thumb fastmult vfp edsp neon vfpv3 tls vfpd32
-#
-# echo 1 > /sys/power/pm_debug_messages
-# echo +30 > /sys/class/rtc/rtc0/wakealarm
-#  echo -n mem > /sys/power/state
-[   86.584147] PM: suspend entry (deep)
-[   86.584684] PM: Syncing filesystems ... done.
-[   86.735819] Freezing user space processes ... (elapsed 0.003 seconds) done.
-[   86.742319] OOM killer disabled.
-[   86.744018] Freezing remaining freezable tasks ... (elapsed 0.002
-seconds) done.
-[   86.751479] printk: Suspending console(s) (use no_console_suspend to debug)
-[   86.792770] smsc95xx 1-2:1.0 eth0: entering SUSPEND2 mode
-[   86.821751] dwc2 12480000.hsotg: suspending usb gadget g_ether
-[   86.822560] dwc2 12480000.hsotg: new device is full-speed
-[   86.822666] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   86.822682] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   86.824507] wake enabled for irq 119
-[   86.824592] BUCK9: No configuration
-[   86.824672] BUCK8_P3V3: No configuration
-[   86.824706] BUCK7_2.0V: No configuration
-[   86.824738] BUCK6_1.35V: No configuration
-[   86.824770] VDDQ_CKEM1_2_1.2V: No configuration
-[   86.826766] LDO26: No configuration
-[   86.826802] VDDQ_LCD_1.8V: No configuration
-[   86.826834] LDO24: No configuration
-[   86.826866] LDO23: No configuration
-[   86.826898] LDO22_VDDQ_MMC4_2.8V: No configuration
-[   86.826930] TFLASH_2.8V: No configuration
-[   86.826962] LDO20_1.8V: No configuration
-[   86.826994] LDO19: No configuration
-[   86.827026] LDO18: No configuration
-[   86.827057] LDO17: No configuration
-[   86.827516] VDDQ_C2C_W_1.8V: No configuration
-[   86.828324] VDDQ_MIPIHSI_1.8V: No configuration
-[   86.828359] LDO9: No configuration
-[   86.828818] VDDQ_MMC1_3_1.8V: No configuration
-[   86.828851] VDDQ_MMC2_2.8V: No configuration
-[   86.828884] VDDQ_EXT_1.8V: No configuration
-[   86.828935] VDD_ALIVE_1.0V: No configuration
-[   86.839760] usb3503 0-0008: switched to STANDBY mode
-[   86.840336] wake enabled for irq 123
-[   86.855834] samsung-pinctrl 11000000.pinctrl: Setting external
-wakeup interrupt mask: 0xfbfff7ff
-[   86.871661] Disabling non-boot CPUs ...
-[   87.016430] Enabling non-boot CPUs ...
-[   88.009557] CPU1: failed to boot: -110
-[   88.010324] Error taking CPU1 up: -110
-[   89.009841] CPU2: failed to boot: -110
-[   89.011290] Error taking CPU2 up: -110
-[   90.009615] CPU3: failed to boot: -110
-[   90.010258] Error taking CPU3 up: -110
-[   90.012152] s3c-i2c 13860000.i2c: slave address 0x00
-[   90.012174] s3c-i2c 13860000.i2c: bus frequency set to 390 KHz
-[   90.012208] s3c-i2c 13870000.i2c: slave address 0x00
-[   90.012225] s3c-i2c 13870000.i2c: bus frequency set to 97 KHz
-[   90.012257] s3c-i2c 13880000.i2c: slave address 0x00
-[   90.012274] s3c-i2c 13880000.i2c: bus frequency set to 97 KHz
-[   90.012306] s3c-i2c 138e0000.i2c: slave address 0x00
-[   90.012323] s3c-i2c 138e0000.i2c: bus frequency set to 97 KHz
-[   90.028694] s3c-rtc 10070000.rtc: rtc disabled, re-enabling
-[   90.029174] usb usb1: root hub lost power or was reset
-[   90.032911] s3c2410-wdt 10060000.watchdog: watchdog disabled
-[   90.033064] wake disabled for irq 123
-[   90.041886] usb3503 0-0008: switched to HUB mode
-[   90.127583] wake disabled for irq 119
-[   90.127865] dwc2 12480000.hsotg: resuming usb gadget g_ether
-[   90.429505] usb 1-2: reset high-speed USB device number 2 using exynos-ehci
-[   90.781458] usb 1-3: reset high-speed USB device number 3 using exynos-ehci
-[   91.366725] OOM killer enabled.
-[   91.369869] Restarting tasks ... done.
-[   91.419515] PM: suspend exit
-# [   92.229649] smsc95xx 1-2:1.0 eth0: link up, 100Mbps, full-duplex,
-lpa 0xC5E1
-# lscpu
-Architecture:         armv7l
-Byte Order:           Little Endian
-CPU(s):               4
-On-line CPU(s) list:  0
-Off-line CPU(s) list: 1-3
-Thread(s) per core:   1
-Core(s) per socket:   1
-Socket(s):            1
-Vendor ID:            ARM
-Model:                0
-Model name:           Cortex-A9
-Stepping:             r3p0
-CPU max MHz:          1704.0000
-CPU min MHz:          200.0000
-BogoMIPS:             24.00
-Flags:                half thumb fastmult vfp edsp neon vfpv3 tls vfpd32
-
-Best Regards
--Anand
+> 
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> [prepared for upstream]
+>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+>>
+>> ---
+>> Hi,
+>>
+>> This patch introduces the ASYNC_UPDATE cap, which originated from the
+>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user to
+>> figure that async_update exists.
+>>
+>> This was tested using a small program that exercises the uAPI for easy
+>> sanity testing. The program was created by Alexandros and modified by
+>> Enric to test the capability flag [2].
+>>
+>> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
+>> the patch to update cursors asynchronously through atomic plus the patch
+>> that introduces the ATOMIC_AMEND flag for the drm/rockchip driver.
+>>
+>> To test, just build the program and use the --atomic flag to use the cursor
+>> plane with the ATOMIC_AMEND flag. E.g.
+>>
+>>   drm_cursor --atomic
+>>
+>> [1] https://patchwork.freedesktop.org/patch/243088/
+>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
+>>
+>> Thanks
+>> Helen
+>>
+>>
+>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
+>>  include/uapi/drm/drm.h      |  1 +
+>>  2 files changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+>> index 94bd872d56c4..4a7e0f874171 100644
+>> --- a/drivers/gpu/drm/drm_ioctl.c
+>> +++ b/drivers/gpu/drm/drm_ioctl.c
+>> @@ -31,6 +31,7 @@
+>>  #include <drm/drm_ioctl.h>
+>>  #include <drm/drmP.h>
+>>  #include <drm/drm_auth.h>
+>> +#include <drm/drm_modeset_helper_vtables.h>
+>>  #include "drm_legacy.h"
+>>  #include "drm_internal.h"
+>>  #include "drm_crtc_internal.h"
+>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>>  {
+>>  	struct drm_get_cap *req = data;
+>>  	struct drm_crtc *crtc;
+>> +	struct drm_plane *plane;
+>>  
+>>  	req->value = 0;
+>>  
+>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>>  	case DRM_CAP_CRTC_IN_VBLANK_EVENT:
+>>  		req->value = 1;
+>>  		break;
+>> +	case DRM_CAP_ASYNC_UPDATE:
+>> +		req->value = 1;
+>> +		list_for_each_entry(plane, &dev->mode_config.plane_list, head) {
+>> +			if (!plane->helper_private->atomic_async_update) {
+>> +				req->value = 0;
+>> +				break;
+>> +			}
+>> +		}
+>> +		break;
+>>  	default:
+>>  		return -EINVAL;
+>>  	}
+>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+>> index 300f336633f2..ff01540cbb1d 100644
+>> --- a/include/uapi/drm/drm.h
+>> +++ b/include/uapi/drm/drm.h
+>> @@ -649,6 +649,7 @@ struct drm_gem_open {
+>>  #define DRM_CAP_PAGE_FLIP_TARGET	0x11
+>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT	0x12
+>>  #define DRM_CAP_SYNCOBJ		0x13
+>> +#define DRM_CAP_ASYNC_UPDATE		0x14
+>>  
+>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
+>>  struct drm_get_cap {
+>> -- 
+>> 2.19.1
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
