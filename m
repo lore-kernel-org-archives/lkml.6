@@ -2,146 +2,95 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC4CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2183C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0783B213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:15:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i55Gn+qU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0783B213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 99EE020851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:15:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99EE020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeLEMPE (ORCPT
+        id S1727715AbeLEMPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:15:04 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38154 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeLEMPD (ORCPT
+        Wed, 5 Dec 2018 07:15:25 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55402 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbeLEMPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:15:03 -0500
-Received: by mail-oi1-f195.google.com with SMTP id a77so17295070oii.5;
-        Wed, 05 Dec 2018 04:15:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GBUSQk2PdOZFKYA6A63N18LCzBPvNkM379cJypVZDM0=;
-        b=i55Gn+qUZw8+y65bQTAfeP94ZFm+9BnhUqA1rKpcXN+YUuwcM8lU+960a4gEL154j9
-         Fr1ZRP1UBpmy621uTAI1JDeOuwuKWDWkZLizqrXy6GrXhrM1dgnkeJVHPoE0GuBxQmSL
-         6vHK8WsnyA7pvvHwPHSjtALMyCGZ/vCZB+AHqnvpxIPVTW0CG67qNUs5F+GPtXLlwa3O
-         jiYGw4fr8FdoDp2/R4gpUhqdNFyOLP703ijyOzqQM7KOHetJC10iKwK2i1bus++/y+sR
-         bbcGPfMbxJBgjqQKByMABjGmQXbaX31BGR116/3nwON2vCqHKMCgDLQZ23Cvy7sfY05h
-         Heqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GBUSQk2PdOZFKYA6A63N18LCzBPvNkM379cJypVZDM0=;
-        b=m20f5aaqzfKpRGFNXD7OvP0hdgyMXI8Z2D9JB5vYbWuqjcJWpp5915u93kxjIkOEPk
-         zaZyA7kLWBGWJTfEtRWu3AA3Pz6OoEWUwX67m8pn5b4u5p9Ue4jcjTp1wJo033FSnsZt
-         VDWSSiwBuD0VPquVKm9pE4wj7xXO6rziHUSX6G3oa+d2iYapK6quGBuwQMqM0Pub1IQ0
-         CXlFmT11s4gOXBdKfDWftzEDip39W5AMQ0XmoU0KE13pGif3Vyor5fF/gYHBt0k8/ubJ
-         N2Tv/SUOJRlEunlHh27b5/86LmoXd/zfhBy1L8Wfp6MCds/nC4Dh9p9Rhf7VmUJ/ZAMJ
-         3tOg==
-X-Gm-Message-State: AA+aEWYjzp/KNILsD4X2KdLU7RtckUihz58fxQ+HxKz626OrjijlP0z1
-        bxRkhyQR4GrzALTg9MuzhT+nc/u/B90ZNv08x8prhAbD
-X-Google-Smtp-Source: AFSGD/X1JcPRDrP2vleoUg4EqcCzdoBIbgHS1sqhjpYkrt6Bo4J6K5ZKLzrijF+TP2vgoy+wbnJI5XL6MJaqSHArHvc=
-X-Received: by 2002:aca:4d47:: with SMTP id a68mr13926177oib.43.1544012102512;
- Wed, 05 Dec 2018 04:15:02 -0800 (PST)
+        Wed, 5 Dec 2018 07:15:24 -0500
+Received: from 79.184.252.87.ipv4.supernova.orange.pl (79.184.252.87) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id 445ed31fa8b29caa; Wed, 5 Dec 2018 13:15:22 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Linux 4.20-rc5: Lab setup broken by build-related x86 change
+Date:   Wed, 05 Dec 2018 13:15:10 +0100
+Message-ID: <1753172.TxHhsZQBsE@aspire.rjw.lan>
+In-Reply-To: <CAHk-=wizcNrsoyCM1EXQqoswMCYsJaby2iAkZb9wBAzDEhvxNg@mail.gmail.com>
+References: <CAHk-=wizcNrsoyCM1EXQqoswMCYsJaby2iAkZb9wBAzDEhvxNg@mail.gmail.com>
 MIME-Version: 1.0
-References: <1544001240-18622-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1544001240-18622-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 5 Dec 2018 10:15:06 -0200
-Message-ID: <CAOMZO5ACrqY9FusUG7E-vMWJ4pKpVgw-yLOYqJncOJ+H9A5k5w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: imx6qdl-sabresd: add light sensor support
-To:     Yongcai Huang <anson.huang@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+On Monday, December 3, 2018 12:30:24 AM CET Linus Torvalds wrote:
+> Hmm.. I'd like to say it was a normal week, but I'd be lying. rc5 is
+> the biggest rc so far (with the obvious exception of rc1), and it
+> looks fairly unusual in the diffstat too, with almost a third being
+> arch updates. Yes, another third is drivers (normal), but even there
+> almost half is in sound. The rest is tooling, mm, core networking and
+> some fs updates.
+> 
+> So it all looks a bit odd, although none of it is hugely _alarming_.
+> One of the reasons the arch side is a bit bigger than usual at this
+> stage is that we got the STIPB performance regression sorted out, for
+> example.
 
-On Wed, Dec 5, 2018 at 7:20 AM Anson Huang <anson.huang@nxp.com> wrote:
->
-> Add isl29023 light sensor support on i2c3 bus, the light
-> sensor's power is controlled by a fixed regulator, since
-> the isl29023 driver and most of other sensors on same
-> board like mag3110 and mma8451 do NOT support regulator
-> operation currently, they are all controlled by this
-> regulator, so this patch also adds the fixed regulator
-> support and make it always on.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx6qdl-sabresd.dtsi | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> index d7389b5..f96ae54 100644
-> --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-> @@ -62,6 +62,19 @@
->                         gpio = <&gpio3 19 0>;
->                         enable-active-high;
->                 };
-> +
-> +               reg_sensor: regulator@4 {
+One of the changes apparently related to this broke my lab setup in which
+I build everything on a central machine, export the build directory over
+NFS (read-only) to some other systems and run "make modules_install" on
+them from there.
 
-I know that you followed the existing pattern for regulators in this
-file, but it is not recommended to put regulators under "simple-bus".
+After commit
 
-I would suggest you to make a first patch of the series that removes
-all of the existing regulators from "simple-bus", then you add this
-series on top.
+commit 4cd24de3a0980bf3100c9dcb08ef65ca7c31af48
+Author: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Date:   Fri Nov 2 01:45:41 2018 -0700
 
-Then this regulator becomes:
+    x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support
+    
+    Since retpoline capable compilers are widely available, make
+    CONFIG_RETPOLINE hard depend on the compiler capability.
+    
+    Break the build when CONFIG_RETPOLINE is enabled and the compiler does not
+    support it. Emit an error message in that case:
+    
+     "arch/x86/Makefile:226: *** You are building kernel with non-retpoline
+      compiler, please update your compiler..  Stop."
+    
+    [dwmw: Fail the build with non-retpoline compiler]
 
-reg_light_sensor: regulator-light-sensor {
+which is new in -rc5, the "make modules_install" step fails with the above
+message, which doesn't make sense even, because the compiler on the clients
+is the same as on the central machine in the lab and it can do retpolines
+just fine.
 
-> +                       compatible = "regulator-fixed";
-> +                       reg = <4>;
-> +                       pinctrl-names = "default";
-> +                       pinctrl-0 = <&pinctrl_sensor_reg>;
+Obviously this is due to the RETPOLINE_CFLAGS check added by the commit above.
+Annoying that. :-)
 
-pinctrl_sensor_reg is too generic. You could use pinctrl_light_sensor_reg
+Cheers,
+Rafael
 
-> +                       regulator-name = "sensor-supply";
-> +                       regulator-min-microvolt = <3300000>;
-> +                       regulator-max-microvolt = <3300000>;
-> +                       gpio = <&gpio2 31 GPIO_ACTIVE_HIGH>;
-> +                       enable-active-high;
-> +                       regulator-always-on;
-> +               };
->         };
->
->         gpio-keys {
-> @@ -420,6 +433,15 @@
->                 interrupts = <7 2>;
->                 wakeup-gpios = <&gpio6 7 0>;
->         };
-> +
-> +       isl29023@44 {
-
-Node names should be generic, so: light-sensor@44
