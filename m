@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D145DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BCBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F5D20851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFBFB20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9ITMcjk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F5D20851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDjAH2va"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFBFB20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeLEJl3 (ORCPT
+        id S1728934AbeLEJle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:41:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:41:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727908AbeLEJl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:27 -0500
+        id S1727908AbeLEJlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:31 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62B5520850;
-        Wed,  5 Dec 2018 09:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69D8420850;
+        Wed,  5 Dec 2018 09:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002886;
-        bh=WpPP2hVwF9+8ubCe+5BMooiw77D3Y1/Kr+KAdfgJRPw=;
+        s=default; t=1544002890;
+        bh=+XOzV77xp2GoK9CWwidyOONpXnq2cjeGMTaNItLdp4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9ITMcjk1YS41BBpLumQKau0GZ7ITtQCRevDlnK3DqRkgosHuLfH2BgOqeDKEaCWU
-         TqXfXjLzfslHIeP0YSrLgQl47CPJ1Jsm4KQiPGovLnsOR6RRVZsNl35TEv2XKloGHX
-         /Wystriq7L8ytkS4Y5l1zsxoY0cRMEfkn05n9AIo=
+        b=DDjAH2vaLrXoyvrUa6jwX3uvsQmRJI6LzODItXRWX4GeGh9IcpX8UJI/iAZI+19dx
+         aM650GjekGBv+NrcuRb8WJYnkH2sYR5TKkD6AxgbNRRZsrQWEJxw6/Lg5dmhWL/1M7
+         nFrkdJQS7kYlB8R85cFFkxwjjws8pIlDkIuw7BRw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     shaoyunl <shaoyun.liu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+Cc:     "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 099/123] drm/amdgpu: Add delay after enable RLC ucode
-Date:   Wed,  5 Dec 2018 04:35:31 -0500
-Message-Id: <20181205093555.5386-99-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 100/123] drm/ast: fixed reading monitor EDID not stable issue
+Date:   Wed,  5 Dec 2018 04:35:32 -0500
+Message-Id: <20181205093555.5386-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,49 +54,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: shaoyunl <shaoyun.liu@amd.com>
+From: "Y.C. Chen" <yc_chen@aspeedtech.com>
 
-[ Upstream commit ad97d9de45835b6a0f71983b0ae0cffd7306730a ]
+[ Upstream commit 300625620314194d9e6d4f6dda71f2dc9cf62d9f ]
 
-Driver shouldn't try to access any GFX registers until RLC is idle.
-During the test, it took 12 seconds for RLC to clear the BUSY bit
-in RLC_GPM_STAT register which is un-acceptable for driver.
-As per RLC engineer, it would take RLC Ucode less than 10,000 GFXCLK
-cycles to finish its critical section. In a lowest 300M enginer clock
-setting(default from vbios), 50 us delay is enough.
+v1: over-sample data to increase the stability with some specific monitors
+v2: refine to avoid infinite loop
+v3: remove un-necessary "volatile" declaration
 
-This commit fix the hang when RLC introduce the work around for XGMI
-which requires more cycles to setup more registers than normal
+[airlied: fix two checkpatch warnings]
 
-Signed-off-by: shaoyunl <shaoyun.liu@amd.com>
-Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1542858988-1127-1-git-send-email-yc_chen@aspeedtech.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/ast/ast_mode.c | 36 ++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index ef00d14f8645..325e2213cac5 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -2243,12 +2243,13 @@ static void gfx_v9_0_rlc_start(struct amdgpu_device *adev)
- #endif
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 7c6ac3cadb6b..8bb355d5d43d 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -973,9 +973,21 @@ static int get_clock(void *i2c_priv)
+ {
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
  
- 	WREG32_FIELD15(GC, 0, RLC_CNTL, RLC_ENABLE_F32, 1);
-+	udelay(50);
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4;
+ 	return val & 1 ? 1 : 0;
+ }
  
- 	/* carrizo do enable cp interrupt after cp inited */
--	if (!(adev->flags & AMD_IS_APU))
-+	if (!(adev->flags & AMD_IS_APU)) {
- 		gfx_v9_0_enable_gui_idle_interrupt(adev, true);
--
--	udelay(50);
-+		udelay(50);
-+	}
+@@ -983,9 +995,21 @@ static int get_data(void *i2c_priv)
+ {
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
  
- #ifdef AMDGPU_RLC_DEBUG_RETRY
- 	/* RLC_GPM_GENERAL_6 : RLC Ucode version */
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5;
+ 	return val & 1 ? 1 : 0;
+ }
+ 
+@@ -998,7 +1022,7 @@ static void set_clock(void *i2c_priv, int clock)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((clock & 0x01) ? 0 : 1);
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfe, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf4, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x01);
+ 		if (ujcrb7 == jtemp)
+ 			break;
+@@ -1014,7 +1038,7 @@ static void set_data(void *i2c_priv, int data)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((data & 0x01) ? 0 : 1) << 2;
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfb, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf1, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x04);
+ 		if (ujcrb7 == jtemp)
+ 			break;
 -- 
 2.17.1
 
