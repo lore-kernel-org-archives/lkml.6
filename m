@@ -2,289 +2,153 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00100C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EDFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE51214DE
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 684302081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 02:58:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AvUeHEfD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE51214DE
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jd2XerM9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684302081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbeLEC53 (ORCPT
+        id S1726816AbeLEC6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 21:57:29 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40558 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeLEC53 (ORCPT
+        Tue, 4 Dec 2018 21:58:42 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35787 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbeLEC6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 21:57:29 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18-v6so16898937lji.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:57:27 -0800 (PST)
+        Tue, 4 Dec 2018 21:58:42 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so18072292wrb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 18:58:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=g3vdiKpq6Yq137uF6dDzSyP1VLeEpr9KPs0zFhT2M9g=;
-        b=AvUeHEfDId+G74ApLqVBHgV2QmAkaA9ORiz0wd+Z5pJ15LoEHyAW4d5pmAvGjI4rhV
-         YVyELgC6sGLbKMPMzIZ1HPaCVCJH6gWEVDP5XTLZxq0WFeHCMUUVj2NGmHrO0yImRaH2
-         D/VC3hSb9gYN7C5AhXZ9yZ56aLQGpcJGm8Ubs=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JtHvc1wKR8UzHTWCRtECIwbWEcC9WmtTV1sPBssAB/8=;
+        b=jd2XerM9WriBcE6UWG5K+DgtOKnCM5pYBNbTHSuHJZt7/xbuBc2ndhYzORMnpLFOkY
+         sjHBYAboFCueFIbGZy38z6mkZ8CDt1/3b24ZjbtyoAFhRH9Ci3aO1bBR3o0krWw/us/R
+         Y0bXKhiKav/++dV38NcUYRTuUK5ATnRZOf6PQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=g3vdiKpq6Yq137uF6dDzSyP1VLeEpr9KPs0zFhT2M9g=;
-        b=t7QOrAsbr/Nhyyya/7AKtZJB0Jbj87r9/qUzx5AEYuXJ+kEGi19nV9B1Tb37JKjmyr
-         +OrFO8aj01B0bkUcXTKStYq0D0JRdQFgyPI+BgQeZIbOujBIiJHCeGjoLiApXi/yra7s
-         WJ1IXTSlR7RnyRIjwxZ710Xv/FMJ1lEHQ6eKcxlvsXpHncPfkWgdTvmAnfJhMJrWRoFB
-         5NmNIChYOk/4zlVyfGu4w3jNnnMxfuBjfqKKBd8PB4e454DpiXn9Jkjeq5do9n+7OA3a
-         5vfwIZmeWujCRW3OwJxcQKZS0rML3xlcRG9MPWyDq04jBJaxkVOb5buaCPnihaof7pV3
-         UpzA==
-X-Gm-Message-State: AA+aEWZSFXCocRD5R9lC5M32wrdtJXcmSH5FBWj+dYfD73LxYlpAjmp9
-        E1TJQOnrVTDOyEJYvZBA7bkgs9yjHU3p8p+P20F9fA==
-X-Google-Smtp-Source: AFSGD/WwTCKfNk1curYU9AOJSPMFptKRQucn4abhtp6VOjv40S3rD08VtQEc8FTcSvXa199jM9nFbIcD5OHeBgKEry4=
-X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr2959490ljb.52.1543978646327;
- Tue, 04 Dec 2018 18:57:26 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JtHvc1wKR8UzHTWCRtECIwbWEcC9WmtTV1sPBssAB/8=;
+        b=LIbw7oLyUagNJwZ4guK0Zdj6fhM0gkBUYLTsBtMN2092vub4oVAwACoXHRgNGxPzyv
+         zJZZn0mKtUEZLLeQIkrUzrvuXxd7colAoa3o19bz89AwuOzbg8ghlDAyD6LRPiEhdrP4
+         fUxXwBsMGL4dimYWzHrbZbOHIGTIpLKcM9IKZ8yiMIu/2RI1+EgV9TofYt0TSaEVaDr3
+         YKMsNu6G0Jzu/T6zG5g4zuu/EQJyxq7fI7lPvByl4pZPAyW6I52qqqYkuIzYVeF/ExdC
+         Nrcrss82d05A5R/VrlvbjXhr5XXi8RoSznabESQvEJUIOwrzYFOK3YJDOvH5chSqTE9E
+         5jBA==
+X-Gm-Message-State: AA+aEWbJKmffPt4yaEG0phBvILNNV22jH62bJPcMooUIoHicwxbJkcGm
+        yq1+JaJ1ztWiAIIsiTPOxLSObQ==
+X-Google-Smtp-Source: AFSGD/UYNE+Z9Y+lPzomXCXMPB4q8JvtSTdyv/YDAGH96l05K0+ArBt+APEwc4U1f9R3ikyIpNAjgQ==
+X-Received: by 2002:adf:c612:: with SMTP id n18mr19396951wrg.174.1543978720427;
+        Tue, 04 Dec 2018 18:58:40 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id t6sm16910200wru.11.2018.12.04.18.58.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 18:58:39 -0800 (PST)
+Date:   Wed, 5 Dec 2018 10:58:32 +0800
+From:   leo.yan@linaro.org
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v1 2/5] perf cs-etm: Avoid stale branch samples when
+ flush packet
+Message-ID: <20181205025832.GA13305@leoy-ThinkPad-X240s>
+References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
+ <1541912383-19915-3-git-send-email-leo.yan@linaro.org>
+ <20181116230511.GB25258@xps15>
 MIME-Version: 1.0
-References: <4ea9eaf85d780afb190cb45da2df8ff5fd86d449.1542362262.git.baolin.wang@linaro.org>
- <a41e3aad0147b25c4c22189dd7af0d68c5587b92.1542362262.git.baolin.wang@linaro.org>
- <20181204215219.GA14502@bogus>
-In-Reply-To: <20181204215219.GA14502@bogus>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 5 Dec 2018 10:57:12 +0800
-Message-ID: <CAMz4ku+5ELZ9sXz+1RzkgHnOFz_XfObwCdyixhvPN+Q0aovgUQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] power: supply: charger-manager: Remove deprecated
- extcon APIs
-To:     Rob Herring <robh@kernel.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116230511.GB25258@xps15>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob=EF=BC=8C
-On Wed, 5 Dec 2018 at 05:52, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Nov 16, 2018 at 07:01:12PM +0800, Baolin Wang wrote:
-> > The struct extcon_specific_cable_nb and related APIs are deprecated now=
-,
-> > so we should use new method to get one extcon device and register extco=
-n
-> > notifier.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> >  .../bindings/power/supply/charger-manager.txt      |    6 +--
->
-> Bindings should be a separate patch.
+On Fri, Nov 16, 2018 at 04:05:11PM -0700, Mathieu Poirier wrote:
 
-Sure.
+[...]
 
->
-> >  drivers/power/supply/charger-manager.c             |   51 ++++++++----=
---------
-> >  include/linux/power/charger-manager.h              |    2 +-
-> >  3 files changed, 23 insertions(+), 36 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/supply/charger-man=
-ager.txt b/Documentation/devicetree/bindings/power/supply/charger-manager.t=
-xt
-> > index ec4fe9d..315b0cb 100644
-> > --- a/Documentation/devicetree/bindings/power/supply/charger-manager.tx=
-t
-> > +++ b/Documentation/devicetree/bindings/power/supply/charger-manager.tx=
-t
-> > @@ -11,7 +11,7 @@ Required properties :
-> >       - cm-regulator-name : name of charger regulator
-> >       - subnode <cable> :
-> >               - cm-cable-name : name of charger cable
-> > -             - cm-cable-extcon : name of extcon dev
-> > +             - extcon : phandles to external connector devices
->
-> Somewhat less terrible, but not really. I consider extcon binding itself
-> deprecated. I suspect 'charger-manager' as a whole probably needs to be
-> reworked. This also is not a backwards compatible change.
-
-We are do some optimization for 'charger-manager', like this patch
-did, we are trying to remove the deprecated extcon API.
-And now no one use the incorrect 'cm-cable-extcon' property on
-mainline, so no need worry backwards compatibility.
-
-> >  (optional)   - cm-cable-min : minimum current of cable
-> >  (optional)   - cm-cable-max : maximum current of cable
-> >
-> > @@ -66,13 +66,13 @@ Example :
-> >                       cm-regulator-name =3D "chg-reg";
-> >                       cable@0 {
-> >                               cm-cable-name =3D "USB";
-> > -                             cm-cable-extcon =3D "extcon-dev.0";
-> > +                             extcon =3D <&extcon_usb>;
-> >                               cm-cable-min =3D <475000>;
-> >                               cm-cable-max =3D <500000>;
-> >                       };
-> >                       cable@1 {
-> >                               cm-cable-name =3D "TA";
-> > -                             cm-cable-extcon =3D "extcon-dev.0";
-> > +                             extcon =3D <&extcon_usb>;
-> >                               cm-cable-min =3D <650000>;
-> >                               cm-cable-max =3D <675000>;
-> >                       };
-> > diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/sup=
-ply/charger-manager.c
-> > index dc0c9a6..4f28c03 100644
-> > --- a/drivers/power/supply/charger-manager.c
-> > +++ b/drivers/power/supply/charger-manager.c
-> > @@ -1207,12 +1207,11 @@ static int charger_extcon_init(struct charger_m=
-anager *cm,
-> >        */
-> >       INIT_WORK(&cable->wq, charger_extcon_work);
-> >       cable->nb.notifier_call =3D charger_extcon_notifier;
-> > -     ret =3D extcon_register_interest(&cable->extcon_dev,
-> > -                     cable->extcon_name, cable->name, &cable->nb);
-> > -     if (ret < 0) {
-> > -             pr_info("Cannot register extcon_dev for %s(cable: %s)\n",
-> > -                     cable->extcon_name, cable->name);
-> > -     }
-> > +     ret =3D devm_extcon_register_notifier(cm->dev, cable->extcon_dev,
-> > +                                         EXTCON_USB, &cable->nb);
-> > +     if (ret < 0)
-> > +             dev_err(cm->dev, "Cannot register extcon_dev for (cable: =
-%s)\n",
-> > +                     cable->name);
-> >
-> >       return ret;
-> >  }
-> > @@ -1589,15 +1588,25 @@ static struct charger_desc *of_cm_parse_desc(st=
-ruct device *dev)
-> >                               for_each_child_of_node(child, _child) {
-> >                                       of_property_read_string(_child,
-> >                                       "cm-cable-name", &cables->name);
-> > -                                     of_property_read_string(_child,
-> > -                                     "cm-cable-extcon",
-> > -                                     &cables->extcon_name);
-> >                                       of_property_read_u32(_child,
-> >                                       "cm-cable-min",
-> >                                       &cables->min_uA);
-> >                                       of_property_read_u32(_child,
-> >                                       "cm-cable-max",
-> >                                       &cables->max_uA);
+> > -static int cs_etm__flush(struct cs_etm_queue *etmq)
+> > +static int cs_etm__flush(struct cs_etm_queue *etmq, bool new_packet)
+> >  {
+> >  	int err = 0;
+> >  	struct cs_etm_auxtrace *etm = etmq->etm;
+> > @@ -989,6 +989,20 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+> >  
+> >  	}
+> >  
+> > +	/*
+> > +	 * If 'new_packet' is false, this time call has no a new packet
+> > +	 * coming and 'etmq->packet' contains the stale packet which is
+> > +	 * set at the previous time with packets swapping.  In this case
+> > +	 * this function is invoked only for flushing branch stack at
+> > +	 * the end of buffer handling.
+> > +	 *
+> > +	 * Simply to say, branch samples should be generated when every
+> > +	 * time receive one new packet; otherwise, directly bail out to
+> > +	 * avoid generate branch sample with stale packet.
+> > +	 */
+> > +	if (!new_packet)
+> > +		return 0;
 > > +
-> > +                                     if (of_property_read_bool(_child,=
- "extcon")) {
-> > +                                             struct device_node *np;
-> > +
-> > +                                             np =3D of_parse_phandle(_=
-child, "extcon", 0);
-> > +                                             if (!np)
-> > +                                                     return ERR_PTR(-E=
-NODEV);
-> > +
-> > +                                             cables->extcon_dev =3D ex=
-tcon_find_edev_by_node(np);
-> > +                                             of_node_put(np);
-> > +                                             if (IS_ERR(cables->extcon=
-_dev))
-> > +                                                     return ERR_PTR(PT=
-R_ERR(cables->extcon_dev));
-> > +                                     }
-> >                                       cables++;
-> >                               }
-> >                       }
-> > @@ -1625,7 +1634,6 @@ static int charger_manager_probe(struct platform_=
-device *pdev)
-> >       struct charger_desc *desc =3D cm_get_drv_data(pdev);
-> >       struct charger_manager *cm;
-> >       int ret, i =3D 0;
-> > -     int j =3D 0;
-> >       union power_supply_propval val;
-> >       struct power_supply *fuel_gauge;
-> >       struct power_supply_config psy_cfg =3D {};
-> > @@ -1823,19 +1831,8 @@ static int charger_manager_probe(struct platform=
-_device *pdev)
-> >                               &charger->attr_g);
-> >       }
-> >  err_reg_extcon:
-> > -     for (i =3D 0; i < desc->num_charger_regulators; i++) {
-> > -             struct charger_regulator *charger;
-> > -
-> > -             charger =3D &desc->charger_regulators[i];
-> > -             for (j =3D 0; j < charger->num_cables; j++) {
-> > -                     struct charger_cable *cable =3D &charger->cables[=
-j];
-> > -                     /* Remove notifier block if only edev exists */
-> > -                     if (cable->extcon_dev.edev)
-> > -                             extcon_unregister_interest(&cable->extcon=
-_dev);
-> > -             }
-> > -
-> > +     for (i =3D 0; i < desc->num_charger_regulators; i++)
-> >               regulator_put(desc->charger_regulators[i].consumer);
-> > -     }
-> >
-> >       power_supply_unregister(cm->charger_psy);
-> >
-> > @@ -1847,7 +1844,6 @@ static int charger_manager_remove(struct platform=
-_device *pdev)
-> >       struct charger_manager *cm =3D platform_get_drvdata(pdev);
-> >       struct charger_desc *desc =3D cm->desc;
-> >       int i =3D 0;
-> > -     int j =3D 0;
-> >
-> >       /* Remove from the list */
-> >       mutex_lock(&cm_list_mtx);
-> > @@ -1857,15 +1853,6 @@ static int charger_manager_remove(struct platfor=
-m_device *pdev)
-> >       cancel_work_sync(&setup_polling);
-> >       cancel_delayed_work_sync(&cm_monitor_work);
-> >
-> > -     for (i =3D 0 ; i < desc->num_charger_regulators ; i++) {
-> > -             struct charger_regulator *charger
-> > -                             =3D &desc->charger_regulators[i];
-> > -             for (j =3D 0 ; j < charger->num_cables ; j++) {
-> > -                     struct charger_cable *cable =3D &charger->cables[=
-j];
-> > -                     extcon_unregister_interest(&cable->extcon_dev);
-> > -             }
-> > -     }
-> > -
-> >       for (i =3D 0 ; i < desc->num_charger_regulators ; i++)
-> >               regulator_put(desc->charger_regulators[i].consumer);
-> >
-> > diff --git a/include/linux/power/charger-manager.h b/include/linux/powe=
-r/charger-manager.h
-> > index c4fa907..e4d0269 100644
-> > --- a/include/linux/power/charger-manager.h
-> > +++ b/include/linux/power/charger-manager.h
-> > @@ -66,7 +66,7 @@ struct charger_cable {
-> >       const char *name;
-> >
-> >       /* The charger-manager use Extcon framework */
-> > -     struct extcon_specific_cable_nb extcon_dev;
-> > +     struct extcon_dev *extcon_dev;
-> >       struct work_struct wq;
-> >       struct notifier_block nb;
-> >
-> > --
-> > 1.7.9.5
-> >
+> >  	if (etm->sample_branches &&
+> >  	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
+> >  		err = cs_etm__synth_branch_sample(etmq);
+> > @@ -1075,7 +1089,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+> >  					 * Discontinuity in trace, flush
+> >  					 * previous branch stack
+> >  					 */
+> > -					cs_etm__flush(etmq);
+> > +					cs_etm__flush(etmq, true);
+> >  					break;
+> >  				case CS_ETM_EMPTY:
+> >  					/*
+> > @@ -1092,7 +1106,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+> >  
+> >  		if (err == 0)
+> >  			/* Flush any remaining branch stack entries */
+> > -			err = cs_etm__flush(etmq);
+> > +			err = cs_etm__flush(etmq, false);
+> 
+> I understand what you're doing and it will yield the correct results.  What I'm
+> not sure about is if we wouldn't be better off splitting cs_etm__flush()
+> in order to reduce the complexity of the main decoding loop.  That is rename
+> cs_etm__flush() to something like cs_etm__trace_on() and spin off a new
+> cs_etm__end_block().  
+> 
+> It does introduce a little bit of code duplication but I think we'd win in terms
+> of readability and flexibility.
 
+Sorry for long delay, Mathieu.
 
+Agree with the idea of splitting cs_etm__flush() into two functions.
+Will spin patch for new version.
 
---=20
-Baolin Wang
-Best Regards
+Thanks,
+Leo Yan
+
+> >  	}
+> >  
+> >  	return err;
+> > -- 
+> > 2.7.4
+> > 
