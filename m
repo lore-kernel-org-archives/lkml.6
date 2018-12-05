@@ -2,121 +2,91 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A92C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3223C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73C7320878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C7320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 867C720878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:43:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TT23gtRI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867C720878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeLEOnP (ORCPT
+        id S1727867AbeLEOnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:43:15 -0500
-Received: from mail-eopbgr720064.outbound.protection.outlook.com ([40.107.72.64]:62496
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726918AbeLEOnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:43:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iDS/CpyQiotw0wHnstDnO05wzbKWIFZFy3qMpJ4geN4=;
- b=L7v6PDEZIHo6ktX9n/r17bUwZllphHxSrXz7t9ulM3nLbkGrZN8O7wzDj5PcQUvkFj287tGDiB+fT0D7g9d0hSeKfDxNS+yY/LuxOk3szFI2gukJCuVrFOvEjVkFnes+0Ot4xxQmTdaEXp0UtQODHo/bFaJrV2OAn6p1JRYFC5E=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB0192.namprd12.prod.outlook.com (10.162.3.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Wed, 5 Dec 2018 14:43:10 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1404.019; Wed, 5 Dec 2018
- 14:43:10 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Ingo Molnar <mingo@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] x86/umip: Make the UMIP activated message generic
-Thread-Topic: [PATCH] x86/umip: Make the UMIP activated message generic
-Thread-Index: AQHUjCCFH8x+LgP8GkWS/ubsimhkSKVvxTKAgAB0OIA=
-Date:   Wed, 5 Dec 2018 14:43:09 +0000
-Message-ID: <cfdd7539-577a-7c86-4347-ff3982b0a18a@amd.com>
-References: <20181204222718.9375.11043.stgit@tlendack-t1.amdoffice.net>
- <20181205074709.GA105592@gmail.com>
-In-Reply-To: <20181205074709.GA105592@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR02CA0033.namprd02.prod.outlook.com
- (2603:10b6:805:a2::46) To SN1PR12MB0175.namprd12.prod.outlook.com
- (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB0192;20:TOzTWQact9TBN6/S+ndRZaAWLFB5JgkZt1Cqp6Sn0s+ehhGFMOgVlwSf5B1fvo7n3sCOzkuS1FGj/S/5aJfJQwAC5LYG72kf9sUK7imn3lMD1fo0FGLN3P3lZ617zUoEoILS32XXxNxJk+oEZWEMqoakN/jMjAiurLGdq/BFJd+9XQpb/EV8kZFZqRH7Lw1XTYYtskGT4b2sd0DN6O3W/D0lFCqWEw5E789qyeBZdkH9D76nNatSHwCcxd28GMyK
-x-ms-office365-filtering-correlation-id: f1e217c1-ecbf-49e4-972d-08d65abff9b9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0192;
-x-ms-traffictypediagnostic: SN1PR12MB0192:
-x-microsoft-antispam-prvs: <SN1PR12MB0192B4B75177257D02FD3A9DECA80@SN1PR12MB0192.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0192;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0192;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(376002)(396003)(39860400002)(199004)(189003)(26005)(7736002)(54906003)(305945005)(86362001)(6486002)(5660300001)(316002)(256004)(14444005)(6246003)(6436002)(3846002)(31696002)(6116002)(72206003)(66066001)(478600001)(6916009)(99286004)(486006)(15650500001)(2906002)(106356001)(229853002)(52116002)(2616005)(8676002)(386003)(76176011)(6506007)(53546011)(97736004)(4326008)(14454004)(476003)(36756003)(446003)(71200400001)(105586002)(53936002)(25786009)(68736007)(186003)(102836004)(8936002)(71190400001)(6512007)(81156014)(11346002)(31686004)(81166006)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0192;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Cw4/mSqpKlDm/FBaG3/2R6tuGSSAOGs3Qr51yI1Wqalt9AmNHG4fgykgalVc+emvxyTNBou4fkY4hUVebv8nF2nLzPuDo6SrDLAWk/5szoU5pK1AmZKas45lrStIafEbPZOHY4d/bQw+944DkJwzw9FAOl6TxvTJON9pztQ6rtR6FbgI4bnjCBajvuKU19H5rty6RcAhRTGctMza7H/roUmajz167GLlEjNgRgA2g1NLVV4N+mYhkyAzsUP76tIWIhYHsiRwoV9mfwp+oUeC0J4upxCPuoeKmX+O9Jf+q4XkdALEfaZA07MxbOtkwoXxejEjhegAWaA7mzTEIyfBuBg4PjigKSz0Ig7RxkRQqL0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <642416E4E7342E49B00E89D705691F4E@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 5 Dec 2018 09:43:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43926 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeLEOnV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:43:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/L0uBM6DoEflxkum1yP/GbMdESPWeER5F10xyxcKreE=; b=TT23gtRIDM/FtcG+a3giH+J+5
+        JG+ALJ65QPQP0f3m9DbidDMZEWP2+0O9X1NLlas14Q+xwH3GM3a+zB4z51S5fmt5Yb++akyAzY4Yt
+        zMIfad2FyvjRLH60vWTo9RXu8JCCpR2en8E65hbIIgX+sxD1p0zaqMcIPfFmtksWW1vFtF6rg1vHr
+        M6YtQZR/8W7zXrUuCBoHUKxOFNx5P8mM0vUzFVjD8cxxfnQ8atVXWI/jLhhS0CR0/WvRF2RP5dsQs
+        cWzpHPN8pedYPm70jz4JOKH/WWaM3ws+I2msquVc2flVrdBjz4ipVzJ1VftgPNf4JVdHizCUt7U0t
+        6sep9Xy+g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUYOK-0007gE-O2; Wed, 05 Dec 2018 14:43:08 +0000
+Date:   Wed, 5 Dec 2018 06:43:08 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
+ and improve debugging
+Message-ID: <20181205144308.GA28409@infradead.org>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-4-drinkcat@chromium.org>
+ <20181205135406.GA29031@infradead.org>
+ <1d211576-9153-cca1-5cd0-8c9881bd3fa4@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1e217c1-ecbf-49e4-972d-08d65abff9b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 14:43:10.0681
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0192
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d211576-9153-cca1-5cd0-8c9881bd3fa4@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIvMDUvMjAxOCAwMTo0NyBBTSwgSW5nbyBNb2xuYXIgd3JvdGU6DQo+IA0KPiAqIExlbmRh
-Y2t5LCBUaG9tYXMgPFRob21hcy5MZW5kYWNreUBhbWQuY29tPiB3cm90ZToNCj4gDQo+PiBUaGUg
-VXNlciBNb2RlIEluc3RydWN0aW9uIFByZXZlbnRpb24gKFVNSVApIGZlYXR1cmUgaXMgcGFydCBv
-ZiB0aGUgeDg2XzY0DQo+PiBpbnN0cnVjdGlvbiBzZXQgYXJjaGl0ZWN0dXJlIGFuZCBub3Qgc3Bl
-Y2lmaWMgdG8gSW50ZWwuICBNYWtlIHRoZSBtZXNzYWdlDQo+PiBnZW5lcmljLg0KPj4NCj4+IFNp
-Z25lZC1vZmYtYnk6IFRvbSBMZW5kYWNreSA8dGhvbWFzLmxlbmRhY2t5QGFtZC5jb20+DQo+PiAt
-LS0NCj4+DQo+PiBUaGlzIHBhdGNoIGlzIGFnYWluc3QgdGhlIHg4Ni9jcHUgYnJhbmNoIG9mIHRo
-ZSB0aXAgdHJlZToNCj4+ICAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L3RpcC90aXAuZ2l0IHg4Ni9jcHUNCj4+DQo+PiAgYXJjaC94ODYva2VybmVsL2NwdS9j
-b21tb24uYyB8ICAgIDIgKy0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2NwdS9jb21t
-b24uYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvY29tbW9uLmMNCj4+IGluZGV4IDJjNTZiODAuLmNi
-MjhlOTggMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5jDQo+PiAr
-KysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5jDQo+PiBAQCAtMzUzLDcgKzM1Myw3IEBA
-IHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCBzZXR1cF91bWlwKHN0cnVjdCBjcHVpbmZvX3g4
-NiAqYykNCj4+ICANCj4+ICAJY3I0X3NldF9iaXRzKFg4Nl9DUjRfVU1JUCk7DQo+PiAgDQo+PiAt
-CXByX2luZm9fb25jZSgieDg2L2NwdTogSW50ZWwgVXNlciBNb2RlIEluc3RydWN0aW9uIFByZXZl
-bnRpb24gKFVNSVApIGFjdGl2YXRlZFxuIik7DQo+PiArCXByX2luZm9fb25jZSgieDg2L2NwdTog
-VXNlciBNb2RlIEluc3RydWN0aW9uIFByZXZlbnRpb24gKFVNSVApIGFjdGl2YXRlZFxuIik7DQo+
-IA0KPiBJcyB0aGVyZSBhbnkgcHVibGljIGluZm9ybWF0aW9uIGFib3V0IHdoaWNoIEFNRCBDUFVz
-IGFyZSBnb2luZyB0byBzdXBwb3J0IA0KPiBpdD8NCg0KTm8gcHVibGljIGluZm9ybWF0aW9uIHll
-dC4uLg0KDQpUaGFua3MsDQpUb20NCg0KPiANCj4gVGhlIGxhdGVzdCBBTUQgQ1BVIEkgY2FuIHRl
-c3Qgb24gaXMgYSBSeXplbiBUaHJlYWRyaXBwZXIgMTk1MFgsIGFuZCB0aGF0IA0KPiBkb2Vzbid0
-IGhhdmUgVU1JUC4NCj4gDQo+IFRoYW5rcywNCj4gDQo+IAlJbmdvDQo+IA0K
+On Wed, Dec 05, 2018 at 02:40:06PM +0000, Robin Murphy wrote:
+> 32-bit Arm doesn't have ZONE_DMA32, but has (or at least had at the time) a
+> 2GB ZONE_DMA. Whether we actually need that or not depends on how this all
+> interacts with LPAE and highmem, but I'm not sure of those details off-hand.
+
+Well, arm32 can't address more than 32-bits in the linear kernel
+mapping, so GFP_KERNEL should be perfectly fine there if the limit
+really is 32-bits and not 31 or smaller because someone stole a bit
+or two somewhere.
