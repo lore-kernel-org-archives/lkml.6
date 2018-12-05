@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EF3C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E5DC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B912D2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B8802084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544025934;
-	bh=p9Cnz2WgxXLR4c7HDleEbaGuc6IMCjoYt58q0fc/V0k=;
+	s=default; t=1544025937;
+	bh=o48pzkt/4xF8cFm8Nx30igUkMILu8n6cNEW2dYOan7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bofZpPB0+5LlJoFiY/sEJ6QSrcKC3pShb0aTlzLuqny3ISXosqbri3YBHK12TBMLo
-	 EX/J5U+zqX5kMr2r75PgR07LosJvon8lQGmXVIj0SYccZoMnePRF/r9gPHt8Tz7fhR
-	 40Xv+whzmRbpgcMAku7gmUYczS34qGI1zE/3hffw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B912D2084C
+	b=yFFAJkJ9b+PFKEhC9y3K+POkv4F5Zf9LCwZPChcezRBW+XZoNc+UdZEpunApI9/2Y
+	 O7VOTR3h0+Sf0SUzyekfs1s0x1rxQsMlA6SDEZ2rM2wXlzETZqGEVaGic6bjn4PkoL
+	 5Ar+5hPRTf3UITNM7rzsJX9YvQThxTvH8AAEJxec=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8802084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbeLEQFd (ORCPT
+        id S1728451AbeLEQFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:05:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46619 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 11:05:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55332 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728361AbeLEQFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:05:31 -0500
+        id S1728361AbeLEQFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:05:33 -0500
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6840B3DE04;
-        Wed,  5 Dec 2018 16:05:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3402689AC8;
+        Wed,  5 Dec 2018 16:05:33 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF1805C5FD;
-        Wed,  5 Dec 2018 16:05:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B2E9C5C5FE;
+        Wed,  5 Dec 2018 16:05:30 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
@@ -49,111 +49,74 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
         esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH 6/8] perf tools: Add ordered_events__flush_time interface
-Date:   Wed,  5 Dec 2018 17:05:07 +0100
-Message-Id: <20181205160509.1168-7-jolsa@kernel.org>
+Subject: [PATCH 7/8] perf trace: Move event delivery to deliver_event function
+Date:   Wed,  5 Dec 2018 17:05:08 +0100
+Message-Id: <20181205160509.1168-8-jolsa@kernel.org>
 In-Reply-To: <20181205160509.1168-1-jolsa@kernel.org>
 References: <20181205160509.1168-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 05 Dec 2018 16:05:30 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Dec 2018 16:05:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding OE_FLUSH__TIME flush type, to be able to flush
-only certain amount of the queue based on the provided
-timestamp. It will be used in following patches.
+Moving event delivery code to deliver_event function,
+so it's easier to add conditional ordered delivery
+coming in following patches.
 
-Link: http://lkml.kernel.org/n/tip-a3na77vemwr1g92lfhlrztg5@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-qz9wzti2cw6q7swja0h2x4sf@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/ordered-events.c | 23 +++++++++++++++++++----
- tools/perf/util/ordered-events.h |  2 ++
- 2 files changed, 21 insertions(+), 4 deletions(-)
+ tools/perf/builtin-trace.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index c5412db05683..b5c6a854379f 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -219,8 +219,7 @@ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
- 	return 0;
- }
- 
--static int __ordered_events__flush(struct ordered_events *oe,
--				   bool show_progress)
-+static int do_flush(struct ordered_events *oe, bool show_progress)
- {
- 	struct list_head *head = &oe->events;
- 	struct ordered_event *tmp, *iter;
-@@ -263,7 +262,8 @@ static int __ordered_events__flush(struct ordered_events *oe,
- 	return 0;
- }
- 
--int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
-+static int __ordered_events__flush(struct ordered_events *oe, enum oe_flush how,
-+				   u64 time)
- {
- 	static const char * const str[] = {
- 		"NONE",
-@@ -302,6 +302,11 @@ int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
- 		break;
- 	}
- 
-+	case OE_FLUSH__TIME:
-+		oe->next_flush = time;
-+		show_progress = false;
-+		break;
-+
- 	case OE_FLUSH__ROUND:
- 	case OE_FLUSH__NONE:
- 	default:
-@@ -312,7 +317,7 @@ int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
- 		   str[how], oe->nr_events);
- 	pr_oe_time(oe->max_timestamp, "max_timestamp\n");
- 
--	err = __ordered_events__flush(oe, show_progress);
-+	err = do_flush(oe, show_progress);
- 
- 	if (!err) {
- 		if (how == OE_FLUSH__ROUND)
-@@ -328,6 +333,16 @@ int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index a663ec346a8e..b4b1dafe882a 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2641,6 +2641,21 @@ static int trace__set_filter_pids(struct trace *trace)
  	return err;
  }
  
-+int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
++static int deliver_event(struct trace *trace, union perf_event *event)
 +{
-+	return __ordered_events__flush(oe, how, 0);
++	struct perf_evlist *evlist = trace->evlist;
++	struct perf_sample sample;
++	int err;
++
++	err = perf_evlist__parse_sample(evlist, event, &sample);
++	if (err)
++		fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
++	else
++		trace__handle_event(trace, event, &sample);
++
++	return 0;
 +}
 +
-+int ordered_events__flush_time(struct ordered_events *oe, u64 time)
-+{
-+	return __ordered_events__flush(oe, OE_FLUSH__TIME, time);
-+}
-+
- void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver,
- 			  void *data)
+ static int trace__run(struct trace *trace, int argc, const char **argv)
  {
-diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-index 0c6e26aec0e3..6ef81e5be052 100644
---- a/tools/perf/util/ordered-events.h
-+++ b/tools/perf/util/ordered-events.h
-@@ -19,6 +19,7 @@ enum oe_flush {
- 	OE_FLUSH__ROUND,
- 	OE_FLUSH__HALF,
- 	OE_FLUSH__TOP,
-+	OE_FLUSH__TIME,
- };
+ 	struct perf_evlist *evlist = trace->evlist;
+@@ -2806,18 +2821,10 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 			continue;
  
- struct ordered_events;
-@@ -55,6 +56,7 @@ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
- 			  u64 timestamp, u64 file_offset);
- void ordered_events__delete(struct ordered_events *oe, struct ordered_event *event);
- int ordered_events__flush(struct ordered_events *oe, enum oe_flush how);
-+int ordered_events__flush_time(struct ordered_events *oe, u64 time);
- void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver,
- 			  void *data);
- void ordered_events__free(struct ordered_events *oe);
+ 		while ((event = perf_mmap__read_event(md)) != NULL) {
+-			struct perf_sample sample;
+-
+ 			++trace->nr_events;
+ 
+-			err = perf_evlist__parse_sample(evlist, event, &sample);
+-			if (err) {
+-				fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
+-				goto next_event;
+-			}
++			deliver_event(trace, event);
+ 
+-			trace__handle_event(trace, event, &sample);
+-next_event:
+ 			perf_mmap__consume(md);
+ 
+ 			if (interrupted)
 -- 
 2.17.2
 
