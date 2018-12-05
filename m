@@ -2,110 +2,161 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 251EEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE99FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF27214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKcUt5Kx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF27214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ABCFE214DB
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCFE214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729645AbeLEJuI (ORCPT
+        id S1729673AbeLEJuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729617AbeLEJuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:50:04 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D83214C1;
-        Wed,  5 Dec 2018 09:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003404;
-        bh=k5IbEAHU7WUfkgd4sB0BICxioz6/fBNBT8wdFyGz2v0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OKcUt5KxRWKUpV7ZSAMxYtiX2P2VXwPTChnX7bFKJoArPa72AM/hwbFpeHNSvRYuh
-         Oj8S6xLtvcWUpkgDt/GTPICuIPHrnsEcsRQKe1yttn/DMUurgLP5kQoMY9bD+UZFGp
-         MD2IXC5IQDv1jHFEztwslG9+P0DzmgrdttR4hy2c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xin Long <lucien.xin@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.9 21/45] ipvs: call ip_vs_dst_notifier earlier than ipv6_dev_notf
-Date:   Wed,  5 Dec 2018 04:46:42 -0500
-Message-Id: <20181205094706.7225-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
-References: <20181205094706.7225-1-sashal@kernel.org>
+        Wed, 5 Dec 2018 04:50:14 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36504 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbeLEJuM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:50:12 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f23so16475357edb.3;
+        Wed, 05 Dec 2018 01:50:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z/cbHVmOnR4ssoA0Bz+FRdDV0r+8venf015r/nDfnhU=;
+        b=ENN6TNi74Mub0yMwoDMN5ILIcY7YNLDf1gQ4nDbIgkg64gSNVRbGsG7mOJJmmP4jJi
+         1uiFN1skohwl+D1x3Q0pc1eAFCVwn8r9HKZFJlAsGuad0uYdjb1XETCNCx1RUQpFHG7B
+         V05ZvBUv944up7ENhyopx7strGgBy2LCzPXlWeJjGUt3pZ6KUrLX4jZiE8ZdIP/A8hqL
+         jDL9BvKJvpjO6NsudO7TX9MbvLeafqcI6CG+vjlXPw1KC88MgyIFFFMNelnwf3LAl//R
+         TRwik1Q2Cf7qncb6AmWc+KDVA/671SBt929NTi44fjU0hF0hN2roytyHWmETbIQzNGUv
+         ob3Q==
+X-Gm-Message-State: AA+aEWZUQv6dXFtr3Bncbv1l89rV5Y+b20d1KDUoFJZ9LzF4QDyU+jsX
+        lY6RjfyQZOnW9eq3D8YKdj/wEDeK/24=
+X-Google-Smtp-Source: AFSGD/XwX9bg+xrOas/8A2jiafEZmA7SOjVQuZ+a9cX4xm4/wvnDMFCxLQz/92qhpBnAOU694vlYeQ==
+X-Received: by 2002:aa7:c5d0:: with SMTP id h16mr20976757eds.107.1544003409743;
+        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id e26-v6sm3050901ejb.29.2018.12.05.01.50.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id z5so18937579wrt.11;
+        Wed, 05 Dec 2018 01:50:09 -0800 (PST)
+X-Received: by 2002:a5d:4f10:: with SMTP id c16mr21994267wru.177.1544003408999;
+ Wed, 05 Dec 2018 01:50:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
+ <20181205092444.29497-8-paul.kocialkowski@bootlin.com> <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
+ <edf44a24633ecaf59a7d5bea1f4acffdd0ae01a3.camel@bootlin.com>
+In-Reply-To: <edf44a24633ecaf59a7d5bea1f4acffdd0ae01a3.camel@bootlin.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 5 Dec 2018 17:49:57 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67tgp_tD_Pkx1Qkc=d__saZUMwwmE44uCCeLgVM2HWmUQ@mail.gmail.com>
+Message-ID: <CAGb2v67tgp_tD_Pkx1Qkc=d__saZUMwwmE44uCCeLgVM2HWmUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/15] arm64: dts: allwinner: h5: Add system-control
+ node with SRAM C1
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+On Wed, Dec 5, 2018 at 5:48 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Wed, 2018-12-05 at 17:45 +0800, Chen-Yu Tsai wrote:
+> > On Wed, Dec 5, 2018 at 5:25 PM Paul Kocialkowski
+> > <paul.kocialkowski@bootlin.com> wrote:
+> > > Add the H5-specific system control node description to its device-tree
+> > > with support for the SRAM C1 section, that will be used by the video
+> > > codec node later on.
+> > >
+> > > The CPU-side SRAM address was obtained empirically while the size was
+> > > taken from the documentation. They may not be entirely accurate.
+> > >
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > ---
+> > >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++++
+> > >  1 file changed, 22 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > index b41dc1aab67d..42bfb560b367 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> > > @@ -94,6 +94,28 @@
+> > >         };
+> > >
+> > >         soc {
+> > > +               system-control@1c00000 {
+> > > +                       compatible = "allwinner,sun50i-h5-system-control";
+> > > +                       reg = <0x01c00000 0x1000>;
+> > > +                       #address-cells = <1>;
+> > > +                       #size-cells = <1>;
+> > > +                       ranges;
+> > > +
+> > > +                       sram_c1: sram@1d00000 {
+> > > +                               compatible = "mmio-sram";
+> > > +                               reg = <0x00018000 0x1c000>;
+> >
+> > 0x1d00000 or 0x18000?
+>
+> For the H5, I found the VE SRAM area to be mapped to 0x18000 on the CPU
+> side (when testing with devmem), unlike the A64, H3 and others. I was
+> rather surprised about this as well!
 
-[ Upstream commit 2a31e4bd9ad255ee40809b5c798c4b1c2b09703b ]
+I'm actually referring to the node name that still says 1d00000.
 
-ip_vs_dst_event is supposed to clean up all dst used in ipvs'
-destinations when a net dev is going down. But it works only
-when the dst's dev is the same as the dev from the event.
+ChenYu
 
-Now with the same priority but late registration,
-ip_vs_dst_notifier is always called later than ipv6_dev_notf
-where the dst's dev is set to lo for NETDEV_DOWN event.
-
-As the dst's dev lo is not the same as the dev from the event
-in ip_vs_dst_event, ip_vs_dst_notifier doesn't actually work.
-Also as these dst have to wait for dest_trash_timer to clean
-them up. It would cause some non-permanent kernel warnings:
-
-  unregister_netdevice: waiting for br0 to become free. Usage count = 3
-
-To fix it, call ip_vs_dst_notifier earlier than ipv6_dev_notf
-by increasing its priority to ADDRCONF_NOTIFY_PRIORITY + 5.
-
-Note that for ipv4 route fib_netdev_notifier doesn't set dst's
-dev to lo in NETDEV_DOWN event, so this fix is only needed when
-IP_VS_IPV6 is defined.
-
-Fixes: 7a4f0761fce3 ("IPVS: init and cleanup restructuring")
-Reported-by: Li Shuang <shuali@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/ipvs/ip_vs_ctl.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 079b3c426720..8382b7880b24 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -4013,6 +4013,9 @@ static void __net_exit ip_vs_control_net_cleanup_sysctl(struct netns_ipvs *ipvs)
- 
- static struct notifier_block ip_vs_dst_notifier = {
- 	.notifier_call = ip_vs_dst_event,
-+#ifdef CONFIG_IP_VS_IPV6
-+	.priority = ADDRCONF_NOTIFY_PRIORITY + 5,
-+#endif
- };
- 
- int __net_init ip_vs_control_net_init(struct netns_ipvs *ipvs)
--- 
-2.17.1
-
+>
+> > > +                               #address-cells = <1>;
+> > > +                               #size-cells = <1>;
+> > > +                               ranges = <0 0x00018000 0x1c000>;
+> >
+> > Same here.
+> >
+> > > +
+> > > +                               ve_sram: sram-section@0 {
+> > > +                                       compatible = "allwinner,sun50i-h5-sram-c1",
+> > > +                                                    "allwinner,sun4i-a10-sram-c1";
+> > > +                                       reg = <0x000000 0x1c000>;
+> > > +                               };
+> > > +                       };
+> > > +               };
+> > > +
+> > >                 mali: gpu@1e80000 {
+> > >                         compatible = "allwinner,sun50i-h5-mali", "arm,mali-450";
+> > >                         reg = <0x01e80000 0x30000>;
+> > > --
+> > > 2.19.2
+>
+> Cheers,
+>
+> Paul
+>
+> --
+> Paul Kocialkowski, Bootlin (formerly Free Electrons)
+> Embedded Linux and kernel engineering
+> https://bootlin.com
+>
