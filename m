@@ -2,176 +2,96 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D64C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA8FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E7B2064D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E7B2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 65EF92064D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:31:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sXhCbD0m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65EF92064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeLEKao (ORCPT
+        id S1727552AbeLEKbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:30:44 -0500
-Received: from mx.socionext.com ([202.248.49.38]:21311 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727025AbeLEKan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:30:43 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 05 Dec 2018 19:30:41 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 36E5960062;
-        Wed,  5 Dec 2018 19:30:41 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 5 Dec 2018 19:30:41 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 8DD9440377;
-        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 670C4120304;
-        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
- description
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
- <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
- <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
- <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
- <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <60f13d51-51e6-33f9-5393-e9425883c528@socionext.com>
-Date:   Wed, 5 Dec 2018 19:30:39 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Wed, 5 Dec 2018 05:31:40 -0500
+Received: from casper.infradead.org ([85.118.1.10]:54500 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbeLEKbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:31:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4KqDWiP1GGJKYnL+84+zo9iBjKZH0iNJw4HXyUC5u9Y=; b=sXhCbD0mTJXyWG5P81ZORGWRxG
+        hrD1/I4aacvXHy9QTvdO5l0gDpKOtFd6FHOInohqYMb0AUtraQnVhN8nhwpYTNTDBIRLouKLZUSI3
+        RsXNw3qTjy7h9DszNu14RBF29F1p2/uSkhZxvzqbHfpxhDwUydTqx58DfIVvn6bT3E/ElcARbRGl1
+        Lem/tfID6/H+ERKkxPLRUu7T+U1LcKUcWhQJVWuR3H6uowOnzDR+hoIHya8/7LSJDiv4xpXSLrDHM
+        RXIP3TLEbUcI78wv5bTbRDuaW7S0Dn/AJO+6XymqggDXFG4phTdfX12uCMSaUzg8yO71RjslVsLqH
+        BYdPgLQQ==;
+Received: from [191.33.148.129] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUUSt-0001Ou-EM; Wed, 05 Dec 2018 10:31:35 +0000
+Date:   Wed, 5 Dec 2018 08:31:29 -0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-media@vger.kernel.org, linux-spi@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH 7/8] media: sti/bdisp: don't pass GFP_DMA32 to
+ dma_alloc_attrs
+Message-ID: <20181205083129.20b6b0be@coco.lan>
+In-Reply-To: <CA+M3ks5ebGDgFtMS5mSYz38AnyrTMQr8C_JkbFEzp=k+izJjUQ@mail.gmail.com>
+References: <20181013151707.32210-1-hch@lst.de>
+        <20181013151707.32210-8-hch@lst.de>
+        <CA+M3ks5KO-Yr_PEczaENhTfirthFz2gW1uv4bwZe5mjy3-jZyg@mail.gmail.com>
+        <20181017072020.GD23407@lst.de>
+        <CA+M3ks5ebGDgFtMS5mSYz38AnyrTMQr8C_JkbFEzp=k+izJjUQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Em Thu, 18 Oct 2018 14:00:40 +0200
+Benjamin Gaignard <benjamin.gaignard@linaro.org> escreveu:
 
-On 2018/12/04 22:32, Rob Herring wrote:
-> On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi
->>
->> On 2018/12/04 0:49, Rob Herring wrote:
->>> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
->>> <sugaya.taichi@socionext.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 2018/11/30 17:16, Stephen Boyd wrote:
->>>>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
->>>>>> On 2018/11/28 11:01, Stephen Boyd wrote:
->>>>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
->>>>>>>>      create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>> new file mode 100644
->>>>>>>> index 0000000..f5d906c
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>> @@ -0,0 +1,12 @@
->>>>>>>> +Socionext M10V SMP trampoline driver binding
->>>>>>>> +
->>>>>>>> +This is a driver to wait for sub-cores while boot process.
->>>>>>>> +
->>>>>>>> +- compatible: should be "socionext,smp-trampoline"
->>>>>>>> +- reg: should be <0x4C000100 0x100>
->>>>>>>> +
->>>>>>>> +EXAMPLE
->>>>>>>> +       trampoline: trampoline@0x4C000100 {
->>>>>>> Drop the 0x part of unit addresses.
->>>>>>
->>>>>> Okay.
->>>>>>
->>>>>>
->>>>>>>> +               compatible = "socionext,smp-trampoline";
->>>>>>>> +               reg = <0x4C000100 0x100>;
->>>>>>> Looks like a software construct, which we wouldn't want to put into DT
->>>>>>> this way. DT doesn't describe drivers.
->>>>>> We would like to use this node only getting the address of the
->>>>>> trampoline area
->>>>>> in which sub-cores wait.  (They have finished to go to this area in previous
->>>>>> bootloader process.)
->>>>>
->>>>> Is this area part of memory, or a special SRAM? If it's part of memory,
->>>>> I would expect this node to be under the reserved-memory node and
->>>>> pointed to by some other node that uses this region. Could even be the
->>>>> CPU nodes.
->>>>
->>>> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
->>>> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
->>>> BTW, sorry, the trampoline address of this example is simply wrong.  We
->>>> were going to use a part of the SRAM from the beginning.
->>>>
->>>>>
->>>>>>
->>>>>> So should we embed the constant value in source codes instead of getting
->>>>>> from
->>>>>> DT because the address is constant at the moment? Or is there other
->>>>>> approach?
->>>>>>
->>>>>
->>>>> If it's constant then that also works. Why does it need to come from DT
->>>>> at all then?
->>>>
->>>> We think it is not good to embed constant value in driver codes and do
->>>> not have another way...
->>>> Are there better ways?
->>>
->>> If this is just memory, can you use the standard spin-table binding in
->>> the DT spec? There are some requirements like 64-bit values even on
->>> 32-bit machines (though this gets violated).
->>
->> The spin-table seems to be used on only 64-bit arch. Have it ever worked
->> on 32-bit machine?
-> 
-> Yes.
-> 
->> And I would like not to use it because avoid violation.
-> 
-> The issue now that I remember is cpu-release-addr is defined to always
-> be a 64-bit value while some platforms made it a 32-bit value.
-> 'cpu-release-addr' is also used for some other enable-methods.
+> Le mer. 17 oct. 2018 =C3=A0 09:20, Christoph Hellwig <hch@lst.de> a =C3=
+=A9crit :
+> >
+> > On Mon, Oct 15, 2018 at 11:12:55AM +0200, Benjamin Gaignard wrote: =20
+> > > Le sam. 13 oct. 2018 =C3=A0 17:18, Christoph Hellwig <hch@lst.de> a =
+=C3=A9crit : =20
+> > > >
+> > > > The DMA API does its own zone decisions based on the coherent_dma_m=
+ask.
+> > > >
+> > > > Signed-off-by: Christoph Hellwig <hch@lst.de> =20
+> > >
+> > > Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org> =20
+> >
+> > Can you pick it up through the media tree? =20
+>=20
+> No but Mauros or Hans (in CC) can add it.
 
-Thanks.
-OK, try to use the spin-table.
+I'm adding it. Sorry for the delay. All those trips for MS/KS made
+harder to handle it earlier.
 
-Best Regards,
-Sugaya Taichi
-
-> 
-> Rob
-> 
-
+Thanks,
+Mauro
