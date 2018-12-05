@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF09EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9CBC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD601206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD601206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9A55B206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A55B206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbeLEIiT (ORCPT
+        id S1727524AbeLEIia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:38:19 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36363 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:38:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36344 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbeLEIiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:38:04 -0500
+        id S1727188AbeLEIiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:38:00 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CE97A20EDE; Wed,  5 Dec 2018 09:38:01 +0100 (CET)
+        id 52B0720E92; Wed,  5 Dec 2018 09:37:56 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 89B7220E20;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 51CB820E1F;
         Wed,  5 Dec 2018 09:37:30 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 22/22] drm/sun4i: frontend: Add A20-specific device-tree compatible and quirks
-Date:   Wed,  5 Dec 2018 09:37:03 +0100
-Message-Id: <20181205083703.21488-23-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 21/22] drm/sun4i: frontend: Move the FIR filter phases to our quirks
+Date:   Wed,  5 Dec 2018 09:37:02 +0100
+Message-Id: <20181205083703.21488-22-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,56 +50,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the appropriate device-tree compatible and quirk data for
-hooking frontend support for the A20. It supports the FIR coefficients
-ready bit but not the access control bit. It also takes different phase
-values than the A33 for these coefficients.
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-The compatible is already used in the A20 device-tree and already
-documented in the device-tree bindings.
+The FIR filters phase depend on the SoC, so let's move it to our quirks
+structure instead of removing them.
 
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 28 ++++++++++++++++++++------
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  5 +++++
+ 2 files changed, 27 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 4a215d5202e2..a1a4108f226e 100644
+index 86c5033102b9..4a215d5202e2 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -682,6 +682,20 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
- 	.runtime_suspend	= sun4i_frontend_runtime_suspend,
+@@ -438,12 +438,18 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	 * I have no idea what this does exactly, but it seems to be
+ 	 * related to the scaler FIR filter phase parameters.
+ 	 */
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZPHASE_REG, 0x400);
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_HORZPHASE_REG, 0x400);
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE0_REG, 0x400);
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE0_REG, 0x400);
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
+-	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZPHASE_REG,
++		     frontend->data->ch_phase[0].horzphase);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_HORZPHASE_REG,
++		     frontend->data->ch_phase[1].horzphase);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE0_REG,
++		     frontend->data->ch_phase[0].vertphase[0]);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE0_REG,
++		     frontend->data->ch_phase[1].vertphase[0]);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG,
++		     frontend->data->ch_phase[0].vertphase[1]);
++	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG,
++		     frontend->data->ch_phase[1].vertphase[1]);
+ 
+ 	/*
+ 	 * Checking the input format is sufficient since we currently only
+@@ -677,6 +683,16 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
  };
  
-+static const struct sun4i_frontend_data sun7i_a20_frontend = {
+ static const struct sun4i_frontend_data sun8i_a33_frontend = {
 +	.ch_phase		= {
 +		{
-+			.horzphase = 0,
-+			.vertphase = { 0, 0 },
++			.horzphase = 0x400,
++			.vertphase = { 0x400, 0x400 },
 +		},
 +		{
-+			.horzphase = 0xfc000,
-+			.vertphase = { 0xfc000, 0xfc000 },
++			.horzphase = 0x400,
++			.vertphase = { 0x400, 0x400 },
 +		},
 +	},
-+	.has_coef_rdy		= true,
-+};
-+
- static const struct sun4i_frontend_data sun8i_a33_frontend = {
- 	.ch_phase		= {
- 		{
-@@ -697,6 +711,10 @@ static const struct sun4i_frontend_data sun8i_a33_frontend = {
+ 	.has_coef_access_ctrl	= true,
  };
  
- const struct of_device_id sun4i_frontend_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun7i-a20-display-frontend",
-+		.data = &sun7i_a20_frontend
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a33-display-frontend",
- 		.data = &sun8i_a33_frontend
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index e332bc1c6b68..0c382c1ddb0f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -115,6 +115,11 @@ struct reset_control;
+ struct sun4i_frontend_data {
+ 	bool	has_coef_access_ctrl;
+ 	bool	has_coef_rdy;
++
++	struct {
++		u32	horzphase;
++		u32	vertphase[2];
++	} ch_phase[2];
+ };
+ 
+ struct sun4i_frontend {
 -- 
 2.19.2
 
