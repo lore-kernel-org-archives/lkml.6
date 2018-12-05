@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3C9C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7C5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E1DA20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1DA20850
+	by mail.kernel.org (Postfix) with ESMTP id BCDB620850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDB620850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeLEJZU (ORCPT
+        id S1727535AbeLEJZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:25:20 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39765 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 04:25:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39787 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbeLEJZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:25:16 -0500
+        id S1726944AbeLEJZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:25:17 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3A68020510; Wed,  5 Dec 2018 10:25:14 +0100 (CET)
+        id CC9D020D23; Wed,  5 Dec 2018 10:25:14 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D3DA920717;
-        Wed,  5 Dec 2018 10:25:03 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6A28220726;
+        Wed,  5 Dec 2018 10:25:04 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,9 +40,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 02/15] ARM: dts: sun8i: a33: Remove unnecessary reserved memory node
-Date:   Wed,  5 Dec 2018 10:24:31 +0100
-Message-Id: <20181205092444.29497-3-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 04/15] soc: sunxi: sram: Enable EMAC clock access for H3 variant
+Date:   Wed,  5 Dec 2018 10:24:33 +0100
+Message-Id: <20181205092444.29497-5-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
 References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
@@ -53,44 +53,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While we believed that the memory for the video engine had to be kept
-in the first 256 MiBs of DRAM, this is no longer true starting with the
-A33 and any address can be mapped.
+Just like the A64 and H5, the H3 SoC uses the system control block
+to enable the EMAC clock.
 
-As a result, remove the reserved memory node and let the kernel allocate
-the CMA pool wherever it sees fit.
+Add a variant structure definition for the H3 and use it over the A10
+one. This will allow using the H3-specific binding for the syscon node
+attached to the EMAC instead of the generic syscon binding.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/sun8i-a33.dtsi | 15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/soc/sunxi/sunxi_sram.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index c2c10cd4a210..9ac4fae6c10d 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -186,21 +186,6 @@
- 		};
- 	};
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 71e3ee4a3f19..fd81a3c0db45 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -290,6 +290,10 @@ static const struct sunxi_sramc_variant sun4i_a10_sramc_variant = {
+ 	/* Nothing special */
+ };
  
--	reserved-memory {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
--		default-pool {
--			compatible = "shared-dma-pool";
--			size = <0x6000000>;
--			alloc-ranges = <0x4a000000 0x6000000>;
--			reusable;
--			linux,cma-default;
--		};
--	};
--
- 	sound: sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "sun8i-a33-audio";
++static const struct sunxi_sramc_variant sun8i_h3_sramc_variant = {
++	.has_emac_clock = true,
++};
++
+ static const struct sunxi_sramc_variant sun50i_a64_sramc_variant = {
+ 	.has_emac_clock = true,
+ };
+@@ -369,7 +373,7 @@ static const struct of_device_id sunxi_sram_dt_match[] = {
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun8i-h3-system-control",
+-		.data = &sun4i_a10_sramc_variant,
++		.data = &sun8i_h3_sramc_variant,
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun50i-a64-sram-controller",
 -- 
 2.19.2
 
