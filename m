@@ -2,82 +2,161 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF58C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A82DC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32902082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:32:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruC6o84A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32902082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 68FF42082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FF42082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeLEJcu (ORCPT
+        id S1727555AbeLEJdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:32:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60800 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbeLEJcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:32:50 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3AEA206B7;
-        Wed,  5 Dec 2018 09:32:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002369;
-        bh=XvcNcTd5h9EUQAuG9Fb41nfSJj2dbLBNpLwZBFp/0hE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ruC6o84AhT7ezR6J4thMIPSgDYNBvDTdSmwiOfibVp24G8+tTG3N52FgpvkQa/qc9
-         GDIUP0NjXDhFf3S/cqI5hQBBZ8CIEPDVcsTjtvI/NBpFANRWT/Na33NoH6QKqo2sWq
-         L6BZ0UM2dRrrYxjIEJYkDh0YNppOAr04P8RndZ8w=
-Date:   Wed, 5 Dec 2018 10:32:47 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        rajatxjain@gmail.com, dtor@google.com, raghuram.hegde@intel.com,
-        chethan.tumkur.narayan@intel.com, sukumar.ghorai@intel.com
-Subject: Re: [PATCH v3 2/5] usb: assign ACPI companions for embedded USB
- devices
-Message-ID: <20181205093247.GB1817@kroah.com>
-References: <20181117010748.24347-1-rajatja@google.com>
- <20181121235020.29461-1-rajatja@google.com>
- <20181121235020.29461-2-rajatja@google.com>
+        Wed, 5 Dec 2018 04:33:09 -0500
+Received: from smtp.eu.citrix.com ([185.25.65.24]:9887 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEJdJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:33:09 -0500
+X-IronPort-AV: E=Sophos;i="5.56,317,1539648000"; 
+   d="scan'208";a="82813116"
+Date:   Wed, 5 Dec 2018 10:32:23 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Chao Gao <chao.gao@intel.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        <xen-devel@lists.xenproject.org>, Jan Beulich <jbeulich@suse.com>
+Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing a
+ device
+Message-ID: <20181205093223.dncg4nq4dh6xmrhk@mac>
+References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181121235020.29461-2-rajatja@google.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 03:50:17PM -0800, Rajat Jain wrote:
-> From: Dmitry Torokhov <dtor@chromium.org>
+On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
+> I find some pass-thru devices don't work any more across guest reboot.
+> Assigning it to another guest also meets the same issue. And the only
+> way to make it work again is un-binding and binding it to pciback.
+> Someone reported this issue one year ago [1]. More detail also can be
+> found in [2].
 > 
-> USB devices permanently connected to USB ports may be described in ACPI
-> tables and share ACPI devices with ports they are connected to. See [1]
-> for details.
+> The root-cause is Xen's internal MSI-X state isn't reset properly
+> during reboot or re-assignment. In the above case, Xen set maskall bit
+> to mask all MSI interrupts after it detected a potential security
+> issue. Even after device reset, Xen didn't reset its internal maskall
+> bit. As a result, maskall bit would be set again in next write to
+> MSI-X message control register.
 > 
-> This will allow us to describe sideband resources for devices, such as,
-> for example, hard reset line for BT USB controllers.
+> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
+> internal state of a device, we employ it to fix this issue rather than
+> introducing another dedicated sub-hypercall.
 > 
-> [1] https://docs.microsoft.com/en-us/windows-hardware/drivers/bringup/other-acpi-namespace-objects#acpi-namespace-hierarchy-and-adr-for-embedded-usb-devices
-> 
-> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-> Signed-off-by: Rajat Jain <rajatja@google.com> (changed how we get the usb_port)
+> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
+> the device's msix and pirq has been created. This limitation prevents
+> us calling this function when detaching a device from a guest during
+> guest shutdown. Thus it is called right before calling
+> PHYSDEVOPS_prepare_msix().
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
+() at the end of the hypercall name since it's not a function.
+
+I'm also wondering why the release can't be done when the device is
+detached from the guest (or the guest has been shut down). This makes
+me worry about the raciness of the attach/detach procedure: if there's
+a state where pciback assumes the device has been detached from the
+guest, but there are still pirqs bound, an attempt to attach to
+another guest in such state will fail.
+
+> [1]: https://lists.xenproject.org/archives/html/xen-devel/2017-09/
+>      msg02520.html
+> [2]: https://lists.xen.org/archives/html/xen-devel/2018-11/msg01616.html
+> 
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>  drivers/xen/xen-pciback/pci_stub.c | 49 ++++++++++++++++++++++++++++++++++++++
+>  drivers/xen/xen-pciback/pciback.h  |  1 +
+>  drivers/xen/xen-pciback/xenbus.c   | 10 ++++++++
+>  3 files changed, 60 insertions(+)
+> 
+> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
+> index 59661db..f8623d0 100644
+> --- a/drivers/xen/xen-pciback/pci_stub.c
+> +++ b/drivers/xen/xen-pciback/pci_stub.c
+> @@ -87,6 +87,55 @@ static struct pcistub_device *pcistub_device_alloc(struct pci_dev *dev)
+>  	return psdev;
+>  }
+>  
+> +/*
+> + * Reset Xen internal MSI-X state by invoking PHYSDEVOP_{release, prepare}_msix.
+> + */
+> +int pcistub_msix_reset(struct pci_dev *dev)
+> +{
+> +#ifdef CONFIG_PCI_MSI
+> +	if (dev->msix_cap) {
+> +		struct physdev_pci_device ppdev = {
+> +			.seg = pci_domain_nr(dev->bus),
+> +			.bus = dev->bus->number,
+> +			.devfn = dev->devfn
+> +		};
+> +		int err;
+> +		u16 val;
+> +
+> +		/*
+> +		 * Do a write first to flush Xen's internal state to hardware
+> +		 * such that the following read can infer whether MSI-X maskall
+> +		 * bit is set by Xen.
+> +		 */
+> +		pci_read_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, &val);
+> +		pci_write_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, val);
+> +
+> +		pci_read_config_word(dev, dev->msix_cap + PCI_MSIX_FLAGS, &val);
+> +		if (!(val & PCI_MSIX_FLAGS_MASKALL))
+> +			return 0;
+
+I would just perform a reset regardless of the maskall value, which
+would also allow you to skip the read/write dance that you do above.
+
+ATM we are only concerned about the maskall bit, but there's no reason
+why prepare/release couldn't do more stuff in the future.
+
+> +
+> +		pr_info("Reset MSI-X state for device %04x:%02x:%02x.%d\n",
+> +			ppdev.seg, ppdev.bus, PCI_SLOT(ppdev.devfn),
+> +			PCI_FUNC(ppdev.devfn));
+> +
+> +		err = HYPERVISOR_physdev_op(PHYSDEVOP_release_msix, &ppdev);
+> +		if (err) {
+> +			dev_warn(&dev->dev, "MSI-X release failed (%d)\n",
+> +				 err);
+
+This is a warn, while the message below is an err, any reason for
+the difference in log level?
+
+> +			return err;
+> +		}
+> +
+> +		err = HYPERVISOR_physdev_op(PHYSDEVOP_prepare_msix, &ppdev);
+> +		if (err) {
+> +			dev_err(&dev->dev, "MSI-X preparation failed (%d)\n",
+> +				err);
+> +			return err;
+
+Thanks, Roger.
