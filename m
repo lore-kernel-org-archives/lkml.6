@@ -2,138 +2,101 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E315DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A678C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A407420879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:44:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cVimNEqG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A407420879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id F3BEE20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:45:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BEE20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbeLEVo1 (ORCPT
+        id S1728622AbeLEVpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:44:27 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41133 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbeLEVo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:44:26 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15-v6so2284312ljc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:44:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xEeJHAAiSGsLcB7FfbD7q9ilLJGsNKJ++qp+PPJmZZs=;
-        b=cVimNEqGh3m4R1bKKyCfw0n6eCWEBhBGMdMAEXhYGV2YgU2hzCbEqqyZvepsN06IB7
-         v8ekRsvc6bs0iWLt656e4RQt2tY4t1qTYOMmvZ+3kc6G1PCKTcLPJy4vd3I8f1SRhfOB
-         f2hyOkXfxLhgAkknhO1SikvTUojk1NxErh/xI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xEeJHAAiSGsLcB7FfbD7q9ilLJGsNKJ++qp+PPJmZZs=;
-        b=BdvixCfL9jDJWcJ3VOoOrjN8A6k5C0V3Vev2dseXOFBiU3VGDKZbBK7aZkLGtBijed
-         YUf9A0WjAc1bITZZOqd88o0Z5ZYlqOIz0ftd9TaOJToS21JrIBc7zvYb+eNqSnnQvgRc
-         YLBPd+QEiOJejjHDqnBM4eAHfNBm68pj+07Nf+i+OLwvuJSPUKfd3NKz+SEJCCLbkI2g
-         mnMg13uMQLOSscObYQi1Wm2ZtT/Dv+qmi+VogXofZ8SvAvVmgIVV9qSfZ7jwBraqD2rG
-         h7m66KaT/Iw9Ik5YeRNGb9c/SH9Wjrklfe9wvO3ocLC5m+/++oIaAMBQfjovcOt9f+pG
-         m1uw==
-X-Gm-Message-State: AA+aEWb7rGHO52y17GI28SGWRdqIe8sotmXaf3uxyognOedN7tK11jfU
-        k0PT1Nxz4EEX65rdVqyoh1S4aq8wnr0=
-X-Google-Smtp-Source: AFSGD/XRH6E6/TzmEnpXf3vMZSeb0A69C+AaY8zy4y0R2q5umYZHBP//Ow7/yleEAq8aK/6SK0Fu8g==
-X-Received: by 2002:a2e:5d12:: with SMTP id r18-v6mr18401441ljb.89.1544046264968;
-        Wed, 05 Dec 2018 13:44:24 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id r4sm3813928lfe.60.2018.12.05.13.44.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 13:44:24 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id v15-v6so19728555ljh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 13:44:23 -0800 (PST)
-X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr18174084ljh.174.1544046263003;
- Wed, 05 Dec 2018 13:44:23 -0800 (PST)
+        Wed, 5 Dec 2018 16:45:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeLEVpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 16:45:50 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AEEE5307D85E;
+        Wed,  5 Dec 2018 21:45:49 +0000 (UTC)
+Received: from sky.random (ovpn-122-73.rdu2.redhat.com [10.10.122.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8E71194AF;
+        Wed,  5 Dec 2018 21:45:43 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 16:45:42 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
+ regressions
+Message-ID: <20181205214542.GC11899@redhat.com>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com>
+ <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
+ <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com>
+ <20181205090554.GX1286@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1812051142040.240991@chino.kir.corp.google.com>
 MIME-Version: 1.0
-References: <20181128223428.177313-1-evgreen@chromium.org> <20181128223428.177313-4-evgreen@chromium.org>
- <CAD=FV=VtKpbL3-Wt8ctcmTG0_-YzgEv3xXZGd8xV=RsgAhof1A@mail.gmail.com>
-In-Reply-To: <CAD=FV=VtKpbL3-Wt8ctcmTG0_-YzgEv3xXZGd8xV=RsgAhof1A@mail.gmail.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 5 Dec 2018 13:43:46 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7ffHt8GzyZXzG0uJdYUSmzWk7mGu7Y-E=Oh+PSBQoepg@mail.gmail.com>
-Message-ID: <CAE=gft7ffHt8GzyZXzG0uJdYUSmzWk7mGu7Y-E=Oh+PSBQoepg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: sdm845: Add SD nodes for sdm845-mtp
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, robh+dt@kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>,
-        mark.rutland@arm.com, linux-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1812051142040.240991@chino.kir.corp.google.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 05 Dec 2018 21:45:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 1:19 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Wed, Nov 28, 2018 at 2:34 PM Evan Green <evgreen@chromium.org> wrote:
-> > +&sdhc_2 {
-> > +       status = "okay";
-> > +
-> > +       pinctrl-names = "default";
-> > +       pinctrl-0 = <&sdc2_clk &sdc2_cmd &sdc2_data &sd_cd_odl>;
-> > +
-> > +       vmmc-supply = <&vreg_l21a_2p95>;
-> > +       vqmmc-supply = <&vddpx_2>;
-> > +
-> > +       cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
-> > +};
-> > +
-> >  &qupv3_id_1 {
->
-> Please sort alphabetically.  "s" comes after "q".
+On Wed, Dec 05, 2018 at 11:49:26AM -0800, David Rientjes wrote:
+> High thp utilization is not always better, especially when those hugepages 
+> are accessed remotely and introduce the regressions that I've reported.  
+> Seeking high thp utilization at all costs is not the goal if it causes 
+> workloads to regress.
 
-I've got A through F down cold, but those later letters are spotty :) Will fix.
+Is it possible what you need is a defrag=compactonly_thisnode to set
+instead of the default defrag=madvise? The fact you seem concerned
+about page fault latencies doesn't make your workload an obvious
+candidate for MADV_HUGEPAGE to begin with. At least unless you decide
+to smooth the MADV_HUGEPAGE behavior with an mbind that will simply
+add __GFP_THISNODE to the allocations, perhaps you'll be even faster
+if you invoke reclaim in the local node for 4k allocations too.
 
->
->
-> > +       /* It seems that mmc_test reports errors if drive strength is not 16. */
->
-> Possibly put this comment right next to one of the the "drive-strength" lines?
+It looks like for your workload THP is a nice to have add-on, which is
+practically true of all workloads (with a few corner cases that must
+use MADV_NOHUGEPAGE), and it's what the defrag= default is about.
 
-Ok.
+Is it possible that you just don't want to shut off completely
+compaction in the page fault and if you're ok to do it for your
+library, you may be ok with that for all other apps too?
 
->
->
-> > +       sd_cd_odl: sd-cd-odl {
->
-> "sd_cd_odl" is the name on a different board.  On sdm845 this is
-> 'sd_card_det_n", so it'd be better to use that name.
->
->
-> > +               pinmux {
-> > +                       pins = "gpio126";
-> > +                       function = "gpio";
-> > +               };
-> > +
-> > +               pinconf {
-> > +                       pins = "gpio126";
-> > +                       bias-pull-up;
-> > +                       drive-strength = <2>;
->
-> Maybe leave this off?  According to Bjorn's research "drive-strength"
-> has no affect on inputs and this is most certainly an input.
+That's a different stance from other MADV_HUGEPAGE users because you
+don't seem to mind a severely crippled THP utilization in your
+app.
 
-Sure. Spin coming up.
+With your patch the utilization will go down a lot compared to the
+previous __GFP_THISNODE swap storm capable and you're still very fine
+with that. The fact you're fine with that points in the direction of
+changing the default tuning for defrag= to something stronger than
+madvise (that is precisely the default setting that is forcing you to
+use MADV_HUGEPAGE to get a chance to get some THP once a in a while
+during the page fault, after some uptime).
 
->
-> -Doug
+Considering mbind surprisingly isn't privileged (so I suppose it may
+cause swap storms equivalent to __GFP_THISNODE if maliciously used
+after all) you could even consider a defrag=thisnode to force
+compaction+defrag local to the node to retain your THP+NUMA dynamic
+partitioning behavior that ends up swappin heavy in the local node.
