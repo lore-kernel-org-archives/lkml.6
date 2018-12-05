@@ -7,60 +7,66 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B67EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ACAC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A85F208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80172208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544039503;
-	bh=sKoFktAAzxuIYi7hs2T7fMQmIGYgXPVWp2CYJYqjf7A=;
+	s=default; t=1544039508;
+	bh=/Mf9lkbFWlWsrBODBZfbt8kW8HIna6A1hCkUrRKohWo=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=dDKsiUQt/bWQY0BQgo5yKi+/IJg1a3izh4A9qfb52Jrrp1fLSbq29gwE/ZtHs6d78
-	 8+kf81atU7UClwAddA4o62G62F84Biw8zoB/kVNFyYgUBvreyzYNhEJxKn4d98Phna
-	 KA5l34MnK+k0N2e9Ed4tzgRzAGiFwDGI3Uh/hfjQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A85F208E7
+	b=JKumZdfEx/QWN4YAJ8fJcnR5CKlEV9x92MJo7B1zJpQvzHJ/VXh4KeCT+IuIGWV6u
+	 htP7fMhL4bAg6PgR3xeo8tpG/JbP+G/BeoqIGMHvBZk4lS8Ia4peuRpKzlfbeMZh0s
+	 UniZK0twgZMD4uGvAcTsk+ns+4X2ImJkhloY4Itk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80172208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbeLETvl (ORCPT
+        id S1728926AbeLETvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:51:41 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36365 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728871AbeLETva (ORCPT
+        Wed, 5 Dec 2018 14:51:47 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46669 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728511AbeLETv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:51:30 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k98so19828844otk.3;
-        Wed, 05 Dec 2018 11:51:29 -0800 (PST)
+        Wed, 5 Dec 2018 14:51:29 -0500
+Received: by mail-ot1-f65.google.com with SMTP id w25so19773731otm.13;
+        Wed, 05 Dec 2018 11:51:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=qctK2c2J3l+tBzpOg1oUnoGeCH3cH1/L4PcrunO1KLU=;
-        b=GT4oyBxAmZTehgkEiNV/7U1+glJe092cnQncOzxaCb1nQCrpdJSVlaBKVO/itHqzmV
-         8J90f/F4M5eGkQDQyaEuy2aJfviMJ119aFyJ5CR6S7pufF9M6s2vJ1B6QhlNcc0XtTc1
-         sBAUmVzCLTqs7fZYyS0/QGnQEewqBtTUildnlt4xxhKB3yQSj69QRWuflOZrBitShxtF
-         t1YPNDaSh8PVeSbbK2gceg62Xvdzf+VKRYGenXlpLRCNh4Vlon/rn1R6X6A8DsJXZTbQ
-         55VJ8LDFAv9R/pc9yazpRBFiX3YBjBAr+dKKJGV2JyH4DBWtrFWpVRqtKfO69i8nHZAh
-         ihEw==
-X-Gm-Message-State: AA+aEWbtcyGgS4jmkS6LuLs0tTv+iF55OCPnz7SqOJPnKKqygg6/GtWV
-        5cYMu0brEiqNi8U39cj68OX14yNnOg==
-X-Google-Smtp-Source: AFSGD/XEunTCNxwJ7ZaoCxnPQQsLCOY0gMVg7PKStnA23jdS3FZI8iGSRFUk95tHVp+E03CMk+WeSw==
-X-Received: by 2002:a9d:77d4:: with SMTP id w20mr15762782otl.196.1544039489380;
-        Wed, 05 Dec 2018 11:51:29 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=ThQ7RT0snc2eXhKBllFE/yVobWH1ZvOxkwfOj6s8tE8=;
+        b=Xb0dr03n9GAJ5BEKTLca5y35Q2eJlgI4oSTXhzcngJmRPPtnDBSfoNnIbKq/GomoGy
+         1WF8cC6gjMr06CgO8HBeFaE/EXf1cRuvcg7lQSkVUgnne5WZZMnF3Hqx2aoWKVIaF2ao
+         lq8lNHnp61k7KN8o88TyRtfQN/gDop2l+0wYXM7ulMmbPBz6ZZJ+9Q3bhdxfebuIX1/Y
+         hrVWpDkMm/tjUZ5OaWn7OSxoB64WpIpSWm+rV+WHtvwPN2s5BUDw8c7ccUt++g0uc4cF
+         yteFBs679x7Heni2l8uE2k6Dh1Rfcak2QSY2xypy8DCG/bHFR8rIr3dCuIRAs5WMIwgN
+         zfZA==
+X-Gm-Message-State: AA+aEWYWbXbsbSGIdwL2SJiOAHejsdgS5p5uWmiQQ1WsxdaekpvfxGwJ
+        K8Ol7QQt4Y02tLi1aB1A0JvlNAdoAA==
+X-Google-Smtp-Source: AFSGD/WpzdhTG/04KfFGOZWhkfcbxlLfUQArESSierVbdwONFtNtAjGMAkfqvVdxhqqgqIJsIfGAnQ==
+X-Received: by 2002:a05:6830:13c2:: with SMTP id e2mr15266877otq.15.1544039488275;
         Wed, 05 Dec 2018 11:51:28 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.51.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 11:51:27 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] coresight: Use of_node_name_eq for node name comparisons
-Date:   Wed,  5 Dec 2018 13:50:50 -0600
-Message-Id: <20181205195050.4759-34-robh@kernel.org>
+Cc:     Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] ASoC: Use of_node_name_eq for node name comparisons
+Date:   Wed,  5 Dec 2018 13:50:49 -0600
+Message-Id: <20181205195050.4759-33-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,29 +78,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Convert string compares of DT node names to use of_node_name_eq helper
 instead. This removes direct access to the node name pointer.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
+For the FSL ASoC card, the full node names appear to be "ssi", "esai",
+and "sai", so there's not any reason to use strstr and of_node_name_eq
+can be used instead.
+
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/hwtracing/coresight/of_coresight.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/fsl/fsl-asoc-card.c       | 6 +++---
+ sound/soc/generic/simple-scu-card.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 89092f83567e..7045930fc958 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -80,8 +80,8 @@ static struct device_node *of_coresight_get_port_parent(struct device_node *ep)
- 	 * Skip one-level up to the real device node, if we
- 	 * are using the new bindings.
- 	 */
--	if (!of_node_cmp(parent->name, "in-ports") ||
--	    !of_node_cmp(parent->name, "out-ports"))
-+	if (of_node_name_eq(parent, "in-ports") ||
-+	    of_node_name_eq(parent, "out-ports"))
- 		parent = of_get_next_parent(parent);
+diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
+index 44433b20435c..81f2fe2c6d23 100644
+--- a/sound/soc/fsl/fsl-asoc-card.c
++++ b/sound/soc/fsl/fsl-asoc-card.c
+@@ -571,17 +571,17 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
+ 	}
  
- 	return parent;
+ 	/* Common settings for corresponding Freescale CPU DAI driver */
+-	if (strstr(cpu_np->name, "ssi")) {
++	if (of_node_name_eq(cpu_np, "ssi")) {
+ 		/* Only SSI needs to configure AUDMUX */
+ 		ret = fsl_asoc_card_audmux_init(np, priv);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "failed to init audmux\n");
+ 			goto asrc_fail;
+ 		}
+-	} else if (strstr(cpu_np->name, "esai")) {
++	} else if (of_node_name_eq(cpu_np, "esai")) {
+ 		priv->cpu_priv.sysclk_id[1] = ESAI_HCKT_EXTAL;
+ 		priv->cpu_priv.sysclk_id[0] = ESAI_HCKR_EXTAL;
+-	} else if (strstr(cpu_np->name, "sai")) {
++	} else if (of_node_name_eq(cpu_np, "sai")) {
+ 		priv->cpu_priv.sysclk_id[1] = FSL_SAI_CLK_MAST1;
+ 		priv->cpu_priv.sysclk_id[0] = FSL_SAI_CLK_MAST1;
+ 	}
+diff --git a/sound/soc/generic/simple-scu-card.c b/sound/soc/generic/simple-scu-card.c
+index 85b46f0eae0f..e9a1acffcf5b 100644
+--- a/sound/soc/generic/simple-scu-card.c
++++ b/sound/soc/generic/simple-scu-card.c
+@@ -216,7 +216,7 @@ static int asoc_simple_card_parse_of(struct simple_card_data *priv)
+ 	i = 0;
+ 	for_each_child_of_node(node, np) {
+ 		is_fe = false;
+-		if (strcmp(np->name, PREFIX "cpu") == 0)
++		if (of_node_name_eq(np, PREFIX "cpu"))
+ 			is_fe = true;
+ 
+ 		ret = asoc_simple_card_dai_link_of(np, priv, daifmt, i, is_fe);
 -- 
 2.19.1
 
