@@ -2,80 +2,144 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A872C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E4CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4199A20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544027449;
-	bh=dHQfDerNuj2N49NiI3C9axw+52chXrULOjae4wogl1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=v8txTWVMSHw1RfAgNhpkjFPNk0Vvg2qfol9AIMzM0f0vZGXv2zEaUg6QX3x61t6S8
-	 uVLEbbJFhl9pdh9o2jnr6xRpSFY8LGxVNemC9RsJBMEH+ej85H19n6R8bXOlBELqpy
-	 pZwaQr4UfR8fF8hxfAuH1SqBidEfJJ2RtCNegMMg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4199A20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9DEE42082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="PENoLAQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DEE42082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeLEQas (ORCPT
+        id S1727932AbeLEQat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 11:30:49 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:50261 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbeLEQas (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 11:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727737AbeLEQar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:30:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 484E62082B;
-        Wed,  5 Dec 2018 16:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544027446;
-        bh=dHQfDerNuj2N49NiI3C9axw+52chXrULOjae4wogl1g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Os7JCdUIi7I/vQg1fUg0wshtF77uk+pcyYzqkvGHPRkWTpDx6aRB2urU30GrireD1
-         suuxBYKOP0ydlCJtcctmi5mboc/5zVAlOzjhgfaKgAtbKLAFLMuDQzhck7wTY7BDDv
-         47WLvZ5kr5RVhggiGLw0T51YXbVu1RmEJeTSDvnE=
-Date:   Wed, 5 Dec 2018 17:30:44 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Peter Rajnoha <prajnoha@redhat.com>
-Cc:     rafael@kernel.org, jeyu@kernel.org, linux-kernel@vger.kernel.org,
-        msekleta@redhat.com
-Subject: Re: [PATCH 0/2] Fix return code and improve feature check for
- synthetic uevents
-Message-ID: <20181205163044.GB7185@kroah.com>
-References: <20181205112745.12276-1-prajnoha@redhat.com>
+Received: by mail-it1-f193.google.com with SMTP id z7so22272855iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 08:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UjMA8GYjBXGSFO0Tdq6v3UUBevPYreEUAopQcbtKsI4=;
+        b=PENoLAQDHlvM4Yx8wdadc2ZGSu2llROpwQ411ayS38IvaD+lt8V/3EaHThCZrwXovi
+         +LZSQofnxplkfSL82zgTLaHKMgu14ibfDzqubHyeZFQ1v4aExm9tFufL7APu4n7q/5z2
+         q07eJOrtF2qaf6cE2RiFAf3MTgJeP3RFAen/LbyyeapvNDpWXnG+zy681n9fXmE7daBg
+         kGldPB1oR3YwOwLIe3hS9FBUaeBL/0LjyzWuhChig0zFX0NuiY9wpc7d71GMMSOOgpj3
+         f695ExeSBvTkiJJ+3RTyIbvT9853tmX/6Nk2r+1fK8cTofI6bQGforjagYkRBtrF3SF2
+         +ORA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UjMA8GYjBXGSFO0Tdq6v3UUBevPYreEUAopQcbtKsI4=;
+        b=IoK5JqpMUUTHVWiq9YKU0WfeJk71z7Z5j5/wdnd00kasGKXBbeqkm9a0y/59VvS6zR
+         y2h6h0ijydtiP0yQ7G8RzGjy3OcVr4ymWJNAFlGpw9FuRTrmqo43OIdkAVTYPWfDLYMx
+         G5torcbQfRxFGf15QVUdZvOh4ndac80uzpNCN2dOpHaPVFAUElpGzHpSZHMGv4jLQupx
+         HTVtsuTY0AMitR0XeYPZQSSlhLQnjp7iMPdLv1H+5OxPZiGY30RdT6p1Emgtle4rKoWj
+         1Sg1cMbTJV/ie6SgCy5YGpd2AS7920OXwwv3ZJBcbYAUWwSV6+iE5YIMkVObmsTraxmy
+         /ZKw==
+X-Gm-Message-State: AA+aEWZDCUbTRM6FZHc4NKzlWv/IX6ImLK9rYsjvcVrrZHI1YeLXzLFV
+        LpnBMzQyXkqpYHfmdFAPV5I5MJuTPjQ=
+X-Google-Smtp-Source: AFSGD/VWDp/W/7ZUF1qcESATLfLxQd925a4VisnmGBV285qzsF+yF7y7RO2JCbJ+Tqj5yyDBcgcU5g==
+X-Received: by 2002:a02:88cf:: with SMTP id b15mr23391906jak.10.1544027447020;
+        Wed, 05 Dec 2018 08:30:47 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id y8sm7219380ita.5.2018.12.05.08.30.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 08:30:46 -0800 (PST)
+Subject: Re: [PATCH V9 3/4] blk-mq: issue directly with bypass 'false' in
+ blk_mq_sched_insert_requests
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1543995842-20704-4-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6cb12913-3575-d3aa-ff08-f89bcb38b3d6@kernel.dk>
+Date:   Wed, 5 Dec 2018 09:30:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205112745.12276-1-prajnoha@redhat.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <1543995842-20704-4-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:27:43PM +0100, Peter Rajnoha wrote:
-> Two small patches to aid handling of synthetic uevents back in userspace:
-> 
->   - Return error code back to userspace on /sys/.../uevent file write
->     failure so userspace knows and it can act accordingly.
-> 
->   - Add new 'kernel/uevent_features' sysfs file to make it possible for
->     userspace to check that the extended synthetic uevent arguments are
->     supported without relying on kernel version check only.
-> 
-> Peter Rajnoha (2):
->   kobject: return error code if writing /sys/.../uevent fails
->   kobject: add kernel/uevent_features sysfs file
+On 12/5/18 12:44 AM, Jianchao Wang wrote:
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index fe92e52..0dfa269 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -1899,32 +1899,23 @@ blk_status_t blk_mq_request_issue_directly(struct request *rq, bool last)
+>  void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+>  		struct list_head *list)
+>  {
+> +	blk_qc_t cookie = BLK_QC_T_INVALID;
+> +
 
-Did you send this series twice?  Which one should I pay attention to?
+I'm fine with adding this, but I think we need some sort of check for
+that not being a valid cookie. That isn't new, we really should have
+already.
 
-confused,
+>  	while (!list_empty(list)) {
+> -		blk_status_t ret;
+>  		struct request *rq = list_first_entry(list, struct request,
+>  				queuelist);
+>  
+> -		if (!blk_rq_can_direct_dispatch(rq))
+> -			break;
+> -
+>  		list_del_init(&rq->queuelist);
+> -		ret = blk_mq_request_issue_directly(rq, list_empty(list));
+> -		if (ret != BLK_STS_OK) {
+> -			if (ret == BLK_STS_RESOURCE ||
+> -					ret == BLK_STS_DEV_RESOURCE) {
+> -				list_add(&rq->queuelist, list);
+> -				break;
+> -			}
+> -			blk_mq_end_request(rq, ret);
+> -		}
+> +		blk_mq_try_issue_directly(hctx, rq, &cookie, false,
+> +				list_empty(list));
 
-greg k-h
+Indent the list_empty() one more tab, should be after the ( if possible.
+
+> -	 * If we didn't flush the entire list, we could have told
+> -	 * the driver there was more coming, but that turned out to
+> -	 * be a lie.
+> +	 * cookie is set to a valid value only when reqeust is issued successfully.
+> +	 * We only need to care about the last request's result, if it is inserted,
+> +	 * kick the hardware with commit_rqs hook.
+
+reqeust -> request
+
+Also lines are too long, limit to 80 chars please.
+
+And why aren't we just using the list_empty() check like before, and not
+having to add the inval cookie value?
+
+> -	if (!list_empty(list) && hctx->queue->mq_ops->commit_rqs)
+> +	if ((cookie == BLK_QC_T_INVALID) && hctx->queue->mq_ops->commit_rqs)
+>  		hctx->queue->mq_ops->commit_rqs(hctx);
+
+Redundant parens around the cookie check.
+
+-- 
+Jens Axboe
+
