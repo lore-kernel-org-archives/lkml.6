@@ -2,216 +2,313 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ACEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DFDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0045C20645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:50:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bj8ToTz0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0045C20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F1A42084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 03:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1A42084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbeLEDuB (ORCPT
+        id S1726933AbeLEDvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 22:50:01 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41568 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeLEDuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 22:50:00 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so18114232wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 19:49:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MzhuMjMGrWaYPBgj7NxnknHks4PiChgmdxDKPESvPbc=;
-        b=bj8ToTz0U/XeuaDa194Kl5Fl8S7aXHODD+Ff7zXQmX6p4ifH4Y/OPI5I/f0rCJWtme
-         Yq0mg3AGrXPioOAY6IqTuIHcLHCulJcFpDRInk9BPvuscwmlAqwh+rWAvUA7jnT7idkZ
-         unhkBB09ZourdALAM9IH0NIgtUAL8XW52qnOg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MzhuMjMGrWaYPBgj7NxnknHks4PiChgmdxDKPESvPbc=;
-        b=ohiz6Pq/mf9VOcheEVyks2glpm1iXmuIBaZeXoKMoRP9T9A+8St7tLEnZdoUo5BWAb
-         aHjbFw2if1VfMQsYdK4LqTDtkK0bsFh+RFQyC7pUlrnOTCd0ySLXSB2dG+rzsrLOKvIn
-         lhHdrA269ZtQ7dxxVdQfFJnC/VOkNRr++eEgDMVE+GZ0R/hUeJCkgtBZyAZwH+tWmGn5
-         AR1ht9Xci5QwfkMY5UtLe6DjFVw01k8NTcygjQ+Ehb1nLH+2Q78tbzsZg7LHxIzdeb9F
-         RxonyE1rYmVq7Vq8KerGkx9P38KOJICZcDleb3lNhilr4XYEP7bKO/tWUxRsGUHeP9bw
-         vf0w==
-X-Gm-Message-State: AA+aEWbhKtlQ1wRl2j38M7ialm0zqqnNRof+WHBgTt0Sr/urjHhj5nla
-        RQO+mqidda5DWxxn6tr8VfXgDQ==
-X-Google-Smtp-Source: AFSGD/W5ZXFHJS9SIZlY4c7hLN0kpMIFwaRXz5fh+wyBPSX2RK0gyp5GQwHplqzUevvj1yrL7cQFEA==
-X-Received: by 2002:a5d:5351:: with SMTP id t17mr20015207wrv.288.1543981797276;
-        Tue, 04 Dec 2018 19:49:57 -0800 (PST)
-Received: from leoy-ThinkPad-X240s ([209.250.228.18])
-        by smtp.gmail.com with ESMTPSA id y13sm3195946wrn.73.2018.12.04.19.49.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 19:49:56 -0800 (PST)
-Date:   Wed, 5 Dec 2018 11:49:50 +0800
-From:   leo.yan@linaro.org
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Al Grant <Al.Grant@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v1 5/5] perf cs-etm: Track exception number
-Message-ID: <20181205034950.GB15964@leoy-ThinkPad-X240s>
-References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
- <1541912383-19915-6-git-send-email-leo.yan@linaro.org>
- <20181119204749.GB608@xps15>
+        Tue, 4 Dec 2018 22:51:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726830AbeLEDvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 22:51:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25401AEF7;
+        Wed,  5 Dec 2018 03:51:13 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Tom Herbert <tom@quantonium.net>,
+        David Miller <davem@davemloft.net>
+Date:   Wed, 05 Dec 2018 14:51:02 +1100
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] rhashtable: further improve stability of rhashtable_walk
+In-Reply-To: <153086109256.2825.15329014177598382684.stgit@noble>
+References: <153086101070.2825.6850140624411927465.stgit@noble> <153086109256.2825.15329014177598382684.stgit@noble>
+Message-ID: <87zhtkeimx.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119204749.GB608@xps15>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 01:47:49PM -0700, Mathieu Poirier wrote:
-> On Sun, Nov 11, 2018 at 12:59:43PM +0800, Leo Yan wrote:
-> > When an exception packet comes, it contains the info for exception
-> > number; the exception number indicates the exception types, so from it
-> > we can know if the exception is taken for interrupt, system call or
-> > other traps, etc.  But because the exception return packet cannot
-> > delivery exception number correctly by decoder thus when prepare sample
-> > flags we cannot know what's type for exception return.
-> > 
-> > This patch adds a new 'exc_num' array in decoder structure to record
-> > exception number per CPU, the exception number is recorded in the array
-> > when the exception packet comes and this exception number can be used by
-> > exception return packet.  If detect there have discontinuous trace with
-> > TRACE_ON or TRACE_OFF packet, the exception number is set to invalid
-> > value.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 67 ++++++++++++++++++++++---
-> >  1 file changed, 59 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > index b8cb7a3e..d1a6cbc 100644
-> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> > @@ -43,6 +43,7 @@ struct cs_etm_decoder {
-> >  	u32 packet_count;
-> >  	u32 head;
-> >  	u32 tail;
-> > +	u32 *exc_num;
-> >  	struct cs_etm_packet packet_buffer[MAX_BUFFER];
-> >  };
-> >  
-> > @@ -368,24 +369,64 @@ static ocsd_datapath_resp_t
-> >  cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
-> >  				 const uint8_t trace_chan_id)
-> >  {
-> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > -					     CS_ETM_TRACE_OFF);
-> > +	int ret;
-> > +	struct cs_etm_packet *packet;
-> > +
-> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > +					    CS_ETM_TRACE_OFF);
-> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > +		return ret;
-> > +
-> > +	packet = &decoder->packet_buffer[decoder->tail];
-> > +
-> > +	/* Clear execption number for discontinuous trace */
-> > +	decoder->exc_num[packet->cpu] = UINT32_MAX;
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  static ocsd_datapath_resp_t
-> >  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
-> >  				const uint8_t trace_chan_id)
-> >  {
-> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > -					     CS_ETM_TRACE_ON);
-> > +	int ret;
-> > +	struct cs_etm_packet *packet;
-> > +
-> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > +					    CS_ETM_TRACE_ON);
-> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > +		return ret;
-> > +
-> > +	packet = &decoder->packet_buffer[decoder->tail];
-> > +
-> > +	/* Clear execption number for discontinuous trace */
-> > +	decoder->exc_num[packet->cpu] = UINT32_MAX;
-> > +
-> > +	return ret;
-> >  }
-> >  
-> >  static ocsd_datapath_resp_t
-> >  cs_etm_decoder__buffer_exception(struct cs_etm_decoder *decoder,
-> > +				 const ocsd_generic_trace_elem *elem,
-> >  				 const uint8_t trace_chan_id)
-> >  {
-> > -	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > -					     CS_ETM_EXCEPTION);
-> > +	int ret;
-> > +	struct cs_etm_packet *packet;
-> > +
-> > +	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> > +					    CS_ETM_EXCEPTION);
-> > +	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-> > +		return ret;
-> > +
-> > +	packet = &decoder->packet_buffer[decoder->tail];
-> > +
-> > +	/*
-> > +	 * Exception number is recorded per CPU and later can be used
-> > +	 * for exception return instruction analysis.
-> > +	 */
-> > +	decoder->exc_num[packet->cpu] = elem->exception_number;
-> 
-> Am I missing something or the information about the exception number that is
-> recorded here isn't used anywhere?
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The exception number will be used to set branch flag patch [1].
-According to exception number we can know it's for system call,
-interrupt or other traps.
 
-[1] http://archive.armlinux.org.uk/lurker/message/20181111.050755.d1c1b257.en.html
+If the sequence:
+   obj =3D rhashtable_walk_next(iter);
+   rhashtable_walk_stop(iter);
+   rhashtable_remove_fast(ht, &obj->head, params);
+   rhashtable_walk_start(iter);
 
-> If you want to use this in perf report/script,
-> the exception number will have to be added to the cs_etm_packet struct.
+ races with another thread inserting or removing
+ an object on the same hash chain, a subsequent
+ rhashtable_walk_next() is not guaranteed to get the "next"
+ object. It is possible that an object could be
+ repeated, or missed.
 
-Actually before has discussed this with Mike but found it's hard to
-save the exception number in cs_etm_packet struct.  The reason is the
-exception packet contains the correct exception number, but the
-exception return packet doesn't contain exception number.  Thus this
-patch uses cs_etm_decoder struct to save exception number per CPU
-context when receive exception packet, and later the saved exception
-number will be used by exception return packet.
+ This can be made more reliable by keeping the objects in a hash chain
+ sorted by memory address.  A subsequent rhashtable_walk_next()
+ call can reliably find the correct position in the list, and thus
+ find the 'next' object.
 
-Please see related discussion at the end of page [2].
+ It is not possible to take this approach with an rhltable as keeping
+ the hash chain in order is not so easy.  When the first object with a
+ given key is removed, it is replaced in the chain with the next
+ object with the same key, and the address of that object may not be
+ correctly ordered.
+ I have not yet found any way to achieve the same stability
+ with rhltables, that doesn't have a major impact on lookup
+ or insert.  No code currently in Linux would benefit from
+ such extra stability.
 
-[2] https://lists.linaro.org/pipermail/coresight/2018-October/001832.html
+ With this patch:
+ - a new object is always inserted after the last object with a
+   smaller address, or at the start.
+ - when rhashtable_walk_start() is called, it records that 'p' is not
+   'safe', meaning that it cannot be dereferenced.  The revalidation
+   that was previously done here is moved to rhashtable_walk_next()
+ - when rhashtable_walk_next() is called while p is not NULL and not
+   safe, it walks the chain looking for the first object with an
+   address greater than p and returns that.  If there is none, it moves
+   to the next hash chain.
 
-> I am done with the revision of this set.
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
 
-Thanks a lot for reviewing.
+This is a resend of a patch that I sent back in July.  I couldn't
+applied then because it assumed another rhashtable patch which hadn't
+landed yet - it now has.
 
-[...]
+NeilBrown
 
-Thanks,
-Leo Yan
+ include/linux/rhashtable-types.h |  1 +
+ include/linux/rhashtable.h       | 10 ++++-
+ lib/rhashtable.c                 | 82 ++++++++++++++++++++++++++----------=
+----
+ 3 files changed, 62 insertions(+), 31 deletions(-)
+
+diff --git a/include/linux/rhashtable-types.h b/include/linux/rhashtable-ty=
+pes.h
+index 763d613ce2c2..bc3e84547ba7 100644
+=2D-- a/include/linux/rhashtable-types.h
++++ b/include/linux/rhashtable-types.h
+@@ -126,6 +126,7 @@ struct rhashtable_iter {
+ 	struct rhashtable_walker walker;
+ 	unsigned int slot;
+ 	unsigned int skip;
++	bool p_is_unsafe;
+ 	bool end_of_table;
+ };
+=20
+diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
+index 20f9c6af7473..4a8056b66bfb 100644
+=2D-- a/include/linux/rhashtable.h
++++ b/include/linux/rhashtable.h
+@@ -635,7 +635,12 @@ static inline void *__rhashtable_insert_fast(
+ 		    (params.obj_cmpfn ?
+ 		     params.obj_cmpfn(&arg, rht_obj(ht, head)) :
+ 		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
+=2D			pprev =3D &head->next;
++			if (rhlist) {
++				pprev =3D &head->next;
++			} else {
++				if (head < obj)
++					pprev =3D &head->next;
++			}
+ 			continue;
+ 		}
+=20
+@@ -1131,7 +1136,8 @@ static inline int rhashtable_walk_init(struct rhashta=
+ble *ht,
+  * Note that if you restart a walk after rhashtable_walk_stop you
+  * may see the same object twice.  Also, you may miss objects if
+  * there are removals in between rhashtable_walk_stop and the next
+=2D * call to rhashtable_walk_start.
++ * call to rhashtable_walk_start.  Note that this is different to
++ * rhashtable_walk_enter() which never misses objects.
+  *
+  * For a completely stable walk you should construct your own data
+  * structure outside the hash table.
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 852ffa5160f1..d4154b9a29a1 100644
+=2D-- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -225,6 +225,7 @@ static int rhashtable_rehash_one(struct rhashtable *ht,=
+ unsigned int old_hash)
+ 	struct bucket_table *old_tbl =3D rht_dereference(ht->tbl, ht);
+ 	struct bucket_table *new_tbl =3D rhashtable_last_table(ht, old_tbl);
+ 	struct rhash_head __rcu **pprev =3D rht_bucket_var(old_tbl, old_hash);
++	struct rhash_head __rcu **inspos;
+ 	int err =3D -EAGAIN;
+ 	struct rhash_head *head, *next, *entry;
+ 	spinlock_t *new_bucket_lock;
+@@ -253,12 +254,15 @@ static int rhashtable_rehash_one(struct rhashtable *h=
+t, unsigned int old_hash)
+ 	new_bucket_lock =3D rht_bucket_lock(new_tbl, new_hash);
+=20
+ 	spin_lock_nested(new_bucket_lock, SINGLE_DEPTH_NESTING);
+=2D	head =3D rht_dereference_bucket(new_tbl->buckets[new_hash],
+=2D				      new_tbl, new_hash);
+=2D
++	inspos =3D &new_tbl->buckets[new_hash];
++	head =3D rht_dereference_bucket(*inspos, new_tbl, new_hash);
++	while (!rht_is_a_nulls(head) && head < entry) {
++		inspos =3D &head->next;
++		head =3D rht_dereference_bucket(*inspos, new_tbl, new_hash);
++	}
+ 	RCU_INIT_POINTER(entry->next, head);
+=20
+=2D	rcu_assign_pointer(new_tbl->buckets[new_hash], entry);
++	rcu_assign_pointer(*inspos, entry);
+ 	spin_unlock(new_bucket_lock);
+=20
+ 	rcu_assign_pointer(*pprev, next);
+@@ -554,6 +558,10 @@ static struct bucket_table *rhashtable_insert_one(stru=
+ct rhashtable *ht,
+ 		return ERR_PTR(-ENOMEM);
+=20
+ 	head =3D rht_dereference_bucket(*pprev, tbl, hash);
++	while (!ht->rhlist && !rht_is_a_nulls(head) && head < obj) {
++		pprev =3D &head->next;
++		head =3D rht_dereference_bucket(*pprev, tbl, hash);
++	}
+=20
+ 	RCU_INIT_POINTER(obj->next, head);
+ 	if (ht->rhlist) {
+@@ -648,10 +656,10 @@ EXPORT_SYMBOL_GPL(rhashtable_insert_slow);
+  *
+  * This function prepares a hash table walk.
+  *
+=2D * Note that if you restart a walk after rhashtable_walk_stop you
+=2D * may see the same object twice.  Also, you may miss objects if
+=2D * there are removals in between rhashtable_walk_stop and the next
+=2D * call to rhashtable_walk_start.
++ * A walk is guaranteed to return every object that was in
++ * the table before this call, and is still in the table when
++ * rhashtable_walk_next() returns NULL.  Duplicates can be
++ * seen, but only if there is a rehash event during the walk.
+  *
+  * For a completely stable walk you should construct your own data
+  * structure outside the hash table.
+@@ -735,19 +743,10 @@ int rhashtable_walk_start_check(struct rhashtable_ite=
+r *iter)
+=20
+ 	if (iter->p && !rhlist) {
+ 		/*
+=2D		 * We need to validate that 'p' is still in the table, and
+=2D		 * if so, update 'skip'
++		 * 'p' will be revalidated when rhashtable_walk_next()
++		 * is called.
+ 		 */
+=2D		struct rhash_head *p;
+=2D		int skip =3D 0;
+=2D		rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
+=2D			skip++;
+=2D			if (p =3D=3D iter->p) {
+=2D				iter->skip =3D skip;
+=2D				goto found;
+=2D			}
+=2D		}
+=2D		iter->p =3D NULL;
++		iter->p_is_unsafe =3D true;
+ 	} else if (iter->p && rhlist) {
+ 		/* Need to validate that 'list' is still in the table, and
+ 		 * if so, update 'skip' and 'p'.
+@@ -864,15 +863,39 @@ void *rhashtable_walk_next(struct rhashtable_iter *it=
+er)
+ 	bool rhlist =3D ht->rhlist;
+=20
+ 	if (p) {
+=2D		if (!rhlist || !(list =3D rcu_dereference(list->next))) {
+=2D			p =3D rcu_dereference(p->next);
+=2D			list =3D container_of(p, struct rhlist_head, rhead);
+=2D		}
+=2D		if (!rht_is_a_nulls(p)) {
+=2D			iter->skip++;
+=2D			iter->p =3D p;
+=2D			iter->list =3D list;
+=2D			return rht_obj(ht, rhlist ? &list->rhead : p);
++		if (!rhlist && iter->p_is_unsafe) {
++			/*
++			 * First time next() was called after start().
++			 * Need to find location of 'p' in the list.
++			 */
++			struct rhash_head *p;
++
++			iter->skip =3D 0;
++			rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
++				iter->skip++;
++				if (p <=3D iter->p)
++					continue;
++
++				/* p is the next object after iter->p */
++				iter->p =3D p;
++				iter->p_is_unsafe =3D false;
++				return rht_obj(ht, p);
++			}
++			/* There is no "next" object in the list, move
++			 * to next hash chain.
++			 */
++		} else {
++			if (!rhlist || !(list =3D rcu_dereference(list->next))) {
++				p =3D rcu_dereference(p->next);
++				list =3D container_of(p, struct rhlist_head,
++						    rhead);
++			}
++			if (!rht_is_a_nulls(p)) {
++				iter->skip++;
++				iter->p =3D p;
++				iter->list =3D list;
++				return rht_obj(ht, rhlist ? &list->rhead : p);
++			}
+ 		}
+=20
+ 		/* At the end of this slot, switch to next one and then find
+@@ -882,6 +905,7 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
+ 		iter->slot++;
+ 	}
+=20
++	iter->p_is_unsafe =3D false;
+ 	return __rhashtable_walk_find_next(iter);
+ }
+ EXPORT_SYMBOL_GPL(rhashtable_walk_next);
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwHSygACgkQOeye3VZi
+gbnDWw/+K+GVxehFAtWhyiuK+gI9g1uV5ThFp5yV70S9BuTXUQiKAZMH9h7pe11k
+NLgtq0iOl442UvsRNb0GxlDtevJYdMcPnaW1jt3oE9fnoYm1Etr/dLDUwmJGNeUs
+0vYZwcy0uEZ7Y++pHlLZ38NGsLD806egNfduUzzvfE+UDT7S8mD/wUrPsFZGOMo0
+uGyVgxTimx0g62V/wx4bq8OlotUGb78OWDlnVMjGMElj6DQC5X5qIotwzaTw8cD7
+90jrDjJ/9RKdzA8rSfXpzMZEAWZWg6w17j2ifMNSBpLMFLN68yKLJPlgJGLCpNau
+AfU3omBAWYGLMnOyqcPsLAq7J9ZqCZDR3kz12pgXjWIMDouzn/yPMVal71s5hGC6
+Ee238xygU/QTw2p5FNHUTL5fQXA9yFzHIqpr/CpUTfhn9HdFZ4GwWlEfUC9xk4Q3
+CvYTKI04o/Cec5WZHExGGuVcX2BIBYZ9CB+KrJmm6SNggmITnCE4H4+kIhfOzz5j
+/Pwrpk7zKPx1wQXLY72HwndlHnVi+ftWp/l1W4VZEDpeLrJlTKLB70bEK0ZnecHD
+KL8M/+XXoG6pOJR4PMsF2smE76tqb2jFw7RddFbrMnykoq+fHGlH49S6StFBIXLw
+xfVR1E7PVrLR7C2jCngYcTa7NG5rfaMHJvacOvr3ERATnk6Wqeo=
+=CQV/
+-----END PGP SIGNATURE-----
+--=-=-=--
