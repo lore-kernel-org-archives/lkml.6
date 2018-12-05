@@ -2,99 +2,120 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C09C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F149C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807A6206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15D23206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:49:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="O3A0o9iU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807A6206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ic8YoOYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D23206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeLELtC (ORCPT
+        id S1727752AbeLELtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:49:02 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56720 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeLELtB (ORCPT
+        Wed, 5 Dec 2018 06:49:04 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43752 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbeLELtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:49:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WrUdGCH3HH5tHsjC6Vu680aUbSUsAUkeo47fbnKhiZE=; b=O3A0o9iUv9b0PYxqmUQvsQp2G
-        7A8VZmBDLOhIleqeG2PwQXFhvLNdRDOUB55bhrVRePqxSLxvHuEwz6527q+xYWXbY6nf3ieOK/1tS
-        cn2kf7RbMhCQJwqJ7Yd3u3punW/9HIMTzZ0VCd6zU90ebIG2VuIWarvGAXYz3V3uDf9Z0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gUVff-0003L7-PK; Wed, 05 Dec 2018 11:48:51 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4F57B112533E; Wed,  5 Dec 2018 11:48:51 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 11:48:51 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [PATCH AUTOSEL 4.19 031/123] ASoC: Intel: Power down links
- before turning off display audio power
-Message-ID: <20181205114851.GC6205@sirena.org.uk>
-References: <20181205093555.5386-1-sashal@kernel.org>
- <20181205093555.5386-31-sashal@kernel.org>
+        Wed, 5 Dec 2018 06:49:02 -0500
+Received: by mail-lj1-f196.google.com with SMTP id 83-v6so18028949ljf.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 03:49:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XbUU9ajIcqAtVGpTu1ATzBV0x5RKPH6tCX3DaNaIjlE=;
+        b=Ic8YoOYcZ4LW8IZWDI648wtsePNkfIIgb/Q09+s7lypZf3vaquMoP2UZwKoE9ne6Sv
+         NC3YPm/xpcIde1s4NPXathP4bi32FgHsGrtmuXna+FuXohOzhnvOPDnFZ2YUk+iKaZho
+         msPMINb9opCdd3AK3X5MFPPjQneOCWjXyPVAo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XbUU9ajIcqAtVGpTu1ATzBV0x5RKPH6tCX3DaNaIjlE=;
+        b=Zx+b1380hinOGuKXTbhKxSBBpJezBgiqM/dFOxeWDW6eEFo/hiOBmNPct3geJuPrzS
+         k1Vg7n1Dx85JmnJxdetdL56XngcbxHapheWzSIWiHdXtpx9Ok7HzsUBDWNqZMPFFthUK
+         uzG2deS9zHgT4zfZi15ZtKk53Z1VYyt8puhL+uSY3Qy9YbrPYF1QdeW2hYaCI+cmHvcz
+         hz5Tmx96PeDQrlRfK4kib1YayURknRfXJHpAQmxQeoGmdMj1SW+1Om6KzGT+nFg7TNOv
+         c8U+Cu3F3hq885qql8bhZxZVpM5UlnCHASU42x9RyRPDTnWMj85OiYFXbd2MsP1TZOXC
+         bBlQ==
+X-Gm-Message-State: AA+aEWb64BajUGSJBkhQk2zpihDf4NossIYgb0d3P6vma95NLqPBz/+X
+        H7YYmwLwbk0UfSAEGss1zpkiitUvWkmY/f29u4r7Vw==
+X-Google-Smtp-Source: AFSGD/WG0gsdFPNu7rzSjCML2zJOcaZ2fGpt3LRUQai7S4KkRkDafHks3Y7cQqueCtrfxkwhMLG8R06NusbqXzpLm9M=
+X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr15543702ljg.23.1544010539964;
+ Wed, 05 Dec 2018 03:48:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
-Content-Disposition: inline
-In-Reply-To: <20181205093555.5386-31-sashal@kernel.org>
-X-Cookie: Real Users never use the Help key.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com> <20181205113535.GX16508@imbe.wolfsonmicro.main>
+In-Reply-To: <20181205113535.GX16508@imbe.wolfsonmicro.main>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 5 Dec 2018 12:48:47 +0100
+Message-ID: <CACRpkdZs0uSrsY66X67=h=BPy=P_5korWVM8kDbzTXrhrvKvcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Cory Maccarrone <darkstar6262@gmail.com>,
+        David Dajun Chen <dchen@diasemi.com>,
+        Dong Aisheng <dong.aisheng@linaro.org>,
+        Eric Miao <eric.miao@marvell.com>,
+        Graeme Gregory <gg@slimlogic.co.uk>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Haojian Zhuang <haojian.zhuang@marvell.com>,
+        jinyoungp@nvidia.com,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        Mattias NILSSON <mattias.i.nilsson@stericsson.com>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Mike Rapoport <mike@compulab.co.il>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        Support Opensource <support.opensource@diasemi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 5, 2018 at 12:36 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Sun, Dec 02, 2018 at 11:23:07PM -0500, Paul Gortmaker wrote:
+> > The solution to #4 is similar - we delete the ".remove" function and
+> > the binding into the platform_driver struct.  However, since the same
+> > ".remove" function could also be triggered by an "unbind" (such as for
+> > pass-through of a device to a guest instance)  - so we also explicitly
+> > disable any unbind for the driver.
+> >
+> > The unbind mask allows us to ensure we will see if there was some odd
+> > corner case out there that was relying on it.  Typically it would be a
+> > multi-port ethernet card passing a port through to a guest, so a
+> > sensible use case in MFD drivers seems highly unlikely.  This same
+> > solution has already been used in multiple other mainline subsystems.
+> >
+>
+> I guess if this is a general direction thing, but it does seem
+> that module unload is not the only reason one might ever unbind a
+> driver. So are we sure we want to remove the option to unbind
+> these drivers? Certainly for testing it is sometimes useful.
 
---GPJrCs/72TxItFYR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I personally never understood why these attributes are even
+present on non-modular drivers.
 
-On Wed, Dec 05, 2018 at 04:34:23AM -0500, Sasha Levin wrote:
-> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->=20
-> [ Upstream commit 4c10473d6ddf12ec124c9ff71a5d23bb5388478b ]
->=20
-> On certain platforms, Display HDMI HDA codec was not going to sleep state
-> after the use when links are powered down after turning off the display
-> power. As per the HW recommendation, links are powered down before turning
-> off the display power to ensure that the codec goes to sleep state.
+If testing is about exercising unbind/bind to reintialize
+the code through a new call to .probe(), why would the developer
+not take it all the way through and make it a module?
+It just looks like a half-measure.
 
-Are we sure there's no dependencies here?
-
---GPJrCs/72TxItFYR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwHuyIACgkQJNaLcl1U
-h9Cswgf9E2dJbsL/3j7vHTNDq4/dPa6TCumaPjEa79+c5lJjHXQbnKQ5RNHq7TFx
-OGrFLEoJirWh4cbTu12Bp74GPhyQSe7iba/cQ79dwomHA0RMhVzbdS4oghwOcliR
-tM5VDKG9V5IFfDMmWlAHMMQ7J1T4rKqshEHZE8FWQFvhW6Zjm5ka+FWDrcGjzh+f
-WmmcMVqot71AKIUM1B/TI89/t1pii3LIpnsl57s4MHsMazqfzPItX9VE+h8YuoM6
-lUt1S5yMtV8uQSp+6OUdTXyJ2jrR4Pfucl+jWlSfht5GXN6FY5jrhZYozPJ/dZTP
-BfLSYjo9m7L/9W9hOMQN1JAaxyRf5g==
-=4sO+
------END PGP SIGNATURE-----
-
---GPJrCs/72TxItFYR--
+Yours,
+Linus Walleij
