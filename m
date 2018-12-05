@@ -2,142 +2,80 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BA2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD8BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616862084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:23:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616862084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DAD7E2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFwQYfwf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAD7E2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbeLEPXi (ORCPT
+        id S1727640AbeLEP3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:23:38 -0500
-Received: from mga05.intel.com ([192.55.52.43]:57635 "EHLO mga05.intel.com"
+        Wed, 5 Dec 2018 10:29:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEPXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:23:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 07:23:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
-   d="scan'208";a="115877161"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga002.jf.intel.com with ESMTP; 05 Dec 2018 07:23:36 -0800
-Date:   Wed, 5 Dec 2018 07:23:36 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH 6/5] x86/fault: Clean up the page fault oops decoder a bit
-Message-ID: <20181205152336.GA31197@linux.intel.com>
-References: <cover.1542841400.git.luto@kernel.org>
- <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
- <20181122084119.GA44720@gmail.com>
- <20181127153202.GA27075@linux.intel.com>
- <CALCETrW00oTpXOONwbONHHuiyqp9QbNMe0gvVgf8X3_X0fidqw@mail.gmail.com>
+        id S1726918AbeLEP3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:29:05 -0500
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E359920878;
+        Wed,  5 Dec 2018 15:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544023745;
+        bh=6gc1GNYaPrXSCJxKpfbrm5xI1VFiB5LBLD6SMRFiDxo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hFwQYfwfhxfr0s8iadJIumbmNq4IEcE6TfDK8ZCNGQqf4Ncqzs9iZ5eeZfzgzZm31
+         SEKXDBC9EVxRuHEAke1Wsk1sGZos3O5cj4YWSqtBudAZoXgGOl5PdOw19hhHUWfxSA
+         JAM45ZOO/iq9LCVfmG7pJsuKayOp1N24HMCeU3v4=
+Received: by mail-qk1-f172.google.com with SMTP id q70so12073138qkh.6;
+        Wed, 05 Dec 2018 07:29:04 -0800 (PST)
+X-Gm-Message-State: AA+aEWbxXjZ8bXaawN20C1SwlFr9CmDTZIlM/eAigm2+Cuf9m+kuW4Gg
+        1OHjhcXpwm6DiCS4qJojLF7TvfB3Lf2isYEJwg==
+X-Google-Smtp-Source: AFSGD/XGwOvsFejoVa8emjJgfZDHx/tRiZgl+dZ/r3fag5pCqkCYzWYE7oSuITKw95XUMKKYAtVXkJasWpHZtVesvXY=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr23275644qkg.147.1544023744129;
+ Wed, 05 Dec 2018 07:29:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrW00oTpXOONwbONHHuiyqp9QbNMe0gvVgf8X3_X0fidqw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181115071253.22558-1-kmarinushkin@birdec.tech>
+ <20181204214313.GA7847@bogus> <7cbf1452-354f-07d6-2310-cadc4358433e@birdec.tech>
+In-Reply-To: <7cbf1452-354f-07d6-2310-cadc4358433e@birdec.tech>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 5 Dec 2018 09:28:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLirgcDwANbORiez0xtO1tEHDL-O8XdbZSP6R+WZF_HLQ@mail.gmail.com>
+Message-ID: <CAL_JsqLirgcDwANbORiez0xtO1tEHDL-O8XdbZSP6R+WZF_HLQ@mail.gmail.com>
+Subject: Re: [resend PATCH] dt-bindings: sound: Add documentation for pcm3060
+ property out-single-ended
+To:     Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 11:22:25AM -0800, Andy Lutomirski wrote:
-> On Tue, Nov 27, 2018 at 7:32 AM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >  arch/x86/mm/fault.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > index 2ff25ad33233..510e263c256b 100644
-> > --- a/arch/x86/mm/fault.c
-> > +++ b/arch/x86/mm/fault.c
-> > @@ -660,8 +660,10 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
-> >         err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
-> >         err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
-> >         err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
-> > -
-> > -       pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-> > +       err_str_append(~error_code, err_txt, X86_PF_USER, "[KERNEL]");
-> > +       err_str_append(~error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR,
-> > +                                                         "[READ]");
-> > +       pr_alert("#PF error code: %s\n", err_txt);
-> >
-> 
-> Seems generally nice, but I would suggest making the bit-not-set name
-> be another parameter to err_str_append().
+On Wed, Dec 5, 2018 at 1:02 AM Kirill Marinushkin
+<kmarinushkin@birdec.tech> wrote:
+>
+> Thank you Rob,
+>
+> Mark already applied this patch, with a slightly modified subject:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-next&id=fd7de6370cb62b147185834d60069568a21acacd
 
-I didn't recall why I chose to negate error_code until I revisited the
-actual code.  The "READ" case is a combination of !WRITE && !USER, i.e.
-doesn't fit into an existing err_str_append() call.  So we'd end up with
-an extra err_str_append() call that would also have a null message for
-the positive test, which seemed unnecessarily complex and more convoluted
-than simply negating error_code.
+Humm, I wonder why I didn't have Mark's "Applied ..." email for it?
+Otherwise, my scripts rely on the subject matching which breaks when
+maintainers edit subjects.
 
-E.g.:
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..48b420621825 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -607,12 +607,17 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
-  * This helper function transforms the #PF error_code bits into
-  * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
-  */
--static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
-+static void err_str_append(unsigned long error_code, char *buf, unsigned long mask,
-+                          const char *pos, const char *neg)
- {
--       if (error_code & mask) {
-+       if ((error_code & mask) == mask && pos) {
-                if (buf[0])
-                        strcat(buf, " ");
--               strcat(buf, txt);
-+               strcat(buf, pos);
-+       } else if (!(error_code & mask) && neg) {
-+               if (buf[0])
-+                       strcat(buf, " ");
-+               strcat(buf, neg);
-        }
- }
-
-@@ -654,14 +659,15 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
-         * Note: length of these appended strings including the separation space and the
-         * zero delimiter must fit into err_txt[].
-         */
--       err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
--       err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
--       err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
--       err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
--       err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
--       err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
--
--       pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-+       err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" , NULL);
-+       err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]", NULL);
-+       err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" , "[SUPERVISOR]");
-+       err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" , NULL);
-+       err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]", NULL);
-+       err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   , NULL);
-+       err_str_append(error_code, err_txt, X86_PF_WRITE | X86_PF_INSTR, NULL,
-+                                                         "[READ]");
-+       pr_alert("#PF error code: %s\n", err_txt);
-
-        if (!(error_code & X86_PF_USER) && user_mode(regs)) {
-                struct desc_ptr idt, gdt;
+Rob
