@@ -2,86 +2,89 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17415C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40597C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA67820878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA67820878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 04AB720672
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:17:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgGZrhsR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AB720672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeLEMQ5 (ORCPT
+        id S1727805AbeLEMRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:16:57 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:48779 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbeLEMQ5 (ORCPT
+        Wed, 5 Dec 2018 07:17:02 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39451 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727787AbeLEMRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:16:57 -0500
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gUW6q-0006AR-JZ from Jiada_Wang@mentor.com ; Wed, 05 Dec 2018 04:16:56 -0800
-Received: from [172.30.112.81] (147.34.91.1) by svr-orw-mbx-03.mgc.mentorg.com
- (147.34.90.203) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 5 Dec
- 2018 04:16:53 -0800
-Subject: Re: [PATCH linux-next v3 7/7] clk: renesas: Add binding document for
- ADG
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181205074947.28151-1-jiada_wang@mentor.com>
- <87tvjsbbgh.wl-kuninori.morimoto.gx@renesas.com>
-From:   Jiada Wang <jiada_wang@mentor.com>
-Message-ID: <3b2941db-4cd5-0975-c88d-4a23c1ff4907@mentor.com>
-Date:   Wed, 5 Dec 2018 21:16:51 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 5 Dec 2018 07:17:02 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n8so14539085otl.6;
+        Wed, 05 Dec 2018 04:17:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q7F4jQAxIjA2RYWh6EUzGOSX9EbmUsbYMsDcO2KLINs=;
+        b=VgGZrhsRVeU/6A2RcMbQhweMi79hFv2fFfUHRuKNz6j7KN3HtD6nKu9jodsY1wYA5b
+         W1ymYB5/UJzMCTwZNn+ySu2GPMr/yQcMAXIojGt+mFktzRl9tH/UEAOY7i4Obp/7HCdQ
+         Q9MXuvKiznQY6Fdkm/A4fxYHT3blxITf0/roCwI4WO+sKwWEjiSOFroU+mjrT6B0O1Eo
+         jjJi+aM5qsbUJth2Bv9Ni4fHMA/ztiTpHpOsC534VX/ZkCXbgat4A54xoQvont48An+V
+         YigLk7K2zD5kcHGbPCy0fLNlpSW72Iw8IvSkTkeYXWYkREBqWbyZJcILy496HCFZ2ZKf
+         /HQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q7F4jQAxIjA2RYWh6EUzGOSX9EbmUsbYMsDcO2KLINs=;
+        b=c2qSe48k+YgOblMLpIvqwa89IuMd1ccnOeyPZAHxlEa86s9AJpF9updzGwj6rMmDhB
+         wyExC8oNXJIF9KtKyN+61EyvVi/GloBz5wvQdgz5KPYevRFk8CS39lFKSgfhRjYlKuu+
+         msNA7enjJ9eJ0wn5PKAY2BL9WOaSbJCvgVkDQOue8/HRLBHnJUfzH5YhP0SgvcMrlmAp
+         /q4gf+y54BRZ4PFyj5vgpCod02tn6/V96C+GiGe779iWKpKXGOD4yuVCDMEp2AzCfZ9C
+         P9fbTjRhYkQTtiIk+ma9I+6LdIpV4S7+QZO/nfASUo7A0WO2Ola4ITCe2i4hvq8paGOX
+         J0Sw==
+X-Gm-Message-State: AA+aEWaq6wW3jmaJJ0M3S6Gy52qP6MtMA2xyeY1QgAFSmfxHgp0iLIVx
+        nVmBWvhpaFxH8ha25B94L70FFucBzt/fthBcYTM=
+X-Google-Smtp-Source: AFSGD/Vl+mXhnfICGBdS/GcvSRiJEIFuEHs/maZbKOrzhjjL8KexX3YYDBSUtcN7yyVqYD/1mZ4goGBEky93+maNYhE=
+X-Received: by 2002:a9d:7e87:: with SMTP id m7mr16537778otp.225.1544012221012;
+ Wed, 05 Dec 2018 04:17:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87tvjsbbgh.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+References: <1544001240-18622-1-git-send-email-Anson.Huang@nxp.com> <1544001240-18622-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1544001240-18622-2-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 5 Dec 2018 10:17:05 -0200
+Message-ID: <CAOMZO5AC5eACNK8n1Q6iSmah-Myv3sKka253JGRmSg3cMYKqEA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: imx6qdl-sabresd: add magnetometer sensor support
+To:     Yongcai Huang <anson.huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san
-
-will rename dt bindings doc in next version
-
-Thanks.
-Jiada
-
-On 2018/12/05 18:04, Kuninori Morimoto wrote:
-> Hi Jiada
+On Wed, Dec 5, 2018 at 7:20 AM Anson Huang <anson.huang@nxp.com> wrote:
 >
->> Add device tree bindings for Audio Clock Generator (ADG)
->> of R-Car Socs.
->>
->> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->> ---
->>   .../clock/renesas,rcar-adg-clocks.txt         | 24 +++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-adg-clocks.txt
-> We want to have this document on rsnd.txt instead of
-> not-exist-driver file
+> Add magnetometer sensor mag3110 support on i2c3 bus.
 >
-> 	/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
->
-> Best regards
-> ---
-> Kuninori Morimoto
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
