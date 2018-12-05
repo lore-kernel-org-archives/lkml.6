@@ -2,148 +2,80 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF12C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A872C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46502082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4199A20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544027444;
-	bh=klbf+rKG/TCnQYN7HTyCyUu5Si4cSKbAngCpppaNHoo=;
+	s=default; t=1544027449;
+	bh=dHQfDerNuj2N49NiI3C9axw+52chXrULOjae4wogl1g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ALu1rc+1ppsl+PBO/oDCSfK5R9K6Cevr92OfIid2+q0XeWCLNP4cjCpanw4VoIwuM
-	 ir9aIJUl4aGNqaDAs7rusDa6UMpEZaRR8CO6OoaLisEKNz2tpghnVQQoRpYuduKZL2
-	 SO6GzE1M+2qpcm8qUhfhJkLEEwFcWQuqOlhYdvjQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46502082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	b=v8txTWVMSHw1RfAgNhpkjFPNk0Vvg2qfol9AIMzM0f0vZGXv2zEaUg6QX3x61t6S8
+	 uVLEbbJFhl9pdh9o2jnr6xRpSFY8LGxVNemC9RsJBMEH+ej85H19n6R8bXOlBELqpy
+	 pZwaQr4UfR8fF8hxfAuH1SqBidEfJJ2RtCNegMMg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4199A20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeLEQan (ORCPT
+        id S1727859AbeLEQas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:30:43 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34369 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbeLEQan (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:30:43 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j2so20370284wrw.1;
-        Wed, 05 Dec 2018 08:30:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HOpkKQtn98M6vCYoR1drA5ytyH/ssjzpbmfnTDB5m4A=;
-        b=a4B879ljrxtWJxRNQmJGXD65c9r8UuLD9KWXEyvRvSfDHDjJaYT9ZtSVxeoKfddNXe
-         +vCvyqiM4q56CcS/opn58OECXLPHGV3WqtG4iSP8teUhl9257/rKW2t+xhBFRWaNY2vd
-         yp8L7PirVs5zRhYeNWw/SufYk6sFmGRAtgtKlux8EwG2jeQ5xT++uIGNI9zmz/6JaBtm
-         QdQuDFvJHzJtSutnfzN4J9G51dnZPOQhKECeDmMhDqehVnrQ/4JokHWX3pJzARxcLRYZ
-         HOi5dzMsiUhZAnSlzjY21De9I5chPpNP7gsFFsNvjXLiubQShU2CWwlD9TShsVyfyOup
-         TRFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HOpkKQtn98M6vCYoR1drA5ytyH/ssjzpbmfnTDB5m4A=;
-        b=mGK0BdJT5T4fBU8D/Vgt2XZHiP37dBSy+XTTBS4ZEGWL58RR2gpG3V77eorfJJ3aE8
-         DpL0T/miIZmGqy/O5eYPtR1yjB3Z0O7+4qiIr9cSGRatGbjGQDyGPDDgJZG2753aS0Eg
-         tuXOG3tgmpJYPSMiTktTLa3jP2A93mqIDy/yQStgUSL7B0Z29BPeGUVTn1Ib3WE17jOh
-         vkAlwwe2LWgIYeWEakRFVThtF8RVIPbIkcZQ5dAVeXuvTAgzNZoKHDcxFQfwb8mbXEUJ
-         o+cdyr4oUzYl1x+EuTfGYZ0i/Fsn6tAuJNMl8XE8he5oJa98L+ISsdIvqo80QRb0agQW
-         iNAA==
-X-Gm-Message-State: AA+aEWavc6nxQE1WmFAd50U+Z+25sgyYeykKEJ6THMQbjVkwMJOOWqMX
-        /6TiXdYjBdSN8YzMzjGvH+Y=
-X-Google-Smtp-Source: AFSGD/Vg6EIyYFifcL5GFCSQM4BFwsOQFn1GAikhjKdRbIB8DXkg/nf/PYHRa6VG+3QEr7RlQTCwjw==
-X-Received: by 2002:adf:f807:: with SMTP id s7mr23858126wrp.173.1544027440400;
-        Wed, 05 Dec 2018 08:30:40 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v132sm2189944wme.20.2018.12.05.08.30.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 08:30:39 -0800 (PST)
-Date:   Wed, 5 Dec 2018 17:30:37 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>, X86 ML <x86@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH] x86/mce: Streamline MCE subsystem's naming
-Message-ID: <20181205163037.GC109259@gmail.com>
-References: <20181205141323.14995-1-bp@alien8.de>
+        Wed, 5 Dec 2018 11:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727737AbeLEQar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:30:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 484E62082B;
+        Wed,  5 Dec 2018 16:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544027446;
+        bh=dHQfDerNuj2N49NiI3C9axw+52chXrULOjae4wogl1g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Os7JCdUIi7I/vQg1fUg0wshtF77uk+pcyYzqkvGHPRkWTpDx6aRB2urU30GrireD1
+         suuxBYKOP0ydlCJtcctmi5mboc/5zVAlOzjhgfaKgAtbKLAFLMuDQzhck7wTY7BDDv
+         47WLvZ5kr5RVhggiGLw0T51YXbVu1RmEJeTSDvnE=
+Date:   Wed, 5 Dec 2018 17:30:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Peter Rajnoha <prajnoha@redhat.com>
+Cc:     rafael@kernel.org, jeyu@kernel.org, linux-kernel@vger.kernel.org,
+        msekleta@redhat.com
+Subject: Re: [PATCH 0/2] Fix return code and improve feature check for
+ synthetic uevents
+Message-ID: <20181205163044.GB7185@kroah.com>
+References: <20181205112745.12276-1-prajnoha@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205141323.14995-1-bp@alien8.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181205112745.12276-1-prajnoha@redhat.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Borislav Petkov <bp@alien8.de> wrote:
-
-> From: Borislav Petkov <bp@suse.de>
+On Wed, Dec 05, 2018 at 12:27:43PM +0100, Peter Rajnoha wrote:
+> Two small patches to aid handling of synthetic uevents back in userspace:
 > 
-> Rename the containing folder to "mce" which is the most widespread name.
-> Drop the "mce[-_]" filename prefix of some compilation units (while
-> others don't have it).
+>   - Return error code back to userspace on /sys/.../uevent file write
+>     failure so userspace knows and it can act accordingly.
 > 
-> This unifies the file naming in the MCE subsystem:
+>   - Add new 'kernel/uevent_features' sysfs file to make it possible for
+>     userspace to check that the extended synthetic uevent arguments are
+>     supported without relying on kernel version check only.
 > 
-> mce/
-> |-- amd.c
-> |-- apei.c
-> |-- core.c
-> |-- dev-mcelog.c
-> |-- genpool.c
-> |-- inject.c
-> |-- intel.c
-> |-- internal.h
-> |-- Makefile
-> |-- p5.c
-> |-- severity.c
-> |-- therm_throt.c
-> |-- threshold.c
-> `-- winchip.c
-> 
-> No functional changes.
+> Peter Rajnoha (2):
+>   kobject: return error code if writing /sys/.../uevent fails
+>   kobject: add kernel/uevent_features sysfs file
 
-Cool!
+Did you send this series twice?  Which one should I pay attention to?
 
-Would it make sense to organize it a bit more and separate out vendor 
-specific functionality:
+confused,
 
-  mce/cpu/intel.c
-  mce/cpu/intel-p5.c
-  mce/cpu/amd.c
-  mce/cpu/winchip.c
-
-  mce/internal.h
-  mce/core.c
-
-  mce/genpool.c
-  mce/threshold.c
-  mce/severity.c
-  mce/inject.c
-  mce/therm_throt.c
-  mce/dev-mcelog.c
-  mce/apei.c
-
-?
-
-This way there's a clear separation between low level, vendor specific 
-MCE logic and higher level MCE logic.
-
-mce/apei.c, if this is an Intel-only feature, could perhaps become 
-mce/cpu/intel-apei.c?
-
-Anyway, your patch is fine too, so whichever subset you decide to use:
-
-  Reviewed-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
+greg k-h
