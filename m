@@ -2,132 +2,94 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAF6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A14C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFE92081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFE92081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BE6232081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6232081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbeLENAB (ORCPT
+        id S1727267AbeLENCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:00:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56054 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726944AbeLENAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:00:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7CA82B0E5;
-        Wed,  5 Dec 2018 12:59:58 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 13:59:58 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wed, 5 Dec 2018 08:02:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:54050 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726909AbeLENCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:02:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0D5FA78;
+        Wed,  5 Dec 2018 05:02:39 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0525D3F575;
+        Wed,  5 Dec 2018 05:02:37 -0800 (PST)
+Subject: Re: [PATCH v6 21/24] arm64: Handle serror in NMI context
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        yi.z.zhang@linux.intel.com, Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH RFC 7/7] mm: better document PG_reserved
-Message-ID: <20181205125957.GN1286@dhcp22.suse.cz>
-References: <20181205122851.5891-1-david@redhat.com>
- <20181205122851.5891-8-david@redhat.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        daniel.thompson@linaro.org, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, joel@joelfernandes.org,
+        Dave Martin <dave.martin@arm.com>
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-22-git-send-email-julien.thierry@arm.com>
+ <20181204180917.GE19210@arrakis.emea.arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <3ff15164-11db-d3c9-e194-a35facf9971d@arm.com>
+Date:   Wed, 5 Dec 2018 13:02:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205122851.5891-8-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181204180917.GE19210@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-12-18 13:28:51, David Hildenbrand wrote:
-> The usage of PG_reserved and how PG_reserved pages are to be treated is
-> burried deep down in different parts of the kernel. Let's shine some light
-> onto these details by documenting (most?) current users and expected
-> behavior.
-> 
-> I don't see a reason why we have to document "Some of them might not even
-> exist". If there is a user, we should document it. E.g. for balloon
-> drivers we now use PG_offline to indicate that a page might currently
-> not be backed by memory in the hypervisor. And that is independent from
-> PG_reserved.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
-> Cc: Miles Chen <miles.chen@mediatek.com>
-> Cc: yi.z.zhang@linux.intel.com
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi Catalin,
 
-This looks like an improvement. The essential part is that PG_reserved
-page belongs to its user and no generic code should touch it. The rest
-is a description of current users which I haven't checked due to to lack
-of time but yeah, I like the updated wording because I have seen
-multiple people confused from the swapped out part which is not true for
-many many years. I have tried to dig out when it was actually the case
-but failed.
-
-So I cannot give my Ack because I didn't really do a real review but I
-like this FWIW.
-
-> ---
->  include/linux/page-flags.h | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+On 04/12/2018 18:09, Catalin Marinas wrote:
+> On Mon, Nov 12, 2018 at 11:57:12AM +0000, Julien Thierry wrote:
+>> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+>> index 5f4d9ac..66344cd 100644
+>> --- a/arch/arm64/kernel/traps.c
+>> +++ b/arch/arm64/kernel/traps.c
+>> @@ -897,13 +897,17 @@ bool arm64_is_fatal_ras_serror(struct pt_regs *regs, unsigned int esr)
+>>  
+>>  asmlinkage void do_serror(struct pt_regs *regs, unsigned int esr)
+>>  {
+>> -	nmi_enter();
+>> +	const bool was_in_nmi = in_nmi();
+>> +
+>> +	if (!was_in_nmi)
+>> +		nmi_enter();
+>>  
+>>  	/* non-RAS errors are not containable */
+>>  	if (!arm64_is_ras_serror(esr) || arm64_is_fatal_ras_serror(regs, esr))
+>>  		arm64_serror_panic(regs, esr);
+>>  
+>> -	nmi_exit();
+>> +	if (!was_in_nmi)
+>> +		nmi_exit();
+>>  }
 > 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 68b8495e2fbc..112526f5ba61 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -17,8 +17,22 @@
->  /*
->   * Various page->flags bits:
->   *
-> - * PG_reserved is set for special pages, which can never be swapped out. Some
-> - * of them might not even exist...
-> + * PG_reserved is set for special pages. The "struct page" of such a page
-> + * should in general not be touched (e.g. set dirty) except by their owner.
-> + * Pages marked as PG_reserved include:
-> + * - Kernel image (including vDSO) and similar (e.g. BIOS, initrd)
-> + * - Pages allocated early during boot (bootmem, memblock)
-> + * - Zero pages
-> + * - Pages that have been associated with a zone but are not available for
-> + *   the page allocator (e.g. excluded via online_page_callback())
-> + * - Pages to exclude from the hibernation image (e.g. loaded kexec images)
-> + * - MMIO pages (communicate with a device, special caching strategy needed)
-> + * - MCA pages on ia64 (pages with memory errors)
-> + * - Device memory (e.g. PMEM, DAX, HMM)
-> + * Some architectures don't allow to ioremap pages that are not marked
-> + * PG_reserved (as they might be in use by somebody else who does not respect
-> + * the caching strategy). Consequently, PG_reserved for a page mapped into
-> + * user space can indicate the zero page, the vDSO, MMIO pages or device memory.
->   *
->   * The PG_private bitflag is set on pagecache pages if they contain filesystem
->   * specific data (which is normally at page->private). It can be used by
-> -- 
-> 2.17.2
-> 
+> Do we actually need nmi_enter/exit in the outer do_serror() function?
+> Could we just move it to arm64_serror_panic()?
 
--- 
-Michal Hocko
-SUSE Labs
+They might need to be here in the future: if we support kernel-first we would
+have extra calls in here that need to be in_nmi(), the same if we call out to
+APEI to support APCI's NOTIFY_SEI.
+
+
+Thanks,
+
+James
