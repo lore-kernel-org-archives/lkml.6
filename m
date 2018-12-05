@@ -3,115 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE42C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A3AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3243B2082D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCF0D208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaKQG/R0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3243B2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jZxGtCDm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF0D208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeLEPRo (ORCPT
+        id S1727993AbeLEPTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:17:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEPRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:17:43 -0500
-Received: from [192.168.1.11] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3467F2082D;
-        Wed,  5 Dec 2018 15:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544023062;
-        bh=k0KVyboTdQegYDekztBLhmisWmVqwQM88KpCJu2DlpE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YaKQG/R00A5KVdtfLcm2rR6CRhpn1Oz+8p4qqZQx3Sy3VI/QJlPklJivXoJK3SJRV
-         XfX2AW0buFX1SgvesKV39AcH01bDGM8t2jPsRvX+vCcumChC8P5yxl/vVTmeoqfrOM
-         E+0t07+N1LcDE60cIHOndvUaolfkyJA6aGjlntAw=
-Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
- <20181204193416.24661-1-sboyd@kernel.org>
- <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
-Date:   Wed, 5 Dec 2018 09:17:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 10:19:02 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33258 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbeLEPTC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:19:02 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5FIwbD072795;
+        Wed, 5 Dec 2018 09:18:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544023138;
+        bh=3USVK6RT8NoK4DD/hiOT81RkZBnnclUcqfNzMAQ5lJw=;
+        h=Subject:References:CC:From:Date:In-Reply-To;
+        b=jZxGtCDm4a8wFBQOM2I5Xk6EKVWs4/cPYg0YID621ie3qBRKMOVrbS589YzLupjWn
+         1V1RMPU3QWn2ZnMQGTXGU8kceh3xaV0gVpbOqA0pze46C4X18aLEi1es05LgnAqhi+
+         PUOpccSJcV1CeRaWCrnGPY3vHcHsgL+6eJ45xNL4=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5FIwVb100685
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Dec 2018 09:18:58 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
+ Dec 2018 09:18:58 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 5 Dec 2018 09:18:58 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5FIuVW001748;
+        Wed, 5 Dec 2018 09:18:56 -0600
+Subject: Re: [PATCH 0/3] usb: dwc3: Add support for AM654 USB
+References: <1544022879-5704-1-git-send-email-rogerq@ti.com>
+CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <vigneshr@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C07EC5F.1030405@ti.com>
+Date:   Wed, 5 Dec 2018 17:18:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1544022879-5704-1-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Misspelled Felipe's ID. Will resend this series.
 
-On 12/5/18 1:17 AM, Stephen Boyd wrote:
-> (Adding Dinh's korg email)
+On 05/12/18 17:14, Roger Quadros wrote:
+> Hi Felipe,
 > 
-> I also wonder if this driver is even used anymore or maybe we can delete
-> it?
+> TI's AM654 USB SoC has 2 instances of the DWC3 controller.
+> This series adds AM654 USB wrapper support to the keystone-usb driver.
+> 
+> cheers,
+> -roger
+> 
+> Roger Quadros (3):
+>   usb: dwc3: gadget: Fix OTG events when gadget driver isn't loaded
+>   dt-bindings: usb: keystone-usb: Add ti,am654-dwc3 support
+>   usb: dwc3: keystone: Add support for ti,am654-dwc3
+> 
+>  Documentation/devicetree/bindings/usb/keystone-usb.txt |  4 ++--
+>  drivers/usb/dwc3/Kconfig                               |  6 +++---
+>  drivers/usb/dwc3/dwc3-keystone.c                       | 11 ++++++++++-
+>  drivers/usb/dwc3/gadget.c                              |  2 ++
+>  4 files changed, 17 insertions(+), 6 deletions(-)
 > 
 
-The armv7 SoCFPGA platforms are using this driver.
-
-Dinh
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
