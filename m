@@ -2,87 +2,103 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC94C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2F0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DEA208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DEA208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D5941208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544038522;
+	bh=UQcEC3lOYxzmO7G3948nOyr4EYkWEM4aL5QnY6s0R+w=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=Nr3j6oYu3gxWL4SZ5xVeAJac4ZnuPtlq5DhqW7Bz6shIXjYRbrsabl44UwV/2jWvU
+	 hzTzGMXWANRp45Ai6a2RSbUUc+BcJ9MHKU+WsGcWy3UoIbopDfEuu54X46GiwTZ6kL
+	 9cRzxi7Hj8yEPBZ+bh+KGv2opjoEzbCUKBoIx2x8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5941208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeLETeV (ORCPT
+        id S1728370AbeLETfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:34:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42948 "EHLO mx1.redhat.com"
+        Wed, 5 Dec 2018 14:35:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbeLETeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:34:21 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727349AbeLETfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:35:20 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE808307EA8A;
-        Wed,  5 Dec 2018 19:34:20 +0000 (UTC)
-Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D960C5D96E;
-        Wed,  5 Dec 2018 19:34:19 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 14:34:19 -0500
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v14 06/11] livepatch: Use lists to manage patches,
- objects and functions
-Message-ID: <20181205193419.pyqbctefkypdpitf@redhat.com>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-7-pmladek@suse.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1827120892;
+        Wed,  5 Dec 2018 19:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544038519;
+        bh=UQcEC3lOYxzmO7G3948nOyr4EYkWEM4aL5QnY6s0R+w=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=FGhavkkRZhVmFhwBh/loWWnIPWRHGIt2+CZuPSXjxfUWkdCKZS2e2sl4gumnEiZj4
+         k78K635v1p//Ov67xqqjZ02PhIypJ4QMFU6yk6UXr7yx61E+URmcW2zKe/LjK5dFIl
+         aGRvF7Q1dMzN3RLnwcWC4hVTRDPCE/C+IwnUjfw8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129094431.7801-7-pmladek@suse.com>
-User-Agent: Mutt/1.6.2-neo (2016-08-08)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 05 Dec 2018 19:34:21 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181205182058.GF31204@localhost.localdomain>
+Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
+        cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
+        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
+        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
+ <20181205070046.GD31204@localhost.localdomain>
+ <154403037317.88331.9382087418367713867@swboyd.mtv.corp.google.com>
+ <20181205182058.GF31204@localhost.localdomain>
+Message-ID: <154403851843.88331.12634260159268245703@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered device
+ has no provider info
+Date:   Wed, 05 Dec 2018 11:35:18 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:44:26AM +0100, Petr Mladek wrote:
-> From: Jason Baron <jbaron@akamai.com>
-> 
-> Currently klp_patch contains a pointer to a statically allocated array of
-> struct klp_object and struct klp_objects contains a pointer to a statically
-> allocated array of klp_func. In order to allow for the dynamic allocation
-> of objects and functions, link klp_patch, klp_object, and klp_func together
-> via linked lists. This allows us to more easily allocate new objects and
-> functions, while having the iterator be a simple linked list walk.
-> 
-> The static structures are added to the lists early. It allows to add
-> the dynamically allocated objects before klp_init_object() and
-> klp_init_func() calls. Therefore it reduces the further changes
-> to the code.
-> 
-> This patch does not change the existing behavior.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Initialize lists before init calls]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Miroslav Benes <mbenes@suse.cz>
-> ---
+Quoting Matti Vaittinen (2018-12-05 10:20:58)
+> On Wed, Dec 05, 2018 at 09:19:33AM -0800, Stephen Boyd wrote:
+> > Quoting Matti Vaittinen (2018-12-04 23:00:46)
+> > > But that won't solve the issue if we don't do "dirty hacks" in driver.
+> > > The devm interface still only gets the device-pointer, not the DT node
+> > > as argument. And if DT node for device is NULL (like in MFD cases) -
+> > > then there is no parent node, only parent device with a node. For pla=
+in
+> > > of_clk_add_provider() the driver can just give the parent's node poin=
+ter
+> > > in cases where it knows it is the parent who has the provider data in
+> > > DT. But our original problem is in devm interfaces.
+> > > =
 
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+> > =
 
--- Joe
+> > I was misunderstanding the MFD design. Should still work though, so I
+> > squashed this into the patch to clean things up a bit. Does this work
+> > for you?
+> =
+
+> This looks good to me. Especially changing the of_is_clk_provider to
+> get_clk_provider_node which allows to remove some repetition. If you
+> apply this then I will drop my patch from the series. Just please let me
+> know. I will cook version 7 of the series at Friday - tomorrow is the
+> independence day in Finland and I'll be offline =3D)
+> =
+
+
+Ok, I applied it this patch with the squash to clk-next.
+
