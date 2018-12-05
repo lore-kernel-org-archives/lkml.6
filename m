@@ -2,133 +2,69 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C1BC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03BEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9B42082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9B42082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 802FB2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802FB2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeLEOFY (ORCPT
+        id S1727585AbeLEOFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:05:24 -0500
-Received: from relay.sw.ru ([185.231.240.75]:46426 "EHLO relay.sw.ru"
+        Wed, 5 Dec 2018 09:05:52 -0500
+Received: from verein.lst.de ([213.95.11.211]:50597 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEOFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:05:23 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gUXnj-00077J-Bi; Wed, 05 Dec 2018 17:05:19 +0300
-Subject: Re: Kernel crashes after 529262d56dbe "block: remove ->poll_fn"
-To:     Jens Axboe <axboe@kernel.dk>, hch@lst.de, sagi@grimberg.me,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <0bd2d36e-bef0-b836-7039-124ae4d346a6@virtuozzo.com>
- <c374e085-a86b-6df3-2142-74968f067bc7@kernel.dk>
- <5e8d3302-a7d0-3483-6540-f0b87c237f7d@virtuozzo.com>
- <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <d2f563b5-a832-ce72-d8d8-6add788548b7@virtuozzo.com>
-Date:   Wed, 5 Dec 2018 17:05:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1726918AbeLEOFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:05:52 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id B87B168B03; Wed,  5 Dec 2018 15:05:50 +0100 (CET)
+Date:   Wed, 5 Dec 2018 15:05:50 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: use generic DMA mapping code in powerpc V4
+Message-ID: <20181205140550.GA27549@lst.de>
+References: <20181129170351.GC27951@lst.de> <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de> <20181130105346.GB26765@lst.de> <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de> <20181130131056.GA5211@lst.de> <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de> <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de> <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de> <20181204142426.GA2743@lst.de> <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
 MIME-Version: 1.0
-In-Reply-To: <0e6c1e68-38b0-6618-40cd-a2b72dc4e240@kernel.dk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.12.2018 16:20, Jens Axboe wrote:
-> On 12/5/18 6:05 AM, Kirill Tkhai wrote:
->> On 05.12.2018 15:45, Jens Axboe wrote:
->>> On 12/5/18 5:19 AM, Kirill Tkhai wrote:
->>>> Hi,
->>>>
->>>> commit 529262d56dbe from today linux-next makes my kernel crash:
->>>>
->>>> Author: Christoph Hellwig <hch@lst.de>
->>>> Date:   Sun Dec 2 17:46:26 2018 +0100
->>>>
->>>>     block: remove ->poll_fn
->>>>
->>>> Traceback is below, config and reproducer (not minimal, just a random one populating swap) are attached.
->>>>
->>>> [   29.097612] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
->>>> [   29.098730] #PF error: [INSTR]
->>>> [   29.099104] PGD 0 P4D 0 
->>>> [   29.099425] Oops: 0010 [#1] PREEMPT SMP
->>>> [   29.099879] CPU: 3 PID: 925 Comm: bash Not tainted 4.20.0-rc5-next-20181205+ #244
->>>> [   29.100658] RIP: 0010:          (null)
->>>> [   29.101100] Code: Bad RIP value.
->>>> [   29.101480] RSP: 0000:ffffc9000023fb80 EFLAGS: 00010202
->>>> [   29.102061] RAX: ffffffff8182d0e0 RBX: ffff88807ceee000 RCX: 0000000000000000
->>>> [   29.102818] RDX: ffff88807d560f40 RSI: 0000000000000000 RDI: ffff88807ceee000
->>>> [   29.103661] RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000002000
->>>> [   29.104560] R10: 00000000ffffffff R11: ffff88807c854150 R12: 0000000000000000
->>>> [   29.105458] R13: 0000000000000002 R14: ffff88807d7236c0 R15: ffffc9000023fe20
->>>> [   29.106438] FS:  00007faba91d7740(0000) GS:ffff88807db80000(0000) knlGS:0000000000000000
->>>> [   29.107304] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> [   29.107917] CR2: ffffffffffffffd6 CR3: 000000007a172000 CR4: 00000000000006a0
->>>> [   29.109401] Call Trace:
->>>> [   29.110017]  ? blk_poll+0x27c/0x340
->>>> [   29.110691]  ? submit_bio+0x40/0x120
->>>> [   29.111278]  ? swap_readpage+0x148/0x190
->>>> [   29.111924]  ? read_swap_cache_async+0x53/0x60
->>>> [   29.112670]  ? swap_cluster_readahead+0x231/0x2b0
->>>> [   29.113310]  ? swapin_readahead+0x2ce/0x400
->>>> [   29.113878]  ? pagecache_get_page+0x2b/0x210
->>>> [   29.114416]  ? do_swap_page+0x42c/0x800
->>>> [   29.114919]  ? __handle_mm_fault+0x544/0xdd0
->>>> [   29.115455]  ? handle_mm_fault+0x112/0x230
->>>> [   29.115978]  ? __do_page_fault+0x196/0x410
->>>> [   29.116501]  ? __put_user_4+0x19/0x20
->>>> [   29.116990]  ? page_fault+0x5/0x20
->>>> [   29.117451]  ? page_fault+0x1b/0x20
->>>> [   29.117925] CR2: 0000000000000000
->>>> [   29.118472] ---[ end trace 0faa4ddc190b41fa ]---
->>>
->>> Can you try this? The swap read-in poll attempts looks totally
->>> incorrect.
->>>
->>>
->>> diff --git a/mm/page_io.c b/mm/page_io.c
->>> index 5bdfd21c1bd9..f3455f9f8dc7 100644
->>> --- a/mm/page_io.c
->>> +++ b/mm/page_io.c
->>> @@ -401,6 +401,8 @@ int swap_readpage(struct page *page, bool synchronous)
->>>  	get_task_struct(current);
->>>  	bio->bi_private = current;
->>>  	bio_set_op_attrs(bio, REQ_OP_READ, 0);
->>> +	if (synchronous)
->>> +		bio->bi_opf |= REQ_HIPRI;
->>>  	count_vm_event(PSWPIN);
->>>  	bio_get(bio);
->>>  	qc = submit_bio(bio);
->>> @@ -411,7 +413,7 @@ int swap_readpage(struct page *page, bool synchronous)
->>>  			break;
->>>  
->>>  		if (!blk_poll(disk->queue, qc, true))
->>> -			break;
->>> +			io_schedule();
->>>  	}
->>>  	__set_current_state(TASK_RUNNING);
->>>  	bio_put(bio);
->>
->> Still crashes:
-> 
-> What device is this?
+On Wed, Dec 05, 2018 at 10:44:05AM +0100, Christian Zigotzky wrote:
+> Thanks for your reply. I undid all dma mapping commits with the following 
+> command:
+>
+> git checkout 721c01ba8b46ddb5355bd6e6b3bbfdabfdf01e97
+>
+> After that I compiled the kernels with this code for my P5020 board (Cyrus) 
+> and for my PASEMI board (Nemo) today.
+>
+> Result: PASEMI onboard ethernet works again and the P5020 board boots.
+>
+> It seems the dma mapping commits are the problem.
 
-00:01.1 IDE interface: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II] (prog-if 80 [Master])
-	Subsystem: Red Hat, Inc Qemu virtual machine
+Thanks.  Can you try a few stepping points in the tree?
 
-JFI: The same result for gcc-7.3 (initially was gcc-8.2).
+First just with commit 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6
+(the first one) applied?
+
+Second with all commits up to 5da11e49df21f21dac25a2491aa788307bdacb6b
+
+And if that still works with commits up to
+c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a
