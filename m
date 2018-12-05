@@ -2,147 +2,129 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E0EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7E2C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8382720879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 526912082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:53:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hOoEG+u9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8382720879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="tAQsFzPy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526912082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbeLEAw4 (ORCPT
+        id S1726751AbeLEAxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:52:56 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:51918 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeLEAw4 (ORCPT
+        Tue, 4 Dec 2018 19:53:04 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45488 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeLEAxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:52:56 -0500
-X-Greylist: delayed 1465 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Dec 2018 19:52:55 EST
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB50O5NI035362;
-        Wed, 5 Dec 2018 00:28:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=33GdwUmihCsk2pSLE+DYtnsRLJxJNlmd2rViK+KqI5E=;
- b=hOoEG+u99nYARz4VJgCd95n0xRscQOnQ8RGHZvGMC+39tl5RP7nNcz9g0hm0T4cSqLkl
- MlRLlIlHPoc+LjQwRKNj8UVd/vKhWQuutZyo3UcvKqakDc48ebQCm2RsZSqCDecBJU+i
- U+9KtLaQ2eVjXrkdv1e0I8fNtzLBxhC5QJjYIVOv00ICWGv7wY+vA0DTpCte5T/ExsEF
- LTukuDA23rZX0qCo4crAQRbJ6gAyfWCR27yZ+JdcVY4px9YYxDMWi608z6VFMjeqez1n
- Pv/g4tuuC73It5uxHh33THsD2teVByCT78XQxL4/NXKPYsuZQcRU6PW2C9uOkPdpdpgL +w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftf3h7f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 00:28:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB50SDG5002651
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 00:28:13 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB50S9Q8030679;
-        Wed, 5 Dec 2018 00:28:12 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Dec 2018 16:28:09 -0800
-Subject: Re: [Xen-devel][PATCH v2 1/3] xen: Introduce shared buffer helpers
- for page directory...
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        jgross@suse.com
-Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181130074205.20496-1-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <ab1b0d28-f3a1-41ec-82df-2474553dbefe@oracle.com>
-Date:   Tue, 4 Dec 2018 19:28:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 4 Dec 2018 19:53:03 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a14so9147892plm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:53:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=ATCg9fvTUzVSYrKq8MWA0GV6b6vl2SbhBcgVyZ2mmJs=;
+        b=tAQsFzPya0J+e2ukEg4itkrdH8qkWF0z9Gp/TYbIQt0/6MXiT016uFFucX6OrgqwOZ
+         J9DImptrsXJ6CAU8ywDio9+/5utflAcvrPBgCCdOMZJUSPRqtmFRozv2cj3e8lMwf4xv
+         Eb8jHkb5aaoOT7unz3jUEwFP+wNyJEotQ3OHWKrUgwJv35mMJoh5OlGY7JSZCCsWssMY
+         Wpy0K/fvyi9PhG/Zm9SLKxrg44tNKtEAFmf35z0Upmd4yDrbztHpMb1DkMGQ4x4PVgER
+         hJxRnhMHqDI3Vzeww6ZaCM3NYZDEfFhjmCpttc44D5KT4/+rAyAU0VAPJ5aHsXxrmiFU
+         xzEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ATCg9fvTUzVSYrKq8MWA0GV6b6vl2SbhBcgVyZ2mmJs=;
+        b=f2bhQtwx/S5bC5heaFpKCeKkcSMgrK/b7KSWlg98SPlb0g8RHZigz6CcrJZ/8vqPFu
+         fpnuXJVRYdEz/1rGFCaz8gF3jD64FRHHG4rB7zRUp7dLlmleSckxWUYSIg+TRgW/MPGP
+         8lMMJ8v+hwSXducuBbeehjc/hUMT2eOnoSgbX+N1HCmUo7sZxvXOeV5c4891Nc1JV66X
+         L8D3O1Td08unZYY+PcOxX1pFGOk3k0lU7bCYMWlJgWIP4o8CjWD0I+E/BuWAbLHKq7iy
+         ej8sALBkgKs8FAeZtUHvrVhV4DCgTIxaMTL9GlhAmrRJ43pS8J+YSejT+qOHYFNB7Xl3
+         0ihg==
+X-Gm-Message-State: AA+aEWZIKhmo20Q8sQqzCQZADOehYXkHerISXNzfLFYRDWhF4r7+cv38
+        zzQbuu2Sr3JcFjErDKOm3IVEJQ==
+X-Google-Smtp-Source: AFSGD/U+vln/sVxNumAskd/VD/c9RRfiNGiP38FroUtKg1M+ksNzRjyECAPyB+q7y7lBh+sGHxQP+A==
+X-Received: by 2002:a17:902:2862:: with SMTP id e89mr22501733plb.158.1543971182845;
+        Tue, 04 Dec 2018 16:53:02 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id 6sm25011955pfv.30.2018.12.04.16.53.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 16:53:02 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, carlo@caione.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 0/2] ARM: dts: enable CPU frequency scaling on Meson8/Meson8b
+In-Reply-To: <20181129230044.21358-1-martin.blumenstingl@googlemail.com>
+References: <20181129230044.21358-1-martin.blumenstingl@googlemail.com>
+Date:   Tue, 04 Dec 2018 16:53:01 -0800
+Message-ID: <7htvjsbxqq.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130074205.20496-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=650
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050002
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/30/18 2:42 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> based frontends. Currently the frontends which implement
-> similar code for sharing big buffers between frontend and
-> backend are para-virtualized DRM and sound drivers.
-> Both define the same way to share grant references of a
-> data buffer with the corresponding backend with little
-> differences.
->
-> Move shared code into a helper module, so there is a single
-> implementation of the same functionality for all.
->
-> This patch introduces code which is used by sound and display
-> frontend drivers without functional changes with the intention
-> to remove shared code from the corresponding drivers.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-Acked-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> This series enables CPU frequency scaling on Meson8 and Meson8b. On
+> these SoCs all CPU cores are using the same clock, so all cores will
+> always run at the same frequency.
+>
+> On Meson8b this is pretty straight-forward by taking the frequency and
+> voltage table from Amlogic's 3.10 vendor kernel and converting it to
+> "operating-points-v2".
+>
+> Meson8 (which is inherited by Meson8m2) is not so straight forward:
+> The 3.10 vendor kernel contains two frequency and voltage tables with
+> different voltages for the same frequency. It turns out that this is
+> due to the design of a specific reference board where the output
+> voltage of the regulator is limited. This has nothing to do with the
+> recommended voltages of the chip so this adds the "operating-points-v2"
+> which are used by all boards in the vendor kernel except the special
+> case.
+> The two fastest (clock rates: 1.8GHz and 1.992GHz) operating points are
+> causing my Meson8m2 "M8S" (not upstream yet) board to lock up hard with
+> instruction errors. I'm not sure if this is due to the poor design of
+> the PCB (the LED is getting darker when I switch to 1.8GHz and soon
+> after that it will crash). Thus I decided to play safe and disabled
+> these two frequencies for now.
+>
+> Special thanks to Jianxin from Amlogic who patiently replied to all of
+> my questions about the CPU clocks (without his hints I would still be
+> looking at why I'm seeing random lockups when running the CPU off
+> cpu_in_div3 or why the udelay is not working properly)!
+>
+> This is successfully tested on:
+> - Meson8b: Odroid-C1 and EC-100
+> - Meson8m2: MXIII-Plus and my "M8S" board (the latter is not upstream
+>   yet) with frequencies up to 1.608GHz
+>
+> Dependencies of this series:
+> - these patches are based on my other series: [0] "32-bit Meson: add
+>   the ARM TWD and Global Timers"
+> - when not running linux-next this requires the the clock driver
+>   patches which are queued for v4.21: [1] "[GIT PULL] clk: meson:
+>   updates for v4.21"
+> - when not running linux-next there is a runtime dependency on the
+>   meson6_timer from [2] "clocksource/meson6_timer: implement ARM
+>   delay timer" because changing the CPU clock requires a small udelay
+>   which only works properly when using a timer as clocksource (instead
+>   of running a jiffies based delay loop where the timing changes with
+>   the CPU frequency)
 
+Thanks for the detailed description of dependencies.
+
+Applied to v4.21/dt,
+
+Kevin
