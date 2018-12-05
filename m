@@ -2,123 +2,129 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1B2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D347BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53AE620878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53AE620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B31A20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:24:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ago62cqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B31A20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbeLERWp (ORCPT
+        id S1728065AbeLERY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:22:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49524 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbeLERWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:22:44 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58469307CDD4;
-        Wed,  5 Dec 2018 17:22:44 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 95DA684F0;
-        Wed,  5 Dec 2018 17:22:42 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 18:22:41 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>, kernel-team@lge.com
-Subject: Re: [PATCH 3/9] tools/lib/traceevent: Install trace-seq.h API header
- file
-Message-ID: <20181205172241.GC3836@krava>
-References: <20181130154403.150474900@goodmis.org>
- <20181130154647.176265533@goodmis.org>
- <20181204074739.GC16733@sejong>
- <20181204144145.116a2caf@vmware.local.home>
- <20181205122517.GG2950@krava>
- <20181205120334.60d0478e@vmware.local.home>
+        Wed, 5 Dec 2018 12:24:29 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50977 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbeLERY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:24:29 -0500
+Received: by mail-it1-f194.google.com with SMTP id z7so22591970iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zJIU5qPm0FWz6VlyDVJI6HhxPQrbh3vWQhdmJaDqXII=;
+        b=ago62cqjasKEph8jw6fM4KZisk1vJjJIjahBE4+/dyxc3gT7rtjWjC7pF17I7qFK3U
+         A9b3rcDm/sJdTEiAJu8W3tDpX2TukaU60/ji5yHcGcif27VyGZqePxtJhEYD/qn7x/+4
+         cmwcCjKK/VMRxDTnZKldfbE6P34E6btP6VrwU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zJIU5qPm0FWz6VlyDVJI6HhxPQrbh3vWQhdmJaDqXII=;
+        b=jNh7dA6CXfMEvs6BYH+RcTaaf7QRmuGHyETyUcNW2gzCft5Jv3hszu+3NRivdPNgYN
+         xROKbDFbo7KMCEd1ByvqFp66fekh1TE/NJ2meqvSdyoGxhpCJOy3fdyHyMlnFu10/kR5
+         RTfaMeMINfzdKNTxX0EGzH3S5em5DIPGvM9m9aEOv90UJ71UXXPEv5uNge1rNBtoE0be
+         eCxSmCpOlWrBvSPvFMfSOvl63KsH42DDFfg0tDrOVPoXqWVP3d+fqkwTnkTTXWBv3p/N
+         W7lRasESGq8ADnTb3/qCbgdJTGYbc3SfjhLs9bk0zWXmxRC9cbmnU/PF0byt6Ml+cBtY
+         EMRg==
+X-Gm-Message-State: AA+aEWZZ7DROE0f2Z5GuC6UteIwwLbFawVqfIk96xn+PwwLOoq9nFf9i
+        oZUHiZlPgBE/fU5nDMHMND4xrV25doZ/JBOKb+nJ9g==
+X-Google-Smtp-Source: AFSGD/WndxEYCJe+B1h3fR8jRvsFAGkt6W2jotSAufegGWj/fUHQf3BmDj+/l2qzbsos2R9cXU5JoQFqVi/T+nWA5X0=
+X-Received: by 2002:a05:660c:34f:: with SMTP id b15mr16466076itl.146.1544030668000;
+ Wed, 05 Dec 2018 09:24:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205120334.60d0478e@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 05 Dec 2018 17:22:44 +0000 (UTC)
+References: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1543653585-108277-1-git-send-email-yuehaibing@huawei.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 5 Dec 2018 10:24:16 -0700
+Message-ID: <CANLsYkzyVCrV8UG7Fim0an2Rto2a4WTd6fSZLr8tt=gLZACesA@mail.gmail.com>
+Subject: Re: [PATCH -next] coresight: stm: remove set but not used variable 'res_size'
+To:     yuehaibing@huawei.com
+Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:03:34PM -0500, Steven Rostedt wrote:
-> On Wed, 5 Dec 2018 13:25:17 +0100
-> Jiri Olsa <jolsa@redhat.com> wrote:
-> 
-> > On Tue, Dec 04, 2018 at 02:41:45PM -0500, Steven Rostedt wrote:
-> > > On Tue, 4 Dec 2018 16:47:39 +0900
-> > > Namhyung Kim <namhyung@kernel.org> wrote:
-> > > 
-> > >   
-> > > > > @@ -302,6 +302,7 @@ install_headers:
-> > > > >  	$(call QUIET_INSTALL, headers) \
-> > > > >  		$(call do_install,event-parse.h,$(prefix)/include/traceevent,644); \
-> > > > >  		$(call do_install,event-utils.h,$(prefix)/include/traceevent,644); \
-> > > > > +		$(call do_install,trace-seq.h,$(prefix)/include/traceevent,644); \
-> > > > >  		$(call do_install,kbuffer.h,$(prefix)/include/traceevent,644)    
-> > > > 
-> > > > Do you still wanna have 'traceevent' directory prefix?  I just
-> > > > sometimes feel a bit annoying to type it. ;-)  
-> > > 
-> > > I'd still want the separate directory for it. I'll probably have a
-> > > ftrace.h file added to this for ftrace specific code in the future.
-> > >   
-> > > > 
-> > > > Or you can rename it something like 'tep' or 'libtep' - and hopefully
-> > > > having only single header file to include..
-> > > >  
-> > > 
-> > > Hmm, I wonder if we should just call the directory "trace"?  
-> > 
-> > hum, I think it should match the library name, like 'include/tep/'
-> 
-> I was hoping to add other headers in this directly, like ftrace.h and
-> perf.h ;-)
+On Sat, 1 Dec 2018 at 01:31, YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/hwtracing/coresight/coresight-stm.c: In function 'stm_probe':
+> drivers/hwtracing/coresight/coresight-stm.c:796:9: warning:
+>  variable 'res_size' set but not used [-Wunused-but-set-variable]
+>
+> It never used since introduction in commit
+> 237483aa5cf4 ("coresight: stm: adding driver for CoreSight STM component")
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-those are headers from trace-cmd?
+Applied - thanks,
+Mathieu
 
-I guess we could have some common 'trace' related directory,
-but I think we should have some rules for placing files in
-there to avoid mayhem ;-)
-
-but I'd prefer to go with package related directories under include
-
-> > also we should change the plugin installation directory
-> > 
-> > [jolsa@krava traceevent]$ rpm -ql perf | grep traceevent
-> > /usr/lib64/traceevent
-> > /usr/lib64/traceevent/plugins
-> > /usr/lib64/traceevent/plugins/plugin_cfg80211.so
-> > /usr/lib64/traceevent/plugins/plugin_function.so
-> > /usr/lib64/traceevent/plugins/plugin_hrtimer.so
-> > /usr/lib64/traceevent/plugins/plugin_jbd2.so
-> > /usr/lib64/traceevent/plugins/plugin_kmem.so
-> > /usr/lib64/traceevent/plugins/plugin_kvm.so
-> > /usr/lib64/traceevent/plugins/plugin_mac80211.so
-> > /usr/lib64/traceevent/plugins/plugin_sched_switch.so
-> > /usr/lib64/traceevent/plugins/plugin_scsi.so
-> > /usr/lib64/traceevent/plugins/plugin_xen.so
-> 
-> Change it to tep?
-
-yes, that makes sense to me
-
-jirka
+> ---
+>  drivers/hwtracing/coresight/coresight-stm.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index ef339ff..f07825d 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -793,7 +793,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+>         struct stm_drvdata *drvdata;
+>         struct resource *res = &adev->res;
+>         struct resource ch_res;
+> -       size_t res_size, bitmap_size;
+> +       size_t bitmap_size;
+>         struct coresight_desc desc = { 0 };
+>         struct device_node *np = adev->dev.of_node;
+>
+> @@ -833,15 +833,11 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+>
+>         drvdata->write_bytes = stm_fundamental_data_size(drvdata);
+>
+> -       if (boot_nr_channel) {
+> +       if (boot_nr_channel)
+>                 drvdata->numsp = boot_nr_channel;
+> -               res_size = min((resource_size_t)(boot_nr_channel *
+> -                                 BYTES_PER_CHANNEL), resource_size(res));
+> -       } else {
+> +       else
+>                 drvdata->numsp = stm_num_stimulus_port(drvdata);
+> -               res_size = min((resource_size_t)(drvdata->numsp *
+> -                                BYTES_PER_CHANNEL), resource_size(res));
+> -       }
+> +
+>         bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
+>
+>         guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
+>
+>
+>
