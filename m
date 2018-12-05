@@ -2,571 +2,251 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB6C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E376C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D52206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="cLFwjmtj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D52206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id DD9DE206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:23:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD9DE206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeLEJWh (ORCPT
+        id S1727462AbeLEJXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:22:37 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40410 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbeLEJWe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:22:34 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i12so9710006pfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 01:22:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MQaYcVjqdk52D8M5ENsrCRmoZvyNpMveUMqEP1yNMYw=;
-        b=cLFwjmtjE2JHdHahZjd47xMVsvqz2+JvFe4Q4ay3h24vnA5WZ6v9QIi/olJ07sUU7p
-         A8fcU/OhcqocXs/wrS18jPQk96CV4j00mk//RSIHH908jDMSNQmmyMU1Dmfvd2MrBRz7
-         cKPAqaSLh8dG1TUDeOsCNcdmHHgfc31nkusM6D2fHzrxfcBUVYq8YIyk8lPs4P1YKrCd
-         YVEJ8+YDXuYp/7i7Ke+4vaFhdoHQIhek4542ptXXU+VEJ83U8+86zMkXFhvp4M/PmHNX
-         dDklM7Qx09GFgLZzyAN05k9FVpbukeg5ujkYTAudMaJIm42dCNnGhhiLAmHCVlqT/aoO
-         1u8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MQaYcVjqdk52D8M5ENsrCRmoZvyNpMveUMqEP1yNMYw=;
-        b=Ox0S2eBP9xYQcTeBF/IIrNhbnLNORMa7WXZGOpjZ3cVK3cQp6I0IL8SbO+SLtmoVs6
-         5uFCdVQxlfm1fhiUMEjepga17MolarzEZu1m3BMzQPbscrEAtnZyfH2loGltpXm88VlC
-         49B+OwFU6l3lY11/A9w3qEotQbP4T9cSg1tv2m2RxxaqNNlZ1Km2IrHN/mi7JLyqKV6x
-         HLIqUqHZ2cL9QWDVaLE3z56mMKxUmd4Qpdsn79DroSdCHkjTZd/X4xEnAx3OtSHSvyL6
-         dEwQwzXBkaaRt9bAzfkxgyWS/4M/f2sgqk8ckecvkR6UYQEUAcxgi/ZI6DgltF+zNkjJ
-         7FpQ==
-X-Gm-Message-State: AA+aEWYyG00+gnI9CwEXkPUHjn+Gai5unmkVUa3rYVQRsqN1hORTRXCs
-        +tTPNqCAcN+2I7KvmUgw95H4DLMIgkBU2A==
-X-Google-Smtp-Source: AFSGD/Ujk2nZeLeiTW29C0y63816EBtXqPrx3DmqjOK3Wqfk+JbLaa6azj8r1a2Xb+ZjXjG07uNcOw==
-X-Received: by 2002:a62:5e41:: with SMTP id s62mr23336379pfb.232.1544001751565;
-        Wed, 05 Dec 2018 01:22:31 -0800 (PST)
-Received: from localhost.localdomain ([2404:4404:133a:4500:b824:a031:b50e:f401])
-        by smtp.gmail.com with ESMTPSA id k26sm36665596pgf.65.2018.12.05.01.22.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 01:22:30 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, ebiederm@xmission.com
-Cc:     serge@hallyn.com, jannh@google.com, akpm@linux-foundation.org,
-        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, dancol@google.com,
-        timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, Christian Brauner <christian@brauner.io>
-Subject: [PATCH v3] signal: add procfd_send_signal() syscall
-Date:   Wed,  5 Dec 2018 10:22:03 +0100
-Message-Id: <20181205092203.14105-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
+        Wed, 5 Dec 2018 04:23:30 -0500
+Received: from mga09.intel.com ([134.134.136.24]:44000 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbeLEJXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:23:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 01:23:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,317,1539673200"; 
+   d="scan'208";a="107438023"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2018 01:23:27 -0800
+Subject: Re: [PATCH] mmc: sdhci-omap: Workaround errata regarding SDR104/HS200
+ tuning failures (i929)
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     ulf.hansson@linaro.org, kishon@ti.com
+References: <20181129190503.6040-1-faiz_abbas@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <d547d7e3-97d5-3390-52d0-7dfba6754a63@intel.com>
+Date:   Wed, 5 Dec 2018 11:21:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181129190503.6040-1-faiz_abbas@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kill() syscall operates on process identifiers (pid). After a process
-has exited its pid can be reused by another process. If a caller sends a
-signal to a reused pid it will end up signaling the wrong process. This
-issue has often surfaced and there has been a push [1] to address this
-problem.
+On 29/11/18 9:05 PM, Faiz Abbas wrote:
+> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
+> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
+> unexpected tuning pattern errors. A small failure band may be present
+> in the tuning range which may be missed by the current algorithm.
+> Furthermore, the failure bands vary with temperature leading to
+> different optimum tuning values for different temperatures.
+> 
+> As suggested in the related Application Report (SPRACA9B - October 2017
+> - Revised July 2018 [2]), tuning should be done in two stages.
+> In stage 1, assign the optimum ratio in the maximum pass window for the
+> current temperature. In stage 2, if the chosen value is close to the
+> small failure band, move away from it in the appropriate direction.
+> 
+> References:
+> [1] http://www.ti.com/lit/pdf/sprz426
+> [2] http://www.ti.com/lit/pdf/SPRACA9
+> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-This patch uses file descriptors (fd) from proc/<pid> as stable handles on
-struct pid. Even if a pid is recycled the handle will not change. The fd
-can be used to send signals to the process it refers to.
-Thus, the new syscall procfd_send_signal() is introduced to solve this
-problem. Instead of pids it operates on process fds (procfd).
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-/* prototype and argument /*
-long procfd_send_signal(int fd, int sig, siginfo_t *info, unsigned int flags);
-
-In addition to the procfd and signal argument it takes an additional
-siginfo_t and flags argument. If the siginfo_t argument is NULL then
-procfd_send_signal() behaves like kill(). If it is not NULL
-procfd_send_signal() behaves like rt_sigqueueinfo().
-The flags argument is added to allow for future extensions of this syscall.
-It currently needs to be passed as 0. Failing to do so will cause EINVAL.
-
-/* procfd_send_signal() replaces multiple pid-based syscalls */
-The procfd_send_signal() syscall currently takes on the job of the
-following syscalls that operate on pids:
-- kill(2)
-- rt_sigqueueinfo(2)
-The syscall is defined in such a way that it can also operate on thread fds
-instead of process fds. In a future patchset I will extend it to operate on
-procfds from /proc/<pid>/task/<tid> at which point it will additionally
-take on the job of:
-- tgkill(2)
-- rt_tgsigqueueinfo(2)
-Right now this is intentionally left out to keep this patchset as simple as
-possible (cf. [4]). If a procfd of /proc/<pid>/task/<tid> is passed
-EOPNOTSUPP will be returned to give userspace a way to detect when I add
-support for such procfds {cf. [10]).
-
-/* naming */
-The name procfd_send_signal() was chosen to reflect the fact that it takes
-on the job of multiple syscalls. It is intentional that the name is not
-reminiscent of neither kill(2) nor rt_sigqueueinfo(2). Not the fomer
-because it might imply that procfd_send_signal() is only a replacement for
-kill(2) and not the latter because it is a hazzle to remember the correct
-spelling (especially for non-native speakers) and because it is not
-descriptive enough of what the syscall actually does. The name
-"procfd_send_signal" makes it very clear that its job is to send signals.
-
-/* O_PATH file descriptors */
-procfds opened as O_PATH fds cannot be used to send signals to a process
-(cf. [2]). Signaling processes through procfds is the equivalent of writing
-to a file. Thus, this is not an operation that operates "purely at the
-file descriptor level" as required by the open(2) manpage.
-
-/* zombies */
-Zombies can be signaled just as any other process. No special error will be
-reported since a zombie state is an unreliable state (cf. [3]).
-
-/* cross-namespace signals */
-The patch currently enforces that the signaler and signalee either are in
-the same pid namespace or that the signaler's pid namespace is an ancestor
-of the signalee's pid namespace. This is done for the sake of simplicity
-and because it is unclear to what values certain members of struct
-siginfo_t would need to be set to (cf. [5], [6]).
-
-/* compat syscalls */
-It became clear that we would like to avoid adding compat syscalls (cf.
-[7]). The compat syscall handling is now done in kernel/signal.c itself by
-adding __copy_siginfo_from_user_generic() which lets us avoid compat
-syscalls (cf. [8]).
-With upcoming rework for syscall handling things might improve even further
-(cf. [11]).
-This patch was tested on x64 and x86.
-
-/* userspace usage */
-An asciinema recording for the basic functionality can be found under [9].
-With this patch a process can be killed via:
-
- #define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <signal.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <sys/stat.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <unistd.h>
-
- static inline int do_procfd_send_signal(int procfd, int sig, siginfo_t *info,
-                                         unsigned int flags)
- {
- #ifdef __NR_procfd_send_signal
-         return syscall(__NR_procfd_send_signal, procfd, sig, info, flags);
- #else
-         return -ENOSYS;
- #endif
- }
-
- int main(int argc, char *argv[])
- {
-         int fd, ret, saved_errno, sig;
-
-         if (argc < 3)
-                 exit(EXIT_FAILURE);
-
-         fd = open(argv[1], O_DIRECTORY | O_CLOEXEC);
-         if (fd < 0) {
-                 printf("%s - Failed to open \"%s\"\n", strerror(errno), argv[1]);
-                 exit(EXIT_FAILURE);
-         }
-
-         sig = atoi(argv[2]);
-
-         printf("Sending signal %d to process %s\n", sig, argv[1]);
-         ret = do_procfd_send_signal(fd, sig, NULL, 0);
-
-         saved_errno = errno;
-         close(fd);
-         errno = saved_errno;
-
-         if (ret < 0) {
-                 printf("%s - Failed to send signal %d to process %s\n",
-                        strerror(errno), sig, argv[1]);
-                 exit(EXIT_FAILURE);
-         }
-
-         exit(EXIT_SUCCESS);
- }
-
-[1]:  https://lkml.org/lkml/2018/11/18/130
-[2]:  https://lore.kernel.org/lkml/874lbtjvtd.fsf@oldenburg2.str.redhat.com/
-[3]:  https://lore.kernel.org/lkml/20181204132604.aspfupwjgjx6fhva@brauner.io/
-[4]:  https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
-[5]:  https://lore.kernel.org/lkml/20181121213946.GA10795@mail.hallyn.com/
-[6]:  https://lore.kernel.org/lkml/20181120103111.etlqp7zop34v6nv4@brauner.io/
-[7]:  https://lore.kernel.org/lkml/36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net/
-[8]:  https://lore.kernel.org/lkml/87tvjxp8pc.fsf@xmission.com/
-[9]:  https://asciinema.org/a/X1J8eGhe3vCfBE2b9TXtTaSJ7
-[10]: https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
-[11]: https://lore.kernel.org/lkml/F53D6D38-3521-4C20-9034-5AF447DF62FF@amacapital.net/
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirsky <luto@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Florian Weimer <fweimer@redhat.com>
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-Changelog:
-v3:
-- add __copy_siginfo_from_user_generic() to avoid adding compat syscalls
-- s/procfd_signal/procfd_send_signal/g
-- change type of flags argument from int to unsigned int
-- add comment about what happens to zombies
-- add proc_is_tid_procfd()
-- return EOPNOTSUPP when /proc/<pid>/task/<tid> fd is passed so userspace
-  has a way of knowing that tidfds are not supported currently.
-v2:
-- define __NR_procfd_signal in unistd.h
-- wire up compat syscall
-- s/proc_is_procfd/proc_is_tgid_procfd/g
-- provide stubs when CONFIG_PROC_FS=n
-- move proc_pid() to linux/proc_fs.h header
-- use proc_pid() to grab struct pid from /proc/<pid> fd
-v1:
-- patch introduced
----
- arch/x86/entry/syscalls/syscall_32.tbl |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl |   1 +
- fs/proc/base.c                         |  17 +++-
- fs/proc/internal.h                     |   5 -
- include/linux/proc_fs.h                |  18 ++++
- include/linux/syscalls.h               |   3 +
- include/uapi/asm-generic/unistd.h      |   4 +-
- kernel/signal.c                        | 127 +++++++++++++++++++++++--
- 8 files changed, 163 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3cf7b533b3d1..9ab0477d6dc3 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -398,3 +398,4 @@
- 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
-+387	i386	procfd_send_signal	sys_procfd_send_signal		__ia32_sys_procfd_send_signal
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f0b1709a5ffb..6d22b1130ed0 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -343,6 +343,7 @@
- 332	common	statx			__x64_sys_statx
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
-+335	common	procfd_send_signal	__x64_sys_procfd_send_signal
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ce3465479447..906647d51f6d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -716,7 +716,10 @@ static int proc_pid_permission(struct inode *inode, int mask)
- 	return generic_permission(inode, mask);
- }
- 
--
-+struct pid *proc_pid(const struct inode *inode)
-+{
-+	return PROC_I(inode)->pid;
-+}
- 
- static const struct inode_operations proc_def_inode_operations = {
- 	.setattr	= proc_setattr,
-@@ -3038,6 +3041,12 @@ static const struct file_operations proc_tgid_base_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+bool proc_is_tgid_procfd(const struct file *file)
-+{
-+	return d_is_dir(file->f_path.dentry) &&
-+	       (file->f_op == &proc_tgid_base_operations);
-+}
-+
- static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
- {
- 	return proc_pident_lookup(dir, dentry,
-@@ -3422,6 +3431,12 @@ static const struct file_operations proc_tid_base_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+bool proc_is_tid_procfd(const struct file *file)
-+{
-+	return d_is_dir(file->f_path.dentry) &&
-+	       (file->f_op == &proc_tid_base_operations);
-+}
-+
- static const struct inode_operations proc_tid_base_inode_operations = {
- 	.lookup		= proc_tid_base_lookup,
- 	.getattr	= pid_getattr,
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51e..eb69afba83f3 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -113,11 +113,6 @@ static inline void *__PDE_DATA(const struct inode *inode)
- 	return PDE(inode)->data;
- }
- 
--static inline struct pid *proc_pid(const struct inode *inode)
--{
--	return PROC_I(inode)->pid;
--}
--
- static inline struct task_struct *get_proc_task(const struct inode *inode)
- {
- 	return get_pid_task(proc_pid(inode), PIDTYPE_PID);
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index d0e1f1522a78..ebc0e0ca5256 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -73,6 +73,9 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
- 						    int (*show)(struct seq_file *, void *),
- 						    proc_write_t write,
- 						    void *data);
-+extern bool proc_is_tgid_procfd(const struct file *file);
-+extern bool proc_is_tid_procfd(const struct file *file);
-+extern struct pid *proc_pid(const struct inode *inode);
- 
- #else /* CONFIG_PROC_FS */
- 
-@@ -114,6 +117,21 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
- #define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
- #define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
- 
-+static inline bool proc_is_tgid_procfd(const struct file *file)
-+{
-+	return false;
-+}
-+
-+static inline bool proc_is_tid_procfd(const struct file *file)
-+{
-+	return false;
-+}
-+
-+static inline struct pid *proc_pid(const struct inode *inode)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_PROC_FS */
- 
- struct net;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 2ac3d13a915b..b3a02c6780d0 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -907,6 +907,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 			  unsigned mask, struct statx __user *buffer);
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
-+asmlinkage long sys_procfd_send_signal(int procfd, int sig,
-+				       siginfo_t __user *info,
-+				       unsigned int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 538546edbfbd..b409ee26f8e9 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
- __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
- #define __NR_rseq 293
- __SYSCALL(__NR_rseq, sys_rseq)
-+#define __NR_procfd_send_signal 294
-+__SYSCALL(__NR_procfd_send_signal, sys_procfd_send_signal)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 294
-+#define __NR_syscalls 295
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 9a32bc2088c9..79a7e0396b0f 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -19,7 +19,9 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sched/cputime.h>
-+#include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/proc_fs.h>
- #include <linux/tty.h>
- #include <linux/binfmts.h>
- #include <linux/coredump.h>
-@@ -3286,6 +3288,16 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
- }
- #endif
- 
-+static inline void prepare_kill_siginfo(int sig, struct kernel_siginfo *info)
-+{
-+	clear_siginfo(info);
-+	info->si_signo = sig;
-+	info->si_errno = 0;
-+	info->si_code = SI_USER;
-+	info->si_pid = task_tgid_vnr(current);
-+	info->si_uid = from_kuid_munged(current_user_ns(), current_uid());
-+}
-+
- /**
-  *  sys_kill - send a signal to a process
-  *  @pid: the PID of the process
-@@ -3295,16 +3307,119 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
- {
- 	struct kernel_siginfo info;
- 
--	clear_siginfo(&info);
--	info.si_signo = sig;
--	info.si_errno = 0;
--	info.si_code = SI_USER;
--	info.si_pid = task_tgid_vnr(current);
--	info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
-+	prepare_kill_siginfo(sig, &info);
- 
- 	return kill_something_info(sig, &info, pid);
- }
- 
-+/*
-+ * Verify that the signaler and signalee either are in the same pid namespace
-+ * or that the signaler's pid namespace is an ancestor of the signalee's pid
-+ * namespace.
-+ */
-+static bool may_signal_procfd(struct pid *pid)
-+{
-+	struct pid_namespace *active = task_active_pid_ns(current);
-+	struct pid_namespace *p = ns_of_pid(pid);
-+
-+	for (;;) {
-+		if (!p)
-+			return false;
-+		if (p == active)
-+			break;
-+		p = p->parent;
-+	}
-+
-+	return true;
-+}
-+
-+static int __copy_siginfo_from_user_generic(int signo, kernel_siginfo_t *kinfo,
-+					    siginfo_t *info)
-+{
-+#ifdef CONFIG_COMPAT
-+	/*
-+	 * Avoid hooking up compat syscalls and instead handle necessary
-+	 * conversions here.
-+	 */
-+	if (in_compat_syscall())
-+		return __copy_siginfo_from_user32(
-+			signo, kinfo, (struct compat_siginfo __user *)info);
-+#endif
-+	return __copy_siginfo_from_user(signo, kinfo, info);
-+}
-+
-+/**
-+ *  sys_procfd_send_signal - send a signal to a process through a process file
-+ *                           descriptor
-+ *  @procfd: the file descriptor of the process
-+ *  @sig:    signal to be sent
-+ *  @info:   the signal info
-+ *  @flags:  future flags to be passed
-+ *
-+ *  Return: 0 on success, negative errno on failure
-+ */
-+SYSCALL_DEFINE4(procfd_send_signal, int, procfd, int, sig,
-+		siginfo_t __user *, info, unsigned int, flags)
-+{
-+	int ret;
-+	struct fd f;
-+	struct pid *pid;
-+	kernel_siginfo_t kinfo;
-+
-+	/* Enforce flags be set to 0 until we add an extension. */
-+	if (flags)
-+		return -EINVAL;
-+
-+	f = fdget_raw(procfd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	/*
-+	 * Give userspace a way to detect whether /proc/<pid>/task/<tid> fds
-+	 * are supported.
-+	 */
-+	ret = -EOPNOTSUPP;
-+	if (proc_is_tid_procfd(f.file))
-+		goto err;
-+
-+	/* Is this a procfd? */
-+	ret = -EINVAL;
-+	if (!proc_is_tgid_procfd(f.file))
-+		goto err;
-+
-+	/* Without CONFIG_PROC_FS proc_pid() returns NULL. */
-+	pid = proc_pid(file_inode(f.file));
-+	if (!pid)
-+		goto err;
-+
-+	if (!may_signal_procfd(pid))
-+		goto err;
-+
-+	if (info) {
-+		ret = __copy_siginfo_from_user_generic(sig, &kinfo, info);
-+		if (unlikely(ret))
-+			goto err;
-+
-+		/*
-+		 * Not even root can pretend to send signals from the kernel.
-+		 * Nor can they impersonate a kill()/tgkill(), which adds
-+		 * source info.
-+		 */
-+		ret = -EPERM;
-+		if ((kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL) &&
-+		    (task_pid(current) != pid))
-+			goto err;
-+	} else {
-+		prepare_kill_siginfo(sig, &kinfo);
-+	}
-+
-+	ret = kill_pid_info(sig, &kinfo, pid);
-+
-+err:
-+	fdput(f);
-+	return ret;
-+}
-+
- static int
- do_send_specific(pid_t tgid, pid_t pid, int sig, struct kernel_siginfo *info)
- {
--- 
-2.19.1
+> ---
+>  drivers/mmc/host/Kconfig      |  2 +
+>  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
+>  2 files changed, 91 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..6d3553f06f27 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -969,6 +969,8 @@ config MMC_SDHCI_XENON
+>  config MMC_SDHCI_OMAP
+>  	tristate "TI SDHCI Controller Support"
+>  	depends on MMC_SDHCI_PLTFM && OF
+> +	select THERMAL
+> +	select TI_SOC_THERMAL
+>  	help
+>  	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>  	  support present in TI's DRA7 SOCs. The controller supports
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index b3cb39d0db6f..9ccce7ef3a60 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/sys_soc.h>
+> +#include <linux/thermal.h>
+>  
+>  #include "sdhci-pltfm.h"
+>  
+> @@ -286,14 +287,18 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	struct sdhci_host *host = mmc_priv(mmc);
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct thermal_zone_device *thermal_dev;
+>  	struct device *dev = omap_host->dev;
+>  	struct mmc_ios *ios = &mmc->ios;
+>  	u32 start_window = 0, max_window = 0;
+> +	bool single_point_failure = false;
+>  	u8 cur_match, prev_match = 0;
+>  	u32 length = 0, max_len = 0;
+>  	u32 phase_delay = 0;
+> +	int temperature;
+>  	int ret = 0;
+>  	u32 reg;
+> +	int i;
+>  
+>  	/* clock tuning is not needed for upto 52MHz */
+>  	if (ios->clock <= 52000000)
+> @@ -303,6 +308,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
+>  		return 0;
+>  
+> +	thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
+> +	if (IS_ERR(thermal_dev)) {
+> +		dev_err(dev, "Unable to get thermal zone for tuning\n");
+> +		return PTR_ERR(thermal_dev);
+> +	}
+> +
+> +	ret = thermal_zone_get_temp(thermal_dev, &temperature);
+> +	if (ret)
+> +		return ret;
+> +
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_DLL);
+>  	reg |= DLL_SWT;
+>  	sdhci_omap_writel(omap_host, SDHCI_OMAP_DLL, reg);
+> @@ -317,6 +332,11 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  
+>  	omap_host->is_tuning = true;
+>  
+> +	/*
+> +	 * Stage 1: Search for a maximum pass window ignoring any
+> +	 * any single point failures. If the tuning value ends up
+> +	 * near it, move away from it in stage 2 below
+> +	 */
+>  	while (phase_delay <= MAX_PHASE_DELAY) {
+>  		sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+> @@ -324,10 +344,15 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		if (cur_match) {
+>  			if (prev_match) {
+>  				length++;
+> +			} else if (single_point_failure) {
+> +				/* ignore single point failure */
+> +				length++;
+>  			} else {
+>  				start_window = phase_delay;
+>  				length = 1;
+>  			}
+> +		} else {
+> +			single_point_failure = prev_match;
+>  		}
+>  
+>  		if (length > max_len) {
+> @@ -345,13 +370,76 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  		goto tuning_error;
+>  	}
+>  
+> +	/*
+> +	 * Assign tuning value as a ratio of maximum pass window based
+> +	 * on temperature
+> +	 */
+> +	if (temperature < -20000)
+> +		phase_delay = min(max_window + 4 * max_len - 24,
+> +				  max_window +
+> +				  DIV_ROUND_UP(13 * max_len, 16) * 4);
+> +	else if (temperature < 20000)
+> +		phase_delay = max_window + DIV_ROUND_UP(9 * max_len, 16) * 4;
+> +	else if (temperature < 40000)
+> +		phase_delay = max_window + DIV_ROUND_UP(8 * max_len, 16) * 4;
+> +	else if (temperature < 70000)
+> +		phase_delay = max_window + DIV_ROUND_UP(7 * max_len, 16) * 4;
+> +	else if (temperature < 90000)
+> +		phase_delay = max_window + DIV_ROUND_UP(5 * max_len, 16) * 4;
+> +	else if (temperature < 120000)
+> +		phase_delay = max_window + DIV_ROUND_UP(4 * max_len, 16) * 4;
+> +	else
+> +		phase_delay = max_window + DIV_ROUND_UP(3 * max_len, 16) * 4;
+> +
+> +	/*
+> +	 * Stage 2: Search for a single point failure near the chosen tuning
+> +	 * value in two steps. First in the +3 to +10 range and then in the
+> +	 * +2 to -10 range. If found, move away from it in the appropriate
+> +	 * direction by the appropriate amount depending on the temperature.
+> +	 */
+> +	for (i = 3; i <= 10; i++) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 6;
+> +			else if (temperature < 20000)
+> +				phase_delay += i - 12;
+> +			else if (temperature < 70000)
+> +				phase_delay += i - 8;
+> +			else
+> +				phase_delay += i - 6;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +	for (i = 2; i >= -10; i--) {
+> +		sdhci_omap_set_dll(omap_host, phase_delay + i);
+> +
+> +		if (mmc_send_tuning(mmc, opcode, NULL)) {
+> +			if (temperature < 10000)
+> +				phase_delay += i + 12;
+> +			else if (temperature < 20000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 70000)
+> +				phase_delay += i + 8;
+> +			else if (temperature < 90000)
+> +				phase_delay += i + 10;
+> +			else
+> +				phase_delay += i + 12;
+> +
+> +			goto single_failure_found;
+> +		}
+> +	}
+> +
+> +single_failure_found:
+>  	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_AC12);
+>  	if (!(reg & AC12_SCLK_SEL)) {
+>  		ret = -EIO;
+>  		goto tuning_error;
+>  	}
+>  
+> -	phase_delay = max_window + 4 * (max_len >> 1);
+>  	sdhci_omap_set_dll(omap_host, phase_delay);
+>  
+>  	omap_host->is_tuning = false;
+> 
 
