@@ -7,88 +7,89 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696AAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F32C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2682C20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195402087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:45:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fi7IU3bF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682C20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrZGPFrI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195402087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbeLEJpl (ORCPT
+        id S1729457AbeLEJpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:45:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50498 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:45:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729031AbeLEJpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:39 -0500
+        id S1729031AbeLEJpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:45:41 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E487213A2;
-        Wed,  5 Dec 2018 09:45:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 456CE2087F;
+        Wed,  5 Dec 2018 09:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003138;
-        bh=PTFLRBX/OkXfYiJARuFzC4QNZrpP5BCOVwzpy2QzOCk=;
+        s=default; t=1544003141;
+        bh=xjkfUY1K3Ul3MGp4m+eqPGCpORi+OQHS/gsbACiH0VU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fi7IU3bF2AamKlPCIYP5yp+jbNA6HOzO2HMBQzS27g9FoCPsvO2Z655cSvEqM2Bto
-         ulwmZl65R+6nh2TOavOZI97PLbqg84pSJ5ga55IjIwL8mmgKkAk7u3PI3FtWBgwDD2
-         9roTneNfoU2Fk9lEA8COBr38sD+3pfOG4B9G4IG0=
+        b=mrZGPFrILmiK7veXJyqnA4TTBQW2NA3Mmg36/7V4sjMQACLkQBtmjV/pvPTs7TCVH
+         7BRyRbTzDlDENt3GVIZeHqlWrIJ2W/bzsrDdGjFMkeAretUzX4p1Wfg3umAKvDwkex
+         VUrLiSRPsl4hsyex10lTdCvjcgUJdjdVBbg+aMio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Artemy Kovalyov <artemyko@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 41/69] IB/mlx5: Fix page fault handling for MW
-Date:   Wed,  5 Dec 2018 04:42:19 -0500
-Message-Id: <20181205094247.6556-41-sashal@kernel.org>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 42/69] KVM: x86: fix empty-body warnings
+Date:   Wed,  5 Dec 2018 04:42:20 -0500
+Message-Id: <20181205094247.6556-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Artemy Kovalyov <artemyko@mellanox.com>
+From: Yi Wang <wang.yi59@zte.com.cn>
 
-[ Upstream commit 75b7b86bdb0df37e08e44b6c1f99010967f81944 ]
+[ Upstream commit 354cb410d87314e2eda344feea84809e4261570a ]
 
-Memory windows are implemented with an indirect MKey, when a page fault
-event comes for a MW Mkey we need to find the MR at the end of the list of
-the indirect MKeys by iterating on all items from the first to the last.
+We get the following warnings about empty statements when building
+with 'W=1':
 
-The offset calculated during this process has to be zeroed after the first
-iteration or the next iteration will start from a wrong address, resulting
-incorrect ODP faulting behavior.
+arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
 
-Fixes: db570d7deafb ("IB/mlx5: Add ODP support to MW")
-Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Rework the debug helper macro to get rid of these warnings.
+
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/odp.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/lapic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
-index 3d701c7a4c91..1ed94b6c0b0a 100644
---- a/drivers/infiniband/hw/mlx5/odp.c
-+++ b/drivers/infiniband/hw/mlx5/odp.c
-@@ -723,6 +723,7 @@ static int pagefault_single_data_segment(struct mlx5_ib_dev *dev,
- 			head = frame;
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 13dfb55b84db..f7c34184342a 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -55,7 +55,7 @@
+ #define PRIo64 "o"
  
- 			bcnt -= frame->bcnt;
-+			offset = 0;
- 		}
- 		break;
+ /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
+-#define apic_debug(fmt, arg...)
++#define apic_debug(fmt, arg...) do {} while (0)
  
+ /* 14 is the version for Xeon and Pentium 8.4.8*/
+ #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
 -- 
 2.17.1
 
