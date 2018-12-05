@@ -7,41 +7,44 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAB1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E36C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEBA120879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:46:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEBA120879
+	by mail.kernel.org (Postfix) with ESMTP id E33D120879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:49:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33D120879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbeLEVqr (ORCPT
+        id S1728320AbeLEVtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:46:47 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51450 "EHLO
+        Wed, 5 Dec 2018 16:49:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51466 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbeLEVqq (ORCPT
+        with ESMTP id S1727339AbeLEVtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:46:46 -0500
+        Wed, 5 Dec 2018 16:49:24 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id 10EA5260E88
+        with ESMTPSA id 46D5326C263
 Received: by earth.universe (Postfix, from userid 1000)
-        id 758DE3C08D6; Wed,  5 Dec 2018 22:46:42 +0100 (CET)
-Date:   Wed, 5 Dec 2018 22:46:42 +0100
+        id F230A3C08D6; Wed,  5 Dec 2018 22:49:20 +0100 (CET)
+Date:   Wed, 5 Dec 2018 22:49:20 +0100
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     UNGLinuxDriver@microchip.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: reset: ocelot: switch the SI to boot mode
-Message-ID: <20181205214642.fyuody7yzv6ioiqd@earth.universe>
-References: <20181109195700.28321-1-alexandre.belloni@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     tiny.windzz@gmail.com,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] power/reset: axxia: Convert to using %pOFn instead of
+ device_node.name
+Message-ID: <20181205214920.cudnhomld6ejzsx6@earth.universe>
+References: <20181124143138.28999-1-tiny.windzz@gmail.com>
+ <CAL_JsqJ8XkowAJQjZoiuucAWqZuJh1ep2jCFor6NCq4pL3m-Cg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vnfa37dwpgvrd7rh"
+        protocol="application/pgp-signature"; boundary="e6xi732btapmst62"
 Content-Disposition: inline
-In-Reply-To: <20181109195700.28321-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <CAL_JsqJ8XkowAJQjZoiuucAWqZuJh1ep2jCFor6NCq4pL3m-Cg@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,81 +52,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---vnfa37dwpgvrd7rh
+--e6xi732btapmst62
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Fri, Nov 09, 2018 at 08:57:00PM +0100, Alexandre Belloni wrote:
-> Switch the SI to boot mode so on a warm reboot, the SI is able to access
-> the flash.
+On Tue, Nov 27, 2018 at 10:51:09AM -0600, Rob Herring wrote:
+> On Sat, Nov 24, 2018 at 8:31 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> >
+> > In preparation to remove the node name pointer from struct device_node,
+> > convert printf users to use the %pOFn format specifier.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  drivers/power/reset/axxia-reset.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
+> Thanks, but I already sent out the same patch and have queued it since
+> no one picked it up.
 
-Thanks, queued.
+Yeah, I did not find enough time to review patches in the last few
+weeks. OTOH I don't see a previous patch with axxia in the Subject
+in my mailbox anyways. FWIW I will skip this one.
 
 -- Sebastian
 
->  drivers/power/reset/ocelot-reset.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
 >=20
-> diff --git a/drivers/power/reset/ocelot-reset.c b/drivers/power/reset/oce=
-lot-reset.c
-> index 5a13a5cc8188..419952c61fd0 100644
-> --- a/drivers/power/reset/ocelot-reset.c
-> +++ b/drivers/power/reset/ocelot-reset.c
-> @@ -26,6 +26,13 @@ struct ocelot_reset_context {
-> =20
->  #define SOFT_CHIP_RST BIT(0)
-> =20
-> +#define ICPU_CFG_CPU_SYSTEM_CTRL_GENERAL_CTRL	0x24
-> +#define IF_SI_OWNER_MASK			GENMASK(1, 0)
-> +#define IF_SI_OWNER_SISL			0
-> +#define IF_SI_OWNER_SIBM			1
-> +#define IF_SI_OWNER_SIMC			2
-> +#define IF_SI_OWNER_OFFSET			4
-> +
->  static int ocelot_restart_handle(struct notifier_block *this,
->  				 unsigned long mode, void *cmd)
->  {
-> @@ -37,6 +44,11 @@ static int ocelot_restart_handle(struct notifier_block=
- *this,
->  	regmap_update_bits(ctx->cpu_ctrl, ICPU_CFG_CPU_SYSTEM_CTRL_RESET,
->  			   CORE_RST_PROTECT, 0);
-> =20
-> +	/* Make the SI back to boot mode */
-> +	regmap_update_bits(ctx->cpu_ctrl, ICPU_CFG_CPU_SYSTEM_CTRL_GENERAL_CTRL,
-> +			   IF_SI_OWNER_MASK << IF_SI_OWNER_OFFSET,
-> +			   IF_SI_OWNER_SIBM << IF_SI_OWNER_OFFSET);
-> +
->  	writel(SOFT_CHIP_RST, ctx->base);
-> =20
->  	pr_emerg("Unable to restart system\n");
-> --=20
-> 2.19.1
->=20
+> Rob
+> >
+> > diff --git a/drivers/power/reset/axxia-reset.c b/drivers/power/reset/ax=
+xia-reset.c
+> > index 4e4cd1c8fe50..b16013265142 100644
+> > --- a/drivers/power/reset/axxia-reset.c
+> > +++ b/drivers/power/reset/axxia-reset.c
+> > @@ -65,7 +65,7 @@ static int axxia_reset_probe(struct platform_device *=
+pdev)
+> >
+> >         syscon =3D syscon_regmap_lookup_by_phandle(dev->of_node, "sysco=
+n");
+> >         if (IS_ERR(syscon)) {
+> > -               pr_err("%s: syscon lookup failed\n", dev->of_node->name=
+);
+> > +               pr_err("%pOFn: syscon lookup failed\n", dev->of_node);
+> >                 return PTR_ERR(syscon);
+> >         }
+> >
+> > --
+> > 2.17.0
+> >
 
---vnfa37dwpgvrd7rh
+--e6xi732btapmst62
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwIR0IACgkQ2O7X88g7
-+prIHg/+IRoghrCppQ1YBg7ywoPdGcZLMsP9GW6/mAy4rYWYG3sTPM+a8aLZ9o2z
-irbGgJrD64kF5PFO36AfJPxB3c9DtKfduRzY292/mNzXqVp1Px/QQRNPF/MO/tj9
-5NUlGB5EE5hlEY7w/duoH/Y3P4hKTlwwO1SDkv3P8E5mUQ5W/k2gqsUncE14tZ1h
-h2utofCv3JK5rvcRfZnA+qNQwrcxJKpVB4DnJQkg1lria+ut3x5Zy9GCntGgMAFK
-XPQbZ4OVsLRaUQX+vhLI3ZOCjxacemgiFfWmpnIjwbFfsWwrxjIalEmQ+mHMoEgi
-R/24X06zKkBmtoJMHgOKsdRqKQVO9n4KkbnTuTXSsxxqnGntVOFFgPAhLys5P8+j
-LEJgCWGs4YSiR/wOzI8RRyXBmj1EIYe9TGyd+n5x/1crBb8eZj4p3wA8avfyrL4a
-gpY37Lk1Uop9fKPhu+CAtPvOw2uwRLlBrWBcdXU+jxyXjE6ybwp5BvxIDRxSa8H2
-JgLOjAZXFPKw7mWiVPoQ2BVjp8+UUdbZSYfIO7lbZbx1KPoa7APTBGKMebCAo4E2
-QkDUKbIfVwvkTjEpp8rX8AMpz/r61YUG0PPTafwhaonuWYN60IqFNKUnVkCekZao
-R8hVVJwRbEBLD0MO3j3cc/UOLASP37AGm7alZc3eHlgvnF5G3Sg=
-=0yxm
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwIR+AACgkQ2O7X88g7
++ppofA/9G+OsVfrqJYe0I+HptisNYd6w3O4J53mTyTFqneE51pXObCHfUNikbRdl
+jCn1ByD+amv4GtmSyUCgDdpU588SkuK9eMDVrcZmMJ3WvtraaZFlsAU6hfFQy7OD
+QHrH8PSJNoi2a8pL31MV5ZbIsbtzgg136HyNLJiHX/24v0RTZigc/95Da8o8OWZV
+FyqnZrDiyqojBmPOlG0/1NlwHyb5ilNZkNQR7xzP2rmIQAXiBI8km4N7gqL0vjSz
+U96JtN+Rlhci0V37Fm7ouOLrSN3OPxEkOn2hLOdbLfxnOyClFULnEtLTxQgWcrTP
+e7lj4L1cvOtFnuZtdvvol/Cz+qXDePXIdaV0Qzj+P0JPShhiVsoLDJoBz+be8q0p
+vMuiNxcvOMLvkv6ufJr2VYloYfinPJ9v46N4Od0HSxT/T/MMc/VzJoiIUmKXN5/M
+AreKP/XuInNQ9e8wJJVfhg8K2MD8sGmGZ4z6rkstJ6jqli2bPYnI2XhDfVVG1iJo
+CeWgJxSxnpe4Ot2mUA+zVjol3BXSNHW21gQc4tlqMaC/L9M0vADilNHEaUY3ZF2t
+Dk59gGiKg6V9iEcc3papIF0lRoFCy3bonpoEX+WUu/dkCa/JuwRRGSEIq6UBf9yV
+SY9dykIbiNRWxRm6ClXPMnSs3+/Om6bRicaVEUlG8k62bM7V2GU=
+=A2K/
 -----END PGP SIGNATURE-----
 
---vnfa37dwpgvrd7rh--
+--e6xi732btapmst62--
