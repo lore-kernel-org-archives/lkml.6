@@ -2,152 +2,317 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF15C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269AFC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B9B206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6178214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:06:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JbtMdunc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B9B206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2YfPA48i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6178214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbeLEKFu (ORCPT
+        id S1728944AbeLEJlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:05:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35268 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728625AbeLEKFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:05:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so19026910wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 02:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ng7uQOIsu1dfvksG0iACt+aByYbnfmfrK7mC5qiDRPA=;
-        b=JbtMduncsGbNGCfjNy0cROdW7R+KT1dd+ElYm99IRebO8dZ7lZzz6/AJcveN6f7Wwk
-         T70qkOXUfg0LgrIGfDKeHoFfT23etydSv/gO1kbbeOfk5Fjozd2TfIsFUfvsjQuwZv/A
-         ZrRxKhGkLbSjmEoTdz+lErrm3x3DhSF+5D8Po=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ng7uQOIsu1dfvksG0iACt+aByYbnfmfrK7mC5qiDRPA=;
-        b=WKD2lXDyBwJQlr8TPOK33QEPL7iqvNTEALQn/yhqFiBq+oXm1nDsArSiqi6S2Hdv08
-         fTsXpLJ25i88gmAzJ+jRlubLBkRd/FSKvWq4Cf2QAezE4z5NE/QYCYLTIJL+Uy0uQhry
-         3GKZjFgEjYYylJbzrJjD91Q2CuNpJLnPSfNCSNDEDNVAP01imMBOG8RPOMClCdvYnNah
-         GpgeXUcyiuzNHvpE32m/ybBcc3JUMyEZ8bfOsnnHA68KICvSEANwAz1SFH5nO8dNzSRb
-         iPc7p7RXO5ZrrgVo0GpmQOiwvWIj+oNRFxSkRM80M9b2D+2MBhZxzna6LIqALgLyF1N4
-         a58A==
-X-Gm-Message-State: AA+aEWaE4JjX5htjoDLgbmytk21YQvGnktZBfrR6Hh4in8CBOENg5WTv
-        pqOZNUokmoyb7FM8whi+vS5G9g==
-X-Google-Smtp-Source: AFSGD/VUoQoM/DxBPRMyRWJONWaHQUbUH2VcwTjzjisOOuusQuMFw02jcKEO3RdXk09bwf4G41lQAA==
-X-Received: by 2002:adf:f189:: with SMTP id h9mr21061838wro.35.1544004347203;
-        Wed, 05 Dec 2018 02:05:47 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id e130sm30513607wmf.25.2018.12.05.02.05.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 02:05:46 -0800 (PST)
-Date:   Wed, 5 Dec 2018 10:05:44 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org, dtor@google.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] Revert "mfd: cros_ec: Use devm_kzalloc for private data"
-Message-ID: <20181205100544.GB26661@dell>
-References: <20181204155843.11411-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181204155843.11411-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 5 Dec 2018 04:41:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728933AbeLEJlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:35 -0500
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D711120850;
+        Wed,  5 Dec 2018 09:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002894;
+        bh=wvC7vDb9PcpqREp+qBVCSZoFjUBzSdcQZMLRaoL56Y8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2YfPA48ipouknvn+oZwvqdgxBlsS6u/rtfoSnHBvAf/KyligEajDlQGYJXJgBFHdi
+         iUifVaZwN5i5pPkjd9TOQEMVB/BsrNNF99EFmMDaRovFvONrtzi84apMhgcaMtTnLi
+         vrzPs6TDjyikN+fUHJ6Y1p7nZxjt1JOkSKZ7sJWQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Igor Druzhinin <igor.druzhinin@citrix.com>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 102/123] Revert "xen/balloon: Mark unallocated host memory as UNUSABLE"
+Date:   Wed,  5 Dec 2018 04:35:34 -0500
+Message-Id: <20181205093555.5386-102-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Dec 2018, Enric Balletbo i Serra wrote:
+From: Igor Druzhinin <igor.druzhinin@citrix.com>
 
-> This reverts commit 3aa2177e47878f7e7616da8a2050c44f22301b6e.
-> 
-> That commit triggered a new WARN when unloading the module (see at the
-> end of the commit message). When a class_dev is embedded in a structure
-> then that class_dev is the thing that controls the lifetime of that
-> structure, for that reason device managed allocations can't be used here.
-> See Documentation/kobject.txt.
-> 
-> Revert the above patch, so the struct is allocated using kzalloc and we
-> have a release function for it that frees the allocated memory, otherwise
-> it is broken.
-> 
->  ------------[ cut here ]------------
->  Device 'cros_ec' does not have a release() function, it is broken and must be fixed.
->  WARNING: CPU: 3 PID: 3675 at drivers/base/core.c:895 device_release+0x80/0x90
->  Modules linked in: btusb btrtl btintel btbcm bluetooth ...
->  CPU: 3 PID: 3675 Comm: rmmod Not tainted 4.20.0-rc4 #76
->  Hardware name: Google Kevin (DT)
->  pstate: 40000005 (nZcv daif -PAN -UAO)
->  pc : device_release+0x80/0x90
->  lr : device_release+0x80/0x90
->  sp : ffff00000c47bc70
->  x29: ffff00000c47bc70 x28: ffff8000e86b0d40
->  x27: 0000000000000000 x26: 0000000000000000
->  x25: 0000000056000000 x24: 0000000000000015
->  x23: ffff8000f0bbf860 x22: ffff000000d320a0
->  x21: ffff8000ee93e100 x20: ffff8000ed931428
->  x19: ffff8000ed931418 x18: 0000000000000020
->  x17: 0000000000000000 x16: 0000000000000000
->  x15: 0000000000000400 x14: 0000000000000143
->  x13: 0000000000000000 x12: 0000000000000400
->  x11: 0000000000000157 x10: 0000000000000960
->  x9 : ffff00000c47b9b0 x8 : ffff8000e86b1700
->  x7 : 0000000000000000 x6 : ffff8000f7d520b8
->  x5 : ffff8000f7d520b8 x4 : 0000000000000000
->  x3 : ffff8000f7d58e68 x2 : ffff8000e86b0d40
->  x1 : 37d859939c964800 x0 : 0000000000000000
->  Call trace:
->   device_release+0x80/0x90
->   kobject_put+0x74/0xe8
->   device_unregister+0x20/0x30
->   ec_device_remove+0x34/0x48 [cros_ec_dev]
->   platform_drv_remove+0x28/0x48
->   device_release_driver_internal+0x1a8/0x240
->   driver_detach+0x40/0x80
->   bus_remove_driver+0x54/0xa8
->   driver_unregister+0x2c/0x58
->   platform_driver_unregister+0x10/0x18
->   cros_ec_dev_exit+0x1c/0x2d8 [cros_ec_dev]
->   __arm64_sys_delete_module+0x16c/0x1f8
->   el0_svc_common+0x84/0xd8
->   el0_svc_handler+0x2c/0x80
->   el0_svc+0x8/0xc
->  ---[ end trace a57c4625f3c60ae8 ]---
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  drivers/mfd/cros_ec_dev.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+[ Upstream commit 123664101aa2156d05251704fc63f9bcbf77741a ]
 
-Applied, thanks.
+This reverts commit b3cf8528bb21febb650a7ecbf080d0647be40b9f.
 
+That commit unintentionally broke Xen balloon memory hotplug with
+"hotplug_unpopulated" set to 1. As long as "System RAM" resource
+got assigned under a new "Unusable memory" resource in IO/Mem tree
+any attempt to online this memory would fail due to general kernel
+restrictions on having "System RAM" resources as 1st level only.
+
+The original issue that commit has tried to workaround fa564ad96366
+("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
+60-7f)") also got amended by the following 03a551734 ("x86/PCI: Move
+and shrink AMD 64-bit window to avoid conflict") which made the
+original fix to Xen ballooning unnecessary.
+
+Signed-off-by: Igor Druzhinin <igor.druzhinin@citrix.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/xen/enlighten.c | 78 ----------------------------------------
+ arch/x86/xen/setup.c     |  6 ++--
+ drivers/xen/balloon.c    | 65 +++++----------------------------
+ include/xen/balloon.h    |  5 ---
+ 4 files changed, 13 insertions(+), 141 deletions(-)
+
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index 2eeddd814653..c6c7c9b7b5c1 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -7,7 +7,6 @@
+ 
+ #include <xen/features.h>
+ #include <xen/page.h>
+-#include <xen/interface/memory.h>
+ 
+ #include <asm/xen/hypercall.h>
+ #include <asm/xen/hypervisor.h>
+@@ -343,80 +342,3 @@ void xen_arch_unregister_cpu(int num)
+ }
+ EXPORT_SYMBOL(xen_arch_unregister_cpu);
+ #endif
+-
+-#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+-void __init arch_xen_balloon_init(struct resource *hostmem_resource)
+-{
+-	struct xen_memory_map memmap;
+-	int rc;
+-	unsigned int i, last_guest_ram;
+-	phys_addr_t max_addr = PFN_PHYS(max_pfn);
+-	struct e820_table *xen_e820_table;
+-	const struct e820_entry *entry;
+-	struct resource *res;
+-
+-	if (!xen_initial_domain())
+-		return;
+-
+-	xen_e820_table = kmalloc(sizeof(*xen_e820_table), GFP_KERNEL);
+-	if (!xen_e820_table)
+-		return;
+-
+-	memmap.nr_entries = ARRAY_SIZE(xen_e820_table->entries);
+-	set_xen_guest_handle(memmap.buffer, xen_e820_table->entries);
+-	rc = HYPERVISOR_memory_op(XENMEM_machine_memory_map, &memmap);
+-	if (rc) {
+-		pr_warn("%s: Can't read host e820 (%d)\n", __func__, rc);
+-		goto out;
+-	}
+-
+-	last_guest_ram = 0;
+-	for (i = 0; i < memmap.nr_entries; i++) {
+-		if (xen_e820_table->entries[i].addr >= max_addr)
+-			break;
+-		if (xen_e820_table->entries[i].type == E820_TYPE_RAM)
+-			last_guest_ram = i;
+-	}
+-
+-	entry = &xen_e820_table->entries[last_guest_ram];
+-	if (max_addr >= entry->addr + entry->size)
+-		goto out; /* No unallocated host RAM. */
+-
+-	hostmem_resource->start = max_addr;
+-	hostmem_resource->end = entry->addr + entry->size;
+-
+-	/*
+-	 * Mark non-RAM regions between the end of dom0 RAM and end of host RAM
+-	 * as unavailable. The rest of that region can be used for hotplug-based
+-	 * ballooning.
+-	 */
+-	for (; i < memmap.nr_entries; i++) {
+-		entry = &xen_e820_table->entries[i];
+-
+-		if (entry->type == E820_TYPE_RAM)
+-			continue;
+-
+-		if (entry->addr >= hostmem_resource->end)
+-			break;
+-
+-		res = kzalloc(sizeof(*res), GFP_KERNEL);
+-		if (!res)
+-			goto out;
+-
+-		res->name = "Unavailable host RAM";
+-		res->start = entry->addr;
+-		res->end = (entry->addr + entry->size < hostmem_resource->end) ?
+-			    entry->addr + entry->size : hostmem_resource->end;
+-		rc = insert_resource(hostmem_resource, res);
+-		if (rc) {
+-			pr_warn("%s: Can't insert [%llx - %llx) (%d)\n",
+-				__func__, res->start, res->end, rc);
+-			kfree(res);
+-			goto  out;
+-		}
+-	}
+-
+- out:
+-	kfree(xen_e820_table);
+-}
+-#endif /* CONFIG_XEN_BALLOON_MEMORY_HOTPLUG */
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index 1163e33121fb..075ed47993bb 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -808,6 +808,7 @@ char * __init xen_memory_setup(void)
+ 	addr = xen_e820_table.entries[0].addr;
+ 	size = xen_e820_table.entries[0].size;
+ 	while (i < xen_e820_table.nr_entries) {
++		bool discard = false;
+ 
+ 		chunk_size = size;
+ 		type = xen_e820_table.entries[i].type;
+@@ -823,10 +824,11 @@ char * __init xen_memory_setup(void)
+ 				xen_add_extra_mem(pfn_s, n_pfns);
+ 				xen_max_p2m_pfn = pfn_s + n_pfns;
+ 			} else
+-				type = E820_TYPE_UNUSABLE;
++				discard = true;
+ 		}
+ 
+-		xen_align_and_add_e820_region(addr, chunk_size, type);
++		if (!discard)
++			xen_align_and_add_e820_region(addr, chunk_size, type);
+ 
+ 		addr += chunk_size;
+ 		size -= chunk_size;
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index e12bb256036f..7ab6caef599c 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -251,25 +251,10 @@ static void release_memory_resource(struct resource *resource)
+ 	kfree(resource);
+ }
+ 
+-/*
+- * Host memory not allocated to dom0. We can use this range for hotplug-based
+- * ballooning.
+- *
+- * It's a type-less resource. Setting IORESOURCE_MEM will make resource
+- * management algorithms (arch_remove_reservations()) look into guest e820,
+- * which we don't want.
+- */
+-static struct resource hostmem_resource = {
+-	.name   = "Host RAM",
+-};
+-
+-void __attribute__((weak)) __init arch_xen_balloon_init(struct resource *res)
+-{}
+-
+ static struct resource *additional_memory_resource(phys_addr_t size)
+ {
+-	struct resource *res, *res_hostmem;
+-	int ret = -ENOMEM;
++	struct resource *res;
++	int ret;
+ 
+ 	res = kzalloc(sizeof(*res), GFP_KERNEL);
+ 	if (!res)
+@@ -278,42 +263,13 @@ static struct resource *additional_memory_resource(phys_addr_t size)
+ 	res->name = "System RAM";
+ 	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+ 
+-	res_hostmem = kzalloc(sizeof(*res), GFP_KERNEL);
+-	if (res_hostmem) {
+-		/* Try to grab a range from hostmem */
+-		res_hostmem->name = "Host memory";
+-		ret = allocate_resource(&hostmem_resource, res_hostmem,
+-					size, 0, -1,
+-					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
+-	}
+-
+-	if (!ret) {
+-		/*
+-		 * Insert this resource into iomem. Because hostmem_resource
+-		 * tracks portion of guest e820 marked as UNUSABLE noone else
+-		 * should try to use it.
+-		 */
+-		res->start = res_hostmem->start;
+-		res->end = res_hostmem->end;
+-		ret = insert_resource(&iomem_resource, res);
+-		if (ret < 0) {
+-			pr_err("Can't insert iomem_resource [%llx - %llx]\n",
+-				res->start, res->end);
+-			release_memory_resource(res_hostmem);
+-			res_hostmem = NULL;
+-			res->start = res->end = 0;
+-		}
+-	}
+-
+-	if (ret) {
+-		ret = allocate_resource(&iomem_resource, res,
+-					size, 0, -1,
+-					PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
+-		if (ret < 0) {
+-			pr_err("Cannot allocate new System RAM resource\n");
+-			kfree(res);
+-			return NULL;
+-		}
++	ret = allocate_resource(&iomem_resource, res,
++				size, 0, -1,
++				PAGES_PER_SECTION * PAGE_SIZE, NULL, NULL);
++	if (ret < 0) {
++		pr_err("Cannot allocate new System RAM resource\n");
++		kfree(res);
++		return NULL;
+ 	}
+ 
+ #ifdef CONFIG_SPARSEMEM
+@@ -325,7 +281,6 @@ static struct resource *additional_memory_resource(phys_addr_t size)
+ 			pr_err("New System RAM resource outside addressable RAM (%lu > %lu)\n",
+ 			       pfn, limit);
+ 			release_memory_resource(res);
+-			release_memory_resource(res_hostmem);
+ 			return NULL;
+ 		}
+ 	}
+@@ -747,8 +702,6 @@ static int __init balloon_init(void)
+ 	set_online_page_callback(&xen_online_page);
+ 	register_memory_notifier(&xen_memory_nb);
+ 	register_sysctl_table(xen_root);
+-
+-	arch_xen_balloon_init(&hostmem_resource);
+ #endif
+ 
+ #ifdef CONFIG_XEN_PV
+diff --git a/include/xen/balloon.h b/include/xen/balloon.h
+index 61f410fd74e4..4914b93a23f2 100644
+--- a/include/xen/balloon.h
++++ b/include/xen/balloon.h
+@@ -44,8 +44,3 @@ static inline void xen_balloon_init(void)
+ {
+ }
+ #endif
+-
+-#ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+-struct resource;
+-void arch_xen_balloon_init(struct resource *hostmem_resource);
+-#endif
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
