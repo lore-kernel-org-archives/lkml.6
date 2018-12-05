@@ -2,224 +2,144 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EECAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0130C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BC620879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:47:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BC620879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 85DD7206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 05:48:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JLarozb1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85DD7206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbeLEFrY (ORCPT
+        id S1727010AbeLEFsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 00:47:24 -0500
-Received: from ozlabs.org ([203.11.71.1]:54483 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbeLEFrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 00:47:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 438nn40s4lz9sBh;
-        Wed,  5 Dec 2018 16:47:20 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     arnd@arndb.de, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
-In-Reply-To: <5a13dfac-adcb-b0b2-0114-90f9d1eabe8b@gmail.com>
-References: <20181115011125.GA32556@roeck-us.net> <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com> <20181115053836.GA7606@roeck-us.net> <27ed27d3-220e-963f-7d2c-64df10421580@gmail.com> <20181115172535.GA26922@roeck-us.net> <5937b814-ca5f-5786-93a1-3334df8c92dc@gmail.com> <20181116011656.GA21813@roeck-us.net> <ffff966c-d6ae-1487-5269-b86df0824d1c@gmail.com> <20181119205050.GA1933@roeck-us.net> <20181123182023.GA10080@roeck-us.net> <5a13dfac-adcb-b0b2-0114-90f9d1eabe8b@gmail.com>
-Date:   Wed, 05 Dec 2018 16:47:17 +1100
-Message-ID: <87pnugh6e2.fsf@concordia.ellerman.id.au>
+        Wed, 5 Dec 2018 00:48:47 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46260 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbeLEFsq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 00:48:46 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t13so9496709ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 21:48:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jlAgOUx+d9y4Koxz93q6parhhjhH4dXwDaeTxxP4nP8=;
+        b=JLarozb1MoFj2iMfg32xnjapXOlEmjo9r3TV0J+hBfRbOOmqKETxBnc00LeEsw+vm0
+         0lGXJEwWat/3MZeQfKcHirJYh9v82fkKBNOqII0K95iE5kfWgDpEV8M/zzzbjq3VhxYF
+         04YxrC5+/zPLkcH+nofCQ656iGKoites41d8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jlAgOUx+d9y4Koxz93q6parhhjhH4dXwDaeTxxP4nP8=;
+        b=kDpSouxGjomcMoq5R12iW3T47bn2AzdjNJ/5PdXmm1oighbPjVhLXpHsiczY0ELdl5
+         pShmGFFYv7fS0fc0fhSfhCMI6NnWmqx8X3IrYcdKRS+lj0hpAKaR1/cZljtH1tUZAlPn
+         8pYRe+1bA2RXAW7KkM21KMBVDqELPXF5r9OIsDwvH7cABCUP6wizu5uleL2s6i4F0Zod
+         5Bv8oiO/2rifpdPZ7+a0ZXwJZaLFjY49TQF0+ORgQWlXrgaefBaZFt1C5BWUBgJfwZIX
+         sQT8due6WIKluphcWSV0HgsjTavyvWySFfOtZvKrP/acjuUca5hmRW6kKmFrwWP51Q96
+         gBLQ==
+X-Gm-Message-State: AA+aEWaAL00XlElBabI2rZOPGGHIVLflKhPV/8a01R7hjH6/Bi3roenE
+        /ggUcv2vNC89RwKLV2j/0cp4EA==
+X-Google-Smtp-Source: AFSGD/XGIJEFyfrfyg8OULqJMVs+IAQFRiR6jXi3pWWWNF4H9mhmgzh0A9r92Lrx+0cfo5I3yXVu/g==
+X-Received: by 2002:a17:902:ac1:: with SMTP id 59mr3053408plp.36.1543988926074;
+        Tue, 04 Dec 2018 21:48:46 -0800 (PST)
+Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:f659:7f17:ea11:4e8e])
+        by smtp.gmail.com with ESMTPSA id 4sm30806513pfq.10.2018.12.04.21.48.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 21:48:45 -0800 (PST)
+From:   Nicolas Boichat <drinkcat@chromium.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v4 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
+Date:   Wed,  5 Dec 2018 13:48:25 +0800
+Message-Id: <20181205054828.183476-1-drinkcat@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+This is a follow-up to the discussion in [1], [2].
 
-Florian Fainelli <f.fainelli@gmail.com> writes:
-> +PPC folks
->
-> On 11/23/18 10:20 AM, Guenter Roeck wrote:
->> On Mon, Nov 19, 2018 at 12:50:50PM -0800, Guenter Roeck wrote:
->>> On Mon, Nov 19, 2018 at 10:44:30AM -0800, Florian Fainelli wrote:
->>>> On 11/15/18 5:16 PM, Guenter Roeck wrote:
->>>>> On Thu, Nov 15, 2018 at 11:48:20AM -0800, Florian Fainelli wrote:
->>>>>>
->>>>>> OK, would you mind testing this below? It seems to me that 8250_of.c is
->>>>>> incompatible with arch/powerpc/kernel/legacy_serial.c and that is what
->>>>>> is causing the issue here.
->>>>>>
->>>>>> diff --git a/drivers/tty/serial/8250/Kconfig
->>>>>> b/drivers/tty/serial/8250/Kconfig
->>>>>> index d7737dca0e48..21cb14cbd34a 100644
->>>>>> --- a/drivers/tty/serial/8250/Kconfig
->>>>>> +++ b/drivers/tty/serial/8250/Kconfig
->>>>>> @@ -483,7 +483,7 @@ config SERIAL_8250_PXA
->>>>>>
->>>>>>  config SERIAL_OF_PLATFORM
->>>>>>         tristate "Devicetree based probing for 8250 ports"
->>>>>> -       depends on SERIAL_8250 && OF
->>>>>> +       depends on SERIAL_8250 && OF && !(PPC && PPC_UDBG_16550)
->>>>>>         default SERIAL_8250
->>>>>>         help
->>>>>>           This option is used for all 8250 compatible serial ports that
->>>>>
->>>>> 44x/virtex5_defconfig has both PPC_UDBG_16550 and SERIAL_OF_PLATFORM enabled
->>>>> and fails to boot (or display anything on the console) with this patch applied.
->>>>
->>>> Thanks for trying, can you either share or provide a link to the mpc85xx
->>>> and ml507 qemu command lines that you use? I spent a good chunk of my
->>>> time trying to get a kernel to boot but has failed so far.
->>>>
->>>
->> 
->> Any update ? I still see the boot failures in next-20181123.
->
-> Yes, took most of last week's off sorry for the delay. I have finally
-> been able to boot a kernel using your instructions, thanks. The problem
-> is the following call chain:
->
-> of_platform_serial_probe()
->  -> serial8250_register_8250_port()
->     -> up->port.uartclk == 0, return -EINVAL
-> 	-> irq_dispose_mapping()
->
-> and then we basically unwind what we just did with
-> of_platform_serial_probe() including disabling the UART's IRQ, comment
-> out the irq_dispose_mapping() and you will have a functional console
-> again. 8250_of.c is clearly not a full replacement for legacy_serial.c
-> (that was a first attempt), so we need to keep that code around. Making
-> the depends even more conditional also does not sound too appealing,
-> because while we have identified mpc85xx as being problematic, who knows
-> about other platforms. So the best I have that does not involve a revert
-> is this below.
->
-> Ben, Michael, would that sound reasonable to you? It seems to me that
-> there is a million ways to shoot the legacy_serial 8250 registration in
-> the foot in any cases, and having CONFIG_SERIAL_OF_PLATFORM just made it
-> painfully obvious.
+IOMMUs using ARMv7 short-descriptor format require page tables
+(level 1 and 2) to be allocated within the first 4GB of RAM, even
+on 64-bit systems.
 
-We generally try to avoid changing the device tree from inside Linux,
-it's meant to describe the hardware as we're given it, not the state of
-Linux drivers etc. Perhaps this is an exceptional case but it still
-seems fishy.
+For L1 tables that are bigger than a page, we can just use __get_free_pages
+with GFP_DMA32 (on arm64 systems only, arm would still use GFP_DMA).
 
-I also worry that marking the device node disabled might break something
-else, but that's maybe me being paranoid.
+For L2 tables that only take 1KB, it would be a waste to allocate a full
+page, so we considered 3 approaches:
+ 1. This series, adding support for GFP_DMA32 slab caches.
+ 2. genalloc, which requires pre-allocating the maximum number of L2 page
+    tables (4096, so 4MB of memory).
+ 3. page_frag, which is not very memory-efficient as it is unable to reuse
+    freed fragments until the whole page is freed. [3]
 
-I guess I don't really understand how things are supposed to work
-though. We have the 8250 driver and also the OF platform driver, the
-former has already setup the device and then the OF driver just comes
-along and takes over?
+This series is the most memory-efficient approach.
 
-eg. in the boot log from the mpc8544ds you see:
+[1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
+[2] https://lists.linuxfoundation.org/pipermail/iommu/2018-December/031696.html
+[3] https://patchwork.codeaurora.org/patch/671639/
 
-  serial8250.0: ttyS0 at MMIO 0xe0004500 (irq = 42, base_baud = 115200) is a 16550A
-  printk: console [ttyS0] enabled
-  printk: console [ttyS0] enabled
-  printk: bootconsole [udbg0] disabled
-  printk: bootconsole [udbg0] disabled
-  of_serial: probe of e0004500.serial failed with error -22
+Changes since v1:
+ - Add support for SLAB_CACHE_DMA32 in slab and slub (patches 1/2)
+ - iommu/io-pgtable-arm-v7s (patch 3):
+   - Changed approach to use SLAB_CACHE_DMA32 added by the previous
+     commit.
+   - Use DMA or DMA32 depending on the architecture (DMA for arm,
+     DMA32 for arm64).
 
-ie. the 8250 core has already setup the device, so there should really
-be nothing to do?
+Changes since v2:
+ - Reworded and expanded commit messages
+ - Added cache_dma32 documentation in PATCH 2/3.
 
-If the 8250 code could detect that it already has this port registered
-then maybe things would work.
+v3 used the page_frag approach, see [3].
 
-The patch below works for me with mpc8544ds. Whether it's worth changing
-the 8250 code this much to accomodate legacy_serial I'm not sure.
+Nicolas Boichat (3):
+  mm: slab/slub: Add check_slab_flags function to check for valid flags
+  mm: Add support for kmem caches in DMA32 zone
+  iommu/io-pgtable-arm-v7s: Request DMA32 memory, and improve debugging
 
-cheers
+ Documentation/ABI/testing/sysfs-kernel-slab |  9 ++++++++
+ drivers/iommu/io-pgtable-arm-v7s.c          | 20 +++++++++++++----
+ include/linux/slab.h                        |  2 ++
+ mm/internal.h                               | 22 +++++++++++++++++--
+ mm/slab.c                                   | 10 +++------
+ mm/slab.h                                   |  3 ++-
+ mm/slab_common.c                            |  2 +-
+ mm/slub.c                                   | 24 +++++++++++++++------
+ 8 files changed, 70 insertions(+), 22 deletions(-)
 
-
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 94f3e1c64490..c7d7858fdb3d 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -905,7 +905,7 @@ static struct platform_device *serial8250_isa_devs;
-  */
- static DEFINE_MUTEX(serial_mutex);
- 
--static struct uart_8250_port *serial8250_find_match_or_unused(struct uart_port *port)
-+static struct uart_8250_port *serial8250_find_existing(struct uart_port *port)
- {
- 	int i;
- 
-@@ -921,10 +921,17 @@ static struct uart_8250_port *serial8250_find_match_or_unused(struct uart_port *
- 	if (i < nr_uarts && serial8250_ports[i].port.type == PORT_UNKNOWN &&
- 			serial8250_ports[i].port.iobase == 0)
- 		return &serial8250_ports[i];
-+
-+	return NULL;
-+}
-+
-+static struct uart_8250_port *serial8250_find_unused(struct uart_port *port)
-+{
-+	int i;
-+
- 	/*
--	 * We didn't find a matching entry, so look for the first
--	 * free entry.  We look for one which hasn't been previously
--	 * used (indicated by zero iobase).
-+	 * Look for the first free entry. We look for one which hasn't been
-+	 * previously used (indicated by zero iobase).
- 	 */
- 	for (i = 0; i < nr_uarts; i++)
- 		if (serial8250_ports[i].port.type == PORT_UNKNOWN &&
-@@ -960,12 +967,18 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 	struct uart_8250_port *uart;
- 	int ret = -ENOSPC;
- 
--	if (up->port.uartclk == 0)
--		return -EINVAL;
--
- 	mutex_lock(&serial_mutex);
- 
--	uart = serial8250_find_match_or_unused(&up->port);
-+	uart = serial8250_find_existing(&up->port);
-+	if (!uart) {
-+		if (up->port.uartclk == 0) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		uart = serial8250_find_unused(&up->port);
-+	}
-+
- 	if (uart && uart->port.type != PORT_8250_CIR) {
- 		if (uart->port.dev)
- 			uart_remove_one_port(&serial8250_reg, &uart->port);
-@@ -974,7 +987,10 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 		uart->port.membase      = up->port.membase;
- 		uart->port.irq          = up->port.irq;
- 		uart->port.irqflags     = up->port.irqflags;
--		uart->port.uartclk      = up->port.uartclk;
-+
-+		if (up->port.uartclk != 0)
-+			uart->port.uartclk      = up->port.uartclk;
-+
- 		uart->port.fifosize     = up->port.fifosize;
- 		uart->port.regshift     = up->port.regshift;
- 		uart->port.iotype       = up->port.iotype;
-@@ -1056,6 +1072,7 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 			ret = 0;
- 		}
- 	}
-+out:
- 	mutex_unlock(&serial_mutex);
- 
- 	return ret;
+-- 
+2.20.0.rc1.387.gf8505762e3-goog
 
