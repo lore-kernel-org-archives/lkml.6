@@ -2,104 +2,100 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F30C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED778C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C37020850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM90l4CI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C37020850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C00D20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544025562;
+	bh=rmDmFM1Bg4XU33mltuunMZWS0Dse78bB8tFhI28Txzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sKo/4aKl8h5u3xdus9R5RGH7axYq7l3WlL12cbDG6l73XNf4O4W0MPVWIHyl9GmQ0
+	 elRa/vrWbunfieNKR2TuZXNzXNd8QcbS2ngo4Ul9Pg1mKM1fwO7F6vcuBWivMnDXw2
+	 vTs8M7lHjdjVfGCy6fEBcJE+ky6/5UmEjvZm4Od0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C00D20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbeLEP55 (ORCPT
+        id S1728103AbeLEP7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:57:57 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33852 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbeLEP54 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:57:56 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so10224809pfg.1;
-        Wed, 05 Dec 2018 07:57:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6pkf2GvAJxyMlPiVfjOgB6eVZeqIaQ2IeYx1KI9IiAk=;
-        b=iM90l4CIBJjhdHAABDJETrzu51nnql7X++5hjDnJi1holKIR8DPrt+9xRlpvH2Qd3O
-         bpNo3FcWA8Xk1pwrCM9sXTGV43tj0bzCMaJGmwIdb0sTWfl/wVmW7EgiCWIZLFCHfmuX
-         H8CUHIaMU4YHFeMCNJ0uJ8InW1f7M8ztoVooHk5tAVzzEp6V5qgHff6xm+/2aYkH823Z
-         D62gOXn4wKCLOF0QCixrj8H8x+6LNXaWQv5Lu0G7V69Z8onQLLxiRA7Q5wTJT3pUjNLV
-         a3fgov7ZxQfD1UzjgNdnLajXl0RCOR/yzBfMWZv1FTo1F8rYALCfS9YsEBhPRID+AAIP
-         JSbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6pkf2GvAJxyMlPiVfjOgB6eVZeqIaQ2IeYx1KI9IiAk=;
-        b=ZmWGUoPz4fiTbT4AwwKR9n4sQmaL6NR0GREmlm3dUcuxqgTzZggRajN3AJWFvRVKJu
-         /jv3rdOrfGwBWQfsc3mKSHrjBKP7cd+uDlTy1JdR3QY6Dja3uqPQJz3to98YG68R7X5k
-         C6YSZMABO/8+YbwNLkAJhkSADSthQ13+oFW6UITgSSRzUkoT9FpzNABcGsCsAY83a0uI
-         29iHDU5o1KNg3VDpCz1/5Rj4F1iytHuTuSZUvghEllTHVhvoqfV9kMD43yjm85PkMy8f
-         F+G4AgzfnMp3zBrz47iH+KlVvt4SmySGzeHiElglwhXcFMuYG8HY5yCWrKYDvcZ+KLT6
-         OUJw==
-X-Gm-Message-State: AA+aEWazCu0mEws6lKdVcAR9rHab0SsSzWNHHKD+DprC6BSOaQfCs8Hy
-        cVARktglFzxJbNvBrnAGf6wKcmGD4rU=
-X-Google-Smtp-Source: AFSGD/V6eARsx1LNeHogTvDQG4r7FV2CwhNy4qiuFJsec6+dQJ5qTQLvgKnQPk9U+XNszh6m0cxnUw==
-X-Received: by 2002:a65:41c2:: with SMTP id b2mr20694254pgq.67.1544025476204;
-        Wed, 05 Dec 2018 07:57:56 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id g65sm104504596pfa.63.2018.12.05.07.57.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 07:57:55 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] cpufreq: nforce2: Remove meaningless return
-Date:   Wed,  5 Dec 2018 10:57:51 -0500
-Message-Id: <20181205155751.15945-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 5 Dec 2018 10:59:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727339AbeLEP7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:59:21 -0500
+Received: from localhost (unknown [106.201.124.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51DE920850;
+        Wed,  5 Dec 2018 15:59:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544025560;
+        bh=rmDmFM1Bg4XU33mltuunMZWS0Dse78bB8tFhI28Txzg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WrqqOaTxcFIwaxxVzkAkRa337HDalXuSec7bxE3I5x1pOHLYOptKjT8Xu6+YhI1DN
+         Fm0p+lhFdUrMGWkPVPCEjYmK7QEC1G8A47UCZYL820l7TDgpnCpMPvZMpSJDYZkLBF
+         JkJdaZIAHLa1lsKgr3NR8PY9VX9TBmj04FKv+Z9I=
+Date:   Wed, 5 Dec 2018 21:29:12 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     dan.j.williams@intel.com, sudeep.dutt@intel.com,
+        ashutosh.dixit@intel.com, daniel@zonque.org,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        robert.jarzmik@free.fr, okaya@kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: remove DBGFS_FUNC_DECL()
+Message-ID: <20181205155912.GP2847@vkoul-mobl>
+References: <20181130154249.3222-1-tiny.windzz@gmail.com>
+ <20181205082719.GF2847@vkoul-mobl>
+ <CAEExFWu1ahDPqKbYWKPY_bQuw=1Kp1gUki+CpQ7Mq5sNNiy_tg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEExFWu1ahDPqKbYWKPY_bQuw=1Kp1gUki+CpQ7Mq5sNNiy_tg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Delete a line of meaningless return and some useless blank lines. In a function
-whose return type is void, returning on the last line is not required.
+On 05-12-18, 23:49, Frank Lee wrote:
+> On Wed, Dec 5, 2018 at 4:27 PM Vinod Koul <vkoul@kernel.org> wrote:
+> >
+> > On 30-11-18, 10:42, Yangtao Li wrote:
+> > > We already have the DEFINE_SHOW_ATTRIBUTE,There is no need to define
+> > > such a macro,so remove DBGFS_FUNC_DECL.Also use macro to simplify some
+> > > code.
+> >
+> > Spaces after full stop and comma please
+> >
+> > >
+> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > > ---
+> > >  drivers/dma/amba-pl08x.c     | 14 ++------------
+> > >  drivers/dma/mic_x100_dma.c   | 22 +++-------------------
+> > >  drivers/dma/pxa_dma.c        | 24 ++++++++++++------------
+> > >  drivers/dma/qcom/hidma_dbg.c | 33 ++++++---------------------------
+> >
+> > Do you mind splitting it per file.
+> Hi Vinod:
+> 
+> Why not apply it once ？The change is not too big.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
-Changes in v2:
--revert modify of MODULE_
--delete some blank lines
----
- drivers/cpufreq/cpufreq-nforce2.c | 3 ---
- 1 file changed, 3 deletions(-)
+It is not about big or small. A patch should do one thing and touch a
+single module.
 
-diff --git a/drivers/cpufreq/cpufreq-nforce2.c b/drivers/cpufreq/cpufreq-nforce2.c
-index dbf82f36d270..33c309a08c64 100644
---- a/drivers/cpufreq/cpufreq-nforce2.c
-+++ b/drivers/cpufreq/cpufreq-nforce2.c
-@@ -123,8 +123,6 @@ static void nforce2_write_pll(int pll)
- 	/* Now write the value in all 64 registers */
- 	for (temp = 0; temp <= 0x3f; temp++)
- 		pci_write_config_dword(nforce2_dev, NFORCE2_PLLREG, pll);
--
--	return;
- }
- 
- /**
-@@ -438,4 +436,3 @@ static void __exit nforce2_exit(void)
- 
- module_init(nforce2_init);
- module_exit(nforce2_exit);
--
+It also helps people when they look at changes and backports.
+
 -- 
-2.17.0
-
+~Vinod
