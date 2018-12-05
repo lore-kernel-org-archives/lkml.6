@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F086AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BE9C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B284620851
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D2C920850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y26lOCAV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B284620851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxu5Ipc9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D2C920850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbeLEJkz (ORCPT
+        id S1728313AbeLEJk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:40:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45276 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728064AbeLEJku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:40:50 -0500
+        id S1728035AbeLEJky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:40:54 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACBCC2084C;
-        Wed,  5 Dec 2018 09:40:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B1F82084C;
+        Wed,  5 Dec 2018 09:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002849;
-        bh=yiEc0ZEelmk3Zy9UeReG8h3B8OUtmFhhsh09wV16ANE=;
+        s=default; t=1544002853;
+        bh=2o585oHr03UEwlTDKgYZDjY4+rmRx1l6FzKoi8VeG5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y26lOCAVKfp/+XrfnQgSWi/3y5iYLLpBrGxtjlQniHBnTpv4Q1SzvmRnHqPwzM2LN
-         UD7F+AEtYr5aez6Y/xsSAB1aJZckManMjp/+nBvqxl+ebEcMH2BJBZLz5wAttpF53f
-         8YEiE506NeKkMy7xKJXwyJ05dxiZid33Yq6oFy2w=
+        b=bxu5Ipc95TCSIcGVz16TAc9tYjVfMxco/ZR6Xpj3eRck2a1rbsyAZb/M/Ehjkdcjo
+         ZF5etGxZKHhSdRxTovz3EwpCS1wznOx02z9FhFsP/lvvP6DGJKcVT7pJxknWuBONDt
+         Bvi8+mVVQN7bIi0oMa5bHnzea4ASW9jzzW9IU6Gg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bryan Whitehead <Bryan.Whitehead@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 087/123] lan743x: Enable driver to work with LAN7431
-Date:   Wed,  5 Dec 2018 04:35:19 -0500
-Message-Id: <20181205093555.5386-87-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 088/123] usb: gadget: u_ether: fix unsafe list iteration
+Date:   Wed,  5 Dec 2018 04:35:20 -0500
+Message-Id: <20181205093555.5386-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,53 +53,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan Whitehead <Bryan.Whitehead@microchip.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 4df5ce9bc03e47d05f400e64aa32a82ec4cef419 ]
+[ Upstream commit c9287fa657b3328b4549c0ab39ea7f197a3d6a50 ]
 
-This driver was designed to work with both LAN7430 and LAN7431.
-The only difference between the two is the LAN7431 has support
-for external phy.
+list_for_each_entry_safe() is not safe for deleting entries from the
+list if the spin lock, which protects it, is released and reacquired during
+the list iteration. Fix this issue by replacing this construction with
+a simple check if list is empty and removing the first entry in each
+iteration. This is almost equivalent to a revert of the commit mentioned in
+the Fixes: tag.
 
-This change adds LAN7431 to the list of recognized devices
-supported by this driver.
+This patch fixes following issue:
+--->8---
+Unable to handle kernel NULL pointer dereference at virtual address 00000104
+pgd = (ptrval)
+[00000104] *pgd=00000000
+Internal error: Oops: 817 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 1 PID: 84 Comm: kworker/1:1 Not tainted 4.20.0-rc2-next-20181114-00009-g8266b35ec404 #1061
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: events eth_work
+PC is at rx_fill+0x60/0xac
+LR is at _raw_spin_lock_irqsave+0x50/0x5c
+pc : [<c065fee0>]    lr : [<c0a056b8>]    psr: 80000093
+sp : ee7fbee8  ip : 00000100  fp : 00000000
+r10: 006000c0  r9 : c10b0ab0  r8 : ee7eb5c0
+r7 : ee7eb614  r6 : ee7eb5ec  r5 : 000000dc  r4 : ee12ac00
+r3 : ee12ac24  r2 : 00000200  r1 : 60000013  r0 : ee7eb5ec
+Flags: Nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 6d5dc04a  DAC: 00000051
+Process kworker/1:1 (pid: 84, stack limit = 0x(ptrval))
+Stack: (0xee7fbee8 to 0xee7fc000)
+...
+[<c065fee0>] (rx_fill) from [<c0143b7c>] (process_one_work+0x200/0x738)
+[<c0143b7c>] (process_one_work) from [<c0144118>] (worker_thread+0x2c/0x4c8)
+[<c0144118>] (worker_thread) from [<c014a8a4>] (kthread+0x128/0x164)
+[<c014a8a4>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xee7fbfb0 to 0xee7fbff8)
+...
+---[ end trace 64480bc835eba7d6 ]---
 
-Updates for v2:
-    changed 'fixes' tag to match defined format
+Fixes: fea14e68ff5e ("usb: gadget: u_ether: use better list accessors")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-fixes: 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
-Signed-off-by: Bryan Whitehead <Bryan.Whitehead@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/microchip/lan743x_main.c | 1 +
- drivers/net/ethernet/microchip/lan743x_main.h | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/usb/gadget/function/u_ether.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 5c3ac70abeca..aaedf1072460 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -3020,6 +3020,7 @@ static const struct dev_pm_ops lan743x_pm_ops = {
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 1000d864929c..0f026d445e31 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -401,12 +401,12 @@ static int alloc_requests(struct eth_dev *dev, struct gether *link, unsigned n)
+ static void rx_fill(struct eth_dev *dev, gfp_t gfp_flags)
+ {
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
+ 	unsigned long		flags;
  
- static const struct pci_device_id lan743x_pcidev_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SMSC, PCI_DEVICE_ID_SMSC_LAN7430) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_SMSC, PCI_DEVICE_ID_SMSC_LAN7431) },
- 	{ 0, }
- };
+ 	/* fill unused rxq slots with some skb */
+ 	spin_lock_irqsave(&dev->req_lock, flags);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del_init(&req->list);
+ 		spin_unlock_irqrestore(&dev->req_lock, flags);
  
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.h b/drivers/net/ethernet/microchip/lan743x_main.h
-index 0e82b6368798..2d6eea18973e 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.h
-+++ b/drivers/net/ethernet/microchip/lan743x_main.h
-@@ -548,6 +548,7 @@ struct lan743x_adapter;
- /* SMSC acquired EFAR late 1990's, MCHP acquired SMSC 2012 */
- #define PCI_VENDOR_ID_SMSC		PCI_VENDOR_ID_EFAR
- #define PCI_DEVICE_ID_SMSC_LAN7430	(0x7430)
-+#define PCI_DEVICE_ID_SMSC_LAN7431	(0x7431)
+@@ -1125,7 +1125,6 @@ void gether_disconnect(struct gether *link)
+ {
+ 	struct eth_dev		*dev = link->ioport;
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
  
- #define PCI_CONFIG_LENGTH		(0x1000)
+ 	WARN_ON(!dev);
+ 	if (!dev)
+@@ -1142,7 +1141,8 @@ void gether_disconnect(struct gether *link)
+ 	 */
+ 	usb_ep_disable(link->in_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->tx_reqs, list) {
++	while (!list_empty(&dev->tx_reqs)) {
++		req = list_first_entry(&dev->tx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
  
+ 		spin_unlock(&dev->req_lock);
+@@ -1154,7 +1154,8 @@ void gether_disconnect(struct gether *link)
+ 
+ 	usb_ep_disable(link->out_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
+ 
+ 		spin_unlock(&dev->req_lock);
 -- 
 2.17.1
 
