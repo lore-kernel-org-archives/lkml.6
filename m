@@ -2,155 +2,123 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1304C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DD9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF95C2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:02:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF95C2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 3C6FB2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nV2OLcHQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6FB2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbeLERCY (ORCPT
+        id S1728108AbeLERDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:02:24 -0500
-Received: from mail.netline.ch ([148.251.143.178]:43558 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeLERCX (ORCPT
+        Wed, 5 Dec 2018 12:03:02 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38610 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbeLERDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:02:23 -0500
-X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Dec 2018 12:02:21 EST
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 243312A604B;
-        Wed,  5 Dec 2018 17:56:25 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 6kANUdsGjnjo; Wed,  5 Dec 2018 17:56:22 +0100 (CET)
-Received: from kaveri (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 828B72A604A;
-        Wed,  5 Dec 2018 17:56:22 +0100 (CET)
-Received: from daenzer by kaveri with local (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gUaTF-0001WP-Vb; Wed, 05 Dec 2018 17:56:21 +0100
-From:   =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
-To:     Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Junwei Zhang <Jerry.Zhang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/ttm: Use pr_debug for all output from ttm_bo_evict
-Date:   Wed,  5 Dec 2018 17:56:21 +0100
-Message-Id: <20181205165621.5805-2-michel@daenzer.net>
-X-Mailer: git-send-email 2.20.0.rc2
-In-Reply-To: <20181205165621.5805-1-michel@daenzer.net>
-References: <20181205165621.5805-1-michel@daenzer.net>
+        Wed, 5 Dec 2018 12:03:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so13714713wml.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DgQuH6GqzxJS5Yj5/6li80FqNeDhRna9oF01o90a8JI=;
+        b=nV2OLcHQagbZcVNtPuKVyCoQphNgtCFiFXhaPl0uG4Ru14u+dECSh0Luouygy3U+ds
+         /ZQMpXEEa9lZ5wMdUjEec1LczOefVR6PHoq1opYZ7Q0Jd1V1miktI4K/9323JePGoQRk
+         ukTXjNbvih4fXdKbO4Ml3jqRPxoEAJeRZQTZ7Kpy4uUbS88foUIAvayvTHh9x3v1NATo
+         5wb+/1SAoI9NYVm2RK/8gTOocchkZioTT6XLckwARKTwhjZO0ci4fes40oJoe/3BoVvd
+         8wX3WiUr4ceJOoUNt9knqZPKvJ9sFss7GxOAyrMW9ThBlMDtAHMwsLhN5TWlFURXn4P5
+         rR6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DgQuH6GqzxJS5Yj5/6li80FqNeDhRna9oF01o90a8JI=;
+        b=GnAOkbxvTY30Q+ephtZ3Nt4vRREJxMCp1xQEHuc3OJC1sjCe/trUm5sc3CaC08YY0R
+         p1mPIVdyOW4NHNHNzXeiFtUTVGRFUqw5TPpY1k9qZguxBJ9umqcqV/D6sdUzz2ibOJ+3
+         zmcFw0ytojT8vc5/vi+5xMyPYXBj/OmO7aMBbuoEj8hnX9EkXUFsp3QZoRWOx0hao3DP
+         ty4wOtCtOMQHM1UgecwUyvEhyyWRYx30O9se6UFWeulT2mYrVtWv4SUhI4xu+vRIzdiZ
+         fXgZfcGC/f07KYraTUEZTMVkITJHmfbQNIwRwT1eGxKL9xhJ+HwR2+RzqurAw9u5ixzX
+         c+tA==
+X-Gm-Message-State: AA+aEWYZmszJwV5udZmtyaFfNIAlzGnwPLQFK9kuOeLaF26tB94ANQuH
+        F27c4nLdPvb3PTqUoRhCtoY=
+X-Google-Smtp-Source: AFSGD/WkIx8FblD5+1Uv+7j1femYs1Xtps/X3rUvgH8kVERojzjGnu3lZvRqS2Ibef3KpPLEUEprxg==
+X-Received: by 2002:a1c:5604:: with SMTP id k4mr16147226wmb.107.1544029380239;
+        Wed, 05 Dec 2018 09:03:00 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.02.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 09:02:59 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 01/12] staging: rtl8188eu: refactor cckrates_included()
+Date:   Wed,  5 Dec 2018 18:02:36 +0100
+Message-Id: <20181205170247.5401-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+Refactor cckrates_included() to improve readability and slightly
+reduce object file size. Also change the return type to bool.
 
-All the output is related, so it should all be printed the same way.
-Some of it was using pr_debug, but some of it appeared in dmesg by
-default. The caller should handle failure, so there's no need to spam
-dmesg with potentially quite a lot of output by default.
-
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/gpu/drm/ttm/ttm_bo.c | 39 ++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c   | 9 +++++----
+ drivers/staging/rtl8188eu/include/rtw_mlme_ext.h | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index d87935bf8e30..5e9b9dd91629 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -77,38 +77,39 @@ static inline int ttm_mem_type_from_place(const struct ttm_place *place,
- 	return 0;
- }
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 24918223499b..90160d5fc292 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -56,13 +56,14 @@ static u8 rtw_basic_rate_mix[7] = {
+ 	IEEE80211_OFDM_RATE_24MB | IEEE80211_BASIC_RATE_MASK
+ };
  
--static void ttm_mem_type_debug(struct ttm_bo_device *bdev, int mem_type)
-+static void ttm_mem_type_debug(struct ttm_bo_device *bdev, struct drm_printer *p,
-+			       int mem_type)
+-int cckrates_included(unsigned char *rate, int ratelen)
++bool cckrates_included(unsigned char *rate, int ratelen)
  {
- 	struct ttm_mem_type_manager *man = &bdev->man[mem_type];
--	struct drm_printer p = drm_debug_printer(TTM_PFX);
+-	int	i;
++	int i;
  
--	pr_err("    has_type: %d\n", man->has_type);
--	pr_err("    use_type: %d\n", man->use_type);
--	pr_err("    flags: 0x%08X\n", man->flags);
--	pr_err("    gpu_offset: 0x%08llX\n", man->gpu_offset);
--	pr_err("    size: %llu\n", man->size);
--	pr_err("    available_caching: 0x%08X\n", man->available_caching);
--	pr_err("    default_caching: 0x%08X\n", man->default_caching);
-+	drm_printf(p, "    has_type: %d\n", man->has_type);
-+	drm_printf(p, "    use_type: %d\n", man->use_type);
-+	drm_printf(p, "    flags: 0x%08X\n", man->flags);
-+	drm_printf(p, "    gpu_offset: 0x%08llX\n", man->gpu_offset);
-+	drm_printf(p, "    size: %llu\n", man->size);
-+	drm_printf(p, "    available_caching: 0x%08X\n", man->available_caching);
-+	drm_printf(p, "    default_caching: 0x%08X\n", man->default_caching);
- 	if (mem_type != TTM_PL_SYSTEM)
--		(*man->func->debug)(man, &p);
-+		(*man->func->debug)(man, p);
- }
- 
- static void ttm_bo_mem_space_debug(struct ttm_buffer_object *bo,
- 					struct ttm_placement *placement)
- {
-+	struct drm_printer p = drm_debug_printer(TTM_PFX);
- 	int i, ret, mem_type;
- 
--	pr_err("No space for %p (%lu pages, %luK, %luM)\n",
--	       bo, bo->mem.num_pages, bo->mem.size >> 10,
--	       bo->mem.size >> 20);
-+	drm_printf(&p, "No space for %p (%lu pages, %luK, %luM)\n",
-+		   bo, bo->mem.num_pages, bo->mem.size >> 10,
-+		   bo->mem.size >> 20);
- 	for (i = 0; i < placement->num_placement; i++) {
- 		ret = ttm_mem_type_from_place(&placement->placement[i],
- 						&mem_type);
- 		if (ret)
- 			return;
--		pr_err("  placement[%d]=0x%08X (%d)\n",
--		       i, placement->placement[i].flags, mem_type);
--		ttm_mem_type_debug(bo->bdev, mem_type);
-+		drm_printf(&p, "  placement[%d]=0x%08X (%d)\n",
-+			   i, placement->placement[i].flags, mem_type);
-+		ttm_mem_type_debug(bo->bdev, &p, mem_type);
+ 	for (i = 0; i < ratelen; i++) {
+-		if  ((((rate[i]) & 0x7f) == 2)	|| (((rate[i]) & 0x7f) == 4) ||
+-		     (((rate[i]) & 0x7f) == 11)  || (((rate[i]) & 0x7f) == 22))
++		u8 r = rate[i] & 0x7f;
++
++		if (r == 2 || r == 4 || r == 11 || r == 22)
+ 			return true;
  	}
- }
+ 	return false;
+diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+index 9526da3efcc4..c86dec12dec2 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+@@ -580,7 +580,7 @@ void addba_timer_hdl(struct timer_list *t);
+ 	mod_timer(&mlmeext->link_timer, jiffies +	\
+ 		  msecs_to_jiffies(ms))
  
-@@ -728,8 +729,8 @@ static int ttm_bo_evict(struct ttm_buffer_object *bo,
- 	ret = ttm_bo_mem_space(bo, &placement, &evict_mem, ctx);
- 	if (ret) {
- 		if (ret != -ERESTARTSYS) {
--			pr_err("Failed to find memory space for buffer 0x%p eviction\n",
--			       bo);
-+			pr_debug("Failed to find memory space for buffer 0x%p eviction\n",
-+				 bo);
- 			ttm_bo_mem_space_debug(bo, &placement);
- 		}
- 		goto out;
-@@ -738,7 +739,7 @@ static int ttm_bo_evict(struct ttm_buffer_object *bo,
- 	ret = ttm_bo_handle_move_mem(bo, &evict_mem, true, ctx);
- 	if (unlikely(ret)) {
- 		if (ret != -ERESTARTSYS)
--			pr_err("Buffer eviction failed\n");
-+			pr_debug("Buffer eviction failed\n");
- 		ttm_bo_mem_put(bo, &evict_mem);
- 		goto out;
- 	}
+-int cckrates_included(unsigned char *rate, int ratelen);
++bool cckrates_included(unsigned char *rate, int ratelen);
+ int cckratesonly_included(unsigned char *rate, int ratelen);
+ 
+ void process_addba_req(struct adapter *padapter, u8 *paddba_req, u8 *addr);
 -- 
-2.20.0.rc2
+2.19.2
 
