@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC90C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E07C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C760720892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675A720892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:19:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4Tb8vA4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C760720892
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p9zyVDnL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675A720892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeLEQTH (ORCPT
+        id S1728242AbeLEQTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:19:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36837 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeLEQTH (ORCPT
+        Wed, 5 Dec 2018 11:19:12 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41986 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLEQTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:19:07 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so10300556plo.3;
-        Wed, 05 Dec 2018 08:19:07 -0800 (PST)
+        Wed, 5 Dec 2018 11:19:10 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so9232009pga.9;
+        Wed, 05 Dec 2018 08:19:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=TkmL002NIrFI/+qlHIQs+8PHenuR75IqlFLC7k33xLk=;
-        b=h4Tb8vA4breO2EQ5nRHAlajpKtVZwS4M19enDNuL/h72S0J0Xk8HY+FqCYMti8Bi3d
-         57gkNY9J8ZDog3o3O3Q+w0Qfk4A7ntOY0yUU84ywqtRyEGVkoXmG7/9JqaA5UOOVPK/V
-         1smgF1Z2gJCvYtJ4zW5ZOnf0GHXEK/KqfU1F/cD//mlV/q4lqC9sumKSyoXTZwZ68ba2
-         +PA7u1AAAhbdIOxvN4d+Wvixr/uPN5Ck4i2MbOJqouFObt1SKVytSbp3AGlpd1Y0+2kI
-         9PB58N8BMjqanRlJdziFthD5U4HKPZS8j91HB5e8SRsOoeF4hm3U+p8Wq3THXzve2SYM
-         92YA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=UlVfIMfHrGtBTlZv/XK8koRNqWY+54IiT4Z9OFB2kBw=;
+        b=p9zyVDnLTDccX6BjnfxuHmufgkGARQAWH6PNjDcQaP0d7RHLNfobAzQenhVX0TLyQJ
+         DaPB/5OD5dd4IBHTHRb4J4mkeXn7DdZ/tEIkCP/TL2sUPW5NFoIKd9GMaaJSeIlsF32r
+         Vfgh44k3f2+aOQD/A6SsnQQYwRFtvsFQjMkZ32HrGrq1lHXokB7+7mxpAm/YbAYW9Lwu
+         YJc/kQJeYb8hZF5b0ikCCmCKy5MK08ecgte1WLilvRY7anHDTgWMY94YR0Zjf62Tsa8g
+         4FP5T6QISdsUqOHkEVwFs/GVeCEHg0U4n0zAOoWbfbpUFfd5DApJ8fvNBtCwRb+kVlbH
+         BNfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TkmL002NIrFI/+qlHIQs+8PHenuR75IqlFLC7k33xLk=;
-        b=G4gTXbJrzeTkg66u42A6ZQE0g+lBY9WVGLYVINvhO+X8zRrRgT8O552txVnVaIVIzZ
-         iAD9JLiwxYBww1oYVxYCM9R1+vqHoWO6VjCXgCu0B01x7FlvPQzSCVl7ibvUKnC/aSqV
-         FA2v8Fc2dC3Z063+jYDSsKIyETzpX8mqVV103RVzF0Xxu7KF+ylKHXttr7qYAA8u9hEG
-         swgZRikyMXl0ccRyr2Vt/RgloiVc8gCedQEidNtagpRKFDJeKeNW187PGQDAax+/xDu2
-         u+PaMOfBVnNfKbhyQBp30bCHgvd/PWz9bY2v37Eh5RzLlZtVxgq9U+uan4tu3Nj+imH3
-         wGtw==
-X-Gm-Message-State: AA+aEWaHmvJi58zOBstSl5cnHqNaYTA+kYYBBxE+xsOG001ngY3/tiup
-        l2SRNVo8dLvQ6AznG2ptBz0=
-X-Google-Smtp-Source: AFSGD/VVDjWyxipNkFrCccRko39MIoR6sZ9UlhG9MGv7loJC8nVBAFn1I0Q6bVwS3isDcnw3CW2L7A==
-X-Received: by 2002:a17:902:6bc7:: with SMTP id m7mr25362376plt.106.1544026746670;
-        Wed, 05 Dec 2018 08:19:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=UlVfIMfHrGtBTlZv/XK8koRNqWY+54IiT4Z9OFB2kBw=;
+        b=VVE9rE1HALY7aCkO48WBkmy2IoxVSS4if1GU3eACvoqVKD0ZN45Mq0YYkbFQQGs970
+         FfmXplc/y1KkaCf1SB+l2Eb5XCTF89GX1aYpZ8jmiuBoGTqRxxYN7x4iymF8ce2yoKMz
+         A8KyrGZZgx5FyaHM2Bds+eH9XOX+278zcIDv/+rCJqlTRrs0sxzw/R+TL7VeuzD2CRVB
+         BBp1jnMJRxvP282lqLTYeB7sKVvS39IwWrbakyKoaf2aVqz0I8Oczl91tDJz9XX6svVk
+         gptF2ITGsr+ZamDPcFOGJr1rvWEPYVHQwWdL0FNtF3u3gKnm330JQovPKZFq4jjCSHN9
+         43uw==
+X-Gm-Message-State: AA+aEWYj/lh6pcSQ7eULIStMux17dy/iyHsReWBBVJ6rgXFwnkae5YB2
+        wjiPrQSK13u+LwZZTfVPRnP0lS2auLY=
+X-Google-Smtp-Source: AFSGD/WzdxHmUE3nEUbxh/wpldUjRDSE4NVo39PlUajdmLspkBIg9fg85B0OrPZUxw+Y1Xob+V9PCA==
+X-Received: by 2002:a65:41c2:: with SMTP id b2mr20775172pgq.67.1544026750169;
+        Wed, 05 Dec 2018 08:19:10 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x3sm66303001pgt.45.2018.12.05.08.19.05
+        by smtp.gmail.com with ESMTPSA id g65sm104654652pfa.63.2018.12.05.08.19.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 08:19:06 -0800 (PST)
+        Wed, 05 Dec 2018 08:19:09 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     vkoul@kernel.org, dan.j.williams@intel.com, sudeep.dutt@intel.com,
         ashutosh.dixit@intel.com, daniel@zonque.org,
@@ -65,10 +66,12 @@ To:     vkoul@kernel.org, dan.j.williams@intel.com, sudeep.dutt@intel.com,
 Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 1/4] dmaengine: amba-pl08x: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Wed,  5 Dec 2018 11:18:57 -0500
-Message-Id: <20181205161900.16434-1-tiny.windzz@gmail.com>
+Subject: [PATCH 2/4] dmaengine: mic_x100_dma: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Wed,  5 Dec 2018 11:18:58 -0500
+Message-Id: <20181205161900.16434-2-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20181205161900.16434-1-tiny.windzz@gmail.com>
+References: <20181205161900.16434-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,40 +81,56 @@ Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/dma/amba-pl08x.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ drivers/dma/mic_x100_dma.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 97483df1f82e..fc8c2bab563c 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -2505,24 +2505,14 @@ static int pl08x_debugfs_show(struct seq_file *s, void *data)
+diff --git a/drivers/dma/mic_x100_dma.c b/drivers/dma/mic_x100_dma.c
+index adfd316db1a8..6a91e28d537d 100644
+--- a/drivers/dma/mic_x100_dma.c
++++ b/drivers/dma/mic_x100_dma.c
+@@ -676,7 +676,7 @@ static void mic_dma_dev_unreg(struct mic_dma_device *mic_dma_dev)
+ }
+ 
+ /* DEBUGFS CODE */
+-static int mic_dma_reg_seq_show(struct seq_file *s, void *pos)
++static int mic_dma_reg_show(struct seq_file *s, void *pos)
+ {
+ 	struct mic_dma_device *mic_dma_dev = s->private;
+ 	int i, chan_num, first_chan = mic_dma_dev->start_ch;
+@@ -707,23 +707,7 @@ static int mic_dma_reg_seq_show(struct seq_file *s, void *pos)
  	return 0;
  }
  
--static int pl08x_debugfs_open(struct inode *inode, struct file *file)
+-static int mic_dma_reg_debug_open(struct inode *inode, struct file *file)
 -{
--	return single_open(file, pl08x_debugfs_show, inode->i_private);
+-	return single_open(file, mic_dma_reg_seq_show, inode->i_private);
 -}
 -
--static const struct file_operations pl08x_debugfs_operations = {
--	.open		= pl08x_debugfs_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-static int mic_dma_reg_debug_release(struct inode *inode, struct file *file)
+-{
+-	return single_release(inode, file);
+-}
+-
+-static const struct file_operations mic_dma_reg_ops = {
+-	.owner   = THIS_MODULE,
+-	.open    = mic_dma_reg_debug_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = mic_dma_reg_debug_release
 -};
-+DEFINE_SHOW_ATTRIBUTE(pl08x_debugfs);
++DEFINE_SHOW_ATTRIBUTE(mic_dma_reg);
  
- static void init_pl08x_debugfs(struct pl08x_driver_data *pl08x)
- {
- 	/* Expose a simple debugfs interface to view all clocks */
- 	(void) debugfs_create_file(dev_name(&pl08x->adev->dev),
- 			S_IFREG | S_IRUGO, NULL, pl08x,
--			&pl08x_debugfs_operations);
-+			&pl08x_debugfs_fops);
+ /* Debugfs parent dir */
+ static struct dentry *mic_dma_dbg;
+@@ -747,7 +731,7 @@ static int mic_dma_driver_probe(struct mbus_device *mbdev)
+ 		if (mic_dma_dev->dbg_dir)
+ 			debugfs_create_file("mic_dma_reg", 0444,
+ 					    mic_dma_dev->dbg_dir, mic_dma_dev,
+-					    &mic_dma_reg_ops);
++					    &mic_dma_reg_fops);
+ 	}
+ 	return 0;
  }
- 
- #else
 -- 
 2.17.0
 
