@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592BEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A255C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDCA20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F50420851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:47:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ScvXDerd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EDCA20878
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BD1AsJ0i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F50420851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbeLEMrv (ORCPT
+        id S1727935AbeLEMrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:47:51 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35150 "EHLO
+        Wed, 5 Dec 2018 07:47:55 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41422 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727898AbeLEMrs (ORCPT
+        with ESMTP id S1727919AbeLEMrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:47:48 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so18213586ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 04:47:47 -0800 (PST)
+        Wed, 5 Dec 2018 07:47:52 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k15-v6so733478ljc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 04:47:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qTwEgaJuHML2/WugrEbTAW9s/jIgwlSTFOzt/GYbDJk=;
-        b=ScvXDerd9AjqpSTtybMjmLDBmrN/dJTK4LZtUTVLDI8K/hsBSik/8My7fIAhAB0JpM
-         CY2z6RfbQsonquJTdfMp7uO+zPewcW1EaZrYBjm4XvcdIkurSp1KKLQrZ9iAcQmP6KJi
-         H7xa3mbRBhl1eCYurlEPEGzjRcBl00fKqTI4Y=
+        bh=Aih5LvsfvsMhYdIrSkgjVM1Zlxek03AkpQ3jJn8pr8c=;
+        b=BD1AsJ0i9yE4A7wpFRIL3wjXaEUe0g6haVUi2mrHm3Z55B8q8ppckHHyG69pIT05sB
+         UUgh3hFhqMBxyfLLkYe+Mk/i6ZIg2aPH7MHJYreSuLnT5puXl1xJXPuRNoQJ5EbP6UVc
+         X6Q1zj2gJDY/lyp7B2rPrpSYhU40meZ69fnmI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qTwEgaJuHML2/WugrEbTAW9s/jIgwlSTFOzt/GYbDJk=;
-        b=BGBhNdJ82CbohbNfizrYni/Tcn0qPdpDOoiz2B5+7wItiWRTMK+jWgPeW2VM4PK5mf
-         y0MiS+9Qkkq0dn+BL0Di9R518W+8Zj6iMVNdnkCqg9Bg72Aqxglx+16F5TpqCcurhD3A
-         5yYzWORyhbxOFsxeua5IZGVXt0gfuVOLqXSDwHYDliFMWUllI44bCLYVEzyaXfY0sDjC
-         NiIUZmHGctk4O1CGITQjxQbFY+fP7EiznJWvd/31dfmjZ4NIDbsFufNj7S6dJoKYGerv
-         JtusmuaXV5eU9nbRoVW7TF8qzmyynp/LUDjMIfZeqhDKwQbTKerh/9jU9DA9NMVW1ht4
-         mpLw==
-X-Gm-Message-State: AA+aEWbXVFqZsAsUoPbwmiR74QpFKOCJxl6UxabWP6BVtEyWhF6Qrc0L
-        mCQ8aWTERxO43NsO8U4apTciJg==
-X-Google-Smtp-Source: AFSGD/Ua1YLt4MiMZnMbT5Xv42wTyNmGJf1qpdDkNhBoPYJ8JZb9nqxRa3iQt9pMT8inlhSdVDVGEg==
-X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr17299442ljj.158.1544014066335;
-        Wed, 05 Dec 2018 04:47:46 -0800 (PST)
+        bh=Aih5LvsfvsMhYdIrSkgjVM1Zlxek03AkpQ3jJn8pr8c=;
+        b=aA9Gr/0VdEEj7by9v4+KJCRNAH4H1h7LxhAiD3/lssDFhildVlnecAVfyrsVvuzXq2
+         622yC/u7oLc3ViNmEzyaZRNB8QLXW9oFptVnSP7p4y2gYUdEuidFP6C8fZUDrzK3FMOa
+         qBQSOvEejjoUHFSM7ZVhIiYBqjEFZMtSvR40tZRl3tJ8HDMjWftM7zRTdS6sIPqWJ9Ww
+         AyXezxxvXKOWI8r+dhjJQFqH1wpViUyNHW7ZOu19dvSlxfM1XM2eBrw2UggupZHT49An
+         1hN1dRHwVsILADSx9IT1iFJB6odt9FZ0LldRvNIO3AxakLQG3qOovlhbIIoU9jFaycdr
+         x5NQ==
+X-Gm-Message-State: AA+aEWbjQlTt3YvYQ8iLkAVNR1Ig2PwhIKY8T5Tfx/kIq11e8d72h51B
+        wFfS0HQFDaJiwHQc6IDbJgO4Sg==
+X-Google-Smtp-Source: AFSGD/VHRtqDbbSV7UOkBKl5LIrlulwEAh1Qie9x1vatjdhGqkTqEBsu1LjarO5OGJzLAmyxRE08ZQ==
+X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr129644ljb.106.1544014070213;
+        Wed, 05 Dec 2018 04:47:50 -0800 (PST)
 Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id e19-v6sm3797125ljf.67.2018.12.05.04.47.44
+        by smtp.gmail.com with ESMTPSA id e19-v6sm3797125ljf.67.2018.12.05.04.47.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 04:47:45 -0800 (PST)
+        Wed, 05 Dec 2018 04:47:49 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -64,9 +64,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 08/15 v3] regulator: max77686: Let core handle GPIO descriptor
-Date:   Wed,  5 Dec 2018 13:47:14 +0100
-Message-Id: <20181205124721.26624-9-linus.walleij@linaro.org>
+Subject: [PATCH 10/15 v3] gpio: devres: Handle nonexclusive GPIOs
+Date:   Wed,  5 Dec 2018 13:47:16 +0100
+Message-Id: <20181205124721.26624-11-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205124721.26624-1-linus.walleij@linaro.org>
 References: <20181205124721.26624-1-linus.walleij@linaro.org>
@@ -77,66 +77,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod_get_from_of_node() rather than the devm_*
-version so that the regulator core can handle the lifecycle
-of these descriptors.
+When we get a nonexeclusive GPIO descriptor using managed
+resources, we should only add it to the list of managed
+resources once: on the first user. Augment the
+devm_gpiod_get_index() and devm_gpiod_get_from_of_node()
+calls to account for this by checking if the descriptor
+is already resource managed before we proceed to allocate
+a new resource management struct.
 
-Fix up the errorpath so that we free this descriptor if
-an error occurs in the callback. Rely on the regulator
-core to deal with it after this point: a previous patch
-fixed up the regulator core to properly dispose any
-GPIO descriptors once you call regulator_register().
-
-Fixes: 96392c3d8ca4 ("regulator: max77686: Pass descriptor instead of GPIO number")
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: b0ce7b29bfcd ("regulator/gpio: Allow nonexclusive GPIO access")
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-ChangeLog v2->v3:
-- Resending.
-ChangeLog v1->v2:
-- Handle the errorpath (hopefully) correct, back out of
-  regulator registration by freeing the descriptors of all
-  not yet registered regulators.
+ChangeLog v1->v3:
+- New patch.
+- This fix is in response to an issue Marek saw in the fixups
+  for resource-managed GPIO descriptors used with ena_gpiod
+  in the regulator subsystem.
+- I first thought to apply it to the GPIO tree directly, but
+  since it is not a regression it is better to put it into
+  the regulator tree with the rest of the patches.
 ---
- drivers/regulator/max77686-regulator.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/gpio/gpiolib-devres.c | 50 ++++++++++++++++++++++++++---------
+ 1 file changed, 38 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/regulator/max77686-regulator.c b/drivers/regulator/max77686-regulator.c
-index f5cee1775905..8020eb57374a 100644
---- a/drivers/regulator/max77686-regulator.c
-+++ b/drivers/regulator/max77686-regulator.c
-@@ -250,13 +250,13 @@ static int max77686_of_parse_cb(struct device_node *np,
- 		struct regulator_config *config)
- {
- 	struct max77686_data *max77686 = config->driver_data;
-+	int ret;
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index 01959369360b..a57e968025a8 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -98,15 +98,28 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+ 	struct gpio_desc **dr;
+ 	struct gpio_desc *desc;
  
- 	switch (desc->id) {
- 	case MAX77686_BUCK8:
- 	case MAX77686_BUCK9:
- 	case MAX77686_LDO20 ... MAX77686_LDO22:
--		config->ena_gpiod = devm_gpiod_get_from_of_node(max77686->dev,
--				np,
-+		config->ena_gpiod = gpiod_get_from_of_node(np,
- 				"maxim,ena",
- 				0,
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
-@@ -271,9 +271,13 @@ static int max77686_of_parse_cb(struct device_node *np,
- 	if (config->ena_gpiod) {
- 		set_bit(desc->id, max77686->gpio_enabled);
- 
--		return regmap_update_bits(config->regmap, desc->enable_reg,
--					  desc->enable_mask,
--					  MAX77686_GPIO_CONTROL);
-+		ret = regmap_update_bits(config->regmap, desc->enable_reg,
-+					 desc->enable_mask,
-+					 MAX77686_GPIO_CONTROL);
-+		if (ret) {
-+			gpiod_put(config->ena_gpiod);
-+			config->ena_gpiod = NULL;
-+		}
++	desc = gpiod_get_index(dev, con_id, idx, flags);
++	if (IS_ERR(desc))
++		return desc;
++
++	/*
++	 * For non-exclusive GPIO descriptors, check if this descriptor is
++	 * already under resource management by this device.
++	 */
++	if (flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
++		struct devres *dres;
++
++		dres = devres_find(dev, devm_gpiod_release,
++				   devm_gpiod_match, desc);
++		if (dres)
++			return desc;
++	}
++
+ 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+ 			  GFP_KERNEL);
+-	if (!dr)
++	if (!dr) {
++		gpiod_put(desc);
+ 		return ERR_PTR(-ENOMEM);
+-
+-	desc = gpiod_get_index(dev, con_id, idx, flags);
+-	if (IS_ERR(desc)) {
+-		devres_free(dr);
+-		return desc;
  	}
  
- 	return 0;
+ 	*dr = desc;
+@@ -140,15 +153,28 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+ 	struct gpio_desc **dr;
+ 	struct gpio_desc *desc;
+ 
++	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
++	if (IS_ERR(desc))
++		return desc;
++
++	/*
++	 * For non-exclusive GPIO descriptors, check if this descriptor is
++	 * already under resource management by this device.
++	 */
++	if (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
++		struct devres *dres;
++
++		dres = devres_find(dev, devm_gpiod_release,
++				   devm_gpiod_match, desc);
++		if (dres)
++			return desc;
++	}
++
+ 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+ 			  GFP_KERNEL);
+-	if (!dr)
++	if (!dr) {
++		gpiod_put(desc);
+ 		return ERR_PTR(-ENOMEM);
+-
+-	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
+-	if (IS_ERR(desc)) {
+-		devres_free(dr);
+-		return desc;
+ 	}
+ 
+ 	*dr = desc;
 -- 
 2.19.2
 
