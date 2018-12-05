@@ -2,122 +2,168 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121E9C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92B7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2431214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2431214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DDFF20850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544042562;
+	bh=56xfK0f4Jt74vV+P9zWL3U/Bkp/4KRIX7RZj0NEPRr0=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=01flRPcFYJ3AXLSTn+8KdcM3kVFAPJu5/3YawfLxUZdBCord/hHxRb64UHzYC0UOL
+	 m+DN1+3uTTR6XGstapFjzN5PJ+xfI+P2JyjzyJgA4TPSTfNAzWb3mxLH6J7e7sWV2Y
+	 zdbZOEp03OxxkhIuvE0j7vcefkIolfLlXLVB9Lyc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DDFF20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeLEUmh (ORCPT
+        id S1728574AbeLEUml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 15:42:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728138AbeLEUmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 15:42:37 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51082 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbeLEUmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:42:36 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B3618263BF7
-Received: by earth.universe (Postfix, from userid 1000)
-        id E3B313C08D6; Wed,  5 Dec 2018 21:36:34 +0100 (CET)
-Date:   Wed, 5 Dec 2018 21:36:34 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yuanjiang.yu@unisoc.com, broonie@kernel.org,
-        linus.walleij@linaro.org
-Subject: Re: [PATCH 3/6] power: supply: charger-manager: Fix incorrect return
- value
-Message-ID: <20181205203634.f6u2yo7v3gonv2cm@earth.universe>
-References: <4ea9eaf85d780afb190cb45da2df8ff5fd86d449.1542362262.git.baolin.wang@linaro.org>
- <edef76d756eeae2708f5a23f4d8f1f742fac76a7.1542362262.git.baolin.wang@linaro.org>
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F7DB20850;
+        Wed,  5 Dec 2018 20:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544042556;
+        bh=56xfK0f4Jt74vV+P9zWL3U/Bkp/4KRIX7RZj0NEPRr0=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=MVdjBsO1hVkzpxirhypwazW4HjjQKAJKXwRrZu/mcqwA22pBB2uIh5p5MJ/QV8Ayc
+         fQHZYj8nE8Z2guy8DHNw+MEsrtINut/GAkRbgZgEh0BDb+J9lfXNyJbLDQ6ZLy609P
+         cwBkwHuoPrHWgrDIp+UAMsGGT6Nyjx7ceshKPU2Y=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4k54tp3efjptzhvg"
-Content-Disposition: inline
-In-Reply-To: <edef76d756eeae2708f5a23f4d8f1f742fac76a7.1542362262.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+To:     Tali Perry <tali.perry1@gmail.com>, avifishman70@gmail.com,
+        brendanhiggins@google.com, mturquette@baylibre.com,
+        tmaimon77@gmail.com, venture@google.com, yuenn@google.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181205194702.257430-3-tali.perry1@gmail.com>
+Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+References: <20181205194702.257430-1-tali.perry1@gmail.com>
+ <20181205194702.257430-3-tali.perry1@gmail.com>
+Message-ID: <154404255553.88331.5492676494542176052@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v1 1/1] clk: npcm: get fixed input clks from DT
+Date:   Wed, 05 Dec 2018 12:42:35 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---4k54tp3efjptzhvg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Nov 16, 2018 at 07:01:10PM +0800, Baolin Wang wrote:
-> Fix incorrect return value.
->=20
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Quoting Tali Perry (2018-12-05 11:47:02)
 > ---
 
-Thanks, queued.
+No commit text? No Signed-off-by?
 
--- Sebastian
+Sorry, I don't understand what this patch is for or what's going on.
 
->  drivers/power/supply/charger-manager.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/suppl=
-y/charger-manager.c
-> index bd6c450..a52bc77 100644
-> --- a/drivers/power/supply/charger-manager.c
-> +++ b/drivers/power/supply/charger-manager.c
-> @@ -1212,7 +1212,6 @@ static int charger_extcon_init(struct charger_manag=
-er *cm,
->  	if (ret < 0) {
->  		pr_info("Cannot register extcon_dev for %s(cable: %s)\n",
->  			cable->extcon_name, cable->name);
-> -		ret =3D -EINVAL;
->  	}
-> =20
->  	return ret;
-> @@ -1633,7 +1632,7 @@ static int charger_manager_probe(struct platform_de=
-vice *pdev)
-> =20
->  	if (IS_ERR(desc)) {
->  		dev_err(&pdev->dev, "No platform data (desc) found\n");
-> -		return -ENODEV;
-> +		return PTR_ERR(desc);
->  	}
-> =20
->  	cm =3D devm_kzalloc(&pdev->dev, sizeof(*cm), GFP_KERNEL);
-> --=20
-> 1.7.9.5
->=20
+>  drivers/clk/clk-npcm7xx.c | 64 +++++++++++++++++++++++++++++++++++++++--=
+------
+>  1 file changed, 53 insertions(+), 11 deletions(-)
+> =
 
---4k54tp3efjptzhvg
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> index 27a86b7a34db..25f8ccaa3d2f 100644
+> --- a/drivers/clk/clk-npcm7xx.c
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -8,17 +8,23 @@
+>   */
+>  =
 
------BEGIN PGP SIGNATURE-----
+>  #include <linux/module.h>
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/device.h>
+>  #include <linux/io.h>
+>  #include <linux/kernel.h>
+>  #include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+> +#include <linux/rational.h>
+>  #include <linux/bitfield.h>
+> -
+>  #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
+>  =
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwINtIACgkQ2O7X88g7
-+prn7g//SmzLat8wABBr5Pe64cyPtuFqBq29DMkaowLjuLJSdjI29GGpA6OKn5AO
-sHT26tZA88SMB23WDwPVpubaMwrQdATNvNQtcS1zjdXdyk8F6RcUBJ0cCeP5IAXc
-QlX211xAKByDHie1tjHbJk73cn32WvhpwBMbV8EO2V3r0NaSBE327C/YmdksTVXt
-t1KmdHHJm9B2e8vYGGCblI0+saVPZxcXLbxsOh12Eo/puqnrrzpmxm2N0ThdcMuR
-8aWZhA0kXgDmoiS3cYtMoUTDuBoO3BMY3fOmiJdawFQwNkF4OWiBrj+4XiCbzKRR
-6Ej/bPXLOJsqkR/iySFdrsZC+7+jjByDVRhL0X/fpcNVW9LMI7slYcjd1FmN5B/2
-Qm1AEloya8/aXvdqxd7C76zCmXTLcLWg2OQsvxyMNbrdqHm/YWtMRoRM2IVTyi0s
-9wcLwCpjPYLrbAlRaT8UIq07u/dj83uTzI4YwXZ5ScjKddA0I1oTjk7sn38JrzGm
-Zc+YSU/VsytB2bOHALpcDwZ3n9sNfxzgW9xOq/eYFtBDjr7Cd8Yhn2U9YXAfY4Nw
-6NyGgOKU/ZDs2iIpDktX4XwOet8Xc8rbLKKbI+zqzseJbLFodAYg5ixQOctk0z7u
-jKsJ7q1GuzVtOHB60hnVVfQdatUV0hSgR18+0psiQ2wXj/RJdzE=
-=3iHH
------END PGP SIGNATURE-----
+> +
 
---4k54tp3efjptzhvg--
+I don't get it. Please don't send random whitespace changes in a patch.
+
+>  struct npcm7xx_clk_pll {
+>         struct clk_hw   hw;
+>         void __iomem    *pllcon;
+> @@ -44,7 +50,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct=
+ clk_hw *hw,
+>         u64 ret;
+>  =
+
+>         if (parent_rate =3D=3D 0) {
+> -               pr_err("%s: parent rate is zero", __func__);
+> +               pr_err("%s: parent rate is zero. reg=3D%s\n", __func__,
+> +                      hw->init->name);
+
+Why do we care?
+
+>                 return 0;
+>         }
+>  =
+
+> @@ -544,12 +552,14 @@ static void __init npcm7xx_clk_init(struct device_n=
+ode *clk_np)
+>         void __iomem *clk_base;
+>         struct resource res;
+>         struct clk_hw *hw;
+> +       struct clk *clk;
+>         int ret;
+>         int i;
+>  =
+
+> +       clk_base =3D NULL;
+>         ret =3D of_address_to_resource(clk_np, 0, &res);
+>         if (ret) {
+> -               pr_err("%pOFn: failed to get resource, ret %d\n", clk_np,
+> +               pr_err("%s: failed to get resource, ret %d\n", clk_np->na=
+me,
+>                         ret);
+>                 return;
+>         }
+
+Drop this change as it's making things worse.
+
+> @@ -558,9 +568,10 @@ static void __init npcm7xx_clk_init(struct device_no=
+de *clk_np)
+>         if (!clk_base)
+>                 goto npcm7xx_init_error;
+>  =
+
+> -       npcm7xx_clk_data =3D kzalloc(struct_size(npcm7xx_clk_data, hws,
+> -                                  NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
+> -       if (!npcm7xx_clk_data)
+> +       npcm7xx_clk_data =3D kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+> +               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL=
+);
+> +
+> +       if (!npcm7xx_clk_data->hws)
+>                 goto npcm7xx_init_np_err;
+>  =
+
+>         npcm7xx_clk_data->num =3D NPCM7XX_NUM_CLOCKS;
+
+Drop this hunk.
+
