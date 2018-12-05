@@ -2,90 +2,84 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B5CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC92C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2D6C20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EurGI24u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D6C20989
+	by mail.kernel.org (Postfix) with ESMTP id ACC6320661
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC6320661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbeLEJ5R (ORCPT
+        id S1730207AbeLEJ4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:57:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729858AbeLEJ4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:56:33 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD91D21527;
-        Wed,  5 Dec 2018 09:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003792;
-        bh=ixkSGs3AesB+cKP9JzO54GkLwd16f35wRYQPDnBeeso=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EurGI24uV8qsbJdELXP/4vLCJ0MfNcCfpjVLMFdLwdBmMas9mXHV7ai7BCanoi4dK
-         9IhqkwdfXEmrsVRQKMOjZlsGWdOHXmPZwd95YKoN8zFvQqTdmkWqDNplfO3PdzanlJ
-         jEfyAUzj8NQci34SI8BXra9oGVW4fmzwXuZ0kl1U=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 20/26] fscache, cachefiles: remove redundant variable 'cache'
-Date:   Wed,  5 Dec 2018 04:54:24 -0500
-Message-Id: <20181205095430.8019-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
-References: <20181205095430.8019-1-sashal@kernel.org>
+        Wed, 5 Dec 2018 04:56:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729796AbeLEJ4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:56:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 81CEEB695;
+        Wed,  5 Dec 2018 09:56:00 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 10:55:57 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
+Message-ID: <20181205095557.GE1286@dhcp22.suse.cz>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-3-drinkcat@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205054828.183476-3-drinkcat@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 05-12-18 13:48:27, Nicolas Boichat wrote:
+> In some cases (e.g. IOMMU ARMv7s page allocator), we need to allocate
+> data structures smaller than a page with GFP_DMA32 flag.
+> 
+> This change makes it possible to create a custom cache in DMA32 zone
+> using kmem_cache_create, then allocate memory using kmem_cache_alloc.
+> 
+> We do not create a DMA32 kmalloc cache array, as there are currently
+> no users of kmalloc(..., GFP_DMA32). The new test in check_slab_flags
+> ensures that such calls still fail (as they do before this change).
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+The changelog should be much more specific about decisions made here.
+First of all it would be nice to mention the usecase.
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+Secondly, why do we need a new sysfs file? Who is going to consume it?
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index a899e69cd5fd..4b3a6b01bb48 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -962,11 +962,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
- void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
- 
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
- 
- 	_enter("%p,{%lu}", object, page->index);
- 
+Then why do we need SLAB_MERGE_SAME to cover GFP_DMA32 as well? I
+thought the whole point is to use dedicated slab cache. Who is this
+going to merge with?
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
