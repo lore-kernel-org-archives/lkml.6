@@ -2,98 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63F2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C02C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE13E2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:20:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE13E2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3271E2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:20:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="VVDRDjQM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3271E2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeLENUC (ORCPT
+        id S1727444AbeLENUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:20:02 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50329 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeLENUC (ORCPT
+        Wed, 5 Dec 2018 08:20:16 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54684 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLENUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:20:02 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gUX5s-000849-LQ; Wed, 05 Dec 2018 14:20:00 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gUX5s-0002PM-7j; Wed, 05 Dec 2018 14:20:00 +0100
-Date:   Wed, 5 Dec 2018 14:20:00 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Message-ID: <20181205132000.f7n2stv2pxldzcxu@pengutronix.de>
-References: <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de>
- <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
- <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
- <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de>
- <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 5 Dec 2018 08:20:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z18so13263412wmc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 05:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=2/kWzSPXQ+g9IzAwdqQK9pspdaUmQmZp604OR3Ol9F4=;
+        b=VVDRDjQMAiePU/UmXAewImUcYfIee8a8aSVG4rqENqzYNbnohBj0g1ESMboIMYBogq
+         vBV8qi5GYKN1ZJsGMyuTCurU3jGPE1021E5uSRrSVygd6QSI2WRV+p+XmAdEB2RDlQ12
+         4r2Bq3T3PuHWPvlIgDATYskppM7LRK1K9Tfz7u/Y1OtURQbvjr0O/YB71dPXNAHdvt5b
+         UbHQX3croqJ/J5RUT3iRc9rL+i+oWvJ5R/eTucEUjnVmc54zsfNaejfqKfyZ7F3OwmpJ
+         dDDN49fs2L4XKh2E2KgALp20nud6jmF0x/NQgl6FvDcnprj6h4sQBR978yzVOyvN6ICl
+         +mAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=2/kWzSPXQ+g9IzAwdqQK9pspdaUmQmZp604OR3Ol9F4=;
+        b=nRkDqO8W5j+w4jJ6df+LhOKFWgIpq4hN+ybbMEi+C9uDV6htqaw8rUmrCVjM4NdCTf
+         nObANFMUTQOcd3Xw0f9StqpGlTSlPmYTxoz2JAcCE9W7g0Yb1F4j6AvJMyGkcflixXSf
+         YsKVy1FIl00F5vK8LzD7fC1bJUt1TRqn5C00s339S+ynL3BCVYzRku6t4vugfoU95AHn
+         c4iJm3SZ1ZlI9VnIS1VslfQ+OMhdcAyCnTI9Dlnj+avYgo7UxLqxFmGVrW2lJdtYCCja
+         3wgO3P1qu4WESfRv/iQ3ziYK8BY1go6ja0EhSNC8MtYlFX4Y3SFJ0pTpeiuuLamX24HY
+         mo7g==
+X-Gm-Message-State: AA+aEWbNOSHq+848csUYvDmyxQxd+AtOTkWI/uaP61shN4GsB0R2NEwG
+        jSI7pTuAsmwY2Fz6eBAV0E5ED0VhXJxpNQ==
+X-Google-Smtp-Source: AFSGD/VXWvI0GfqkOkDTNp4gngw3LRwT7uq+xj32X1p6Ti9G4UMPxZP8l/VyD72swxO0r/Bl4az+vQ==
+X-Received: by 2002:a1c:b607:: with SMTP id g7mr16640399wmf.97.1544016013563;
+        Wed, 05 Dec 2018 05:20:13 -0800 (PST)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id j8sm17913635wmd.0.2018.12.05.05.20.12
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 05 Dec 2018 05:20:13 -0800 (PST)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] serial: uartps: Add the device_init_wakeup
+Date:   Wed,  5 Dec 2018 14:20:11 +0100
+Message-Id: <ec9fdbdf1c444dc60edfc75a31583630e76a9b72.1544016009.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 01:19:54PM +0100, Linus Walleij wrote:
-> On Mon, Dec 3, 2018 at 12:06 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Mon, Dec 03, 2018 at 11:57:26AM +0100, Bartosz Golaszewski wrote:
-> 
-> > > It used to live in the gpio-mockup driver and I generalized it
-> > > precisely because there was another driver - iio evgen - which was
-> > > doing basically the same thing. While I don't know if there'll be more
-> > > users (I'd guess it would be useful for testing purposes of other
-> > > subsystems) having the same functionality implemented once is better
-> > > than twice.
-> >
-> > The iio testing driver only needs the trigger and relies on an irq that
-> > then calls the registerd handler. The iio driver doesn't need to tune
-> > the edge sensitivity though and if your mockup driver just only calls
-> > the fire routine if the configured sensitivity justifies that,
-> > everything should work as expected.
-> 
-> Simulating edges in the generic IRQ simulator codes seems
-> generally useful to me, even if there is just one user now.
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-I cannot imagine another potential user. Which kind of driver could use
-that that is not a gpio simulator?
+Initialise the device wakeup.
 
-Best regards
-Uwe
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
+ drivers/tty/serial/xilinx_uartps.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index 379242b96790..0140644391df 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1624,6 +1624,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, UART_AUTOSUSPEND_TIMEOUT);
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
++	device_init_wakeup(port->dev, true);
+ 
+ #ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
+ 	/*
+@@ -1702,6 +1703,7 @@ static int cdns_uart_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
++	device_init_wakeup(&pdev->dev, false);
+ 
+ #ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
+ 	if (console_port == port)
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+1.9.1
+
