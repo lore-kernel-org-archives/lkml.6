@@ -2,130 +2,266 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F6FC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA9CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A24206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A24206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 445E5206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cR/NTGET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445E5206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeLEPEc (ORCPT
+        id S1728046AbeLEPEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:04:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbeLEPEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:04:31 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DDB2137E8E;
-        Wed,  5 Dec 2018 15:04:30 +0000 (UTC)
-Received: from treble (ovpn-123-135.rdu2.redhat.com [10.10.123.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E99918B95;
-        Wed,  5 Dec 2018 15:04:28 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 09:04:22 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 0/4] Static calls
-Message-ID: <20181205150422.mlrjcm5rm26ozg5j@treble>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
- <20181204180835.29f9aa03@vmware.local.home>
- <EE66E7C9-5735-48B3-A001-E9FCDA46E177@amacapital.net>
+        Wed, 5 Dec 2018 10:04:42 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51640 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeLEPEl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:04:41 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5F4K1k008691;
+        Wed, 5 Dec 2018 09:04:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544022260;
+        bh=TCEuzOFURhsIQBJniBkxDl5bGfdwFTkOlj1sEkXZMdk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cR/NTGETiFLLc2MWeJyfzWYz/GOY3b+ei2NMOGTliUkBetjxGVdi2kpkkc3J7Tk5e
+         E/5yjlWbyMaurRFq3lm/nLP3gDlVv+Lps21c7Xd2jbbSvHr5Y7rPIOCTrEeWw2LXNf
+         98LpsXouu7jNa5HlTQq05fMDMSvBuW1QoxU3DTls=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5F4Ko5070243
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Dec 2018 09:04:20 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
+ Dec 2018 09:04:19 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 5 Dec 2018 09:04:19 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5F4GF4017571;
+        Wed, 5 Dec 2018 09:04:17 -0600
+Subject: Re: [PATCH 3/3] mmc: sdhci_am654: Add Initial Support for AM654 SDHCI
+ driver
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <michal.simek@xilinx.com>, <kishon@ti.com>
+References: <20181129161513.31734-1-faiz_abbas@ti.com>
+ <20181129161513.31734-4-faiz_abbas@ti.com>
+ <2618ec91-09d1-26f3-361e-34a073b1e5ea@intel.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <dfe6c97a-6383-c697-88e5-279f6ca8136e@ti.com>
+Date:   Wed, 5 Dec 2018 20:37:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <EE66E7C9-5735-48B3-A001-E9FCDA46E177@amacapital.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 05 Dec 2018 15:04:31 +0000 (UTC)
+In-Reply-To: <2618ec91-09d1-26f3-361e-34a073b1e5ea@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 03:41:01PM -0800, Andy Lutomirski wrote:
+Hi Adrian,
+
+On 05/12/18 7:12 PM, Adrian Hunter wrote:
+> On 29/11/18 6:15 PM, Faiz Abbas wrote:
+>> The host controllers on TI's AM654 SOCs are not compatible with
+>> the phy and consumer model of the sdhci-of-arasan driver. It turns out
+>> that for optimal operation at higher speeds, a special tuning procedure
+>> needs to be implemented which involves configuration of platform
+>> specific phy registers.
+>>
+>> Therefore, branch out to a new sdhci_am654 driver and add the phy
+>> register space with all phy configurations to it. Populate AM654
+>> specific callbacks to sdhci_ops and add SDHCI_QUIRKS wherever
+>> applicable.
+>>
+>> Only add support for upto High Speed for SD card and upto DDR52 speed
+>> mode for eMMC. Higher speeds will be added in subsequent patches.
+>>
+...
+>> +		sdhci_am654->dll_on = true;
+>> +	}
+>> +}
+>> +
+>> +
 > 
+> Double blank line
+
+Will fix.
+
 > 
-> > On Dec 4, 2018, at 3:08 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > 
-> > Where did this end up BTW?
-> > 
-> > I know that there's controversy about the
-> > CONFIG_HAVE_STATIC_CALL_OPTIMIZED option, but I don't think the 
-> > CONFIG_HAVE_STATIC_CALL_UNOPTIMIZED version was controversial. From the
-> > v1 patch 0 description:
-> > 
-> > There are three separate implementations, depending on what the arch
-> > supports:
-> > 
-> >  1) CONFIG_HAVE_STATIC_CALL_OPTIMIZED: patched call sites - requires
-> >     objtool and a small amount of arch code
-> > 
-> >  2) CONFIG_HAVE_STATIC_CALL_UNOPTIMIZED: patched trampolines - requires
-> >     a small amount of arch code
-> > 
-> >  3) If no arch support, fall back to regular function pointers
-> > 
-> > My benchmarks showed the best improvements with the
-> > STATIC_CALL_OPTIMIZED, but it still showed improvement with the
-> > UNOPTIMIZED version as well. Can we at least apply 2 and 3 from the
-> > above (which happen to be the first part of the patch set. 1 comes in
-> > at the end).
+>> +static void sdhci_am654_set_power(struct sdhci_host *host, unsigned char mode,
+>> +				  unsigned short vdd)
+>> +{
+>> +	if (!IS_ERR(host->mmc->supply.vmmc)) {
+>> +		struct mmc_host *mmc = host->mmc;
+>> +
+>> +		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+>> +	}
+>> +	sdhci_set_power_noreg(host, mode, vdd);
+>> +}
+>> +
+>> +struct sdhci_ops sdhci_am654_ops = {
+>> +	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>> +	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
+>> +	.set_uhs_signaling = sdhci_set_uhs_signaling,
+>> +	.set_bus_width = sdhci_set_bus_width,
+>> +	.set_power = sdhci_am654_set_power,
+>> +	.set_clock = sdhci_am654_set_clock,
+>> +	.reset = sdhci_reset,
+>> +};
+>> +
+>> +static const struct sdhci_pltfm_data sdhci_am654_pdata = {
+>> +	.ops = &sdhci_am654_ops,
+>> +	.quirks = SDHCI_QUIRK_INVERTED_WRITE_PROTECT |
+>> +		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
+>> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+>> +};
+>> +
+>> +static int sdhci_am654_init(struct sdhci_host *host)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>> +	u32 ctl_cfg_2 = 0;
+>> +	u32 val;
+>> +	int ret;
+>> +
+>> +	regmap_read(sdhci_am654->base, PHY_STAT1, &val);
+>> +	if (~val & CALDONE_MASK) {
+>> +		/* Calibrate IO lines */
+>> +		regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
+>> +				   PDB_MASK, PDB_MASK);
+>> +		ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1,
+>> +					       val, val & CALDONE_MASK, 1, 20);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	/* Enable pins by setting IO mux to 0 */
+>> +	regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
+>> +			   IOMUX_ENABLE_MASK, 0);
+>> +
+>> +	/* Set slot type based on SD or eMMC */
+>> +	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
+>> +		ctl_cfg_2 = SLOTTYPE_EMBEDDED;
+>> +
+>> +	regmap_update_bits(sdhci_am654->base, CTL_CFG_2,
+>> +			   ctl_cfg_2, SLOTTYPE_MASK);
+>> +
+>> +	return sdhci_add_host(host);
+>> +}
+>> +
+>> +static int sdhci_am654_get_of_property(struct platform_device *pdev,
+>> +					struct sdhci_am654_data *sdhci_am654)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	int drv_strength;
+>> +	int ret;
+>> +
+>> +	ret = device_property_read_u32(dev, "ti,trm-icp",
+>> +				       &sdhci_am654->trm_icp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = device_property_read_u32(dev, "ti,otap-del-sel",
+>> +				       &sdhci_am654->otap_del_sel);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = device_property_read_u32(dev, "ti,driver-strength-ohm",
+>> +				       &drv_strength);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	switch (drv_strength) {
+>> +	case 50:
+>> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_50_OHM;
+>> +		break;
+>> +	case 33:
+>> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_33_OHM;
+>> +		break;
+>> +	case 66:
+>> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_66_OHM;
+>> +		break;
+>> +	case 100:
+>> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_100_OHM;
+>> +		break;
+>> +	case 40:
+>> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_40_OHM;
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Invalid driver strength\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	sdhci_get_of_property(pdev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int sdhci_am654_probe(struct platform_device *pdev)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host;
+>> +	struct sdhci_am654_data *sdhci_am654;
+>> +	struct sdhci_host *host;
+>> +	struct resource *res;
+>> +	struct clk *clk_xin;
+>> +	struct device *dev = &pdev->dev;
+>> +	void __iomem *base;
+>> +	int ret;
+>> +
+>> +	host = sdhci_pltfm_init(pdev, &sdhci_am654_pdata, sizeof(*sdhci_am654));
+>> +	if (IS_ERR(host))
+>> +		return PTR_ERR(host);
+>> +
+>> +	pltfm_host = sdhci_priv(host);
+>> +	sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>> +
+>> +	clk_xin = devm_clk_get(dev, "clk_xin");
+>> +	if (IS_ERR(clk_xin)) {
+>> +		dev_err(dev, "clk_xin clock not found.\n");
+>> +		ret = PTR_ERR(clk_xin);
+>> +		goto err_pltfm_free;
+>> +	}
+>> +
+>> +	sdhci_am654->clk_ahb = devm_clk_get(dev, "clk_ahb");
+>> +	if (IS_ERR(sdhci_am654->clk_ahb)) {
+>> +		dev_err(dev, "clk_ahb clock not found.\n");
+>> +		ret = PTR_ERR(sdhci_am654->clk_ahb);
+>> +		goto err_pltfm_free;
+>> +	}
 > 
-> Sounds good to me.
+> Did you intend not to enable clks?
+
+Yes. Clocks get enabled as a part of pm_runtime calls.
 > 
-> > 
-> > I would also just call it CONFIG_STATIC_CALL. If we every agree on the
-> > optimized version, then we can call it CONFIG_STATIC_CALL_OPTIMIZED.
-> > Have an option called UNOPTIMIZED just seems wrong.
+>> +
+>> +	pltfm_host->clk = clk_xin;
+>> +
+>> +	pm_runtime_enable(dev);
+>> +	ret = pm_runtime_get_sync(dev);
+>> +	if (ret > 0) {
+> 
+> Did you intend 'ret > 0'?
 
-(Poking my head up for a bit, soon to disappear again until next week)
+Sorry. That was intended to be < 0.
 
-Ard had already objected to "unoptimized", which was why for v2 I
-renamed them to CONFIG_STATIC_CALL_OUTLINE and CONFIG_STATIC_CALL_INLINE.
-
-I could rename it to CONFIG_STATIC_CALL and CONFIG_STATIC_CALL_INLINE if
-you prefer.  I don't have much of an opinion either way.
-
-I'll post a v3 next week or so, with the controversial bits more fully
-separated from the non-controversial bits.  So at least the out-of-line
-implementation can get merged.
-
-> My objection to all the bike shed colors so far is that we *always*
-> have static_call() — it’s just not always static.
-
-Hm?  Do you mean you don't like that we have a generic function pointer
-implementation?  or what?
-
-> Anyway, I have a new objection to Josh’s create_gap proposal: what on
-> Earth will kernel CET do to it?  Maybe my longjmp-like hack is
-> actually better.
-
-Does CET even care about iret?  I assumed it didn't.  If it does, your
-proposal would have the same problem, no?
-
--- 
-Josh
+Thanks,
+Faiz
