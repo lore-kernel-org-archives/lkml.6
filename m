@@ -2,200 +2,204 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3413FC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C64C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0A820850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:15:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="WmKmIezv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0A820850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A97A20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 23:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544051810;
+	bh=LQNeZgdotgA5zUyaVs+F8s8TonzSnfRs9CCRmMkMy88=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=B1+obsoNdTJxtZxpApLNojg47wJkyTLbsa1k/YUG4E4+RanSZlzTC5JKLSp9JemKY
+	 WijI5phq/ac1+OeX4bMYBsVZ87INyP7weJrRuTQ3d7/XZNxJDRbgktEVfcO2GAMQPk
+	 B7hnm1LRtb5JaiGIH0Gn+LM5ld7g82Ii/rmS6eBE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A97A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbeLEXPa (ORCPT
+        id S1728751AbeLEXQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 18:15:30 -0500
-Received: from mail-eopbgr780075.outbound.protection.outlook.com ([40.107.78.75]:50240
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727337AbeLEXP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 18:15:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J1HNItAU3YZjUWZGBoeTeZnXJyQUXtAbTQA9XP3HZc4=;
- b=WmKmIezvl06HbgFRMifF37ohxH15pzoKpKuY2mDW2xS68eygXtmK+f3Ul7l2VAx8i3m0blCCH6AXGDO4INeZJXXDQRHzMS18tir1zlkNanmzntrLeu5eovC4EcJjqgJDrU4sxirVo614/PfdBcULXDwLaAMtH70RODhWsXdhDjQ=
-Received: from DM5PR12MB1707.namprd12.prod.outlook.com (10.175.89.136) by
- DM5PR12MB1612.namprd12.prod.outlook.com (10.172.40.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 5 Dec 2018 23:15:20 +0000
-Received: from DM5PR12MB1707.namprd12.prod.outlook.com
- ([fe80::6c3e:bc59:80d9:d17d]) by DM5PR12MB1707.namprd12.prod.outlook.com
- ([fe80::6c3e:bc59:80d9:d17d%3]) with mapi id 15.20.1404.016; Wed, 5 Dec 2018
- 23:15:20 +0000
-From:   "Kuehling, Felix" <Felix.Kuehling@amd.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] mm/mmu_notifier: use structure for
- invalidate_range_start/end callback
-Thread-Topic: [PATCH v2 1/3] mm/mmu_notifier: use structure for
- invalidate_range_start/end callback
-Thread-Index: AQHUjFySPulSYcO6VE6A1hHsSlKmSaVwri6AgAAWxYCAAAMZAA==
-Date:   Wed, 5 Dec 2018 23:15:20 +0000
-Message-ID: <be0140a1-a656-2383-4a74-c92bc0f7e568@amd.com>
-References: <20181205053628.3210-1-jglisse@redhat.com>
- <20181205053628.3210-2-jglisse@redhat.com>
- <b76dfbdd-a017-4032-d8a1-860ff62dfb59@amd.com>
- <20181205230413.GN3536@redhat.com>
-In-Reply-To: <20181205230413.GN3536@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [165.204.55.251]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-clientproxiedby: YTXPR0101CA0042.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:1::19) To DM5PR12MB1707.namprd12.prod.outlook.com
- (2603:10b6:3:10f::8)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Felix.Kuehling@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1612;20:gvn+nZ6HLpbnm3zysdcPUFf4xee6WfZ129cOKzcU7M8mdTdj7HUwkkstKicLG78z8VOY9XmKLDqPMDVGRfDeBA+M7+YUwf8G2i3rsA4T4L5t0NNH1zFmB1m1D14ukPBGq+1PqXnMugZgN9GaqbXegD8nizCLYvwNvzUhhAExjFNyQ8ROtcqTGz1rFI0ihR8FdHhEm/naXiFCCN3oZJAICFSQersB3FqUM26TEGH5TVnx/T/YPFWgwrwOsrdYjdwB
-x-ms-office365-filtering-correlation-id: ab2427db-97c3-4d97-0d6d-08d65b0786bb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1612;
-x-ms-traffictypediagnostic: DM5PR12MB1612:
-x-microsoft-antispam-prvs: <DM5PR12MB16128B0BC14745F7593DDAA892A80@DM5PR12MB1612.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1612;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1612;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(136003)(376002)(346002)(199004)(189003)(81156014)(65826007)(86362001)(316002)(81166006)(36756003)(2616005)(54906003)(305945005)(6116002)(102836004)(106356001)(53546011)(6916009)(105586002)(5660300001)(446003)(486006)(11346002)(7736002)(14454004)(476003)(58126008)(8676002)(3846002)(6486002)(31696002)(8936002)(7416002)(2906002)(6436002)(93886005)(229853002)(71190400001)(71200400001)(66574009)(52116002)(26005)(99286004)(186003)(25786009)(72206003)(97736004)(76176011)(478600001)(345774005)(68736007)(53936002)(6512007)(14444005)(256004)(6246003)(4326008)(386003)(6506007)(64126003)(66066001)(65806001)(31686004)(65956001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1612;H:DM5PR12MB1707.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ZBVEyJ8YPE/RMG4S1FfT4FjWrNjK8ch5H5iQTQa+48sUjzIl6XYsfHikTge7L/u1l1a1xZqJjaDgnt5bGtMw9Cy6S+TMxk2QhDhGj/22aMtjYBPTMl0Rc86RUVRmM+0jdRkWoiIVNL8gTy81dDhq51tcR/i+S3NRpkpKNUpvgy27KrSM7S2+FLjG1wC46AqqjO6Pq9mLR8/LYAFjHsouXzMPL0PXYKS6+NbcqDU2ZeooWpP8bjWj4b7CNh0e5f53lWQ97RkpOlYVReLA4S1Fo3OqSvDsydVzZydGg1iWwm1Ac7qDfnfbHC8ubfF+nmmNce5YxKEi3nt39XCs/FNK+bDP1vahGMAL4eHmUf7HwvM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <163F1F45876CBE43B936CDC5DDF1B141@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 5 Dec 2018 18:16:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727645AbeLEXQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 18:16:48 -0500
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD2E0214DA
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 23:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544051807;
+        bh=LQNeZgdotgA5zUyaVs+F8s8TonzSnfRs9CCRmMkMy88=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=p8d8iJ1YA7VXQOHfehykZUHGh0R6N5l6dYBW0Q774J8ulVQLmHk/NezPhAuYY111x
+         qAwrK31FF6+LmwXjY9rpcpX6aOACXcZR5sORDHrtfwkbUjydLW/3nEYXrke3QmVbk6
+         tw9nXoQGGrA5fzjkQ/Os5/EXwqFlHc+Fh9J8nypU=
+Received: by mail-wm1-f52.google.com with SMTP id y185so12832198wmd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 15:16:46 -0800 (PST)
+X-Gm-Message-State: AA+aEWZr7Czuf50RBylNt+0rWwDupTA6GrA4CvPRUSIe0u3KOOF3S0ER
+        OZBZfVM2+zuln8lGYAx7UkLzxUqpPjAz8A7y0FChsw==
+X-Google-Smtp-Source: AFSGD/Vq7p5EZlOQjfWxf/hzOiBixKOltbzsLuF/4tasE9w6K5eVW6BNkaML+bH3ZJ9wMbM9048y+qevnYquzVGJrw4=
+X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr6727166wme.108.1544051805174;
+ Wed, 05 Dec 2018 15:16:45 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab2427db-97c3-4d97-0d6d-08d65b0786bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 23:15:20.5240
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1612
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+ <20181204160304.GB7195@arm.com> <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+ <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com> <20181205114148.GA15160@arm.com>
+In-Reply-To: <20181205114148.GA15160@arm.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 5 Dec 2018 15:16:33 -0800
+X-Gmail-Original-Message-ID: <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+Message-ID: <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, jeyu@kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux-MM <linux-mm@kvack.org>, Jann Horn <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMi0wNSA2OjA0IHAubS4sIEplcm9tZSBHbGlzc2Ugd3JvdGU6DQo+IE9uIFdlZCwg
-RGVjIDA1LCAyMDE4IGF0IDA5OjQyOjQ1UE0gKzAwMDAsIEt1ZWhsaW5nLCBGZWxpeCB3cm90ZToN
-Cj4+IFRoZSBhbWRncHUgcGFydCBsb29rcyBnb29kIHRvIG1lLg0KPj4NCj4+IEEgbWlub3Igbml0
-LXBpY2sgaW4gbW11X25vdGlmaWVyLmMgKGlubGluZSkuDQo+Pg0KPj4gRWl0aGVyIHdheSwgdGhl
-IHNlcmllcyBpcyBBY2tlZC1ieTogRmVsaXggS3VlaGxpbmcgPEZlbGl4Lkt1ZWhsaW5nQGFtZC5j
-b20+DQo+Pg0KPj4gT24gMjAxOC0xMi0wNSAxMjozNiBhLm0uLCBqZ2xpc3NlQHJlZGhhdC5jb20g
-d3JvdGU6DQo+Pj4gRnJvbTogSsOpcsO0bWUgR2xpc3NlIDxqZ2xpc3NlQHJlZGhhdC5jb20+DQo+
-Pj4NCj4+PiBUbyBhdm9pZCBoYXZpbmcgdG8gY2hhbmdlIG1hbnkgY2FsbGJhY2sgZGVmaW5pdGlv
-biBldmVyeXRpbWUgd2Ugd2FudA0KPj4+IHRvIGFkZCBhIHBhcmFtZXRlciB1c2UgYSBzdHJ1Y3R1
-cmUgdG8gZ3JvdXAgYWxsIHBhcmFtZXRlcnMgZm9yIHRoZQ0KPj4+IG1tdV9ub3RpZmllciBpbnZh
-bGlkYXRlX3JhbmdlX3N0YXJ0L2VuZCBjYWxsYmFjay4gTm8gZnVuY3Rpb25hbCBjaGFuZ2VzDQo+
-Pj4gd2l0aCB0aGlzIHBhdGNoLg0KPj4+DQo+Pj4gU2lnbmVkLW9mZi1ieTogSsOpcsO0bWUgR2xp
-c3NlIDxqZ2xpc3NlQHJlZGhhdC5jb20+DQo+Pj4gQ2M6IEFuZHJldyBNb3J0b24gPGFrcG1AbGlu
-dXgtZm91bmRhdGlvbi5vcmc+DQo+Pj4gQ2M6IE1hdHRoZXcgV2lsY294IDxtYXdpbGNveEBtaWNy
-b3NvZnQuY29tPg0KPj4+IENjOiBSb3NzIFp3aXNsZXIgPHp3aXNsZXJAa2VybmVsLm9yZz4NCj4+
-PiBDYzogSmFuIEthcmEgPGphY2tAc3VzZS5jej4NCj4+PiBDYzogRGFuIFdpbGxpYW1zIDxkYW4u
-ai53aWxsaWFtc0BpbnRlbC5jb20+DQo+Pj4gQ2M6IFBhb2xvIEJvbnppbmkgPHBib256aW5pQHJl
-ZGhhdC5jb20+DQo+Pj4gQ2M6IFJhZGltIEtyxI1tw6HFmSA8cmtyY21hckByZWRoYXQuY29tPg0K
-Pj4+IENjOiBNaWNoYWwgSG9ja28gPG1ob2Nrb0BrZXJuZWwub3JnPg0KPj4+IENjOiBDaHJpc3Rp
-YW4gS29lbmlnIDxjaHJpc3RpYW4ua29lbmlnQGFtZC5jb20+DQo+Pj4gQ2M6IEZlbGl4IEt1ZWhs
-aW5nIDxmZWxpeC5rdWVobGluZ0BhbWQuY29tPg0KPj4+IENjOiBSYWxwaCBDYW1wYmVsbCA8cmNh
-bXBiZWxsQG52aWRpYS5jb20+DQo+Pj4gQ2M6IEpvaG4gSHViYmFyZCA8amh1YmJhcmRAbnZpZGlh
-LmNvbT4NCj4+PiBDYzoga3ZtQHZnZXIua2VybmVsLm9yZw0KPj4+IENjOiBkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnDQo+Pj4gQ2M6IGxpbnV4LXJkbWFAdmdlci5rZXJuZWwub3JnDQo+
-Pj4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnDQo+Pj4gLS0tDQo+Pj4gIGRyaXZl
-cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9tbi5jICB8IDQzICsrKysrKysrKysrLS0tLS0t
-LS0tLS0tLS0NCj4+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fdXNlcnB0ci5jIHwg
-MTQgKysrKy0tLS0NCj4+PiAgZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fbW4uYyAgICAg
-IHwgMTYgKysrKy0tLS0tDQo+Pj4gIGRyaXZlcnMvaW5maW5pYmFuZC9jb3JlL3VtZW1fb2RwLmMg
-ICAgICB8IDIwICsrKysrLS0tLS0tLQ0KPj4+ICBkcml2ZXJzL2luZmluaWJhbmQvaHcvaGZpMS9t
-bXVfcmIuYyAgICAgfCAxMyArKystLS0tLQ0KPj4+ICBkcml2ZXJzL21pc2MvbWljL3NjaWYvc2Np
-Zl9kbWEuYyAgICAgICAgfCAxMSArKy0tLS0tDQo+Pj4gIGRyaXZlcnMvbWlzYy9zZ2ktZ3J1L2dy
-dXRsYnB1cmdlLmMgICAgICB8IDE0ICsrKystLS0tDQo+Pj4gIGRyaXZlcnMveGVuL2dudGRldi5j
-ICAgICAgICAgICAgICAgICAgICB8IDEyICsrKy0tLS0NCj4+PiAgaW5jbHVkZS9saW51eC9tbXVf
-bm90aWZpZXIuaCAgICAgICAgICAgIHwgMTQgKysrKystLS0NCj4+PiAgbW0vaG1tLmMgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHwgMjMgKysrKysrLS0tLS0tLQ0KPj4+ICBtbS9tbXVf
-bm90aWZpZXIuYyAgICAgICAgICAgICAgICAgICAgICAgfCAyMSArKysrKysrKysrLS0NCj4+PiAg
-dmlydC9rdm0va3ZtX21haW4uYyAgICAgICAgICAgICAgICAgICAgIHwgMTQgKysrLS0tLS0NCj4+
-PiAgMTIgZmlsZXMgY2hhbmdlZCwgMTAyIGluc2VydGlvbnMoKyksIDExMyBkZWxldGlvbnMoLSkN
-Cj4+Pg0KPj4gW3NuaXBdDQo+Pj4gZGlmZiAtLWdpdCBhL21tL21tdV9ub3RpZmllci5jIGIvbW0v
-bW11X25vdGlmaWVyLmMNCj4+PiBpbmRleCA1MTE5ZmY4NDY3NjkuLjVmNjY2NWFlM2VlMiAxMDA2
-NDQNCj4+PiAtLS0gYS9tbS9tbXVfbm90aWZpZXIuYw0KPj4+ICsrKyBiL21tL21tdV9ub3RpZmll
-ci5jDQo+Pj4gQEAgLTE3OCwxNCArMTc4LDIwIEBAIGludCBfX21tdV9ub3RpZmllcl9pbnZhbGlk
-YXRlX3JhbmdlX3N0YXJ0KHN0cnVjdCBtbV9zdHJ1Y3QgKm1tLA0KPj4+ICAJCQkJICB1bnNpZ25l
-ZCBsb25nIHN0YXJ0LCB1bnNpZ25lZCBsb25nIGVuZCwNCj4+PiAgCQkJCSAgYm9vbCBibG9ja2Fi
-bGUpDQo+Pj4gIHsNCj4+PiArCXN0cnVjdCBtbXVfbm90aWZpZXJfcmFuZ2UgX3JhbmdlLCAqcmFu
-Z2UgPSAmX3JhbmdlOw0KPj4gSSdtIG5vdCBzdXJlIHdoeSB5b3UgbmVlZCB0byBhY2Nlc3MgX3Jh
-bmdlIGluZGlyZWN0bHkgdGhyb3VnaCBhIHBvaW50ZXIuDQo+PiBTZWUgYmVsb3cuDQo+Pg0KPj4N
-Cj4+PiAgCXN0cnVjdCBtbXVfbm90aWZpZXIgKm1uOw0KPj4+ICAJaW50IHJldCA9IDA7DQo+Pj4g
-IAlpbnQgaWQ7DQo+Pj4gIA0KPj4+ICsJcmFuZ2UtPmJsb2NrYWJsZSA9IGJsb2NrYWJsZTsNCj4+
-PiArCXJhbmdlLT5zdGFydCA9IHN0YXJ0Ow0KPj4+ICsJcmFuZ2UtPmVuZCA9IGVuZDsNCj4+PiAr
-CXJhbmdlLT5tbSA9IG1tOw0KPj4gVGhpcyBjb3VsZCBqdXN0IGFzc2lnbiBfcmFuZ2UuYmxvY2th
-YmxlLCBfcmFuZ2Uuc3RhcnQsIGV0Yy4gd2l0aG91dCB0aGUNCj4+IGluZGlyZWN0aW9uLiBPciB5
-b3UgY291bGQgZXZlbiB1c2UgYW4gaW5pdGlhbGl6ZXIgaW5zdGVhZDoNCj4+DQo+PiBzdHJ1Y3Qg
-bW11X25vdGlmaWVyX3JhbmdlIHJhbmdlID0gew0KPj4gwqDCoMKgIC5ibG9ja2FibGUgPSBibG9j
-a2FibGUsDQo+PiDCoMKgwqAgLnN0YXJ0ID0gc3RhcnQsDQo+PiDCoMKgwqAgLi4uDQo+PiB9Ow0K
-Pj4NCj4+DQo+Pj4gKw0KPj4+ICAJaWQgPSBzcmN1X3JlYWRfbG9jaygmc3JjdSk7DQo+Pj4gIAlo
-bGlzdF9mb3JfZWFjaF9lbnRyeV9yY3UobW4sICZtbS0+bW11X25vdGlmaWVyX21tLT5saXN0LCBo
-bGlzdCkgew0KPj4+ICAJCWlmIChtbi0+b3BzLT5pbnZhbGlkYXRlX3JhbmdlX3N0YXJ0KSB7DQo+
-Pj4gLQkJCWludCBfcmV0ID0gbW4tPm9wcy0+aW52YWxpZGF0ZV9yYW5nZV9zdGFydChtbiwgbW0s
-IHN0YXJ0LCBlbmQsIGJsb2NrYWJsZSk7DQo+Pj4gKwkJCWludCBfcmV0ID0gbW4tPm9wcy0+aW52
-YWxpZGF0ZV9yYW5nZV9zdGFydChtbiwgcmFuZ2UpOw0KPj4gVGhpcyBjb3VsZCBqdXN0IHVzZSAm
-X3JhbmdlIHdpdGhvdXQgdGhlIGluZGlyZWN0aW9uLg0KPj4NCj4+IFNhbWUgaW4gLi4uX2ludmFs
-aWRhdGVfcmFuZ2VfZW5kIGJlbG93Lg0KPiBTbyBleHBsYWluYXRpb24gaXMgdGhhdCB0aGlzIGlz
-IGEgdGVtcG9yYXJ5IHN0ZXAgYWxsIHRoaXMgY29kZSBpcw0KPiByZW1vdmUgaW4gdGhlIHNlY29u
-ZCBwYXRjaC4gSXQgd2FzIGRvbmUgdGhpcyB3YXkgaW4gdGhpcyBwYXRjaCB0bw0KPiBtaW5pbWl6
-ZSB0aGUgZGlmZiB3aXRoaW4gdGhlIG5leHQgcGF0Y2guDQoNCkkgd2FzIGFjdHVhbGx5IGxvb2tp
-bmcgZm9yIHRoYXQgYmVjYXVzZSBJIHN1c3BlY3RlZCB0aGF0IHRoaXMgd291bGQgbWFrZQ0KbW9y
-ZSBzZW5zZSBpbiB0aGUgY29udGV4dCBvZiB0aGUgb3RoZXIgcGF0Y2hlcy4gQnV0IHRoZW4gSSBt
-aXNzZWQgdGhlDQptbXVfbm90aWZpZXIuYyBjaGFuZ2UgaW4gcGF0Y2ggMiBpbiB0aGUgbm9pc2Ug
-b2YgYWxsIHRoZSBvdGhlciBtbQ0KY2hhbmdlcy4gTmV2ZXIgbWluZC4NCg0KDQo+IEkgZGlkIHRo
-aXMgYmVjYXVzZSBpIHdhbnRlZCB0byBkbyB0aGUgY29udmVydGlvbiBpbiAyIHN0ZXBzIHRoZQ0K
-PiBmaXJzdCBzdGVwIGkgY29udmVydCBhbGwgdGhlIGxpc3RlbmVyIG9mIG1tdSBub3RpZmllciBh
-bmQgaW4gdGhlDQo+IHNlY29uZCBzdGVwIGkgY29udmVydCBhbGwgdGhlIGNhbGwgc2l0ZSB0aGF0
-IHRyaWdnZXIgYSBtbXUgbm90aWZlci4NCg0KVGhhdCBwYXJ0IG1ha2VzIHNlbnNlIGFuZCBJIGFw
-cHJlY2lhdGUgdGhhdCBpdCBrZWVwcyB0aGUgcGF0Y2hlcw0KcmVhc29uYWJseSBzZXBhcmF0ZSBm
-b3IgZGlmZmVyZW50IGF1ZGllbmNlcy4NCg0KVGhhbmtzLA0KwqAgRmVsaXgNCg0KDQo+IEkgZGlk
-IHRoYXQgdG8gaGVscCBwZW9wbGUgcmV2aWV3aW5nIG9ubHkgdGhlIHBhcnQgdGhleSBjYXJlIGFi
-b3V0Lg0KPg0KPiBBcHBhcmVudGx5IGl0IGVuZCB1cCBjb25mdXNpbmcgcGVvcGxlIG1vcmUgdGhh
-biBpdCBoZWxwZWQgOikNCj4NCj4gRG8gcGVvcGxlIGhhdmUgc3Ryb25nIGZlZWxpbmcgYWJvdXQg
-Z2V0dGluZyB0aGlzIGNvZGUgdGhhdCBpcw0KPiBkZWxldGVkIGluIHRoZSBzZWNvbmQgcGF0Y2gg
-Zml4IGluIHRoZSBmaXJzdCBwYXRjaCBhbnl3YXkgPw0KPg0KPiBJIGNhbiByZXNwaW4gaWYgc28g
-YnV0IGkgZG9uJ3Qgc2VlIG11Y2ggdmFsdWUgaW4gZm9ybWF0aW5nIGNvZGUNCj4gdGhhdCBpcyBk
-ZWxldGVkIGluIHRoZSBzZXJpZS4NCj4NCj4gVGhhbmsgeW91IGZvciByZXZpZXdpbmcNCj4NCj4g
-Q2hlZXJzLA0KPiBKw6lyw7RtZQ0K
+On Wed, Dec 5, 2018 at 3:41 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Tue, Dec 04, 2018 at 12:09:49PM -0800, Andy Lutomirski wrote:
+> > On Tue, Dec 4, 2018 at 12:02 PM Edgecombe, Rick P
+> > <rick.p.edgecombe@intel.com> wrote:
+> > >
+> > > On Tue, 2018-12-04 at 16:03 +0000, Will Deacon wrote:
+> > > > On Mon, Dec 03, 2018 at 05:43:11PM -0800, Nadav Amit wrote:
+> > > > > > On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@i=
+ntel.com>
+> > > > > > wrote:
+> > > > > >
+> > > > > > Since vfree will lazily flush the TLB, but not lazily free the =
+underlying
+> > > > > > pages,
+> > > > > > it often leaves stale TLB entries to freed pages that could get=
+ re-used.
+> > > > > > This is
+> > > > > > undesirable for cases where the memory being freed has special =
+permissions
+> > > > > > such
+> > > > > > as executable.
+> > > > >
+> > > > > So I am trying to finish my patch-set for preventing transient W+=
+X mappings
+> > > > > from taking space, by handling kprobes & ftrace that I missed (th=
+anks again
+> > > > > for
+> > > > > pointing it out).
+> > > > >
+> > > > > But all of the sudden, I don=E2=80=99t understand why we have the=
+ problem that this
+> > > > > (your) patch-set deals with at all. We already change the mapping=
+s to make
+> > > > > the memory writable before freeing the memory, so why can=E2=80=
+=99t we make it
+> > > > > non-executable at the same time? Actually, why do we make the mod=
+ule memory,
+> > > > > including its data executable before freeing it???
+> > > >
+> > > > Yeah, this is really confusing, but I have a suspicion it's a combi=
+nation
+> > > > of the various different configurations and hysterical raisins. We =
+can't
+> > > > rely on module_alloc() allocating from the vmalloc area (see nios2)=
+ nor
+> > > > can we rely on disable_ro_nx() being available at build time.
+> > > >
+> > > > If we *could* rely on module allocations always using vmalloc(), th=
+en
+> > > > we could pass in Rick's new flag and drop disable_ro_nx() altogethe=
+r
+> > > > afaict -- who cares about the memory attributes of a mapping that's=
+ about
+> > > > to disappear anyway?
+> > > >
+> > > > Is it just nios2 that does something different?
+> > > >
+> > > Yea it is really intertwined. I think for x86, set_memory_nx everywhe=
+re would
+> > > solve it as well, in fact that was what I first thought the solution =
+should be
+> > > until this was suggested. It's interesting that from the other thread=
+ Masami
+> > > Hiramatsu referenced, set_memory_nx was suggested last year and would=
+ have
+> > > inadvertently blocked this on x86. But, on the other architectures I =
+have since
+> > > learned it is a bit different.
+> > >
+> > > It looks like actually most arch's don't re-define set_memory_*, and =
+so all of
+> > > the frob_* functions are actually just noops. In which case allocatin=
+g RWX is
+> > > needed to make it work at all, because that is what the allocation is=
+ going to
+> > > stay at. So in these archs, set_memory_nx won't solve it because it w=
+ill do
+> > > nothing.
+> > >
+> > > On x86 I think you cannot get rid of disable_ro_nx fully because ther=
+e is the
+> > > changing of the permissions on the directmap as well. You don't want =
+some other
+> > > caller getting a page that was left RO when freed and then trying to =
+write to
+> > > it, if I understand this.
+> > >
+> >
+> > Exactly.
+>
+> Of course, I forgot about the linear mapping. On arm64, we've just queued
+> support for reflecting changes to read-only permissions in the linear map
+> [1]. So, whilst the linear map is always non-executable, we will need to
+> make parts of it writable again when freeing the module.
+>
+> > After slightly more thought, I suggest renaming VM_IMMEDIATE_UNMAP to
+> > VM_MAY_ADJUST_PERMS or similar.  It would have the semantics you want,
+> > but it would also call some arch hooks to put back the direct map
+> > permissions before the flush.  Does that seem reasonable?  It would
+> > need to be hooked up that implement set_memory_ro(), but that should
+> > be quite easy.  If nothing else, it could fall back to set_memory_ro()
+> > in the absence of a better implementation.
+>
+> You mean set_memory_rw() here, right? Although, eliding the TLB invalidat=
+ion
+> would open up a window where the vmap mapping is executable and the linea=
+r
+> mapping is writable, which is a bit rubbish.
+>
+
+Right, and Rick pointed out the same issue.  Instead, we should set
+the direct map not-present or its ARM equivalent, then do the flush,
+then make it RW.  I assume this also works on arm and arm64, although
+I don't know for sure.  On x86, the CPU won't cache not-present PTEs.
