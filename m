@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934C9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D298420850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D298420850
+	by mail.kernel.org (Postfix) with ESMTP id 62FE8206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FE8206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbeLEIhi (ORCPT
+        id S1727304AbeLEIhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:37:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36146 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:37:42 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36158 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbeLEIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726820AbeLEIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 03:37:38 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CF0FA20E22; Wed,  5 Dec 2018 09:37:35 +0100 (CET)
+        id 14B32207BF; Wed,  5 Dec 2018 09:37:36 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7C404207BF;
+        by mail.bootlin.com (Postfix) with ESMTPSA id B3E6520828;
         Wed,  5 Dec 2018 09:37:25 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 01/22] drm/fourcc: Add format info helpers for checking YUV planes disposition
-Date:   Wed,  5 Dec 2018 09:36:42 +0100
-Message-Id: <20181205083703.21488-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 02/22] drm/fourcc: Add format info helpers for checking YUV sub-sampling
+Date:   Wed,  5 Dec 2018 09:36:43 +0100
+Message-Id: <20181205083703.21488-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,72 +50,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is often useful to check whether the DRM format info retrieved from
-the DRM framebuffer matches a specific YUV planes disposition.
-
-This introduces helpers to quickly check that a provided format info
-matches a YUV format with a specific disposition, in commonly-used
-terminology.
-
-The intent of providing helpers taking the format info instead of the
-fourcc alone is to avoid the overhead of iterating through all formats
-when the whole format info structure is available. As a result, these
-helpers are very simple so they are made inline.
+Display engine drivers often need to distinguish between different types of
+YUV sub-sampling. This introduces helpers to check for common sub-sampling
+ratios in their commonly-used denomination from the DRM format info.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/drm/drm_fourcc.h | 42 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
 diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index bcb389f04618..01cd353d9302 100644
+index 01cd353d9302..b3d9d88ab290 100644
 --- a/include/drm/drm_fourcc.h
 +++ b/include/drm/drm_fourcc.h
-@@ -143,6 +143,48 @@ struct drm_format_name_buf {
- 	char str[32];
- };
+@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
+ 	return info->is_yuv && info->num_planes == 3;
+ }
  
 +/**
-+ * drm_format_info_is_yuv_packed - check that the format info matches a YUV
-+ * format with data laid in a single plane
++ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
++ * YUV format with 4:1:0 sub-sampling
 + * @info: format info
 + *
 + * Returns:
-+ * A boolean indicating whether the format info matches a packed YUV format.
++ * A boolean indicating whether the format info matches a YUV format with 4:1:0
++ * sub-sampling.
 + */
 +static inline bool
-+drm_format_info_is_yuv_packed(const struct drm_format_info *info)
++drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
 +{
-+	return info->is_yuv && info->num_planes == 1;
++	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
 +}
 +
 +/**
-+ * drm_format_info_is_yuv_semiplanar - check that the format info matches a YUV
-+ * format with data laid in two planes (luminance and chrominance)
++ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
++ * YUV format with 4:1:1 sub-sampling
 + * @info: format info
 + *
 + * Returns:
-+ * A boolean indicating whether the format info matches a semiplanar YUV format.
++ * A boolean indicating whether the format info matches a YUV format with 4:1:1
++ * sub-sampling.
 + */
 +static inline bool
-+drm_format_info_is_yuv_semiplanar(const struct drm_format_info *info)
++drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
 +{
-+	return info->is_yuv && info->num_planes == 2;
++	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
 +}
 +
 +/**
-+ * drm_format_info_is_yuv_planar - check that the format info matches a YUV
-+ * format with data laid in three planes (one for each YUV component)
++ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
++ * YUV format with 4:2:0 sub-sampling
 + * @info: format info
 + *
 + * Returns:
-+ * A boolean indicating whether the format info matches a planar YUV format.
++ * A boolean indicating whether the format info matches a YUV format with 4:2:0
++ * sub-sampling.
 + */
 +static inline bool
-+drm_format_info_is_yuv_planar(const struct drm_format_info *info)
++drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
 +{
-+	return info->is_yuv && info->num_planes == 3;
++	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
++ * YUV format with 4:2:2 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:2
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
++ * YUV format with 4:4:4 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:4:4
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
 +}
 +
  const struct drm_format_info *__drm_format_info(u32 format);
