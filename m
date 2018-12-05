@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EBCC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DB1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5EF2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4024720879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:06:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="loNJNIJP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5EF2082B
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ZKOHGnEA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4024720879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeLERGj (ORCPT
+        id S1728389AbeLERGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:06:39 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:51846 "EHLO
+        Wed, 5 Dec 2018 12:06:44 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:38520 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbeLERGh (ORCPT
+        with ESMTP id S1727195AbeLERGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:06:37 -0500
+        Wed, 5 Dec 2018 12:06:40 -0500
 Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 1C54410C11A2;
-        Wed,  5 Dec 2018 09:06:37 -0800 (PST)
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 591A124E1686;
+        Wed,  5 Dec 2018 09:06:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544029597; bh=MhY2zqECzgAgOwGwefpRZ3WiWfEyyLAEyNmFF4e43nY=;
+        t=1544029600; bh=4XRcn4REUHkeWQGTsmdIle/D+obVlEkXO8SDsM3ssNQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=loNJNIJPfhNtrMnT8GzavgOLjYoI1B2FxAKyNydCZZeO9baEHVi6NQVDuY1AClGXR
-         PzrTHM5CL40HxwTWsYkx6kWoqWwcoC3MvR6RdeAKsYsvr/2YJg6720J6IZw6QG7Qnx
-         Pa7We5xmWK+WkmGGI+K8wL0c+gPCihqBnOaGlEcmfFxlVP8pfHAlwZ2UY3Jc0MjMtP
-         FMu6o8ZeMSHh8AfyE0rv4aiwkIfsNnAxRi/CtnUJsZ+zaZU7TEKpOzNo6ek8glI06p
-         OFRTHAZyCWzI42dgG3L1MQBU8/l75lIp6BeAmVyR4v51UonHa8yQA8W0hXP0gEMDd8
-         2BQrclmgUwM9A==
+        b=ZKOHGnEAomWWsW4olwx7lkjd9sinSQel9O50T7Qbw9J1RqtM2YJgOMN+IsYf3W8N6
+         AITkeEqHF6W75/J8OddQWnMgizisVhCL5dwLP+slfU7529ncCedAnc28qfhK6CoRS0
+         yJy8G4s+w1HhRWwPt7ibmMUksXwj+FuLfO2EgwGmpPI14Ns583jjE3DKzeuMk6b1Ax
+         tdgZ4x9qFnWd/eSygAMrYHI1St6iKyzbHMtSpVrLj3wgnpMFGYv0Vlnx+mEW1CNIK8
+         tRxWqjKUukJQBScTquNzf2R/9wcWaMdbl28C8wwxXhw6wi/KZOtDetvW5wO8NsS080
+         Jkkj6rg4i2+fQ==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 58B0A598B;
-        Wed,  5 Dec 2018 09:06:34 -0800 (PST)
+        by mailhost.synopsys.com (Postfix) with ESMTP id 83A4159D3;
+        Wed,  5 Dec 2018 09:06:37 -0800 (PST)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <vineet.gupta1@synopsys.com>
@@ -53,9 +53,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 4/5] ARC: perf: fix description comment
-Date:   Wed,  5 Dec 2018 20:06:08 +0300
-Message-Id: <20181205170609.18690-5-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 5/5] ARC: perf: remove useless ifdefs
+Date:   Wed,  5 Dec 2018 20:06:09 +0300
+Message-Id: <20181205170609.18690-6-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.14.5
 In-Reply-To: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
 References: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
@@ -64,43 +64,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix description comment as this code doesn't belong only to
-ARC700 anymore.
+ifdef around 'arc_pmu_match' structure declaration is useless
+as we refer to 'arc_pmu_match' in several places which aren't
+guarded with ifdef.
 
-Also while I'm at it, use SPDX License Identifier.
+Nevertheless 'ARC' option selects 'OF' unconditionally so we
+can simply get rid of this ifdef.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/kernel/perf_event.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ arch/arc/kernel/perf_event.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
-index 8c88837fcd83..b6207090aaa7 100644
+index b6207090aaa7..7786c1f005fb 100644
 --- a/arch/arc/kernel/perf_event.c
 +++ b/arch/arc/kernel/perf_event.c
-@@ -1,15 +1,10 @@
--/*
-- * Linux performance counter support for ARC700 series
-- *
-- * Copyright (C) 2013-2015 Synopsys, Inc. (www.synopsys.com)
-- *
-- * This code is inspired by the perf support of various other architectures.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Linux performance counter support for ARC CPUs.
-+// This code is inspired by the perf support of various other architectures.
-+//
-+// Copyright (C) 2013-2018 Synopsys, Inc. (www.synopsys.com)
-+
- #include <linux/errno.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
+@@ -643,14 +643,12 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
+ 	return perf_pmu_register(&arc_pmu->pmu, "arc_pmu", PERF_TYPE_RAW);
+ }
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id arc_pmu_match[] = {
+ 	{ .compatible = "snps,arc700-pct" },
+ 	{ .compatible = "snps,archs-pct" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, arc_pmu_match);
+-#endif
+ 
+ static struct platform_driver arc_pmu_driver = {
+ 	.driver	= {
 -- 
 2.14.5
 
