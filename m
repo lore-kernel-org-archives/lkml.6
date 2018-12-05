@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED76C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FC9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C96206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C96206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9F0E2206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0E2206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbeLEIjW (ORCPT
+        id S1727635AbeLEIjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:39:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36214 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 03:39:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36220 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727312AbeLEIhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727324AbeLEIhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 03:37:48 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EF6182087D; Wed,  5 Dec 2018 09:37:45 +0100 (CET)
+        id 31CCE20A58; Wed,  5 Dec 2018 09:37:46 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AB15520A59;
+        by mail.bootlin.com (Postfix) with ESMTPSA id E95DF20A5A;
         Wed,  5 Dec 2018 09:37:26 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v4 06/22] drm/sun4i: Move the BT.601 CSC coefficients to the frontend
-Date:   Wed,  5 Dec 2018 09:36:47 +0100
-Message-Id: <20181205083703.21488-7-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 07/22] drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
+Date:   Wed,  5 Dec 2018 09:36:48 +0100
+Message-Id: <20181205083703.21488-8-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
 References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
@@ -50,97 +50,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both the backend and the frontend need the BT.601 CSC coefficients for
-YUV to RGB conversion. Since the backend has a dependency on the
-frontend (and not the other way round), move the coefficients there
-so that both can access them without having to duplicate them.
+In prevision of adding support for YUV formats, set the YUV to RGB
+colorspace conversion coefficients if required and don't bypass the
+CSC engine when converting.
+
+The BT601 coefficients from the A33 BSP are copied over from the backend
+code. Because of module inter-dependency, we can't have the frontend use
+these coefficients from the backend directly.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c  | 22 ----------------------
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
- 3 files changed, 24 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 23 +++++++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index bbadc2ab9f4d..892197f52557 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -45,28 +45,6 @@ static const u32 sunxi_rgb2yuv_coef[12] = {
- 	0x000001c1, 0x00003e88, 0x00003fb8, 0x00000808
- };
- 
--/*
-- * These coefficients are taken from the A33 BSP from Allwinner.
-- *
-- * The first three values of each row are coded as 13-bit signed fixed-point
-- * numbers, with 10 bits for the fractional part. The fourth value is a
-- * constant coded as a 14-bit signed fixed-point number with 4 bits for the
-- * fractional part.
-- *
-- * The values in table order give the following colorspace translation:
-- * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
-- * R = 1.164 * Y + 1.596 * V - 222
-- * B = 1.164 * Y + 2.018 * U + 276
-- *
-- * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
-- * following the BT601 spec.
-- */
--static const u32 sunxi_bt601_yuv2rgb_coef[12] = {
--	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
--	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
--	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
--};
--
- static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
- {
- 	int i;
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 7c7a5ea0cf58..045013efdc57 100644
+index 045013efdc57..bf37a4ea81c5 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -48,6 +48,29 @@ static const u32 sun4i_frontend_horz_coef[64] = {
- 	0x03ff0000, 0x0000fd41, 0x01ff0000, 0x0000fe42,
- };
+@@ -213,6 +213,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	const struct drm_format_info *format = fb->format;
+ 	u32 out_fmt_val;
+ 	u32 in_fmt_val, in_mod_val, in_ps_val;
++	unsigned int i;
++	u32 bypass;
+ 	int ret;
  
-+/*
-+ * These coefficients are taken from the A33 BSP from Allwinner.
-+ *
-+ * The first three values of each row are coded as 13-bit signed fixed-point
-+ * numbers, with 10 bits for the fractional part. The fourth value is a
-+ * constant coded as a 14-bit signed fixed-point number with 4 bits for the
-+ * fractional part.
-+ *
-+ * The values in table order give the following colorspace translation:
-+ * G = 1.164 * Y - 0.391 * U - 0.813 * V + 135
-+ * R = 1.164 * Y + 1.596 * V - 222
-+ * B = 1.164 * Y + 2.018 * U + 276
-+ *
-+ * This seems to be a conversion from Y[16:235] UV[16:240] to RGB[0:255],
-+ * following the BT601 spec.
-+ */
-+const u32 sunxi_bt601_yuv2rgb_coef[12] = {
-+	0x000004a7, 0x00001e6f, 0x00001cbf, 0x00000877,
-+	0x000004a7, 0x00000000, 0x00000662, 0x00003211,
-+	0x000004a7, 0x00000812, 0x00000000, 0x00002eb1,
-+};
-+EXPORT_SYMBOL(sunxi_bt601_yuv2rgb_coef);
+ 	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
+@@ -250,9 +252,26 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
+ 
++	/*
++	 * Checking the input format is sufficient since we currently only
++	 * support RGB output formats to the backend. If YUV output formats
++	 * ever get supported, an YUV input and output would require bypassing
++	 * the CSC engine too.
++	 */
++	if (format->is_yuv) {
++		/* Setup the CSC engine for YUV to RGB conversion. */
++		bypass = 0;
 +
- static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
- {
- 	int i;
++		for (i = 0; i < ARRAY_SIZE(sunxi_bt601_yuv2rgb_coef); i++)
++			regmap_write(frontend->regs,
++				     SUN4I_FRONTEND_CSC_COEF_REG(i),
++				     sunxi_bt601_yuv2rgb_coef[i]);
++	} else {
++		bypass = SUN4I_FRONTEND_BYPASS_CSC_EN;
++	}
++
+ 	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
+-			   SUN4I_FRONTEND_BYPASS_CSC_EN,
+-			   SUN4I_FRONTEND_BYPASS_CSC_EN);
++			   SUN4I_FRONTEND_BYPASS_CSC_EN, bypass);
+ 
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
+ 		     in_mod_val | in_fmt_val | in_ps_val);
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index ad146e8d8d70..3df2bd8a7a95 100644
+index 3df2bd8a7a95..17b46ecf7d9e 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -86,6 +86,7 @@ struct sun4i_frontend {
- };
+@@ -35,6 +35,8 @@
+ #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888	1
+ #define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
  
- extern const struct of_device_id sun4i_frontend_of_table[];
-+extern const u32 sunxi_bt601_yuv2rgb_coef[12];
++#define SUN4I_FRONTEND_CSC_COEF_REG(c)		(0x070 + (0x4 * (c)))
++
+ #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
+ #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
  
- int sun4i_frontend_init(struct sun4i_frontend *frontend);
- void sun4i_frontend_exit(struct sun4i_frontend *frontend);
 -- 
 2.19.2
 
