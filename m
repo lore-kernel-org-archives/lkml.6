@@ -2,314 +2,138 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0A2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDBBC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2F52082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:40:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SWHxJXgT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2F52082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E7A8D2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:40:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A8D2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeLEHkE (ORCPT
+        id S1727145AbeLEHko convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:40:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37318 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEHkD (ORCPT
+        Wed, 5 Dec 2018 02:40:44 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34574 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEHko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:40:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b5so9659330plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LutB4UMjchAnNYOrNPwRWiMSPBbcvDM/vMfMLyZxfvQ=;
-        b=SWHxJXgTkvXhxSy1XJ55bx3coeIpsSdeRvKiZCiXXwz5nuIqDar3wmE9EE502EhaFU
-         pSimZqb/JU4loZIHicQqbMJsDJXV6lVlQEbWXK+w5qJPCscDgUgAg5t3YX8hmE01Ffgh
-         E9AUgyQkeJlHdRJjpWQtFWVawJ0NzobeEW758=
+        Wed, 5 Dec 2018 02:40:44 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t5so17826241otk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:40:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LutB4UMjchAnNYOrNPwRWiMSPBbcvDM/vMfMLyZxfvQ=;
-        b=H8Dg4MD+vGiDWN8RoJYj2v4mOiERI1AX7q1GcnQRpbXu3IfimcMgNFDkUQ2MPuc1Ks
-         Lu6mRzo3jjbKgD6JBs7j0N/5JbLeYkoR6avErtdPuvGGXOFmlaE0brZOTvxJmIlG9F67
-         XjoYuw20YLYO8Z7+lD5kepncycXx9WLiwM5/Bb3NdjxFzhH4x0awVhC5s3NjFfisuXVN
-         pzhM9FG2oS04EbnzJGlC1C/JpWcDMO+w1163sZu6+Zi09ilQNrQaRegydy6qK7NBE7/8
-         wBsoRYp6WsqTjqgH34LFwyffnV++WCSFr6cGrlBRu3Jn8nL5KrIiELn+KBtrFEY8hfXx
-         ZNxA==
-X-Gm-Message-State: AA+aEWZA4xYuKSgDTqZh2drZBlIFGqzD7K/XYbpt/ZSZmAD5/DugiDRR
-        3pY2G2bdWjq5N+aVfX3SD7EOoP4SRDdUq0RZyRggwQ==
-X-Google-Smtp-Source: AFSGD/VGX3V4N8XiB9gi2Y4I24suVkIRvHhCLuy7FocrV2/oOfVFqLAYihhIY8yJsqtJ4cG2yJCiPGGaPTm0fgecmuo=
-X-Received: by 2002:a17:902:d806:: with SMTP id a6mr22269405plz.172.1543995602584;
- Tue, 04 Dec 2018 23:40:02 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JNQhOhszSHcggNaD1SBayBjLbXetxd8vVoIXLJFOLls=;
+        b=aaj76gWvFRqeF5yop0sJq8odqk2CVaUSPOkg1JhJTP0W9rRQrH5+xjUPMnvJ1l4bPe
+         b9PVlAmKwGVkVGBD98kUUz/8Iajzg2QjiWAz/ATObkDIu5eV83tGCGIoFkANgyCQuKd8
+         3us1xBRgXfpWghmiHRIVgkjQ+j/5yTQdcuaiob6g0dzM0Z42Y1gAdyt3W4CUScCxcCQu
+         sPJiVVxEYBqpRstZiKhmf/kWKBhJrbjzyT73laNBWOSQA2ZuYUGBkpJ5VIGOYJCdLhMN
+         e/oKyJzNfuohCGOx5TYKoIZJyxgrG6IlzDpBy1EDXM5mLG1B9J3WDe/qjPWUyVtghpNY
+         MQTA==
+X-Gm-Message-State: AA+aEWaB4v6tlgjgAJqJXS2b57mufGL9jXjJZ8eBwkJyZzLum4cS2qwH
+        5U4zntocrwW/geuHwXdp0n3Blkhb4A5JZ3gu7rn6dg==
+X-Google-Smtp-Source: AFSGD/UrN4JljRWTRvMnVubzH//Z4S09NkST192w6Ii7WNXmmFTNNpclxl8mDG/jGvBm7M+5sx76yyp2nKe6X0pHP6Y=
+X-Received: by 2002:a05:6830:1289:: with SMTP id z9mr13755442otp.281.1543995643229;
+ Tue, 04 Dec 2018 23:40:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20181205054828.183476-1-drinkcat@chromium.org>
- <20181205054828.183476-3-drinkcat@chromium.org> <20181205072528.l7blg6y24ggblh4m@master>
-In-Reply-To: <20181205072528.l7blg6y24ggblh4m@master>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 5 Dec 2018 15:39:51 +0800
-Message-ID: <CANMq1KCi-k_4-66pMfvByzsjpf1H6_bvC82Ow0b_jEH6B3LHwA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
-To:     richard.weiyang@gmail.com
-Cc:     Will Deacon <will.deacon@arm.com>, Michal Hocko <mhocko@suse.com>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        linux-mm@kvack.org, Christoph Lameter <cl@linux.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        yingjoe.chen@mediatek.com, Vlastimil Babka <vbabka@suse.cz>,
-        Tomasz Figa <tfiga@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>
+References: <20181204205345.9514-1-malat@debian.org> <ba978bc1-e137-8abf-01a0-e1c68341a95f@c-s.fr>
+In-Reply-To: <ba978bc1-e137-8abf-01a0-e1c68341a95f@c-s.fr>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 5 Dec 2018 08:40:31 +0100
+Message-ID: <CA+7wUswgOLp8z6-VOf86=dSf1PCOT4CW4RpMOC-J_p2xBiZkwA@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/32: Move the old 6xx -mcpu logic before the
+ TARGET_CPU logic
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 3:25 PM Wei Yang <richard.weiyang@gmail.com> wrote:
+On Tue, Dec 4, 2018 at 10:28 PM Christophe LEROY
+<christophe.leroy@c-s.fr> wrote:
 >
-> On Wed, Dec 05, 2018 at 01:48:27PM +0800, Nicolas Boichat wrote:
-> >In some cases (e.g. IOMMU ARMv7s page allocator), we need to allocate
-> >data structures smaller than a page with GFP_DMA32 flag.
-> >
-> >This change makes it possible to create a custom cache in DMA32 zone
-> >using kmem_cache_create, then allocate memory using kmem_cache_alloc.
-> >
-> >We do not create a DMA32 kmalloc cache array, as there are currently
-> >no users of kmalloc(..., GFP_DMA32). The new test in check_slab_flags
-> >ensures that such calls still fail (as they do before this change).
-> >
-> >Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
-> >Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> >---
-> >
-> >Changes since v2:
-> > - Clarified commit message
-> > - Add entry in sysfs-kernel-slab to document the new sysfs file
-> >
-> >(v3 used the page_frag approach)
-> >
-> >Documentation/ABI/testing/sysfs-kernel-slab |  9 +++++++++
-> > include/linux/slab.h                        |  2 ++
-> > mm/internal.h                               |  8 ++++++--
-> > mm/slab.c                                   |  4 +++-
-> > mm/slab.h                                   |  3 ++-
-> > mm/slab_common.c                            |  2 +-
-> > mm/slub.c                                   | 18 +++++++++++++++++-
-> > 7 files changed, 40 insertions(+), 6 deletions(-)
-> >
-> >diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
-> >index 29601d93a1c2ea..d742c6cfdffbe9 100644
-> >--- a/Documentation/ABI/testing/sysfs-kernel-slab
-> >+++ b/Documentation/ABI/testing/sysfs-kernel-slab
-> >@@ -106,6 +106,15 @@ Description:
-> >               are from ZONE_DMA.
-> >               Available when CONFIG_ZONE_DMA is enabled.
-> >
-> >+What:         /sys/kernel/slab/cache/cache_dma32
-> >+Date:         December 2018
-> >+KernelVersion:        4.21
-> >+Contact:      Nicolas Boichat <drinkcat@chromium.org>
-> >+Description:
-> >+              The cache_dma32 file is read-only and specifies whether objects
-> >+              are from ZONE_DMA32.
-> >+              Available when CONFIG_ZONE_DMA32 is enabled.
-> >+
-> > What:         /sys/kernel/slab/cache/cpu_slabs
-> > Date:         May 2007
-> > KernelVersion:        2.6.22
-> >diff --git a/include/linux/slab.h b/include/linux/slab.h
-> >index 11b45f7ae4057c..9449b19c5f107a 100644
-> >--- a/include/linux/slab.h
-> >+++ b/include/linux/slab.h
-> >@@ -32,6 +32,8 @@
-> > #define SLAB_HWCACHE_ALIGN    ((slab_flags_t __force)0x00002000U)
-> > /* Use GFP_DMA memory */
-> > #define SLAB_CACHE_DMA                ((slab_flags_t __force)0x00004000U)
-> >+/* Use GFP_DMA32 memory */
-> >+#define SLAB_CACHE_DMA32      ((slab_flags_t __force)0x00008000U)
-> > /* DEBUG: Store the last owner for bug hunting */
-> > #define SLAB_STORE_USER               ((slab_flags_t __force)0x00010000U)
-> > /* Panic if kmem_cache_create() fails */
-> >diff --git a/mm/internal.h b/mm/internal.h
-> >index a2ee82a0cd44ae..fd244ad716eaf8 100644
-> >--- a/mm/internal.h
-> >+++ b/mm/internal.h
-> >@@ -14,6 +14,7 @@
-> > #include <linux/fs.h>
-> > #include <linux/mm.h>
-> > #include <linux/pagemap.h>
-> >+#include <linux/slab.h>
-> > #include <linux/tracepoint-defs.h>
-> >
-> > /*
-> >@@ -34,9 +35,12 @@
-> > #define GFP_CONSTRAINT_MASK (__GFP_HARDWALL|__GFP_THISNODE)
-> >
-> > /* Check for flags that must not be used with a slab allocator */
-> >-static inline gfp_t check_slab_flags(gfp_t flags)
-> >+static inline gfp_t check_slab_flags(gfp_t flags, slab_flags_t slab_flags)
-> > {
-> >-      gfp_t bug_mask = __GFP_DMA32 | __GFP_HIGHMEM | ~__GFP_BITS_MASK;
-> >+      gfp_t bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
-> >+
-> >+      if (!IS_ENABLED(CONFIG_ZONE_DMA32) || !(slab_flags & SLAB_CACHE_DMA32))
-> >+              bug_mask |= __GFP_DMA32;
 >
-> The original version doesn't check CONFIG_ZONE_DMA32.
 >
-> Do we need to add this condition here?
-> Could we just decide the bug_mask based on slab_flags?
-
-We can. The reason I did it this way is that when we don't have
-CONFIG_ZONE_DMA32, the compiler should be able to simplify to:
-
-bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
-if (true || ..) => if (true)
-   bug_mask |= __GFP_DMA32;
-
-Then just
-bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK | __GFP_DMA32;
-
-And since the function is inline, slab_flags would not even need to be
-accessed at all.
-
+> Le 04/12/2018 à 21:53, Mathieu Malaterre a écrit :
+> > The code:
 > >
-> >       if (unlikely(flags & bug_mask)) {
-> >               gfp_t invalid_mask = flags & bug_mask;
-> >diff --git a/mm/slab.c b/mm/slab.c
-> >index 65a774f05e7836..2fd3b9a996cbe6 100644
-> >--- a/mm/slab.c
-> >+++ b/mm/slab.c
-> >@@ -2109,6 +2109,8 @@ int __kmem_cache_create(struct kmem_cache *cachep, slab_flags_t flags)
-> >       cachep->allocflags = __GFP_COMP;
-> >       if (flags & SLAB_CACHE_DMA)
-> >               cachep->allocflags |= GFP_DMA;
-> >+      if (flags & SLAB_CACHE_DMA32)
-> >+              cachep->allocflags |= GFP_DMA32;
-> >       if (flags & SLAB_RECLAIM_ACCOUNT)
-> >               cachep->allocflags |= __GFP_RECLAIMABLE;
-> >       cachep->size = size;
-> >@@ -2643,7 +2645,7 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
-> >        * Be lazy and only check for valid flags here,  keeping it out of the
-> >        * critical path in kmem_cache_alloc().
-> >        */
-> >-      flags = check_slab_flags(flags);
-> >+      flags = check_slab_flags(flags, cachep->flags);
-> >       WARN_ON_ONCE(cachep->ctor && (flags & __GFP_ZERO));
-> >       local_flags = flags & (GFP_CONSTRAINT_MASK|GFP_RECLAIM_MASK);
+> >    ifdef CONFIG_6xx
+> >    KBUILD_CFLAGS          += -mcpu=powerpc
+> >    endif
 > >
-> >diff --git a/mm/slab.h b/mm/slab.h
-> >index 4190c24ef0e9df..fcf717e12f0a86 100644
-> >--- a/mm/slab.h
-> >+++ b/mm/slab.h
-> >@@ -127,7 +127,8 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
+> > was added in 2006 in commit f48b8296b315 ("[PATCH] powerpc32: Set cpu
+> > explicitly in kernel compiles"). This change was acceptable since the
+> > TARGET_CPU logic was 64-bit only.
 > >
+> > Since commit 0e00a8c9fd92 ("powerpc: Allow CPU selection
+> > also on PPC32") this logic is no longer acceptable after the TARGET_CPU
+> > specific. It currently appends -mcpu=powerpc at the end of the command
+> > line, after any TARGET_CPU specific:
 > >
-> > /* Legal flag mask for kmem_cache_create(), for various configurations */
-> >-#define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | SLAB_PANIC | \
-> >+#define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
-> >+                       SLAB_CACHE_DMA32 | SLAB_PANIC | \
-> >                        SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS )
+> >    gcc -Wp,-MD,init/.do_mounts.o.d ...
+> >      -mcpu=powerpc -mbig-endian -m32 ...
+> >      -mcpu=e300c2 ...
+> >      -mcpu=powerpc ...
+> >      ../init/do_mounts.c
 > >
-> > #if defined(CONFIG_DEBUG_SLAB)
-> >diff --git a/mm/slab_common.c b/mm/slab_common.c
-> >index 70b0cc85db67f8..18b7b809c8d064 100644
-> >--- a/mm/slab_common.c
-> >+++ b/mm/slab_common.c
-> >@@ -53,7 +53,7 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
-> >               SLAB_FAILSLAB | SLAB_KASAN)
+> > Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+> > Fixes: 0e00a8c9fd92 ("powerpc: Allow CPU selection also on PPC32")
+> > Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+> > Link: https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg142315.html
+> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> > ---
+> >   arch/powerpc/Makefile | 8 ++++----
+> >   1 file changed, 4 insertions(+), 4 deletions(-)
 > >
-> > #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
-> >-                       SLAB_ACCOUNT)
-> >+                       SLAB_CACHE_DMA32 | SLAB_ACCOUNT)
+> > diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> > index 8a2ce14d68d0..544b30667ea5 100644
+> > --- a/arch/powerpc/Makefile
+> > +++ b/arch/powerpc/Makefile
+> > @@ -30,6 +30,10 @@ endif
+> >   endif
+> >   endif
 > >
-> > /*
-> >  * Merge control. If this is set then no merging of slab caches will occur.
-> >diff --git a/mm/slub.c b/mm/slub.c
-> >index 21a3f6866da472..6d47765a82d150 100644
-> >--- a/mm/slub.c
-> >+++ b/mm/slub.c
-> >@@ -1685,7 +1685,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
-> >
-> > static struct page *new_slab(struct kmem_cache *s, gfp_t flags, int node)
-> > {
-> >-      flags = check_slab_flags(flags);
-> >+      flags = check_slab_flags(flags, s->flags);
-> >
-> >       return allocate_slab(s,
-> >               flags & (GFP_RECLAIM_MASK | GFP_CONSTRAINT_MASK), node);
-> >@@ -3577,6 +3577,9 @@ static int calculate_sizes(struct kmem_cache *s, int forced_order)
-> >       if (s->flags & SLAB_CACHE_DMA)
-> >               s->allocflags |= GFP_DMA;
-> >
-> >+      if (s->flags & SLAB_CACHE_DMA32)
-> >+              s->allocflags |= GFP_DMA32;
-> >+
-> >       if (s->flags & SLAB_RECLAIM_ACCOUNT)
-> >               s->allocflags |= __GFP_RECLAIMABLE;
-> >
-> >@@ -5095,6 +5098,14 @@ static ssize_t cache_dma_show(struct kmem_cache *s, char *buf)
-> > SLAB_ATTR_RO(cache_dma);
-> > #endif
-> >
-> >+#ifdef CONFIG_ZONE_DMA32
-> >+static ssize_t cache_dma32_show(struct kmem_cache *s, char *buf)
-> >+{
-> >+      return sprintf(buf, "%d\n", !!(s->flags & SLAB_CACHE_DMA32));
-> >+}
-> >+SLAB_ATTR_RO(cache_dma32);
-> >+#endif
-> >+
-> > static ssize_t usersize_show(struct kmem_cache *s, char *buf)
-> > {
-> >       return sprintf(buf, "%u\n", s->usersize);
-> >@@ -5435,6 +5446,9 @@ static struct attribute *slab_attrs[] = {
-> > #ifdef CONFIG_ZONE_DMA
-> >       &cache_dma_attr.attr,
-> > #endif
-> >+#ifdef CONFIG_ZONE_DMA32
-> >+      &cache_dma32_attr.attr,
-> >+#endif
-> > #ifdef CONFIG_NUMA
-> >       &remote_node_defrag_ratio_attr.attr,
-> > #endif
-> >@@ -5665,6 +5679,8 @@ static char *create_unique_id(struct kmem_cache *s)
-> >        */
-> >       if (s->flags & SLAB_CACHE_DMA)
-> >               *p++ = 'd';
-> >+      if (s->flags & SLAB_CACHE_DMA32)
-> >+              *p++ = 'D';
-> >       if (s->flags & SLAB_RECLAIM_ACCOUNT)
-> >               *p++ = 'a';
-> >       if (s->flags & SLAB_CONSISTENCY_CHECKS)
-> >--
-> >2.20.0.rc1.387.gf8505762e3-goog
-> >
-> >_______________________________________________
-> >iommu mailing list
-> >iommu@lists.linux-foundation.org
-> >https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> > +ifdef CONFIG_6xx
+> > +KBUILD_CFLAGS                += -mcpu=powerpc
+> > +endif
+> > +
 >
-> --
-> Wei Yang
-> Help you, Help me
+> Could you make the patch on top of my serie (ie after the change of
+> CONFIG_6xx to CONFIG_BOOK3S_32 ?
+
+Sure. That will defeat the point of the Fixes: line, but I guess who
+cares anyway ? Will re-submit asap.
+
+> The serie is in origin/next-test
+>
+> Thanks,
+> Christophe
+>
+> >   ifeq ($(CROSS_COMPILE),)
+> >   KBUILD_DEFCONFIG := $(shell uname -m)_defconfig
+> >   else
+> > @@ -241,10 +245,6 @@ KBUILD_CFLAGS    += $(call cc-option,-fno-dwarf2-cfi-asm)
+> >   # often slow when they are implemented at all
+> >   KBUILD_CFLAGS               += $(call cc-option,-mno-string)
+> >
+> > -ifdef CONFIG_6xx
+> > -KBUILD_CFLAGS                += -mcpu=powerpc
+> > -endif
+> > -
+> >   cpu-as-$(CONFIG_4xx)                += -Wa,-m405
+> >   cpu-as-$(CONFIG_ALTIVEC)    += $(call as-option,-Wa$(comma)-maltivec)
+> >   cpu-as-$(CONFIG_E200)               += -Wa,-me200
+> >
