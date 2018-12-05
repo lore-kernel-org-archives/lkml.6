@@ -2,134 +2,92 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320DFC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D47C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAA820878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2B/1bAR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAA820878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 41E5820878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E5820878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeLEPjR (ORCPT
+        id S1728107AbeLEPje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:39:17 -0500
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:45792 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeLEPjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:16 -0500
-Received: by mail-lf1-f54.google.com with SMTP id b20so15031853lfa.12;
-        Wed, 05 Dec 2018 07:39:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=h/XFwuE/C9TLle+Bju0W+UKGFFPuBXHWbSsfi3HGwdU=;
-        b=Z2B/1bARbGfzrqgYTyMW1Pglc9VC56G5oQ//7NFAHfFj/P8efMo71RDB7SufW2UQYl
-         doxZNuy2rM+R6+lokAadGhSz0+R1IZDsf2z8kZlDG7Rx3stN/HCbdTnhXb7o4ZUbmewl
-         vsAXQmSJUWPmM9gO07P0gwPcHg90KBEJPVRjSslAiL69FbdUbHAYcxRK4KfMMgSQX0pg
-         IcH/Bonpo7v2YctIclHpR87oVuDgq9elWXHs3OqphmN1q1778qSHkhFYMxDX4NIrqZlC
-         GPYWTRDzhL03l1TrNURkWR096lU2OkjpLHWbMxqXahUn7rUThY/cXFw15uQiR4qiGZ8P
-         ++Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=h/XFwuE/C9TLle+Bju0W+UKGFFPuBXHWbSsfi3HGwdU=;
-        b=r3XLy9a/aviS+nU8dx+YrtxiRGPzf5zl88stbsbltPWL9dX55B3hoff2gxr+FMCSYE
-         micp+29jYc7CLumikA9keoJGv+N0NY06CrtTl5153JISofmuXAeOpjZbbeMERxcpEiPx
-         NZ8axRYI+9rZdLAevRuGCIrN7WfMYRfVJEtbePZRP93Cq+WXhY1eNO7HPs8hR9NNL2pl
-         AriG2o5koKD4rdDDzjiM3YN4N9zNWZqF08UjNGzRYGPvDNQK3sou9p39rFRrrS9W9WDY
-         xLPRl7sBLOCappfxRafD7oC1TXT104Ps/2LPgNZgVtib9udtGWyOV49KtdmYi5iRrxNR
-         e/Dw==
-X-Gm-Message-State: AA+aEWYIw97A9EVBfxuINoXtY05FhSjh1q+6hAuby1EUWsGQSVGbjITD
-        4biZIr1muyNgWL3H0I51RIY=
-X-Google-Smtp-Source: AFSGD/WS0EdryFHjw/4OtoHY5KRgpWH0V3/u3NcXX69ZSV6V3m3U/5aktk+ngSsS+VCplcKdYdR5SA==
-X-Received: by 2002:a19:a502:: with SMTP id o2mr14388597lfe.92.1544024353176;
-        Wed, 05 Dec 2018 07:39:13 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id r199sm3596313lff.50.2018.12.05.07.39.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 07:39:12 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUZGc-0004Cw-Ie; Wed, 05 Dec 2018 16:39:15 +0100
-Date:   Wed, 5 Dec 2018 16:39:14 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Anatolij Gustschin <agust@denx.de>
-Cc:     Song Qiang <songqiang1304521@gmail.com>, johan@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: usb: thoughts of adding more support for FT232H
-Message-ID: <20181205153914.GL15689@localhost>
-References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
- <20181205161718.7451d98f@crub>
+        Wed, 5 Dec 2018 10:39:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58919 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeLEPjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:39:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 71F6420C36; Wed,  5 Dec 2018 16:39:31 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E1BC920CE8;
+        Wed,  5 Dec 2018 16:39:04 +0100 (CET)
+Date:   Wed, 5 Dec 2018 16:39:05 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v4 05/22] drm/sun4i: frontend: Determine input format
+ based on colorspace
+Message-ID: <20181205153905.gtsgto45omkocxrz@flea>
+References: <20181205083703.21488-1-paul.kocialkowski@bootlin.com>
+ <20181205083703.21488-6-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nuvzpqcwpzwepf3q"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205161718.7451d98f@crub>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181205083703.21488-6-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 04:17:18PM +0100, Anatolij Gustschin wrote:
-> Hi,
-> 
-> On Wed, 5 Dec 2018 22:10:40 +0800
-> Song Qiang songqiang1304521@gmail.com wrote:
-> ...
-> >I've been developing some iio device drivers and found that some people
-> >would like to test their devices with a qemu system which requires an
-> >i2c or spi port on our development hosts. Usually this is achieved with
-> >a DLN-2 adapter, while this is a bit difficult for me because it costs
-> >~175$ in my country. Then I found that FTDI's FT232H supports both these
-> >two modes and costs only less than 5$ but without full support in kernel.
-> >The ftdi-sio driver supports FT232H only as a serial converter.
-> >So I'm planning to write a mfd driver for it supports both these three
-> >modes, here are my thoughts:
-> 
-> There already has been a discussion [1] about adding an MFD driver for
-> FT232H, since the operating modes are mutually exclusive (and bus pins
-> shared between different modes), the MFD approach doesn't seem to be
-> a good fit.
-> 
-> >  - This device cannot support these three modes together because they
-> >    share some common pins, so I'm planning to add a sysfs entry
-> >    'current_mode' for selecting which mode the device should be working
-> >    on.
-> >  - This device is in uart mode on reset, so default mode would be reset,
-> >    too. This also helps for people only want to use this as a serial
-> >    converter feels nothing has happened (compatible).
-> >  - I was trying to reuse the ftdi-sio driver but it seems like mfd can
-> >    only register platform devices, while this is a usb driver. I may
-> >    have to copy some functions from this driver.
-> >
-> >Would you share any ideas? I'd appreciate it.
-> 
-> There is a patch series [2] adding an interface driver for FT232H-
-> based adapter devices, it already supports adding custom MPSSE based
-> SPI busses with SPI slaves for a custom USB PID. It already supports
-> adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
-> Adding I2C driver/adapter support should be easy, too. Maybe you can
-> re-use it.
 
-> [1] https://patchwork.kernel.org/patch/9828985
-> [2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
+--nuvzpqcwpzwepf3q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was going to refer to these series, but Anatolij beat me to it
-(haven't looked at [2] myself yet, though).
+On Wed, Dec 05, 2018 at 09:36:46AM +0100, Paul Kocialkowski wrote:
+> Since all the RGB input formats have the same value for the DATA_FMT
+> field of the INPUT_FMT register, we can group them when the format is
+> known to be RGB. Here, we assume that a non-YUV format is RGB, because
+> the hardware does not support any other colorspace than RGB and YUV.
+>=20
+> Use the DRM format info structure to check whether the format uses a
+> YUV colorspace.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Thanks,
-Johan
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nuvzpqcwpzwepf3q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAfxGAAKCRDj7w1vZxhR
+xdyTAP9S9aXImznZ2+1K97zxpbBmZsSZW49FJhUMY7OqZMmEEQD+OOEh+isTecuq
+jgXyGxCSgQzezqAAYBzmFNpDWXjz9Ag=
+=2Kw6
+-----END PGP SIGNATURE-----
+
+--nuvzpqcwpzwepf3q--
