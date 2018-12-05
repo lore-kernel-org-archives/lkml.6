@@ -2,95 +2,95 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D8CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0994FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA65C2081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDAB420850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O/xiM052"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA65C2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hWSXlMFf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDAB420850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeLEMzT (ORCPT
+        id S1727865AbeLEMz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:55:19 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36820 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727809AbeLEMzT (ORCPT
+        Wed, 5 Dec 2018 07:55:28 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:41982 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeLEMz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:55:19 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so18227166ljk.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 04:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MPhiphJkyHNBIRz2WygzOMtJhYXElRIR+7gk7YvqEEo=;
-        b=O/xiM052FM7pBWm7Yr1COtbJkaSSVfTb9NO1X84k7pNpKVBZoiF3y2PICfyQA6Jal0
-         SWAkHUU7RIrfSnGCu6NGiaMT4CMLR/ZFA3dqCfZpixAW3Kw3lpMlbZQgCq+iifPkthjh
-         I2ZhsnoVox7TnyPuvSDPZmlVwyBtEaMtQLlWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MPhiphJkyHNBIRz2WygzOMtJhYXElRIR+7gk7YvqEEo=;
-        b=ZqSSnlQT3ZI1YyJURGKCrwYe1oAIUrBOHPCdFvEj20i2f/KNqlrpVu4xz59rXDa3Kc
-         XBhuQFdnQGDrT3tkQAaieLhFLcimU6FdlKDVXwrp52F8M0h6rNjGcH6DDD7lSukcnvJa
-         S0VPO0AnNOuClM6BaQkF18yajjQ3jM+zu5H1Ux5sl5WyTMQiYSXxn+Qo50Dslfl/Ou9y
-         LTN9lF6S+s7vatpKdktoCwrGaOddFj9b/QMfnE180BVjjfDswUHGtyC5rNNNoNBBsk+m
-         WbYQfAE+08zLyyidMwyO9mrs1rKarE+LTsuSe3Sp7BW4/czhlufDqU+p0QttyEbvH/Jk
-         G2MQ==
-X-Gm-Message-State: AA+aEWZ5SDYM+3aKYitD19niSPr5C9e4IO+lZi65kcWnWrL6h7lQJJVb
-        kf0rDAZdK3mMrUZ0v9Q0/K2rjJKZH6daeKL0Spc1JQ==
-X-Google-Smtp-Source: AFSGD/XXZT0Uyd958fgHRW36Lra+egPmDHayMj75jhaktdmYGCHbUpH0ddYmhdWQ0rk/SfJ3ALxO2NJ05ivQkVgE+Tc=
-X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr15441917ljp.12.1544014516807;
- Wed, 05 Dec 2018 04:55:16 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de> <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de> <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
- <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
-In-Reply-To: <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 5 Dec 2018 13:55:04 +0100
-Message-ID: <CACRpkdZu_Pyd_FLYpRikpC4YTer4VjDhsmRZyfjyqrLoBgR+ww@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 07:55:28 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id wB5CsIlc027765;
+        Wed, 5 Dec 2018 21:54:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wB5CsIlc027765
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544014459;
+        bh=ABN4Id0ITWlGPPFug9vn5zPzA9h/rDKJEe8f0mRIi5Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hWSXlMFfvUueEf7yXCHAgHIVrpnn7BLpcbJ8gi9lyDVxIjiNR8MNnPjAzQJfVnyd3
+         clsPCd61MOVaeUwvtd5mN8nq6vIMtAA56YF4Y8rLwJ9X4950Crp5TzDByXOQQuHbvk
+         GYfnvurTjAlkPDdbnfmB24nc1E93AL0d2FpEtVQSJ44INACpwzIsCsesZNtO5sEezt
+         83Q5hgjx3jM2YhPIJFZZPVoqVxdQrafItV71wYlxi88zdx/f1t0ExTfyivTgfwrDHI
+         WHoLWtKTV0hx+FX3tBPCI8vzgHThWeVaU4dbMdp4w2FS3qtYytxbrV81EepMPr0Y4V
+         XU1whcjSX8x2g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-gpio@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] gpio: uniphier: convert to SPDX License Identifier
+Date:   Wed,  5 Dec 2018 21:54:09 +0900
+Message-Id: <1544014449-5104-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 1:38 PM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
+checkpatch.pl suggests to use SPDX license tag. I am happy to
+follow it.
 
-> All that would be great, but at this point I just want to fix broken
-> tests in user-space. After that we can think about how to
-> improve/approach simulating interrupts all we want.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-That is true. The other Linus is known to steamroll
-maintainers who knowingly break userspace, so we have
-a broad consensus not to do that, and I think
-that holds no matter if the ABI user is a test or not,
-debugfs or not.
+ drivers/gpio/gpio-uniphier.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+index 74551cbd..0f662b2 100644
+--- a/drivers/gpio/gpio-uniphier.c
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -1,16 +1,7 @@
+-/*
+- * Copyright (C) 2017 Socionext Inc.
+- *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (C) 2017 Socionext Inc.
++//   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+ 
+ #include <linux/bits.h>
+ #include <linux/gpio/driver.h>
+-- 
+2.7.4
+
