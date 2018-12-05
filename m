@@ -2,88 +2,136 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFC7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E06C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8228B20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="deOrn0QN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8228B20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A5E2020989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:02:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E2020989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbeLEJpe (ORCPT
+        id S1728787AbeLEKCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 05:02:42 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40333 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbeLEJpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 04:45:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728820AbeLEJpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:45:33 -0500
-Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5CFC208E7;
-        Wed,  5 Dec 2018 09:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003132;
-        bh=UNPqv9u2iY10gUFG8UJeI0z2KIeZT51xf/3NeiiWVOs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=deOrn0QNLvoE+eUL1N5t5XVjYP2piw+a/N3A5GClDVdecsKjw2fMu5uKCrxEBFC/d
-         9IZeOL0+U5rdeRNIA2KJUrWiodcF6oMmkgt3vPxYPpLbIlJgc6gPvCT1vz1KHeau6d
-         4ZFmIb1h1tkmb2quf/mf6Z+ScXR3GgcVQwuIPfjQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 39/69] drm/meson: add support for 1080p25 mode
-Date:   Wed,  5 Dec 2018 04:42:17 -0500
-Message-Id: <20181205094247.6556-39-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
-References: <20181205094247.6556-1-sashal@kernel.org>
+Received: by mail-ed1-f67.google.com with SMTP id d3so16431487edx.7;
+        Wed, 05 Dec 2018 01:45:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TV1XO0Uved8LFFNzA4LL71DcJa0tScM4mubEOFV4mR0=;
+        b=KroFkHR7ALGcBlw8163R8xnciUG6WPFtjqky3uiikrA/EN5XPUxRbdv2CyVViavt7w
+         5LJ1LKjSeyIV4qFU9M2A52wuF10Nsc99aB3c7A6DMFPjBj9dpS4N6hOgf9amOW7pMdJ8
+         ZURTVtI1mbzqvZRpaXY1EJpJhOIZFywh1ydbOOzu3FKZh++/T/Y5eLkH7zovA+PaYXLt
+         c3b1WqVkQQuJtAPcisg/XVELyhgxTrSjZcoVEfzIHnvN8KFRDKvUU+r3J+2g+zdyJODb
+         0pO4tDnM+zRSaUZ089c8QxsnIw+7oViODSXfnqmpkrlrB+LBN6BLOAPbwbaOPzT0h0iA
+         JEZw==
+X-Gm-Message-State: AA+aEWayT4w6+EolP/+xoZae2GJdrbnMaISYEjnXWMJUhKpoKQWsSn/D
+        xi6fgyPEtblxXTL0jw/okV4YGJpu73g=
+X-Google-Smtp-Source: AFSGD/Uv+7Q6Jef/bi4d+SascgkzjfEmLCGxmooTsf3roYegEsokS/4knjZwj50691todaY2EhcbAg==
+X-Received: by 2002:a50:b0e5:: with SMTP id j92mr19431224edd.188.1544003131995;
+        Wed, 05 Dec 2018 01:45:31 -0800 (PST)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
+        by smtp.gmail.com with ESMTPSA id e53sm5424517ede.90.2018.12.05.01.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 01:45:31 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id m22so12185932wml.3;
+        Wed, 05 Dec 2018 01:45:30 -0800 (PST)
+X-Received: by 2002:a1c:c008:: with SMTP id q8mr13866947wmf.99.1544003130312;
+ Wed, 05 Dec 2018 01:45:30 -0800 (PST)
+MIME-Version: 1.0
+References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com> <20181205092444.29497-8-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20181205092444.29497-8-paul.kocialkowski@bootlin.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 5 Dec 2018 17:45:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
+Message-ID: <CAGb2v66JwZ_RkEdk6sz-0Z7EJx7ieG3zBT6yr-95X6guxUkKTg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/15] arm64: dts: allwinner: h5: Add system-control
+ node with SRAM C1
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+On Wed, Dec 5, 2018 at 5:25 PM Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+>
+> Add the H5-specific system control node description to its device-tree
+> with support for the SRAM C1 section, that will be used by the video
+> codec node later on.
+>
+> The CPU-side SRAM address was obtained empirically while the size was
+> taken from the documentation. They may not be entirely accurate.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 22 ++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> index b41dc1aab67d..42bfb560b367 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> @@ -94,6 +94,28 @@
+>         };
+>
+>         soc {
+> +               system-control@1c00000 {
+> +                       compatible = "allwinner,sun50i-h5-system-control";
+> +                       reg = <0x01c00000 0x1000>;
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +
+> +                       sram_c1: sram@1d00000 {
+> +                               compatible = "mmio-sram";
+> +                               reg = <0x00018000 0x1c000>;
 
-[ Upstream commit 31e1ab494559fb46de304cc6c2aed1528f94b298 ]
+0x1d00000 or 0x18000?
 
-This essential mode for PAL users is missing, so add it.
+> +                               #address-cells = <1>;
+> +                               #size-cells = <1>;
+> +                               ranges = <0 0x00018000 0x1c000>;
 
-Fixes: 335e3713afb87 ("drm/meson: Add support for HDMI venc modes and settings")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1542793169-13008-1-git-send-email-christianshewitt@gmail.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/meson/meson_venc.c | 1 +
- 1 file changed, 1 insertion(+)
+Same here.
 
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index 9509017dbded..d5dfe7045cc6 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -714,6 +714,7 @@ struct meson_hdmi_venc_vic_mode {
- 	{ 5, &meson_hdmi_encp_mode_1080i60 },
- 	{ 20, &meson_hdmi_encp_mode_1080i50 },
- 	{ 32, &meson_hdmi_encp_mode_1080p24 },
-+	{ 33, &meson_hdmi_encp_mode_1080p50 },
- 	{ 34, &meson_hdmi_encp_mode_1080p30 },
- 	{ 31, &meson_hdmi_encp_mode_1080p50 },
- 	{ 16, &meson_hdmi_encp_mode_1080p60 },
--- 
-2.17.1
-
+> +
+> +                               ve_sram: sram-section@0 {
+> +                                       compatible = "allwinner,sun50i-h5-sram-c1",
+> +                                                    "allwinner,sun4i-a10-sram-c1";
+> +                                       reg = <0x000000 0x1c000>;
+> +                               };
+> +                       };
+> +               };
+> +
+>                 mali: gpu@1e80000 {
+>                         compatible = "allwinner,sun50i-h5-mali", "arm,mali-450";
+>                         reg = <0x01e80000 0x30000>;
+> --
+> 2.19.2
+>
