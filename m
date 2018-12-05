@@ -7,43 +7,48 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B990C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99056C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527882084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 525CA20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVPbXgNW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527882084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2cUbwKJQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525CA20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729036AbeLEJmJ (ORCPT
+        id S1729044AbeLEJmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:42:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:42:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729026AbeLEJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:42:04 -0500
+        id S1728569AbeLEJmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:42:09 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAC5320879;
-        Wed,  5 Dec 2018 09:42:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC2A20851;
+        Wed,  5 Dec 2018 09:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002924;
-        bh=b0IHSgUSy50pbIqeRaEhsU5t430F0nvR2rNARyjafG4=;
+        s=default; t=1544002927;
+        bh=cHjCX6akeU8QFCEB1UYtyiM27Vkd2V5muTaczIT2ISA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVPbXgNW/oaJ47OU8J5WjzY4xxRTIehzudlgAIwf0RwFsOD3nshvkfTAZRxM3xAan
-         HIyjeg/1g119KENRZilq5ZnniXrkcapI4yCQjWPKKC+hRlgLeZrdMP6OhG2C3Wm7aS
-         5+8pP/DL9y1lsDQ7DZh5i7TjuMv3jyXpxk5DCcns=
+        b=2cUbwKJQfkpclwOFMrqAv8/SQGiHSBZ6wdr/z3DhebiTG3h0Gqm6RhuLQ13u0HfpL
+         sXjpx3Y3w/k/jKLqVh18Eyf3vqVtwuK5jh8z0w2M8enbzqbnddAWktfuRKj6VdKYYU
+         wsbsL/Nahu9I5mwYLpElvntGWJDDpgZkabTFceUQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Larry Chen <lchen@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 114/123] unifdef: use memcpy instead of strncpy
-Date:   Wed,  5 Dec 2018 04:35:46 -0500
-Message-Id: <20181205093555.5386-114-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 115/123] ocfs2: fix deadlock caused by ocfs2_defrag_extent()
+Date:   Wed,  5 Dec 2018 04:35:47 -0500
+Message-Id: <20181205093555.5386-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,48 +57,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Larry Chen <lchen@suse.com>
 
-[ Upstream commit 38c7b224ce22c25fed04007839edf974bd13439d ]
+[ Upstream commit e21e57445a64598b29a6f629688f9b9a39e7242a ]
 
-New versions of gcc reasonably warn about the odd pattern of
+ocfs2_defrag_extent may fall into deadlock.
 
-	strncpy(p, q, strlen(q));
+ocfs2_ioctl_move_extents
+    ocfs2_ioctl_move_extents
+      ocfs2_move_extents
+        ocfs2_defrag_extent
+          ocfs2_lock_allocators_move_extents
 
-which really doesn't make sense: the strncpy() ends up being just a slow
-and odd way to write memcpy() in this case.
+            ocfs2_reserve_clusters
+              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
 
-There was a comment about _why_ the code used strncpy - to avoid the
-terminating NUL byte, but memcpy does the same and avoids the warning.
+	  __ocfs2_flush_truncate_log
+              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
 
+As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+against the global bitmap if local allocator has not sufficient cluters.
+Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+return success with global bitmap locked.
+
+After ocfs2_reserve_cluster(), if truncate log is full,
+__ocfs2_flush_truncate_log() will definitely fall into deadlock because
+it needs to inode_lock global bitmap, which has already been locked.
+
+To fix this bug, we could remove from
+ocfs2_lock_allocators_move_extents() the code which intends to lock
+global allocator, and put the removed code after
+__ocfs2_flush_truncate_log().
+
+ocfs2_lock_allocators_move_extents() is referred by 2 places, one is
+here, the other does not need the data allocator context, which means
+this patch does not affect the caller so far.
+
+Link: http://lkml.kernel.org/r/20181101071422.14470-1-lchen@suse.com
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/unifdef.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/move_extents.c | 47 +++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
 
-diff --git a/scripts/unifdef.c b/scripts/unifdef.c
-index 7493c0ee51cc..db00e3e30a59 100644
---- a/scripts/unifdef.c
-+++ b/scripts/unifdef.c
-@@ -395,7 +395,7 @@ usage(void)
-  * When we have processed a group that starts off with a known-false
-  * #if/#elif sequence (which has therefore been deleted) followed by a
-  * #elif that we don't understand and therefore must keep, we edit the
-- * latter into a #if to keep the nesting correct. We use strncpy() to
-+ * latter into a #if to keep the nesting correct. We use memcpy() to
-  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
-  *
-  * When we find a true #elif in a group, the following block will
-@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
- static void Itrue (void) { Ftrue();  ignoreon(); }
- static void Ifalse(void) { Ffalse(); ignoreon(); }
- /* modify this line */
--static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
-+static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
- static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
- static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
- static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 7eb3b0a6347e..f55f82ca3425 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -156,18 +156,14 @@ static int __ocfs2_move_extent(handle_t *handle,
+ }
+ 
+ /*
+- * lock allocators, and reserving appropriate number of bits for
+- * meta blocks and data clusters.
+- *
+- * in some cases, we don't need to reserve clusters, just let data_ac
+- * be NULL.
++ * lock allocator, and reserve appropriate number of bits for
++ * meta blocks.
+  */
+-static int ocfs2_lock_allocators_move_extents(struct inode *inode,
++static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+ 					struct ocfs2_extent_tree *et,
+ 					u32 clusters_to_move,
+ 					u32 extents_to_split,
+ 					struct ocfs2_alloc_context **meta_ac,
+-					struct ocfs2_alloc_context **data_ac,
+ 					int extra_blocks,
+ 					int *credits)
+ {
+@@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+ 		goto out;
+ 	}
+ 
+-	if (data_ac) {
+-		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+-		if (ret) {
+-			mlog_errno(ret);
+-			goto out;
+-		}
+-	}
+ 
+ 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+ 
+@@ -257,10 +246,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
+-	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+-						 &context->meta_ac,
+-						 &context->data_ac,
+-						 extra_blocks, &credits);
++	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
++						*len, 1,
++						&context->meta_ac,
++						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -283,6 +272,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
++	/*
++	 * Make sure ocfs2_reserve_cluster is called after
++	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
++	 *
++	 * If ocfs2_reserve_cluster is called
++	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
++	 * may happen.
++	 *
++	 */
++	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
++	if (ret) {
++		mlog_errno(ret);
++		goto out_unlock_mutex;
++	}
++
+ 	handle = ocfs2_start_trans(osb, credits);
+ 	if (IS_ERR(handle)) {
+ 		ret = PTR_ERR(handle);
+@@ -600,9 +604,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
+-	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+-						 &context->meta_ac,
+-						 NULL, extra_blocks, &credits);
++	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
++						len, 1,
++						&context->meta_ac,
++						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
 -- 
 2.17.1
 
