@@ -2,108 +2,121 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8B5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DB0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2238520879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2238520879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C4152084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:03:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uxsauKk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4152084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbeLERDk (ORCPT
+        id S1728420AbeLERDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:03:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbeLERDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:03:37 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C94D12084C;
-        Wed,  5 Dec 2018 17:03:36 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 12:03:34 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>, kernel-team@lge.com
-Subject: Re: [PATCH 3/9] tools/lib/traceevent: Install trace-seq.h API
- header file
-Message-ID: <20181205120334.60d0478e@vmware.local.home>
-In-Reply-To: <20181205122517.GG2950@krava>
-References: <20181130154403.150474900@goodmis.org>
-        <20181130154647.176265533@goodmis.org>
-        <20181204074739.GC16733@sejong>
-        <20181204144145.116a2caf@vmware.local.home>
-        <20181205122517.GG2950@krava>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 5 Dec 2018 12:03:52 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35282 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727908AbeLERDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:03:07 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so20494053wrb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 09:03:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1sWRn4XuGGhXCprrJr59tzoZcef0Y6d2HdIapkdzvjc=;
+        b=uxsauKk+tkU+TJIjdJuBX1zeF4dRe6rHsEz1cHM15M0CUaLfJXA9jg9mMiybLk8RQ+
+         V84jW7AF94GL+J4LUeY2B0VcqWECo/nhmliCKHehi+rfHtAe7OKYuJxX0bnxUA98pnGj
+         9TKAiYgU4oRYR/9CCg0p79YFJhBS+hPAh9L1gNOpzKXKhMeFw9Uf07+xSjl07suoNXlI
+         2o0FcVClswkRqyHZu/fmzq/D79X80ohjxtB2qimrV2XuVs1Q0bxfSXq/r74Z29+g8kbo
+         gqWv7iOtqbCYLF2W2YYJkX8YCdzW4GEbHXS/WSRr+X0Cl2Soax+MY8ZCyvLYf5BkcQDG
+         X51A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1sWRn4XuGGhXCprrJr59tzoZcef0Y6d2HdIapkdzvjc=;
+        b=EWLv+52B9b1R1YFi+/gANYt5LpjBskLzMJF7xpyeHOwo/vNfZOT0CUVVQDwiHUh3jA
+         8A+idRvgXJgPteyj4UYnDz49wFKagwKYf7EP8bZaVZWYdNC97hviB7fpPsDjjIXkNpK1
+         tCbrI/fAsoxrj8U5Q35McMAAR5LDXXYjKLswWZtV17HrTRpLJ3rTlyACN9ByjPsOlqHx
+         zr6LNVwun7vDXutaSY2jm6eikgpAiHtYsFmtDpBb+fcsQEEWFMsD6nrOEA4XNCQHg5ML
+         eTr53/m6N8EOHN2SJQGQ9zKYv9hedL1jpqLVCCffBrsmRH4tth8sgBWbEDgYZ3rEtMnJ
+         RD3w==
+X-Gm-Message-State: AA+aEWZrM/tUkGBGxSiPbcmNLZKYdoORD+2G4ewFJOsf6514s+T/Q5gN
+        OB3/FjDFvWM4uImvMNygVV8=
+X-Google-Smtp-Source: AFSGD/VUTVhX4RdPCeNEoZwT6BO3JqudFGS0vNWGewWY3wla8WRFox4BfpmKNZPCU/hpZNyJYd6wzw==
+X-Received: by 2002:adf:fe8f:: with SMTP id l15mr21442074wrr.313.1544029385893;
+        Wed, 05 Dec 2018 09:03:05 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id n127sm7949825wmd.20.2018.12.05.09.03.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 09:03:05 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 07/12] staging: rtl8188eu: cleanup long lines in rtw_wlan_util.c
+Date:   Wed,  5 Dec 2018 18:02:42 +0100
+Message-Id: <20181205170247.5401-7-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181205170247.5401-1-straube.linux@gmail.com>
+References: <20181205170247.5401-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Dec 2018 13:25:17 +0100
-Jiri Olsa <jolsa@redhat.com> wrote:
+Cleanup some lines over 80 characters by adding appropriate
+line breaks and removing commented code.
 
-> On Tue, Dec 04, 2018 at 02:41:45PM -0500, Steven Rostedt wrote:
-> > On Tue, 4 Dec 2018 16:47:39 +0900
-> > Namhyung Kim <namhyung@kernel.org> wrote:
-> > 
-> >   
-> > > > @@ -302,6 +302,7 @@ install_headers:
-> > > >  	$(call QUIET_INSTALL, headers) \
-> > > >  		$(call do_install,event-parse.h,$(prefix)/include/traceevent,644); \
-> > > >  		$(call do_install,event-utils.h,$(prefix)/include/traceevent,644); \
-> > > > +		$(call do_install,trace-seq.h,$(prefix)/include/traceevent,644); \
-> > > >  		$(call do_install,kbuffer.h,$(prefix)/include/traceevent,644)    
-> > > 
-> > > Do you still wanna have 'traceevent' directory prefix?  I just
-> > > sometimes feel a bit annoying to type it. ;-)  
-> > 
-> > I'd still want the separate directory for it. I'll probably have a
-> > ftrace.h file added to this for ftrace specific code in the future.
-> >   
-> > > 
-> > > Or you can rename it something like 'tep' or 'libtep' - and hopefully
-> > > having only single header file to include..
-> > >  
-> > 
-> > Hmm, I wonder if we should just call the directory "trace"?  
-> 
-> hum, I think it should match the library name, like 'include/tep/'
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I was hoping to add other headers in this directly, like ftrace.h and
-perf.h ;-)
-
-> 
-> also we should change the plugin installation directory
-> 
-> [jolsa@krava traceevent]$ rpm -ql perf | grep traceevent
-> /usr/lib64/traceevent
-> /usr/lib64/traceevent/plugins
-> /usr/lib64/traceevent/plugins/plugin_cfg80211.so
-> /usr/lib64/traceevent/plugins/plugin_function.so
-> /usr/lib64/traceevent/plugins/plugin_hrtimer.so
-> /usr/lib64/traceevent/plugins/plugin_jbd2.so
-> /usr/lib64/traceevent/plugins/plugin_kmem.so
-> /usr/lib64/traceevent/plugins/plugin_kvm.so
-> /usr/lib64/traceevent/plugins/plugin_mac80211.so
-> /usr/lib64/traceevent/plugins/plugin_sched_switch.so
-> /usr/lib64/traceevent/plugins/plugin_scsi.so
-> /usr/lib64/traceevent/plugins/plugin_xen.so
-
-Change it to tep?
-
--- Steve
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 956a331beda2..2ffa0332bf32 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -379,7 +379,8 @@ int is_client_associated_to_ap(struct adapter *padapter)
+ 	pmlmeext = &padapter->mlmeextpriv;
+ 	pmlmeinfo = &pmlmeext->mlmext_info;
+ 
+-	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE))
++	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) &&
++	    (pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE)
+ 		return true;
+ 	else
+ 		return _FAIL;
+@@ -390,7 +391,8 @@ int is_client_associated_to_ibss(struct adapter *padapter)
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+ 	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
+ 
+-	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE))
++	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) &&
++	    (pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE)
+ 		return true;
+ 	else
+ 		return _FAIL;
+@@ -662,8 +664,6 @@ static void bwmode_update_check(struct adapter *padapter, struct ndis_802_11_var
+ 		struct wlan_bssid_ex	*cur_network = &pmlmeinfo->network;
+ 		struct sta_priv	*pstapriv = &padapter->stapriv;
+ 
+-		/* set_channel_bwmode(padapter, pmlmeext->cur_channel, pmlmeext->cur_ch_offset, pmlmeext->cur_bwmode); */
+-
+ 		/* update ap's stainfo */
+ 		psta = rtw_get_stainfo(pstapriv, cur_network->MacAddress);
+ 		if (psta) {
+-- 
+2.19.2
 
