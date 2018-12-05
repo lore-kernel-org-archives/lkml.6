@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6131C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DA9C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F39620645
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E6620645
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:31:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQPcqkkB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F39620645
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAf93hQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E6620645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbeLESb3 (ORCPT
+        id S1728415AbeLESbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:31:29 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51921 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbeLESb0 (ORCPT
+        Wed, 5 Dec 2018 13:31:31 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46857 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728288AbeLESb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:31:26 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s14so14363033wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:31:25 -0800 (PST)
+        Wed, 5 Dec 2018 13:31:27 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so20731460wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 10:31:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X6Cb3IZL32U0xdIctqbMRGZiak7S108GweaHQVRRZZI=;
-        b=gQPcqkkBg83VEa32ZMAT6efjo0Ank+eWYSrQopqt5fomVmmFUVr0dFp/NUXG80XKU3
-         sqEoNrgLuuX+TexjroLHoDXitZjIpSS62EthnglqQWKTapnFhI7P7YahrYKirQsWFtnE
-         mxE5XhbkjuBolHM/sOJ9m1Wby4q/y2Af18/qwhlo5XpSZ+srSe78MxWbzdy+oFHBRcxo
-         4btvv9u4ZBOIP/x6hcVEtBh44xr8F9Yquhn0JPnv/OBVFRYLD/B2mGdO+uqa5ahnKHXs
-         ZFD/wKGrAMRFUmh9k8zYJkpO9cBcFLWRcczDb84xM72P93YfIvUAFfrXx/5bqmCkcXfc
-         rQYw==
+        bh=c0fAXjK7WtwNwNfHFkEE0JGYb445E4L0ysb3AhH6CYc=;
+        b=dAf93hQ1m7gyGqjGjaDNveVceBo9Qepd2Jcsznq/eZpyKlnM6kIzgVT2uPylnePjNT
+         h+nrC7EVfPAnepKWmDStKCTEqYyPQjgL7x6xb34VxEnSb2IO10JrwRbduvyrUiE9XAoG
+         g3vykwR/ax5JuK6fzKQEOoICzQRBb0RRrLiiTvJ0TXzRhSpa9tjs0A4LoSy5tAV2DqCv
+         m4sFQB8DSXWa8/kCX1VPEWPx06/0OHJDJmZTJCni50pbRW7J6ZfJjb6QxwuRKoUnIBSS
+         IEsTPLjfnwZjKroSf1bbr+dXmqMWLx5D3DxXBDMDpNglcaQ/6o9IpQIcdIq+aiPHjNo7
+         hVQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X6Cb3IZL32U0xdIctqbMRGZiak7S108GweaHQVRRZZI=;
-        b=snQ2Wv+7nc7/RsBszyxu+qFyxdA9Wx7D0Skb1kR2CqNqj1kFC50SuIZK8Wezc9ygJ3
-         ohJWnuoP2msZ64r21PsCYUvJjg7HBGE9HJNm/1eVy6nV9cxirrGDKc/P7E/k2wFoRFbo
-         q+m8los1HJ74gc4dyHRcfeVH91tobuX0puNKc5wSqWNbwV2A//6pR66P5whhPlCB1ktX
-         0nEOIO+VINMegLC02tRLqvb6DM3QN73Vy77f0umX7IogRL1i59mKF5pYBxFSOie6PBek
-         xYV4YOIptm+S9s/zwfkzFfTzph95eWFMMpUPN6H/T2U/H8upSt93JmYOluzyKEJmGWzN
-         4tpw==
-X-Gm-Message-State: AA+aEWbL4UVAHEwEdEsMOye4gWT+z59vBA1cPRwNE5jFtwg5wk7ZmDEq
-        zDMf1MurGWPFBYW1NLUBVCs=
-X-Google-Smtp-Source: AFSGD/Ux1osoqeQJW4kLPlu0bWjLgY22ky927T7Wqpd1yCKLirCbzZL7E2R5MRw9yLR4F5KhPe7T5Q==
-X-Received: by 2002:a1c:282:: with SMTP id 124mr16655817wmc.113.1544034684382;
-        Wed, 05 Dec 2018 10:31:24 -0800 (PST)
+        bh=c0fAXjK7WtwNwNfHFkEE0JGYb445E4L0ysb3AhH6CYc=;
+        b=dHhqhfPRerK08MRvkbxH7wPsguB4X6o/Rq+tfEfLh4C1YXzTdzgdrQZ/JGLCY1kvKc
+         gUcTXw6ARTOjfldw6ScvWNxIE1FLsFMNrgzNmi+2qNdm5/rVi78YOM6AB/8NKfyNyJ+t
+         WWxHRF/Poe1ff4ACZiiVNycGvFYa2kl9W8xzbeqOgJMUfP+3fWwRE9xuSY4YMy9hgYRD
+         snM562Dvekb44SZQNnqKfwSz50/sm0b5FBXZuQ58d+7pEUxfcM8pm2GpMyz7icSIQfxd
+         m0XfU9nkRMn4lYRHiJ6usZ95JBbd2YfArYEz2OnocjuBBf5B9pv3wSj8CuJK0Y8tZ1O6
+         8Q9w==
+X-Gm-Message-State: AA+aEWbALLekMNVRrUSNv2yxIe0tcvegCzW91m+emowM9XEpRNGX574N
+        nSHaVQQ2o8njfFAsryqHVLI=
+X-Google-Smtp-Source: AFSGD/VkuBaQ5oL70hcz54gVdAiIxyqhIRE+zRcoYcd26J1NLhv7FAd9xlmdJ5CU+US08XOntolqNA==
+X-Received: by 2002:adf:9246:: with SMTP id 64mr24101791wrj.130.1544034685340;
+        Wed, 05 Dec 2018 10:31:25 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id a18sm27860998wrp.13.2018.12.05.10.31.23
+        by smtp.gmail.com with ESMTPSA id a18sm27860998wrp.13.2018.12.05.10.31.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 10:31:23 -0800 (PST)
+        Wed, 05 Dec 2018 10:31:24 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 11/12] staging: rtl8188eu: rename struct field Wifi_Error_Status
-Date:   Wed,  5 Dec 2018 19:30:59 +0100
-Message-Id: <20181205183100.16828-11-straube.linux@gmail.com>
+Subject: [PATCH v2 12/12] staging: rtl8188eu: remove unused code in rtw_cmd.c
+Date:   Wed,  5 Dec 2018 19:31:00 +0100
+Message-Id: <20181205183100.16828-12-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205183100.16828-1-straube.linux@gmail.com>
 References: <20181205183100.16828-1-straube.linux@gmail.com>
@@ -76,68 +76,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename struct field Wifi_Error_Status to avoid CamelCase.
-Wifi_Error_Status -> wifi_error_status
+Remove unused/commented code in rtw_cmd.c.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_sreset.c      | 4 ++--
- drivers/staging/rtl8188eu/include/rtw_sreset.h   | 2 +-
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_cmd.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_sreset.c b/drivers/staging/rtl8188eu/core/rtw_sreset.c
-index fb5adaf4a42c..a8397b132002 100644
---- a/drivers/staging/rtl8188eu/core/rtw_sreset.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_sreset.c
-@@ -12,10 +12,10 @@ void rtw_hal_sreset_init(struct adapter *padapter)
- {
- 	struct sreset_priv *psrtpriv = &padapter->HalData->srestpriv;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index e3e46f7ac834..f9cdd1da8add 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -215,8 +215,6 @@ int rtw_cmd_thread(void *context)
  
--	psrtpriv->Wifi_Error_Status = WIFI_STATUS_SUCCESS;
-+	psrtpriv->wifi_error_status = WIFI_STATUS_SUCCESS;
- }
+ 	/*  free all cmd_obj resources */
+ 	while ((pcmd = rtw_dequeue_cmd(&pcmdpriv->cmd_queue))) {
+-		/* DBG_88E("%s: leaving... drop cmdcode:%u\n", __func__, pcmd->cmdcode); */
+-
+ 		rtw_free_cmd_obj(pcmd);
+ 	}
  
- void sreset_set_wifi_error_status(struct adapter *padapter, u32 status)
- {
--	padapter->HalData->srestpriv.Wifi_Error_Status = status;
-+	padapter->HalData->srestpriv.wifi_error_status = status;
- }
-diff --git a/drivers/staging/rtl8188eu/include/rtw_sreset.h b/drivers/staging/rtl8188eu/include/rtw_sreset.h
-index 3ee6a4a7847d..ea3c0d93bf0b 100644
---- a/drivers/staging/rtl8188eu/include/rtw_sreset.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_sreset.h
-@@ -11,7 +11,7 @@
- #include <drv_types.h>
+@@ -259,7 +257,6 @@ u8 rtw_sitesurvey_cmd(struct adapter  *padapter, struct ndis_802_11_ssid *ssid,
  
- struct sreset_priv {
--	u8	Wifi_Error_Status;
-+	u8 wifi_error_status;
- };
+ 	init_h2fwcmd_w_parm_no_rsp(ph2c, psurveyPara, _SiteSurvey_CMD_);
  
- #include <rtl8188e_hal.h>
-diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index 7dc7028c1cd5..e4f2af2974ed 100644
---- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -263,7 +263,7 @@ static int usbctrl_vendorreq(struct adapter *adapt, u8 request, u16 value, u16 i
- 				if (status == (-ESHUTDOWN) || status == -ENODEV)
- 					adapt->bSurpriseRemoved = true;
- 				else
--					adapt->HalData->srestpriv.Wifi_Error_Status = USB_VEN_REQ_CMD_FAIL;
-+					adapt->HalData->srestpriv.wifi_error_status = USB_VEN_REQ_CMD_FAIL;
- 			} else { /*  status != len && status >= 0 */
- 				if (status > 0) {
- 					if (requesttype == 0x01) {
-@@ -410,7 +410,7 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
- 			break;
- 		case -EPROTO:
- 		case -EOVERFLOW:
--			adapt->HalData->srestpriv.Wifi_Error_Status = USB_READ_PORT_FAIL;
-+			adapt->HalData->srestpriv.wifi_error_status = USB_READ_PORT_FAIL;
- 			precvbuf->reuse = true;
- 			usb_read_port(adapt, RECV_BULK_IN_ADDR, precvbuf);
- 			break;
+-	/* psurveyPara->bsslimit = 48; */
+ 	psurveyPara->scan_mode = pmlmepriv->scan_mode;
+ 
+ 	/* prepare ssid list */
+@@ -660,9 +657,6 @@ u8 rtw_addbareq_cmd(struct adapter *padapter, u8 tid, u8 *addr)
+ 
+ 	init_h2fwcmd_w_parm_no_rsp(ph2c, paddbareq_parm, _AddBAReq_CMD_);
+ 
+-	/* DBG_88E("rtw_addbareq_cmd, tid =%d\n", tid); */
+-
+-	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ 
+ exit:
+@@ -696,7 +690,6 @@ u8 rtw_dynamic_chk_wk_cmd(struct adapter *padapter)
+ 
+ 	init_h2fwcmd_w_parm_no_rsp(ph2c, pdrvextra_cmd_parm, _Set_Drv_Extra_CMD_);
+ 
+-	/* rtw_enqueue_cmd(pcmdpriv, ph2c); */
+ 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
+ exit:
+ 	return res;
+@@ -862,7 +855,6 @@ static void lps_ctrl_wk_hdl(struct adapter *padapter, u8 lps_ctrl_type)
+ 		rtw_hal_set_hwreg(padapter, HW_VAR_H2C_FW_JOINBSSRPT, (u8 *)(&mstatus));
+ 		break;
+ 	case LPS_CTRL_SPECIAL_PACKET:
+-		/* DBG_88E("LPS_CTRL_SPECIAL_PACKET\n"); */
+ 		pwrpriv->DelayLPSLastTimeStamp = jiffies;
+ 		LPS_Leave(padapter);
+ 		break;
+@@ -879,7 +871,6 @@ u8 rtw_lps_ctrl_wk_cmd(struct adapter *padapter, u8 lps_ctrl_type, u8 enqueue)
+ 	struct cmd_obj	*ph2c;
+ 	struct drvextra_cmd_parm	*pdrvextra_cmd_parm;
+ 	struct cmd_priv	*pcmdpriv = &padapter->cmdpriv;
+-	/* struct pwrctrl_priv *pwrctrlpriv = &padapter->pwrctrlpriv; */
+ 	u8	res = _SUCCESS;
+ 
+ 	if (enqueue) {
+@@ -1029,9 +1020,6 @@ static void rtw_chk_hi_queue_hdl(struct adapter *padapter)
+ 	if (psta_bmc->sleepq_len == 0) {
+ 		u8 val = 0;
+ 
+-		/* while ((rtw_read32(padapter, 0x414)&0x00ffff00)!= 0) */
+-		/* while ((rtw_read32(padapter, 0x414)&0x0000ff00)!= 0) */
+-
+ 		rtw_hal_get_hwreg(padapter, HW_VAR_CHK_HI_QUEUE_EMPTY, &val);
+ 
+ 		while (!val) {
 -- 
 2.19.2
 
