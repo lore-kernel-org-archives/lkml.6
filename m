@@ -2,128 +2,122 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E42C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121E9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF896213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:41:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tMQCgk3A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF896213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D2431214C1
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 20:42:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2431214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728498AbeLEUlc (ORCPT
+        id S1728542AbeLEUmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 15:41:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40046 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeLEUlc (ORCPT
+        Wed, 5 Dec 2018 15:42:37 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51082 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbeLEUmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 15:41:32 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so19622044lji.7;
-        Wed, 05 Dec 2018 12:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c1SYpFWful/LYR+Z8PGwojGR2UwW7UW11XztZ/uT98k=;
-        b=tMQCgk3Ab2XibSFGqMubh8H0ioN9b8ZeSmxft7q/iMZxwu4FrF6BqIjyRKZ1hQPt7P
-         DRfsdwDnLpuKwiirbQgumm5nX/JR5ODRWvybLoJwxfUVZJz+9KALrKCGV9DyP4KKQGKZ
-         OO+kU+bOnln2Wq4hcL0XGyABnjNcEf3UHtE6QQqRF8rMVYZjLVBxBKufWouCbjtWnRyM
-         5HpGFuG8ysg+0W/+a7Ct0R3A1sw2BSu1i2/JwcJsJTZpl7xQ1JG8nrFF91T9jStOHzj8
-         fF6dSYXBRl0XgadO1ZG433dbmYPVjPYbS9+r69vixXToYauLnC4CH83dQnfxLdCfPls8
-         kmaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c1SYpFWful/LYR+Z8PGwojGR2UwW7UW11XztZ/uT98k=;
-        b=IJgbTC1e+EBDz6o842rZvJUuz2onhrhKJDkhGZpRtzIsRpJAmNMyKbWgxngCcdaiCF
-         cfjYzGNk6xnJxNUtMas0J5NUEVtBTa/EM0p8K5aJLmpA2NW6mc+fV3BroOqCuvfetlx0
-         ffi6CuV5oXaMIiVjqzx9aKy3qe9gPFY+FGH4F9C6Pp57ifrFaIf1QmlO8DehXkAKwzme
-         kHHHdsV3JBrOas4/TWmkNv+5ulZLqKlRzpypweRxUE8udHOmGxUozHrbzHo74pc+nkU6
-         USx3+X4strLX5ew2k8owUiDsS7sMoSh75xFY73g8gmBlw/b9y1leK9goOoExR2wglOQ6
-         WiiA==
-X-Gm-Message-State: AA+aEWZgjHvzC6woNGxlJKDi8y4RrAWE5XNMIpesBBLs3B/bHF6AE17V
-        yDe4GoTDgnPCXiFpEIv5hWHPauIBH0UjeA==
-X-Google-Smtp-Source: AFSGD/UDZi8sZNzqDpbxw0ckYa9btaERcXoZPYmFSqbVoyA/hG/xEA41iVYdX120o9jSQNlQmaiMuQ==
-X-Received: by 2002:a2e:9f56:: with SMTP id v22-v6mr16214486ljk.114.1544042489623;
-        Wed, 05 Dec 2018 12:41:29 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:41e8:260c:942a:b736])
-        by smtp.googlemail.com with ESMTPSA id a18-v6sm4032412ljk.86.2018.12.05.12.41.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 12:41:28 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH] Bluetooth: btbcm: Add entry for BCM4329B1 UART bluetooth
-Date:   Wed,  5 Dec 2018 21:41:16 +0100
-Message-Id: <20181205204116.23815-1-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Dec 2018 15:42:36 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id B3618263BF7
+Received: by earth.universe (Postfix, from userid 1000)
+        id E3B313C08D6; Wed,  5 Dec 2018 21:36:34 +0100 (CET)
+Date:   Wed, 5 Dec 2018 21:36:34 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yuanjiang.yu@unisoc.com, broonie@kernel.org,
+        linus.walleij@linaro.org
+Subject: Re: [PATCH 3/6] power: supply: charger-manager: Fix incorrect return
+ value
+Message-ID: <20181205203634.f6u2yo7v3gonv2cm@earth.universe>
+References: <4ea9eaf85d780afb190cb45da2df8ff5fd86d449.1542362262.git.baolin.wang@linaro.org>
+ <edef76d756eeae2708f5a23f4d8f1f742fac76a7.1542362262.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4k54tp3efjptzhvg"
+Content-Disposition: inline
+In-Reply-To: <edef76d756eeae2708f5a23f4d8f1f742fac76a7.1542362262.git.baolin.wang@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the device ID for the BCM 4329 combo module used
-in the Samsung Aries based phones (Galaxy S and it's variants).
 
-```
-[   11.508980] Bluetooth: hci0: BCM: chip id 41
-[   11.518975] Bluetooth: hci0: BCM: features 0x04
-[   11.550132] Bluetooth: hci0: BCM4329B1
-[   11.557046] Bluetooth: hci0: BCM4329B1 (002.002.023) build 0000
-[   13.737071] Bluetooth: hci0: BCM4329B1 (002.002.023) build 0744
-```
+--4k54tp3efjptzhvg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Output from hciconfig
+Hi,
 
-```
-hci0:   Type: Primary  Bus: UART
-        BD Address: 43:29:B1:55:00:00  ACL MTU: 1021:6  SCO MTU: 64:1
-        UP RUNNING
-        RX bytes:1675 acl:0 sco:0 events:145 errors:0
-        TX bytes:20426 acl:0 sco:0 commands:146 errors:0
-        Features: 0xbf 0xfe 0x8f 0xfe 0x9b 0xff 0x79 0x83
-        Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
-        Link policy: RSWITCH SNIFF
-        Link mode: SLAVE ACCEPT
-        Name: 'aries'
-        Class: 0x000000
-        Service Classes: Unspecified
-        Device Class: Miscellaneous,
-        HCI Version: 2.1 (0x4)  Revision: 0x2e8
-        LMP Version: 2.1 (0x4)  Subversion: 0x4217
-        Manufacturer: Broadcom Corporation (15)
-```
+On Fri, Nov 16, 2018 at 07:01:10PM +0800, Baolin Wang wrote:
+> Fix incorrect return value.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- drivers/bluetooth/btbcm.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks, queued.
 
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index e3e4d929e74f..ba330096d2c6 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -330,6 +330,7 @@ static const struct bcm_subver_table bcm_uart_subver_table[] = {
- 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
- 	{ 0x6119, "BCM4345C0"	},	/* 003.001.025 */
- 	{ 0x230f, "BCM4356A2"	},	/* 001.003.015 */
-+	{ 0x4217, "BCM4329B1"	},	/* 002.002.023 */
- 	{ }
- };
- 
--- 
-2.17.1
+-- Sebastian
 
+>  drivers/power/supply/charger-manager.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/suppl=
+y/charger-manager.c
+> index bd6c450..a52bc77 100644
+> --- a/drivers/power/supply/charger-manager.c
+> +++ b/drivers/power/supply/charger-manager.c
+> @@ -1212,7 +1212,6 @@ static int charger_extcon_init(struct charger_manag=
+er *cm,
+>  	if (ret < 0) {
+>  		pr_info("Cannot register extcon_dev for %s(cable: %s)\n",
+>  			cable->extcon_name, cable->name);
+> -		ret =3D -EINVAL;
+>  	}
+> =20
+>  	return ret;
+> @@ -1633,7 +1632,7 @@ static int charger_manager_probe(struct platform_de=
+vice *pdev)
+> =20
+>  	if (IS_ERR(desc)) {
+>  		dev_err(&pdev->dev, "No platform data (desc) found\n");
+> -		return -ENODEV;
+> +		return PTR_ERR(desc);
+>  	}
+> =20
+>  	cm =3D devm_kzalloc(&pdev->dev, sizeof(*cm), GFP_KERNEL);
+> --=20
+> 1.7.9.5
+>=20
+
+--4k54tp3efjptzhvg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwINtIACgkQ2O7X88g7
++prn7g//SmzLat8wABBr5Pe64cyPtuFqBq29DMkaowLjuLJSdjI29GGpA6OKn5AO
+sHT26tZA88SMB23WDwPVpubaMwrQdATNvNQtcS1zjdXdyk8F6RcUBJ0cCeP5IAXc
+QlX211xAKByDHie1tjHbJk73cn32WvhpwBMbV8EO2V3r0NaSBE327C/YmdksTVXt
+t1KmdHHJm9B2e8vYGGCblI0+saVPZxcXLbxsOh12Eo/puqnrrzpmxm2N0ThdcMuR
+8aWZhA0kXgDmoiS3cYtMoUTDuBoO3BMY3fOmiJdawFQwNkF4OWiBrj+4XiCbzKRR
+6Ej/bPXLOJsqkR/iySFdrsZC+7+jjByDVRhL0X/fpcNVW9LMI7slYcjd1FmN5B/2
+Qm1AEloya8/aXvdqxd7C76zCmXTLcLWg2OQsvxyMNbrdqHm/YWtMRoRM2IVTyi0s
+9wcLwCpjPYLrbAlRaT8UIq07u/dj83uTzI4YwXZ5ScjKddA0I1oTjk7sn38JrzGm
+Zc+YSU/VsytB2bOHALpcDwZ3n9sNfxzgW9xOq/eYFtBDjr7Cd8Yhn2U9YXAfY4Nw
+6NyGgOKU/ZDs2iIpDktX4XwOet8Xc8rbLKKbI+zqzseJbLFodAYg5ixQOctk0z7u
+jKsJ7q1GuzVtOHB60hnVVfQdatUV0hSgR18+0psiQ2wXj/RJdzE=
+=3iHH
+-----END PGP SIGNATURE-----
+
+--4k54tp3efjptzhvg--
