@@ -2,235 +2,114 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8D6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F9D20878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F9D20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F35202081C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:29:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOWdvebb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35202081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeLEO2w (ORCPT
+        id S1727604AbeLEO3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:28:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55524 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEO2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:28:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F45080D;
-        Wed,  5 Dec 2018 06:28:51 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1ADC13F59C;
-        Wed,  5 Dec 2018 06:28:49 -0800 (PST)
-Subject: Re: [PATCH] drm/rockchip: Allow driver to be shutdown on reboot/kexec
-To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Guenter Roeck <linux@roeck-us.net>,
+        Wed, 5 Dec 2018 09:29:24 -0500
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:44927 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLEO3X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 09:29:23 -0500
+Received: by mail-pg1-f180.google.com with SMTP id t13so9079098pgr.11;
+        Wed, 05 Dec 2018 06:29:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:cc:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Hh30y7nFFzinjgoOoXb+ViLeqHlFOg1c1L2H1D4xVIo=;
+        b=mOWdvebbADLhGCT2hNxf4rKDez9W2tmuABzAP23tH9sCsX4kshjBhH+skHCEHuC5mS
+         GOLU6ISvXEVckAcXgNJWqFAYAarJAEqErSvylfjhPnP4wiUZLKbhz5INXc8SywjPHm30
+         zTKdc8hCuzXaAEsXIMNx29+RN0MXuoEp8QqNjqQQAdumlSWb5k3quRkK7W840n6ME3gv
+         e1wvi13LoFdSsHHuSTfZkFCt/j3KkwFkbdc5U0jrWRxRfESxLVKLEs+04ug/0IIU+vNT
+         iKxOZY6JUceeuCAmieQze3//qsfCezIM6z24YyvT69tWuRt0o62h5DLf+nygwwrIW4fU
+         e+ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Hh30y7nFFzinjgoOoXb+ViLeqHlFOg1c1L2H1D4xVIo=;
+        b=M8W3e6dwYsUPPTL6LK/iUE0w+w2sGpMtj518wTnzOnappdwAQeE1v/T5J7xf7dddhd
+         //wnsRlXcbHC7P8Cj8zHOG1VU5AdRdcH+J265zp/mK35hlWHOIrYbTeGcZ50JzII+VOr
+         dBkQuAMsIsPMiP7J35zwGneacBPLDmBfOp9VGk3YXAa48FiBkvHXozs/WUceooVmw/eC
+         2IdCA+SCZ1iD49TGIr+quvaBJByHvY8w0EWZZ1n3dMI3dpiBNBjxlKF7zmvRMRKlcU/2
+         +MM4a4FjWSRoR/7Dy+k8Xk402bL/6jLF7FOXl8b68FKiS1/ChCfUdVU7rQfVJL0eGl8E
+         IvRg==
+X-Gm-Message-State: AA+aEWaBd8rtw9TSK/YKUZbF0NUxeppD63AY1VAjgyRxFTiTlENjz9Jd
+        fvXrysMH9702r4xsXk7N6cvTr8JEA4M=
+X-Google-Smtp-Source: AFSGD/W33936He+IM0w2Mefk1IRhucRu0W/MvP4oA9Yz5/ymnpwflSadF3I89hX7XZ70Z67n/Ho6hA==
+X-Received: by 2002:a63:6704:: with SMTP id b4mr20760328pgc.100.1544020162519;
+        Wed, 05 Dec 2018 06:29:22 -0800 (PST)
+Received: from [0.0.0.0] (97.64.17.87.16clouds.com. [97.64.17.87])
+        by smtp.gmail.com with ESMTPSA id b7sm29049849pfa.52.2018.12.05.06.29.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 06:29:21 -0800 (PST)
+Subject: Re: Externally multiplexing interfaces on the same processor pins
+To:     Frederick Heinecke <fheinecke@ksu.edu>
+References: <BL0PR05MB4594E94CC5D74DC038E35EFBA90A0@BL0PR05MB4594.namprd05.prod.outlook.com>
+From:   Song Qiang <songqiang1304521@gmail.com>
+Cc:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-References: <20180805124807.18169-1-marc.zyngier@arm.com>
- <20181205030127.GA200921@google.com> <1693737.bVF0dcvACY@diego>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <dd1777ad-fe3e-a661-a27f-8ba418064b40@arm.com>
-Date:   Wed, 5 Dec 2018 14:28:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+Message-ID: <ca1c00e1-8104-b697-24dd-d43a47adcac1@gmail.com>
+Date:   Wed, 5 Dec 2018 22:29:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1693737.bVF0dcvACY@diego>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <BL0PR05MB4594E94CC5D74DC038E35EFBA90A0@BL0PR05MB4594.namprd05.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
 
-On 05/12/2018 14:11, Heiko Stübner wrote:
-> Hi Brian,
-> 
-> Am Mittwoch, 5. Dezember 2018, 04:01:34 CET schrieb Brian Norris:
->> + others
->>
->> Hi,
->>
->> On Sun, Aug 05, 2018 at 01:48:07PM +0100, Marc Zyngier wrote:
->>> Leaving the DRM driver enabled on reboot or kexec has the annoying
->>> effect of leaving the display generating transactions whilst the
->>> IOMMU has been shut down.
->>>
->>> In turn, the IOMMU driver (which shares its interrupt line with
->>> the VOP) starts warning either on shutdown or when entering the
->>> secondary kernel in the kexec case (nothing is expected on that
->>> front).
->>>
->>> A cheap way of ensuring that things are nicely shut down is to
->>> register a shutdown callback in the platform driver.
->>>
->>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>> ---
->>
->> This patch made it into 4.20-rc1 as well as -stable, and it has caused
->> regressions for me, on the Kevin and Scarlet [1] RK3399 platforms.
->>
->> On
->> shutdown/reboot, I see this:
->>
->> [   94.742559] WARNING: CPU: 4 PID: 2035 at
->> drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
->> ...
->> [   94.775904] CPU: 4 PID: 2035 Comm: reboot Tainted: G        W        
->> 4.20.0-rc5+ #83 [   94.784651] Hardware name: Google Scarlet (DT)
->> [   94.789611] pstate: 20000005 (nzCv daif -PAN -UAO)
->> [   94.794959] pc : drm_mode_config_cleanup+0x1c4/0x294
->> [   94.800500] lr : drm_mode_config_cleanup+0x108/0x294
->> ...
->> [   94.898683] Call trace:
->> [   94.901410]  drm_mode_config_cleanup+0x1c4/0x294
->> [   94.906565]  rockchip_drm_unbind+0x4c/0x8c
->> [   94.911138]  component_master_del+0x88/0xb8
->> [   94.915807]  rockchip_drm_platform_remove+0x2c/0x44
->> [   94.921243]  rockchip_drm_platform_shutdown+0x20/0x2c
->> [   94.926881]  platform_drv_shutdown+0x2c/0x38
->> [   94.931647]  device_shutdown+0x164/0x1b8
->> [   94.936016]  kernel_restart_prepare+0x40/0x48
->> [   94.940878]  kernel_restart+0x20/0x68
->> [   94.944964]  __se_sys_reboot+0x1ac/0x204
->> [   94.949331]  __arm64_sys_reboot+0x2c/0x38
->> [   94.953806]  el0_svc_common+0xa4/0xec
->> [   94.957891]  el0_svc_compat_handler+0x30/0x3c
->> [   94.962753]  el0_svc_compat+0x8/0x18
->> [   94.966740] ---[ end trace b9ba2e701f4fb233 ]---
->> [   95.255169] Memory manager not clean during takedown.
->> [   95.260824] WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950
->> drm_mm_takedown+0x34/0x44 ...
->> [   95.292314] CPU: 4 PID: 2035 Comm: reboot Tainted: G        W        
->> 4.20.0-rc5+ #83 [   95.301061] Hardware name: Google Scarlet (DT)
->> [   95.306020] pstate: 60000005 (nZCv daif -PAN -UAO)
->> [   95.311369] pc : drm_mm_takedown+0x34/0x44
->> [   95.315940] lr : drm_mm_takedown+0x34/0x44
->> ...
->> [   95.415857]  drm_mm_takedown+0x34/0x44
->> [   95.420042]  rockchip_drm_unbind+0x64/0x8c
->> [   95.424613]  component_master_del+0x88/0xb8
->> [   95.429283]  rockchip_drm_platform_remove+0x2c/0x44
->> [   95.434728]  rockchip_drm_platform_shutdown+0x20/0x2c
->> [   95.440360]  platform_drv_shutdown+0x2c/0x38
->> [   95.445127]  device_shutdown+0x164/0x1b8
->> [   95.449504]  kernel_restart_prepare+0x40/0x48
->> [   95.454358]  kernel_restart+0x20/0x68
->> [   95.458436]  __se_sys_reboot+0x1ac/0x204
->> [   95.462812]  __arm64_sys_reboot+0x2c/0x38
->> [   95.467287]  el0_svc_common+0xa4/0xec
->> [   95.471373]  el0_svc_compat_handler+0x30/0x3c
->> [   95.476235]  el0_svc_compat+0x8/0x18
->> [   95.480215] ---[ end trace b9ba2e701f4fb234 ]---
->>
->> It's especially bad on -stable kernels, where I believe the remove()
->> paths were even worse. This triggers a variety of OOPSes, and it's not
->> clear if those are simply because of backports (e.g., RK3399 did not
->> have support in 4.4.y, but our downstream has merged all sorts of
->> backports to make it work).
->>
->> Anyway, the above warnings occur on v4.20-rc, which I think is
->> justification enough for a revert.
-> 
-> That's strange. I remember testing quite a number of shutdown/reboot
-> cycles before applying that patch. And for good measure did the same
-> again right now.
-> 
-> - Kevin, with netboot firmware, booting into Debian+console only
-> - Bob, with stock firmware, booting into Debian+KDE Plasma
-> - Scarlet, with stock firmware, booting into Debian+KDE Plasma
-> 
-> With some random number of reboot and shutdowns on each I didn't
-> see any warnings at all.
+On 8/29/18 2:46 AM, Frederick Heinecke wrote:
+> Hello all,
+>
+> Does anybody here know how the kernel handles externally multiplexed peripherals and and what the proper way to setup the device tree for multiplexed peripherals? For example, if I have two interfaces (say USB and I2C) on the same pins, and I want both to be available and usable (not at the same time of course), does the kernel natively support this or is this something that needs to be written into the drivers for both interfaces? Could the kernel or a user-space process potentially attempt to access both at the same time?
+>
+>   Here's a poorly drawn example of what I'm asking about: https://i.snag.gy/SJQnH1.jpg
+>       
+>   Thank you,
+>   
+>   Fred Heinecke
+>      
 
-And I've been using this very patch for quite a while now.
+Hi Fred,
 
-Before suggesting a revert, I'd rather we understand what is going on,
-and why is the DRM layer crapping itself that badly for a legitimate
-operation (it is certainly better to have a shutdown than to let the VOP
-scan out crap once the IOMMU has been shut down). In short, don't shoot
-the messenger.
 
-> 
->> I plan to submit a revert which I hope can go to 4.20 as well as
->> -stable. I'd hope the remove()/shutdown() paths should be fixed before
->> this gets applied again, and that it does not get shipped to -stable
->> kernels.
-> 
-> But judging by the fact that the warning indicates that somthing is still
-> holding onto a framebuffer and a rmmod rockchipdrm is not possible
-> at runrtime for likely the same reason, I guess we really might be creating
-> a problem with that shutdown.
+Recently I've been looking at a devices just act as you described. A FT232H 
+adapter. It has several interfaces including i2c, spi, jtag, etc but share some 
+pins. As far as I know these kind of devices should fall in mfd subsystem and as 
+for mfd subsystem, it handles devices with functions enabled together. Doing 
+what we want would need dynamic device register and unregister support. I;m just 
+planning to write a more support driver for FT232H and I handle this situation 
+with another sysfs entry 'current_mode', through this, I select which mode this 
+device should be working on. I haven't found any facility in kernel supports this.
 
-That's a potential root cause.
+Would you share what you device is? I think we can help you insight the 
+corresponding driver and check how did the manufacture do with it.
 
-> 
-> Can you maybe give "drm/rockchip: shutdown drm subsystem on shutdown" [2]
-> a try? When the underlying issue of rebooting surfaced we had 2 competing 
-> solutions, so we at least don't reopen the issue, that people have problems
-> rebooting?
 
-kexec working is certainly something I need. And I'd like to understand
-why Brian sees this and nobody else.
+yours,
 
-Thanks,
+Song Qiang
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
