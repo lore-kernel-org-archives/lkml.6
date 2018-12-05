@@ -2,243 +2,592 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534D7C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AE6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04FB820892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:10:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04FB820892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E0BC208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 18:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0BC208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeLESKI (ORCPT
+        id S1728175AbeLESLO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:10:08 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:48166 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLESKI (ORCPT
+        Wed, 5 Dec 2018 13:11:14 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:43255 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLESLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:10:08 -0500
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wB5I8j0b025346
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 5 Dec 2018 10:08:45 -0800 (PST)
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 5 Dec 2018 10:08:44 -0800
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- B377C2E0930; Wed,  5 Dec 2018 13:08:43 -0500 (EST)
-Date:   Wed, 5 Dec 2018 13:08:43 -0500
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Steve Twiss <stwiss.opensource@diasemi.com>
-CC:     Lee Jones <lee.jones@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Cory Maccarrone <darkstar6262@gmail.com>,
-        David Dajun Chen <david.chen@diasemi.com>,
-        Dong Aisheng <dong.aisheng@linaro.org>,
-        Eric Miao <eric.miao@marvell.com>,
-        Graeme Gregory <gg@slimlogic.co.uk>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        Jin Park <jinyoungp@nvidia.com>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        Mattias Nilsson <mattias.i.nilsson@stericsson.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Mike Rapoport <mike@compulab.co.il>,
-        Tony Lindgren <tony@atomide.com>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: Re: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-Message-ID: <20181205180843.GD23156@windriver.com>
-References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
- <6ED8E3B22081A4459DAC7699F3695FB7021C509AD4@SW-EX-MBX02.diasemi.com>
+        Wed, 5 Dec 2018 13:11:14 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUbdd-0004p1-7O; Wed, 05 Dec 2018 11:11:09 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUbda-0005mk-Hq; Wed, 05 Dec 2018 11:11:08 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian@brauner.io>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org
+References: <20181205092203.14105-1-christian@brauner.io>
+Date:   Wed, 05 Dec 2018 12:10:55 -0600
+In-Reply-To: <20181205092203.14105-1-christian@brauner.io> (Christian
+        Brauner's message of "Wed, 5 Dec 2018 10:22:03 +0100")
+Message-ID: <87bm5zondc.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6ED8E3B22081A4459DAC7699F3695FB7021C509AD4@SW-EX-MBX02.diasemi.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-XM-SPF: eid=1gUbda-0005mk-Hq;;;mid=<87bm5zondc.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+cbZd5/RaZ+U2YZSA6iGfAByFEi1FOM5s=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v3] signal: add procfd_send_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[RE: [PATCH v2 00/22] mfd: demodularization of non-modular drivers] On 05/12/2018 (Wed 12:01) Steve Twiss wrote:
+Christian Brauner <christian@brauner.io> writes:
 
-> Hi Paul,
-> 
-> On 03 December 2018 04:23, Paul Gortmaker wrote:
-> 
-> > Subject: [PATCH v2 00/22] mfd: demodularization of non-modular drivers
-> > 
-> > [v1 --> v2: add some more commits as requested by Lee (MFD maintainer),
-> >  update the 00/NN text; re-do build and link testing on new linux-next. ]
-> > 
-> > This group of MFD drivers are all controlled by "bool" Kconfig settings,
-> > but contain various amounts of largely pointless uses of infrastructure
-> > related to modular operations, even though they can't be built modular.
-> > 
-> > We can easily remove/replace all of it.  We are trying to make driver
-> > code consistent with the Makefiles/Kconfigs that control them. 
-> 
-> For the DA9052 and DA9055, changes:
-> 
-> -  drivers/mfd/da9052-core.c         | 11 -----------
-> -  drivers/mfd/da9052-i2c.c          | 22 ++-------------------
-> -  drivers/mfd/da9052-irq.c          |  1 -
-> -  drivers/mfd/da9052-spi.c          | 22 ++-------------------
-> -  drivers/mfd/da9055-core.c         | 13 ++-----------
-> -  drivers/mfd/da9055-i2c.c          | 24 ++---------------------
-> 
-> The responsibility can fall back to Dialog for these changes. We will
-> submit Kconfig patches for these and make them explicitly non-modular.
-> This will remove the ambiguity caused by the Kconfig bool options.
+> The kill() syscall operates on process identifiers (pid). After a process
+> has exited its pid can be reused by another process. If a caller sends a
+> signal to a reused pid it will end up signaling the wrong process. This
+> issue has often surfaced and there has been a push [1] to address this
+> problem.
+>
+> This patch uses file descriptors (fd) from proc/<pid> as stable handles on
+> struct pid. Even if a pid is recycled the handle will not change. The fd
+> can be used to send signals to the process it refers to.
+> Thus, the new syscall procfd_send_signal() is introduced to solve this
+> problem. Instead of pids it operates on process fds (procfd).
+>
+> /* prototype and argument /*
+> long procfd_send_signal(int fd, int sig, siginfo_t *info, unsigned int flags);
+>
+> In addition to the procfd and signal argument it takes an additional
+> siginfo_t and flags argument. If the siginfo_t argument is NULL then
+> procfd_send_signal() behaves like kill(). If it is not NULL
+> procfd_send_signal() behaves like rt_sigqueueinfo().
+> The flags argument is added to allow for future extensions of this syscall.
+> It currently needs to be passed as 0. Failing to do so will cause EINVAL.
+>
+> /* procfd_send_signal() replaces multiple pid-based syscalls */
+> The procfd_send_signal() syscall currently takes on the job of the
+> following syscalls that operate on pids:
+> - kill(2)
+> - rt_sigqueueinfo(2)
+> The syscall is defined in such a way that it can also operate on thread fds
+> instead of process fds. In a future patchset I will extend it to operate on
+> procfds from /proc/<pid>/task/<tid> at which point it will additionally
+> take on the job of:
+> - tgkill(2)
+> - rt_tgsigqueueinfo(2)
+> Right now this is intentionally left out to keep this patchset as simple as
+> possible (cf. [4]). If a procfd of /proc/<pid>/task/<tid> is passed
+> EOPNOTSUPP will be returned to give userspace a way to detect when I add
+> support for such procfds {cf. [10]).
+>
+> /* naming */
+> The name procfd_send_signal() was chosen to reflect the fact that it takes
+> on the job of multiple syscalls. It is intentional that the name is not
+> reminiscent of neither kill(2) nor rt_sigqueueinfo(2). Not the fomer
+> because it might imply that procfd_send_signal() is only a replacement for
+> kill(2) and not the latter because it is a hazzle to remember the correct
+> spelling (especially for non-native speakers) and because it is not
+> descriptive enough of what the syscall actually does. The name
+> "procfd_send_signal" makes it very clear that its job is to send signals.
+>
+> /* O_PATH file descriptors */
+> procfds opened as O_PATH fds cannot be used to send signals to a process
+> (cf. [2]). Signaling processes through procfds is the equivalent of writing
+> to a file. Thus, this is not an operation that operates "purely at the
+> file descriptor level" as required by the open(2) manpage.
+>
+> /* zombies */
+> Zombies can be signaled just as any other process. No special error will be
+> reported since a zombie state is an unreliable state (cf. [3]).
+>
+> /* cross-namespace signals */
+> The patch currently enforces that the signaler and signalee either are in
+> the same pid namespace or that the signaler's pid namespace is an ancestor
+> of the signalee's pid namespace. This is done for the sake of simplicity
+> and because it is unclear to what values certain members of struct
+> siginfo_t would need to be set to (cf. [5], [6]).
+>
+> /* compat syscalls */
+> It became clear that we would like to avoid adding compat syscalls (cf.
+> [7]). The compat syscall handling is now done in kernel/signal.c itself by
+> adding __copy_siginfo_from_user_generic() which lets us avoid compat
+> syscalls (cf. [8]).
+> With upcoming rework for syscall handling things might improve even further
+> (cf. [11]).
+> This patch was tested on x64 and x86.
+>
+> /* userspace usage */
+> An asciinema recording for the basic functionality can be found under [9].
+> With this patch a process can be killed via:
+>
+>  #define _GNU_SOURCE
+>  #include <errno.h>
+>  #include <fcntl.h>
+>  #include <signal.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/stat.h>
+>  #include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <unistd.h>
+>
+>  static inline int do_procfd_send_signal(int procfd, int sig, siginfo_t *info,
+>                                          unsigned int flags)
+>  {
+>  #ifdef __NR_procfd_send_signal
+>          return syscall(__NR_procfd_send_signal, procfd, sig, info, flags);
+>  #else
+>          return -ENOSYS;
+>  #endif
+>  }
+>
+>  int main(int argc, char *argv[])
+>  {
+>          int fd, ret, saved_errno, sig;
+>
+>          if (argc < 3)
+>                  exit(EXIT_FAILURE);
+>
+>          fd = open(argv[1], O_DIRECTORY | O_CLOEXEC);
+>          if (fd < 0) {
+>                  printf("%s - Failed to open \"%s\"\n", strerror(errno), argv[1]);
+>                  exit(EXIT_FAILURE);
+>          }
+>
+>          sig = atoi(argv[2]);
+>
+>          printf("Sending signal %d to process %s\n", sig, argv[1]);
+>          ret = do_procfd_send_signal(fd, sig, NULL, 0);
+>
+>          saved_errno = errno;
+>          close(fd);
+>          errno = saved_errno;
+>
+>          if (ret < 0) {
+>                  printf("%s - Failed to send signal %d to process %s\n",
+>                         strerror(errno), sig, argv[1]);
+>                  exit(EXIT_FAILURE);
+>          }
+>
+>          exit(EXIT_SUCCESS);
+>  }
+>
+> [1]:  https://lkml.org/lkml/2018/11/18/130
+> [2]:  https://lore.kernel.org/lkml/874lbtjvtd.fsf@oldenburg2.str.redhat.com/
+> [3]:  https://lore.kernel.org/lkml/20181204132604.aspfupwjgjx6fhva@brauner.io/
+> [4]:  https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
+> [5]:  https://lore.kernel.org/lkml/20181121213946.GA10795@mail.hallyn.com/
+> [6]:  https://lore.kernel.org/lkml/20181120103111.etlqp7zop34v6nv4@brauner.io/
+> [7]:  https://lore.kernel.org/lkml/36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net/
+> [8]:  https://lore.kernel.org/lkml/87tvjxp8pc.fsf@xmission.com/
+> [9]:  https://asciinema.org/a/X1J8eGhe3vCfBE2b9TXtTaSJ7
+> [10]: https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
+> [11]: https://lore.kernel.org/lkml/F53D6D38-3521-4C20-9034-5AF447DF62FF@amacapital.net/
+>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Andy Lutomirsky <luto@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Florian Weimer <fweimer@redhat.com>
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> ---
+> Changelog:
+> v3:
+> - add __copy_siginfo_from_user_generic() to avoid adding compat syscalls
+> - s/procfd_signal/procfd_send_signal/g
+> - change type of flags argument from int to unsigned int
+> - add comment about what happens to zombies
+> - add proc_is_tid_procfd()
+> - return EOPNOTSUPP when /proc/<pid>/task/<tid> fd is passed so userspace
+>   has a way of knowing that tidfds are not supported currently.
+> v2:
+> - define __NR_procfd_signal in unistd.h
+> - wire up compat syscall
+> - s/proc_is_procfd/proc_is_tgid_procfd/g
+> - provide stubs when CONFIG_PROC_FS=n
+> - move proc_pid() to linux/proc_fs.h header
+> - use proc_pid() to grab struct pid from /proc/<pid> fd
+> v1:
+> - patch introduced
+> ---
+>  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  fs/proc/base.c                         |  17 +++-
+>  fs/proc/internal.h                     |   5 -
+>  include/linux/proc_fs.h                |  18 ++++
+>  include/linux/syscalls.h               |   3 +
+>  include/uapi/asm-generic/unistd.h      |   4 +-
+>  kernel/signal.c                        | 127 +++++++++++++++++++++++--
+>  8 files changed, 163 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 3cf7b533b3d1..9ab0477d6dc3 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -398,3 +398,4 @@
+>  384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+>  385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+>  386	i386	rseq			sys_rseq			__ia32_sys_rseq
+> +387	i386	procfd_send_signal	sys_procfd_send_signal		__ia32_sys_procfd_send_signal
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index f0b1709a5ffb..6d22b1130ed0 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -343,6 +343,7 @@
+>  332	common	statx			__x64_sys_statx
+>  333	common	io_pgetevents		__x64_sys_io_pgetevents
+>  334	common	rseq			__x64_sys_rseq
+> +335	common	procfd_send_signal	__x64_sys_procfd_send_signal
+>  
+>  #
+>  # x32-specific system call numbers start at 512 to avoid cache impact
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ce3465479447..906647d51f6d 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -716,7 +716,10 @@ static int proc_pid_permission(struct inode *inode, int mask)
+>  	return generic_permission(inode, mask);
+>  }
+>  
+> -
+> +struct pid *proc_pid(const struct inode *inode)
+> +{
+> +	return PROC_I(inode)->pid;
+> +}
+>  
+>  static const struct inode_operations proc_def_inode_operations = {
+>  	.setattr	= proc_setattr,
+> @@ -3038,6 +3041,12 @@ static const struct file_operations proc_tgid_base_operations = {
+>  	.llseek		= generic_file_llseek,
+>  };
+>  
+> +bool proc_is_tgid_procfd(const struct file *file)
+> +{
+> +	return d_is_dir(file->f_path.dentry) &&
+> +	       (file->f_op == &proc_tgid_base_operations);
+> +}
+> +
+>  static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+>  {
+>  	return proc_pident_lookup(dir, dentry,
+> @@ -3422,6 +3431,12 @@ static const struct file_operations proc_tid_base_operations = {
+>  	.llseek		= generic_file_llseek,
+>  };
+>  
+> +bool proc_is_tid_procfd(const struct file *file)
+> +{
+> +	return d_is_dir(file->f_path.dentry) &&
+> +	       (file->f_op == &proc_tid_base_operations);
+> +}
+> +
+>  static const struct inode_operations proc_tid_base_inode_operations = {
+>  	.lookup		= proc_tid_base_lookup,
+>  	.getattr	= pid_getattr,
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 5185d7f6a51e..eb69afba83f3 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -113,11 +113,6 @@ static inline void *__PDE_DATA(const struct inode *inode)
+>  	return PDE(inode)->data;
+>  }
+>  
+> -static inline struct pid *proc_pid(const struct inode *inode)
+> -{
+> -	return PROC_I(inode)->pid;
+> -}
+> -
+>  static inline struct task_struct *get_proc_task(const struct inode *inode)
+>  {
+>  	return get_pid_task(proc_pid(inode), PIDTYPE_PID);
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> index d0e1f1522a78..ebc0e0ca5256 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -73,6 +73,9 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+>  						    int (*show)(struct seq_file *, void *),
+>  						    proc_write_t write,
+>  						    void *data);
+> +extern bool proc_is_tgid_procfd(const struct file *file);
+> +extern bool proc_is_tid_procfd(const struct file *file);
+> +extern struct pid *proc_pid(const struct inode *inode);
+>  
+>  #else /* CONFIG_PROC_FS */
+>  
+> @@ -114,6 +117,21 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
+>  #define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
+>  #define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
+>  
+> +static inline bool proc_is_tgid_procfd(const struct file *file)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline bool proc_is_tid_procfd(const struct file *file)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline struct pid *proc_pid(const struct inode *inode)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif /* CONFIG_PROC_FS */
+>  
+>  struct net;
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 2ac3d13a915b..b3a02c6780d0 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -907,6 +907,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+>  			  unsigned mask, struct statx __user *buffer);
+>  asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+>  			 int flags, uint32_t sig);
+> +asmlinkage long sys_procfd_send_signal(int procfd, int sig,
+> +				       siginfo_t __user *info,
+> +				       unsigned int flags);
+>  
+>  /*
+>   * Architecture-specific system calls
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index 538546edbfbd..b409ee26f8e9 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
+>  __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+>  #define __NR_rseq 293
+>  __SYSCALL(__NR_rseq, sys_rseq)
+> +#define __NR_procfd_send_signal 294
+> +__SYSCALL(__NR_procfd_send_signal, sys_procfd_send_signal)
+>  
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 294
+> +#define __NR_syscalls 295
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 9a32bc2088c9..79a7e0396b0f 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -19,7 +19,9 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/sched/cputime.h>
+> +#include <linux/file.h>
+>  #include <linux/fs.h>
+> +#include <linux/proc_fs.h>
+>  #include <linux/tty.h>
+>  #include <linux/binfmts.h>
+>  #include <linux/coredump.h>
+> @@ -3286,6 +3288,16 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
+>  }
+>  #endif
+>  
+> +static inline void prepare_kill_siginfo(int sig, struct kernel_siginfo *info)
+> +{
+> +	clear_siginfo(info);
+> +	info->si_signo = sig;
+> +	info->si_errno = 0;
+> +	info->si_code = SI_USER;
+> +	info->si_pid = task_tgid_vnr(current);
+> +	info->si_uid = from_kuid_munged(current_user_ns(), current_uid());
+> +}
+> +
+>  /**
+>   *  sys_kill - send a signal to a process
+>   *  @pid: the PID of the process
+> @@ -3295,16 +3307,119 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
+>  {
+>  	struct kernel_siginfo info;
+>  
+> -	clear_siginfo(&info);
+> -	info.si_signo = sig;
+> -	info.si_errno = 0;
+> -	info.si_code = SI_USER;
+> -	info.si_pid = task_tgid_vnr(current);
+> -	info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
+> +	prepare_kill_siginfo(sig, &info);
+>  
+>  	return kill_something_info(sig, &info, pid);
+>  }
+>  
+> +/*
+> + * Verify that the signaler and signalee either are in the same pid namespace
+> + * or that the signaler's pid namespace is an ancestor of the signalee's pid
+> + * namespace.
+> + */
+> +static bool may_signal_procfd(struct pid *pid)
+> +{
+> +	struct pid_namespace *active = task_active_pid_ns(current);
+> +	struct pid_namespace *p = ns_of_pid(pid);
+> +
+> +	for (;;) {
+> +		if (!p)
+> +			return false;
+> +		if (p == active)
+> +			break;
+> +		p = p->parent;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static int __copy_siginfo_from_user_generic(int signo, kernel_siginfo_t *kinfo,
+> +					    siginfo_t *info)
+Ugh.  _generic is a poor fit here.  In the kernel _generic tends to be
+for the default helper function for a set of operations.
 
-[typo noted: non-modular ---> modular]
+A suffix like _any or anything that implemies you can be a compat or not
+a compat syscall would be better.
 
-Great, I'll look forward to seeing those patches to convert  these
-drivers to modular in the near future, and I'll not re-send mine.
+> +{
+> +#ifdef CONFIG_COMPAT
+> +	/*
+> +	 * Avoid hooking up compat syscalls and instead handle necessary
+> +	 * conversions here.
+> +	 */
+> +	if (in_compat_syscall())
+> +		return __copy_siginfo_from_user32(
+> +			signo, kinfo, (struct compat_siginfo __user *)info);
+> +#endif
+> +	return __copy_siginfo_from_user(signo, kinfo, info);
+> +}
 
-Thanks,
-P.
---
+Let me be very clear.  __copy_siginfo_from_user exists because of a bug
+in the original implementation of rt_sigqueueinfo.  It should not gain
+any new callers.  It only exists because there is userspace that is
+confirmed to care.
+
+If you must take a separate signal parameter please verify
+"signo == si_signo" and fail if they do not match.
+
+> +/**
+> + *  sys_procfd_send_signal - send a signal to a process through a process file
+> + *                           descriptor
+> + *  @procfd: the file descriptor of the process
+
+There is a subtle naming and semantic issue here that needs to be
+addressed.
+- Are you only going to support processes?
+  If so procfd is fine, otherwise another name needs to be chosen.
+
+- Do you want to embed what will get signaled into the file descriptor?
+
+- Are you about pids?  In which case a pid type needs to be added to the
+  parameters so you can send to sessions, pgrps, processes, and threads.
+
+This is important to get right so that people can know how to use this
+system call.
 
 
-> 
-> Regards,
-> Steve
-> 
-> > This
-> > means not using modular functions/macros for drivers that can never be
-> > built as a module.  Some of the downfalls this oversight leads to are:
-> > 
-> >  (1) it is easy to accidentally write unused module_exit and remove code
-> >  (2) it can be misleading when reading the source, thinking it can be
-> >      modular when the Makefile and/or Kconfig prohibit it
-> >  (3) it requires the include of the module.h header file which in turn
-> >      includes nearly everything else, thus adding a lot of CPP overhead.
-> >  (4) it gets copied/replicated into other drivers and spreads quickly.
-> > 
-> > What we see in current drivers falls into one or more of the following
-> > categories:
-> > 
-> > 1) include of <linux/module.h> when it simply isn't needed
-> > 
-> > 2) Use of MODULE_LICENSE, MODULE_DEVICE_TABLE,  MODULE_AUTHOR etc.
-> >    macros that are no-ops for non-modular drivers.
-> > 
-> > 3) Creation of a module_exit() function that will be compiled and
-> >    linked in but never actually called for non-modular drivers.
-> > 
-> > 4) Addition of a platform_driver ".remove" function that is bound
-> >    into the struct but will never be called for non-module use cases.
-> > 
-> > Solution to #1 --> #3 is simple ; we just delete the related code.
-> > 
-> > The solution to #4 is similar - we delete the ".remove" function and
-> > the binding into the platform_driver struct.  However, since the same
-> > ".remove" function could also be triggered by an "unbind" (such as for
-> > pass-through of a device to a guest instance)  - so we also explicitly
-> > disable any unbind for the driver.
-> > 
-> > The unbind mask allows us to ensure we will see if there was some odd
-> > corner case out there that was relying on it.  Typically it would be a
-> > multi-port ethernet card passing a port through to a guest, so a
-> > sensible use case in MFD drivers seems highly unlikely.  This same
-> > solution has already been used in multiple other mainline subsystems.
-> > 
-> > Build testing was done on drivers/mfd for allyesconfig on x86_64, ARM
-> > and ARM-64 on a recent linux-next checkout.
-> > 
-> > Paul.
-> > 
-> > ---
-> > 
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Cory Maccarrone <darkstar6262@gmail.com>
-> > Cc: David Dajun Chen <dchen@diasemi.com>
-> > Cc: Dong Aisheng <dong.aisheng@linaro.org>
-> > Cc: Eric Miao <eric.miao@marvell.com>
-> > Cc: Graeme Gregory <gg@slimlogic.co.uk>
-> > Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> > Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
-> > Cc: Jin Park <jinyoungp@nvidia.com>
-> > Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-> > Cc: Laxman Dewangan <ldewangan@nvidia.com>
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > Cc: Mattias Nilsson <mattias.i.nilsson@stericsson.com>
-> > Cc: Michael Hennerich <michael.hennerich@analog.com>
-> > Cc: Mike Rapoport <mike@compulab.co.il>
-> > Cc: Tony Lindgren <tony@atomide.com>
-> > Cc: Venu Byravarasu <vbyravarasu@nvidia.com>
-> > Cc: linux-omap@vger.kernel.org
-> > Cc: patches@opensource.cirrus.com
-> > Cc: Support Opensource <support.opensource@diasemi.com>
-> > 
-> > 
-> > Paul Gortmaker (22):
-> >   mfd: aat2870-core: Make it explicitly non-modular
-> >   mfd: adp5520: Make it explicitly non-modular
-> >   mfd: as3711: Make it explicitly non-modular
-> >   mfd: da903x: Make it explicitly non-modular
-> >   mfd: da9052-*: Make it explicitly non-modular
-> >   mfd: da9055-i2c: Make it explicitly non-modular
-> >   mfd: da9055-core: make it explicitly non-modular
-> >   mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
-> >   mfd: htc-i2cpld: Make it explicitly non-modular
-> >   mfd: max8925-core: drop unused MODULE_ tags from non-modular code
-> >   mfd: rc5t583: Make it explicitly non-modular
-> >   mfd: sta2x11: drop unused MODULE_ tags from non-modular code
-> >   mfd: syscon: Make it explicitly non-modular
-> >   mfd: tps65090: Make it explicitly non-modular
-> >   mfd: tps65910: Make it explicitly non-modular
-> >   mfd: tps80031: Make it explicitly non-modular
-> >   mfd: wm831x-spi: Make it explicitly non-modular
-> >   mfd: wm831x-i2c: Make it explicitly non-modular
-> >   mfd: wm831x-core: drop unused MODULE_ tags from non-modular code
-> >   mfd: wm8350-i2c: Make it explicitly non-modular
-> >   mfd: wm8350-core: drop unused MODULE_ tags from non-modular code
-> >   mfd: wm8400-core: Make it explicitly non-modular
-> > 
-> >  drivers/mfd/aat2870-core.c        | 40 +++------------------------------------
-> >  drivers/mfd/adp5520.c             | 30 +++++++----------------------
-> >  drivers/mfd/as3711.c              | 14 --------------
-> >  drivers/mfd/da903x.c              | 26 +++----------------------
-> >  drivers/mfd/da9052-core.c         | 11 -----------
-> >  drivers/mfd/da9052-i2c.c          | 22 ++-------------------
-> >  drivers/mfd/da9052-irq.c          |  1 -
-> >  drivers/mfd/da9052-spi.c          | 22 ++-------------------
-> >  drivers/mfd/da9055-core.c         | 13 ++-----------
-> >  drivers/mfd/da9055-i2c.c          | 24 ++---------------------
-> >  drivers/mfd/db8500-prcmu.c        | 10 ++++------
-> >  drivers/mfd/htc-i2cpld.c          | 18 +-----------------
-> >  drivers/mfd/max8925-core.c        |  7 +------
-> >  drivers/mfd/rc5t583.c             | 14 --------------
-> >  drivers/mfd/sta2x11-mfd.c         | 10 ++++------
-> >  drivers/mfd/syscon.c              | 12 +-----------
-> >  drivers/mfd/tps65090.c            | 30 +++++------------------------
-> >  drivers/mfd/tps65910.c            | 18 +-----------------
-> >  drivers/mfd/tps80031.c            | 37 ++----------------------------------
-> >  drivers/mfd/wm831x-core.c         |  7 ++-----
-> >  drivers/mfd/wm831x-i2c.c          | 20 ++------------------
-> >  drivers/mfd/wm831x-spi.c          | 24 ++---------------------
-> >  drivers/mfd/wm8350-core.c         |  6 ++----
-> >  drivers/mfd/wm8350-i2c.c          | 24 +----------------------
-> >  drivers/mfd/wm8400-core.c         | 18 +++---------------
-> >  include/linux/mfd/da9052/da9052.h |  1 -
-> >  26 files changed, 52 insertions(+), 407 deletions(-)
-> > 
-> > --
-> > 2.7.4
-> 
+> + *  @sig:    signal to be sent
+> + *  @info:   the signal info
+> + *  @flags:  future flags to be passed
+> + *
+> + *  Return: 0 on success, negative errno on failure
+> + */
+> +SYSCALL_DEFINE4(procfd_send_signal, int, procfd, int, sig,
+> +		siginfo_t __user *, info, unsigned int, flags)
+> +{
+> +	int ret;
+> +	struct fd f;
+> +	struct pid *pid;
+> +	kernel_siginfo_t kinfo;
+> +
+> +	/* Enforce flags be set to 0 until we add an extension. */
+> +	if (flags)
+> +		return -EINVAL;
+> +
+> +	f = fdget_raw(procfd);
+> +	if (!f.file)
+> +		return -EBADF;
+> +
+> +	/*
+> +	 * Give userspace a way to detect whether /proc/<pid>/task/<tid> fds
+> +	 * are supported.
+> +	 */
+> +	ret = -EOPNOTSUPP;
+> +	if (proc_is_tid_procfd(f.file))
+> +		goto err;
+
+	-EBADF is the proper error code.
+
+> +	/* Is this a procfd? */
+> +	ret = -EINVAL;
+> +	if (!proc_is_tgid_procfd(f.file))
+> +		goto err;
+
+	-EBADF is the proper error code.
+
+> +	/* Without CONFIG_PROC_FS proc_pid() returns NULL. */
+> +	pid = proc_pid(file_inode(f.file));
+> +	if (!pid)
+> +		goto err;
+
+Perhaps you want to fold the proc_pid into the proc_is_tgid_procfd call.
+
+> +	if (!may_signal_procfd(pid))
+> +		goto err;
+> +
+> +	if (info) {
+> +		ret = __copy_siginfo_from_user_generic(sig, &kinfo, info);
+> +		if (unlikely(ret))
+> +			goto err;
+> +
+> +		/*
+> +		 * Not even root can pretend to send signals from the kernel.
+> +		 * Nor can they impersonate a kill()/tgkill(), which adds
+> +		 * source info.
+> +		 */
+> +		ret = -EPERM;
+> +		if ((kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL) &&
+> +		    (task_pid(current) != pid))
+> +			goto err;
+> +	} else {
+> +		prepare_kill_siginfo(sig, &kinfo);
+> +	}
+
+I think I would just make the section above say:
+
+	ret = copy_siginfo_from_user_any(
+> +
+> +	ret = kill_pid_info(sig, &kinfo, pid);
+> +
+> +err:
+> +	fdput(f);
+> +	return ret;
+> +}
+> +
+>  static int
+>  do_send_specific(pid_t tgid, pid_t pid, int sig, struct kernel_siginfo *info)
+>  {
