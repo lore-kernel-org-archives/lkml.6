@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3161C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49720C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B642220850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D4F52084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAfT1TWo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B642220850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xS9Hx3N4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4F52084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbeLEJlI (ORCPT
+        id S1728184AbeLEJlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:41:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45544 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:41:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728834AbeLEJlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:05 -0500
+        id S1728847AbeLEJlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:41:08 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 089EC2084C;
-        Wed,  5 Dec 2018 09:41:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D47B20851;
+        Wed,  5 Dec 2018 09:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002864;
-        bh=vn2W9lsmO56lv8OhRZFUgZHvqg3PUeAnZaPha3Y6jY8=;
+        s=default; t=1544002867;
+        bh=bY6Ylx66IlaBG8SCByZRLnVhgpCmvt378GrqAosWWeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LAfT1TWox78mxZAZq1NvCgTEwb1CUb77ZMQO834EjZfDNCI8LSXy0DvrYgVJkSzqs
-         YQi76qki/i5g+IYANyRlYWNirEnf8C6Vf+m4+5/9aOAGj2IuDo09nmesLAGO+nlVlx
-         A9ClYlIXRCir7lwEiI8ti8fx4dsdKqRBLYCrkNns=
+        b=xS9Hx3N45Rp9NfkIikYISY3tPDxC2LXqYUPXbLYCvE5PrR7BckylEOQNaOs4iiv7p
+         uvPyaqxHacGurlGWw32HK2tnRMzoH35TgJFdDRfyJrIPOpFXBjfwvBIfJDEiO5F7yM
+         V5oBhyLVb+olg+4XPW8IvslAPiDxJnBLFamn0Z9s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "kiran.modukuri" <kiran.modukuri@gmail.com>,
+Cc:     Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
+        Shantanu Goel <sgoel01@yahoo.com>,
+        Daniel Axtens <dja@axtens.net>,
         David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 092/123] fscache: Fix race in fscache_op_complete() due to split atomic_sub & read
-Date:   Wed,  5 Dec 2018 04:35:24 -0500
-Message-Id: <20181205093555.5386-92-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 093/123] cachefiles: Fix page leak in cachefiles_read_backing_file while vmscan is active
+Date:   Wed,  5 Dec 2018 04:35:25 -0500
+Message-Id: <20181205093555.5386-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -52,73 +54,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "kiran.modukuri" <kiran.modukuri@gmail.com>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-[ Upstream commit 3f2b7b9035107d6096ea438ea3d97dcf0481b6d2 ]
+[ Upstream commit 9a24ce5b66f9c8190d63b15f4473600db4935f1f ]
 
-The code in fscache_retrieval_complete is using atomic_sub followed by an
-atomic_read:
+[Description]
 
-        atomic_sub(n_pages, &op->n_pages);
-        if (atomic_read(&op->n_pages) <= 0)
-                fscache_op_complete(&op->op, true);
+In a heavily loaded system where the system pagecache is nearing memory
+limits and fscache is enabled, pages can be leaked by fscache while trying
+read pages from cachefiles backend.  This can happen because two
+applications can be reading same page from a single mount, two threads can
+be trying to read the backing page at same time.  This results in one of
+the threads finding that a page for the backing file or netfs file is
+already in the radix tree.  During the error handling cachefiles does not
+clean up the reference on backing page, leading to page leak.
 
-This causes two threads doing a decrement of n_pages to race with each
-other seeing the op->refcount 0 at same time - and they end up calling
-fscache_op_complete() in both the threads leading to an assertion failure.
+[Fix]
+The fix is straightforward, to decrement the reference when error is
+encountered.
 
-Fix this by using atomic_sub_return_relaxed() instead of two calls.  Note
-that I'm using 'relaxed' rather than, say, 'release' as there aren't
-multiple variables that appear to need ordering across the release.
+  [dhowells: Note that I've removed the clearance and put of newpage as
+   they aren't attested in the commit message and don't appear to actually
+   achieve anything since a new page is only allocated is newpage!=NULL and
+   any residual new page is cleared before returning.]
 
-The oops looks something like:
+[Testing]
+I have tested the fix using following method for 12+ hrs.
 
-FS-Cache: Assertion failed
-FS-Cache: 0 > 0 is false
-...
-kernel BUG at /usr/src/linux-4.4.0/fs/fscache/operation.c:449!
-...
-Workqueue: fscache_operation fscache_op_work_func [fscache]
-...
-RIP: 0010:[<ffffffffc037eacd>] fscache_op_complete+0x10d/0x180 [fscache]
-...
-Call Trace:
- [<ffffffffc1464cf9>] cachefiles_read_copier+0x3a9/0x410 [cachefiles]
- [<ffffffffc037e272>] fscache_op_work_func+0x22/0x50 [fscache]
- [<ffffffff81096da0>] process_one_work+0x150/0x3f0
- [<ffffffff8109751a>] worker_thread+0x11a/0x470
- [<ffffffff81808e59>] ? __schedule+0x359/0x980
- [<ffffffff81097400>] ? rescuer_thread+0x310/0x310
- [<ffffffff8109cdd6>] kthread+0xd6/0xf0
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
- [<ffffffff8180d0cf>] ret_from_fork+0x3f/0x70
- [<ffffffff8109cd00>] ? kthread_park+0x60/0x60
+1) mkdir -p /mnt/nfs ; mount -o vers=3,fsc <server_ip>:/export /mnt/nfs
+2) create 10000 files of 2.8MB in a NFS mount.
+3) start a thread to simulate heavy VM presssure
+   (while true ; do echo 3 > /proc/sys/vm/drop_caches ; sleep 1 ; done)&
+4) start multiple parallel reader for data set at same time
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   ..
+   ..
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
+5) finally check using cat /proc/fs/fscache/stats | grep -i pages ;
+   free -h , cat /proc/meminfo and page-types -r -b lru
+   to ensure all pages are freed.
 
-This seen this in 4.4.x kernels and the same bug affects fscache in latest
-upstreams kernels.
-
-Fixes: 1bb4b7f98f36 ("FS-Cache: The retrieval remaining-pages counter needs to be atomic_t")
+Reviewed-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Shantanu Goel <sgoel01@yahoo.com>
 Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+[dja: forward ported to current upstream]
+Signed-off-by: Daniel Axtens <dja@axtens.net>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/fscache-cache.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/cachefiles/rdwr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 34cf0fdd7dc7..610815e3f1aa 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -196,8 +196,7 @@ static inline void fscache_enqueue_retrieval(struct fscache_retrieval *op)
- static inline void fscache_retrieval_complete(struct fscache_retrieval *op,
- 					      int n_pages)
- {
--	atomic_sub(n_pages, &op->n_pages);
--	if (atomic_read(&op->n_pages) <= 0)
-+	if (atomic_sub_return_relaxed(n_pages, &op->n_pages) <= 0)
- 		fscache_op_complete(&op->op, false);
- }
- 
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 40f7595aad10..db233588a69a 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -535,7 +535,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
+ 					    netpage->index, cachefiles_gfp);
+ 		if (ret < 0) {
+ 			if (ret == -EEXIST) {
++				put_page(backpage);
++				backpage = NULL;
+ 				put_page(netpage);
++				netpage = NULL;
+ 				fscache_retrieval_complete(op, 1);
+ 				continue;
+ 			}
+@@ -608,7 +611,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
+ 					    netpage->index, cachefiles_gfp);
+ 		if (ret < 0) {
+ 			if (ret == -EEXIST) {
++				put_page(backpage);
++				backpage = NULL;
+ 				put_page(netpage);
++				netpage = NULL;
+ 				fscache_retrieval_complete(op, 1);
+ 				continue;
+ 			}
 -- 
 2.17.1
 
