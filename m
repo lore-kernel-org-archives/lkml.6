@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5236EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1533CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCAE214C1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A3620989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCpYX2+Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCAE214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="13beEXbO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A3620989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbeLEKBC (ORCPT
+        id S1729604AbeLEKBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:01:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55792 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 05:01:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728229AbeLEJtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:49:39 -0500
+        id S1728187AbeLEJtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:49:24 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 094572087F;
-        Wed,  5 Dec 2018 09:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4D2A2133F;
+        Wed,  5 Dec 2018 09:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003378;
-        bh=/nuJRpR5ZhXgX+Bt6hiWyf5T2NfQE9eAfL8I8Wddwm0=;
+        s=default; t=1544003363;
+        bh=AdQyCZCTBpnwqPXFFQ1/H75lZIshnD/px6dBAoo5oAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tCpYX2+Z6cdODF/Vnbbeeyi9Oz+rwzRWYzX1BS2gmy67IOq1OjtJ4j+6inX7uZYDO
-         y11NNOFmQkhLTeSqwYjWHUG0QFJef0kP4lu+DnJR0TIE47hoabskPfRfSLiyjDmwGX
-         imQ0SQJHqTVRU0wFb5jw4p25I3tIb75aVp+eCGQI=
+        b=13beEXbOZRfhYkOa+fWcZ8pST61C45xsbRxWeS6YutQnIfJvyq7PXHDlhzFGuCFtt
+         myORvat/M1K4U52S+B5ev55X2Zhox7qsYXFvrxjBfCunIZbnKuaQ98XYo02nkagECN
+         ikf5iw37xxvF9QRFpshw/eFQNhCx48u5M7lHvIzg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Robbie Ko <robbieko@synology.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 14/45] Btrfs: send, fix infinite loop due to directory rename dependencies
-Date:   Wed,  5 Dec 2018 04:46:35 -0500
-Message-Id: <20181205094706.7225-14-sashal@kernel.org>
+Cc:     Tzung-Bi Shih <tzungbi@google.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 10/45] ASoC: dapm: Recalculate audio map forcely when card instantiated
+Date:   Wed,  5 Dec 2018 04:46:31 -0500
+Message-Id: <20181205094706.7225-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -54,200 +52,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robbie Ko <robbieko@synology.com>
+From: Tzung-Bi Shih <tzungbi@google.com>
 
-[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
+[ Upstream commit 882eab6c28d23a970ae73b7eb831b169a672d456 ]
 
-When doing an incremental send, due to the need of delaying directory move
-(rename) operations we can end up in infinite loop at
-apply_children_dir_moves().
+Audio map are possible in wrong state before card->instantiated has
+been set to true.  Imaging the following examples:
 
-An example scenario that triggers this problem is described below, where
-directory names correspond to the numbers of their respective inodes.
+time 1: at the beginning
 
-Parent snapshot:
+  in:-1    in:-1    in:-1    in:-1
+ out:-1   out:-1   out:-1   out:-1
+ SIGGEN        A        B      Spk
 
- .
- |--- 261/
-       |--- 271/
-             |--- 266/
-                   |--- 259/
-                   |--- 260/
-                   |     |--- 267
-                   |
-                   |--- 264/
-                   |     |--- 258/
-                   |           |--- 257/
-                   |
-                   |--- 265/
-                   |--- 268/
-                   |--- 269/
-                   |     |--- 262/
-                   |
-                   |--- 270/
-                   |--- 272/
-                   |     |--- 263/
-                   |     |--- 275/
-                   |
-                   |--- 274/
-                         |--- 273/
+time 2: after someone called snd_soc_dapm_new_widgets()
+(e.g. create_fill_widget_route_map() in sound/soc/codecs/hdac_hdmi.c)
 
-Send snapshot:
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN        A        B      Spk
 
- .
- |-- 275/
-      |-- 274/
-           |-- 273/
-                |-- 262/
-                     |-- 269/
-                          |-- 258/
-                               |-- 271/
-                                    |-- 268/
-                                         |-- 267/
-                                              |-- 270/
-                                                   |-- 259/
-                                                   |    |-- 265/
-                                                   |
-                                                   |-- 272/
-                                                        |-- 257/
-                                                             |-- 260/
-                                                             |-- 264/
-                                                                  |-- 263/
-                                                                       |-- 261/
-                                                                            |-- 266/
+time 3: routes added
 
-When processing inode 257 we delay its move (rename) operation because its
-new parent in the send snapshot, inode 272, was not yet processed. Then
-when processing inode 272, we delay the move operation for that inode
-because inode 274 is its ancestor in the send snapshot. Finally we delay
-the move operation for inode 274 when processing it because inode 275 is
-its new parent in the send snapshot and was not yet moved.
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN -----> A -----> B ---> Spk
 
-When finishing processing inode 275, we start to do the move operations
-that were previously delayed (at apply_children_dir_moves()), resulting in
-the following iterations:
+In the end, the path should be powered on but it did not.  At time 3,
+"in" of SIGGEN and "out" of Spk did not propagate to their neighbors
+because snd_soc_dapm_add_path() will not invalidate the paths if
+the card has not instantiated (i.e. card->instantiated is false).
+To correct the state of audio map, recalculate the whole map forcely.
 
-1) We issue the move operation for inode 274;
-
-2) Because inode 262 depended on the move operation of inode 274 (it was
-   delayed because 274 is its ancestor in the send snapshot), we issue the
-   move operation for inode 262;
-
-3) We issue the move operation for inode 272, because it was delayed by
-   inode 274 too (ancestor of 272 in the send snapshot);
-
-4) We issue the move operation for inode 269 (it was delayed by 262);
-
-5) We issue the move operation for inode 257 (it was delayed by 272);
-
-6) We issue the move operation for inode 260 (it was delayed by 272);
-
-7) We issue the move operation for inode 258 (it was delayed by 269);
-
-8) We issue the move operation for inode 264 (it was delayed by 257);
-
-9) We issue the move operation for inode 271 (it was delayed by 258);
-
-10) We issue the move operation for inode 263 (it was delayed by 264);
-
-11) We issue the move operation for inode 268 (it was delayed by 271);
-
-12) We verify if we can issue the move operation for inode 270 (it was
-    delayed by 271). We detect a path loop in the current state, because
-    inode 267 needs to be moved first before we can issue the move
-    operation for inode 270. So we delay again the move operation for
-    inode 270, this time we will attempt to do it after inode 267 is
-    moved;
-
-13) We issue the move operation for inode 261 (it was delayed by 263);
-
-14) We verify if we can issue the move operation for inode 266 (it was
-    delayed by 263). We detect a path loop in the current state, because
-    inode 270 needs to be moved first before we can issue the move
-    operation for inode 266. So we delay again the move operation for
-    inode 266, this time we will attempt to do it after inode 270 is
-    moved (its move operation was delayed in step 12);
-
-15) We issue the move operation for inode 267 (it was delayed by 268);
-
-16) We verify if we can issue the move operation for inode 266 (it was
-    delayed by 270). We detect a path loop in the current state, because
-    inode 270 needs to be moved first before we can issue the move
-    operation for inode 266. So we delay again the move operation for
-    inode 266, this time we will attempt to do it after inode 270 is
-    moved (its move operation was delayed in step 12). So here we added
-    again the same delayed move operation that we added in step 14;
-
-17) We attempt again to see if we can issue the move operation for inode
-    266, and as in step 16, we realize we can not due to a path loop in
-    the current state due to a dependency on inode 270. Again we delay
-    inode's 266 rename to happen after inode's 270 move operation, adding
-    the same dependency to the empty stack that we did in steps 14 and 16.
-    The next iteration will pick the same move dependency on the stack
-    (the only entry) and realize again there is still a path loop and then
-    again the same dependency to the stack, over and over, resulting in
-    an infinite loop.
-
-So fix this by preventing adding the same move dependency entries to the
-stack by removing each pending move record from the red black tree of
-pending moves. This way the next call to get_pending_dir_moves() will
-not return anything for the current parent inode.
-
-A test case for fstests, with this reproducer, follows soon.
-
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-[Wrote changelog with example and more clear explanation]
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/send.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ sound/soc/soc-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index 79dc3ee1de58..a45f26ac5da7 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -3349,7 +3349,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
- 	kfree(m);
- }
- 
--static void tail_append_pending_moves(struct pending_dir_move *moves,
-+static void tail_append_pending_moves(struct send_ctx *sctx,
-+				      struct pending_dir_move *moves,
- 				      struct list_head *stack)
- {
- 	if (list_empty(&moves->list)) {
-@@ -3360,6 +3361,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
- 		list_add_tail(&moves->list, stack);
- 		list_splice_tail(&list, stack);
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 4e3de566809c..168559b5e9f3 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2018,6 +2018,7 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
  	}
-+	if (!RB_EMPTY_NODE(&moves->node)) {
-+		rb_erase(&moves->node, &sctx->pending_dir_moves);
-+		RB_CLEAR_NODE(&moves->node);
-+	}
- }
  
- static int apply_children_dir_moves(struct send_ctx *sctx)
-@@ -3374,7 +3379,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
- 		return 0;
- 
- 	INIT_LIST_HEAD(&stack);
--	tail_append_pending_moves(pm, &stack);
-+	tail_append_pending_moves(sctx, pm, &stack);
- 
- 	while (!list_empty(&stack)) {
- 		pm = list_first_entry(&stack, struct pending_dir_move, list);
-@@ -3385,7 +3390,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
- 			goto out;
- 		pm = get_pending_dir_moves(sctx, parent_ino);
- 		if (pm)
--			tail_append_pending_moves(pm, &stack);
-+			tail_append_pending_moves(sctx, pm, &stack);
- 	}
- 	return 0;
- 
+ 	card->instantiated = 1;
++	dapm_mark_endpoints_dirty(card);
+ 	snd_soc_dapm_sync(&card->dapm);
+ 	mutex_unlock(&card->mutex);
+ 	mutex_unlock(&client_mutex);
 -- 
 2.17.1
 
