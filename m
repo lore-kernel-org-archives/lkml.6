@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73109C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5AFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3666620850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716AA2081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mX/l+WrA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3666620850
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzVT7tLi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716AA2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbeLEM5e (ORCPT
+        id S1727881AbeLEM5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:57:34 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41444 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727475AbeLEM5c (ORCPT
+        Wed, 5 Dec 2018 07:57:39 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38683 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727475AbeLEM5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:57:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 70so8988790pgh.8;
-        Wed, 05 Dec 2018 04:57:31 -0800 (PST)
+        Wed, 5 Dec 2018 07:57:35 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so8991640pgc.5;
+        Wed, 05 Dec 2018 04:57:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HZ0Xqc8PGVWzAi/hwDCp2WBWvtjBbAmFHe3E+G7gDkY=;
-        b=mX/l+WrAVuNtgRAIwxDdZYgWOQvsJXbdfDAYPB/wrq8BCT/BUDywwF8SSo3Ac+M6YB
-         /0anSC4VdyTZIRLJ+nKKIFf2JaeuO93TCs+Ft07VInqvgJfErM+I/zXV+fWjogoIeJwR
-         0497o3hoz4E4a1voh+2UL1u90FBgXj5SgrfieZXQ3Yh+MznwuuADitYD7diSEm6x0Thy
-         jf5WESfa76ZtHG3dqCo/t36oX6jPwvU4FtWbVSqVk2FZf81NgryNM+NV6f3FmeFZzdSj
-         gbq8zgPw1j0oU5cEBvbFXwhXsQZlFNbr1p93Q6MCKnQ8seswjx25ZvJx3k9hgoQiqGDz
-         JZNQ==
+        bh=kPHdydhUX9ooSL0A7ozYYgMZy1PB7bQSzbcoXLKwK5U=;
+        b=UzVT7tLiPj86PGmIAVOEqyGKY4cumawAuv4qlDoOYPvYY1Ci/JActq6uXPg7OtN3nr
+         qc3pVY6EBNzTFW0/srnC+q5BX9j/jlMTkDvD3mlCyouVb0cZzH8tEaCsQoXsj89zsJIn
+         bdWPBmHBded8Tza6p/ozEh2bxGDBFnf8NRFiuP0H9tIDb7X+zfAcOqz4LQRjInBeY42A
+         P6JJ9LMHVojgZgqlbFMGrndLBhWgGJAscfwIF7mCtFK1m3etHnicLzfOa0WlHSOAvlC6
+         aNGjEu/7J65lf2TRPpSWlZARXhYQ7PpxVX2WHiJjF1bd2bQSoQW82fOibZfnb8LW+R8t
+         LCRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HZ0Xqc8PGVWzAi/hwDCp2WBWvtjBbAmFHe3E+G7gDkY=;
-        b=g+dJKcrjCmMfzmmpjG6J3Cv/nQP/zpaU7R4LQ/B4AJTg25II2EFSsB17ED6bnT9PpL
-         Rw8Iid8atvkUkGwwTNQYY7KxyRLE/d55Nmq2QkrR/Ex/s96de+f3aWJaNI8yNQAqUpWk
-         J6ZH6CtaHOJZnseb/MF7To93Ww+fJ/1uI4+rbTk+WxWL458jZlR57QaMgNDk7AqSUDZl
-         Lr4t2k1CpPFxZ9nAKOOxwAfCxxf5xMbt4mo3MfarJ+Igp4QgFOr8Lt6RqQMMSZMxcFdT
-         vhN/IGdXu/JwBHjkD1Rd7o0/G+oey49ypYlhmD5qSgSviQcUGfokRqcqLXl5Q6nIbuMJ
-         WWOQ==
-X-Gm-Message-State: AA+aEWbdN9vZvjj6BUIKxl/SE0wPDL5XzA0klEXMOdp5RQVaQEXs8T0x
-        Ewwn2hmUK/d45ni64eoeFuQ=
-X-Google-Smtp-Source: AFSGD/WhDitiNX4zVXN1t4sPYy6dJqGjHx7Iuv7JznwbU/WFccakNrN5YpXKp8MNaFEdymLBZ+kDXw==
-X-Received: by 2002:a63:f959:: with SMTP id q25mr20579422pgk.315.1544014651322;
-        Wed, 05 Dec 2018 04:57:31 -0800 (PST)
+        bh=kPHdydhUX9ooSL0A7ozYYgMZy1PB7bQSzbcoXLKwK5U=;
+        b=B17BMEu3RrFtkxzyz/p9BqUe52GjxO5noMOFWYPCWsC2ox37+wkrXIBmgOsaKedWHT
+         kmhXnmcPqHl8/4WIvpA7djCvvbrEs6wfoZRE5YW0MZ1obt55nEDSgJzaWMZqOm2UCUcn
+         MrfSVpXgODegA8UEbzSryE9X2Wle+QfufgwUVOjqAfumL8N6xxYYblAjs0G5FRNTQnLZ
+         rIU59mZnjM3AXNubVaELcMSwFApbwyi6Dibf2PROg66z/VFSHwfUjpUANJFILUp1A73S
+         N3phMx0Rt1+1SiAmb1/GXJ74fFwGB3ol6uW2MGetIwsirbe2pRPoG47Fx8E7mwGRl5Tx
+         sODQ==
+X-Gm-Message-State: AA+aEWb52kdwVp9uBhJs0FDhFUV2WZQ2Ka+fU7vhAp6I5bBkeD/YzoZW
+        Tm1mXTEQJC/2PMrgHjhF5Ag=
+X-Google-Smtp-Source: AFSGD/WuthGYWA4jkgbphVBf0nyBM3e0VO3lYSSDK088HJfRvtzV78K6th1Kpc3L46hA6ZbSK2lxxA==
+X-Received: by 2002:a63:e516:: with SMTP id r22mr20818726pgh.256.1544014655165;
+        Wed, 05 Dec 2018 04:57:35 -0800 (PST)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id q1sm26348898pfb.96.2018.12.05.04.57.27
+        by smtp.gmail.com with ESMTPSA id q1sm26348898pfb.96.2018.12.05.04.57.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 04:57:30 -0800 (PST)
+        Wed, 05 Dec 2018 04:57:34 -0800 (PST)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
         davem@davemloft.net, adobriyan@gmail.com, akpm@linux-foundation.org
 Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH 4/5] netfilter: fix missed NULL check in nf_conntrack_proto_pernet_init()
-Date:   Wed,  5 Dec 2018 20:56:29 +0800
-Message-Id: <1544014590-14429-4-git-send-email-laoar.shao@gmail.com>
+Subject: [PATCH 5/5] netfilter: fix error return value of nf_ct_l4proto_pernet_register_one()
+Date:   Wed,  5 Dec 2018 20:56:30 +0800
+Message-Id: <1544014590-14429-5-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544014590-14429-1-git-send-email-laoar.shao@gmail.com>
 References: <1544014590-14429-1-git-send-email-laoar.shao@gmail.com>
@@ -75,30 +75,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nf_ct_l4proto_net() may return NULL.
-That may happens if some module forget to set both l4proto->get_net_proto
-and l4proto->net_id.
-We'd check the return value here, in case crash happens.
+If pn is NULL, it will return 0.
+That's not proper. We should return an error.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- net/netfilter/nf_conntrack_proto.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/netfilter/nf_conntrack_proto.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_proto.c
-index 154e8c0..316fef3 100644
+index 316fef3..3caf137 100644
 --- a/net/netfilter/nf_conntrack_proto.c
 +++ b/net/netfilter/nf_conntrack_proto.c
-@@ -946,6 +946,9 @@ int nf_conntrack_proto_pernet_init(struct net *net)
- 	struct nf_proto_net *pn = nf_ct_l4proto_net(net,
- 					&nf_conntrack_l4proto_generic);
+@@ -252,6 +252,7 @@ int nf_ct_l4proto_pernet_register_one(struct net *net,
+ 			goto out;
+ 	}
  
-+	if (pn == NULL)
-+		return -EINVAL;
-+
- 	err = nf_conntrack_l4proto_generic.init_net(net);
- 	if (err < 0)
- 		return err;
++	ret = -EINVAL;
+ 	pn = nf_ct_l4proto_net(net, l4proto);
+ 	if (pn == NULL)
+ 		goto out;
 -- 
 1.8.3.1
 
