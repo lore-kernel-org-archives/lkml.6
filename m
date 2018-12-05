@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2A9C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B5CC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F121E20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2D6C20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsoY/mL2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F121E20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EurGI24u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D6C20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730321AbeLEJ47 (ORCPT
+        id S1730056AbeLEJ5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:57:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729773AbeLEJ46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:56:58 -0500
+        id S1729858AbeLEJ4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:56:33 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D1A214F1;
-        Wed,  5 Dec 2018 09:56:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD91D21527;
+        Wed,  5 Dec 2018 09:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003817;
-        bh=K4t0j8gSCS4kHdN+PRobSec8+BKi0oSoDAOAe8uDIAE=;
+        s=default; t=1544003792;
+        bh=ixkSGs3AesB+cKP9JzO54GkLwd16f35wRYQPDnBeeso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rsoY/mL2U4JCdlX1zsnVEJ9AQppxvqAzvapVfJBx7z4L1sWBvuHQVHgVouRilW3RV
-         0BQVD4mnu8R5gXpvgT6lD1hVXOodQEVvv0HaMaBePryK9G0/TCDym7ygA7WadtU9Sy
-         u+0evyLINh04GB9mHoNr4tlG/9G4scvVF3ge32Fc=
+        b=EurGI24uV8qsbJdELXP/4vLCJ0MfNcCfpjVLMFdLwdBmMas9mXHV7ai7BCanoi4dK
+         9IhqkwdfXEmrsVRQKMOjZlsGWdOHXmPZwd95YKoN8zFvQqTdmkWqDNplfO3PdzanlJ
+         jEfyAUzj8NQci34SI8BXra9oGVW4fmzwXuZ0kl1U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 26/26] ocfs2: fix potential use after free
-Date:   Wed,  5 Dec 2018 04:54:30 -0500
-Message-Id: <20181205095430.8019-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 20/26] fscache, cachefiles: remove redundant variable 'cache'
+Date:   Wed,  5 Dec 2018 04:54:24 -0500
+Message-Id: <20181205095430.8019-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -58,47 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
+[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
 
-ocfs2_get_dentry() calls iput(inode) to drop the reference count of
-inode, and if the reference count hits 0, inode is freed.  However, in
-this function, it then reads inode->i_generation, which may result in a
-use after free bug.  Move the put operation later.
+Variable 'cache' is being assigned but is never used hence it is
+redundant and can be removed.
 
-Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cleans up clang warning:
+warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cachefiles/rdwr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 29651167190d..01ac16b3feac 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index a899e69cd5fd..4b3a6b01bb48 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -962,11 +962,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
+ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+ {
+ 	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
  
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
- 	}
+ 	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
+ 
+ 	_enter("%p,{%lu}", object, page->index);
+ 
 -- 
 2.17.1
 
