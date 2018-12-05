@@ -2,130 +2,112 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C80BEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC337C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57AFE20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88CBC2133F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NpIIBjbC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AFE20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OxXn/5jf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CBC2133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeLEWCc (ORCPT
+        id S1728548AbeLEWDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:02:32 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:38130 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbeLEWCc (ORCPT
+        Wed, 5 Dec 2018 17:03:32 -0500
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:37426 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbeLEWDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:02:32 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB5LxTH4065707;
-        Wed, 5 Dec 2018 22:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dnK95Ha9vuSbCq4ScqwJPrv/LSu/YMCHUJZyCbC50To=;
- b=NpIIBjbCaT/I4b0IHBjHcb7y2Vkl4Gemj2vvU+9EZDvQB7EQ8CVCfNooM+c6VyKMby0+
- xdwLlw6PX3H2+rlgT5nJzqduCOXhe6eKNNTvTzwi3RejCil3+xHR6eoreETKTL2vNPu8
- 95IPrHYMKXY3L+JnqswBdvqHkwldyt7CyXGwUshTHr0wnMWz5jPh7bGaOXwtrU2JS/jA
- nlrsl/gCxoov50z53L2s0bm1H1aPEV65Xh/9gHiJG3KDRrH2lGGb0EDtebMu11Ve5o0q
- F0zpxyKklM5nQshJYWgGFKcVpDnVubHZamMo8vTJymgzqsywD3GXe46fyqeXjfBjLGzz Ng== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftf91p5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Dec 2018 22:02:09 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB5M29gE014114
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Dec 2018 22:02:09 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB5M28jp026624;
-        Wed, 5 Dec 2018 22:02:08 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 14:02:07 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id B2EE96A00FC; Wed,  5 Dec 2018 17:02:06 -0500 (EST)
-Date:   Wed, 5 Dec 2018 17:02:06 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
-Message-ID: <20181205220206.GA16013@char.us.oracle.com>
-References: <20181205191956.31480-1-ehabkost@redhat.com>
+        Wed, 5 Dec 2018 17:03:31 -0500
+Received: by mail-lj1-f175.google.com with SMTP id e5-v6so19815839lja.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:03:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jeBCiMRjj6emHZgqF9aI6xfjnoFCV7BrQmzQ31NuRYM=;
+        b=OxXn/5jftXfYxnB8kIaksOk1tG8sO9RRBauyeFarUiXHKvJ+Rncz7Y/qUSfnDpIxGX
+         XW5ZVG+y8Ll5Mw1m8Oqtu/HfgktTWPPr5EsGYHlxfNa8WRcKHNgpZyD9Oj7MdYegXmK0
+         KvxhbNc1NCZ/5X+8oTw5TZq42xUW6bDwnxFUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jeBCiMRjj6emHZgqF9aI6xfjnoFCV7BrQmzQ31NuRYM=;
+        b=YhtDF1ms4i1ctqKA/hjWk47htTBmeMGJSRbz97jYkNETHXzMTIqn/rD9gKLINzi08X
+         vAtGMUIxtoqyjSnac1GoSBc685KSTX4P5NLyUH/qTkKCVNJkTNt2eJRMYQU0EUjbfv+p
+         NpXpeOT7Fnndoq1O8eR0kOOSH91WFM03GAz3naHqR2s2ilyf3a8RJJnsq+H7XipmbXp6
+         mEUh9pFvoJlzHd9Ho1RL7UXRUd5OqpZm7vrpA9Nc1pfhqm7UzR+KKqwd6HuuC5rn8a21
+         p9m/8APUjR7iFRVEZz+pLK4GaB1Zw6wG7BiCFcO/W79ahVfSCFBXUdcPMinY/VohoUHp
+         JtOw==
+X-Gm-Message-State: AA+aEWbWlBlDEG+HzVLJz05vgO99Z2+3KkE2ThO8r8QuOGI0Z5bOuVnH
+        Wsosm9zOP9Ed2eTAHr0Hg4vrrbA1RqM=
+X-Google-Smtp-Source: AFSGD/Uxp+4Qs8OniJSZ3Fx6Y2/qKhDO8C96I1Y9tLfXoHEj3PMVveQ0Sb6tRh58INc7e2A+FLcOgg==
+X-Received: by 2002:a2e:5654:: with SMTP id k81-v6mr16346264ljb.48.1544047409020;
+        Wed, 05 Dec 2018 14:03:29 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id m13-v6sm4133342ljg.56.2018.12.05.14.03.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 14:03:28 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id g11-v6so19800218ljk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:03:27 -0800 (PST)
+X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr18359782ljj.6.1544047407295;
+ Wed, 05 Dec 2018 14:03:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205191956.31480-1-ehabkost@redhat.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812050192
+References: <CAHk-=whrfDw4yV4h2ijbX3vpXf5m4hzJ5pGX7_v6pU31RGib-g@mail.gmail.com>
+ <20181203183050.GL31738@dhcp22.suse.cz> <CAHk-=wgVL_sxXSbjYTiGhxp6+9wLQ9ZmSN+0R5PCF6_a9pQgWw@mail.gmail.com>
+ <20181203185954.GM31738@dhcp22.suse.cz> <CAHk-=wiNKLH2Pbnr9z2SvmDhf7XT==U6NPRkQNX13Sg-FRk0Yw@mail.gmail.com>
+ <20181203201214.GB3540@redhat.com> <CAHk-=wg=6uxAJMbvGJC-5CSikC8OdqsjE1vw+DsCMj=2SNSnZg@mail.gmail.com>
+ <CAHk-=whDg5+e2-eXYo-jwC1spt2r7JjLQSaLm4OyfGMQHLTrdw@mail.gmail.com>
+ <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz> <20181204104558.GV23260@techsingularity.net>
+ <20181205204034.GB11899@redhat.com>
+In-Reply-To: <20181205204034.GB11899@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Dec 2018 14:03:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+Message-ID: <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3% regression
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
+        mhocko@kernel.org, ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org,
+        David Rientjes <rientjes@google.com>, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:19:56PM -0200, Eduardo Habkost wrote:
-> Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
-> to the guest, which makes STIBP available to guests.  This was implemented
-> by commits d28b387fb74d ("KVM/VMX: Allow direct access to
-> MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
-> MSR_IA32_SPEC_CTRL").
-> 
-> However, we never updated GET_SUPPORTED_CPUID to let userspace know that
-> STIBP can be enabled in CPUID.  Fix that by updating
+On Wed, Dec 5, 2018 at 12:40 PM Andrea Arcangeli <aarcange@redhat.com> wrote:
+>
+> So ultimately we decided that the saner behavior that gives the least
+> risk of regression for the short term, until we can do something
+> better, was the one that is already applied upstream.
 
-Ooops!
-> kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
+You're ignoring the fact that people *did* report things regressed.
 
-Shouldn't there also be a patch in QEMU to use it? (aka, +stibp).
+That's the part I find unacceptable. You're saying "we picked
+something that minimized regressions".
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+No it didn't. The regression is present and real, and is on a real
+load, not a benchmark.
 
-Thank you!
-> Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
-> ---
->  arch/x86/kvm/cpuid.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 7bcfa61375c0..cc6dd65828a4 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -381,7 +381,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  	/* cpuid 0x80000008.ebx */
->  	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
->  		F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
-> -		F(AMD_SSB_NO);
-> +		F(AMD_SSB_NO) | F(AMD_STIBP);
->  
->  	/* cpuid 0xC0000001.edx */
->  	const u32 kvm_cpuid_C000_0001_edx_x86_features =
-> @@ -411,7 +411,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  	/* cpuid 7.0.edx*/
->  	const u32 kvm_cpuid_7_0_edx_x86_features =
->  		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
-> -		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
-> +		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP);
->  
->  	/* all calls to cpuid_count() should be made on the same cpu */
->  	get_cpu();
-> -- 
-> 2.18.0.rc1.1.g3f1ff2140
-> 
+So that argument is clearly bogus.
+
+I'm going to revert the commit since people apparently seem to be
+ignoring this fundamental issue.
+
+Real workloads regressed.  The regressions got reported. Ignoring that
+isn't acceptable.
+
+                    Linus
