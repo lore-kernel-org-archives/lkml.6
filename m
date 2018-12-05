@@ -2,49 +2,49 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AD4C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20CDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EDA920850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716622084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="InyYxgtL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDA920850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGg91RV+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716622084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeLEJgT (ORCPT
+        id S1727602AbeLEJgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:36:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37932 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:36:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbeLEJgQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:36:16 -0500
+        id S1727347AbeLEJgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:36:21 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B26EF2084C;
-        Wed,  5 Dec 2018 09:36:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4ED720851;
+        Wed,  5 Dec 2018 09:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002575;
-        bh=vZPSzNYPMiOhOKC4E6xYUZ0lqyp+YSxDWyBqB4W23Yg=;
+        s=default; t=1544002580;
+        bh=TLAGF3zeNGSzdfjq6p0aIKprWYjJifZAymBiycpaTrc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=InyYxgtLK00P7aajBK50aUiv2ryi3EXqbz50U7Yup2uSW35BxzW/U0cfeLos+vh5W
-         dJisrLS6kEiG29d7Qnq18OCHmGDKMV88FyR9gdDynogB/QCLKktozA9q1XYuPf28Xl
-         eYs1PbiAswchFMN7EryYMcQoljVNYnjFlLPqNUU8=
+        b=oGg91RV+8Q6dbfww41A231K15Q0fhQ3vJnh8XwaG8D/FUHcLpN9oWAV5IQvA9mG+7
+         WikFitpWGYXYlhB+IdoseDvOmvqUmedE4CNOsp0eLoGAjhgFJiTMfAF+MCWfXiHsBF
+         sOFFzJNNDCDU3gIoc9523/RLprbLPlSQcgXfqArE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin Kelly <martin@martingkelly.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 004/123] iio:st_magn: Fix enable device after trigger
-Date:   Wed,  5 Dec 2018 04:33:56 -0500
-Message-Id: <20181205093555.5386-4-sashal@kernel.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 006/123] ASoC: qdsp6: q6afe-dai: Fix the dai widgets
+Date:   Wed,  5 Dec 2018 04:33:58 -0500
+Message-Id: <20181205093555.5386-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,80 +53,338 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kelly <martin@martingkelly.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit fe5192ac81ad0d4dfe1395d11f393f0513c15f7f ]
+[ Upstream commit e14856f6cfbb1b96aa45a68f188b147b5bde76b4 ]
 
-Currently, we enable the device before we enable the device trigger. At
-high frequencies, this can cause interrupts that don't yet have a poll
-function associated with them and are thus treated as spurious. At high
-frequencies with level interrupts, this can even cause an interrupt storm
-of repeated spurious interrupts (~100,000 on my Beagleboard with the
-LSM9DS1 magnetometer). If these repeat too much, the interrupt will get
-disabled and the device will stop functioning.
+For some reason the dapm widgets are incorrectly defined from the start,
+Not sure how we ended up with such thing. Fix them now!
 
-To prevent these problems, enable the device prior to enabling the device
-trigger, and disable the divec prior to disabling the trigger. This means
-there's no window of time during which the device creates interrupts but we
-have no trigger to answer them.
+Without this fix the backend dais are always powered up even if there
+is no active stream.
 
-Fixes: 90efe055629 ("iio: st_sensors: harden interrupt handling")
-Signed-off-by: Martin Kelly <martin@martingkelly.com>
-Tested-by: Denis Ciocca <denis.ciocca@st.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reported-by: Jimmy Cheng-Yi Chiang <cychiang@google.com>
+Reported-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/magnetometer/st_magn_buffer.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ sound/soc/qcom/qdsp6/q6afe-dai.c | 208 +++++++++++++++----------------
+ 1 file changed, 104 insertions(+), 104 deletions(-)
 
-diff --git a/drivers/iio/magnetometer/st_magn_buffer.c b/drivers/iio/magnetometer/st_magn_buffer.c
-index 0a9e8fadfa9d..37ab30566464 100644
---- a/drivers/iio/magnetometer/st_magn_buffer.c
-+++ b/drivers/iio/magnetometer/st_magn_buffer.c
-@@ -30,11 +30,6 @@ int st_magn_trig_set_state(struct iio_trigger *trig, bool state)
- 	return st_sensors_set_dataready_irq(indio_dev, state);
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index 60ff4a2d3577..8f6c8fc073a9 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -1112,204 +1112,204 @@ static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
  }
  
--static int st_magn_buffer_preenable(struct iio_dev *indio_dev)
--{
--	return st_sensors_set_enable(indio_dev, true);
--}
--
- static int st_magn_buffer_postenable(struct iio_dev *indio_dev)
- {
- 	int err;
-@@ -50,7 +45,7 @@ static int st_magn_buffer_postenable(struct iio_dev *indio_dev)
- 	if (err < 0)
- 		goto st_magn_buffer_postenable_error;
+ static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
+-	SND_SOC_DAPM_AIF_OUT("HDMI_RX", "HDMI Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_RX", "Slimbus Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_RX", "Slimbus1 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_RX", "Slimbus2 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_RX", "Slimbus3 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_RX", "Slimbus4 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_RX", "Slimbus5 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_RX", "Slimbus6 Playback", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_TX", "Slimbus Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_TX", "Slimbus1 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_TX", "Slimbus2 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_TX", "Slimbus3 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_TX", "Slimbus4 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_TX", "Slimbus5 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_TX", "Slimbus6 Capture", 0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_RX", "Quaternary MI2S Playback",
++	SND_SOC_DAPM_AIF_IN("HDMI_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_0_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_1_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_2_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_3_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_4_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_5_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("SLIMBUS_6_RX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_TX", NULL, 0, 0, 0, 0),
++	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_RX", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_TX", "Quaternary MI2S Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_TX", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_RX", "Tertiary MI2S Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_MI2S_RX", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_MI2S_TX", "Tertiary MI2S Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_TX", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX", "Secondary MI2S Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_MI2S_TX", "Secondary MI2S Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_TX", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX_SD1",
++	SND_SOC_DAPM_AIF_IN("SEC_MI2S_RX_SD1",
+ 			"Secondary MI2S Playback SD1",
+ 			0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_RX", "Primary MI2S Playback",
++	SND_SOC_DAPM_AIF_IN("PRI_MI2S_RX", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRI_MI2S_TX", "Primary MI2S Capture",
++	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_TX", NULL,
+ 						0, 0, 0, 0),
  
--	return err;
-+	return st_sensors_set_enable(indio_dev, true);
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_0", "Primary TDM0 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_0", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_1", "Primary TDM1 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_1", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_2", "Primary TDM2 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_2", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_3", "Primary TDM3 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_3", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_4", "Primary TDM4 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_4", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_5", "Primary TDM5 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_5", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_6", "Primary TDM6 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_6", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_RX_7", "Primary TDM7 Playback",
++	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_RX_7", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_0", "Primary TDM0 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_0", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_1", "Primary TDM1 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_1", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_2", "Primary TDM2 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_2", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_3", "Primary TDM3 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_3", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_4", "Primary TDM4 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_4", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_5", "Primary TDM5 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_5", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_6", "Primary TDM6 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_6", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("PRIMARY_TDM_TX_7", "Primary TDM7 Capture",
++	SND_SOC_DAPM_AIF_OUT("PRIMARY_TDM_TX_7", NULL,
+ 						0, 0, 0, 0),
  
- st_magn_buffer_postenable_error:
- 	kfree(mdata->buffer_data);
-@@ -63,11 +58,11 @@ static int st_magn_buffer_predisable(struct iio_dev *indio_dev)
- 	int err;
- 	struct st_sensor_data *mdata = iio_priv(indio_dev);
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_0", "Secondary TDM0 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_0", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_1", "Secondary TDM1 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_1", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_2", "Secondary TDM2 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_2", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_3", "Secondary TDM3 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_3", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_4", "Secondary TDM4 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_4", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_5", "Secondary TDM5 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_5", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_6", "Secondary TDM6 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_6", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("SEC_TDM_RX_7", "Secondary TDM7 Playback",
++	SND_SOC_DAPM_AIF_IN("SEC_TDM_RX_7", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_0", "Secondary TDM0 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_0", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_1", "Secondary TDM1 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_1", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_2", "Secondary TDM2 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_2", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_3", "Secondary TDM3 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_3", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_4", "Secondary TDM4 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_4", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_5", "Secondary TDM5 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_5", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_6", "Secondary TDM6 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_6", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("SEC_TDM_TX_7", "Secondary TDM7 Capture",
++	SND_SOC_DAPM_AIF_OUT("SEC_TDM_TX_7", NULL,
+ 						0, 0, 0, 0),
  
--	err = iio_triggered_buffer_predisable(indio_dev);
-+	err = st_sensors_set_enable(indio_dev, false);
- 	if (err < 0)
- 		goto st_magn_buffer_predisable_error;
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_0", "Tertiary TDM0 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_0", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_1", "Tertiary TDM1 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_1", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_2", "Tertiary TDM2 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_2", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_3", "Tertiary TDM3 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_3", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_4", "Tertiary TDM4 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_4", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_5", "Tertiary TDM5 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_5", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_6", "Tertiary TDM6 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_6", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("TERT_TDM_RX_7", "Tertiary TDM7 Playback",
++	SND_SOC_DAPM_AIF_IN("TERT_TDM_RX_7", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_0", "Tertiary TDM0 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_0", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_1", "Tertiary TDM1 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_1", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_2", "Tertiary TDM2 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_2", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_3", "Tertiary TDM3 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_3", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_4", "Tertiary TDM4 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_4", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_5", "Tertiary TDM5 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_5", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_6", "Tertiary TDM6 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_6", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("TERT_TDM_TX_7", "Tertiary TDM7 Capture",
++	SND_SOC_DAPM_AIF_OUT("TERT_TDM_TX_7", NULL,
+ 						0, 0, 0, 0),
  
--	err = st_sensors_set_enable(indio_dev, false);
-+	err = iio_triggered_buffer_predisable(indio_dev);
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_0", "Quaternary TDM0 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_0", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_1", "Quaternary TDM1 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_1", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_2", "Quaternary TDM2 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_2", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_3", "Quaternary TDM3 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_3", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_4", "Quaternary TDM4 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_4", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_5", "Quaternary TDM5 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_5", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_6", "Quaternary TDM6 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_6", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_RX_7", "Quaternary TDM7 Playback",
++	SND_SOC_DAPM_AIF_IN("QUAT_TDM_RX_7", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_0", "Quaternary TDM0 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_0", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_1", "Quaternary TDM1 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_1", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_2", "Quaternary TDM2 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_2", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_3", "Quaternary TDM3 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_3", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_4", "Quaternary TDM4 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_4", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_5", "Quaternary TDM5 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_5", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_6", "Quaternary TDM6 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_6", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUAT_TDM_TX_7", "Quaternary TDM7 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUAT_TDM_TX_7", NULL,
+ 						0, 0, 0, 0),
  
- st_magn_buffer_predisable_error:
- 	kfree(mdata->buffer_data);
-@@ -75,7 +70,6 @@ static int st_magn_buffer_predisable(struct iio_dev *indio_dev)
- }
- 
- static const struct iio_buffer_setup_ops st_magn_buffer_setup_ops = {
--	.preenable = &st_magn_buffer_preenable,
- 	.postenable = &st_magn_buffer_postenable,
- 	.predisable = &st_magn_buffer_predisable,
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_0", "Quinary TDM0 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_0", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_1", "Quinary TDM1 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_1", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_2", "Quinary TDM2 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_2", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_3", "Quinary TDM3 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_3", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_4", "Quinary TDM4 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_4", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_5", "Quinary TDM5 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_5", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_6", "Quinary TDM6 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_6", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_RX_7", "Quinary TDM7 Playback",
++	SND_SOC_DAPM_AIF_IN("QUIN_TDM_RX_7", NULL,
+ 			     0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_0", "Quinary TDM0 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_0", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_1", "Quinary TDM1 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_1", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_2", "Quinary TDM2 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_2", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_3", "Quinary TDM3 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_3", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_4", "Quinary TDM4 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_4", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_5", "Quinary TDM5 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_5", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_6", "Quinary TDM6 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_6", NULL,
+ 						0, 0, 0, 0),
+-	SND_SOC_DAPM_AIF_IN("QUIN_TDM_TX_7", "Quinary TDM7 Capture",
++	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_7", NULL,
+ 						0, 0, 0, 0),
  };
+ 
 -- 
 2.17.1
 
