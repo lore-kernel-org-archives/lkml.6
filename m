@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1C2C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C770AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4652084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CDE72084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:38:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTy8kVgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4652084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGoZcFvy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDE72084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbeLEJil (ORCPT
+        id S1728295AbeLEJiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:38:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42524 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:38:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbeLEJii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:38:38 -0500
+        id S1727195AbeLEJim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:38:42 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9943420850;
-        Wed,  5 Dec 2018 09:38:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC80120878;
+        Wed,  5 Dec 2018 09:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002718;
-        bh=kzV+dq+LlIqarmvzibxG4RAaY5u2hP9GtEBlaiHZawc=;
+        s=default; t=1544002721;
+        bh=HCb0N6XZIG+2gEWzNVFmOp7jiFDUnUl+rQCt4xTSdj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTy8kVgrIf04X2RkDAswS7W7Fcg793tzzMENVOPwxowWrs8ngy4hQ5H0n/pzSDCvx
-         1Pi45floqrvRNH3Oy/p80HY4hb5Pn/cJvQ9rLdMH+AxfQ/85OHarcuAPjy1m7ZbTPD
-         uh837z8k2yr3pTxgYy+E7EBcdhOGul+kGz6S84E8=
+        b=dGoZcFvyqNGH47YB8S4xA8GmIQdcmdkzFmbrWJ3Onjuem4BSrySQHdJ1uph4X7ILJ
+         Av3o2SP93V7wkITVD4r0Yi88v3d84eosyzLPDjMDHdx3/bTHeqPO6QiiC/jdDww5z8
+         7QeXP63iplkWZ4JTAhRrAbvA/sLWoJ2//YEo3Bsc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Artem Savkov <asavkov@redhat.com>,
@@ -44,9 +45,9 @@ Cc:     Artem Savkov <asavkov@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 047/123] objtool: Fix double-free in .cold detection error path
-Date:   Wed,  5 Dec 2018 04:34:39 -0500
-Message-Id: <20181205093555.5386-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 048/123] objtool: Fix segfault in .cold detection with -ffunction-sections
+Date:   Wed,  5 Dec 2018 04:34:40 -0500
+Message-Id: <20181205093555.5386-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -57,13 +58,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Artem Savkov <asavkov@redhat.com>
 
-[ Upstream commit 0b9301fb632f7111a3293a30cc5b20f1b82ed08d ]
+[ Upstream commit 22566c1603030f0a036ad564634b064ad1a55db2 ]
 
-If read_symbols() fails during second list traversal (the one dealing
-with ".cold" subfunctions) it frees the symbol, but never deletes it
-from the list/hash_table resulting in symbol being freed again in
-elf_close(). Fix it by just returning an error, leaving cleanup to
-elf_close().
+Because find_symbol_by_name() traverses the same lists as
+read_symbols(), changing sym->name in place without copying it affects
+the result of find_symbol_by_name().  In the case where a ".cold"
+function precedes its parent in sec->symbol_list, it can result in a
+function being considered a parent of itself. This leads to function
+length being set to 0 and other consequent side-effects including a
+segfault in add_switch_table().  The effects of this bug are only
+visible when building with -ffunction-sections in KCFLAGS.
+
+Fix by copying the search string instead of modifying it in place.
 
 Signed-off-by: Artem Savkov <asavkov@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
@@ -71,26 +77,55 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Link: http://lkml.kernel.org/r/beac5a9b7da9e8be90223459dcbe07766ae437dd.1542736240.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/910abd6b5a4945130fd44f787c24e07b9e07c8da.1542736240.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/objtool/elf.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 7ec85d567598..a6f543e0b387 100644
+index a6f543e0b387..b75d004f6482 100644
 --- a/tools/objtool/elf.c
 +++ b/tools/objtool/elf.c
-@@ -312,7 +312,7 @@ static int read_symbols(struct elf *elf)
+@@ -31,6 +31,8 @@
+ #include "elf.h"
+ #include "warn.h"
+ 
++#define MAX_NAME_LEN 128
++
+ struct section *find_section_by_name(struct elf *elf, const char *name)
+ {
+ 	struct section *sec;
+@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
+ 	/* Create parent/child links for any cold subfunctions */
+ 	list_for_each_entry(sec, &elf->sections, list) {
+ 		list_for_each_entry(sym, &sec->symbol_list, list) {
++			char pname[MAX_NAME_LEN + 1];
++			size_t pnamelen;
+ 			if (sym->type != STT_FUNC)
+ 				continue;
+ 			sym->pfunc = sym->cfunc = sym;
+@@ -305,9 +309,16 @@ static int read_symbols(struct elf *elf)
+ 			if (!coldstr)
+ 				continue;
+ 
+-			coldstr[0] = '\0';
+-			pfunc = find_symbol_by_name(elf, sym->name);
+-			coldstr[0] = '.';
++			pnamelen = coldstr - sym->name;
++			if (pnamelen > MAX_NAME_LEN) {
++				WARN("%s(): parent function name exceeds maximum length of %d characters",
++				     sym->name, MAX_NAME_LEN);
++				return -1;
++			}
++
++			strncpy(pname, sym->name, pnamelen);
++			pname[pnamelen] = '\0';
++			pfunc = find_symbol_by_name(elf, pname);
+ 
  			if (!pfunc) {
  				WARN("%s(): can't find parent function",
- 				     sym->name);
--				goto err;
-+				return -1;
- 			}
- 
- 			sym->pfunc = pfunc;
 -- 
 2.17.1
 
