@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0EFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5CBC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC9C20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DC9C20850
+	by mail.kernel.org (Postfix) with ESMTP id 6671120850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6671120850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeLEIwp (ORCPT
+        id S1727430AbeLEIwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:52:45 -0500
+        Wed, 5 Dec 2018 03:52:11 -0500
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727409AbeLEIwL (ORCPT
+        by vger.kernel.org with ESMTP id S1727332AbeLEIwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:52:11 -0500
+        Wed, 5 Dec 2018 03:52:09 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 21D1941397;
-        Wed,  5 Dec 2018 00:52:05 -0800 (PST)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id DF21441398;
+        Wed,  5 Dec 2018 00:52:04 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
@@ -43,10 +43,11 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 09/14] x86/kprobes: Instruction pages initialization enhancements
-Date:   Tue, 4 Dec 2018 17:34:03 -0800
-Message-ID: <20181205013408.47725-10-namit@vmware.com>
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH v7 04/14] fork: provide a function for copying init_mm
+Date:   Tue, 4 Dec 2018 17:33:58 -0800
+Message-ID: <20181205013408.47725-5-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
@@ -59,67 +60,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a preparatory patch for a following patch that makes
-module allocated pages non-executable. The patch sets the page as
-executable after allocation.
+Provide a function for copying init_mm. This function will be later used
+for setting a temporary mm.
 
-In the future, we may get better protection of executables. For example,
-by using hypercalls to request the hypervisor to protect VM executable
-pages from modifications using nested page-tables. This would allow
-us to ensure the executable has not changed between allocation and
-its write-protection.
-
-While at it, do some small cleanup of what appears to be unnecessary
-masking.
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ include/linux/sched/task.h |  1 +
+ kernel/fork.c              | 24 ++++++++++++++++++------
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index c33b06f5faa4..ca0118d3b3e8 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
- 	void *page;
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 108ede99e533..ac0a675678f5 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -74,6 +74,7 @@ extern void exit_itimers(struct signal_struct *);
+ extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
+ extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+ struct task_struct *fork_idle(int);
++struct mm_struct *copy_init_mm(void);
+ extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+ extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
  
- 	page = module_alloc(PAGE_SIZE);
--	if (page)
--		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-+	if (page == NULL)
-+		return NULL;
-+
-+	/*
-+	 * First make the page read-only, and then only then make it executable
-+	 * to prevent it from being W+X in between.
-+	 */
-+	set_memory_ro((unsigned long)page, 1);
-+
-+	/*
-+	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-+	 * that the page was not maliciously altered and it is still zeroed.
-+	 */
-+	set_memory_x((unsigned long)page, 1);
- 
- 	return page;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff89c7b..01d3f5b39363 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1297,13 +1297,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+ 		complete_vfork_done(tsk);
  }
-@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
- /* Recover page to RW mode before releasing it */
- void free_insn_page(void *page)
+ 
+-/*
+- * Allocate a new mm structure and copy contents from the
+- * mm structure of the passed in task structure.
++/**
++ * dup_mm() - duplicates an existing mm structure
++ * @tsk: the task_struct with which the new mm will be associated.
++ * @oldmm: the mm to duplicate.
++ *
++ * Allocates a new mm structure and copy contents from the provided
++ * @oldmm structure.
++ *
++ * Return: the duplicated mm or NULL on failure.
+  */
+-static struct mm_struct *dup_mm(struct task_struct *tsk)
++static struct mm_struct *dup_mm(struct task_struct *tsk,
++				struct mm_struct *oldmm)
  {
--	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
--	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-+	/*
-+	 * First make the page non-executable, and then only then make it
-+	 * writable to prevent it from being W+X in between.
-+	 */
-+	set_memory_nx((unsigned long)page, 1);
-+	set_memory_rw((unsigned long)page, 1);
- 	module_memfree(page);
+-	struct mm_struct *mm, *oldmm = current->mm;
++	struct mm_struct *mm;
+ 	int err;
+ 
+ 	mm = allocate_mm();
+@@ -1370,7 +1377,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+ 	}
+ 
+ 	retval = -ENOMEM;
+-	mm = dup_mm(tsk);
++	mm = dup_mm(tsk, current->mm);
+ 	if (!mm)
+ 		goto fail_nomem;
+ 
+@@ -2176,6 +2183,11 @@ struct task_struct *fork_idle(int cpu)
+ 	return task;
  }
  
++struct mm_struct *copy_init_mm(void)
++{
++	return dup_mm(NULL, &init_mm);
++}
++
+ /*
+  *  Ok, this is the main fork-routine.
+  *
 -- 
 2.17.1
 
