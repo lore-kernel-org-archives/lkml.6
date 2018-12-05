@@ -2,188 +2,309 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C82C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E24C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A1D20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DF452146D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:25:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1aSbESR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A1D20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1BOSweZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF452146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeLEHZa (ORCPT
+        id S1727091AbeLEHZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:25:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39141 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEHZ3 (ORCPT
+        Wed, 5 Dec 2018 02:25:33 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34880 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbeLEHZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:25:29 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f81so9297775wmd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:25:27 -0800 (PST)
+        Wed, 5 Dec 2018 02:25:32 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x30so16144751edx.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:25:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jQI5QB2zWD2HACaA3OnxgaHUN8Kq2Iivz0sMx7foRUg=;
-        b=M1aSbESRvmrvwm+NG2oIYxhwlJUPCz9vPU/3QnDosw58OsujpHEvLI95bQkMLnzvGh
-         OVgnzN7tTWK18UOfH220x7qLN8sQyjgbfUm21pOB03itfV5O7nVRxL5XSc8VSJcONk8H
-         tYgxrNsy4Qokb/oM2mteIHjg3m3sz0ywPzyNo=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DXpiqpRsXmiJ33IZH8p+kDDbVBm2Es8YjVb4fRMw/G8=;
+        b=S1BOSweZnvo5WRY7VtD0Sko4dMIJtJO4fdPnDcY9FmM833an3kGeLJNScKN6xbSrtt
+         PxSqSkaQ9FF3mC/7hSPy3pilGDQlM9592vEHL3Q60firA/VlbO76FBKrLvZuOZMdML6R
+         ltKBhTeysSb1DIS5oS8+VrEJ5jCOSkng3YGEOcCo2WDq8bRdqv7E83dZu/6NePNAdiv6
+         ii6m3nhDDeTyVf+6WCgc+GMmmMx17s7Gz/Sbd0j0jVtsuYoxPBlYpShXXH0ltA4FtzKB
+         23MDWMghMM5AezWWspc6sPxgjU1WWEycH3IwR1gyFpF5AcSOvLQHRS5yjHudbCpqeR7l
+         qhAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jQI5QB2zWD2HACaA3OnxgaHUN8Kq2Iivz0sMx7foRUg=;
-        b=asBPiNiLeK6XIGXkcE1sGw6s8rOR2vNAoMsR7cY1w4pyCGJfWPt57YQx3jORZzK2Ly
-         wZKiFjJHCzp4eXaLVWpVQLECQ1DKR97B3wLPwN5cMUDBnLrB1+7goYkosrwdl9dcxgb8
-         tf7vQfql/VJfOYV65QgOpLl3/UR8nF7Xtm/v0ADQDRedYXP4ySHf8mQTyc2iFfRb4kNd
-         gSUzHLj63VXrTIWPf9O09E8cYztzoPfXWyHmQ50okHdKncswh5AjxlONEoR9ddBFIEeJ
-         kLxoJmNsFKY0CtVG/s2JiXZ4SF8b8ogLg8jSVs0gDqflIptAf1bkVshAJqOmtEvoRqi1
-         MlQA==
-X-Gm-Message-State: AA+aEWai4VP1+gpSzQYM1aSLfz9Qiaw0M52ReXk8zQU34SV8iCeNGabE
-        SK4ifRQBLmll75rid+3Vl2xdVg==
-X-Google-Smtp-Source: AFSGD/Wp26pPW/gb4Q2HPFqZ4bCCsiQVScMx56ysnlpk/eQReM7xDQgLoSjB7fQta+IesBzVYIhLYg==
-X-Received: by 2002:a1c:20cb:: with SMTP id g194mr14272235wmg.77.1543994726408;
-        Tue, 04 Dec 2018 23:25:26 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id d2sm14136352wrs.97.2018.12.04.23.25.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DXpiqpRsXmiJ33IZH8p+kDDbVBm2Es8YjVb4fRMw/G8=;
+        b=kQrrGrjSfDm7a0KglAuOrNdGNOP+/slm5PcpHvU8dFS0fUJKvEQfG1BtF3L/DetQBw
+         CJnQfJlFQOKu1K3XmssEkQTRlQYnLwbSs+huCKXlkyrVspMgR9nE+KSBKD60ZDRNoodr
+         3jLaZ9lqOQAkPy3W84UKtzQl23DpdmcqFR4Hl+ZngEuZC/OS6W5JM/sKf6Ve6IRbM53e
+         k4B4QQyJ9rgjS1AuUE+vQcvbzEdUHwDI+IMqgEwaaRG3BbLCE2mjlwbpFw31NmwxMKr/
+         SjezUPk0+dHNVBrva4ZqhM2xVB1szYHzcZh15dJLdJ0S667Lk5W4FRJ+odCCl7Q6NXnN
+         6pDQ==
+X-Gm-Message-State: AA+aEWZB9i849rAvEzP2HHfno4mbqZjNf9PUtQmyvJUzAHSFaxb4UXEB
+        pGCYXMB86E5+spKMb4iNUzw=
+X-Google-Smtp-Source: AFSGD/VWPvWKQ4US7UOFmmvttp7BEDrKogrxYnb+pcfi0cV/QJh1kj6Q2RhbaMOUAgBcW1PBLxWDfQ==
+X-Received: by 2002:a50:ae01:: with SMTP id c1mr21113318edd.12.1543994729578;
+        Tue, 04 Dec 2018 23:25:29 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id c11-v6sm3008054ejm.67.2018.12.04.23.25.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 23:25:25 -0800 (PST)
-Date:   Wed, 5 Dec 2018 07:25:23 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 2/8] mfd / platform: cros_ec: move lightbar attributes
- to its own driver.
-Message-ID: <20181205072523.GW26661@dell>
-References: <20181127121849.23975-1-enric.balletbo@collabora.com>
- <20181127121849.23975-3-enric.balletbo@collabora.com>
- <20181203103619.GD26661@dell>
- <59c6fa0a-e5d5-0e4a-9393-0c9a8b26332d@collabora.com>
- <20181204092121.GR26661@dell>
- <8dcf0fb8-697f-8443-68c3-0faae6fe412e@collabora.com>
+        Tue, 04 Dec 2018 23:25:28 -0800 (PST)
+Date:   Wed, 5 Dec 2018 07:25:28 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Will Deacon <will.deacon@arm.com>, Michal Hocko <mhocko@suse.com>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        linux-mm@kvack.org, Christoph Lameter <cl@linux.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
+        David Rientjes <rientjes@google.com>,
+        yingjoe.chen@mediatek.com, Vlastimil Babka <vbabka@suse.cz>,
+        Tomasz Figa <tfiga@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
+Message-ID: <20181205072528.l7blg6y24ggblh4m@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-3-drinkcat@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8dcf0fb8-697f-8443-68c3-0faae6fe412e@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181205054828.183476-3-drinkcat@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Dec 2018, Enric Balletbo i Serra wrote:
-> On 4/12/18 10:21, Lee Jones wrote:
-> > On Mon, 03 Dec 2018, Enric Balletbo i Serra wrote:
-> >> On 3/12/18 11:36, Lee Jones wrote:
-> >>> On Tue, 27 Nov 2018, Enric Balletbo i Serra wrote:
-> >>>
-> >>>> The entire way how cros sysfs attibutes are created is broken.
-> >>>> cros_ec_lightbar should be its own driver and its attributes should be
-> >>>> associated with a lightbar driver not the mfd driver. In order to retain
-> >>>> the path, the lightbar attributes are attached to the cros_class.
-> >>>
-> >>> I'm not exactly clear on what a lightbar is, but shouldn't it live in
-> >>> the appropriate subsystem.  Like LED for example?
-> >>>
-> >>
-> >> The lightbar is a four-color indicator available on some Chromebook, but the
-> >> fact that can you can program this lightbar with different sequences, including
-> >> user defined sequences makes the device a bit special and very chrome platform
-> >> specific. The same happens with the VBC driver.
-> > 
-> > Being Chrome specific doesn't necessarily mean that these drivers
-> > shouldn't reside in a proper subsystem.  A lot of drivers in the
-> > kernel are only relevant to very specific hardware/platforms.
+On Wed, Dec 05, 2018 at 01:48:27PM +0800, Nicolas Boichat wrote:
+>In some cases (e.g. IOMMU ARMv7s page allocator), we need to allocate
+>data structures smaller than a page with GFP_DMA32 flag.
+>
+>This change makes it possible to create a custom cache in DMA32 zone
+>using kmem_cache_create, then allocate memory using kmem_cache_alloc.
+>
+>We do not create a DMA32 kmalloc cache array, as there are currently
+>no users of kmalloc(..., GFP_DMA32). The new test in check_slab_flags
+>ensures that such calls still fail (as they do before this change).
+>
+>Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
+>Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+>---
+>
+>Changes since v2:
+> - Clarified commit message
+> - Add entry in sysfs-kernel-slab to document the new sysfs file
+>
+>(v3 used the page_frag approach)
+>
+>Documentation/ABI/testing/sysfs-kernel-slab |  9 +++++++++
+> include/linux/slab.h                        |  2 ++
+> mm/internal.h                               |  8 ++++++--
+> mm/slab.c                                   |  4 +++-
+> mm/slab.h                                   |  3 ++-
+> mm/slab_common.c                            |  2 +-
+> mm/slub.c                                   | 18 +++++++++++++++++-
+> 7 files changed, 40 insertions(+), 6 deletions(-)
+>
+>diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
+>index 29601d93a1c2ea..d742c6cfdffbe9 100644
+>--- a/Documentation/ABI/testing/sysfs-kernel-slab
+>+++ b/Documentation/ABI/testing/sysfs-kernel-slab
+>@@ -106,6 +106,15 @@ Description:
+> 		are from ZONE_DMA.
+> 		Available when CONFIG_ZONE_DMA is enabled.
 > 
-> Agree, and we try to put these drivers in their subsystem when we think it is
-> appropriate (we have in rtc, power, iio, keyboard, etc.)
-
-Right.  I can see that.  This is good.
-
-> > IMHO code in drivers/platform should pertain only to the core platform
-> > itself.  Any drivers for leaf hardware/functionality should be split
-> > out into the subsystems, however niche you think they are.
+>+What:		/sys/kernel/slab/cache/cache_dma32
+>+Date:		December 2018
+>+KernelVersion:	4.21
+>+Contact:	Nicolas Boichat <drinkcat@chromium.org>
+>+Description:
+>+		The cache_dma32 file is read-only and specifies whether objects
+>+		are from ZONE_DMA32.
+>+		Available when CONFIG_ZONE_DMA32 is enabled.
+>+
+> What:		/sys/kernel/slab/cache/cpu_slabs
+> Date:		May 2007
+> KernelVersion:	2.6.22
+>diff --git a/include/linux/slab.h b/include/linux/slab.h
+>index 11b45f7ae4057c..9449b19c5f107a 100644
+>--- a/include/linux/slab.h
+>+++ b/include/linux/slab.h
+>@@ -32,6 +32,8 @@
+> #define SLAB_HWCACHE_ALIGN	((slab_flags_t __force)0x00002000U)
+> /* Use GFP_DMA memory */
+> #define SLAB_CACHE_DMA		((slab_flags_t __force)0x00004000U)
+>+/* Use GFP_DMA32 memory */
+>+#define SLAB_CACHE_DMA32	((slab_flags_t __force)0x00008000U)
+> /* DEBUG: Store the last owner for bug hunting */
+> #define SLAB_STORE_USER		((slab_flags_t __force)0x00010000U)
+> /* Panic if kmem_cache_create() fails */
+>diff --git a/mm/internal.h b/mm/internal.h
+>index a2ee82a0cd44ae..fd244ad716eaf8 100644
+>--- a/mm/internal.h
+>+++ b/mm/internal.h
+>@@ -14,6 +14,7 @@
+> #include <linux/fs.h>
+> #include <linux/mm.h>
+> #include <linux/pagemap.h>
+>+#include <linux/slab.h>
+> #include <linux/tracepoint-defs.h>
 > 
-> To be honest, I don't have a hard opinion yet on if the drivers/platform should
-> pertain only to the core platform itself.
+> /*
+>@@ -34,9 +35,12 @@
+> #define GFP_CONSTRAINT_MASK (__GFP_HARDWALL|__GFP_THISNODE)
 > 
-> The cros_ec_lightbar.c file already exists in drivers/platform, the patch just
-> converts it to a kernel module (only adds few lines). The main purpose of the se
-> patches was have cros-ec mfd code and their subdrivers separated instead of
-> having crossed calls.
+> /* Check for flags that must not be used with a slab allocator */
+>-static inline gfp_t check_slab_flags(gfp_t flags)
+>+static inline gfp_t check_slab_flags(gfp_t flags, slab_flags_t slab_flags)
+> {
+>-	gfp_t bug_mask = __GFP_DMA32 | __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+>+	gfp_t bug_mask = __GFP_HIGHMEM | ~__GFP_BITS_MASK;
+>+
+>+	if (!IS_ENABLED(CONFIG_ZONE_DMA32) || !(slab_flags & SLAB_CACHE_DMA32))
+>+		bug_mask |= __GFP_DMA32;
 
-Right.  I have no intention of blocking *this* patch.  All we're doing
-here is highlighting potential issues I see.
+The original version doesn't check CONFIG_ZONE_DMA32.
 
-> I don't mind to move to another subsystem (I need to discuss with the chromium
-> guys
+Do we need to add this condition here?
+Could we just decide the bug_mask based on slab_flags?
 
-Wonderful.  That's exactly what I wanted to hear.
-
-> and I am still not sure if LED fits very well in this case, I can look in
-> more detail)
-
-Sure.
-
-> but shouldn't be this a follow up patch?
-
-Absolutely.
-
-> I am also worried on how this could affect the current user interface. Well,
-> something to look, right.
-
-Right.
-
-Thanks again for looking into this.  I will re-review your patch, this
-time *not* taking the location of the driver into consideration.
-
-> > I also understand the convenience factor of not having to go through
-> > a !Google Maintainer, but this is not a loophole I'm prepared to
-> > support. ;)
-> > 
-> >> Other subdevices like, rtc, keyboard, usbpd charger,etc. are already in their
-> >> subsystems.
-> >>
-> >>>> The patch also adds the sysfs documentation.
-> >>>>
-> >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >>>> ---
-> >>>>
-> >>>> Changes in v3:
-> >>>> - Removed unneded check for ec_dev.
-> >>>>
-> >>>> Changes in v2:
-> >>>> - Removed the two exported functions to attach/detach to the cros_class.
-> >>>> - Use dev_warn instead of dev_err when adding the lightbar.
-> >>>>
-> >>>>  ...sfs-class-chromeos-driver-cros-ec-lightbar | 74 +++++++++++++++
-> >>>>  drivers/mfd/cros_ec_dev.c                     | 24 ++---
-> >>>>  drivers/mfd/cros_ec_dev.h                     |  6 --
-> >>>>  drivers/platform/chrome/Kconfig               | 10 ++
-> >>>>  drivers/platform/chrome/Makefile              |  3 +-
-> >>>>  drivers/platform/chrome/cros_ec_lightbar.c    | 95 ++++++++++++++-----
-> >>>>  include/linux/mfd/cros_ec.h                   |  1 -
-> >>>>  7 files changed, 172 insertions(+), 41 deletions(-)
-> >>>>  create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
-> >>>
-> > 
+> 
+> 	if (unlikely(flags & bug_mask)) {
+> 		gfp_t invalid_mask = flags & bug_mask;
+>diff --git a/mm/slab.c b/mm/slab.c
+>index 65a774f05e7836..2fd3b9a996cbe6 100644
+>--- a/mm/slab.c
+>+++ b/mm/slab.c
+>@@ -2109,6 +2109,8 @@ int __kmem_cache_create(struct kmem_cache *cachep, slab_flags_t flags)
+> 	cachep->allocflags = __GFP_COMP;
+> 	if (flags & SLAB_CACHE_DMA)
+> 		cachep->allocflags |= GFP_DMA;
+>+	if (flags & SLAB_CACHE_DMA32)
+>+		cachep->allocflags |= GFP_DMA32;
+> 	if (flags & SLAB_RECLAIM_ACCOUNT)
+> 		cachep->allocflags |= __GFP_RECLAIMABLE;
+> 	cachep->size = size;
+>@@ -2643,7 +2645,7 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
+> 	 * Be lazy and only check for valid flags here,  keeping it out of the
+> 	 * critical path in kmem_cache_alloc().
+> 	 */
+>-	flags = check_slab_flags(flags);
+>+	flags = check_slab_flags(flags, cachep->flags);
+> 	WARN_ON_ONCE(cachep->ctor && (flags & __GFP_ZERO));
+> 	local_flags = flags & (GFP_CONSTRAINT_MASK|GFP_RECLAIM_MASK);
+> 
+>diff --git a/mm/slab.h b/mm/slab.h
+>index 4190c24ef0e9df..fcf717e12f0a86 100644
+>--- a/mm/slab.h
+>+++ b/mm/slab.h
+>@@ -127,7 +127,8 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
+> 
+> 
+> /* Legal flag mask for kmem_cache_create(), for various configurations */
+>-#define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | SLAB_PANIC | \
+>+#define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | \
+>+			 SLAB_CACHE_DMA32 | SLAB_PANIC | \
+> 			 SLAB_TYPESAFE_BY_RCU | SLAB_DEBUG_OBJECTS )
+> 
+> #if defined(CONFIG_DEBUG_SLAB)
+>diff --git a/mm/slab_common.c b/mm/slab_common.c
+>index 70b0cc85db67f8..18b7b809c8d064 100644
+>--- a/mm/slab_common.c
+>+++ b/mm/slab_common.c
+>@@ -53,7 +53,7 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
+> 		SLAB_FAILSLAB | SLAB_KASAN)
+> 
+> #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
+>-			 SLAB_ACCOUNT)
+>+			 SLAB_CACHE_DMA32 | SLAB_ACCOUNT)
+> 
+> /*
+>  * Merge control. If this is set then no merging of slab caches will occur.
+>diff --git a/mm/slub.c b/mm/slub.c
+>index 21a3f6866da472..6d47765a82d150 100644
+>--- a/mm/slub.c
+>+++ b/mm/slub.c
+>@@ -1685,7 +1685,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+> 
+> static struct page *new_slab(struct kmem_cache *s, gfp_t flags, int node)
+> {
+>-	flags = check_slab_flags(flags);
+>+	flags = check_slab_flags(flags, s->flags);
+> 
+> 	return allocate_slab(s,
+> 		flags & (GFP_RECLAIM_MASK | GFP_CONSTRAINT_MASK), node);
+>@@ -3577,6 +3577,9 @@ static int calculate_sizes(struct kmem_cache *s, int forced_order)
+> 	if (s->flags & SLAB_CACHE_DMA)
+> 		s->allocflags |= GFP_DMA;
+> 
+>+	if (s->flags & SLAB_CACHE_DMA32)
+>+		s->allocflags |= GFP_DMA32;
+>+
+> 	if (s->flags & SLAB_RECLAIM_ACCOUNT)
+> 		s->allocflags |= __GFP_RECLAIMABLE;
+> 
+>@@ -5095,6 +5098,14 @@ static ssize_t cache_dma_show(struct kmem_cache *s, char *buf)
+> SLAB_ATTR_RO(cache_dma);
+> #endif
+> 
+>+#ifdef CONFIG_ZONE_DMA32
+>+static ssize_t cache_dma32_show(struct kmem_cache *s, char *buf)
+>+{
+>+	return sprintf(buf, "%d\n", !!(s->flags & SLAB_CACHE_DMA32));
+>+}
+>+SLAB_ATTR_RO(cache_dma32);
+>+#endif
+>+
+> static ssize_t usersize_show(struct kmem_cache *s, char *buf)
+> {
+> 	return sprintf(buf, "%u\n", s->usersize);
+>@@ -5435,6 +5446,9 @@ static struct attribute *slab_attrs[] = {
+> #ifdef CONFIG_ZONE_DMA
+> 	&cache_dma_attr.attr,
+> #endif
+>+#ifdef CONFIG_ZONE_DMA32
+>+	&cache_dma32_attr.attr,
+>+#endif
+> #ifdef CONFIG_NUMA
+> 	&remote_node_defrag_ratio_attr.attr,
+> #endif
+>@@ -5665,6 +5679,8 @@ static char *create_unique_id(struct kmem_cache *s)
+> 	 */
+> 	if (s->flags & SLAB_CACHE_DMA)
+> 		*p++ = 'd';
+>+	if (s->flags & SLAB_CACHE_DMA32)
+>+		*p++ = 'D';
+> 	if (s->flags & SLAB_RECLAIM_ACCOUNT)
+> 		*p++ = 'a';
+> 	if (s->flags & SLAB_CONSISTENCY_CHECKS)
+>-- 
+>2.20.0.rc1.387.gf8505762e3-goog
+>
+>_______________________________________________
+>iommu mailing list
+>iommu@lists.linux-foundation.org
+>https://lists.linuxfoundation.org/mailman/listinfo/iommu
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Wei Yang
+Help you, Help me
