@@ -2,192 +2,198 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3279EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9A7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB05B20879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:31:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB05B20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A0C0A20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C0A20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbeLETbH (ORCPT
+        id S1728189AbeLETc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:31:07 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:41107 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728189AbeLETbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:31:04 -0500
-Received: by mail-it1-f200.google.com with SMTP id 123so17547182itv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:31:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=o/5q+EiSW/dgkrwWBnQBXqJ1QIoBjGhjPebH4qn/PGk=;
-        b=oJWfSODp3saE0ZVAMQj2ON+DzEWTYM8M0lm4AFDRMNBC3ruRGbfdufDLwsRLus6vXc
-         OKWjJhHUTqFu5ao08E+5lsP/sfPTDXcDWU7snfvRHkRsq9zzcu9EfWsiOB/ItPUTB+7f
-         P+QsnfP1Fo5j28QC3Zd8teJuxCIU/LULZCTTnEfDE+PzukYwTCVvG2LA9FNSIb8SHdyD
-         /GrOXo0YnQrRu4FOcLMc7RXEakddmD9tEb+dFpgEFThFWL9Td3dt8OZQ7TCfVojnY2HM
-         A8IBMJhxN/IV53ru92Xw0t+rzBJy1ruY+Umlm82tijBk/ZNyZduPzH+Bwzugd2MmfhWr
-         PpLA==
-X-Gm-Message-State: AA+aEWb9TznmOBNK5G69febXl5lZk1n8qex2/vqQhOPLpV4R2PJfJW5W
-        7zCvf4Tm3G3T/53LjpGeOh/A4V7kuqAlKfJ/YxF9UBcAF6wX
-X-Google-Smtp-Source: AFSGD/UDHVdrzYkQc32Devnm1eEsYc4v/fE1C0OjkJjdEtEFMR9GgZ533CxMtvh8FMZYeVOd+iztA0ottBedGwFz3HXC5oyhf9gN
+        Wed, 5 Dec 2018 14:32:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36320 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727257AbeLETcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:32:55 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0DF6A89ACA;
+        Wed,  5 Dec 2018 19:32:55 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 25E1F60E3F;
+        Wed,  5 Dec 2018 19:32:54 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 14:32:53 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181205193253.mhlqj37r4o6ukkhp@redhat.com>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-6-pmladek@suse.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:6212:: with SMTP id d18mr13400849itc.29.1544038263094;
- Wed, 05 Dec 2018 11:31:03 -0800 (PST)
-Date:   Wed, 05 Dec 2018 11:31:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000311344057c4b6cc3@google.com>
-Subject: KMSAN: kernel-infoleak in sctp_getsockopt
-From:   syzbot <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129094431.7801-6-pmladek@suse.com>
+User-Agent: Mutt/1.6.2-neo (2016-08-08)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 05 Dec 2018 19:32:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Nov 29, 2018 at 10:44:25AM +0100, Petr Mladek wrote:
+> The possibility to re-enable a registered patch was useful for immediate
+> patches where the livepatch module had to stay until the system reboot.
+> The improved consistency model allows to achieve the same result by
+> unloading and loading the livepatch module again.
+> 
+> Also we are going to add a feature called atomic replace. It will allow
+> to create a patch that would replace all already registered patches.
+> The aim is to handle dependent patches more securely. It will obsolete
+> the stack of patches that helped to handle the dependencies so far.
+> Then it might be unclear when a cumulative patch re-enabling is safe.
+> 
+> It would be complicated to support the many modes. Instead we could
+> actually make the API and code easier to understand.
+> 
+> This patch removes the two step public API. All the checks and init calls
+> are moved from klp_register_patch() to klp_enabled_patch(). Also the patch
+> is automatically freed, including the sysfs interface when the transition
+> to the disabled state is completed.
+> 
+> As a result, there is never a disabled patch on the top of the stack.
+> Therefore we do not need to check the stack in __klp_enable_patch().
+> And we could simplify the check in __klp_disable_patch().
+> 
+> Also the API and logic is much easier. It is enough to call
+> klp_enable_patch() in module_init() call. The patch patch can be disabled
+                                                ^^^^^^^^^^^
+s/patch patch/patch
 
-syzbot found the following crash on:
+> by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
+> can be removed once the transition finishes and sysfs interface is freed.
+> 
+> The only problem is how to free the structures and kobjects a safe way.
+> The operation is triggered from the sysfs interface. We could not put
+> the related kobject from there because it would cause lock inversion
+> between klp_mutex and kernfs locks, see kn->count lockdep map.
+> 
+> This patch solved the problem by offloading the free task to
+> a workqueue. It is perfectly fine:
+> 
+>   + The patch cannot not longer be used in the livepatch operations.
+> 
+>   + The module could not be removed until the free operation finishes
+>     and module_put() is called.
+> 
+>   + The operation is asynchronous already when the first
+>     klp_try_complete_transition() fails and another call
+>     is queued with a delay.
+> 
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
 
-HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_CSUM o..
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e84a47400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56b48b46dafe4516
-dashboard link: https://syzkaller.appspot.com/bug?extid=ad5d327e6936a2e284be
-compiler:       clang version 8.0.0 (trunk 343298)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103cd225400000
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+>  Documentation/livepatch/livepatch.txt        | 137 ++++++-------
+>  include/linux/livepatch.h                    |   5 +-
+>  kernel/livepatch/core.c                      | 275 +++++++++------------------
+>  kernel/livepatch/core.h                      |   2 +
+>  kernel/livepatch/transition.c                |  19 +-
+>  samples/livepatch/livepatch-callbacks-demo.c |  13 +-
+>  samples/livepatch/livepatch-sample.c         |  13 +-
+>  samples/livepatch/livepatch-shadow-fix1.c    |  14 +-
+>  samples/livepatch/livepatch-shadow-fix2.c    |  14 +-
+>  9 files changed, 166 insertions(+), 326 deletions(-)
+> 
+> diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
+> index 2d7ed09dbd59..d849af312576 100644
+> --- a/Documentation/livepatch/livepatch.txt
+> +++ b/Documentation/livepatch/livepatch.txt
+>  
+> [ ... snip ... ]
+>
+> +5.1. Loading
+> +------------
+>  
+> -5.1. Registration
+> ------------------
+> +The only reasonable way is to enable the patch when the livepatch kernel
+> +module is being loaded. For this, klp_enable_patch() has to be called
+> +in module_init() callback. There are two main reasons:
+   ^^^^^^^^^^^^^^^^
 
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x32d/0x480 lib/dump_stack.c:113
-  kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
-  kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
-  kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
-  _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-  copy_to_user include/linux/uaccess.h:183 [inline]
-  sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
-  sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
-  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-  __sys_getsockopt+0x489/0x550 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
-R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
-R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
+s/in module_init()/in the module_init()
 
-Uninit was stored to memory at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-  kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-  kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-  kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-  sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
-  sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-  sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
-  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-  __sys_getsockopt+0x489/0x550 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>  
+> [ ... snip ... ]
+>
+> +5.4. Removing
+> +-------------
+>  
+> -At this stage, all the relevant sys-fs entries are removed and the patch
+> -is removed from the list of known patches.
+> +Module removal is only safe when there are no users of the underlying
+                                                              ^^^^^^^^^^
+Could a reader confuse "underlying functions" for functions in the
+livepatching-core?  Would "modified functions" or adding "(struct
+klp_func) " make this more specific?
 
-Uninit was stored to memory at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-  kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-  kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-  kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-  sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
-  sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-  sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
-  sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-  __sys_getsockopt+0x489/0x550 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-  __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> +functions. This is the reason why the force feature permanently disables
+> +the removal. The forced tasks entered the functions but we cannot say
+                                         ^^^^^^^^^^^^^
+Same ambiguity here.
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-  kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
-  kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
-  __kmalloc+0x14c/0x4d0 mm/slub.c:3825
-  kmalloc include/linux/slab.h:551 [inline]
-  sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
-  notifier_call_chain kernel/notifier.c:93 [inline]
-  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-  atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
-  inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:107
-  ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
-  inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
-  inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
-  rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
-  netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
-  __sys_sendmsg net/socket.c:2154 [inline]
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-  do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index b71892693da5..1366dbb159ab 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -144,6 +144,7 @@ struct klp_object {
+>   * @kobj_alive: @kobj has been added and needs freeing
+>   * @enabled:	the patch is enabled (but operation may be incomplete)
+>   * @forced:	was involved in a forced transition
+> + * @free_work:	work freeing the patch that has to be done in another context
+                                                                      ^^^^^^^^^^^^^^^
+Can we just state the context here?  ie:
 
-Bytes 32-35 of 2100 are uninitialized
-Memory access of size 2100 starts at ffff888185d8b000
-Data copied to user address 0000000020001108
-==================================================================
+ * @free_work:	patch cleanup from workqueue-context
+
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index 972520144713..e01dfa3b58d2 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -45,7 +45,7 @@
+>   */
+>  DEFINE_MUTEX(klp_mutex);
+>  
+> -/* Registered patches */
+> +/* Actively used patches. */
+>  LIST_HEAD(klp_patches);
+
+By itself, this comment makes me wonder if there are un-active and/or
+un-used patches that I need to worry about.  After this patchset,
+klp_patches will include patches that have been enabled and those that
+have been replaced, but the replacement transition is still in progress.  
+
+If that sounds accurate, how about adding to the comment:
+
+/* Actively used patches: enabled or replaced and awaiting transition */
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- Joe
