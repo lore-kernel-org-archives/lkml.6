@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD356C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC424C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3832082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3832082B
+	by mail.kernel.org (Postfix) with ESMTP id B8D10206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:25:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D10206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeLEJZy (ORCPT
+        id S1727648AbeLEJZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:25:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39880 "EHLO mail.bootlin.com"
+        Wed, 5 Dec 2018 04:25:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39883 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeLEJZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:25:27 -0500
+        id S1727515AbeLEJZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:25:28 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A74C220E39; Wed,  5 Dec 2018 10:25:24 +0100 (CET)
+        id 9915520A44; Wed,  5 Dec 2018 10:25:24 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BCE7920A59;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 74E3F20A58;
         Wed,  5 Dec 2018 10:25:06 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -40,9 +40,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v2 12/15] media: cedrus: Add device-tree compatible and variant for H5 support
-Date:   Wed,  5 Dec 2018 10:24:41 +0100
-Message-Id: <20181205092444.29497-13-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 11/15] dt-bindings: media: cedrus: Add compatibles for the A64 and H5
+Date:   Wed,  5 Dec 2018 10:24:40 +0100
+Message-Id: <20181205092444.29497-12-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
 References: <20181205092444.29497-1-paul.kocialkowski@bootlin.com>
@@ -53,40 +53,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the necessary compatible for supporting the H5 SoC along with a
-description of the capabilities of this variant.
+This introduces two new compatibles for the cedrus driver, for the
+A64 and H5 platforms.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/staging/media/sunxi/cedrus/cedrus.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/media/cedrus.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-index 82558455384a..f04b9bf23774 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-@@ -388,6 +388,10 @@ static const struct cedrus_variant sun8i_h3_cedrus_variant = {
- 	.capabilities	= CEDRUS_CAPABILITY_UNTILED,
- };
- 
-+static const struct cedrus_variant sun50i_h5_cedrus_variant = {
-+	.capabilities	= CEDRUS_CAPABILITY_UNTILED,
-+};
-+
- static const struct of_device_id cedrus_dt_match[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-video-engine",
-@@ -409,6 +413,10 @@ static const struct of_device_id cedrus_dt_match[] = {
- 		.compatible = "allwinner,sun8i-h3-video-engine",
- 		.data = &sun8i_h3_cedrus_variant,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-h5-video-engine",
-+		.data = &sun50i_h5_cedrus_variant,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, cedrus_dt_match);
+diff --git a/Documentation/devicetree/bindings/media/cedrus.txt b/Documentation/devicetree/bindings/media/cedrus.txt
+index 33833a43fff8..bce0705df953 100644
+--- a/Documentation/devicetree/bindings/media/cedrus.txt
++++ b/Documentation/devicetree/bindings/media/cedrus.txt
+@@ -11,6 +11,8 @@ Required properties:
+ 			- "allwinner,sun7i-a20-video-engine"
+ 			- "allwinner,sun8i-a33-video-engine"
+ 			- "allwinner,sun8i-h3-video-engine"
++			- "allwinner,sun50i-a64-video-engine"
++			- "allwinner,sun50i-h5-video-engine"
+ - reg			: register base and length of VE;
+ - clocks		: list of clock specifiers, corresponding to entries in
+ 			  the clock-names property;
 -- 
 2.19.2
 
