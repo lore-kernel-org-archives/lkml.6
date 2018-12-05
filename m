@@ -2,145 +2,76 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6317CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5655C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25102208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25102208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EED620879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544030723;
+	bh=a5S8271YuAAXHW3TVhL4YiMFaZAFFUty9bLcYII0KAM=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=uA98mSM6ykSSvfQ+YxZI0OXScNsQC6UBbQZXBecaCycM96FLJhgfBn0lXQ004haPD
+	 pF0hk7mN6ZmjMKfRTjxxHb8jN59BmwgwqQ/YR9HrvCET/uJMtsscQc7fMqV+7rcQY4
+	 5+2vKK2bOIkiqZraFwCgp7tlaccROAxl6gkciNOY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EED620879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeLERZT (ORCPT
+        id S1728435AbeLERZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:25:19 -0500
-Received: from mga09.intel.com ([134.134.136.24]:37841 "EHLO mga09.intel.com"
+        Wed, 5 Dec 2018 12:25:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728197AbeLERZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:25:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 09:25:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,318,1539673200"; 
-   d="scan'208";a="281190628"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005.jf.intel.com with ESMTP; 05 Dec 2018 09:25:13 -0800
-Subject: [driver-core PATCH v8 0/9] Add NUMA aware async_schedule calls
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org,
-        alexander.h.duyck@linux.intel.com
-Date:   Wed, 05 Dec 2018 09:25:13 -0800
-Message-ID: <154403054034.11544.3978949383914046587.stgit@ahduyck-desk1.jf.intel.com>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
+        id S1728359AbeLERZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:25:19 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3FE520989;
+        Wed,  5 Dec 2018 17:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544030718;
+        bh=a5S8271YuAAXHW3TVhL4YiMFaZAFFUty9bLcYII0KAM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=lCr12/vutigdQ+5Og42lkakuqiMHAdK6v7F58k/xWmR4RMgx0AMYjkZQOMQ8oRqFL
+         hWMVGxuMwMdujxSUMURGp7thXKU0Lq+Hero8AP2+MnY5P6PrgE9aVwrbWS+wUJ8lfa
+         DO8daaw3M6p0GQrprOYQwHkEAPUtafhLLeZVXWiU=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1c73fcc1dcb63aa0e5c65492692658a9e74f3c2d.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <1c73fcc1dcb63aa0e5c65492692658a9e74f3c2d.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154403071814.88331.10541605548687550422@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 09/10] clk: apcs-msm8916: simplify probe cleanup by using devm
+Date:   Wed, 05 Dec 2018 09:25:18 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set provides functionality that will help to improve the
-locality of the async_schedule calls used to provide deferred
-initialization.
+Quoting Matti Vaittinen (2018-12-04 03:39:06)
+> use devm variant for of_provider registration.
+> =
 
-This patch set originally started out focused on just the one call to
-async_schedule_domain in the nvdimm tree that was being used to defer the
-device_add call however after doing some digging I realized the scope of
-this was much broader than I had originally planned. As such I went
-through and reworked the underlying infrastructure down to replacing the
-queue_work call itself with a function of my own and opted to try and
-provide a NUMA aware solution that would work for a broader audience.
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
 
-In addition I have added several tweaks and/or clean-ups to the front of the
-patch set. Patches 1 through 4 address a number of issues that actually were
-causing the existing async_schedule calls to not show the performance that
-they could due to either not scaling on a per device basis, or due to issues
-that could result in a potential deadlock. For example, patch 4 addresses the
-fact that we were calling async_schedule once per driver instead of once
-per device, and as a result we would have still ended up with devices
-being probed on a non-local node without addressing this first.
+Applied to clk-next
 
-RFC->v1:
-    Dropped nvdimm patch to submit later.
-        It relies on code in libnvdimm development tree.
-    Simplified queue_work_near to just convert node into a CPU.
-    Split up drivers core and PM core patches.
-v1->v2:
-    Renamed queue_work_near to queue_work_node
-    Added WARN_ON_ONCE if we use queue_work_node with per-cpu workqueue
-v2->v3:
-    Added Acked-by for queue_work_node patch
-    Continued rename from _near to _node to be consistent with queue_work_node
-        Renamed async_schedule_near_domain to async_schedule_node_domain
-        Renamed async_schedule_near to async_schedule_node
-    Added kerneldoc for new async_schedule_XXX functions
-    Updated patch description for patch 4 to include data on potential gains
-v3->v4
-    Added patch to consolidate use of need_parent_lock
-    Make asynchronous driver probing explicit about use of drvdata
-v4->v5
-    Added patch to move async_synchronize_full to address deadlock
-    Added bit async_probe to act as mutex for probe/remove calls
-    Added back nvdimm patch as code it relies on is now in Linus's tree
-    Incorporated review comments on parent & device locking consolidation
-    Rebased on latest linux-next
-v5->v6:
-    Drop the "This patch" or "This change" from start of patch descriptions.
-    Drop unnecessary parenthesis in first patch
-    Use same wording for "selecting a CPU" in comments added in first patch
-    Added kernel documentation for async_probe member of device
-    Fixed up comments for async_schedule calls in patch 2
-    Moved code related setting async driver out of device.h and into dd.c
-    Added Reviewed-by for several patches
-v6->v7:
-    Fixed typo which had kernel doc refer to "lock" when I meant "unlock"
-    Dropped "bool X:1" to "u8 X:1" from patch description
-    Added async_driver to device_private structure to store driver
-    Dropped unecessary code shuffle from async_probe patch
-    Reordered patches to move fixes up to front
-    Added Reviewed-by for several patches
-    Updated cover page and patch descriptions throughout the set
-v7->v8:
-    Replaced async_probe value with dead, only apply dead in device_del
-    Dropped Reviewed-by from patch 2 due to significant changes
-    Added Reviewed-by for patches reviewed by Luis Chamberlain
-
----
-
-Alexander Duyck (9):
-      driver core: Move async_synchronize_full call
-      driver core: Establish order of operations for device_add and device_del via bitflag
-      device core: Consolidate locking and unlocking of parent and device
-      driver core: Probe devices asynchronously instead of the driver
-      workqueue: Provide queue_work_node to queue work near a given NUMA node
-      async: Add support for queueing on specific NUMA node
-      driver core: Attach devices on CPU local to device node
-      PM core: Use new async_schedule_dev command
-      libnvdimm: Schedule device registration on node local to the device
-
-
- drivers/base/base.h       |    4 +
- drivers/base/bus.c        |   46 ++------------
- drivers/base/core.c       |   11 +++
- drivers/base/dd.c         |  152 ++++++++++++++++++++++++++++++++++++++-------
- drivers/base/power/main.c |   12 ++--
- drivers/nvdimm/bus.c      |   11 ++-
- include/linux/async.h     |   82 +++++++++++++++++++++++-
- include/linux/device.h    |    5 +
- include/linux/workqueue.h |    2 +
- kernel/async.c            |   53 +++++++++-------
- kernel/workqueue.c        |   84 +++++++++++++++++++++++++
- 11 files changed, 362 insertions(+), 100 deletions(-)
-
---
