@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583A0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE3EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD752082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FEEF20879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544029896;
-	bh=qXCio4IpcUKOOI4jkWqRa3eeGOx3O8xUpG22nYvQopk=;
+	s=default; t=1544029905;
+	bh=0a7MG6E+Z71NvOC7e+IcjxQjMg1F6QgntJz3Vkl3ZZs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q23awCRLpjydyQWHr/zs99Zo3/IsTMO5g9x7jyTzmsCM/Uj0QmSutR5YuSWPTguiJ
-	 MCqMb7FaqKrOwmNAttSkE6FKR6PTTBbsqipcO1U26dzrhViWzl6N/D9VjOIH8rmgkh
-	 Je3GY9Y2a8wMc3y995mEh471B4idD6473gvXbtIs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD752082B
+	b=ElNSC0ccKly2GRo5fs+Rw8jUIXgyVKJmvJW43DQtR194MQbaD3YeicMtLd0zu+1ve
+	 SbIPQxJfTgFSAdEzEhLxpKpnYZs8EF+tm8eD1vJcD7xDfZeM8dplq7/XNmysbE+NiN
+	 MAWnpPWxwiHFoq7/MlwFk6mO8XymqC69GcdoC1K0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEEF20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeLERLf (ORCPT
+        id S1728522AbeLERLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:11:35 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41326 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728306AbeLERK4 (ORCPT
+        Wed, 5 Dec 2018 12:11:44 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33310 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728268AbeLERKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:10:56 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 189so12284594qkj.8;
-        Wed, 05 Dec 2018 09:10:55 -0800 (PST)
+        Wed, 5 Dec 2018 12:10:54 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so23137292qtp.0;
+        Wed, 05 Dec 2018 09:10:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GpKKsX6cKhxXuFDSCK8CzHfLCYdBqcCVVk9oe3i81ZI=;
-        b=UeU1glk3xkG+stmQ871+2wQmAcgEBGpK8xNfJsqga4rQBsjhccGvp3SKZ4aqlmPRd8
-         NTSbwsbvtQLY80d0kgpONKnyJWUDw60nPrZUKu2QE9SFLfwMNmJD1ehlsLjZf9uPoiHx
-         1+M5ib1XKcVRvtpNJJ1U6Ja5O2VZ8szd438/Op65o0QpxuZKMibaPbn7BBqpuWxJLtrb
-         vE+M1E1ZClWrBYoyWa3hu1nHBTmvZVwpqgeT3XZDtf1eE9SCd/GJY5o4AIWZ2nEY+2fb
-         M+E+V2TcPF0KOL7UhS/VUuP6o0UPU5kvchV2SNIR4rh+V+VPDVPLpoqsvBctq1Y4/khG
-         /vqA==
-X-Gm-Message-State: AA+aEWZ9p8BgNYPA+SRIVENuiBKw/pCB2hF9GRZuYZjNWSYt5iCunN+o
-        80kMzYsU8QGdEuukavedPUQ=
-X-Google-Smtp-Source: AFSGD/XHkyKW3PSK5ep57Ohtnrq3A0AlP8TakP3RcXbMmr05N35/xtkaE1vXPHT6FKEj+pdzb/EKYA==
-X-Received: by 2002:a37:455:: with SMTP id 82mr23305998qke.60.1544029854730;
-        Wed, 05 Dec 2018 09:10:54 -0800 (PST)
+        bh=hz95MKJyUN7o6BiAIb6U29q8tBi4HHpnn/9TiI2pVhA=;
+        b=pKgVJOofZk4rIj0tH8YEhZK+JTHenmku+to0wE4xd7RONr/7xAPmskTyc1V5Jblq1p
+         qraLgVXOsTgH5/bVwrbp1IknVLJnR5Zy+MvHN4WvZzLhf8ABFstcgxdLpj/l/DRTPAzA
+         RSVcsXSOi9G2UWjMNXbykTDlkzJkTu7LmzcwHXp/xwVwNozPumzbbXpazlCsPaiPt4Qz
+         QoxTEz73+59lrhASq6kzTBl9wULQOkbzsDTwbTnXJ0YkVMSF683GJDQIqARix3up68ga
+         3Fs/SFe0ZM2R9983dOjQZTMXxlZVwDWPQ1j+ttN111BnL1A+mLebIy3ckHH5ZN3Yd7fy
+         LNAg==
+X-Gm-Message-State: AA+aEWbjtlBc4m2e1qn3jUgpqNA5wmXSDadk3X0BxqieLCtFtgDsSobs
+        Cumjve1AYcJNwFYLage5bio=
+X-Google-Smtp-Source: AFSGD/VbE+xWASlOUOoCGee+Aa5tHO3nOvGUm3aatE+xZQeKFMyvFplrmvslXKUn/MdcdyZSwnyuvQ==
+X-Received: by 2002:aed:3784:: with SMTP id j4mr23730345qtb.50.1544029853481;
+        Wed, 05 Dec 2018 09:10:53 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.53
+        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 09:10:54 -0800 (PST)
+        Wed, 05 Dec 2018 09:10:52 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -60,9 +60,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 09/14] blkcg: associate writeback bios with a blkg
-Date:   Wed,  5 Dec 2018 12:10:34 -0500
-Message-Id: <20181205171039.73066-10-dennis@kernel.org>
+Subject: [PATCH 08/14] blkcg: associate a blkg for pages being evicted by swap
+Date:   Wed,  5 Dec 2018 12:10:33 -0500
+Message-Id: <20181205171039.73066-9-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181205171039.73066-1-dennis@kernel.org>
 References: <20181205171039.73066-1-dennis@kernel.org>
@@ -71,171 +71,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the goals of this series is to remove a separate reference to
-the css of the bio. This can and should be accessed via bio_blkcg(). In
-this patch, wbc_init_bio() now requires a bio to have a device
-associated with it.
+A prior patch in this series added blkg association to bios issued by
+cgroups. There are two other paths that we want to attribute work back
+to the appropriate cgroup: swap and writeback. Here we modify the way
+swap tags bios to include the blkg. Writeback will be tackle in the next
+patch.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Acked-by: Tejun Heo <tj@kernel.org>
 ---
- Documentation/admin-guide/cgroup-v2.rst |  8 +++++---
- block/bio.c                             | 18 ++++++++++++++++++
- fs/buffer.c                             | 10 +++++-----
- fs/ext4/page-io.c                       |  2 +-
- include/linux/bio.h                     |  5 +++++
- include/linux/writeback.h               |  5 +++--
- 6 files changed, 37 insertions(+), 11 deletions(-)
+ block/bio.c         | 62 +++++++++++++++++++++++++++------------------
+ include/linux/bio.h |  6 ++---
+ mm/page_io.c        |  2 +-
+ 3 files changed, 42 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 476722b7b636..baf19bf28385 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1879,8 +1879,10 @@ following two functions.
- 
-   wbc_init_bio(@wbc, @bio)
- 	Should be called for each bio carrying writeback data and
--	associates the bio with the inode's owner cgroup.  Can be
--	called anytime between bio allocation and submission.
-+	associates the bio with the inode's owner cgroup and the
-+	corresponding request queue.  This must be called after
-+	a queue (device) has been associated with the bio and
-+	before submission.
- 
-   wbc_account_io(@wbc, @page, @bytes)
- 	Should be called for each data segment being written out.
-@@ -1899,7 +1901,7 @@ the configuration, the bio may be executed at a lower priority and if
- the writeback session is holding shared resources, e.g. a journal
- entry, may lead to priority inversion.  There is no one easy solution
- for the problem.  Filesystems can try to work around specific problem
--cases by skipping wbc_init_bio() or using bio_associate_blkcg()
-+cases by skipping wbc_init_bio() and using bio_associate_blkg()
- directly.
- 
- 
 diff --git a/block/bio.c b/block/bio.c
-index f0f069c1823c..b42477b6a225 100644
+index 90089124b512..f0f069c1823c 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -2034,6 +2034,24 @@ static void __bio_associate_blkg_from_css(struct bio *bio,
- 	rcu_read_unlock();
+@@ -1957,30 +1957,6 @@ EXPORT_SYMBOL(bioset_init_from_src);
+ 
+ #ifdef CONFIG_BLK_CGROUP
+ 
+-#ifdef CONFIG_MEMCG
+-/**
+- * bio_associate_blkcg_from_page - associate a bio with the page's blkcg
+- * @bio: target bio
+- * @page: the page to lookup the blkcg from
+- *
+- * Associate @bio with the blkcg from @page's owning memcg.  This works like
+- * every other associate function wrt references.
+- */
+-int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
+-{
+-	struct cgroup_subsys_state *blkcg_css;
+-
+-	if (unlikely(bio->bi_css))
+-		return -EBUSY;
+-	if (!page->mem_cgroup)
+-		return 0;
+-	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
+-				     &io_cgrp_subsys);
+-	bio->bi_css = blkcg_css;
+-	return 0;
+-}
+-#endif /* CONFIG_MEMCG */
+-
+ /**
+  * bio_associate_blkcg - associate a bio with the specified blkcg
+  * @bio: target bio
+@@ -2045,6 +2021,44 @@ static void __bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+ 	bio->bi_blkg = blkg_try_get_closest(blkg);
  }
  
-+/**
-+ * bio_associate_blkg_from_css - associate a bio with a specified css
-+ * @bio: target bio
-+ * @css: target css
-+ *
-+ * Associate @bio with the blkg found by combining the css's blkg and the
-+ * request_queue of the @bio.  This takes a reference on the css that will
-+ * be put upon freeing of @bio.
-+ */
-+void bio_associate_blkg_from_css(struct bio *bio,
-+				 struct cgroup_subsys_state *css)
++static void __bio_associate_blkg_from_css(struct bio *bio,
++					  struct cgroup_subsys_state *css)
 +{
-+	css_get(css);
++	struct blkcg_gq *blkg;
++
++	rcu_read_lock();
++
++	blkg = blkg_lookup_create(css_to_blkcg(css), bio->bi_disk->queue);
++	__bio_associate_blkg(bio, blkg);
++
++	rcu_read_unlock();
++}
++
++#ifdef CONFIG_MEMCG
++/**
++ * bio_associate_blkg_from_page - associate a bio with the page's blkg
++ * @bio: target bio
++ * @page: the page to lookup the blkcg from
++ *
++ * Associate @bio with the blkg from @page's owning memcg and the respective
++ * request_queue.  This works like every other associate function wrt
++ * references.
++ */
++void bio_associate_blkg_from_page(struct bio *bio, struct page *page)
++{
++	struct cgroup_subsys_state *css;
++
++	if (unlikely(bio->bi_css))
++		return;
++	if (!page->mem_cgroup)
++		return;
++
++	css = cgroup_get_e_css(page->mem_cgroup->css.cgroup, &io_cgrp_subsys);
 +	bio->bi_css = css;
 +	__bio_associate_blkg_from_css(bio, css);
 +}
-+EXPORT_SYMBOL_GPL(bio_associate_blkg_from_css);
++#endif /* CONFIG_MEMCG */
 +
- #ifdef CONFIG_MEMCG
  /**
-  * bio_associate_blkg_from_page - associate a bio with the page's blkg
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1286c2b95498..d60d61e8ed7d 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3060,11 +3060,6 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 	 */
- 	bio = bio_alloc(GFP_NOIO, 1);
- 
--	if (wbc) {
--		wbc_init_bio(wbc, bio);
--		wbc_account_io(wbc, bh->b_page, bh->b_size);
--	}
--
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_write_hint = write_hint;
-@@ -3084,6 +3079,11 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
- 		op_flags |= REQ_PRIO;
- 	bio_set_op_attrs(bio, op, op_flags);
- 
-+	if (wbc) {
-+		wbc_init_bio(wbc, bio);
-+		wbc_account_io(wbc, bh->b_page, bh->b_size);
-+	}
-+
- 	submit_bio(bio);
- 	return 0;
- }
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index db7590178dfc..2aa62d58d8dd 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -374,13 +374,13 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
- 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
- 	if (!bio)
- 		return -ENOMEM;
--	wbc_init_bio(io->io_wbc, bio);
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
- 	bio_set_dev(bio, bh->b_bdev);
- 	bio->bi_end_io = ext4_end_bio;
- 	bio->bi_private = ext4_get_io_end(io->io_end);
- 	io->io_bio = bio;
- 	io->io_next_block = bh->b_blocknr;
-+	wbc_init_bio(io->io_wbc, bio);
- 	return 0;
- }
- 
+  * bio_associate_blkg - associate a bio with a blkg
+  * @bio: target bio
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f13572c254a7..f0438061a5a3 100644
+index 6ee2ea8b378a..f13572c254a7 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -515,6 +515,8 @@ static inline void bio_associate_blkg_from_page(struct bio *bio,
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
- void bio_disassociate_blkg(struct bio *bio);
- void bio_associate_blkg(struct bio *bio);
-+void bio_associate_blkg_from_css(struct bio *bio,
-+				 struct cgroup_subsys_state *css);
- void bio_disassociate_task(struct bio *bio);
- void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
- #else	/* CONFIG_BLK_CGROUP */
-@@ -522,6 +524,9 @@ static inline int bio_associate_blkcg(struct bio *bio,
- 			struct cgroup_subsys_state *blkcg_css) { return 0; }
- static inline void bio_disassociate_blkg(struct bio *bio) { }
- static inline void bio_associate_blkg(struct bio *bio) { }
-+static inline void bio_associate_blkg_from_css(struct bio *bio,
-+					       struct cgroup_subsys_state *css)
-+{ }
- static inline void bio_disassociate_task(struct bio *bio) { }
- static inline void bio_clone_blkcg_association(struct bio *dst,
- 			struct bio *src) { }
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index fdfd04e348f6..738a0c24874f 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -246,7 +246,8 @@ static inline void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
-  *
-  * @bio is a part of the writeback in progress controlled by @wbc.  Perform
-  * writeback specific initialization.  This is used to apply the cgroup
-- * writeback context.
-+ * writeback context.  Must be called after the bio has been associated with
-+ * a device.
-  */
- static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
- {
-@@ -257,7 +258,7 @@ static inline void wbc_init_bio(struct writeback_control *wbc, struct bio *bio)
- 	 * regular writeback instead of writing things out itself.
- 	 */
- 	if (wbc->wb)
--		bio_associate_blkcg(bio, wbc->wb->blkcg_css);
-+		bio_associate_blkg_from_css(bio, wbc->wb->blkcg_css);
- }
+@@ -505,10 +505,10 @@ do {						\
+ 	disk_devt((bio)->bi_disk)
  
- #else	/* CONFIG_CGROUP_WRITEBACK */
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
+-int bio_associate_blkcg_from_page(struct bio *bio, struct page *page);
++void bio_associate_blkg_from_page(struct bio *bio, struct page *page);
+ #else
+-static inline int bio_associate_blkcg_from_page(struct bio *bio,
+-						struct page *page) {  return 0; }
++static inline void bio_associate_blkg_from_page(struct bio *bio,
++						struct page *page) { }
+ #endif
+ 
+ #ifdef CONFIG_BLK_CGROUP
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 5bdfd21c1bd9..3475733b1926 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -339,7 +339,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 		goto out;
+ 	}
+ 	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
+-	bio_associate_blkcg_from_page(bio, page);
++	bio_associate_blkg_from_page(bio, page);
+ 	count_swpout_vm_event(page);
+ 	set_page_writeback(page);
+ 	unlock_page(page);
 -- 
 2.17.1
 
