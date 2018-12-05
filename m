@@ -2,98 +2,104 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89376C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D651C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D33220879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:47:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T3UORW7a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D33220879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id F2ED8208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:51:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2ED8208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbeLEWrQ (ORCPT
+        id S1728138AbeLEWvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:47:16 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38772 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbeLEWrP (ORCPT
+        Wed, 5 Dec 2018 17:51:06 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40511 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbeLEWvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:47:15 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so19047676oii.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:47:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=viG5/RsatE8x2Ykr5a1oyvGlkJmJiXjlidnEcsvF+xQ=;
-        b=T3UORW7a2L5UbikH+Nc3DT27olWAu79hQEvAmafrTDSlwIbVmu4WuCbQFmGTUyaCr9
-         FCWtAi53X6mduntYQSTNQI4+7JwvM3tz0+fquwXzrkP4NAIey5eEBD24u9MWK+jbHdv+
-         B1MDq3l/MdPTizE5Z9DBjRgzB6V9XhFjyxY1op6ADodQB7pMrwfPn/xh1nAVlrSXdYgt
-         yqdihygvHBPCNVWtbjW32Z9GSr2oX8DVzUHg115qEerPrzOBfLlgubUCqtYrpiWRoG1F
-         tOGsI/QtkR2PZatqVwZRgpN4ViN9kNz09ErwvijvpIZybM4h1/e21djqVmWqIcXdkmqF
-         Sg4A==
+        Wed, 5 Dec 2018 17:51:06 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k12so24261788qtf.7;
+        Wed, 05 Dec 2018 14:51:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=viG5/RsatE8x2Ykr5a1oyvGlkJmJiXjlidnEcsvF+xQ=;
-        b=VcGGjDW131hGWOOrzGjG9WW/Y9ISMHNhyIY7ZHsG+vY9jHh3wxBVS6cTTUw3usPWUA
-         2Q4sA6+M27e45o3JY3lzH0ZhnXrmsDx6W8LZxZ7QuwOPWr8Hb1bVps7A4EN3GjydDmjt
-         z7FNZ7KwBAwCZKoMB+aHF2KOD2+anXyBwJUtLLCZXLStNQY34MSMy3MxNppTG0exDbla
-         F7GjJ9QyhaXTmUgmQ8BDIJUGdKP5FvJCEV10P88Er93T1XyyS4YWZZAj4I706Z2c+Rt1
-         hg47iRHKSQb0FmBwMCOSlNb5RyHAR9mDiVkGg0liqb7/yvhrXpGLANVCLqVV7xa8IKfp
-         q5Lw==
-X-Gm-Message-State: AA+aEWbf/BSC6Ofd+IToES9LIBNZgSPzD8NhaUYwegcOPTTpGnEHYlLH
-        vXwNUyMTO1xvnrTTKp0hQAlF45lrK4CIYkQpygC5/A==
-X-Google-Smtp-Source: AFSGD/X86nT6PUdj7lo49FYLgnyiwwtkaaaL7ZQtCY4Jmp2xttwWkhWHloXVKhIZ/nMuW3410GDFfT+q1P3BLgvXlXs=
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr16908999oia.86.1544050034655;
- Wed, 05 Dec 2018 14:47:14 -0800 (PST)
+        bh=fc2wlGsV/6cnLR4lBPEfdEY3h9NpXDGasmQxPGH9Ikc=;
+        b=bd13kP3Eq7jUapeJkgiGo+vHTE17dPcmdfddAFawRUXH9dzUNmX0ijXNtTa0dpxH2+
+         8NOQRIHF8ZYHVP2vAz1e30t0XKiSALddXYJl3KjGNFMvSBIsEmBNvm4VWrLURyZmtjl/
+         hhMh/vjvQTZEEmRpNZn9GBGkyEtzZlsmXHa3J/82ecsjLkzNe7rEU/YPliBctdMtXiiU
+         1ICYvyRD+QcIWU7PU5VF1l+reuGLilPAm6jwz8DeHOQNvJv2ImjGWTcQxHhiF5XU7q7o
+         n7671kSX0TX86c/CLhRvWHhUH8PWVWcv7rxm1D7gkX0lMzTVI7o618URThZ2F0x0pWWA
+         xSgQ==
+X-Gm-Message-State: AA+aEWYjPjXcYJSVFJjlVFKHYvzQGDe6IrWAR/QIUOGpwo6FWIZ1SwWp
+        WUQNS7kLstStHWPYGO7TdHeoM6idbxIx3PnHgyI=
+X-Google-Smtp-Source: AFSGD/V0799B0DUbiFWotroi+AHXadEjrZy3FnQHhbHCRsv4l2rASBpZvbZJ0qgor3nKMAb4Pl2q0hDo43C4aeRCb1U=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr6893786qtl.343.1544050265023;
+ Wed, 05 Dec 2018 14:51:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20181205191956.31480-1-ehabkost@redhat.com> <20181205220206.GA16013@char.us.oracle.com>
-In-Reply-To: <20181205220206.GA16013@char.us.oracle.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Wed, 5 Dec 2018 14:47:03 -0800
-Message-ID: <CALMp9eQFqs7w81gWYc=z_YXaBGO-4Nr3_M=rd3eev4KP-U-nGA@mail.gmail.com>
-Subject: Re: [PATCH] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Eduardo Habkost <ehabkost@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        David Woodhouse <dwmw2@infradead.org>
+References: <20181204220224.27324-1-TheSven73@googlemail.com>
+ <20181204220224.27324-2-TheSven73@googlemail.com> <20181205101659.GA27058@kroah.com>
+ <CAGngYiXXrrqGxTt339EP53tschLgZ82eRGvGifHQw6pg=C88+Q@mail.gmail.com>
+ <20181205191724.GA434@kroah.com> <CAGngYiWG74nDt1_hN0-bKCDRxm-f=N-Rnjtk02Vd7dgKtGRaBA@mail.gmail.com>
+In-Reply-To: <CAGngYiWG74nDt1_hN0-bKCDRxm-f=N-Rnjtk02Vd7dgKtGRaBA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 5 Dec 2018 23:50:48 +0100
+Message-ID: <CAK8P3a2+ehccfdD7kwo=ev6P7Oka7CqEiq6BgkjUafFRwgnTQQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/6] fieldbus_dev: add Fieldbus Device subsystem.
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     gregkh <gregkh@linuxfoundation.org>, svendev@arcx.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>, noralf@tronnes.org,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        John Garry <john.garry@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 2:02 PM Konrad Rzeszutek Wilk
-<konrad.wilk@oracle.com> wrote:
->
-> On Wed, Dec 05, 2018 at 05:19:56PM -0200, Eduardo Habkost wrote:
-> > Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
-> > to the guest, which makes STIBP available to guests.  This was implemented
-> > by commits d28b387fb74d ("KVM/VMX: Allow direct access to
-> > MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
-> > MSR_IA32_SPEC_CTRL").
+On Wed, Dec 5, 2018 at 11:32 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+> On Wed, Dec 5, 2018 at 2:17 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 > >
-> > However, we never updated GET_SUPPORTED_CPUID to let userspace know that
-> > STIBP can be enabled in CPUID.  Fix that by updating
+> > Great, then call it a 'fieldbus' class, not "fieldbus_dev' class.
 >
-> Ooops!
-> > kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
+> Small nit:
 >
-> Shouldn't there also be a patch in QEMU to use it? (aka, +stibp).
+> Hardware connected to a fieldbus comes in two distinct flavours:
+> - clients (e.g. thermometer, robotic arm) called "fieldbus devices"
+> - servers (e.g. a PLC) called "fieldbus controllers"
+>
+> Their userspace APIs will probably differ quite a lot.
+>
+> The userspace API created by the patch is only for clients a.k.a.
+> "fieldbus devices". That's why I'm writing 'fieldbus_dev' all over the place.
+>
+> For simplicity, we could change that to just 'fieldbus'. But would this get
+> us in trouble when, at some point, we want to add a userspace API for
+> servers a.k.a. "fieldbus controllers" ?
 
-I don't see how that's relevant here. GET_SUPPORTED_CPUID should
-report all of the supported CPUID features regardless of what
-particular consumers choose to do with them.
+In the long run, would you expect to support more devices or more
+controllers that need a distinct driver? Whichever we have more of should
+probably get the shorter name.
+
+      Arnd
