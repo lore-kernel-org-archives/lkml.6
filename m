@@ -2,124 +2,213 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33A6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C577AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C182082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:24:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C182082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CEC12082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 13:25:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwSGadw6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEC12082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeLENYZ (ORCPT
+        id S1727460AbeLENZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 08:24:25 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54486 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbeLENYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:24:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EB0BA78;
-        Wed,  5 Dec 2018 05:24:24 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1D8C43F59C;
-        Wed,  5 Dec 2018 05:24:24 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id CCB5A1AE0BC3; Wed,  5 Dec 2018 13:24:44 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 13:24:44 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Wed, 5 Dec 2018 08:25:03 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37972 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLENZD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:25:03 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so12921647wml.3;
+        Wed, 05 Dec 2018 05:25:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kSlpEWch4CmScK4r3B0WBPdFNkQUOlH1T+Evl37LkEo=;
+        b=gwSGadw69VdyW3HjkgkonTR2fSVWBrZk44O4yvD5TMqBWJ0QqhLPxgTJNufCvZGg0B
+         lIXgiwEsFQh8tTx7I0nCIn7Fz2kJXWIJS9WmlpMAa/n3oVnce46xaqZJxcDVDNwbbnvr
+         Z1NORiXJ7sfm653iqiKjiBx9Hu6Dl0e2iqNgZFWPW8ozAq+7BmUp/Q7jlZjFynhQxpZ8
+         BuKjgSDRtnQrOG6JpWwBZ2WHG3Q5NeF/WDBoCRWp1NZNTjL9HqATqP7A5vowmkoBAJgt
+         2YczQ2bsgt5WAdIFx/ZAP4j9UdU/dJ/9EcscyRZR+wluwtllZ2y9fXs6YesiI/X2+8FU
+         rJug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kSlpEWch4CmScK4r3B0WBPdFNkQUOlH1T+Evl37LkEo=;
+        b=WGTOfg/vRQRjpxQN5KtpkQt92aV5lEDaiI3/grN7paY1ezaVY5yrR3vknfDS4XfX8q
+         TQX90kpa7hTVmT+k7HjtYQRkuLAK8jtvV2AM9U1LXKUz2rgInaZkpzPl9K+wi6LWLP1c
+         rrM9N9DiTRyZAqVEJzRRnIbPHcw9CRBZ5o+Q12Htap5V7tWwbqG4l8rvdeqtcBaf6lsJ
+         87ZKIf7O5WGuTROuhFMdso3FjFFfL7laMSC9xwuJK3hqblTKhxmj3c8EtQx+kToGi43O
+         0IZliq1u2pt1qO54Ei8jDBfclWKOPNnAwUXLk2ZwZXjNJaNV2WnNI6Akp8ArFtDyBvrz
+         N7ZA==
+X-Gm-Message-State: AA+aEWYdR+EtHLPTd4yR9mf+2U/Nbl0/lhSSusKh0pirlZO+8NUShx6K
+        eVF44p156Bq5TXRtHGTTJCk=
+X-Google-Smtp-Source: AFSGD/XtPKAyax0MXrWRffbMEqW7fJaHYm9h+gt1es6Z3rvZG9cqj3E/nbvWXjWbG84aD0r5qRy/cA==
+X-Received: by 2002:a1c:4c10:: with SMTP id z16mr16767173wmf.117.1544016299751;
+        Wed, 05 Dec 2018 05:24:59 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id b18sm21449895wrw.83.2018.12.05.05.24.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 05:24:59 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     masonccyang@mxic.com.tw,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] arm64/bpf: don't allocate BPF JIT programs in
- module memory
-Message-ID: <20181205132444.GA15631@arm.com>
-References: <20181123221804.440-1-ard.biesheuvel@linaro.org>
- <20181123221804.440-3-ard.biesheuvel@linaro.org>
- <20181130182629.GA16085@arm.com>
- <CAKv+Gu9QVHLWu5H3Ok1Kbm=vtzd1KaHUn2VEij6oToW5aPR9uA@mail.gmail.com>
- <20181203124930.GB25097@arm.com>
- <CAKv+Gu8svuTSOzg7wmmK70tRPgFqGvBh5BZR-V+43dMLvT1bJg@mail.gmail.com>
- <12954298-de06-349e-6df2-c218e5bf09a3@iogearbox.net>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>, zhengxunli@mxic.com.tw
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
+ <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
+ <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com>
+ <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw>
+ <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
+ <CAMuHMdV-Ca5sderSKmdbtovKrd-Z7piwVZbwDtB6vVXPa8Q5AA@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8e667f91-70bd-795c-094f-23c919c3802c@gmail.com>
+Date:   Wed, 5 Dec 2018 14:24:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12954298-de06-349e-6df2-c218e5bf09a3@iogearbox.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAMuHMdV-Ca5sderSKmdbtovKrd-Z7piwVZbwDtB6vVXPa8Q5AA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 01:24:17PM +0100, Daniel Borkmann wrote:
-> On 12/04/2018 04:45 PM, Ard Biesheuvel wrote:
-> > On Mon, 3 Dec 2018 at 13:49, Will Deacon <will.deacon@arm.com> wrote:
-> >> On Fri, Nov 30, 2018 at 08:20:06PM +0100, Ard Biesheuvel wrote:
-> >>> On Fri, 30 Nov 2018 at 19:26, Will Deacon <will.deacon@arm.com> wrote:
-> >>>> On Fri, Nov 23, 2018 at 11:18:04PM +0100, Ard Biesheuvel wrote:
-> >>>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> >>>>> index a6fdaea07c63..76c2ab40c02d 100644
-> >>>>> --- a/arch/arm64/net/bpf_jit_comp.c
-> >>>>> +++ b/arch/arm64/net/bpf_jit_comp.c
-> >>>>> @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
-> >>>>>                                          tmp : orig_prog);
-> >>>>>       return prog;
-> >>>>>  }
-> >>>>> +
-> >>>>> +void *bpf_jit_alloc_exec(unsigned long size)
-> >>>>> +{
-> >>>>> +     return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_START,
-> >>>>> +                                 BPF_JIT_REGION_END, GFP_KERNEL,
-> >>>>> +                                 PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-> >>>>> +                                 __builtin_return_address(0));
-> >>>>
-> >>>> I guess we'll want VM_IMMEDIATE_UNMAP here if Rich gets that merged.
-> >>>
-> >>> I think akpm already queued up that patch.
-> >>>
-> >>>> In the
-> >>>> meantime, I wonder if it's worth zeroing the region in bpf_jit_free_exec()?
-> >>>> (although we'd need the size information...).
-> >>>>
-> >>>
-> >>> Not sure. What exactly would that achieve?
-> >>
-> >> I think the zero encoding is guaranteed to be undefined, so it would limit
-> >> the usefulness of any stale, executable TLB entries. However, we'd also need
-> >> cache maintenance to make that stuff visible to the I side, so it's probably
-> >> not worth it, especially if akpm has queued the stuff from Rich.
-> >>
-> >> Maybe just add an:
-> >>
-> >> /* FIXME: Remove this when VM_IMMEDIATE_UNMAP is supported */
-> >> #ifndef VM_IMMEDIATE_UNMAP
-> >> #define VM_IMMEDIATE_UNMAP      0
-> >> #endif
-> >>
-> >> so we remember to come back and sort this out? Up to you.
-> > 
-> > I'll just make a note to send out that patch once the definition lands via -akpm
+On 12/05/2018 02:15 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
+
+Hi,
+
+> On Wed, Dec 5, 2018 at 1:57 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 12/05/2018 08:44 AM, masonccyang@mxic.com.tw wrote:
+>>>> "Marek Vasut" <marek.vasut@gmail.com>
+>>>> 2018/12/05 上午 10:04
+>>>> On 12/03/2018 10:18 AM, Mason Yang wrote:
+>>>>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+>>>>>
+>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 > 
-> Could I get an ACK from you for this patch, then I'd take the series into bpf-next.
+>>>>> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+>>>>> +{
+>>>>> +   /*
+>>>>> +    * NOTE: The 0x260 are undocumented bits, but they must be set.
+>>>>> +    *   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+>>>>> +    *   0x0 : the delay is biggest,
+>>>>> +    *   0x1 : the delay is 2nd biggest,
+>>>>> +    *   0x3 or 0x6 is a recommended value.
+>>>>> +    */
+>>>>
+>>>> Doesn't this vary by SoC ? I think H3 ES1.0 had different value here,
+>>>> but I might be wrong.
+>>>
+>>> I check the Renesas bare-metal code, mini_monitor v4.01.
+>>> It set 0x03 or 0x0 and I test them w/ 0x0, 0x3 and 0x6 are all OK.
+>>
+>> Shouldn't this somehow use the soc_device_match() then and configure it
+>> accordingly for various chips ? Like eg. the r8a7795-cpg-mssr driver does.
+> 
+> Please don't use soc_device_match() for per-SoC configuration, if
+> you already have of_device_id.data.
 
-Gah, thanks for the ping: I thought I acked this initially, but turns out I
-didn't.
+I mean, the value is different on H3 ES1 and ES2 iirc, that's what
+soc_device_match() is for, right ?
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+> BTW, this drivers support r8a7795 only (for now), as per the compatible
+> value.
 
-Will
+77995
+
+>>>>> +#ifdef CONFIG_RESET_CONTROLLER
+>>>>
+>>>> Just make the driver depend on reset controller.
+>>>
+>>> ?
+>>> please refer to
+>>> https://github.com/torvalds/linux/blob/master/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>
+>>> line 124 ~ 126
+>>
+>> This seems like a stopgap measure for systems which do not have a reset
+>> api compatible controller. Geert ?
+> 
+> So far CONFIG_RESET_CONTROLLER is optional.
+
+My understanding is that for this IP, it can well be mandatory, since
+all the chips have a reset wired to the IP internally.
+
+>>>>> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+>>>>> +            const void *tx_buf, void *rx_buf)
+>>>>> +{
+>>>>> +   u32 smenr, smcr, data, pos = 0;
+>>>>> +   int ret = 0;
+>>>>> +
+>>>>> +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+>>>>> +              RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+>>>>> +              RPC_CMNCR_BSZ(0));
+>>>>> +   regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
+>>>>> +   regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+>>>>> +   regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+>>>>> +   regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
+>>>>> +
+>>>>> +   if (tx_buf) {
+>>>>> +      smenr = rpc->smenr;
+>>>>> +
+>>>>> +      while (pos < rpc->xferlen) {
+>>>>> +         u32 nbytes = rpc->xferlen  - pos;
+>>>>> +
+>>>>> +         regmap_write(rpc->regmap, RPC_SMWDR0,
+>>>>> +                 *(u32 *)(tx_buf + pos));
+>>>>
+>>>> *(u32 *) cast is probably not needed , fix casts globally.
+>>>
+>>> It must have it!
+>>
+>> Why ?
+> 
+> Else you get a compiler warning, as tx_bug is void *.
+
+Don't you need some get_unaligned() in that case ? txbuf+pos can well be
+unaligned if it's void * .
+
+>>>>> +#ifdef CONFIG_PM_SLEEP
+>>>>> +static int rpc_spi_suspend(struct device *dev)
+>>>>> +{
+>>>>> +   struct platform_device *pdev = to_platform_device(dev);
+>>>>> +   struct spi_master *master = platform_get_drvdata(pdev);
+>>>>> +
+>>>>> +   return spi_master_suspend(master);
+>>>>
+>>>> Won't the SPI NOR lose state across suspend ? Is that a problem ?
+>>>
+>>> I don't think so.
+>>> Because when the device is not in operation and CS# is high,
+>>> it is put in stand-by mode.
+>>
+>> Is the power to the SPI NOR retained ?
+> 
+> Not if PSCI system suspend turns of power to the SoC.
+
+And is that a problem ?
+
+-- 
+Best regards,
+Marek Vasut
