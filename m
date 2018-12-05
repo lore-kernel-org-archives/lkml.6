@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDDEC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A14C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07B620878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C48520878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n/K3mbc+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07B620878
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rixo+vtx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C48520878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeLEPTo (ORCPT
+        id S1728139AbeLEPTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:19:44 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51076 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeLEPTo (ORCPT
+        Wed, 5 Dec 2018 10:19:49 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:54308 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeLEPTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:19:44 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5FJfSs086772;
-        Wed, 5 Dec 2018 09:19:41 -0600
+        Wed, 5 Dec 2018 10:19:48 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5FJj1R013242;
+        Wed, 5 Dec 2018 09:19:45 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544023181;
-        bh=cFF0LK1rea/6jyLZlnj/kTttiYi9qVhIlwykaHOy0AU=;
+        s=ti-com-17Q1; t=1544023185;
+        bh=z1nWhNHQgfUtwFJxgzO+epxyHRSr7YEr+iRwu0V9p9I=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=n/K3mbc++XpGOyomx+keolYvOXdau2nbIO4ymcfJLhVqqtA98S/ylla7yE3Yrc0AY
-         olfp5gdLPRalfRIZHz//hdjAhZgl7AAbt6Ttez4hde0InqAR987+IDjl/VPrlGAxVL
-         LvZYCj5jf6Tj9MTd3WNfqlgITkF8cCBYCkdg7f0U=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5FJf8T074136
+        b=Rixo+vtxBvU6EelT0P2GCNKE87V9vEQx5Fa/iogc7csv8KEr7MjCvnm5tgkDARygM
+         hb8/j8htesfuJORGWcbeZmXupWNBGX6v1BopFv/9bxrysDVMWcdbwCizFOHmNvzdk6
+         Uw7LXiIrw4/PpBY/zDIQJoRC3e5KtrNe83xPsaj8=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5FJjFJ101314
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 09:19:41 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 5 Dec 2018 09:19:45 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
- Dec 2018 09:19:38 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ Dec 2018 09:19:44 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 5 Dec 2018 09:19:38 -0600
+ Wed, 5 Dec 2018 09:19:44 -0600
 Received: from dlelxv97.itg.ti.com (dlelxv97.itg.ti.com [172.17.2.193])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5FJc7L001456;
-        Wed, 5 Dec 2018 09:19:38 -0600
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5FJhSw020000;
+        Wed, 5 Dec 2018 09:19:43 -0600
 Received: from localhost.localdomain (vboxa0400828d.dhcp.ti.com [172.22.237.247])
-        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5FJWna025493;
-        Wed, 5 Dec 2018 09:19:35 -0600
+        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5FJWnc025493;
+        Wed, 5 Dec 2018 09:19:41 -0600
 From:   Roger Quadros <rogerq@ti.com>
 To:     <balbi@kernel.org>
 CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <nsekhar@ti.com>,
         <t-kristo@ti.com>, <vigneshr@ti.com>, <linux-omap@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-usb@vger.kernel.org>, <rogerq@ti.com>
-Subject: [PATCH 1/3] usb: dwc3: gadget: Fix OTG events when gadget driver isn't loaded
-Date:   Wed, 5 Dec 2018 17:19:29 +0200
-Message-ID: <1544023171-5796-2-git-send-email-rogerq@ti.com>
+Subject: [PATCH 3/3] usb: dwc3: keystone: Add support for ti,am654-dwc3
+Date:   Wed, 5 Dec 2018 17:19:31 +0200
+Message-ID: <1544023171-5796-4-git-send-email-rogerq@ti.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544023171-5796-1-git-send-email-rogerq@ti.com>
 References: <1544023171-5796-1-git-send-email-rogerq@ti.com>
@@ -74,40 +74,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On v3.10a in dual-role mode, if port is in device mode
-and gadget driver isn't loaded, the OTG event interrupts don't
-come through.
+The AM654 SoC contains a DWC3 controller with TI specific
+wrapper. Add support for that.
 
-It seems that if the core is configured to be OTG2.0 only,
-then we can't leave the DCFG.DEVSPD at Super-speed (default)
-if we expect OTG to work properly. It must be set to High-speed.
-
-Fix this issue by configuring DCFG.DEVSPD to the supported
-maximum speed at gadget init. Device tree still needs to provide
-correct supported maximum speed for this to work.
-
-This issue wasn't present on v2.40a but is seen on v3.10a.
-It doesn't cause any side effects on v2.40a.
+Unlike the Keystone 2 case, for AM654 We don't need to
+process any IRQs for basic USB operation.
 
 Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/usb/dwc3/gadget.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/dwc3/Kconfig         |  6 +++---
+ drivers/usb/dwc3/dwc3-keystone.c | 11 ++++++++++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 679c12e..79120c0 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -3240,6 +3240,8 @@ int dwc3_gadget_init(struct dwc3 *dwc)
- 		goto err4;
+diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
+index 1a0404f..a83a84f 100644
+--- a/drivers/usb/dwc3/Kconfig
++++ b/drivers/usb/dwc3/Kconfig
+@@ -86,11 +86,11 @@ config USB_DWC3_HAPS
+ 	  platform, please say 'Y' or 'M' here.
+ 
+ config USB_DWC3_KEYSTONE
+-	tristate "Texas Instruments Keystone2 Platforms"
+-	depends on ARCH_KEYSTONE || COMPILE_TEST
++	tristate "Texas Instruments Keystone2/3 Platforms"
++	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+ 	default USB_DWC3
+ 	help
+-	  Support of USB2/3 functionality in TI Keystone2 platforms.
++	  Support of USB2/3 functionality in TI Keystone2/3 platforms.
+ 	  Say 'Y' or 'M' here if you have one such device
+ 
+ config USB_DWC3_OF_SIMPLE
+diff --git a/drivers/usb/dwc3/dwc3-keystone.c b/drivers/usb/dwc3/dwc3-keystone.c
+index 193a9a8..cbee5fb 100644
+--- a/drivers/usb/dwc3/dwc3-keystone.c
++++ b/drivers/usb/dwc3/dwc3-keystone.c
+@@ -106,6 +106,10 @@ static int kdwc3_probe(struct platform_device *pdev)
+ 		goto err_irq;
  	}
  
-+	dwc3_gadget_set_speed(&dwc->gadget, dwc->maximum_speed);
++	/* IRQ processing not required currently for AM65 */
++	if (of_device_is_compatible(node, "ti,am654-dwc3"))
++		goto skip_irq;
 +
- 	return 0;
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "missing irq\n");
+@@ -123,6 +127,7 @@ static int kdwc3_probe(struct platform_device *pdev)
  
- err4:
+ 	kdwc3_enable_irqs(kdwc);
+ 
++skip_irq:
+ 	error = of_platform_populate(node, NULL, NULL, dev);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to create dwc3 core\n");
+@@ -152,8 +157,11 @@ static int kdwc3_remove_core(struct device *dev, void *c)
+ static int kdwc3_remove(struct platform_device *pdev)
+ {
+ 	struct dwc3_keystone *kdwc = platform_get_drvdata(pdev);
++	struct device_node *node = pdev->dev.of_node;
++
++	if (!of_device_is_compatible(node, "ti,am654-dwc3"))
++		kdwc3_disable_irqs(kdwc);
+ 
+-	kdwc3_disable_irqs(kdwc);
+ 	device_for_each_child(&pdev->dev, NULL, kdwc3_remove_core);
+ 	pm_runtime_put_sync(kdwc->dev);
+ 	pm_runtime_disable(kdwc->dev);
+@@ -165,6 +173,7 @@ static int kdwc3_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id kdwc3_of_match[] = {
+ 	{ .compatible = "ti,keystone-dwc3", },
++	{ .compatible = "ti,am654-dwc3" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, kdwc3_of_match);
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
