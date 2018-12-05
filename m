@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB0C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4762AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D85213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B0EB2082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:52:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvb6PcCS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D85213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq5M4cze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B0EB2082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbeLEJwA (ORCPT
+        id S1729795AbeLEJvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:52:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57326 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729697AbeLEJvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:51:03 -0500
+        id S1729697AbeLEJu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:50:58 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 453262087F;
-        Wed,  5 Dec 2018 09:51:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F40872087F;
+        Wed,  5 Dec 2018 09:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003462;
-        bh=lbCX+OE1QP/uE58tK/2IGyeElBlpghobLovF+WNzO/A=;
+        s=default; t=1544003458;
+        bh=JUM+duHqmpBjUL36ybvUdijy+WP12OKfOZq0c8jRchQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvb6PcCSLt+HR40gpGLXXrA/JRbToJxIAc0zCG8A5S0v8N8X2Gnrs03ktahIIbpmT
-         7ypRb2x0FRKgJQzK+zAB7fFAj/svz+Zk/RYtO2adv2YSrtaYfsduLlhitebOM/jBB4
-         O9ZU1+M/zSXzE/0gy5BJ2ZJ8W8l6TyJ/eX+da5oo=
+        b=kq5M4cze/+B393kDQmW1gUzRNHbSaXqgQALIaJbhrE2vLuUKF90QZ1FrcLwGIUegV
+         fIjTkAaW8xjnkWTLXRJmUkgcQTQ3x7BD/kl9eaCi/vk/92vbihf5w84qXJ7FcTbKKS
+         MzCRg4h6OaeW6RxWDnm/o+pSh3STxJIWZ8yHvxew=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
+Cc:     Srikanth Boddepalli <boddepalli.srikanth@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 38/45] fscache, cachefiles: remove redundant variable 'cache'
-Date:   Wed,  5 Dec 2018 04:46:59 -0500
-Message-Id: <20181205094706.7225-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 36/45] xen: xlate_mmu: add missing header to fix 'W=1' warning
+Date:   Wed,  5 Dec 2018 04:46:57 -0500
+Message-Id: <20181205094706.7225-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
@@ -52,39 +52,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+[ Upstream commit 72791ac854fea36034fa7976b748fde585008e78 ]
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+Add a missing header otherwise compiler warns about missed prototype:
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+drivers/xen/xlate_mmu.c:183:5: warning: no previous prototype for 'xen_xlate_unmap_gfn_range?' [-Wmissing-prototypes]
+  int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/xen/xlate_mmu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 8d43306c038b..799b59d96fe2 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -969,11 +969,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
- void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index 23f1387b3ef7..e7df65d32c91 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -36,6 +36,7 @@
+ #include <asm/xen/hypervisor.h>
  
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
- 
- 	_enter("%p,{%lu}", object, page->index);
- 
+ #include <xen/xen.h>
++#include <xen/xen-ops.h>
+ #include <xen/page.h>
+ #include <xen/interface/xen.h>
+ #include <xen/interface/memory.h>
 -- 
 2.17.1
 
