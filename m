@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63126C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73766C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239DA2081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E0820892
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:43:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rh50s/iX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239DA2081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETtpkOve"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E0820892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeLEJnm (ORCPT
+        id S1729008AbeLEJnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:43:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:43:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728753AbeLEJnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:43:40 -0500
+        id S1729112AbeLEJnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:43:42 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFAB52081B;
-        Wed,  5 Dec 2018 09:43:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 523C720878;
+        Wed,  5 Dec 2018 09:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003019;
-        bh=AVQPsWhpOvdV3fbpq5OtOAw1BlBaV6toGM7Rcfj4gac=;
+        s=default; t=1544003021;
+        bh=h757dGOELV3g6f3kSQsL5SUCtHU0Wdou09gfN8ON+nw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rh50s/iXDc9KCl3mk44IXm2e+ELGaHlvdH5sNEeYCDxJoIwfjriBizVD2tp9k0ZHb
-         vFuEiIcugYApyJNew/2jrW3KeecaitWHL55ouQKx+Nqtbcxb9wrnzHFOBQ5eDO+HqG
-         JOWZJZQezlJ1toWgYXl/MGQcAVgm8Xc0XLJ99gGc=
+        b=ETtpkOve37Zr8l9hpecMgp2cgNAFdZScq/uca+edTwHZMOuppfeOrNndkHPoHK1mM
+         mrgFDYUF7TkKhh1d7hdJryO0zBEBCg8QWwMEQyuTS0SGShy4+FgB66bDFlfhvxOdSP
+         LQOKdoRdO0zoSNtqpUg+d1FgYX6wdc+HaNJKKxiE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 06/69] ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
-Date:   Wed,  5 Dec 2018 04:41:44 -0500
-Message-Id: <20181205094247.6556-6-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 07/69] sysv: return 'err' instead of 0 in __sysv_write_inode
+Date:   Wed,  5 Dec 2018 04:41:45 -0500
+Message-Id: <20181205094247.6556-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094247.6556-1-sashal@kernel.org>
 References: <20181205094247.6556-1-sashal@kernel.org>
@@ -53,40 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit cec83ff1241ec98113a19385ea9e9cfa9aa4125b ]
+[ Upstream commit c4b7d1ba7d263b74bb72e9325262a67139605cde ]
 
-While playing with initialization order of modem device, it has been
-discovered that under some circumstances (early console init, I
-believe) its .pm() callback may be called before the
-uart_port->private_data pointer is initialized from
-plat_serial8250_port->private_data, resulting in NULL pointer
-dereference.  Fix it by checking for uninitialized pointer before using
-it in modem_pm().
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixes: aabf31737a6a ("ARM: OMAP1: ams-delta: update the modem to use regulator API")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+fs/sysv/inode.c: In function '__sysv_write_inode':
+fs/sysv/inode.c:239:6: warning:
+ variable 'err' set but not used [-Wunused-but-set-variable]
+
+__sysv_write_inode should return 'err' instead of 0
+
+Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/board-ams-delta.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/sysv/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 6cbc69c92913..4174fa86bfb1 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -512,6 +512,9 @@ static void modem_pm(struct uart_port *port, unsigned int state, unsigned old)
- 	struct modem_private_data *priv = port->private_data;
- 	int ret;
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index 3c47b7d5d4cf..9e0874d1524c 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
+                 }
+         }
+ 	brelse(bh);
+-	return 0;
++	return err;
+ }
  
-+	if (!priv)
-+		return;
-+
- 	if (IS_ERR(priv->regulator))
- 		return;
- 
+ int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
 -- 
 2.17.1
 
