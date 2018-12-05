@@ -2,110 +2,165 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4301BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D492C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF25E213A2
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9118F20659
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="g2Mc8Ypy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF25E213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="w9S4OUbL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9118F20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeLEL2o (ORCPT
+        id S1727719AbeLEL3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:28:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50918 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727678AbeLEL2o (ORCPT
+        Wed, 5 Dec 2018 06:29:12 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:57972 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbeLEL3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:28:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Vr9tgcVHTh8iiUQZzai9FfjRca3WGPSQTxY477+SLsA=; b=g2Mc8Ypy6cXQQpM7U8HoFCB6j
-        SBydPD1h2mp13rEErwiczdEkF98+I7cL/o8msV5++uvuJ8m68dLUFUMum5B4/8ZV55sHTdytzlsGY
-        0tUSh5olEzVV1ROFkynDv2DLeRKchfSlu9eHPV4oEDxxuT34/G305d9msuNZ9ePx+94sU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gUVM0-0003HO-Rk; Wed, 05 Dec 2018 11:28:32 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8180C112533F; Wed,  5 Dec 2018 11:28:32 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 11:28:32 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
-        "djkurtz@chromium.org" <djkurtz@chromium.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ASoC: DA7219: Implement error check on reg read and
- write
-Message-ID: <20181205112832.GA6205@sirena.org.uk>
-References: <1543948103-20752-1-git-send-email-akshu.agrawal@amd.com>
- <1543948103-20752-2-git-send-email-akshu.agrawal@amd.com>
- <AM5PR1001MB099412DDC3B33069BCFDC38B80AF0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <50cffd9e-74f4-b0af-5eed-3dad5f32d8f9@amd.com>
- <AM5PR1001MB0994CDEC9FB92DBCEB83892280A80@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-In-Reply-To: <AM5PR1001MB0994CDEC9FB92DBCEB83892280A80@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-X-Cookie: Real Users never use the Help key.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 5 Dec 2018 06:29:11 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id wB5BSBlV028064;
+        Wed, 5 Dec 2018 20:28:11 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wB5BSBlV028064
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544009292;
+        bh=sWyas4YPx7Kc+mWtxj9UKPr4KlAhoGwLASCZp+3wZhU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=w9S4OUbL7uO43hdC0S5b/isieGpBRChmF2XR3C5LWA5ongMKo1Egv23tDOrWEglsA
+         T0G7r7k1uOn0AzftSYsEJk0Gmyw7yvak7t97CLQIEIPpF3/IQBI/yTQw0Aoj/I3Jwc
+         m0wK8qvkG+Ug6KHxoLtnFlgxolvu+Kr5nhm6Ewsynifn367SuyIz0i3U1RJrry36KV
+         oKApaiNcv4Nc5bgItsFJLZ8yNMEcuUz2lH77Bou6W5QNu3Fg2UbtRKNtCAwvJDAlfC
+         E6yD0rC+8ji0kyqfDYZ8scdEMgLdCcO1BshvYncuXyxlm1miohYHcM4dId3MxZIHfC
+         t49OPVTaiTT3Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kbuild: refactor Makefile.asm-generic
+Date:   Wed,  5 Dec 2018 20:28:04 +0900
+Message-Id: <1544009286-15705-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ - Use conventional $(MAKE) $(asm-generic)=<dir> style
+   for directory descending
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ - Remove unneeded FORCE since "all" is a phony target
 
-On Wed, Dec 05, 2018 at 10:21:04AM +0000, Adam Thomson wrote:
+ - Remove unneeded "_dummy :=" assignment
 
-> If the previous I2C access failed, how can we be sure that the write back to HW
-> of 0xFF even succeeds? More importantly these error returns won't necessarily
-> stop subsequent calls to controls within the Codec I believe, so you could still
-> see unwanted writes to HW via I2C, if I2C is sporadically operational. Again I
-> don't see this update resolving that. The key thing is to resolve why even just
-> one I2C transaction fails.
+ - Skip $(shell mkdir ...) when headers exist in the directory
 
-Right, it's just not clear what we can constructively do if the I2C bus
-falls to bits other than log things and the I2C controllers will
-generally do that themselves.  There's no guarantee what made it
-through to the device or what will in future make it through to the
-device.
+ - Misc cleanups
 
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
------BEGIN PGP SIGNATURE-----
+ Makefile                     |  8 ++++----
+ scripts/Makefile.asm-generic | 37 +++++++++++++++++++------------------
+ 2 files changed, 23 insertions(+), 22 deletions(-)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwHtl8ACgkQJNaLcl1U
-h9DiPgf/dRdws2pJQNwVjMZCeXaIWamfcvHKqKCY0obEy89cZkRWM/SWVu/M1bj3
-5pzLBIjk5b/tJh4/yFcK1ioJjiEpCk76HGlFnUp9+wDFeO8TOJVNppe72gmN9QrA
-fq2PjmoDPV3STxHwDzy0/5Q4pCiS3K1qFLTfY/pK8PFowuk+y/SLVNnsb34HlH7c
-6OOIGiUJNn3a6cKBTeyN2VH9tasRbsBeap4q8DZJRt2Q6+6Jp3/cLtSO7HKqLghK
-hDkNILIx9pymLYIn9zGntO46IyP+R28+TP6lGafnFvfj/eoz+BJTYsxg26qdRP+0
-WIuaOyr/YmzRZ3yjFs8Pn7SdVXj1Kw==
-=0djV
------END PGP SIGNATURE-----
+diff --git a/Makefile b/Makefile
+index ab38eb2..3af0379 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1122,13 +1122,13 @@ prepare0: archprepare
+ prepare: prepare0 prepare-objtool
+ 
+ # Support for using generic headers in asm-generic
++asm-generic := -f $(srctree)/scripts/Makefile.asm-generic obj
++
+ PHONY += asm-generic uapi-asm-generic
+ asm-generic: uapi-asm-generic
+-	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+-	            src=asm obj=arch/$(SRCARCH)/include/generated/asm
++	$(Q)$(MAKE) $(asm-generic)=arch/$(SRCARCH)/include/generated/asm
+ uapi-asm-generic:
+-	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
+-	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
++	$(Q)$(MAKE) $(asm-generic)=arch/$(SRCARCH)/include/generated/uapi/asm
+ 
+ PHONY += prepare-objtool
+ prepare-objtool: $(objtool_target)
+diff --git a/scripts/Makefile.asm-generic b/scripts/Makefile.asm-generic
+index 32ad8e9..760323e 100644
+--- a/scripts/Makefile.asm-generic
++++ b/scripts/Makefile.asm-generic
+@@ -2,41 +2,42 @@
+ # include/asm-generic contains a lot of files that are used
+ # verbatim by several architectures.
+ #
+-# This Makefile reads the file arch/$(SRCARCH)/include/$(src)/Kbuild
++# This Makefile reads the file arch/$(SRCARCH)/include/(uapi/)/asm/Kbuild
+ # and for each file listed in this file with generic-y creates
+-# a small wrapper file in $(obj) (arch/$(SRCARCH)/include/generated/$(src))
++# a small wrapper file in arch/$(SRCARCH)/include/generated/(uapi/)/asm.
+ 
+ PHONY := all
+ all:
+ 
+-kbuild-file := $(srctree)/arch/$(SRCARCH)/include/$(src)/Kbuild
+--include $(kbuild-file)
++src := $(subst /generated,,$(obj))
++-include $(src)/Kbuild
+ 
+ include scripts/Kbuild.include
+ 
+-# Create output directory if not already present
+-_dummy := $(shell [ -d $(obj) ] || mkdir -p $(obj))
++generic-y   := $(addprefix $(obj)/, $(generic-y))
++generated-y := $(addprefix $(obj)/, $(generated-y))
+ 
+-# Stale wrappers when the corresponding files are removed from generic-y
+-# need removing.
+-generated-y   := $(generic-y) $(generated-y)
+-all-files     := $(patsubst %, $(obj)/%, $(generated-y))
+-old-headers   := $(wildcard $(obj)/*.h)
+-unwanted      := $(filter-out $(all-files),$(old-headers))
++# Remove stale wrappers when the corresponding files are removed from generic-y
++old-headers := $(wildcard $(obj)/*.h)
++unwanted    := $(filter-out $(generic-y) $(generated-y),$(old-headers))
+ 
+ quiet_cmd_wrap = WRAP    $@
+-cmd_wrap = echo "\#include <asm-generic/$*.h>" >$@
++      cmd_wrap = echo "\#include <asm-generic/$*.h>" > $@
+ 
+ quiet_cmd_remove = REMOVE  $(unwanted)
+-cmd_remove = rm -f $(unwanted)
++      cmd_remove = rm -f $(unwanted)
+ 
+-all: $(patsubst %, $(obj)/%, $(generic-y)) FORCE
+-	$(if $(unwanted),$(call cmd,remove),)
++all: $(generic-y)
++	$(if $(unwanted),$(call cmd,remove))
+ 	@:
+ 
+ $(obj)/%.h:
+ 	$(call cmd,wrap)
+ 
+-PHONY += FORCE
++# Create output directory. Skip it if at least one old header exists
++# since we know the output directory already exists.
++ifeq ($(old-headers),)
++$(shell mkdir -p $(obj))
++endif
++
+ .PHONY: $(PHONY)
+-FORCE: ;
+-- 
+2.7.4
 
---5vNYLRcllDrimb99--
