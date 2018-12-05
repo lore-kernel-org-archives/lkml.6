@@ -2,156 +2,98 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0E2C07E85
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47372C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DDD2081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DDD2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BAA002081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 00:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UNd0vZvQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA002081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeLEAXE (ORCPT
+        id S1726650AbeLEAXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:23:04 -0500
-Received: from mga05.intel.com ([192.55.52.43]:20493 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725905AbeLEAXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:23:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:23:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="107334987"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.183])
-  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 16:23:02 -0800
-Date:   Tue, 4 Dec 2018 16:23:02 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 0/7] tpm: retrieve digest size of unknown algorithms
- from TPM
-Message-ID: <20181205002302.GB12210@linux.intel.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181205002155.GA12210@linux.intel.com>
+        Tue, 4 Dec 2018 19:23:35 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38232 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbeLEAXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Dec 2018 19:23:35 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so8142166pgc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 16:23:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=rXz3U3BB2qLVL7pDyi7g6ArLmKgfu6RB2C9y2sIyQss=;
+        b=UNd0vZvQx46EpcicD+JD3WZrqKRZgMmW0+NfSxRx6ZOsPWgr93gbFJHwv86Co7x1Jn
+         p9NN8tpcSLd1aV8vfa6kwFuxTjfRwyBuVnUfwdhwKOkpWCyVYeAt3Id8LhZ+QZ2aK7jF
+         17JXlnclsppDUhQozJ7gPyQ5Jlb+diavl0oMF0539qPEROjmnTBVWC24wQYqX6jDSomF
+         D0CXkgaOo/ocrB/pNYEylbPzKMnkW1fs/WFNGYR2xSsNAqWZqiGWAa8QtPdk6oyv/kxK
+         TEnihlIbZbkKsfGOhd0xPSp0wD0cn00cKyIqyDetuqb2CjKHUxpBTSr3+HUeCpVG2Wlw
+         94LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=rXz3U3BB2qLVL7pDyi7g6ArLmKgfu6RB2C9y2sIyQss=;
+        b=WySOTlThnOpqqzYPqk0OaRpvknGsDogi1+ohX/29HVBQFDt3/WXjGvUzXgz2q45fng
+         Htlk01LjhopGLEeiPjxW/UzxkMFZpW3bU9sQ0WL/lpigRPncXdPZmSqUX8Cc5MPg5DYQ
+         wyexdJtpVxkYnrD6h3OxkrhpkHqufpqboTcaGuzyf8tvOreXl08QBkCGphDNUVavYD18
+         tm392L17lb36mqIFX73XyCEwsHRc9XaZHLe/nT9d5dQb+IEH7rTi5LHlsrbyBLWdYm3t
+         3mLMHgViCida8xKzyVYruOOqKXaJlXhFEuFklaS5fEDN6PCJtvmyYq5IOhKZEt+SFhgN
+         w2NA==
+X-Gm-Message-State: AA+aEWbdPhsEBbCdgOygg5vyf54NlsoMKpZqdD7ePa3EXgTbQ9xkLEwu
+        DoEJ7MGnwr1bgP1CgwIpBZ5JeQ==
+X-Google-Smtp-Source: AFSGD/XGJhD03HWOsr+Ai1mk71eWDszLqTXBQnA1uSfWhbIxF4GaeH+M9b0XYGvsM2ojZLlr9yKLDA==
+X-Received: by 2002:a63:f34b:: with SMTP id t11mr18681172pgj.341.1543969414116;
+        Tue, 04 Dec 2018 16:23:34 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id k129sm32765272pgk.29.2018.12.04.16.23.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 16:23:33 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Carlo Caione <ccaione@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH] MAINTAINERS: Remove myself from the list
+In-Reply-To: <eaf25e588c5ab78c607e7168e22871464e7ec8d7.camel@baylibre.com>
+References: <20181201151749.10932-1-ccaione@baylibre.com> <928e27de-cb7b-cf40-b8b6-2aa43a69ee39@baylibre.com> <eaf25e588c5ab78c607e7168e22871464e7ec8d7.camel@baylibre.com>
+Date:   Tue, 04 Dec 2018 16:23:32 -0800
+Message-ID: <7h1s6wddob.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205002155.GA12210@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 04:21:55PM -0800, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:31AM +0100, Roberto Sassu wrote:
-> > Update
-> > 
-> > This version of the patch set includes an additional patch (7/7) which
-> > modifies the definition of tpm_pcr_extend() and tpm2_pcr_extend(). The new
-> > patch has been included to facilitate the review of the changes to support
-> > TPM 2.0 crypto agility for reading/extending PCRs.
-> > 
-> > 
-> > Original patch set description
-> > 
-> > The TPM driver currently relies on the crypto subsystem to determine the
-> > digest size of supported TPM algorithms. In the future, TPM vendors might
-> > implement new algorithms in their chips, and those algorithms might not
-> > be supported by the crypto subsystem.
-> > 
-> > Usually, vendors provide patches for the new hardware, and likely
-> > the crypto subsystem will be updated before the new algorithm is
-> > introduced. However, old kernels might be updated later, after patches
-> > are included in the mainline kernel. This would leave the opportunity
-> > for attackers to misuse PCRs, as PCR banks with an unknown algorithm
-> > are not extended.
-> > 
-> > This patch set provides a long term solution for this issue. If a TPM
-> > algorithm is not known by the crypto subsystem, the TPM driver retrieves
-> > the digest size from the TPM with a PCR read. All the PCR banks are
-> > extended, even if the algorithm is not yet supported by the crypto
-> > subsystem.
-> > 
-> > PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
-> > is stored in the tpm_chip structure and available for users of the TPM
-> > driver.
-> > 
-> > Changelog
-> > 
-> > v5:
-> > - rename digest_struct variable to digest
-> > - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
-> > - rename digest_size member of tpm_bank_list to extend_size
-> > - change type of alg_id member of tpm_bank list from u8 to u16
-> > - add missing semi-colon in pcrlock()
-> > 
-> > v4:
-> > - rename active_banks to allocated_banks
-> > - replace kmalloc_array() with kcalloc()
-> > - increment nr_allocated_banks if at least one PCR in the bank is selected
-> > - pass multiple digests to tpm_pcr_extend()
-> > 
-> > v3:
-> > - remove end marker change
-> > - replace active_banks static array with pointer to dynamic array
-> > - remove TPM2_ACTIVE_PCR_BANKS
-> > 
-> > v2:
-> > - change the end marker of the active_banks array
-> > - check digest size from output of PCR read command
-> > - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
-> > 
-> > v1:
-> > - modify definition of tpm_pcr_read()
-> > - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
-> > 
-> > Roberto Sassu (7):
-> >   tpm: dynamically allocate the allocated_banks array
-> >   tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
-> >   tpm: rename and export tpm2_digest and tpm2_algorithms
-> >   tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
-> >   tpm: retrieve digest size of unknown algorithms with PCR read
-> >   tpm: ensure that the output of PCR read contains the correct digest
-> >     size
-> >   tpm: pass an array of tpm_bank_list structures to tpm_pcr_extend()
-> > 
-> >  drivers/char/tpm/eventlog/tpm2.c    |  12 +--
-> >  drivers/char/tpm/tpm-chip.c         |   1 +
-> >  drivers/char/tpm/tpm-interface.c    |  36 +++----
-> >  drivers/char/tpm/tpm.h              |  23 ++---
-> >  drivers/char/tpm/tpm1-cmd.c         |  26 ++++-
-> >  drivers/char/tpm/tpm2-cmd.c         | 154 +++++++++++++++++++++-------
-> >  include/linux/tpm.h                 |  43 +++++++-
-> >  include/linux/tpm_eventlog.h        |  19 +---
-> >  security/integrity/ima/ima_crypto.c |  10 +-
-> >  security/integrity/ima/ima_queue.c  |   5 +-
-> >  security/keys/trusted.c             |   5 +-
-> >  11 files changed, 220 insertions(+), 114 deletions(-)
-> > 
-> > -- 
-> > 2.17.1
-> > 
-> 
-> Some generic stuff I noticed:
-> 
-> * Use SHA1_DIGEST_SIZE, not TPM_DIGEST_SIZE. The latter is just
->   uninforming constant that we want to get rid off.
+Carlo Caione <ccaione@baylibre.com> writes:
 
-Oops, sent by mistake. Other thing was that if you have an array
-in the tail of the struct you can just have [] no subcript zero
-needed.
+> On Mon, 2018-12-03 at 11:21 +0100, Neil Armstrong wrote:
+>> On 01/12/2018 16:17, Carlo Caione wrote:
+>> > Kevin is basically doing all the work. Remove my name as co-
+>> > maintainer.
+>> 
+>> Sure, but couldn't we move you as reviewer and add Martin as reviewer
+>> aswell since he is dedicated to the Meson8X support ?
+>> 
+>> Or maybe add a separate entry with Kevin as maintainer and Martin as
+>> reviewer for Meson8X ?
+>
+> This. At this point I don't think I will be going to work on the
+> Meson8X for a while and Martin proved to be the right guy for this job.
+>
+> So, let's remove my name from here first and then Martin can add a new
+> entry for Meson8X.
 
-/Jarkko
+Queued for v4.21 (branch: v4.21/soc)
+
+Kevin
