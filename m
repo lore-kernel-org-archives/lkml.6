@@ -2,124 +2,153 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C824C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA957C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F27B2082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8526A2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:07:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oxD8y4xp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F27B2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0pYmpW7r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8526A2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbeLEGEB (ORCPT
+        id S1727011AbeLEGHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:04:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37098 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeLEGEA (ORCPT
+        Wed, 5 Dec 2018 01:07:32 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:51932 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbeLEGHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:04:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so17202951lja.4;
-        Tue, 04 Dec 2018 22:03:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CS4vtvQelp5gpMEkctN0BYyuL98AEddXz23ekuUXwrA=;
-        b=oxD8y4xprxMKRX7SoDG5hwKscSvm4QLPJdo4G3MSFfYSKjm3YMJacfyuTwTry2P34D
-         qxhezBjnyX4HrfAyl5VnLRsC5Bz4AM6+GFcviMgHdBvt/lQBV+r9j/o55O/T6s0GKH8V
-         junNqKQnspjTwAh6NjUWI6Dn8/H+lSbvATE/qrjBWyyJhspo/Eno5lrgff4l/ndK2yM/
-         odVJApnhXFxd8z5ZIdMpE5Kldv4QNE3jnRP49O0+H20kku+NW7qcptPVWnhubjEsip+l
-         iuUnpokyp1cA1k5piSYzynYN5yWqjCPANF6DNMN53TwVg471zF4LPK3RGfeVnUTvYpFL
-         dqOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CS4vtvQelp5gpMEkctN0BYyuL98AEddXz23ekuUXwrA=;
-        b=qiCD05HFd9sd5UP2oepqJ/AgSZ+lUCn+wihlG9w9w1IKDolEvvfE/MSqM89/rpdg8J
-         r3u7VtmDZaGIUni2iFzBGdyKaMsaQb72EpzdEJ63wZ87nVSMwe1JuiS7UuH57ICJo94X
-         yjBf/q8TlcBwZWSHbZ7lhQfX3Iks2GrsEadC/dRTuecZ14xPj/5uziMaNPMeveNqd4dG
-         0FdNGp2+qiyCPbzTQW2h3MKUtKpxwpxdgAEseGCJFFbFj7puHqSz+CwcAFhiObbyhBo/
-         OL94bntJMTC5jJeiY29gzbI9D49H0hsX2lQK9AiiUERtMA2N24Xr2XPK9ZLjbx3Nw63p
-         0ngA==
-X-Gm-Message-State: AA+aEWbM2C8qgCFhHkRfCRJtWYuPUvplG7W4UcTgPeCmIzBFKDSQkz9d
-        xuR9+9gUEApG/1pZyLMPUUs=
-X-Google-Smtp-Source: AFSGD/V7l6qy+y3m75xA4nCxxyr+7Z5813HdlE9Lvrdeu+til/aZGVAu+t0q9h/QteIqvYki5CwTxQ==
-X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr5091381lji.112.1543989838484;
-        Tue, 04 Dec 2018 22:03:58 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id x24-v6sm3909551ljc.54.2018.12.04.22.03.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 22:03:57 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gUQHv-00010z-DK; Wed, 05 Dec 2018 07:03:59 +0100
-Date:   Wed, 5 Dec 2018 07:03:59 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Jackychou <jackychou@asix.com.tw>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        louis@asix.com.tw
-Subject: Re: [PATCH 1/2 v4] USB: serial: mos7840: Adjust port settings for
- read and write registers
-Message-ID: <20181205060359.GE18087@localhost>
-References: <20181130063122.24217-1-jackychou@asix.com.tw>
+        Wed, 5 Dec 2018 01:07:31 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB564INK094690;
+        Wed, 5 Dec 2018 06:07:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=e9iFII9C1C0acSfgyX90GXg6qSj2zoATcOqH0dCyByE=;
+ b=0pYmpW7rn7CSAlDuSy+Bifgh5ZtTTfz/mGjEVBOPeMdEfu5hHTZWRPm6avAr1JKqF3x3
+ B3xfI8trsb124YYYenBGOVV910u1OrgoAnOhjQ0VJRX0InX9iHcWGD4vHKjBULotaFsO
+ OBSaTj2k4RJwGOP1Lr9WYLdGlSFCyfQgNRQViphiTd7eWClK66sPhTczY40j41ZJMCm7
+ MzUAGGMx4+5dCAl/3fwXKymlaMQQ5lkphT/40z73vsuM/Mo5PTvitLnP0A+dA3WgwFNP
+ 20OZg5/0MVPJM98m2TLFnCqBOqHD7IxyMCmx3Nlabw7eZcpT/agRrWIzZgu/ck4ksJk5 mg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2p3hqu0f97-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Dec 2018 06:07:12 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB567AFd000472
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Dec 2018 06:07:11 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB5678w1018626;
+        Wed, 5 Dec 2018 06:07:08 GMT
+Received: from [10.191.30.150] (/10.191.30.150)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Dec 2018 22:07:08 -0800
+Subject: Re: [PATCH] x86/build: fix compiler support check for
+ CONFIG_RETPOLINE
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc:     Meelis Roos <mroos@linux.ee>, "H. Peter Anvin" <hpa@zytor.com>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+References: <1543978802-24196-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <de8a06d6-11c5-19ea-07a6-37f8624c8b66@oracle.com>
+Date:   Wed, 5 Dec 2018 14:07:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130063122.24217-1-jackychou@asix.com.tw>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+In-Reply-To: <1543978802-24196-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9097 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812050056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 02:31:21PM +0800, Jackychou wrote:
-> From: JackyChou <jackychou@asix.com.tw>
-> 
-> In the read/write function, set port 2 independently in the 2-port case.
-> 
-> When setting the offset of port registers, the offset between port 1 and
-> other ports is different, so port 1 is set independently.
-> Then in the rest of ports, the port 2 between 2-ports case and 4-ports case
-> is different, so port 2 in 2-ports case is set independently.
-> 
-> Signed-off-by: JackyChou <jackychou@asix.com.tw>
+
+On 2018/12/5 11:00, Masahiro Yamada wrote:
+> It is wrong to add CONFIG option diagnostic to the Makefile parse
+> stage.
+>
+> Once you are hit by the error about non-retpoline compiler, the
+> compilation still breaks even after disabling CONFIG_RETPOLINE.
+>
+> The easiest fix is to move this check to the "archprepare" like commit
+> 829fe4aa9ac1 ("x86: Allow generating user-space headers without a
+> compiler") did.
+>
+> Link: https://lkml.org/lkml/2018/12/4/206
+> Reported-by: Meelis Roos <mroos@linux.ee>
+> Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
+>
+>   arch/x86/Makefile | 14 ++++++++------
+>   1 file changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index f5d7f41..ae0148b 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -219,12 +219,7 @@ KBUILD_CFLAGS += -Wno-sign-compare
+>   KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+>   
+>   # Avoid indirect branches in kernel to deal with Spectre
+> -ifdef CONFIG_RETPOLINE
+> -ifeq ($(RETPOLINE_CFLAGS),)
+> -  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+> -endif
+> -  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+> -endif
+> +KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
 
-Thanks for the update.
+Is it better to also move "# Avoid indirect branches in kernel to deal 
+with Spectre"
 
-> +	} else {
-> +		u8 port_offset;
-> +
-> +		if ((mos7840_port->port_num == 2) && (serial->num_ports == 2))
-> +			port_offset = 1;
-> +		else
-> +			port_offset = mos7840_port->port_num - 2;
-> +		mos7840_port->SpRegOffset = 0x8 + (2 * port_offset);
-> +		mos7840_port->ControlRegOffset = 0x9 + (2 * port_offset);
-> +		mos7840_port->DcrRegOffset = 0x16 + (3 * port_offset);
+and "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)"?
 
-I simplified this further as:
+Seems unconditionaly using "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)" will 
+have compiler
 
-	} else {
-		u8 phy_num = mos7840_port->port_num;
+using "__x86_indirect_thunk_\reg" call even ifCONFIG_RETPOLINE is 
+disabled. I guess
 
-		/* Port 2 in the 2-port case uses registers of port 3 */
-		if (serial->num_ports == 2)
-			phy_num = 3;
+link process will fail?
 
-		mos7840_port->SpRegOffset = 0x8 + 2 * (phy_num - 2);
-		mos7840_port->ControlRegOffset = 0x9 + 2 * (phy_num - 2);
-		mos7840_port->DcrRegOffset = 0x16 + 3 * (phy_num - 2);
+Thanks
 
-before applying.
+Zhenzhong
 
-Johan
+>   
+>   archscripts: scripts_basic
+>   	$(Q)$(MAKE) $(build)=arch/x86/tools relocs
+> @@ -307,6 +302,13 @@ ifndef CC_HAVE_ASM_GOTO
+>   	@echo Compiler lacks asm-goto support.
+>   	@exit 1
+>   endif
+> +ifdef CONFIG_RETPOLINE
+> +ifeq ($(RETPOLINE_CFLAGS),)
+> +	@echo "You are building kernel with non-retpoline compiler." >&2
+> +	@echo "Please update your compiler." >&2
+> +	@false
+> +endif
+> +endif
+>   
+>   archclean:
+>   	$(Q)rm -rf $(objtree)/arch/i386
