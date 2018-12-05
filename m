@@ -2,68 +2,108 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B033C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCF1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9E01206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:39:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9E01206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2D6C8206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 11:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6C8206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeLELjC (ORCPT
+        id S1727757AbeLELj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:39:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33466 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727084AbeLELjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:39:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A0AB5B125;
-        Wed,  5 Dec 2018 11:39:00 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 12:38:59 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 11/11] selftests/livepatch: introduce tests
-In-Reply-To: <20181129094431.7801-12-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1812051237430.31935@pobox.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com> <20181129094431.7801-12-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 5 Dec 2018 06:39:27 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:36278 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727084AbeLELj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:39:26 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB5BdOi4032434;
+        Wed, 5 Dec 2018 05:39:24 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2p3qktq2nm-1;
+        Wed, 05 Dec 2018 05:39:23 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 068A7611C8C2;
+        Wed,  5 Dec 2018 05:39:20 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 5 Dec 2018
+ 11:39:19 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wB5BdJvw006393; Wed,
+ 5 Dec 2018 11:39:19 GMT
+Date:   Wed, 5 Dec 2018 11:39:19 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 20/22] mfd: wm8350-i2c: Make it explicitly non-modular
+Message-ID: <20181205113919.GA16508@imbe.wolfsonmicro.main>
+References: <1543811009-15112-1-git-send-email-paul.gortmaker@windriver.com>
+ <1543811009-15112-21-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1543811009-15112-21-git-send-email-paul.gortmaker@windriver.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1812050108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018, Petr Mladek wrote:
-
-> From: Joe Lawrence <joe.lawrence@redhat.com>
+On Sun, Dec 02, 2018 at 11:23:27PM -0500, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
 > 
-> Add a few livepatch modules and simple target modules that the included
-> regression suite can run tests against:
+> drivers/mfd/Kconfig:config MFD_WM8350_I2C
+> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8350 with I2C"
 > 
->   - basic livepatching (multiple patches, atomic replace)
->   - pre/post (un)patch callbacks
->   - shadow variable API
+> ...meaning that it currently is not being built as a module by anyone.
 > 
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> 
+> Since module_init was not in use by this code, the init ordering
+> remains unchanged with this commit.
+> 
+> We don't replace module.h with init.h since the file already has that.
+> But we do delete an unused moduleparam.h
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: patches@opensource.cirrus.com
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+> -static int wm8350_i2c_remove(struct i2c_client *i2c)
+> -{
+> -	struct wm8350 *wm8350 = i2c_get_clientdata(i2c);
+> -
+> -	wm8350_device_exit(wm8350);
+> -
+> -	return 0;
+> -}
 
-Tested-by: Miroslav Benes <mbenes@suse.cz>
+Likewise here it removes the only caller of wm8350_device_exit.
 
-I can also ack the changes in Documentation/, but probably someone else should
-look at the selftests.
-
-Miroslav
+Thanks,
+Charles
