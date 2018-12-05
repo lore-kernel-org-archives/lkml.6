@@ -2,226 +2,89 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84857C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3F9C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C6B2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:31:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="PfYKEKi9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C6B2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+	by mail.kernel.org (Postfix) with ESMTP id 2164B2084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 16:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544027504;
+	bh=vKZ+T3/yLJvcJtv0n93/NaSsyMXA5esfFdr7EVo+Kjk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=krMiNeL/2Q+pQoYLQxOz5cVUXOrBz7M6GIcJP8WHx9+n9ghJVw1FNr1fH5ueXi7Qd
+	 lVvCSIq05EDTWXZ7YPpaFohWFT0S/Rg67OFK8gMgDNoYdVoaImo8BTnq50DDDTSkVj
+	 OMNH6DPgDO8zoFt/HS3V+wBj9HAOEgWFv4hGGSjA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2164B2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbeLEQb2 (ORCPT
+        id S1727979AbeLEQbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 11:31:28 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36623 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeLEQb1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 11:31:27 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u3so20334264wrs.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 08:31:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=lJGJl+Zz3dohXDs1M9NnK7Qjus1Vw4KTtaI9rn0Hb0I=;
-        b=PfYKEKi9G3XyUftfauD+ySP31LgKRyx8bb8j60wd2LF2bQ6UjDmtGEyKAN+QW0bVbu
-         pSJ6I5NlBEHYHSN5oZMoYKYyZP+OKa3HuqcCe1hJEUzrJ+VWicenKutn6jRiWZDp/dZE
-         h7+JhUozC5k0k42wHMtM4GqPIqswg1Ps8JWSRNO7ujxhDj1IhfwzUr5BEzGMXmv11p3U
-         O12GaRDvueuXBIm1dFV+yn045nyvNKzYYk8k+cksBELZ/Zrx0xRhk6IPkF4r6fDlvwN4
-         wY6LTaBhTSE9kaIL5HFK0BpmnyZ7IOs9G/Spf6FAmXffVLAu1ItlK1dQWNdYVDby9DvS
-         IxQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=lJGJl+Zz3dohXDs1M9NnK7Qjus1Vw4KTtaI9rn0Hb0I=;
-        b=B2lHr9am0yqqeb68tH/A9XQv5AiDWUocPfMcomGZIIAySGxk91Ceflz5AFipyAmsV8
-         diXA+aa6kNy13yfFUOHtxAJ8ikXzWKzFTi8jswPQokJqr/VGVenrSIFBCKgrh36Faxke
-         aCR8KXYUDz5ZexUVD7gUWVYPiNrCme0bEYXPuRUT5Jec+sUT/oCtU/Ne+uGfcl2EtCHL
-         paXf2Cpxjrv95AieIhyx3pw8tDagIag6UejfPnHHBYZ1mST2IZgp/OaCpwVpBXGZPrLo
-         gbxRiVeBL4UkKt1c2q1Y5MvfmHiH2yreD7UWRJUqX0nH/RB25Au9XGrbRd1nIeFyZUbz
-         M2vg==
-X-Gm-Message-State: AA+aEWYxfCVz0mEC6wLXXuzmmiek90MRhGbwWVKH9Ct7BQuLR5sJdM4h
-        GTd/TppiDv6ZrFKuY98sfBOB4ZR0zbzhTQ==
-X-Google-Smtp-Source: AFSGD/U9dRNNxyUkOqK55dfQNvL/HHGkTyTVG1Iop5kSa4Fe+aALPyDQb50V0gTJmzdWX75BTMakIQ==
-X-Received: by 2002:a5d:454f:: with SMTP id p15mr23783832wrr.39.1544027484118;
-        Wed, 05 Dec 2018 08:31:24 -0800 (PST)
-Received: from [74.125.140.109] ([149.199.62.131])
-        by smtp.gmail.com with ESMTPSA id x81sm13299417wmg.17.2018.12.05.08.31.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 08:31:23 -0800 (PST)
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH 6/7] microblaze: fix race condition in building boot
- images
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <1543823457-32478-7-git-send-email-yamada.masahiro@socionext.com>
-From:   Michal Simek <monstr@monstr.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
- 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
- RmzhqoTJlA==
-Message-ID: <ccf309af-f225-2c12-cb2f-1d8787d2e4fa@monstr.eu>
-Date:   Wed, 5 Dec 2018 17:31:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 11:31:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727242AbeLEQbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 11:31:42 -0500
+Received: from localhost (unknown [106.201.124.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31FC12082B;
+        Wed,  5 Dec 2018 16:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544027502;
+        bh=vKZ+T3/yLJvcJtv0n93/NaSsyMXA5esfFdr7EVo+Kjk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bkyOjiHnezjTSL+QwCkDSI+2XZYU2YVFd1CSC7m0RgQCN3uWOWqKnh2UMHQaIhijh
+         w5E0Hg2h3k2lWs+2PcIF+gtw8QiEWDXpyPmxMk3ZMP1RSZ83kOgzBUQDfiD0V724LF
+         deXHYd7TCUcdvpP93pZIaeXagsbc8Dr6f9T4l1Vs=
+Date:   Wed, 5 Dec 2018 22:01:33 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Long Cheng <long.cheng@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, srv_heupstream@mediatek.com,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>
+Subject: Re: [PATCH v2 0/4] add uart DMA function
+Message-ID: <20181205163133.GQ2847@vkoul-mobl>
+References: <1543999380-7946-1-git-send-email-long.cheng@mediatek.com>
+ <20181205100306.GA12106@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <1543823457-32478-7-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="QRafftiq0Vg7iGvJt1D24yW8ozuMu91fx"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205100306.GA12106@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---QRafftiq0Vg7iGvJt1D24yW8ozuMu91fx
-Content-Type: multipart/mixed; boundary="Q6imD8n9iDhX8BsH7vgVDGbfVKg7OPN2c";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <ccf309af-f225-2c12-cb2f-1d8787d2e4fa@monstr.eu>
-Subject: Re: [PATCH 6/7] microblaze: fix race condition in building boot
- images
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <1543823457-32478-7-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1543823457-32478-7-git-send-email-yamada.masahiro@socionext.com>
+Hi Greg,
 
---Q6imD8n9iDhX8BsH7vgVDGbfVKg7OPN2c
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 05-12-18, 11:03, Greg Kroah-Hartman wrote:
+> On Wed, Dec 05, 2018 at 04:42:56PM +0800, Long Cheng wrote:
+> > In Mediatek SOCs, the uart can support DMA function.
+> > Base on DMA engine formwork, we add the DMA code to support uart. And put the code under drivers/dma.
+> > 
+> > This series contains document bindings, Kconfig to control the function enable or not,
+> > device tree including interrupt and dma device node, the code of UART DM
+> 
+> I've queued up patches 1 and 3 from this series in my tty tree, thanks.
 
-On 03. 12. 18 8:50, Masahiro Yamada wrote:
-> I fixed a race condition in the parallel building of ARM in commit
-> 3939f3345050 ("ARM: 8418/1: add boot image dependencies to not
-> generate invalid images").
->=20
-> I see the same problem for MicroBlaze too.
->=20
-> "make -j<N> ARCH=3Dmicroblaze all linux.bin.ub" results in a broken bui=
-ld
-> since two threads descend into arch/microblaze/boot simultaneously.
+Do you mind not taking patch 2, I would like that to go thru dmaengine
+tree
 
-I see also different problem that when I run that make above
-linux.bin.ub is not generated at all.
-
-
->=20
-> Add proper dependencies to avoid it.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->=20
->  arch/microblaze/Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
-> index 7a5df02..544796d 100644
-> --- a/arch/microblaze/Makefile
-> +++ b/arch/microblaze/Makefile
-> @@ -79,13 +79,15 @@ all: linux.bin
->  archclean:
->  	$(Q)$(MAKE) $(clean)=3D$(boot)
-> =20
-> +linux.bin.ub linux.bin.gz: linux.bin
-> +
->  PHONY +=3D linux.bin linux.bin.gz linux.bin.ub
->  linux.bin linux.bin.gz linux.bin.ub: vmlinux
->  	$(Q)$(MAKE) $(build)=3D$(boot) $(boot)/$@
->  	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
-> =20
->  PHONY +=3D simpleImage.$(DTB)
-> -simpleImage.$(DTB): vmlinux
-> +simpleImage.$(DTB): linux.bin.ub
-
-It looks weird that simpleImage requires linux.bin.ub.
-Is it really linux.bin.ub here or just linux.bin?
-
->  	$(Q)$(MAKE) $(build)=3D$(boot) simple_images
->  	@echo 'Kernel: $(boot)/$@ is ready' ' (#'`cat .version`')'
-> =20
->=20
-
-
-Thanks,
-Michal
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
-
-
-
---Q6imD8n9iDhX8BsH7vgVDGbfVKg7OPN2c--
-
---QRafftiq0Vg7iGvJt1D24yW8ozuMu91fx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlwH/VYACgkQykllyylKDCGrMgCfQxhQUBclDm5RzrFGGQRzQLE9
-BlsAnRxVOqJZCpD41urBkFUoh8S3aKTa
-=56rY
------END PGP SIGNATURE-----
-
---QRafftiq0Vg7iGvJt1D24yW8ozuMu91fx--
+Thanks
+-- 
+~Vinod
