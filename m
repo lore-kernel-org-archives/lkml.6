@@ -2,102 +2,116 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CDCC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE42C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 498D22082D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498D22082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 3243B2082D
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:17:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaKQG/R0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3243B2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbeLEPRc convert rfc822-to-8bit (ORCPT
+        id S1727998AbeLEPRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:17:32 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:53041 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeLEPRc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:17:32 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4392Qx69T5z1qxkk;
-        Wed,  5 Dec 2018 16:17:29 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4392Qx5Zdxz1qsJW;
-        Wed,  5 Dec 2018 16:17:29 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 7VgH6MA1Z3GN; Wed,  5 Dec 2018 16:17:23 +0100 (CET)
-X-Auth-Info: HKX1L2szS1Wgg4ZSEcLRd6n5x2DpFHEyBOQ7oDLhJdU=
-Received: from crub (p508DE362.dip0.t-ipconnect.de [80.141.227.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 5 Dec 2018 10:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbeLEPRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:17:43 -0500
+Received: from [192.168.1.11] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed,  5 Dec 2018 16:17:23 +0100 (CET)
-Date:   Wed, 5 Dec 2018 16:17:18 +0100
-From:   Anatolij Gustschin <agust@denx.de>
-To:     Song Qiang <songqiang1304521@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: usb: thoughts of adding more support for FT232H
-Message-ID: <20181205161718.7451d98f@crub>
-In-Reply-To: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
-References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3467F2082D;
+        Wed,  5 Dec 2018 15:17:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544023062;
+        bh=k0KVyboTdQegYDekztBLhmisWmVqwQM88KpCJu2DlpE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YaKQG/R00A5KVdtfLcm2rR6CRhpn1Oz+8p4qqZQx3Sy3VI/QJlPklJivXoJK3SJRV
+         XfX2AW0buFX1SgvesKV39AcH01bDGM8t2jPsRvX+vCcumChC8P5yxl/vVTmeoqfrOM
+         E+0t07+N1LcDE60cIHOndvUaolfkyJA6aGjlntAw=
+Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+ <20181204193416.24661-1-sboyd@kernel.org>
+ <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
+Date:   Wed, 5 Dec 2018 09:17:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Stephen,
 
-On Wed, 5 Dec 2018 22:10:40 +0800
-Song Qiang songqiang1304521@gmail.com wrote:
-...
->I've been developing some iio device drivers and found that some people
->would like to test their devices with a qemu system which requires an
->i2c or spi port on our development hosts. Usually this is achieved with
->a DLN-2 adapter, while this is a bit difficult for me because it costs
->~175$ in my country. Then I found that FTDI's FT232H supports both these
->two modes and costs only less than 5$ but without full support in kernel.
->The ftdi-sio driver supports FT232H only as a serial converter.
->So I'm planning to write a mfd driver for it supports both these three
->modes, here are my thoughts:
+On 12/5/18 1:17 AM, Stephen Boyd wrote:
+> (Adding Dinh's korg email)
+> 
+> I also wonder if this driver is even used anymore or maybe we can delete
+> it?
+> 
 
-There already has been a discussion [1] about adding an MFD driver for
-FT232H, since the operating modes are mutually exclusive (and bus pins
-shared between different modes), the MFD approach doesn't seem to be
-a good fit.
+The armv7 SoCFPGA platforms are using this driver.
 
->  - This device cannot support these three modes together because they
->    share some common pins, so I'm planning to add a sysfs entry
->    'current_mode' for selecting which mode the device should be working
->    on.
->  - This device is in uart mode on reset, so default mode would be reset,
->    too. This also helps for people only want to use this as a serial
->    converter feels nothing has happened (compatible).
->  - I was trying to reuse the ftdi-sio driver but it seems like mfd can
->    only register platform devices, while this is a usb driver. I may
->    have to copy some functions from this driver.
->
->Would you share any ideas? I'd appreciate it.
-
-There is a patch series [2] adding an interface driver for FT232H-
-based adapter devices, it already supports adding custom MPSSE based
-SPI busses with SPI slaves for a custom USB PID. It already supports
-adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
-Adding I2C driver/adapter support should be easy, too. Maybe you can
-re-use it.
-
-Thanks,
-Anatolij
-
-[1] https://patchwork.kernel.org/patch/9828985
-[2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
+Dinh
