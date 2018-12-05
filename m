@@ -2,139 +2,117 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CE1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 567CCC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45A6020878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:48:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A6020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F51A20878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F51A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbeLEOr7 (ORCPT
+        id S1727549AbeLEOtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:47:59 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35538 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeLEOr7 (ORCPT
+        Wed, 5 Dec 2018 09:49:40 -0500
+Received: from ivanoab6.miniserver.com ([5.153.251.140]:60940 "EHLO
+        www.kot-begemot.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbeLEOtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:47:59 -0500
-Received: by mail-vs1-f66.google.com with SMTP id e7so12227676vsc.2;
-        Wed, 05 Dec 2018 06:47:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N4N2sZNH53i6D9yRmiCx9A+jnggLmHj8GKEOX/5FTrU=;
-        b=syT0Cxd7iRsE6xxv81HldcaU5rcJwGRyThmoW1uaFEwCCS5GLOo0sUht3GViYaOlDQ
-         ZG08GL4dKfbT30ZvwrHoetmxEi9f2MH672VbjGUQocW7rRNZH2TV4144pOKXUoeVQIfT
-         votsd3vgZhMxnRJgR7G6m4YjD+Avxy+BDIxhL31mIR3wzRjAxiTV+tPVKQb+cpM8fRTB
-         6p6hxgF/+/uVfqhoaR2v22nheRIvW8yw6Ot1laZS/9uPA0ZYGo0Adr8Hr+ayMEiYuvrc
-         qtpdf+dCutSdTbeW9Y4oXisYfPaNn9xrldXr8WtWuJyDWt7ZIQ6fGGeqG0XJ9tLA66LF
-         AyqQ==
-X-Gm-Message-State: AA+aEWbyR8JtTLk47J4TusiJRd0cD3UnVJ+cGxCnD/huqxQKsseZXzq6
-        /emScrQSSuyfLcHDRuHBuZN/hBwi/4Ewy1RiGTz9Kw==
-X-Google-Smtp-Source: AFSGD/Uy+i6JE9+hiJGclbeIZTeGcdjkd4MCajWCRvlYpZr8AXZ0fXFsHNvyQb/TGAszNCY9o2NxiJlfS3SKFXdg5vA=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr10935737vsp.166.1544021277718;
- Wed, 05 Dec 2018 06:47:57 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com>
- <20181205.221146.969453990167463340.anemo@mba.ocn.ne.jp> <CAMuHMdU9zXXSaPHKvfG3A73h3CTsb9H2RT_gWt-Ne=qQ+HKShQ@mail.gmail.com>
- <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com>
-In-Reply-To: <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Dec 2018 15:47:45 +0100
-Message-ID: <CAMuHMdXyfEVOWoBOx0Ywm6vw5oQ6eHNXFhQBKTfRSBOmPYGM6Q@mail.gmail.com>
-Subject: Re: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
-To:     trondmy@hammerspace.com
-Cc:     Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Wed, 5 Dec 2018 09:49:39 -0500
+Received: from [192.168.17.6] (helo=smaug.kot-begemot.co.uk)
+        by www.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1gUYUC-0006J4-RQ; Wed, 05 Dec 2018 14:49:12 +0000
+Received: from wyvern.kot-begemot.co.uk ([192.168.3.72])
+        by smaug.kot-begemot.co.uk with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <anton.ivanov@cambridgegreys.com>)
+        id 1gUYUA-0006GB-NJ; Wed, 05 Dec 2018 14:49:12 +0000
+Subject: Re: [RFC v3 01/19] kunit: test: add KUnit test runner core
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-nvdimm@lists.01.org, Richard Weinberger <richard@nod.at>,
+        knut.omang@oracle.com,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Joel Stanley <joel@jms.id.au>, Jeff Dike <jdike@addtoit.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kees Cook <keescook@google.com>, linux-um@lists.infradead.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Lawall <julia.lawall@lip6.fr>, levinsasha928@gmail.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        kunit-dev@googlegroups.com, gregkh <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>,
+        Kevin Hilman <khilman@baylibre.com>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-2-brendanhiggins@google.com>
+ <20181130031438.GQ4922@garbanzo.do-not-panic.com>
+ <e2ed9df2-c06b-f0d3-d50a-d03166f586df@cambridgegreys.com>
+ <CAK8P3a2HrOTYv7qCJH1XGVxZ2HDqwkHqRWaAJ93nWc5p8LnCig@mail.gmail.com>
+From:   Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Organization: Cambridge Greys
+Message-ID: <5bd5581f-f192-4ed0-6f5f-9e1bf9f443e2@cambridgegreys.com>
+Date:   Wed, 5 Dec 2018 14:49:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a2HrOTYv7qCJH1XGVxZ2HDqwkHqRWaAJ93nWc5p8LnCig@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Trond,
-
-On Wed, Dec 5, 2018 at 2:45 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
-> On Wed, 2018-12-05 at 14:41 +0100, Geert Uytterhoeven wrote:
-> > On Wed, Dec 5, 2018 at 2:11 PM Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-> > wrote:
-> > > On Tue, 4 Dec 2018 14:53:07 +0100, Geert Uytterhoeven <
-> > > geert@linux-m68k.org> wrote:
-> > > > I found similar crashes in a report from 2006, but of course the
-> > > > code
-> > > > has changed too much to apply the solution proposed there
-> > > > (
-> > > > https://www.linux-mips.org/archives/linux-mips/2006-09/msg00169.html
-> > > > ).
-> > > >
-> > > > Userland is Debian 8 (the last release supporting "old" MIPS).
-> > > > My kernel is based on v4.20.0-rc5, but the issue happens with
-> > > > v4.20-rc1,
-> > > > too.
-> > > >
-> > > > However, I noticed it works in v4.19! Hence I've bisected this,
-> > > > to commit
-> > > > 277e4ab7d530bf28 ("SUNRPC: Simplify TCP receive code by switching
-> > > > to using
-> > > > iterators").
-> > > >
-> > > > Dropping the ",tcp" part from the nfsroot parameter also fixes
-> > > > the issue.
-> > > >
-> > > > Given RBTX4927 is little endian, just like my arm/arm64 boards,
-> > > > it's probably
-> > > > not an endianness issue.  Sparse didn't show anything suspicious
-> > > > before/after
-> > > > the guilty commit.
-> > > >
-> > > > Do you have a clue?
-> > >
-> > > If it was a cache issue, disabling i-cache or d-cache completely
-> > > might
-> > > help understanding the problem.  I added TXx9 specific "icdisable"
-> > > and
-> > > "dcdisable" kernel options for debugging long ago.
-> > >
-> > > I hope these options still works correctly with recent kernel but
-> > > not
-> > > sure.
-> > >
-> > > Also, disabling i-cache makes your board VERY slow, of course.
-> >
-> > Thanks!
-> >
-> > When using these options, I do see a slowdown in early boot, but the
-> > issue
-> > is still there.
-> >
-> > My next guess is an unaligned access not using {get,put}_unaligned(),
-> > which
-> > doesn't seem to work on tx4927, but doesn't cause an exception
-> > neither.
+On 05/12/2018 14:45, Arnd Bergmann wrote:
+> On Wed, Dec 5, 2018 at 2:42 PM Anton Ivanov
+> <anton.ivanov@cambridgegreys.com> wrote:
+>> On 30/11/2018 03:14, Luis Chamberlain wrote:
+>>> On Wed, Nov 28, 2018 at 11:36:18AM -0800, Brendan Higgins wrote:
+>>> Then for the UML stuff, I think if we *really* accept that UML will
+>>> always be a viable option we should probably consider now throwing these
+>>> things under drivers/platform/uml/. This follows the pattern of arch
+>>> specific drivers. Whether or not we end up with a complete userspace
+>> UML platform drivers predate that and are under arch/um/drivers/
+>>
+>> We should either keep to current convention or consider relocating the
+>> existing ones - having things spread in different places around the tree
+>> is not good in the long run (UML already has a few of those under the
+>> x86 tree, let's not increase the number).
+> I don't mind the current location much, but if we move drivers, we should
+> move the into the appropriate subsystems based on what they do, rather
+> than having a new place with a mix of things.
 >
-> Can you try my linux-next branch on git.linux-nfs.org? It contains a
-> fixes for a hang that results from the above commit.
->
-> git pull git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+> E.g. the tty drivers should all be in drivers/tty/ and the network drivers in
+> drivers/net. To paraphrase what you said above: having tty drivers spread in
+> different places around the tree is not good in the long run. We have long
+> ago moved from organizing drivers by bus interface to organizing drivers
+> by class, uml and drivers/platform are just exceptions to this rule.
 
-Thanks for the suggestion, but unfortunately it doesn't help.
+There are some issues with that because uml drivers have bits of what is 
+effectively host side of the hypervisor as a part of them. IMHO, having 
+that in driver/X is not very appropriate. So at least the *_user.c and 
+*_user.h bits have to go (or stay) somewhere else
 
-Gr{oetje,eeting}s,
-
-                        Geert
+Brgds,
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Anton R. Ivanov
+Cambridgegreys Limited. Registered in England. Company Number 10273661
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
