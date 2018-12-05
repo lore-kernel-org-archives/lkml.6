@@ -2,223 +2,343 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03026C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E9BC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B143A20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523B6208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:57:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="qNMLCOeS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B143A20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVEZ0j7I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523B6208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbeLEP5Q (ORCPT
+        id S1728203AbeLEP50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:57:16 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34623 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbeLEP5P (ORCPT
+        Wed, 5 Dec 2018 10:57:26 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36260 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbeLEP50 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:57:15 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j2so20248748wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 07:57:13 -0800 (PST)
+        Wed, 5 Dec 2018 10:57:26 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a18so13487297wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 07:57:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=4NXw887chQRoabO02HsWs+ax0iCGKLUtt8S88sudDxY=;
-        b=qNMLCOeSOzKNHlRdnEKYIRDKRG8RQ/mkfow9B4dqY1uy2XSNopubt6dgEpf0YI0tKJ
-         GYU4S28eLzrYU5Kjz0nxdGxvFOeV/lf/xkRHEFdbGQ81+QDtB/n0HwguUOOhdOj/jTlF
-         0UJEA3S9IR2G2wGDWmCFR8RgqBlWIlV/Mdi2UjSrf5+Y8AYv06qwhTe7qaFiiS67sq8g
-         H2QjdX12tGZOHZrCZg6NhRvcbtFkf8VvKXKvRIN3E1JVgA5N5CMzSljhRzAv+RcQkgn0
-         IkDOopgEiLvR38KSaRLTRYKAQVbpx0dGqGpOqaqDZefcCZOf9+yqYwd2qphc2tHCbAyY
-         ltCQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=faGkLDyMcGFfUJVIL4oUvzg2nMJYII6/RwgTtnAEPJc=;
+        b=LVEZ0j7IGiROwla90AvUgXNnnoI8tK4UCasXVee8pieewmTHGIY0mhwReS2mBVNqFJ
+         j8WroFq3QYZuFpUezm+7OWvIYIYHS64enOuH5++0SBT3EXlI5QXElBlMLjK9aIhDt9IS
+         346NtAPdPgjnH0maYZuRtmM2ey2JCwZjB3BQA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=4NXw887chQRoabO02HsWs+ax0iCGKLUtt8S88sudDxY=;
-        b=X4nWcklbvPdzpIo/hYSPAqnxLhCL/r3VlLZ4kYOuYD/zdHo5JJ3w3yJUfqSzICCded
-         kgBxmERrv20QSh5zJkBaErwHkGlg78xr62vw3fYvGtbi6tdnfwb0Rhy5Kk8kuxkJvXfY
-         doDFK+YMaP+l7FjiHZgiPJGTZZV9SGiqOq0jZCLxDj02wPsq15md7PpgtmsBv5CLDgZB
-         f1DaCoCMBZtBQAeN2udypwfoCV0anItjKvyXFWLCLuj2kbHO8Em4FibkAPBPMj7hHAw2
-         +8vT//QejMI1wfoZ4kCKyBOZfdrfRs/sIIcsSNaAMfGZMPwajof2BX6lTG253LBkaSf+
-         f2og==
-X-Gm-Message-State: AA+aEWZvt9rWUvmh4xD/fcw4pPM9nZ26iC3GNOQv1BjHQvIH6rtq9Kn+
-        ZbtOfZ7Whe2FZwandyWogR/hOIiyDmpkRQ==
-X-Google-Smtp-Source: AFSGD/W3bm55qqUQkPN+aylTLBpJV4MH3a7cDJDKeKQ1UxFigxyKNzoHjn74CIhp/uHulhu0ko35vQ==
-X-Received: by 2002:a5d:4a0c:: with SMTP id m12mr22039502wrq.38.1544025432978;
-        Wed, 05 Dec 2018 07:57:12 -0800 (PST)
-Received: from [74.125.71.109] ([149.199.62.131])
-        by smtp.gmail.com with ESMTPSA id f187sm11590246wma.4.2018.12.05.07.57.10
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=faGkLDyMcGFfUJVIL4oUvzg2nMJYII6/RwgTtnAEPJc=;
+        b=jj9W5p0Cg10MqBbp8jJNC7I7CZKAdeL4Vh2LH1xA5CRuezfZfeBx4nvkn3ovQDUC9k
+         NHubZsaHaexRhIbdgOXiDl25I9RMfb7q3FZ98cgDpTp403jttiJxqAe36iYPYoX2mTGZ
+         i8jEOSuwFEZUb7CLhYr6ziOE34WPwnySv+Xu0/yUdjJ/QsyNGbxtqJR2wZt98YXaq2y0
+         a8EwM5aJIQumE0Dyx4+6cpqUiAtDCZbRhWp2k4q/1B1RWZkOQvLylqWOHa8UaYq7lVfM
+         PIbPCYIP07b9YDu6xv9UDvZovcXqMdNhz7cwJaK2HDpkmCoZhyUE7SIcNvzqGqCbkWRd
+         kYyg==
+X-Gm-Message-State: AA+aEWZ4/6C+SC5vIvBo60thzJ/noorXVtcYoDrdcBzh0OihRW3KcEB0
+        g7GxyRliL4OIg9idtLIbmRhsGg==
+X-Google-Smtp-Source: AFSGD/Uzr1VP9dvO2+Mzd0gwHaGQ6HGAoZImWiX2TTrvACNh9oE/+b7ALIjMzgeH+tSFYyn02MN2xQ==
+X-Received: by 2002:a1c:7fca:: with SMTP id a193mr10564650wmd.36.1544025443504;
+        Wed, 05 Dec 2018 07:57:23 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id x76sm25186790wmd.27.2018.12.05.07.57.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 07:57:12 -0800 (PST)
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH 4/7] microblaze: fix multiple bugs in
- arch/microblaze/boot/Makefile
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <1543823457-32478-5-git-send-email-yamada.masahiro@socionext.com>
-From:   Michal Simek <monstr@monstr.eu>
+        Wed, 05 Dec 2018 07:57:22 -0800 (PST)
+Subject: Re: [PATCH v10 1/7] interconnect: Add generic on-chip interconnect
+ API
+To:     Evan Green <evgreen@chromium.org>
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>,
+        maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>,
+        thierry.reding@gmail.com, ksitaraman@nvidia.com,
+        sanjayc@nvidia.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <20181127180349.29997-2-georgi.djakov@linaro.org>
+ <CAE=gft5jWZgzRTNB4m0ES+g=rpjACYWVissmEQ+pgPGKEffgog@mail.gmail.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
 Openpgp: preference=signencrypt
-Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
- 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
- RmzhqoTJlA==
-Message-ID: <16f2f621-d051-a2e3-c2f3-e69c82140c46@monstr.eu>
-Date:   Wed, 5 Dec 2018 16:57:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <c2dc1f5c-46ab-b5aa-0069-b5b50e7e2182@linaro.org>
+Date:   Wed, 5 Dec 2018 17:57:19 +0200
 MIME-Version: 1.0
-In-Reply-To: <1543823457-32478-5-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="BnUkCeNLXoVlnWtd6lIn4oDFv7lu0YjFw"
+In-Reply-To: <CAE=gft5jWZgzRTNB4m0ES+g=rpjACYWVissmEQ+pgPGKEffgog@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---BnUkCeNLXoVlnWtd6lIn4oDFv7lu0YjFw
-Content-Type: multipart/mixed; boundary="PCP2oxlQHJk1kGZWltWivnfGenSpx3ymf";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <16f2f621-d051-a2e3-c2f3-e69c82140c46@monstr.eu>
-Subject: Re: [PATCH 4/7] microblaze: fix multiple bugs in
- arch/microblaze/boot/Makefile
-References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
- <1543823457-32478-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1543823457-32478-5-git-send-email-yamada.masahiro@socionext.com>
+Hi Evan,
 
---PCP2oxlQHJk1kGZWltWivnfGenSpx3ymf
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 12/1/18 02:38, Evan Green wrote:
+> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>
+>> This patch introduces a new API to get requirements and configure the
+>> interconnect buses across the entire chipset to fit with the current
+>> demand.
+>>
+>> The API is using a consumer/provider-based model, where the providers are
+>> the interconnect buses and the consumers could be various drivers.
+>> The consumers request interconnect resources (path) between endpoints and
+>> set the desired constraints on this data flow path. The providers receive
+>> requests from consumers and aggregate these requests for all master-slave
+>> pairs on that path. Then the providers configure each participating in the
+>> topology node according to the requested data flow path, physical links and
+> 
+> Strange word ordering. Consider something like: "Then the providers
+> configure each node participating in the topology"
+> 
+> ...Or a slightly different flavor: "Then the providers configure each
+> node along the path to support a bandwidth that satisfies all
+> bandwidth requests that cross through that node".
+> 
 
-On 03. 12. 18 8:50, Masahiro Yamada wrote:
-> This Makefile is wrong in multiple ways.
->=20
-> The first issue is the breakage of 'linux.bin.ub' target since commit
-> ece97f3a5fb5 ("microblaze: Fix simpleImage format generation")
-> because the addition of UIMAGE_{IN,OUT} obviously affected it.
->=20
-> make ARCH=3Dmicroblaze CROSS_COMPILE=3Dmicroblaze-linux- linux.bin.ub
->   [ snip ]
->   OBJCOPY arch/microblaze/boot/linux.bin
->   UIMAGE  arch/microblaze/boot/linux.bin.ub.ub
-> /usr/bin/mkimage: Can't open arch/microblaze/boot/linux.bin.ub: No such=
- file or directory
-> make[1]: *** [arch/microblaze/boot/Makefile;14: arch/microblaze/boot/li=
-nux.bin.ub] Error 1
-> make: *** [arch/microblaze/Makefile;83: linux.bin.ub] Error 2
->=20
-> The second issue is the use of the "if_changed" multiple times for
-> the same target.
->=20
-> As commit 92a4728608a8 ("x86/boot: Fix if_changed build flip/flop bug")=
+This sounds better!
 
-> pointed out, this never works properly. Moreover, generating multiple
-> images as a side-effect is extremely confusing and wrong.
->=20
-> As far as I understood, "simpleImage.<dt>" works like a phony target
-> to generate the following four images.
->=20
->  - arch/microblaze/boot/simpleImage.<dt>:
->        identical to arch/microblaze/boot/linux.bin
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.unstrip:
->        identical to vmlinux
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.ub:
->        identical to arch/microblaze/boot/linux.bin.ub
->=20
->  - arch/microblaze/boot/simpleImage.<dt>.strip:
->        stripped vmlinux
+>> constraints. The topology could be complicated and multi-tiered and is SoC
+>> specific.
+>>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
+> 
+> This already has my reviewed by, and I still stand by it, but I
+> couldn't help finding some nits anyway. Sorry :)
 
-Your understanding is correct. It always worked like that
-simpleImage.<dt> was generating 4 files.
-I have wired that long time ago because I wanted to boot image in U-Boot
-that's why .ub was also generated.
-Definitely simpleImage.<dt>.ub can be another target and not
-automatically generated by simpleImage.<dt>
+Thanks for finding them!
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+>> ---
+>>  Documentation/interconnect/interconnect.rst |  94 ++++
+>>  drivers/Kconfig                             |   2 +
+>>  drivers/Makefile                            |   1 +
+>>  drivers/interconnect/Kconfig                |  10 +
+>>  drivers/interconnect/Makefile               |   5 +
+>>  drivers/interconnect/core.c                 | 569 ++++++++++++++++++++
+>>  include/linux/interconnect-provider.h       | 125 +++++
+>>  include/linux/interconnect.h                |  51 ++
+>>  8 files changed, 857 insertions(+)
+>>  create mode 100644 Documentation/interconnect/interconnect.rst
+>>  create mode 100644 drivers/interconnect/Kconfig
+>>  create mode 100644 drivers/interconnect/Makefile
+>>  create mode 100644 drivers/interconnect/core.c
+>>  create mode 100644 include/linux/interconnect-provider.h
+>>  create mode 100644 include/linux/interconnect.h
+>>
+[..]
+>> +/*
+>> + * We want the path to honor all bandwidth requests, so the average and peak
+>> + * bandwidth requirements from each consumer are aggregated at each node.
+>> + * The aggregation is platform specific, so each platform can customize it by
+>> + * implementing it's own aggregate() function.
+> 
+> Grammar police: remove the apostrophe in its.
+> 
 
-Thanks,
-Michal
+Oops.
 
+>> + */
+>> +
+>> +static int aggregate_requests(struct icc_node *node)
+>> +{
+>> +       struct icc_provider *p = node->provider;
+>> +       struct icc_req *r;
+>> +
+>> +       node->avg_bw = 0;
+>> +       node->peak_bw = 0;
+>> +
+>> +       hlist_for_each_entry(r, &node->req_list, req_node)
+>> +               p->aggregate(node, r->avg_bw, r->peak_bw,
+>> +                            &node->avg_bw, &node->peak_bw);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int apply_constraints(struct icc_path *path)
+>> +{
+>> +       struct icc_node *next, *prev = NULL;
+>> +       int ret = -EINVAL;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < path->num_nodes; i++, prev = next) {
+>> +               struct icc_provider *p;
+>> +
+>> +               next = path->reqs[i].node;
+>> +               /*
+>> +                * Both endpoints should be valid master-slave pairs of the
+>> +                * same interconnect provider that will be configured.
+>> +                */
+>> +               if (!prev || next->provider != prev->provider)
+>> +                       continue;
+> 
+> I wonder if we should explicitly ban paths where we bounce through an
+> odd number of nodes within one provider. Otherwise, set() won't be
+> called on all nodes in the path. Or, if we wanted to support those
+> kinds of topologies, you could call set with one of the nodes set to
+> NULL to represent either the ingress or egress bandwidth to this NoC.
+> This doesn't necessarily need to be addressed in this series, but is
+> something that other providers might bump into when implementing their
+> topologies.
+> 
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
+Yes, we can do something like this. But i prefer that we first add
+support for more platforms and then according to the requirements we can
+work out something.
 
+[..]
 
+>> +       new = krealloc(src->links,
+>> +                      (src->num_links) * sizeof(*src->links),
+> 
+> These parentheses aren't needed.
 
---PCP2oxlQHJk1kGZWltWivnfGenSpx3ymf--
+Sure!
 
---BnUkCeNLXoVlnWtd6lIn4oDFv7lu0YjFw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+>> +                      GFP_KERNEL);
+>> +       if (new)
+>> +               src->links = new;
+>> +
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+[..]
 
-iEYEARECAAYFAlwH9VQACgkQykllyylKDCGLuwCgmViAYSvhdEOBuYUZqq0/eRcY
-RSgAnA8W8k7xFoUbE5vFy6JD1ipy3BbV
-=qR2K
------END PGP SIGNATURE-----
+>> +
+>> +MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org");
+> 
+> This is missing the closing >
 
---BnUkCeNLXoVlnWtd6lIn4oDFv7lu0YjFw--
+Thanks!
+
+>> +MODULE_DESCRIPTION("Interconnect Driver Core");
+>> +MODULE_LICENSE("GPL v2");
+> ...
+>> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+>> new file mode 100644
+>> index 000000000000..04b2966ded9f
+>> --- /dev/null
+>> +++ b/include/linux/interconnect.h
+>> @@ -0,0 +1,51 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018, Linaro Ltd.
+>> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+>> + */
+>> +
+>> +#ifndef __LINUX_INTERCONNECT_H
+>> +#define __LINUX_INTERCONNECT_H
+>> +
+>> +#include <linux/mutex.h>
+>> +#include <linux/types.h>
+>> +
+>> +/* macros for converting to icc units */
+>> +#define bps_to_icc(x)  (1)
+>> +#define kBps_to_icc(x) (x)
+>> +#define MBps_to_icc(x) (x * 1000)
+>> +#define GBps_to_icc(x) (x * 1000 * 1000)
+>> +#define kbps_to_icc(x) (x / 8 + ((x) % 8 ? 1 : 0))
+>> +#define Mbps_to_icc(x) (x * 1000 / 8 )
+> 
+> Remove extra space before )
+
+Done.
+
+>> +#define Gbps_to_icc(x) (x * 1000 * 1000 / 8)
+>> +
+>> +struct icc_path;
+>> +struct device;
+>> +
+>> +#if IS_ENABLED(CONFIG_INTERCONNECT)
+>> +
+>> +struct icc_path *icc_get(struct device *dev, const int src_id,
+>> +                        const int dst_id);
+>> +void icc_put(struct icc_path *path);
+>> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw);
+>> +
+>> +#else
+>> +
+>> +static inline struct icc_path *icc_get(struct device *dev, const int src_id,
+>> +                                      const int dst_id)
+>> +{
+>> +       return NULL;
+>> +}
+>> +
+>> +static inline void icc_put(struct icc_path *path)
+>> +{
+>> +}
+>> +
+>> +static inline int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>> +{
+>> +       return 0;
+> 
+> Should this really succeed?
+
+Yes, it should succeed if the framework is not enabled. The drivers
+should handle the case of whether the framework is enabled or not when
+icc_get() or of_icc_get() returns NULL. Based on that they should decide
+if can continue without interconnect support or not.
+
+BR,
+Georgi
