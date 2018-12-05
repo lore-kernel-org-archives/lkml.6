@@ -2,133 +2,105 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCFCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E060BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0941B20989
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544037711;
-	bh=f4fEzsQka7d0wlsvHtxzOszwgJSnuOy3W4rjne0azAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mvliNVQdddwjOrmcasfBh0W/4gBvcw8+PB9p63b9zmZGaMlvcbQExYDt+reHutMdh
-	 ephUwnqEkjP99FGJIrmFLtszNJQ5lC5TN/bHMZDHyeU3PU5X0YKGZAf3pbVXR7nqPj
-	 3GnmBj+BInNGn5+Qf60vCJVXWk9xsIG0h+tf0Dbs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0941B20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DE96213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:24:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8fbf/Qt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE96213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbeLETVt (ORCPT
+        id S1727866AbeLETY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:21:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbeLETVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:21:49 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E822082D;
-        Wed,  5 Dec 2018 19:21:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544037708;
-        bh=f4fEzsQka7d0wlsvHtxzOszwgJSnuOy3W4rjne0azAs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UZi2abCjlgBo2zcUaUsSJq7nAYvrGXYZcMHCwqRoO5rDajtHd4kC+58mdGJURSpPk
-         mLURIoDXSgA5ZHu2AeGOv47E0HgeB81tZEKPKYIZtzJsEc6Qz7sUZ8m6Vzy5qjaNcp
-         twYnynWgOdGnm6yt2cSnExSBWiqGprBClmMfLSdI=
-Date:   Wed, 5 Dec 2018 20:21:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dag B <dag@bakke.com>
-Cc:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, linux-bluetooth@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kay Sievers <kay.sievers@vrfy.org>,
-        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
-Message-ID: <20181205192145.GC434@kroah.com>
-References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
- <20181204204117.14964-1-ville.syrjala@linux.intel.com>
- <20181205070621.GE16346@kroah.com>
- <20181205154032.GT9144@intel.com>
- <c2f9f862-0bf1-be6b-ad9f-8c375d4b8ff0@bakke.com>
+        Wed, 5 Dec 2018 14:24:57 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33596 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLETY4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:24:56 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so9476421pgu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 11:24:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=BYXV+v8uiFHLUJ6Xt6MGtAMgoujWEEDwcTLx+odsbaY=;
+        b=I8fbf/QtHlx1X+ETOhES3o8WeA3LXoHf8VN3wEmDrRCj8Ry3ZGtaMIOf+smqL4VQag
+         bsRqi4yN17xujPgdAnOio+UYIpUAnSKN/W8+HwQ66opQnodiUVbxA1j4irWhlf/aoa8H
+         LXyJ5Qt/RLxriUxknF7TB9q+IGYWRqfGw1/TyAu0e7eHoBfdfYH8gKMSKL9AVdHpt9IS
+         3FsvkZeIlawLMojUX6SMrm8Na1Cw1c/vt0XcN1WOd0yRkLLn0GtACzh/N69gEaLqetWK
+         TLw9EmMr8hbLWLS3dQTOC7Z5Kg9Iw8FJMDnfdNFaaRAyEzCfVu0gvhKSPR31dVGe3sYg
+         CfNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=BYXV+v8uiFHLUJ6Xt6MGtAMgoujWEEDwcTLx+odsbaY=;
+        b=T8LpVkyt6oy5kEqeW1M/iq2D5HVztPvJyQeE97RRimcX7XlKERUfmkmV9G3wFEDKaJ
+         FmY9ki7BUNe/MNJ4RVxJSAth0Napo2RmXzv+TBBFHZZwzTvCHab/9ngaubY/KE/wlXKY
+         eFaiZRbLw1voKw1NNmiJ8+LFrnMspP5wG2eyYbWesH3xD3qVoua5MZzKU89ne3meoU21
+         nvJJv92BK3UrAbBAN3pmNLwpt44KyvyEmhiqyPoo0HwOXIqHJm26SmG+9tG4KfdvfT2q
+         45wkpyX4XBlRQgTdTW3n5CbRFFrUdL5R2xlkp7dKlU6THgvmK7jC0Ip61dvinGt5MKhG
+         Z+Og==
+X-Gm-Message-State: AA+aEWYFmAXSOxelb3gwMrGVTaNDoV1RM37IaIC9NGj1GXuNy7oHR6TT
+        W7ZGYxllO/X7pNeW+rmO+/6vpg==
+X-Google-Smtp-Source: AFSGD/UKhq4hqrJywsqvqxscdXSNUegTvtFvAHsVkI2iE0LcAV0lG7l0sO4VGiFePmUSDoRYGIhDIA==
+X-Received: by 2002:a63:a002:: with SMTP id r2mr21188997pge.212.1544037895725;
+        Wed, 05 Dec 2018 11:24:55 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id v89sm31729585pfk.12.2018.12.05.11.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 11:24:54 -0800 (PST)
+Date:   Wed, 5 Dec 2018 11:24:53 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        s.priebe@profihost.ag, mgorman@techsingularity.net,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [patch 1/2 for-4.20] mm, thp: restore node-local hugepage
+ allocations
+In-Reply-To: <20181205073434.GT1286@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1812051120550.240991@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com> <alpine.DEB.2.21.1812031545560.161134@chino.kir.corp.google.com> <20181204073535.GV31738@dhcp22.suse.cz> <alpine.DEB.2.21.1812041355100.157466@chino.kir.corp.google.com>
+ <20181205073434.GT1286@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c2f9f862-0bf1-be6b-ad9f-8c375d4b8ff0@bakke.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 08:09:35PM +0100, Dag B wrote:
-> 
-> 
-> On 05.12.2018 16:40, Ville Syrjälä wrote:
-> > On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
-> > > On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
-> > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > > 
-> > > > Since commit 1455cf8dbfd0 ("driver core: emit uevents when
-> > > > device is bound to a driver") the kernel started emitting
-> > > > "bind" and "unbind" uevents which confuse the hid2hci
-> > > > udev rules.
-> > > > 
-> > > > The symptoms on an affected machine (Dell E5400 in my case)
-> > > > include bluetooth devices not appearing and udev hogging
-> > > > the cpu as it's busy processing a constant stream of these
-> > > > "bind"+"unbind" uevents.
-> > > What is causing a "stream" of bind and unbind events?  This only happens
-> > > when a device is attached to a driver or removed from a driver, which is
-> > > caused by something else happening.
-> > Not sure if it's just due to this thing causing devices to
-> > appear/disappear during bind/unbind events or what.
-> > 
-> > > This should not be a normal
-> > > occurance, unless something odd is happening to your hardware?
-> > It's not specific to my hardware. Lot's of people are affected.
-> > See eg.
-> > https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
-> > 
-> > Acutally looking through that bug it seems someone else noticed
-> > hid2hci failing lot in the logs. So maybe it's just that we already
-> > switched the mode during "add", and then we try to redo the same
-> > thing during "bind" which fails, and that then causes and unbind?
-> > Dunno, udev is beyond me.
-> > 
-> > 
-> There is another bluetooth scenario where a cpu core peaks at 100%.
-> This is when a bluetooth keyboard goes out to lunch/suspends/disappears.
-> No idea if this is related to the original issue, asking forgiveness if it
-> is not.
+On Wed, 5 Dec 2018, Michal Hocko wrote:
 
-I have bluetooth keyboards working just fine here, again, more specifics
-would be good to have.
+> > > At minimum do not remove the cleanup part which consolidates the gfp
+> > > hadnling to a single place. There is no real reason to have the
+> > > __GFP_THISNODE ugliness outside of alloc_hugepage_direct_gfpmask.
+> > > 
+> > 
+> > The __GFP_THISNODE usage is still confined to 
+> > alloc_hugepage_direct_gfpmask() for the thp fault path, we no longer set 
+> > it in alloc_pages_vma() as done before the cleanup.
+> 
+> Why should be new_page any different?
+> 
 
-> I have found it challenging to attract any attention to the problem, despite
-> it not being an entirely new or uncommon occurence.
-> 
-> Google the following terms: bluetooth keyboard bluetoothd linux 100% cpu
-> 
-> 
-> 
-> By chance, I discovered a supposed fix for this on github today. I have not
-> had the chance to test it (or if it even applies) yet:
-> 
-> https://github.com/peak3d/bluez/commit/9cc3c1afd793e40b1a0cdc4a13e08b5e2575759e
-> 
-> Could someone please shine a light on the sanity of this patch?
-
-That's a userspace bluez patch, I think you are asking on the wrong
-list, sorry.
-
-greg k-h
+To match alloc_new_node_page() which does it correctly and does not change 
+the behavior of mbind() that the cleanup did, which used 
+alloc_hugepage_vma() to get the __GFP_THISNODE behavior.  If there is a 
+reason mbind() is somehow different wrt allocating hugepages locally, I 
+think that should be a separate patch, but the goal of this patch is to 
+revert all the behavioral change that caused hugepages to be allocated 
+remotely.
