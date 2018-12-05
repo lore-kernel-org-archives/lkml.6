@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB6DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD84C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B8F20850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A34D206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 08:00:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="fDqPI1FQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B8F20850
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="hprb1ErJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A34D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbeLEIAG (ORCPT
+        id S1727319AbeLEIAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:00:06 -0500
-Received: from mail-eopbgr1400123.outbound.protection.outlook.com ([40.107.140.123]:50788
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        Wed, 5 Dec 2018 03:00:11 -0500
+Received: from mail-eopbgr1410092.outbound.protection.outlook.com ([40.107.141.92]:40864
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726102AbeLEIAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:00:06 -0500
+        id S1726351AbeLEIAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 03:00:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OldED1gkzqf9FJ3nehPTjjJWLsssp5ny3n/5zRzJytw=;
- b=fDqPI1FQBLIM3lnIsxL3SD3+9+PVpXiBcP7x+80bKwQrORGgq8LeYi2eckyr1MpgEcX99lJxUrHFQyRdZ10YzfN5fi+lHOzjNQT2Ui5+XOnDCaCFnUJiHqD8tTmJ6P+7L2+Jw8pRkq0tChLyEgIGGrJmJ2lvu1fnIeAlXV0xL3s=
+ bh=iq5/QdrIs14OJS/HwuLdIPIFYwsrK8BhkUGUHNrLQvI=;
+ b=hprb1ErJ8FeRs5S7KFTWmw7+kfDe+7zhKN/hhxTtfJU/mWB+oOykf0EKxCgWpvOnWYabxtwpbNc0AFjZhgMeYsvLukzTl1XkU/VgL4sXqULbkNcMmEqJv0BsQQJcJfIcH6MvC3JT5e/1BWUMzOnYepS1xry/yGQSe/KDR6y5100=
 Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com (20.178.137.210) by
- TYAPR01MB2254.jpnprd01.prod.outlook.com (52.133.179.145) with Microsoft SMTP
+ TYAPR01MB4158.jpnprd01.prod.outlook.com (20.178.140.76) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Wed, 5 Dec 2018 08:00:01 +0000
+ 15.20.1382.19; Wed, 5 Dec 2018 07:59:48 +0000
 Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com
  ([fe80::70b6:5ef2:3f71:77c7]) by TYAPR01MB3661.jpnprd01.prod.outlook.com
  ([fe80::70b6:5ef2:3f71:77c7%4]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
- 08:00:01 +0000
+ 07:59:48 +0000
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
@@ -49,51 +49,51 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
 CC:     "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 04/13] sh: sh2: convert to SPDX identifiers
-Thread-Topic: [PATCH 04/13] sh: sh2: convert to SPDX identifiers
-Thread-Index: AQHUjHCGib5jtO3it0KEHea/lx4O2A==
-Date:   Wed, 5 Dec 2018 08:00:01 +0000
-Message-ID: <87efawcszk.wl-kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 03/13] sh: include: convert to SPDX identifiers
+Thread-Topic: [PATCH 03/13] sh: include: convert to SPDX identifiers
+Thread-Index: AQHUjHB+YwWMdLqbEUiTTAxsJGaN/w==
+Date:   Wed, 5 Dec 2018 07:59:48 +0000
+Message-ID: <87ftvccszx.wl-kuninori.morimoto.gx@renesas.com>
 References: <87k1koct23.wl-kuninori.morimoto.gx@renesas.com>
 In-Reply-To: <87k1koct23.wl-kuninori.morimoto.gx@renesas.com>
 Accept-Language: ja-JP, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: TY1PR01CA0135.jpnprd01.prod.outlook.com
- (2603:1096:402:1::11) To TYAPR01MB3661.jpnprd01.prod.outlook.com
+x-clientproxiedby: KAXPR01CA0024.jpnprd01.prod.outlook.com
+ (2603:1096:402:19::34) To TYAPR01MB3661.jpnprd01.prod.outlook.com
  (2603:1096:404:c1::18)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [211.11.155.130]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TYAPR01MB2254;20:3e+jLUToqUPy9sGK8tQbWF0PCT+SzomgGC8HQJ+cz2bCP1TEENL0Nj6PQD+bnHbwRmegq4RGTXH3Rawh3n8ToCUW/mEuXR12RR4c9bpkzDApWtf14k0sy3NlbJNmDPfiqn/OsESX2Qrcuhz8gFUsxkGe05ri1gWPKGzLtblut3w=
-x-ms-office365-filtering-correlation-id: 6db7fcfd-f961-403a-839c-08d65a87a871
+x-microsoft-exchange-diagnostics: 1;TYAPR01MB4158;20:inceZA7kyuxDJnfg2ZX3DiGQCMG0nnRTckTco1AqHpCFLuj6kZj4adQN+X6nr0sATPXhdPBPZNuqzbMjNd94c8q9f2N/jkJZs7tgx39QMamzsgXx9IEJOZ64eTJNkXHRpFFJztMNrcgKPw5II2ij54I/+Yyl16ONqbu57OoUoPU=
+x-ms-office365-filtering-correlation-id: 7e5620ea-e279-4e84-6e05-08d65a87a0bd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2254;
-x-ms-traffictypediagnostic: TYAPR01MB2254:
-x-microsoft-antispam-prvs: <TYAPR01MB225433656F1B77B88D1F15A0D4A80@TYAPR01MB2254.jpnprd01.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB4158;
+x-ms-traffictypediagnostic: TYAPR01MB4158:
+x-microsoft-antispam-prvs: <TYAPR01MB41587BD448226C96FD7FAAFAD4A80@TYAPR01MB4158.jpnprd01.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:TYAPR01MB2254;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2254;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:TYAPR01MB4158;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB4158;
 x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(396003)(346002)(376002)(39860400002)(366004)(136003)(189003)(199004)(6486002)(53936002)(6436002)(6512007)(7736002)(305945005)(71190400001)(316002)(54906003)(110136005)(71200400001)(14454004)(99286004)(86362001)(575784001)(2906002)(68736007)(5660300001)(97736004)(66066001)(8936002)(26005)(106356001)(6506007)(386003)(105586002)(6116002)(186003)(25786009)(256004)(52116002)(3846002)(8676002)(486006)(476003)(4326008)(478600001)(2616005)(446003)(11346002)(36756003)(102836004)(81156014)(76176011)(81166006)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2254;H:TYAPR01MB3661.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39860400002)(346002)(376002)(136003)(199004)(189003)(8676002)(53936002)(52116002)(53946003)(575784001)(86362001)(105586002)(106356001)(8936002)(4326008)(478600001)(6116002)(316002)(81156014)(81166006)(54906003)(110136005)(25786009)(68736007)(6512007)(3846002)(102836004)(66066001)(186003)(5660300001)(6506007)(26005)(386003)(4744004)(486006)(14454004)(76176011)(476003)(71190400001)(71200400001)(305945005)(7736002)(99286004)(36756003)(6486002)(256004)(6436002)(2906002)(11346002)(446003)(97736004)(2616005)(2004002)(579004)(559001)(569006);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB4158;H:TYAPR01MB3661.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 950UsFOHGvd7nFxhcoIHVXEqs4s0AWUw4CkMP+yokIumIzrOd0a9TYXmFaLrOHr1SFz0F4Gl9viZWX0LoMPQ67dKReReNPR/Cq+XX/LprMZz79z3BqjRWYTJntUZmYxOnxj0X74qBu2T+N1/1cKMBzqn/LLrVVz7zn70JpzPwMU2ypo5ZU0xHwU40QUd4jNydjFwTPeFFMfufvblEYe2+UYi1lr4U2WPJZgdfwUVnA8zgDczsZ/D9dGxp6EltIoKyEeJ6owkd9Jk8CSg8fcaYk0yqZdIVRJ9Z5SULBC+nsPLjZeDuM9N68x9lsFseUuFmkJjgqnWawBAk4NPaX9F6L268hCvQrszfs1ikKc2kaU=
+x-microsoft-antispam-message-info: 37KaWzCEbovd2a2A0ZLdhf1K1g35ld6lXJbivwMCIW1qZKQSKj/JS/y3J131iu13EqCXixbfHAHuqkUBiBef3ynhsmhyNb+kFlLOwQ3h+gsL5qwZN7nEZbPsQ/+SnIPMFIt3YM/FpSLAzxMtu5NbAIt4lFc/xPd4xj48nag/pAqjctEX3ihrFcpD11beqqte8pMGCEcElLi2CbT+gDMJGYNDU8QjWJfztQivU70zk9P9P+ccHvjK9/G6aJJR7DwCMcd4O3d+ohfIFrsuMiO3yWpGkqizKQwoMPyyOxDqzHocvaRrz94VqWk3NomP2P2H0lJDEnTqjlZYGq0+BDysL4jyKSaGjxtnU2ZDAZOA/2k=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E1F56E2BB18D9B45816C3F9FE916DC52@jpnprd01.prod.outlook.com>
+Content-ID: <15C283994B0F4C4F8131741EE1350F12@jpnprd01.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6db7fcfd-f961-403a-839c-08d65a87a871
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 08:00:01.4811
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e5620ea-e279-4e84-6e05-08d65a87a0bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 07:59:48.5899
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2254
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -108,143 +108,708 @@ instead of verbose license text.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/sh/kernel/cpu/sh2/Makefile       | 1 +
- arch/sh/kernel/cpu/sh2/clock-sh7619.c | 5 +----
- arch/sh/kernel/cpu/sh2/entry.S        | 7 ++-----
- arch/sh/kernel/cpu/sh2/ex.S           | 7 ++-----
- arch/sh/kernel/cpu/sh2/probe.c        | 5 +----
- arch/sh/kernel/cpu/sh2/setup-sh7619.c | 5 +----
- arch/sh/kernel/cpu/sh2/smp-j2.c       | 5 +----
- 7 files changed, 9 insertions(+), 26 deletions(-)
+ arch/sh/include/asm/Kbuild                           |  1 +
+ arch/sh/include/asm/addrspace.h                      |  5 +----
+ arch/sh/include/asm/asm-offsets.h                    |  1 +
+ arch/sh/include/asm/bl_bit_64.h                      |  7 ++-----
+ arch/sh/include/asm/cache_insns_64.h                 |  7 ++-----
+ arch/sh/include/asm/checksum_32.h                    |  5 +----
+ arch/sh/include/asm/cmpxchg-xchg.h                   |  4 +---
+ arch/sh/include/asm/device.h                         |  5 ++---
+ arch/sh/include/asm/dma-register.h                   |  7 ++-----
+ arch/sh/include/asm/dma.h                            |  7 ++-----
+ arch/sh/include/asm/dwarf.h                          |  8 ++------
+ arch/sh/include/asm/fb.h                             |  1 +
+ arch/sh/include/asm/fixmap.h                         |  7 ++-----
+ arch/sh/include/asm/flat.h                           |  7 ++-----
+ arch/sh/include/asm/freq.h                           |  8 ++------
+ arch/sh/include/asm/gpio.h                           |  7 ++-----
+ arch/sh/include/asm/machvec.h                        |  6 ++----
+ arch/sh/include/asm/mmu_context_64.h                 |  5 +----
+ arch/sh/include/asm/pgtable.h                        |  7 ++-----
+ arch/sh/include/asm/pgtable_64.h                     |  5 +----
+ arch/sh/include/asm/processor_64.h                   |  5 +----
+ arch/sh/include/asm/sfp-machine.h                    | 20 ++++------------=
+----
+ arch/sh/include/asm/shmparam.h                       |  7 ++-----
+ arch/sh/include/asm/siu.h                            |  7 ++-----
+ arch/sh/include/asm/spinlock-cas.h                   |  7 ++-----
+ arch/sh/include/asm/spinlock-llsc.h                  |  7 ++-----
+ arch/sh/include/asm/spinlock.h                       |  7 ++-----
+ arch/sh/include/asm/string_32.h                      |  1 +
+ arch/sh/include/asm/switch_to.h                      |  7 ++-----
+ arch/sh/include/asm/switch_to_64.h                   |  7 ++-----
+ arch/sh/include/asm/tlb_64.h                         |  7 ++-----
+ arch/sh/include/asm/traps_64.h                       |  7 ++-----
+ arch/sh/include/asm/uaccess_64.h                     |  5 +----
+ arch/sh/include/asm/vga.h                            |  1 +
+ arch/sh/include/asm/watchdog.h                       |  8 ++------
+ arch/sh/include/cpu-common/cpu/addrspace.h           |  7 ++-----
+ arch/sh/include/cpu-common/cpu/mmu_context.h         |  7 ++-----
+ arch/sh/include/cpu-common/cpu/pfc.h                 | 12 ++----------
+ arch/sh/include/cpu-common/cpu/timer.h               |  1 +
+ arch/sh/include/cpu-sh2/cpu/cache.h                  |  7 ++-----
+ arch/sh/include/cpu-sh2/cpu/freq.h                   |  7 ++-----
+ arch/sh/include/cpu-sh2/cpu/watchdog.h               |  7 ++-----
+ arch/sh/include/cpu-sh2a/cpu/cache.h                 |  7 ++-----
+ arch/sh/include/cpu-sh2a/cpu/freq.h                  |  7 ++-----
+ arch/sh/include/cpu-sh2a/cpu/watchdog.h              |  1 +
+ arch/sh/include/cpu-sh3/cpu/cache.h                  |  7 ++-----
+ arch/sh/include/cpu-sh3/cpu/dma-register.h           |  7 ++-----
+ arch/sh/include/cpu-sh3/cpu/freq.h                   |  7 ++-----
+ arch/sh/include/cpu-sh3/cpu/gpio.h                   |  7 ++-----
+ arch/sh/include/cpu-sh3/cpu/mmu_context.h            |  7 ++-----
+ arch/sh/include/cpu-sh3/cpu/watchdog.h               |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/addrspace.h              |  5 +----
+ arch/sh/include/cpu-sh4/cpu/cache.h                  |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/dma-register.h           |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/fpu.h                    |  6 ++----
+ arch/sh/include/cpu-sh4/cpu/freq.h                   |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/mmu_context.h            |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/sh7786.h                 |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/sq.h                     |  7 ++-----
+ arch/sh/include/cpu-sh4/cpu/watchdog.h               |  7 ++-----
+ arch/sh/include/cpu-sh5/cpu/cache.h                  |  5 +----
+ arch/sh/include/cpu-sh5/cpu/irq.h                    |  5 +----
+ arch/sh/include/cpu-sh5/cpu/registers.h              |  5 +----
+ arch/sh/include/mach-common/mach/hp6xx.h             | 12 ++++--------
+ arch/sh/include/mach-common/mach/lboxre2.h           |  6 +-----
+ arch/sh/include/mach-common/mach/magicpanelr2.h      |  7 ++-----
+ arch/sh/include/mach-common/mach/mangle-port.h       |  7 ++-----
+ arch/sh/include/mach-common/mach/microdev.h          |  6 ++----
+ arch/sh/include/mach-common/mach/sdk7780.h           |  5 +----
+ arch/sh/include/mach-common/mach/secureedge5410.h    |  6 ++----
+ arch/sh/include/mach-common/mach/sh7763rdp.h         |  6 +-----
+ arch/sh/include/mach-dreamcast/mach/dma.h            |  7 ++-----
+ arch/sh/include/mach-dreamcast/mach/pci.h            |  7 ++-----
+ arch/sh/include/mach-dreamcast/mach/sysasic.h        |  7 +++----
+ .../include/mach-ecovec24/mach/partner-jet-setup.txt |  1 +
+ .../include/mach-kfr2r09/mach/partner-jet-setup.txt  |  1 +
+ arch/sh/include/mach-se/mach/se7721.h                |  8 ++------
+ arch/sh/include/mach-se/mach/se7722.h                |  6 +-----
+ arch/sh/include/mach-se/mach/se7724.h                |  6 +-----
+ arch/sh/include/mach-se/mach/se7780.h                |  5 +----
+ arch/sh/include/uapi/asm/Kbuild                      |  1 +
+ arch/sh/include/uapi/asm/setup.h                     |  1 +
+ arch/sh/include/uapi/asm/types.h                     |  1 +
+ 83 files changed, 142 insertions(+), 357 deletions(-)
 
-diff --git a/arch/sh/kernel/cpu/sh2/Makefile b/arch/sh/kernel/cpu/sh2/Makef=
-ile
-index 904c428..214c3a5 100644
---- a/arch/sh/kernel/cpu/sh2/Makefile
-+++ b/arch/sh/kernel/cpu/sh2/Makefile
+diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
+index 6a5609a..f444077 100644
+--- a/arch/sh/include/asm/Kbuild
++++ b/arch/sh/include/asm/Kbuild
 @@ -1,3 +1,4 @@
 +# SPDX-License-Identifier: GPL-2.0
- #
- # Makefile for the Linux/SuperH SH-2 backends.
- #
-diff --git a/arch/sh/kernel/cpu/sh2/clock-sh7619.c b/arch/sh/kernel/cpu/sh2=
-/clock-sh7619.c
-index e80252a..d66d194c 100644
---- a/arch/sh/kernel/cpu/sh2/clock-sh7619.c
-+++ b/arch/sh/kernel/cpu/sh2/clock-sh7619.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * arch/sh/kernel/cpu/sh2/clock-sh7619.c
+ generic-y +=3D compat.h
+ generic-y +=3D current.h
+ generic-y +=3D delay.h
+diff --git a/arch/sh/include/asm/addrspace.h b/arch/sh/include/asm/addrspac=
+e.h
+index 3d1ae2b..34bfbcd 100644
+--- a/arch/sh/include/asm/addrspace.h
++++ b/arch/sh/include/asm/addrspace.h
+@@ -1,7 +1,4 @@
+-/*
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
++/* SPDX-License-Identifier: GPL-2.0
   *
-@@ -7,10 +8,6 @@
+  * Copyright (C) 1999 by Kaz Kojima
   *
-  * Based on clock-sh4.c
-  *  Copyright (C) 2005  Paul Mundt
+diff --git a/arch/sh/include/asm/asm-offsets.h b/arch/sh/include/asm/asm-of=
+fsets.h
+index d370ee3..9f85357 100644
+--- a/arch/sh/include/asm/asm-offsets.h
++++ b/arch/sh/include/asm/asm-offsets.h
+@@ -1 +1,2 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #include <generated/asm-offsets.h>
+diff --git a/arch/sh/include/asm/bl_bit_64.h b/arch/sh/include/asm/bl_bit_6=
+4.h
+index 6cc8711..aac9780 100644
+--- a/arch/sh/include/asm/bl_bit_64.h
++++ b/arch/sh/include/asm/bl_bit_64.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
 - * License.  See the file "COPYING" in the main directory of this archive
 - * for more details.
   */
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/arch/sh/kernel/cpu/sh2/entry.S b/arch/sh/kernel/cpu/sh2/entry.=
-S
-index 1ee0a6e..0a1c2bf 100644
---- a/arch/sh/kernel/cpu/sh2/entry.S
-+++ b/arch/sh/kernel/cpu/sh2/entry.S
+ #ifndef __ASM_SH_BL_BIT_64_H
+ #define __ASM_SH_BL_BIT_64_H
+diff --git a/arch/sh/include/asm/cache_insns_64.h b/arch/sh/include/asm/cac=
+he_insns_64.h
+index 70b6357..ed682b9 100644
+--- a/arch/sh/include/asm/cache_insns_64.h
++++ b/arch/sh/include/asm/cache_insns_64.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_CACHE_INSNS_64_H
+ #define __ASM_SH_CACHE_INSNS_64_H
+diff --git a/arch/sh/include/asm/checksum_32.h b/arch/sh/include/asm/checks=
+um_32.h
+index 9c84386..b58f3d9 100644
+--- a/arch/sh/include/asm/checksum_32.h
++++ b/arch/sh/include/asm/checksum_32.h
+@@ -1,11 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_CHECKSUM_H
+ #define __ASM_SH_CHECKSUM_H
+=20
+ /*
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  * Copyright (C) 1999 by Kaz Kojima & Niibe Yutaka
+  */
+=20
+diff --git a/arch/sh/include/asm/cmpxchg-xchg.h b/arch/sh/include/asm/cmpxc=
+hg-xchg.h
+index 593a970..c373f21 100644
+--- a/arch/sh/include/asm/cmpxchg-xchg.h
++++ b/arch/sh/include/asm/cmpxchg-xchg.h
+@@ -1,12 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_CMPXCHG_XCHG_H
+ #define __ASM_SH_CMPXCHG_XCHG_H
+=20
+ /*
+  * Copyright (C) 2016 Red Hat, Inc.
+  * Author: Michael S. Tsirkin <mst@redhat.com>
+- *
+- * This work is licensed under the terms of the GNU GPL, version 2.  See t=
+he
+- * file "COPYING" in the main directory of this archive for more details.
+  */
+ #include <linux/bits.h>
+ #include <linux/compiler.h>
+diff --git a/arch/sh/include/asm/device.h b/arch/sh/include/asm/device.h
+index 071bcb4..6f3e686 100644
+--- a/arch/sh/include/asm/device.h
++++ b/arch/sh/include/asm/device.h
+@@ -1,7 +1,6 @@
+-/*
+- * Arch specific extensions to struct device
++/* SPDX-License-Identifier: GPL-2.0
+  *
+- * This file is released under the GPLv2
++ * Arch specific extensions to struct device
+  */
+ #ifndef __ASM_SH_DEVICE_H
+ #define __ASM_SH_DEVICE_H
+diff --git a/arch/sh/include/asm/dma-register.h b/arch/sh/include/asm/dma-r=
+egister.h
+index c757b47..724dab91 100644
+--- a/arch/sh/include/asm/dma-register.h
++++ b/arch/sh/include/asm/dma-register.h
 @@ -1,14 +1,11 @@
 -/*
 +/* SPDX-License-Identifier: GPL-2.0
 + *
-  * arch/sh/kernel/cpu/sh2/entry.S
+  * Common header for the legacy SH DMA driver and the new dmaengine driver
   *
-  * The SH-2 exception entry
+  * extracted from arch/sh/include/asm/dma-sh.h:
   *
-  * Copyright (C) 2005-2008 Yoshinori Sato
-  * Copyright (C) 2005  AXE,Inc.
+  * Copyright (C) 2000  Takashi YOSHII
+  * Copyright (C) 2003  Paul Mundt
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
 - * License.  See the file "COPYING" in the main directory of this archive
 - * for more details.
   */
+ #ifndef DMA_REGISTER_H
+ #define DMA_REGISTER_H
+diff --git a/arch/sh/include/asm/dma.h b/arch/sh/include/asm/dma.h
+index fb6e4f7..4d5a21a 100644
+--- a/arch/sh/include/asm/dma.h
++++ b/arch/sh/include/asm/dma.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/dma.h
+  *
+  * Copyright (C) 2003, 2004  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_DMA_H
+ #define __ASM_SH_DMA_H
+diff --git a/arch/sh/include/asm/dwarf.h b/arch/sh/include/asm/dwarf.h
+index d62abd1..5719544 100644
+--- a/arch/sh/include/asm/dwarf.h
++++ b/arch/sh/include/asm/dwarf.h
+@@ -1,10 +1,6 @@
+-/*
+- * Copyright (C) 2009 Matt Fleming <matt@console-pimps.org>
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
++/* SPDX-License-Identifier: GPL-2.0
+  *
++ * Copyright (C) 2009 Matt Fleming <matt@console-pimps.org>
+  */
+ #ifndef __ASM_SH_DWARF_H
+ #define __ASM_SH_DWARF_H
+diff --git a/arch/sh/include/asm/fb.h b/arch/sh/include/asm/fb.h
+index d92e99c..9a0bca2 100644
+--- a/arch/sh/include/asm/fb.h
++++ b/arch/sh/include/asm/fb.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _ASM_FB_H_
+ #define _ASM_FB_H_
 =20
- #include <linux/linkage.h>
-diff --git a/arch/sh/kernel/cpu/sh2/ex.S b/arch/sh/kernel/cpu/sh2/ex.S
-index 85b0bf8..dd0cc88 100644
---- a/arch/sh/kernel/cpu/sh2/ex.S
-+++ b/arch/sh/kernel/cpu/sh2/ex.S
+diff --git a/arch/sh/include/asm/fixmap.h b/arch/sh/include/asm/fixmap.h
+index 4daf91c..e30348c 100644
+--- a/arch/sh/include/asm/fixmap.h
++++ b/arch/sh/include/asm/fixmap.h
+@@ -1,9 +1,6 @@
+-/*
+- * fixmap.h: compile-time virtual memory allocation
++/* SPDX-License-Identifier: GPL-2.0
+  *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
++ * fixmap.h: compile-time virtual memory allocation
+  *
+  * Copyright (C) 1998 Ingo Molnar
+  *
+diff --git a/arch/sh/include/asm/flat.h b/arch/sh/include/asm/flat.h
+index 275fcae..843d458 100644
+--- a/arch/sh/include/asm/flat.h
++++ b/arch/sh/include/asm/flat.h
 @@ -1,13 +1,10 @@
 -/*
 +/* SPDX-License-Identifier: GPL-2.0
 + *
-  * arch/sh/kernel/cpu/sh2/ex.S
+  * include/asm-sh/flat.h
   *
-  * The SH-2 exception vector table
+  * uClinux flat-format executables
   *
-  * Copyright (C) 2005 Yoshinori Sato
+  * Copyright (C) 2003  Paul Mundt
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
+- * License.  See the file "COPYING" in the main directory of this archive =
+for
+- * more details.
   */
-=20
- #include <linux/linkage.h>
-diff --git a/arch/sh/kernel/cpu/sh2/probe.c b/arch/sh/kernel/cpu/sh2/probe.=
-c
-index a5bd036..d342ea0 100644
---- a/arch/sh/kernel/cpu/sh2/probe.c
-+++ b/arch/sh/kernel/cpu/sh2/probe.c
+ #ifndef __ASM_SH_FLAT_H
+ #define __ASM_SH_FLAT_H
+diff --git a/arch/sh/include/asm/freq.h b/arch/sh/include/asm/freq.h
+index 4ece90b..18133bf 100644
+--- a/arch/sh/include/asm/freq.h
++++ b/arch/sh/include/asm/freq.h
+@@ -1,12 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0+
++ *
+  * include/asm-sh/freq.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+  */
+ #ifndef __ASM_SH_FREQ_H
+ #define __ASM_SH_FREQ_H
+diff --git a/arch/sh/include/asm/gpio.h b/arch/sh/include/asm/gpio.h
+index 7dfe15e..35191889 100644
+--- a/arch/sh/include/asm/gpio.h
++++ b/arch/sh/include/asm/gpio.h
 @@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * arch/sh/kernel/cpu/sh2/probe.c
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  *  include/asm-sh/gpio.h
   *
-  * CPU Subtype Probing for SH-2.
+  * Generic GPIO API and pinmux table support for SuperH.
   *
-  * Copyright (C) 2002 Paul Mundt
+  * Copyright (c) 2008 Magnus Damm
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
 - * License.  See the file "COPYING" in the main directory of this archive
 - * for more details.
   */
- #include <linux/init.h>
- #include <linux/of_fdt.h>
-diff --git a/arch/sh/kernel/cpu/sh2/setup-sh7619.c b/arch/sh/kernel/cpu/sh2=
-/setup-sh7619.c
-index d08db08..f5b6841 100644
---- a/arch/sh/kernel/cpu/sh2/setup-sh7619.c
-+++ b/arch/sh/kernel/cpu/sh2/setup-sh7619.c
+ #ifndef __ASM_SH_GPIO_H
+ #define __ASM_SH_GPIO_H
+diff --git a/arch/sh/include/asm/machvec.h b/arch/sh/include/asm/machvec.h
+index d3324e4..f7d0554 100644
+--- a/arch/sh/include/asm/machvec.h
++++ b/arch/sh/include/asm/machvec.h
+@@ -1,10 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/machvec.h
+  *
+  * Copyright 2000 Stuart Menefy (stuart.menefy@st.com)
+- *
+- * May be copied or modified under the terms of the GNU General Public
+- * License.  See linux/COPYING for more information.
+  */
+=20
+ #ifndef _ASM_SH_MACHVEC_H
+diff --git a/arch/sh/include/asm/mmu_context_64.h b/arch/sh/include/asm/mmu=
+_context_64.h
+index de12102..bacafe0 100644
+--- a/arch/sh/include/asm/mmu_context_64.h
++++ b/arch/sh/include/asm/mmu_context_64.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_MMU_CONTEXT_64_H
+ #define __ASM_SH_MMU_CONTEXT_64_H
+=20
+@@ -6,10 +7,6 @@
+  *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003 - 2007  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #include <cpu/registers.h>
+ #include <asm/cacheflush.h>
+diff --git a/arch/sh/include/asm/pgtable.h b/arch/sh/include/asm/pgtable.h
+index f6abfe2..3587103 100644
+--- a/arch/sh/include/asm/pgtable.h
++++ b/arch/sh/include/asm/pgtable.h
+@@ -1,13 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * This file contains the functions and defines necessary to modify and
+  * use the SuperH page table tree.
+  *
+  * Copyright (C) 1999 Niibe Yutaka
+  * Copyright (C) 2002 - 2007 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General
+- * Public License.  See the file "COPYING" in the main directory of this
+- * archive for more details.
+  */
+ #ifndef __ASM_SH_PGTABLE_H
+ #define __ASM_SH_PGTABLE_H
+diff --git a/arch/sh/include/asm/pgtable_64.h b/arch/sh/include/asm/pgtable=
+_64.h
+index 0742496..1778bc5 100644
+--- a/arch/sh/include/asm/pgtable_64.h
++++ b/arch/sh/include/asm/pgtable_64.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_PGTABLE_64_H
+ #define __ASM_SH_PGTABLE_64_H
+=20
+@@ -10,10 +11,6 @@
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003, 2004  Paul Mundt
+  * Copyright (C) 2003, 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #include <linux/threads.h>
+ #include <asm/processor.h>
+diff --git a/arch/sh/include/asm/processor_64.h b/arch/sh/include/asm/proce=
+ssor_64.h
+index f3d7075..53efc9f 100644
+--- a/arch/sh/include/asm/processor_64.h
++++ b/arch/sh/include/asm/processor_64.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_PROCESSOR_64_H
+ #define __ASM_SH_PROCESSOR_64_H
+=20
+@@ -7,10 +8,6 @@
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASSEMBLY__
+=20
+diff --git a/arch/sh/include/asm/sfp-machine.h b/arch/sh/include/asm/sfp-ma=
+chine.h
+index d3c5484..cbc7cf8c 100644
+--- a/arch/sh/include/asm/sfp-machine.h
++++ b/arch/sh/include/asm/sfp-machine.h
+@@ -1,4 +1,6 @@
+-/* Machine-dependent software floating-point definitions.
++/* SPDX-License-Identifier: GPL-2.0+
++ *
++ * Machine-dependent software floating-point definitions.
+    SuperH kernel version.
+    Copyright (C) 1997,1998,1999 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+@@ -6,21 +8,7 @@
+ 		  Jakub Jelinek (jj@ultra.linux.cz),
+ 		  David S. Miller (davem@redhat.com) and
+ 		  Peter Maydell (pmaydell@chiark.greenend.org.uk).
+-
+-   The GNU C Library is free software; you can redistribute it and/or
+-   modify it under the terms of the GNU Library General Public License as
+-   published by the Free Software Foundation; either version 2 of the
+-   License, or (at your option) any later version.
+-
+-   The GNU C Library is distributed in the hope that it will be useful,
+-   but WITHOUT ANY WARRANTY; without even the implied warranty of
+-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-   Library General Public License for more details.
+-
+-   You should have received a copy of the GNU Library General Public
+-   License along with the GNU C Library; see the file COPYING.LIB.  If
+-   not, write to the Free Software Foundation, Inc.,
+-   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
++*/
+=20
+ #ifndef _SFP_MACHINE_H
+ #define _SFP_MACHINE_H
+diff --git a/arch/sh/include/asm/shmparam.h b/arch/sh/include/asm/shmparam.=
+h
+index ba1758d..6c580a6 100644
+--- a/arch/sh/include/asm/shmparam.h
++++ b/arch/sh/include/asm/shmparam.h
 @@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SH7619 Setup
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/shmparam.h
   *
-  *  Copyright (C) 2006  Yoshinori Sato
-  *  Copyright (C) 2009  Paul Mundt
+  * Copyright (C) 1999 Niibe Yutaka
+  * Copyright (C) 2006 Paul Mundt
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
 - * License.  See the file "COPYING" in the main directory of this archive
 - * for more details.
   */
- #include <linux/platform_device.h>
- #include <linux/init.h>
-diff --git a/arch/sh/kernel/cpu/sh2/smp-j2.c b/arch/sh/kernel/cpu/sh2/smp-j=
-2.c
-index 6ccd7e4..ae44dc2 100644
---- a/arch/sh/kernel/cpu/sh2/smp-j2.c
-+++ b/arch/sh/kernel/cpu/sh2/smp-j2.c
+ #ifndef __ASM_SH_SHMPARAM_H
+ #define __ASM_SH_SHMPARAM_H
+diff --git a/arch/sh/include/asm/siu.h b/arch/sh/include/asm/siu.h
+index 580b7ac..35e4839 100644
+--- a/arch/sh/include/asm/siu.h
++++ b/arch/sh/include/asm/siu.h
 @@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * SMP support for J2 processor
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * platform header for the SIU ASoC driver
   *
-  * Copyright (C) 2015-2016 Smart Energy Instruments, Inc.
+  * Copyright (C) 2009-2010 Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+=20
+ #ifndef ASM_SIU_H
+diff --git a/arch/sh/include/asm/spinlock-cas.h b/arch/sh/include/asm/spinl=
+ock-cas.h
+index 270ee4d..3d49985 100644
+--- a/arch/sh/include/asm/spinlock-cas.h
++++ b/arch/sh/include/asm/spinlock-cas.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/spinlock-cas.h
+  *
+  * Copyright (C) 2015 SEI
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_SPINLOCK_CAS_H
+ #define __ASM_SH_SPINLOCK_CAS_H
+diff --git a/arch/sh/include/asm/spinlock-llsc.h b/arch/sh/include/asm/spin=
+lock-llsc.h
+index 715595d..786ee0f 100644
+--- a/arch/sh/include/asm/spinlock-llsc.h
++++ b/arch/sh/include/asm/spinlock-llsc.h
+@@ -1,12 +1,9 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/spinlock-llsc.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+  * Copyright (C) 2006, 2007 Akio Idehara
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_SPINLOCK_LLSC_H
+ #define __ASM_SH_SPINLOCK_LLSC_H
+diff --git a/arch/sh/include/asm/spinlock.h b/arch/sh/include/asm/spinlock.=
+h
+index c2c61ea..fa6801f 100644
+--- a/arch/sh/include/asm/spinlock.h
++++ b/arch/sh/include/asm/spinlock.h
+@@ -1,12 +1,9 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/spinlock.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+  * Copyright (C) 2006, 2007 Akio Idehara
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_SPINLOCK_H
+ #define __ASM_SH_SPINLOCK_H
+diff --git a/arch/sh/include/asm/string_32.h b/arch/sh/include/asm/string_3=
+2.h
+index 55f8db6..3558b1d 100644
+--- a/arch/sh/include/asm/string_32.h
++++ b/arch/sh/include/asm/string_32.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_STRING_H
+ #define __ASM_SH_STRING_H
+=20
+diff --git a/arch/sh/include/asm/switch_to.h b/arch/sh/include/asm/switch_t=
+o.h
+index bcd722f..9eec80a 100644
+--- a/arch/sh/include/asm/switch_to.h
++++ b/arch/sh/include/asm/switch_to.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_SWITCH_TO_H
+ #define __ASM_SH_SWITCH_TO_H
+diff --git a/arch/sh/include/asm/switch_to_64.h b/arch/sh/include/asm/switc=
+h_to_64.h
+index ba3129d..2dbf231 100644
+--- a/arch/sh/include/asm/switch_to_64.h
++++ b/arch/sh/include/asm/switch_to_64.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_SWITCH_TO_64_H
+ #define __ASM_SH_SWITCH_TO_64_H
+diff --git a/arch/sh/include/asm/tlb_64.h b/arch/sh/include/asm/tlb_64.h
+index ef0ae2a..59fa0a2 100644
+--- a/arch/sh/include/asm/tlb_64.h
++++ b/arch/sh/include/asm/tlb_64.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/tlb_64.h
+  *
+  * Copyright (C) 2003  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_TLB_64_H
+ #define __ASM_SH_TLB_64_H
+diff --git a/arch/sh/include/asm/traps_64.h b/arch/sh/include/asm/traps_64.=
+h
+index ef5eff91..f28db6d 100644
+--- a/arch/sh/include/asm/traps_64.h
++++ b/arch/sh/include/asm/traps_64.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003  Paul Mundt
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_TRAPS_64_H
+ #define __ASM_SH_TRAPS_64_H
+diff --git a/arch/sh/include/asm/uaccess_64.h b/arch/sh/include/asm/uaccess=
+_64.h
+index ca5073d..0c19d02 100644
+--- a/arch/sh/include/asm/uaccess_64.h
++++ b/arch/sh/include/asm/uaccess_64.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_UACCESS_64_H
+ #define __ASM_SH_UACCESS_64_H
+=20
+@@ -15,10 +16,6 @@
+  *     MIPS implementation version 1.15 by
+  *              Copyright (C) 1996, 1997, 1998 by Ralf Baechle
+  *     and i386 version.
 - *
 - * This file is subject to the terms and conditions of the GNU General Pub=
 lic
@@ -252,7 +817,958 @@ lic
 - * for more details.
   */
 =20
- #include <linux/smp.h>
+ #define __get_user_size(x,ptr,size,retval)			\
+diff --git a/arch/sh/include/asm/vga.h b/arch/sh/include/asm/vga.h
+index 06a5de8..089fbdc 100644
+--- a/arch/sh/include/asm/vga.h
++++ b/arch/sh/include/asm/vga.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_VGA_H
+ #define __ASM_SH_VGA_H
+=20
+diff --git a/arch/sh/include/asm/watchdog.h b/arch/sh/include/asm/watchdog.=
+h
+index 85a7aca..cecd0fc 100644
+--- a/arch/sh/include/asm/watchdog.h
++++ b/arch/sh/include/asm/watchdog.h
+@@ -1,14 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0+
++ *
+  * include/asm-sh/watchdog.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+  * Copyright (C) 2009 Siemens AG
+  * Copyright (C) 2009 Valentin Sitdikov
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+  */
+ #ifndef __ASM_SH_WATCHDOG_H
+ #define __ASM_SH_WATCHDOG_H
+diff --git a/arch/sh/include/cpu-common/cpu/addrspace.h b/arch/sh/include/c=
+pu-common/cpu/addrspace.h
+index 2b9ab93..d8bf5d7 100644
+--- a/arch/sh/include/cpu-common/cpu/addrspace.h
++++ b/arch/sh/include/cpu-common/cpu/addrspace.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Definitions for the address spaces of the SH-2 CPUs.
+  *
+  * Copyright (C) 2003  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2_ADDRSPACE_H
+ #define __ASM_CPU_SH2_ADDRSPACE_H
+diff --git a/arch/sh/include/cpu-common/cpu/mmu_context.h b/arch/sh/include=
+/cpu-common/cpu/mmu_context.h
+index beeb299..cef3a30 100644
+--- a/arch/sh/include/cpu-common/cpu/mmu_context.h
++++ b/arch/sh/include/cpu-common/cpu/mmu_context.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2/mmu_context.h
+  *
+  * Copyright (C) 2003  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2_MMU_CONTEXT_H
+ #define __ASM_CPU_SH2_MMU_CONTEXT_H
+diff --git a/arch/sh/include/cpu-common/cpu/pfc.h b/arch/sh/include/cpu-com=
+mon/cpu/pfc.h
+index e538813..879d2c9 100644
+--- a/arch/sh/include/cpu-common/cpu/pfc.h
++++ b/arch/sh/include/cpu-common/cpu/pfc.h
+@@ -1,16 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * SH Pin Function Control Initialization
+  *
+  * Copyright (C) 2012  Renesas Solutions Corp.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; version 2 of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+=20
+ #ifndef __ARCH_SH_CPU_PFC_H__
+diff --git a/arch/sh/include/cpu-common/cpu/timer.h b/arch/sh/include/cpu-c=
+ommon/cpu/timer.h
+index a39c241..af51438 100644
+--- a/arch/sh/include/cpu-common/cpu/timer.h
++++ b/arch/sh/include/cpu-common/cpu/timer.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_CPU_SH2_TIMER_H
+ #define __ASM_CPU_SH2_TIMER_H
+=20
+diff --git a/arch/sh/include/cpu-sh2/cpu/cache.h b/arch/sh/include/cpu-sh2/=
+cpu/cache.h
+index aa1b2b9..070aa9f 100644
+--- a/arch/sh/include/cpu-sh2/cpu/cache.h
++++ b/arch/sh/include/cpu-sh2/cpu/cache.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2/cache.h
+  *
+  * Copyright (C) 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2_CACHE_H
+ #define __ASM_CPU_SH2_CACHE_H
+diff --git a/arch/sh/include/cpu-sh2/cpu/freq.h b/arch/sh/include/cpu-sh2/c=
+pu/freq.h
+index 31de475..fb2e5d2 100644
+--- a/arch/sh/include/cpu-sh2/cpu/freq.h
++++ b/arch/sh/include/cpu-sh2/cpu/freq.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2/freq.h
+  *
+  * Copyright (C) 2006  Yoshinori Sato
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2_FREQ_H
+ #define __ASM_CPU_SH2_FREQ_H
+diff --git a/arch/sh/include/cpu-sh2/cpu/watchdog.h b/arch/sh/include/cpu-s=
+h2/cpu/watchdog.h
+index 1eab8aa..141fe29 100644
+--- a/arch/sh/include/cpu-sh2/cpu/watchdog.h
++++ b/arch/sh/include/cpu-sh2/cpu/watchdog.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2/watchdog.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2_WATCHDOG_H
+ #define __ASM_CPU_SH2_WATCHDOG_H
+diff --git a/arch/sh/include/cpu-sh2a/cpu/cache.h b/arch/sh/include/cpu-sh2=
+a/cpu/cache.h
+index b27ce92..06efb23 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/cache.h
++++ b/arch/sh/include/cpu-sh2a/cpu/cache.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2a/cache.h
+  *
+  * Copyright (C) 2004 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2A_CACHE_H
+ #define __ASM_CPU_SH2A_CACHE_H
+diff --git a/arch/sh/include/cpu-sh2a/cpu/freq.h b/arch/sh/include/cpu-sh2a=
+/cpu/freq.h
+index 830fd43..fb0813f 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/freq.h
++++ b/arch/sh/include/cpu-sh2a/cpu/freq.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh2a/freq.h
+  *
+  * Copyright (C) 2006  Yoshinori Sato
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH2A_FREQ_H
+ #define __ASM_CPU_SH2A_FREQ_H
+diff --git a/arch/sh/include/cpu-sh2a/cpu/watchdog.h b/arch/sh/include/cpu-=
+sh2a/cpu/watchdog.h
+index e7e8259..8f932b7 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/watchdog.h
++++ b/arch/sh/include/cpu-sh2a/cpu/watchdog.h
+@@ -1 +1,2 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #include <cpu-sh2/cpu/watchdog.h>
+diff --git a/arch/sh/include/cpu-sh3/cpu/cache.h b/arch/sh/include/cpu-sh3/=
+cpu/cache.h
+index 29700fd..f571248 100644
+--- a/arch/sh/include/cpu-sh3/cpu/cache.h
++++ b/arch/sh/include/cpu-sh3/cpu/cache.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh3/cache.h
+  *
+  * Copyright (C) 1999 Niibe Yutaka
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH3_CACHE_H
+ #define __ASM_CPU_SH3_CACHE_H
+diff --git a/arch/sh/include/cpu-sh3/cpu/dma-register.h b/arch/sh/include/c=
+pu-sh3/cpu/dma-register.h
+index 2349e48..c0f921f 100644
+--- a/arch/sh/include/cpu-sh3/cpu/dma-register.h
++++ b/arch/sh/include/cpu-sh3/cpu/dma-register.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * SH3 CPU-specific DMA definitions, used by both DMA drivers
+  *
+  * Copyright (C) 2010 Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ #ifndef CPU_DMA_REGISTER_H
+ #define CPU_DMA_REGISTER_H
+diff --git a/arch/sh/include/cpu-sh3/cpu/freq.h b/arch/sh/include/cpu-sh3/c=
+pu/freq.h
+index 53c6230..7290f02 100644
+--- a/arch/sh/include/cpu-sh3/cpu/freq.h
++++ b/arch/sh/include/cpu-sh3/cpu/freq.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh3/freq.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH3_FREQ_H
+ #define __ASM_CPU_SH3_FREQ_H
+diff --git a/arch/sh/include/cpu-sh3/cpu/gpio.h b/arch/sh/include/cpu-sh3/c=
+pu/gpio.h
+index 9a22b88..aeb0588 100644
+--- a/arch/sh/include/cpu-sh3/cpu/gpio.h
++++ b/arch/sh/include/cpu-sh3/cpu/gpio.h
+@@ -1,13 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  *  include/asm-sh/cpu-sh3/gpio.h
+  *
+  *  Copyright (C) 2007  Markus Brunner, Mark Jonas
+  *
+  *  Addresses for the Pin Function Controller
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef _CPU_SH3_GPIO_H
+ #define _CPU_SH3_GPIO_H
+diff --git a/arch/sh/include/cpu-sh3/cpu/mmu_context.h b/arch/sh/include/cp=
+u-sh3/cpu/mmu_context.h
+index 0c7c735..ead9a6f 100644
+--- a/arch/sh/include/cpu-sh3/cpu/mmu_context.h
++++ b/arch/sh/include/cpu-sh3/cpu/mmu_context.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh3/mmu_context.h
+  *
+  * Copyright (C) 1999 Niibe Yutaka
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH3_MMU_CONTEXT_H
+ #define __ASM_CPU_SH3_MMU_CONTEXT_H
+diff --git a/arch/sh/include/cpu-sh3/cpu/watchdog.h b/arch/sh/include/cpu-s=
+h3/cpu/watchdog.h
+index 4ee0347..9d7e9d9 100644
+--- a/arch/sh/include/cpu-sh3/cpu/watchdog.h
++++ b/arch/sh/include/cpu-sh3/cpu/watchdog.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh3/watchdog.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH3_WATCHDOG_H
+ #define __ASM_CPU_SH3_WATCHDOG_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/addrspace.h b/arch/sh/include/cpu-=
+sh4/cpu/addrspace.h
+index d51da25..f006c94 100644
+--- a/arch/sh/include/cpu-sh4/cpu/addrspace.h
++++ b/arch/sh/include/cpu-sh4/cpu/addrspace.h
+@@ -1,7 +1,4 @@
+-/*
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
++/* SPDX-License-Identifier: GPL-2.0
+  *
+  * Copyright (C) 1999 by Kaz Kojima
+  *
+diff --git a/arch/sh/include/cpu-sh4/cpu/cache.h b/arch/sh/include/cpu-sh4/=
+cpu/cache.h
+index 92c4cd1..72b4d13 100644
+--- a/arch/sh/include/cpu-sh4/cpu/cache.h
++++ b/arch/sh/include/cpu-sh4/cpu/cache.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh4/cache.h
+  *
+  * Copyright (C) 1999 Niibe Yutaka
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH4_CACHE_H
+ #define __ASM_CPU_SH4_CACHE_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/dma-register.h b/arch/sh/include/c=
+pu-sh4/cpu/dma-register.h
+index 9cd81e5..53f7ab9 100644
+--- a/arch/sh/include/cpu-sh4/cpu/dma-register.h
++++ b/arch/sh/include/cpu-sh4/cpu/dma-register.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * SH4 CPU-specific DMA definitions, used by both DMA drivers
+  *
+  * Copyright (C) 2010 Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ #ifndef CPU_DMA_REGISTER_H
+ #define CPU_DMA_REGISTER_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/fpu.h b/arch/sh/include/cpu-sh4/cp=
+u/fpu.h
+index febef73..29f451b 100644
+--- a/arch/sh/include/cpu-sh4/cpu/fpu.h
++++ b/arch/sh/include/cpu-sh4/cpu/fpu.h
+@@ -1,12 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * linux/arch/sh/kernel/cpu/sh4/sh4_fpu.h
+  *
+  * Copyright (C) 2006 STMicroelectronics Limited
+  * Author: Carl Shaw <carl.shaw@st.com>
+  *
+- * May be copied or modified under the terms of the GNU General Public
+- * License Version 2.  See linux/COPYING for more information.
+- *
+  * Definitions for SH4 FPU operations
+  */
+=20
+diff --git a/arch/sh/include/cpu-sh4/cpu/freq.h b/arch/sh/include/cpu-sh4/c=
+pu/freq.h
+index 1631fc2..662f0f3 100644
+--- a/arch/sh/include/cpu-sh4/cpu/freq.h
++++ b/arch/sh/include/cpu-sh4/cpu/freq.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh4/freq.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH4_FREQ_H
+ #define __ASM_CPU_SH4_FREQ_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/mmu_context.h b/arch/sh/include/cp=
+u-sh4/cpu/mmu_context.h
+index e46ec70..421b56d 100644
+--- a/arch/sh/include/cpu-sh4/cpu/mmu_context.h
++++ b/arch/sh/include/cpu-sh4/cpu/mmu_context.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh4/mmu_context.h
+  *
+  * Copyright (C) 1999 Niibe Yutaka
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH4_MMU_CONTEXT_H
+ #define __ASM_CPU_SH4_MMU_CONTEXT_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7786.h b/arch/sh/include/cpu-sh4=
+/cpu/sh7786.h
+index 96b8cb1..8f9bfbf 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7786.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7786.h
+@@ -1,14 +1,11 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * SH7786 Pinmux
+  *
+  * Copyright (C) 2008, 2009  Renesas Solutions Corp.
+  * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+  *
+  *  Based on sh7785.h
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+=20
+ #ifndef __CPU_SH7786_H__
+diff --git a/arch/sh/include/cpu-sh4/cpu/sq.h b/arch/sh/include/cpu-sh4/cpu=
+/sq.h
+index 74716ba..81966e4 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sq.h
++++ b/arch/sh/include/cpu-sh4/cpu/sq.h
+@@ -1,12 +1,9 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh4/sq.h
+  *
+  * Copyright (C) 2001, 2002, 2003  Paul Mundt
+  * Copyright (C) 2001, 2002  M. R. Brown
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH4_SQ_H
+ #define __ASM_CPU_SH4_SQ_H
+diff --git a/arch/sh/include/cpu-sh4/cpu/watchdog.h b/arch/sh/include/cpu-s=
+h4/cpu/watchdog.h
+index 7f62b93..fa7bcb3 100644
+--- a/arch/sh/include/cpu-sh4/cpu/watchdog.h
++++ b/arch/sh/include/cpu-sh4/cpu/watchdog.h
+@@ -1,13 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/cpu-sh4/watchdog.h
+  *
+  * Copyright (C) 2002, 2003 Paul Mundt
+  * Copyright (C) 2009 Siemens AG
+  * Copyright (C) 2009 Sitdikov Valentin
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_CPU_SH4_WATCHDOG_H
+ #define __ASM_CPU_SH4_WATCHDOG_H
+diff --git a/arch/sh/include/cpu-sh5/cpu/cache.h b/arch/sh/include/cpu-sh5/=
+cpu/cache.h
+index ed050ab..ef49538 100644
+--- a/arch/sh/include/cpu-sh5/cpu/cache.h
++++ b/arch/sh/include/cpu-sh5/cpu/cache.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_CPU_SH5_CACHE_H
+ #define __ASM_SH_CPU_SH5_CACHE_H
+=20
+@@ -6,10 +7,6 @@
+  *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2003, 2004  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+=20
+ #define L1_CACHE_SHIFT		5
+diff --git a/arch/sh/include/cpu-sh5/cpu/irq.h b/arch/sh/include/cpu-sh5/cp=
+u/irq.h
+index 0ccf257..4aa6ac5 100644
+--- a/arch/sh/include/cpu-sh5/cpu/irq.h
++++ b/arch/sh/include/cpu-sh5/cpu/irq.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_CPU_SH5_IRQ_H
+ #define __ASM_SH_CPU_SH5_IRQ_H
+=20
+@@ -5,10 +6,6 @@
+  * include/asm-sh/cpu-sh5/irq.h
+  *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+=20
+=20
+diff --git a/arch/sh/include/cpu-sh5/cpu/registers.h b/arch/sh/include/cpu-=
+sh5/cpu/registers.h
+index 6664ea6..372c1e1 100644
+--- a/arch/sh/include/cpu-sh5/cpu/registers.h
++++ b/arch/sh/include/cpu-sh5/cpu/registers.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_CPU_SH5_REGISTERS_H
+ #define __ASM_SH_CPU_SH5_REGISTERS_H
+=20
+@@ -6,10 +7,6 @@
+  *
+  * Copyright (C) 2000, 2001  Paolo Alberelli
+  * Copyright (C) 2004  Richard Curnow
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+=20
+ #ifdef __ASSEMBLY__
+diff --git a/arch/sh/include/mach-common/mach/hp6xx.h b/arch/sh/include/mac=
+h-common/mach/hp6xx.h
+index 6aaaf85..71241f0 100644
+--- a/arch/sh/include/mach-common/mach/hp6xx.h
++++ b/arch/sh/include/mach-common/mach/hp6xx.h
+@@ -1,14 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (C) 2003, 2004, 2005  Andriy Skulysh
++ */
+ #ifndef __ASM_SH_HP6XX_H
+ #define __ASM_SH_HP6XX_H
+=20
+-/*
+- * Copyright (C) 2003, 2004, 2005  Andriy Skulysh
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+- */
+ #include <linux/sh_intc.h>
+=20
+ #define HP680_BTN_IRQ		evt2irq(0x600)	/* IRQ0_IRQ */
+diff --git a/arch/sh/include/mach-common/mach/lboxre2.h b/arch/sh/include/m=
+ach-common/mach/lboxre2.h
+index 3a4dcc5..5b6bb8e 100644
+--- a/arch/sh/include/mach-common/mach/lboxre2.h
++++ b/arch/sh/include/mach-common/mach/lboxre2.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_LBOXRE2_H
+ #define __ASM_SH_LBOXRE2_H
+=20
+@@ -5,11 +6,6 @@
+  * Copyright (C) 2007 Nobuhiro Iwamatsu
+  *
+  * NTT COMWARE L-BOX RE2 support
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  */
+ #include <linux/sh_intc.h>
+=20
+diff --git a/arch/sh/include/mach-common/mach/magicpanelr2.h b/arch/sh/incl=
+ude/mach-common/mach/magicpanelr2.h
+index eb0cf20..c2d218c 100644
+--- a/arch/sh/include/mach-common/mach/magicpanelr2.h
++++ b/arch/sh/include/mach-common/mach/magicpanelr2.h
+@@ -1,13 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  *  include/asm-sh/magicpanelr2.h
+  *
+  *  Copyright (C) 2007  Markus Brunner, Mark Jonas
+  *
+  *  I/O addresses and bitmasks for Magic Panel Release 2 board
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+=20
+ #ifndef __ASM_SH_MAGICPANELR2_H
+diff --git a/arch/sh/include/mach-common/mach/mangle-port.h b/arch/sh/inclu=
+de/mach-common/mach/mangle-port.h
+index 4ca1769..dd5a761 100644
+--- a/arch/sh/include/mach-common/mach/mangle-port.h
++++ b/arch/sh/include/mach-common/mach/mangle-port.h
+@@ -1,9 +1,6 @@
+-/*
+- * SH version cribbed from the MIPS copy:
++/* SPDX-License-Identifier: GPL-2.0
+  *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
++ * SH version cribbed from the MIPS copy:
+  *
+  * Copyright (C) 2003, 2004 Ralf Baechle
+  */
+diff --git a/arch/sh/include/mach-common/mach/microdev.h b/arch/sh/include/=
+mach-common/mach/microdev.h
+index dcb05fa..0e2f9ab 100644
+--- a/arch/sh/include/mach-common/mach/microdev.h
++++ b/arch/sh/include/mach-common/mach/microdev.h
+@@ -1,12 +1,10 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * linux/include/asm-sh/microdev.h
+  *
+  * Copyright (C) 2003 Sean McGoogan (Sean.McGoogan@superh.com)
+  *
+  * Definitions for the SuperH SH4-202 MicroDev board.
+- *
+- * May be copied or modified under the terms of the GNU General Public
+- * License.  See linux/COPYING for more information.
+  */
+ #ifndef __ASM_SH_MICRODEV_H
+ #define __ASM_SH_MICRODEV_H
+diff --git a/arch/sh/include/mach-common/mach/sdk7780.h b/arch/sh/include/m=
+ach-common/mach/sdk7780.h
+index ce64e02..a27dbe4 100644
+--- a/arch/sh/include/mach-common/mach/sdk7780.h
++++ b/arch/sh/include/mach-common/mach/sdk7780.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_RENESAS_SDK7780_H
+ #define __ASM_SH_RENESAS_SDK7780_H
+=20
+@@ -6,10 +7,6 @@
+  *
+  * Renesas Solutions SH7780 SDK Support
+  * Copyright (C) 2008 Nicholas Beck <nbeck@mpc-data.co.uk>
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #include <linux/sh_intc.h>
+ #include <asm/addrspace.h>
+diff --git a/arch/sh/include/mach-common/mach/secureedge5410.h b/arch/sh/in=
+clude/mach-common/mach/secureedge5410.h
+index 3653b9a4..dfc68aa 100644
+--- a/arch/sh/include/mach-common/mach/secureedge5410.h
++++ b/arch/sh/include/mach-common/mach/secureedge5410.h
+@@ -1,11 +1,9 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/snapgear.h
+  *
+  * Modified version of io_se.h for the snapgear-specific functions.
+  *
+- * May be copied or modified under the terms of the GNU General Public
+- * License.  See linux/COPYING for more information.
+- *
+  * IO functions for a SnapGear
+  */
+=20
+diff --git a/arch/sh/include/mach-common/mach/sh7763rdp.h b/arch/sh/include=
+/mach-common/mach/sh7763rdp.h
+index 8750cc8..301f85a 100644
+--- a/arch/sh/include/mach-common/mach/sh7763rdp.h
++++ b/arch/sh/include/mach-common/mach/sh7763rdp.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_SH7763RDP_H
+ #define __ASM_SH_SH7763RDP_H
+=20
+@@ -6,11 +7,6 @@
+  *
+  * Copyright (C) 2008 Renesas Solutions
+  * Copyright (C) 2008 Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License. See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  */
+ #include <asm/addrspace.h>
+=20
+diff --git a/arch/sh/include/mach-dreamcast/mach/dma.h b/arch/sh/include/ma=
+ch-dreamcast/mach/dma.h
+index 1dbfdf7..a773a76 100644
+--- a/arch/sh/include/mach-dreamcast/mach/dma.h
++++ b/arch/sh/include/mach-dreamcast/mach/dma.h
+@@ -1,11 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/dreamcast/dma.h
+  *
+  * Copyright (C) 2003 Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_DREAMCAST_DMA_H
+ #define __ASM_SH_DREAMCAST_DMA_H
+diff --git a/arch/sh/include/mach-dreamcast/mach/pci.h b/arch/sh/include/ma=
+ch-dreamcast/mach/pci.h
+index 0314d97..c037c1e 100644
+--- a/arch/sh/include/mach-dreamcast/mach/pci.h
++++ b/arch/sh/include/mach-dreamcast/mach/pci.h
+@@ -1,12 +1,9 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * include/asm-sh/dreamcast/pci.h
+  *
+  * Copyright (C) 2001, 2002  M. R. Brown
+  * Copyright (C) 2002, 2003  Paul Mundt
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #ifndef __ASM_SH_DREAMCAST_PCI_H
+ #define __ASM_SH_DREAMCAST_PCI_H
+diff --git a/arch/sh/include/mach-dreamcast/mach/sysasic.h b/arch/sh/includ=
+e/mach-dreamcast/mach/sysasic.h
+index 58f710e..da10aef 100644
+--- a/arch/sh/include/mach-dreamcast/mach/sysasic.h
++++ b/arch/sh/include/mach-dreamcast/mach/sysasic.h
+@@ -1,4 +1,6 @@
+-/* include/asm-sh/dreamcast/sysasic.h
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * include/asm-sh/dreamcast/sysasic.h
+  *
+  * Definitions for the Dreamcast System ASIC and related peripherals.
+  *
+@@ -6,9 +8,6 @@
+  * Copyright (C) 2003 Paul Mundt <lethal@linux-sh.org>
+  *
+  * This file is part of the LinuxDC project (www.linuxdc.org)
+- *
+- * Released under the terms of the GNU GPL v2.0.
+- *
+  */
+ #ifndef __ASM_SH_DREAMCAST_SYSASIC_H
+ #define __ASM_SH_DREAMCAST_SYSASIC_H
+diff --git a/arch/sh/include/mach-ecovec24/mach/partner-jet-setup.txt b/arc=
+h/sh/include/mach-ecovec24/mach/partner-jet-setup.txt
+index cc737b8..2d685cc 100644
+--- a/arch/sh/include/mach-ecovec24/mach/partner-jet-setup.txt
++++ b/arch/sh/include/mach-ecovec24/mach/partner-jet-setup.txt
+@@ -1,3 +1,4 @@
++LIST "SPDX-License-Identifier: GPL-2.0"
+ LIST "partner-jet-setup.txt"
+ LIST "(C) Copyright 2009 Renesas Solutions Corp"
+ LIST "Kuninori Morimoto <morimoto.kuninori@renesas.com>"
+diff --git a/arch/sh/include/mach-kfr2r09/mach/partner-jet-setup.txt b/arch=
+/sh/include/mach-kfr2r09/mach/partner-jet-setup.txt
+index 3a65503..a67b192 100644
+--- a/arch/sh/include/mach-kfr2r09/mach/partner-jet-setup.txt
++++ b/arch/sh/include/mach-kfr2r09/mach/partner-jet-setup.txt
+@@ -1,3 +1,4 @@
++LIST "SPDX-License-Identifier: GPL-2.0"
+ LIST "partner-jet-setup.txt - 20090729 Magnus Damm"
+ LIST "set up enough of the kfr2r09 hardware to boot the kernel"
+=20
+diff --git a/arch/sh/include/mach-se/mach/se7721.h b/arch/sh/include/mach-s=
+e/mach/se7721.h
+index eabd053..82226d4 100644
+--- a/arch/sh/include/mach-se/mach/se7721.h
++++ b/arch/sh/include/mach-se/mach/se7721.h
+@@ -1,12 +1,8 @@
+-/*
++/* SPDX-License-Identifier: GPL-2.0
++ *
+  * Copyright (C) 2008 Renesas Solutions Corp.
+  *
+  * Hitachi UL SolutionEngine 7721 Support.
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  */
+=20
+ #ifndef __ASM_SH_SE7721_H
+diff --git a/arch/sh/include/mach-se/mach/se7722.h b/arch/sh/include/mach-s=
+e/mach/se7722.h
+index 637e7ac..efb761f 100644
+--- a/arch/sh/include/mach-se/mach/se7722.h
++++ b/arch/sh/include/mach-se/mach/se7722.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_SE7722_H
+ #define __ASM_SH_SE7722_H
+=20
+@@ -7,11 +8,6 @@
+  * Copyright (C) 2007  Nobuhiro Iwamatsu
+  *
+  * Hitachi UL SolutionEngine 7722 Support.
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  */
+ #include <linux/sh_intc.h>
+ #include <asm/addrspace.h>
+diff --git a/arch/sh/include/mach-se/mach/se7724.h b/arch/sh/include/mach-s=
+e/mach/se7724.h
+index be842dd..1fe2882 100644
+--- a/arch/sh/include/mach-se/mach/se7724.h
++++ b/arch/sh/include/mach-se/mach/se7724.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_SE7724_H
+ #define __ASM_SH_SE7724_H
+=20
+@@ -12,11 +13,6 @@
+  *
+  * Based on se7722.h
+  * Copyright (C) 2007  Nobuhiro Iwamatsu
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- *
+  */
+ #include <linux/sh_intc.h>
+ #include <asm/addrspace.h>
+diff --git a/arch/sh/include/mach-se/mach/se7780.h b/arch/sh/include/mach-s=
+e/mach/se7780.h
+index bde357c..24f0ac8 100644
+--- a/arch/sh/include/mach-se/mach/se7780.h
++++ b/arch/sh/include/mach-se/mach/se7780.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __ASM_SH_SE7780_H
+ #define __ASM_SH_SE7780_H
+=20
+@@ -7,10 +8,6 @@
+  * Copyright (C) 2006,2007  Nobuhiro Iwamatsu
+  *
+  * Hitachi UL SolutionEngine 7780 Support.
+- *
+- * This file is subject to the terms and conditions of the GNU General Pub=
+lic
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+  */
+ #include <linux/sh_intc.h>
+ #include <asm/addrspace.h>
+diff --git a/arch/sh/include/uapi/asm/Kbuild b/arch/sh/include/uapi/asm/Kbu=
+ild
+index ba4d39c..5b45897 100644
+--- a/arch/sh/include/uapi/asm/Kbuild
++++ b/arch/sh/include/uapi/asm/Kbuild
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ # UAPI Header export list
+ include include/uapi/asm-generic/Kbuild.asm
+=20
+diff --git a/arch/sh/include/uapi/asm/setup.h b/arch/sh/include/uapi/asm/se=
+tup.h
+index 552df83..1170dd2 100644
+--- a/arch/sh/include/uapi/asm/setup.h
++++ b/arch/sh/include/uapi/asm/setup.h
+@@ -1 +1,2 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #include <asm-generic/setup.h>
+diff --git a/arch/sh/include/uapi/asm/types.h b/arch/sh/include/uapi/asm/ty=
+pes.h
+index b9e79bc..f83795f 100644
+--- a/arch/sh/include/uapi/asm/types.h
++++ b/arch/sh/include/uapi/asm/types.h
+@@ -1 +1,2 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ #include <asm-generic/types.h>
 --=20
 2.7.4
 
