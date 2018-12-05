@@ -2,119 +2,301 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9761C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F338C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 994C520878
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994C520878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 414592087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:40:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F34DFv6B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 414592087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeLEJkX (ORCPT
+        id S1728669AbeLEJk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 04:40:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728647AbeLEJkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 04:40:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57782 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727006AbeLEJkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:40:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3F7EFB6BA;
-        Wed,  5 Dec 2018 09:40:17 +0000 (UTC)
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
- offline
-To:     Pingfan Liu <kernelfans@gmail.com>, mhocko@kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
- <20181204072251.GT31738@dhcp22.suse.cz>
- <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
- <20181204085601.GC1286@dhcp22.suse.cz>
- <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
- <20181205092148.GA1286@dhcp22.suse.cz>
- <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <186b1804-3b1e-340e-f73b-f3c7e69649f5@suse.cz>
-Date:   Wed, 5 Dec 2018 10:40:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAD3A2084C;
+        Wed,  5 Dec 2018 09:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544002822;
+        bh=ptADELP4exReR86dWD2QfCjXQsOmUtUEAVuQpWMjspc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=F34DFv6B5HoH+DfZWmdvyIV4RgViwHy1w+0zKSIoH7ovXNvPed4GT+BeCPvJc/gZk
+         SKwUZC9hxQl+sFUDHbe8EYTP21t8Qgc/jJfqydhcq+mwrCxQPnw680gm3bol6dhUgU
+         Y2b315R2AHeiAvbHBy6574BSVsigQnnluHWPLt5g=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 077/123] netfilter: add missing error handling code for register functions
+Date:   Wed,  5 Dec 2018 04:35:09 -0500
+Message-Id: <20181205093555.5386-77-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
+References: <20181205093555.5386-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 10:29 AM, Pingfan Liu wrote:
->> [    0.007418] Early memory node ranges
->> [    0.007419]   node   1: [mem 0x0000000000001000-0x000000000008efff]
->> [    0.007420]   node   1: [mem 0x0000000000090000-0x000000000009ffff]
->> [    0.007422]   node   1: [mem 0x0000000000100000-0x000000005c3d6fff]
->> [    0.007422]   node   1: [mem 0x00000000643df000-0x0000000068ff7fff]
->> [    0.007423]   node   1: [mem 0x000000006c528000-0x000000006fffffff]
->> [    0.007424]   node   1: [mem 0x0000000100000000-0x000000047fffffff]
->> [    0.007425]   node   5: [mem 0x0000000480000000-0x000000087effffff]
->>
->> There is clearly no node2. Where did the driver get the node2 from?
+From: Taehee Yoo <ap420073@gmail.com>
 
-I don't understand these tables too much, but it seems the other nodes
-exist without them:
+[ Upstream commit 584eab291c67894cb17cc87544b9d086228ea70f ]
 
-[    0.007393] SRAT: PXM 2 -> APIC 0x20 -> Node 2
+register_{netdevice/inetaddr/inet6addr}_notifier may return an error
+value, this patch adds the code to handle these error paths.
 
-Maybe the nodes are hotplugable or something?
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .../net/netfilter/ipv4/nf_nat_masquerade.h    |  2 +-
+ .../net/netfilter/ipv6/nf_nat_masquerade.h    |  2 +-
+ net/ipv4/netfilter/ipt_MASQUERADE.c           |  7 ++--
+ net/ipv4/netfilter/nf_nat_masquerade_ipv4.c   | 21 +++++++++---
+ net/ipv4/netfilter/nft_masq_ipv4.c            |  4 ++-
+ net/ipv6/netfilter/ip6t_MASQUERADE.c          |  8 +++--
+ net/ipv6/netfilter/nf_nat_masquerade_ipv6.c   | 32 +++++++++++++------
+ net/ipv6/netfilter/nft_masq_ipv6.c            |  4 ++-
+ net/netfilter/nft_flow_offload.c              |  5 ++-
+ 9 files changed, 63 insertions(+), 22 deletions(-)
 
-> Since using nr_cpus=4 , the node2 is not be instanced by x86 initalizing code.
+diff --git a/include/net/netfilter/ipv4/nf_nat_masquerade.h b/include/net/netfilter/ipv4/nf_nat_masquerade.h
+index cd24be4c4a99..13d55206bb9f 100644
+--- a/include/net/netfilter/ipv4/nf_nat_masquerade.h
++++ b/include/net/netfilter/ipv4/nf_nat_masquerade.h
+@@ -9,7 +9,7 @@ nf_nat_masquerade_ipv4(struct sk_buff *skb, unsigned int hooknum,
+ 		       const struct nf_nat_range2 *range,
+ 		       const struct net_device *out);
+ 
+-void nf_nat_masquerade_ipv4_register_notifier(void);
++int nf_nat_masquerade_ipv4_register_notifier(void);
+ void nf_nat_masquerade_ipv4_unregister_notifier(void);
+ 
+ #endif /*_NF_NAT_MASQUERADE_IPV4_H_ */
+diff --git a/include/net/netfilter/ipv6/nf_nat_masquerade.h b/include/net/netfilter/ipv6/nf_nat_masquerade.h
+index 0c3b5ebf0bb8..2917bf95c437 100644
+--- a/include/net/netfilter/ipv6/nf_nat_masquerade.h
++++ b/include/net/netfilter/ipv6/nf_nat_masquerade.h
+@@ -5,7 +5,7 @@
+ unsigned int
+ nf_nat_masquerade_ipv6(struct sk_buff *skb, const struct nf_nat_range2 *range,
+ 		       const struct net_device *out);
+-void nf_nat_masquerade_ipv6_register_notifier(void);
++int nf_nat_masquerade_ipv6_register_notifier(void);
+ void nf_nat_masquerade_ipv6_unregister_notifier(void);
+ 
+ #endif /* _NF_NAT_MASQUERADE_IPV6_H_ */
+diff --git a/net/ipv4/netfilter/ipt_MASQUERADE.c b/net/ipv4/netfilter/ipt_MASQUERADE.c
+index ce1512b02cb2..fd3f9e8a74da 100644
+--- a/net/ipv4/netfilter/ipt_MASQUERADE.c
++++ b/net/ipv4/netfilter/ipt_MASQUERADE.c
+@@ -81,9 +81,12 @@ static int __init masquerade_tg_init(void)
+ 	int ret;
+ 
+ 	ret = xt_register_target(&masquerade_tg_reg);
++	if (ret)
++		return ret;
+ 
+-	if (ret == 0)
+-		nf_nat_masquerade_ipv4_register_notifier();
++	ret = nf_nat_masquerade_ipv4_register_notifier();
++	if (ret)
++		xt_unregister_target(&masquerade_tg_reg);
+ 
+ 	return ret;
+ }
+diff --git a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+index ad3aeff152ed..4a7c1f207d6e 100644
+--- a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
++++ b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+@@ -133,16 +133,29 @@ static struct notifier_block masq_inet_notifier = {
+ 
+ static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
+ 
+-void nf_nat_masquerade_ipv4_register_notifier(void)
++int nf_nat_masquerade_ipv4_register_notifier(void)
+ {
++	int ret;
++
+ 	/* check if the notifier was already set */
+ 	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return;
++		return 0;
+ 
+ 	/* Register for device down reports */
+-	register_netdevice_notifier(&masq_dev_notifier);
++	ret = register_netdevice_notifier(&masq_dev_notifier);
++	if (ret)
++		goto err_dec;
+ 	/* Register IP address change reports */
+-	register_inetaddr_notifier(&masq_inet_notifier);
++	ret = register_inetaddr_notifier(&masq_inet_notifier);
++	if (ret)
++		goto err_unregister;
++
++	return ret;
++err_unregister:
++	unregister_netdevice_notifier(&masq_dev_notifier);
++err_dec:
++	atomic_dec(&masquerade_notifier_refcount);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_register_notifier);
+ 
+diff --git a/net/ipv4/netfilter/nft_masq_ipv4.c b/net/ipv4/netfilter/nft_masq_ipv4.c
+index f1193e1e928a..6847de1d1db8 100644
+--- a/net/ipv4/netfilter/nft_masq_ipv4.c
++++ b/net/ipv4/netfilter/nft_masq_ipv4.c
+@@ -69,7 +69,9 @@ static int __init nft_masq_ipv4_module_init(void)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	nf_nat_masquerade_ipv4_register_notifier();
++	ret = nf_nat_masquerade_ipv4_register_notifier();
++	if (ret)
++		nft_unregister_expr(&nft_masq_ipv4_type);
+ 
+ 	return ret;
+ }
+diff --git a/net/ipv6/netfilter/ip6t_MASQUERADE.c b/net/ipv6/netfilter/ip6t_MASQUERADE.c
+index 491f808e356a..29c7f1915a96 100644
+--- a/net/ipv6/netfilter/ip6t_MASQUERADE.c
++++ b/net/ipv6/netfilter/ip6t_MASQUERADE.c
+@@ -58,8 +58,12 @@ static int __init masquerade_tg6_init(void)
+ 	int err;
+ 
+ 	err = xt_register_target(&masquerade_tg6_reg);
+-	if (err == 0)
+-		nf_nat_masquerade_ipv6_register_notifier();
++	if (err)
++		return err;
++
++	err = nf_nat_masquerade_ipv6_register_notifier();
++	if (err)
++		xt_unregister_target(&masquerade_tg6_reg);
+ 
+ 	return err;
+ }
+diff --git a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+index e6eb7cf9b54f..10012fc687b6 100644
+--- a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+@@ -120,8 +120,8 @@ static void iterate_cleanup_work(struct work_struct *work)
+  * of ipv6 addresses being deleted), we also need to add an upper
+  * limit to the number of queued work items.
+  */
+-static int masq_inet_event(struct notifier_block *this,
+-			   unsigned long event, void *ptr)
++static int masq_inet6_event(struct notifier_block *this,
++			    unsigned long event, void *ptr)
+ {
+ 	struct inet6_ifaddr *ifa = ptr;
+ 	const struct net_device *dev;
+@@ -158,20 +158,34 @@ static int masq_inet_event(struct notifier_block *this,
+ 	return NOTIFY_DONE;
+ }
+ 
+-static struct notifier_block masq_inet_notifier = {
+-	.notifier_call	= masq_inet_event,
++static struct notifier_block masq_inet6_notifier = {
++	.notifier_call	= masq_inet6_event,
+ };
+ 
+ static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
+ 
+-void nf_nat_masquerade_ipv6_register_notifier(void)
++int nf_nat_masquerade_ipv6_register_notifier(void)
+ {
++	int ret;
++
+ 	/* check if the notifier is already set */
+ 	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return;
++		return 0;
+ 
+-	register_netdevice_notifier(&masq_dev_notifier);
+-	register_inet6addr_notifier(&masq_inet_notifier);
++	ret = register_netdevice_notifier(&masq_dev_notifier);
++	if (ret)
++		goto err_dec;
++
++	ret = register_inet6addr_notifier(&masq_inet6_notifier);
++	if (ret)
++		goto err_unregister;
++
++	return ret;
++err_unregister:
++	unregister_netdevice_notifier(&masq_dev_notifier);
++err_dec:
++	atomic_dec(&masquerade_notifier_refcount);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_register_notifier);
+ 
+@@ -181,7 +195,7 @@ void nf_nat_masquerade_ipv6_unregister_notifier(void)
+ 	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
+ 		return;
+ 
+-	unregister_inet6addr_notifier(&masq_inet_notifier);
++	unregister_inet6addr_notifier(&masq_inet6_notifier);
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_unregister_notifier);
+diff --git a/net/ipv6/netfilter/nft_masq_ipv6.c b/net/ipv6/netfilter/nft_masq_ipv6.c
+index dd0122f3cffe..e06c82e9dfcd 100644
+--- a/net/ipv6/netfilter/nft_masq_ipv6.c
++++ b/net/ipv6/netfilter/nft_masq_ipv6.c
+@@ -70,7 +70,9 @@ static int __init nft_masq_ipv6_module_init(void)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	nf_nat_masquerade_ipv6_register_notifier();
++	ret = nf_nat_masquerade_ipv6_register_notifier();
++	if (ret)
++		nft_unregister_expr(&nft_masq_ipv6_type);
+ 
+ 	return ret;
+ }
+diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
+index d6bab8c3cbb0..5fd4c57c79cc 100644
+--- a/net/netfilter/nft_flow_offload.c
++++ b/net/netfilter/nft_flow_offload.c
+@@ -214,7 +214,9 @@ static int __init nft_flow_offload_module_init(void)
+ {
+ 	int err;
+ 
+-	register_netdevice_notifier(&flow_offload_netdev_notifier);
++	err = register_netdevice_notifier(&flow_offload_netdev_notifier);
++	if (err)
++		goto err;
+ 
+ 	err = nft_register_expr(&nft_flow_offload_type);
+ 	if (err < 0)
+@@ -224,6 +226,7 @@ static int __init nft_flow_offload_module_init(void)
+ 
+ register_expr:
+ 	unregister_netdevice_notifier(&flow_offload_netdev_notifier);
++err:
+ 	return err;
+ }
+ 
+-- 
+2.17.1
 
-Indeed, nr_cpus seems to restrict what nodes we allocate and populate
-zonelists for.
