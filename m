@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E44DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B990C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64AAE2084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527882084C
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvj6zNou"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64AAE2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVPbXgNW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527882084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbeLEJmE (ORCPT
+        id S1729036AbeLEJmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:42:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46512 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728493AbeLEJl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:41:59 -0500
+        id S1729026AbeLEJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:42:04 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B15520850;
-        Wed,  5 Dec 2018 09:41:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAC5320879;
+        Wed,  5 Dec 2018 09:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002918;
-        bh=AqQGd9eYkhXHQPZv1IobbHvj05PoTH3s5FiulLGjw1I=;
+        s=default; t=1544002924;
+        bh=b0IHSgUSy50pbIqeRaEhsU5t430F0nvR2rNARyjafG4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kvj6zNoudg3V5FGODKkTTxKq0tcHHaGwqx7cK82pIiWohL5TeNEsYKQuhAXCXYATh
-         zhRkxsneRL7o6RHhKW5lTmBVYXj5UKYSko2MEBZgtt/U4LN0+l/SYrp2qUa4dc8SR8
-         uiL3uipfQdRFBOTTMG/f/ln+KXLOoXwQbwpqY5q0=
+        b=iVPbXgNW/oaJ47OU8J5WjzY4xxRTIehzudlgAIwf0RwFsOD3nshvkfTAZRxM3xAan
+         HIyjeg/1g119KENRZilq5ZnniXrkcapI4yCQjWPKKC+hRlgLeZrdMP6OhG2C3Wm7aS
+         5+8pP/DL9y1lsDQ7DZh5i7TjuMv3jyXpxk5DCcns=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 112/123] ACPI/IORT: Fix iort_get_platform_device_domain() uninitialized pointer value
-Date:   Wed,  5 Dec 2018 04:35:44 -0500
-Message-Id: <20181205093555.5386-112-sashal@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 114/123] unifdef: use memcpy instead of strncpy
+Date:   Wed,  5 Dec 2018 04:35:46 -0500
+Message-Id: <20181205093555.5386-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -55,53 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit ea2412dc21cc790335d319181dddc43682aef164 ]
+[ Upstream commit 38c7b224ce22c25fed04007839edf974bd13439d ]
 
-Running the Clang static analyzer on IORT code detected the following
-error:
+New versions of gcc reasonably warn about the odd pattern of
 
-Logic error: Branch condition evaluates to a garbage value
+	strncpy(p, q, strlen(q));
 
-in
+which really doesn't make sense: the strncpy() ends up being just a slow
+and odd way to write memcpy() in this case.
 
-iort_get_platform_device_domain()
+There was a comment about _why_ the code used strncpy - to avoid the
+terminating NUL byte, but memcpy does the same and avoids the warning.
 
-If the named component associated with a given device has no IORT
-mappings, iort_get_platform_device_domain() exits its MSI mapping loop
-with msi_parent pointer containing garbage, which can lead to erroneous
-code path execution.
-
-Initialize the msi_parent pointer, fixing the bug.
-
-Fixes: d4f54a186667 ("ACPI: platform: setup MSI domain for ACPI based
-platform device")
-Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Reviewed-by: Hanjun Guo <hanjun.guo@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/unifdef.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 08f26db2da7e..e938576e58cb 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -700,7 +700,7 @@ static void iort_set_device_domain(struct device *dev,
-  */
- static struct irq_domain *iort_get_platform_device_domain(struct device *dev)
- {
--	struct acpi_iort_node *node, *msi_parent;
-+	struct acpi_iort_node *node, *msi_parent = NULL;
- 	struct fwnode_handle *iort_fwnode;
- 	struct acpi_iort_its_group *its;
- 	int i;
+diff --git a/scripts/unifdef.c b/scripts/unifdef.c
+index 7493c0ee51cc..db00e3e30a59 100644
+--- a/scripts/unifdef.c
++++ b/scripts/unifdef.c
+@@ -395,7 +395,7 @@ usage(void)
+  * When we have processed a group that starts off with a known-false
+  * #if/#elif sequence (which has therefore been deleted) followed by a
+  * #elif that we don't understand and therefore must keep, we edit the
+- * latter into a #if to keep the nesting correct. We use strncpy() to
++ * latter into a #if to keep the nesting correct. We use memcpy() to
+  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
+  *
+  * When we find a true #elif in a group, the following block will
+@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
+ static void Itrue (void) { Ftrue();  ignoreon(); }
+ static void Ifalse(void) { Ffalse(); ignoreon(); }
+ /* modify this line */
+-static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
++static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
+ static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
+ static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
+ static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
 -- 
 2.17.1
 
