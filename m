@@ -2,154 +2,105 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7C1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F3EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D32214E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D32214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A603214E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:09:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/1P3E1U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A603214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbeLEKIl (ORCPT
+        id S1728533AbeLEKJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:08:41 -0500
-Received: from foss.arm.com ([217.140.101.70]:50862 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728204AbeLEKIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:08:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4832980D;
-        Wed,  5 Dec 2018 02:08:39 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 178B23F575;
-        Wed,  5 Dec 2018 02:08:39 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B870C1AE0BA8; Wed,  5 Dec 2018 10:08:59 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 10:08:59 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 08/34] dt-bindings: arm: Convert PMU binding to
- json-schema
-Message-ID: <20181205100858.GA14619@arm.com>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-9-robh@kernel.org>
+        Wed, 5 Dec 2018 05:09:02 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:47039 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727663AbeLEKJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:09:01 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so18997567wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 02:08:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=i+xuE1gfyMXomwVNUBzYM7ahC9MyhTd1cIdmPNCtAbU=;
+        b=F/1P3E1UwxDyEyYBNrO4wvKEfG0Ca+VdUPexzg6KW6T6WJsM7xoAtPAim7dVZ8RjJ5
+         IqTy/PzwoF7uh+pMhRdvV//JeANsIDUyHnlcIIBGUFH+Ssbg9OSMofrRyk2d5kV8aMrx
+         6/JZjRqq2VCcxHwNcK4ieBe+ZKm06bvdwaFos=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=i+xuE1gfyMXomwVNUBzYM7ahC9MyhTd1cIdmPNCtAbU=;
+        b=KqzraUkdb15Y3nlL6dB+bahA0qON8ru+A/efb2ZtWEPFyij6HPH5a2y7hzjK3yRGuJ
+         gJH/nb6wL0Sopb61TY/XVB19F+ldsHFgL/udKl/Pz1QG22VG8Q6ijjNipaGjn0/yIRek
+         /H9JeXv0itfAkYLjGSqwcGMJnZ0q5BHidlHfHRFw6vRPQql31RmMUw72e/0npK96B40H
+         XNYc3dcKLtY1lBLDb3r4di5AH6PTVQQEBxRHEgt/h8bLaCL3QvUdTqs8tiR72wY1y0kA
+         rO146mKWVNZu+6ViNLXXza5XhxPmmXl3Sy0r1BY2cD8egLNy8XdcfYMrGKz0iGsZnSRe
+         ommg==
+X-Gm-Message-State: AA+aEWZQF/BII/tDrN9IOOB4wUaZp66RZudEIYaelkHQ64QBflQqzhi8
+        wdx0JSMQmEgpAr9gvpNtYbdPxa3SJEA=
+X-Google-Smtp-Source: AFSGD/V43VMmDwbtHu1XPRIV5f3zMHYfqAbBD7FN7167poQgiY46CptpfVOToJEtKkxPo0QkxtmbWw==
+X-Received: by 2002:a5d:528e:: with SMTP id c14mr20654939wrv.236.1544004538818;
+        Wed, 05 Dec 2018 02:08:58 -0800 (PST)
+Received: from dell ([2.31.167.218])
+        by smtp.gmail.com with ESMTPSA id y13sm3967115wrn.73.2018.12.05.02.08.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 02:08:58 -0800 (PST)
+Date:   Wed, 5 Dec 2018 10:08:56 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MFD fixes for v4.20
+Message-ID: <20181205100856.GC26661@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181203213223.16986-9-robh@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Linus,
 
-On Mon, Dec 03, 2018 at 03:31:57PM -0600, Rob Herring wrote:
-> Convert ARM PMU binding to DT schema format using json-schema.
+Enjoy!
 
-Just a couple of things below.
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-> diff --git a/Documentation/devicetree/bindings/arm/pmu.yaml b/Documentation/devicetree/bindings/arm/pmu.yaml
-> new file mode 100644
-> index 000000000000..3ea4abfbf276
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/pmu.yaml
-> @@ -0,0 +1,91 @@
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-[...]
+are available in the Git repository at:
 
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - apm,potenza-pmu
-> +              - arm,armv8-pmuv3
-> +              - arm,cortex-a73-pmu
-> +              - arm,cortex-a72-pmu
-> +              - arm,cortex-a57-pmu
-> +              - arm,cortex-a53-pmu
-> +              - arm,cortex-a35-pmu
-> +              - arm,cortex-a17-pmu
-> +              - arm,cortex-a15-pmu
-> +              - arm,cortex-a12-pmu
-> +              - arm,cortex-a9-pmu
-> +              - arm,cortex-a8-pmu
-> +              - arm,cortex-a7-pmu
-> +              - arm,cortex-a5-pmu
-> +              - arm,arm11mpcore-pmu
-> +              - arm,arm1176-pmu
-> +              - arm,arm1136-pmu
-> +              - brcm,vulcan-pmu
-> +              - cavium,thunder-pmu
-> +              - qcom,scorpion-pmu
-> +              - qcom,scorpion-mp-pmu
-> +              - qcom,krait-pmu
-> +      - items:
-> +          - const: arm,cortex-a7-pmu
-> +          - const: arm,cortex-a15-pmu
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-fixes-4.20
 
-What do these last two mean?
+for you to fetch changes up to 48a2ca0ee3994df53da230c7079a18a70ec914f9:
 
-> +
-> +  interrupts:
-> +    # Don't know how many CPUs, so no constraints to specify
-> +    description: 1 per-cpu interrupt (PPI) or 1 interrupt per core.
-> +
-> +  interrupt-affinity:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      When using SPIs, specifies a list of phandles to CPU
-> +      nodes corresponding directly to the affinity of
-> +      the SPIs listed in the interrupts property.
-> +
-> +      When using a PPI, specifies a list of phandles to CPU
-> +      nodes corresponding to the set of CPUs which have
-> +      a PMU of this type signalling the PPI listed in the
-> +      interrupts property, unless this is already specified
-> +      by the PPI interrupt specifier itself (in which case
-> +      the interrupt-affinity property shouldn't be present).
-> +
-> +      This property should be present when there is more than
-> +      a single SPI.
-> +
-> +  qcom,no-pc-write:
-> +    type: boolean
-> +    description:
-> +      Indicates that this PMU doesn't support the 0xc and 0xd events.
-> +
-> +  secure-reg-access:
-> +    type: boolean
-> +    description:
-> +      Indicates that the ARMv7 Secure Debug Enable Register
-> +      (SDER) is accessible. This will cause the driver to do
-> +      any setup required that is only possible in ARMv7 secure
-> +      state. If not present the ARMv7 SDER will not be touched,
-> +      which means the PMU may fail to operate unless external
-> +      code (bootloader or security monitor) has performed the
-> +      appropriate initialisation. Note that this property is
-> +      not valid for non-ARMv7 CPUs or ARMv7 CPUs booting Linux
-> +      in Non-secure state.
-> +
-> +required:
-> +  - compatible
+  Revert "mfd: cros_ec: Use devm_kzalloc for private data" (2018-12-05 09:59:38 +0000)
 
-I probably said this before, but I do think that it's a shame to lose the
-example binding, especially for something like the PMU where you can
-pretty much take an example and bang in your own IRQ numbers to get it
-up and running.
+----------------------------------------------------------------
+Bug fixes:
+  Replace release function: cros_ec_dev
 
-Will
+----------------------------------------------------------------
+Enric Balletbo i Serra (1):
+      Revert "mfd: cros_ec: Use devm_kzalloc for private data"
+
+ drivers/mfd/cros_ec_dev.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+ 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
