@@ -2,197 +2,134 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE329C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320DFC04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDD220892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBAA820878
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:39:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqOUsnxg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDD220892
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2B/1bAR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAA820878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbeLEPjQ (ORCPT
+        id S1728091AbeLEPjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 5 Dec 2018 10:39:17 -0500
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:45792 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeLEPjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 5 Dec 2018 10:39:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbeLEPjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:15 -0500
-Received: from earth.universe (dyndsl-091-096-060-051.ewe-ip-backbone.de [91.96.60.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2631C206B7;
-        Wed,  5 Dec 2018 15:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544024354;
-        bh=zqThkFVDkURSHXROZ4yszDOVhm4bPPTjz/yXkFKU9qM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CqOUsnxgxosg0K76wBKLGgKDtkGARQ6oIvpCQEqUIM/Pr7MOeDWE8NmeHVcLfMZw2
-         D4/9pGQSaKg1ajeRdui+QpBlEQ6TfughJ+IuQPmAOU+A05Q8iE1hcQdm6GIgw4ElZS
-         eRLR7fLR79vyRqP6OJKPtwFXDEsMp+7nRUagnm0I=
-Received: by earth.universe (Postfix, from userid 1000)
-        id A6B973C08D6; Wed,  5 Dec 2018 16:39:11 +0100 (CET)
-Date:   Wed, 5 Dec 2018 16:39:11 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     gregkh@linuxfoundation.org, rdunlap@infradead.org,
+Received: by mail-lf1-f54.google.com with SMTP id b20so15031853lfa.12;
+        Wed, 05 Dec 2018 07:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=h/XFwuE/C9TLle+Bju0W+UKGFFPuBXHWbSsfi3HGwdU=;
+        b=Z2B/1bARbGfzrqgYTyMW1Pglc9VC56G5oQ//7NFAHfFj/P8efMo71RDB7SufW2UQYl
+         doxZNuy2rM+R6+lokAadGhSz0+R1IZDsf2z8kZlDG7Rx3stN/HCbdTnhXb7o4ZUbmewl
+         vsAXQmSJUWPmM9gO07P0gwPcHg90KBEJPVRjSslAiL69FbdUbHAYcxRK4KfMMgSQX0pg
+         IcH/Bonpo7v2YctIclHpR87oVuDgq9elWXHs3OqphmN1q1778qSHkhFYMxDX4NIrqZlC
+         GPYWTRDzhL03l1TrNURkWR096lU2OkjpLHWbMxqXahUn7rUThY/cXFw15uQiR4qiGZ8P
+         ++Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=h/XFwuE/C9TLle+Bju0W+UKGFFPuBXHWbSsfi3HGwdU=;
+        b=r3XLy9a/aviS+nU8dx+YrtxiRGPzf5zl88stbsbltPWL9dX55B3hoff2gxr+FMCSYE
+         micp+29jYc7CLumikA9keoJGv+N0NY06CrtTl5153JISofmuXAeOpjZbbeMERxcpEiPx
+         NZ8axRYI+9rZdLAevRuGCIrN7WfMYRfVJEtbePZRP93Cq+WXhY1eNO7HPs8hR9NNL2pl
+         AriG2o5koKD4rdDDzjiM3YN4N9zNWZqF08UjNGzRYGPvDNQK3sou9p39rFRrrS9W9WDY
+         xLPRl7sBLOCappfxRafD7oC1TXT104Ps/2LPgNZgVtib9udtGWyOV49KtdmYi5iRrxNR
+         e/Dw==
+X-Gm-Message-State: AA+aEWYIw97A9EVBfxuINoXtY05FhSjh1q+6hAuby1EUWsGQSVGbjITD
+        4biZIr1muyNgWL3H0I51RIY=
+X-Google-Smtp-Source: AFSGD/WS0EdryFHjw/4OtoHY5KRgpWH0V3/u3NcXX69ZSV6V3m3U/5aktk+ngSsS+VCplcKdYdR5SA==
+X-Received: by 2002:a19:a502:: with SMTP id o2mr14388597lfe.92.1544024353176;
+        Wed, 05 Dec 2018 07:39:13 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id r199sm3596313lff.50.2018.12.05.07.39.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 07:39:12 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gUZGc-0004Cw-Ie; Wed, 05 Dec 2018 16:39:15 +0100
+Date:   Wed, 5 Dec 2018 16:39:14 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Anatolij Gustschin <agust@denx.de>
+Cc:     Song Qiang <songqiang1304521@gmail.com>, johan@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HSI: omap_ssi: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Message-ID: <20181205153911.rlffpcc5rk2s6o6f@earth.universe>
-References: <20181201023355.5280-1-tiny.windzz@gmail.com>
+Subject: Re: usb: thoughts of adding more support for FT232H
+Message-ID: <20181205153914.GL15689@localhost>
+References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
+ <20181205161718.7451d98f@crub>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u6des2sckltamzeq"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181201023355.5280-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205161718.7451d98f@crub>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 05, 2018 at 04:17:18PM +0100, Anatolij Gustschin wrote:
+> Hi,
+> 
+> On Wed, 5 Dec 2018 22:10:40 +0800
+> Song Qiang songqiang1304521@gmail.com wrote:
+> ...
+> >I've been developing some iio device drivers and found that some people
+> >would like to test their devices with a qemu system which requires an
+> >i2c or spi port on our development hosts. Usually this is achieved with
+> >a DLN-2 adapter, while this is a bit difficult for me because it costs
+> >~175$ in my country. Then I found that FTDI's FT232H supports both these
+> >two modes and costs only less than 5$ but without full support in kernel.
+> >The ftdi-sio driver supports FT232H only as a serial converter.
+> >So I'm planning to write a mfd driver for it supports both these three
+> >modes, here are my thoughts:
+> 
+> There already has been a discussion [1] about adding an MFD driver for
+> FT232H, since the operating modes are mutually exclusive (and bus pins
+> shared between different modes), the MFD approach doesn't seem to be
+> a good fit.
+> 
+> >  - This device cannot support these three modes together because they
+> >    share some common pins, so I'm planning to add a sysfs entry
+> >    'current_mode' for selecting which mode the device should be working
+> >    on.
+> >  - This device is in uart mode on reset, so default mode would be reset,
+> >    too. This also helps for people only want to use this as a serial
+> >    converter feels nothing has happened (compatible).
+> >  - I was trying to reuse the ftdi-sio driver but it seems like mfd can
+> >    only register platform devices, while this is a usb driver. I may
+> >    have to copy some functions from this driver.
+> >
+> >Would you share any ideas? I'd appreciate it.
+> 
+> There is a patch series [2] adding an interface driver for FT232H-
+> based adapter devices, it already supports adding custom MPSSE based
+> SPI busses with SPI slaves for a custom USB PID. It already supports
+> adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
+> Adding I2C driver/adapter support should be easy, too. Maybe you can
+> re-use it.
 
---u6des2sckltamzeq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> [1] https://patchwork.kernel.org/patch/9828985
+> [2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
 
-Hi,
+I was going to refer to these series, but Anatolij beat me to it
+(haven't looked at [2] myself yet, though).
 
-On Fri, Nov 30, 2018 at 09:33:55PM -0500, Yangtao Li wrote:
-> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-
-Thanks, nice cleanup! Queued to hsi-next.
-
--- Sebastian
-
->  drivers/hsi/controllers/omap_ssi_core.c | 29 ++++---------------------
->  drivers/hsi/controllers/omap_ssi_port.c | 14 ++----------
->  2 files changed, 6 insertions(+), 37 deletions(-)
->=20
-> diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/contro=
-llers/omap_ssi_core.c
-> index 41a09f506803..a2a35319f7a5 100644
-> --- a/drivers/hsi/controllers/omap_ssi_core.c
-> +++ b/drivers/hsi/controllers/omap_ssi_core.c
-> @@ -48,7 +48,7 @@
->  static DEFINE_IDA(platform_omap_ssi_ida);
-> =20
->  #ifdef CONFIG_DEBUG_FS
-> -static int ssi_debug_show(struct seq_file *m, void *p __maybe_unused)
-> +static int ssi_regs_show(struct seq_file *m, void *p __maybe_unused)
->  {
->  	struct hsi_controller *ssi =3D m->private;
->  	struct omap_ssi_controller *omap_ssi =3D hsi_controller_drvdata(ssi);
-> @@ -63,7 +63,7 @@ static int ssi_debug_show(struct seq_file *m, void *p _=
-_maybe_unused)
->  	return 0;
->  }
-> =20
-> -static int ssi_debug_gdd_show(struct seq_file *m, void *p __maybe_unused)
-> +static int ssi_gdd_regs_show(struct seq_file *m, void *p __maybe_unused)
->  {
->  	struct hsi_controller *ssi =3D m->private;
->  	struct omap_ssi_controller *omap_ssi =3D hsi_controller_drvdata(ssi);
-> @@ -117,29 +117,8 @@ static int ssi_debug_gdd_show(struct seq_file *m, vo=
-id *p __maybe_unused)
->  	return 0;
->  }
-> =20
-> -static int ssi_regs_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, ssi_debug_show, inode->i_private);
-> -}
-> -
-> -static int ssi_gdd_regs_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, ssi_debug_gdd_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations ssi_regs_fops =3D {
-> -	.open		=3D ssi_regs_open,
-> -	.read		=3D seq_read,
-> -	.llseek		=3D seq_lseek,
-> -	.release	=3D single_release,
-> -};
-> -
-> -static const struct file_operations ssi_gdd_regs_fops =3D {
-> -	.open		=3D ssi_gdd_regs_open,
-> -	.read		=3D seq_read,
-> -	.llseek		=3D seq_lseek,
-> -	.release	=3D single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(ssi_regs);
-> +DEFINE_SHOW_ATTRIBUTE(ssi_gdd_regs);
-> =20
->  static int ssi_debug_add_ctrl(struct hsi_controller *ssi)
->  {
-> diff --git a/drivers/hsi/controllers/omap_ssi_port.c b/drivers/hsi/contro=
-llers/omap_ssi_port.c
-> index 2ada82d2ec8c..b2b3989ccfd2 100644
-> --- a/drivers/hsi/controllers/omap_ssi_port.c
-> +++ b/drivers/hsi/controllers/omap_ssi_port.c
-> @@ -57,7 +57,7 @@ static void ssi_debug_remove_port(struct hsi_port *port)
->  	debugfs_remove_recursive(omap_port->dir);
->  }
-> =20
-> -static int ssi_debug_port_show(struct seq_file *m, void *p __maybe_unuse=
-d)
-> +static int ssi_port_regs_show(struct seq_file *m, void *p __maybe_unused)
->  {
->  	struct hsi_port *port =3D m->private;
->  	struct omap_ssi_port *omap_port =3D hsi_port_drvdata(port);
-> @@ -132,17 +132,7 @@ static int ssi_debug_port_show(struct seq_file *m, v=
-oid *p __maybe_unused)
->  	return 0;
->  }
-> =20
-> -static int ssi_port_regs_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, ssi_debug_port_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations ssi_port_regs_fops =3D {
-> -	.open		=3D ssi_port_regs_open,
-> -	.read		=3D seq_read,
-> -	.llseek		=3D seq_lseek,
-> -	.release	=3D single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(ssi_port_regs);
-> =20
->  static int ssi_div_get(void *data, u64 *val)
->  {
-> --=20
-> 2.17.0
->=20
-
---u6des2sckltamzeq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwH8RYACgkQ2O7X88g7
-+pqsRg/8DFjmmnqwSZuw9CN9oBqVbCkzWkeqcvjsr30CZ+gonZXPaCDpWk3Y8Fqu
-PWzNA7xOll+c+SnXSyrV3wMMpYtFeLFEpFQcJTimOPFrh7cQQEvG6sgmRj+dewxe
-LOcT/oBTAj3xxcCLLHavG6iMnP62Xynhw9Cb8XUmW/MW55cRj0n2O3iF5Mw86fNZ
-Cz2trxad/io18y23WrCMUpl8Co7Hfc4tmgbYnESzeaIPsjFuV32hw2VA57NTAdzx
-VfH2KranGz+SLfYp+TIJaIo0rLtwq4XKoeLg/eNI+9v5be2Mz/0EMV4ZqrCvFyH1
-UTPlUHzYbH1QidTM0EnJLoS3Xh0E6zUgFx93GB6Wsf4iKNZjXAISxRwid8XWYdKi
-gTpEnVOQEA4n7PCXW0OASpbIfnFiD+fcOADKOKvLh485xMo2rvKv/a9I5jDgvapS
-eH5N6Mu3uKX30u/59kBIbph4xVt/MIClc9FOiJVFk9ONDeV85uHg0N5jfI5TDJI3
-8kEwg7xkcDHuPtwktabH/98blvRoyFXlsG51c6pKnMp34oZwN6T2SsOx+uCqpgSY
-rZQFUgVWVFJmaNm4mQ/UG1/r8Pws6BU9YpahO9uuB2ZNdWp33b9oZ7HhF1rtyYEq
-BBS7/unowmepHIxLw69IdQ5XbgeFnfNUwLyTK2tUM7g/Mw5KYFE=
-=QERV
------END PGP SIGNATURE-----
-
---u6des2sckltamzeq--
+Thanks,
+Johan
