@@ -2,77 +2,213 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB24C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013EAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C752720850
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:20:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEMo5iEM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C752720850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BCED520851
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:24:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCED520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeLEMUT (ORCPT
+        id S1727504AbeLEMYW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 07:24:22 -0500
+Received: from ozlabs.org ([203.11.71.1]:47929 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbeLEMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:20:19 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
+        id S1726944AbeLEMYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:24:22 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BB82206B7;
-        Wed,  5 Dec 2018 12:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544012418;
-        bh=ptLvgWpeRZu6cYY+1puDC5J7kKNEdN4gzsLdx7G97II=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MEMo5iEMSqztoLfNdE99LEMjsNNvI2wD9TzO46bOg+XRixl8Gxiaj1AoDq0Y5IH4U
-         g2+xN1DJcsVuRlm6IuzgZReJpKN67wKYfrDoW0+13RNAiq9cP+5VZs0J6cBKK9PTnf
-         0SjUwj0hSjDAC46cKz4Vra0rZqe8bPxwhHyEAJB4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E155D4042C; Wed,  5 Dec 2018 09:20:15 -0300 (-03)
-Date:   Wed, 5 Dec 2018 09:20:15 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Mark Drayton <mbd@fb.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com, Song Liu <songliubraving@fb.com>
-Subject: Re: [PATCH] perf: allow specifying proc-map-timeout in config file
-Message-ID: <20181205122015.GA28389@kernel.org>
-References: <20181204203420.1683114-1-mbd@fb.com>
- <20181205024222.GA32453@danjae.aot.lge.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 438yb60yPcz9s8J;
+        Wed,  5 Dec 2018 23:24:17 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Arnd Bergmann <arnd@arndb.de>, firoz.khan@linaro.org
+Cc:     y2038@lists.linaro.org, linux-arch@vger.kernel.org,
+        deepa.kernel@gmail.com, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: split compat syscall table out from native table
+In-Reply-To: <20181204212340.3915309-1-arnd@arndb.de>
+References: <CAK8P3a2SP0eX50NoFKaM2N85mgSejToQkD9ZOE_7V_RT__BCvg@mail.gmail.com> <20181204212340.3915309-1-arnd@arndb.de>
+Date:   Wed, 05 Dec 2018 23:24:16 +1100
+Message-ID: <87pnugkvpr.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205024222.GA32453@danjae.aot.lge.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Dec 05, 2018 at 11:42:22AM +0900, Namhyung Kim escreveu:
-> On Tue, Dec 04, 2018 at 12:34:20PM -0800, Mark Drayton wrote:
-> > The default timeout of 500ms for parsing /proc/<pid>/maps files is too
-> > short for profiling many of our services. This can be overridden by
-> > passing --proc-map-timeout to the relevant command but it'd be nice to
-> > globally increase our default value. This patch permits setting a
-> > different default with the core.proc-map-timeout config file parameter.
+Arnd Bergmann <arnd@arndb.de> writes:
 
-> > Signed-off-by: Mark Drayton <mbd@fb.com>
- 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> PowerPC uses a syscall table with native and compat calls interleaved,
+> which is a slightly simpler way to define two matching tables.
+>
+> As we move to having the tables generated, that advantage is no longer
+> important, but the interleaved table gets in the way of using the
+> same scripts as on the other architectures.
+>
+> Split out a new compat_sys_call_table symbol that contains all the
+> compat calls, and leave the main table for the native calls, to more
+> closely match the method we use everywhere else.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> This is completely untested, it's just for illustration and to
+> get comments about whether this is a good idea.
 
-Thanks, added both yours and Song's Acked-by,
+Seems like a good idea to me.
 
-- Arnaldo
+The code's not much more complicated, in fact it's probably clearer
+except for the extra macros.
+
+It's more cache efficient too, though it probably doesn't really matter.
+
+cheers
+
+> Firoz, can you try to get this working?
+> ---
+>  arch/powerpc/include/asm/syscall.h |  3 +--
+>  arch/powerpc/kernel/entry_64.S     |  7 ++++--
+>  arch/powerpc/kernel/systbl.S       | 37 ++++++++++++++++++++++++------
+>  arch/powerpc/kernel/vdso.c         |  7 ++++--
+>  4 files changed, 41 insertions(+), 13 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
+> index ab9f3f0a8637..1a0e7a8b1c81 100644
+> --- a/arch/powerpc/include/asm/syscall.h
+> +++ b/arch/powerpc/include/asm/syscall.h
+> @@ -18,9 +18,8 @@
+>  #include <linux/thread_info.h>
+>  
+>  /* ftrace syscalls requires exporting the sys_call_table */
+> -#ifdef CONFIG_FTRACE_SYSCALLS
+>  extern const unsigned long sys_call_table[];
+> -#endif /* CONFIG_FTRACE_SYSCALLS */
+> +extern const unsigned long compat_sys_call_table[];
+>  
+>  static inline int syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
+>  {
+> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+> index 7b1693adff2a..5574d92646f1 100644
+> --- a/arch/powerpc/kernel/entry_64.S
+> +++ b/arch/powerpc/kernel/entry_64.S
+> @@ -54,6 +54,9 @@
+>  SYS_CALL_TABLE:
+>  	.tc sys_call_table[TC],sys_call_table
+>  
+> +COMPAT_SYS_CALL_TABLE:
+> +	.tc compat_sys_call_table[TC],compat_sys_call_table
+> +
+>  /* This value is used to mark exception frames on the stack. */
+>  exception_marker:
+>  	.tc	ID_EXC_MARKER[TC],STACK_FRAME_REGS_MARKER
+> @@ -173,7 +176,7 @@ system_call:			/* label this so stack traces look sane */
+>  	ld	r11,SYS_CALL_TABLE@toc(2)
+>  	andis.	r10,r10,_TIF_32BIT@h
+>  	beq	15f
+> -	addi	r11,r11,8	/* use 32-bit syscall entries */
+> +	ld	r11,COMPAT_SYS_CALL_TABLE@toc(2)
+>  	clrldi	r3,r3,32
+>  	clrldi	r4,r4,32
+>  	clrldi	r5,r5,32
+> @@ -181,7 +184,7 @@ system_call:			/* label this so stack traces look sane */
+>  	clrldi	r7,r7,32
+>  	clrldi	r8,r8,32
+>  15:
+> -	slwi	r0,r0,4
+> +	slwi	r0,r0,3
+>  
+>  	barrier_nospec_asm
+>  	/*
+> diff --git a/arch/powerpc/kernel/systbl.S b/arch/powerpc/kernel/systbl.S
+> index 919a32746ede..883b8e36964c 100644
+> --- a/arch/powerpc/kernel/systbl.S
+> +++ b/arch/powerpc/kernel/systbl.S
+> @@ -17,13 +17,13 @@
+>  #include <asm/ppc_asm.h>
+>  
+>  #ifdef CONFIG_PPC64
+> -#define SYSCALL(func)		.8byte	DOTSYM(sys_##func),DOTSYM(sys_##func)
+> -#define COMPAT_SYS(func)	.8byte	DOTSYM(sys_##func),DOTSYM(compat_sys_##func)
+> -#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func),DOTSYM(ppc_##func)
+> -#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall),DOTSYM(sys_ni_syscall)
+> -#define SYS32ONLY(func)		.8byte	DOTSYM(sys_ni_syscall),DOTSYM(compat_sys_##func)
+> -#define PPC64ONLY(func)		.8byte	DOTSYM(ppc_##func),DOTSYM(sys_ni_syscall)
+> -#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f),DOTSYM(f3264)
+> +#define SYSCALL(func)		.8byte	DOTSYM(sys_##func)
+> +#define COMPAT_SYS(func)	.8byte	DOTSYM(sys_##func)
+> +#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func)
+> +#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall)
+> +#define SYS32ONLY(func)		.8byte	DOTSYM(sys_ni_syscall)
+> +#define PPC64ONLY(func)		.8byte	DOTSYM(ppc_##func)
+> +#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f)
+>  #else
+>  #define SYSCALL(func)		.long	sys_##func
+>  #define COMPAT_SYS(func)	.long	sys_##func
+> @@ -48,3 +48,26 @@
+>  sys_call_table:
+>  
+>  #include <asm/systbl.h>
+> +
+> +#undef SYSCALL
+> +#undef COMPAT_SYS
+> +#undef PPC_SYS
+> +#undef OLDSYS
+> +#undef SYS32ONLY
+> +#undef PPC64ONLY
+> +#undef SYSX
+> +
+> +#ifdef CONFIG_COMPAT
+> +#define SYSCALL(func)		.8byte	DOTSYM(sys_##func)
+> +#define COMPAT_SYS(func)	.8byte	DOTSYM(compat_sys_##func)
+> +#define PPC_SYS(func)		.8byte	DOTSYM(ppc_##func)
+> +#define OLDSYS(func)		.8byte	DOTSYM(sys_ni_syscall)
+> +#define SYS32ONLY(func)		.8byte	DOTSYM(compat_sys_##func)
+> +#define PPC64ONLY(func)		.8byte	DOTSYM(sys_ni_syscall)
+> +#define SYSX(f, f3264, f32)	.8byte	DOTSYM(f3264)
+> +
+> +.globl compat_sys_call_table
+> +compat_sys_call_table:
+> +
+> +#include <asm/systbl.h>
+> +#endif
+> diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
+> index 65b3bdb99f0b..7725a9714736 100644
+> --- a/arch/powerpc/kernel/vdso.c
+> +++ b/arch/powerpc/kernel/vdso.c
+> @@ -671,15 +671,18 @@ static void __init vdso_setup_syscall_map(void)
+>  {
+>  	unsigned int i;
+>  	extern unsigned long *sys_call_table;
+> +#ifdef CONFIG_PPC64
+> +	extern unsigned long *compat_sys_call_table;
+> +#endif
+>  	extern unsigned long sys_ni_syscall;
+>  
+>  
+>  	for (i = 0; i < NR_syscalls; i++) {
+>  #ifdef CONFIG_PPC64
+> -		if (sys_call_table[i*2] != sys_ni_syscall)
+> +		if (sys_call_table[i] != sys_ni_syscall)
+>  			vdso_data->syscall_map_64[i >> 5] |=
+>  				0x80000000UL >> (i & 0x1f);
+> -		if (sys_call_table[i*2+1] != sys_ni_syscall)
+> +		if (compat_sys_call_table[i] != sys_ni_syscall)
+>  			vdso_data->syscall_map_32[i >> 5] |=
+>  				0x80000000UL >> (i & 0x1f);
+>  #else /* CONFIG_PPC64 */
+> -- 
+> 2.18.0
