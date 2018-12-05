@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7979BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974D1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A674206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5472B206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 10:08:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkgoKwHy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A674206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="whIOEtJE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5472B206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbeLEKHa (ORCPT
+        id S1728803AbeLEKIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:07:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45222 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 05:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbeLEJkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:40:47 -0500
+        id S1728662AbeLEJk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:40:26 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1568820878;
-        Wed,  5 Dec 2018 09:40:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBD9C20879;
+        Wed,  5 Dec 2018 09:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002846;
-        bh=jCMRr+lxR8TGpNzuMhMAa6G7cNf3gaivT9ltZ3v4o/w=;
+        s=default; t=1544002824;
+        bh=4g/RUkaTpuATAuzC6bZ+4qK0bHgapWqpdNJJbN/I8pU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HkgoKwHyzJGL/lUQ9fWbXhvOYp4ItlTU0xQRioi0bmyOOGXZE4bHxOs6/feoBfoSt
-         Gb/i9W14wXeyq4R26vCvbpIR+omW0SKD0E29XESQB8s/nJg97VfiY0qxGG04OFIMhr
-         wj2DjY1S1wZRsqP4LoN/YPE8CsDQzK6sOtd3NN8g=
+        b=whIOEtJEFwdRs6WRjs15MJbRuvYzyzRasFJ83vem3RTqghf6sDm0VWwgHqMVTmOxF
+         7M7WV2XhpxRayN3wGvIzZ7oJHo6g3bxJDWnQLvAk5sFooU2fVtg4f8OCRKtTfWii6L
+         4LpOWMtDR8c0z1JfdoJUzk/4B+Od0/BExBf+nfUc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Bryan Whitehead <Bryan.Whitehead@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 086/123] lan743x: fix return value for lan743x_tx_napi_poll
-Date:   Wed,  5 Dec 2018 04:35:18 -0500
-Message-Id: <20181205093555.5386-86-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 078/123] netfilter: nat: fix double register in masquerade modules
+Date:   Wed,  5 Dec 2018 04:35:10 -0500
+Message-Id: <20181205093555.5386-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -53,72 +55,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bryan Whitehead <Bryan.Whitehead@microchip.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit cc5922054131f9abefdc0622ae64fc55e6b2671d ]
+[ Upstream commit 095faf45e64be00bff4da2d6182dface3d69c9b7 ]
 
-The lan743x driver, when under heavy traffic load, has been noticed
-to sometimes hang, or cause a kernel panic.
+There is a reference counter to ensure that masquerade modules register
+notifiers only once. However, the existing reference counter approach is
+not safe, test commands are:
 
-Debugging reveals that the TX napi poll routine was returning
-the wrong value, 'weight'. Most other drivers return 0.
-And call napi_complete, instead of napi_complete_done.
+   while :
+   do
+   	   modprobe ip6t_MASQUERADE &
+	   modprobe nft_masq_ipv6 &
+	   modprobe -rv ip6t_MASQUERADE &
+	   modprobe -rv nft_masq_ipv6 &
+   done
 
-Additionally when creating the tx napi poll routine.
-Changed netif_napi_add, to netif_tx_napi_add.
+numbers below represent the reference counter.
+--------------------------------------------------------
+CPU0        CPU1        CPU2        CPU3        CPU4
+[insmod]    [insmod]    [rmmod]     [rmmod]     [insmod]
+--------------------------------------------------------
+0->1
+register    1->2
+            returns     2->1
+			returns     1->0
+                                                0->1
+                                                register <--
+                                    unregister
+--------------------------------------------------------
 
-Updates for v3:
-    changed 'fixes' tag to match defined format
+The unregistation of CPU3 should be processed before the
+registration of CPU4.
 
-Updates for v2:
-use napi_complete, instead of napi_complete_done in
-    lan743x_tx_napi_poll
-use netif_tx_napi_add, instead of netif_napi_add for
-    registration of tx napi poll routine
+In order to fix this, use a mutex instead of reference counter.
 
-fixes: 23f0703c125b ("lan743x: Add main source files for new lan743x driver")
-Signed-off-by: Bryan Whitehead <Bryan.Whitehead@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+splat looks like:
+[  323.869557] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [modprobe:1381]
+[  323.869574] Modules linked in: nf_tables(+) nf_nat_ipv6(-) nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 n]
+[  323.869574] irq event stamp: 194074
+[  323.898930] hardirqs last  enabled at (194073): [<ffffffff90004a0d>] trace_hardirqs_on_thunk+0x1a/0x1c
+[  323.898930] hardirqs last disabled at (194074): [<ffffffff90004a29>] trace_hardirqs_off_thunk+0x1a/0x1c
+[  323.898930] softirqs last  enabled at (182132): [<ffffffff922006ec>] __do_softirq+0x6ec/0xa3b
+[  323.898930] softirqs last disabled at (182109): [<ffffffff90193426>] irq_exit+0x1a6/0x1e0
+[  323.898930] CPU: 0 PID: 1381 Comm: modprobe Not tainted 4.20.0-rc2+ #27
+[  323.898930] RIP: 0010:raw_notifier_chain_register+0xea/0x240
+[  323.898930] Code: 3c 03 0f 8e f2 00 00 00 44 3b 6b 10 7f 4d 49 bc 00 00 00 00 00 fc ff df eb 22 48 8d 7b 10 488
+[  323.898930] RSP: 0018:ffff888101597218 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[  323.898930] RAX: 0000000000000000 RBX: ffffffffc04361c0 RCX: 0000000000000000
+[  323.898930] RDX: 1ffffffff26132ae RSI: ffffffffc04aa3c0 RDI: ffffffffc04361d0
+[  323.898930] RBP: ffffffffc04361c8 R08: 0000000000000000 R09: 0000000000000001
+[  323.898930] R10: ffff8881015972b0 R11: fffffbfff26132c4 R12: dffffc0000000000
+[  323.898930] R13: 0000000000000000 R14: 1ffff110202b2e44 R15: ffffffffc04aa3c0
+[  323.898930] FS:  00007f813ed41540(0000) GS:ffff88811ae00000(0000) knlGS:0000000000000000
+[  323.898930] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  323.898930] CR2: 0000559bf2c9f120 CR3: 000000010bc80000 CR4: 00000000001006f0
+[  323.898930] Call Trace:
+[  323.898930]  ? atomic_notifier_chain_register+0x2d0/0x2d0
+[  323.898930]  ? down_read+0x150/0x150
+[  323.898930]  ? sched_clock_cpu+0x126/0x170
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  register_netdevice_notifier+0xbb/0x790
+[  323.898930]  ? __dev_close_many+0x2d0/0x2d0
+[  323.898930]  ? __mutex_unlock_slowpath+0x17f/0x740
+[  323.898930]  ? wait_for_completion+0x710/0x710
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  ? up_write+0x6c/0x210
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  324.127073]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  324.127073]  nft_chain_filter_init+0x1e/0xe8a [nf_tables]
+[  324.127073]  nf_tables_module_init+0x37/0x92 [nf_tables]
+[ ... ]
+
+Fixes: 8dd33cc93ec9 ("netfilter: nf_nat: generalize IPv4 masquerading support for nf_tables")
+Fixes: be6b635cd674 ("netfilter: nf_nat: generalize IPv6 masquerading support for nf_tables")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/microchip/lan743x_main.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/ipv4/netfilter/nf_nat_masquerade_ipv4.c | 23 ++++++++++++++-------
+ net/ipv6/netfilter/nf_nat_masquerade_ipv6.c | 23 ++++++++++++++-------
+ 2 files changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index 001b5f714c1b..5c3ac70abeca 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -1675,7 +1675,7 @@ static int lan743x_tx_napi_poll(struct napi_struct *napi, int weight)
- 		netif_wake_queue(adapter->netdev);
- 	}
+diff --git a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+index 4a7c1f207d6e..4c7fcd32f8e6 100644
+--- a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
++++ b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+@@ -131,15 +131,17 @@ static struct notifier_block masq_inet_notifier = {
+ 	.notifier_call	= masq_inet_event,
+ };
  
--	if (!napi_complete_done(napi, weight))
-+	if (!napi_complete(napi))
- 		goto done;
+-static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
++static int masq_refcnt;
++static DEFINE_MUTEX(masq_mutex);
  
- 	/* enable isr */
-@@ -1684,7 +1684,7 @@ static int lan743x_tx_napi_poll(struct napi_struct *napi, int weight)
- 	lan743x_csr_read(adapter, INT_STS);
+ int nf_nat_masquerade_ipv4_register_notifier(void)
+ {
+-	int ret;
++	int ret = 0;
  
- done:
--	return weight;
-+	return 0;
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier was already set */
+-	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return 0;
++	if (++masq_refcnt > 1)
++		goto out_unlock;
+ 
+ 	/* Register for device down reports */
+ 	ret = register_netdevice_notifier(&masq_dev_notifier);
+@@ -150,22 +152,29 @@ int nf_nat_masquerade_ipv4_register_notifier(void)
+ 	if (ret)
+ 		goto err_unregister;
+ 
++	mutex_unlock(&masq_mutex);
+ 	return ret;
++
+ err_unregister:
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ err_dec:
+-	atomic_dec(&masquerade_notifier_refcount);
++	masq_refcnt--;
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ 	return ret;
  }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_register_notifier);
  
- static void lan743x_tx_ring_cleanup(struct lan743x_tx *tx)
-@@ -1873,9 +1873,9 @@ static int lan743x_tx_open(struct lan743x_tx *tx)
- 	tx->vector_flags = lan743x_intr_get_vector_flags(adapter,
- 							 INT_BIT_DMA_TX_
- 							 (tx->channel_number));
--	netif_napi_add(adapter->netdev,
--		       &tx->napi, lan743x_tx_napi_poll,
--		       tx->ring_size - 1);
-+	netif_tx_napi_add(adapter->netdev,
-+			  &tx->napi, lan743x_tx_napi_poll,
-+			  tx->ring_size - 1);
- 	napi_enable(&tx->napi);
+ void nf_nat_masquerade_ipv4_unregister_notifier(void)
+ {
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier still has clients */
+-	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
+-		return;
++	if (--masq_refcnt > 0)
++		goto out_unlock;
  
- 	data = 0;
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ 	unregister_inetaddr_notifier(&masq_inet_notifier);
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_unregister_notifier);
+diff --git a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+index 10012fc687b6..37b1d413c825 100644
+--- a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+@@ -162,15 +162,17 @@ static struct notifier_block masq_inet6_notifier = {
+ 	.notifier_call	= masq_inet6_event,
+ };
+ 
+-static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
++static int masq_refcnt;
++static DEFINE_MUTEX(masq_mutex);
+ 
+ int nf_nat_masquerade_ipv6_register_notifier(void)
+ {
+-	int ret;
++	int ret = 0;
+ 
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier is already set */
+-	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return 0;
++	if (++masq_refcnt > 1)
++		goto out_unlock;
+ 
+ 	ret = register_netdevice_notifier(&masq_dev_notifier);
+ 	if (ret)
+@@ -180,22 +182,29 @@ int nf_nat_masquerade_ipv6_register_notifier(void)
+ 	if (ret)
+ 		goto err_unregister;
+ 
++	mutex_unlock(&masq_mutex);
+ 	return ret;
++
+ err_unregister:
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ err_dec:
+-	atomic_dec(&masquerade_notifier_refcount);
++	masq_refcnt--;
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_register_notifier);
+ 
+ void nf_nat_masquerade_ipv6_unregister_notifier(void)
+ {
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier still has clients */
+-	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
+-		return;
++	if (--masq_refcnt > 0)
++		goto out_unlock;
+ 
+ 	unregister_inet6addr_notifier(&masq_inet6_notifier);
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_unregister_notifier);
 -- 
 2.17.1
 
