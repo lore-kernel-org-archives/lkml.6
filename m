@@ -2,126 +2,80 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 365F2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58022C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A242082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:41:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A242082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BB092082B
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 12:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB092082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeLEMlm (ORCPT
+        id S1727525AbeLEMoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 07:41:42 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15641 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726918AbeLEMlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 07:41:42 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AAA7CDF9C0495;
-        Wed,  5 Dec 2018 20:41:38 +0800 (CST)
-Received: from [10.177.98.84] (10.177.98.84) by smtp.huawei.com (10.3.19.202)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 5 Dec 2018 20:41:39
- +0800
-To:     <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-From:   "weiqi (C)" <weiqi4@huawei.com>
-Subject: [RFC] sched/fair: Align vruntime to last_se when curr_se's timeslice
- run out
-Message-ID: <f4f56ab5-8f9e-9ee4-4db8-370bc4aa2556@huawei.com>
-Date:   Wed, 5 Dec 2018 20:41:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Wed, 5 Dec 2018 07:44:24 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33039 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeLEMoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 07:44:23 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c206so17413790oib.0;
+        Wed, 05 Dec 2018 04:44:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Pr/+bszTfj6S60aVpT69HD6fFT0XdG8D+p/Mm3BjqA=;
+        b=BGqjZIXUCPD5Y/30lpeCjZT7oaU6bj8YFv4GqzSrgkjDDARi3GongLpa44fYjbS5oQ
+         e873BXPVsFXokz5YynrTUZM/naZB2rpSAq0Y18EPaxyB45vmUaGM5DhBu2RNmj0BDBkM
+         GO7+k8S3hVqUZFzij6wblBgn4EQPBPZ0Yoq0Tslrqi3xyl9bXVmMJVC02d28RDL30JdC
+         r2E1Hv9sAA4F5l+sDwVmNi1Dfn0+sEBZ+vHNDbwpXNBD5y5nyet5er0y0/GnFTkhzLJ2
+         rUfHPYZj9814qBflbeY/VOiDK2ZB0gH0CJHDb4N3bgix7ADLFPiAH4LdP3YrgP4pOOYd
+         xZZA==
+X-Gm-Message-State: AA+aEWbYX5W9DImjCP12CJfXox9tmXFOe3hem1CmtW1EGqWiIVbEOLIQ
+        J9TdAefdNJOSmoiwGZwFLf6aG+OXvlLpm69wIus=
+X-Google-Smtp-Source: AFSGD/U/xkzUP2+b8gYW8CjWZj1+FCiZv8ZS4zIyqLLLqZVZKsyyqzRk2xmpnj6Lgwa07Xa8JcZ97nAXLYRYIrrU78A=
+X-Received: by 2002:aca:3d42:: with SMTP id k63mr15334971oia.95.1544013862136;
+ Wed, 05 Dec 2018 04:44:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.98.84]
-X-CFilter-Loop: Reflected
+References: <20181205101131.28996-1-bp@alien8.de>
+In-Reply-To: <20181205101131.28996-1-bp@alien8.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 5 Dec 2018 13:44:10 +0100
+Message-ID: <CAJZ5v0h3X7KF4bkq3xc0FSncYVQwn8JTfw7UotdnU0Y3EE9YuA@mail.gmail.com>
+Subject: Re: [PATCH] x86/kernel: Fix more -Wmissing-prototypes warnings
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        andrew.banman@hpe.com, dimitri.sivanich@hpe.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        mhiramat@kernel.org, mike.travis@hpe.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, wang.yi59@zte.com.cn,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-I measuring the cfs scheduling delay, and found that
-when a cfs_rq contains multiple tasks, it does not guarantee
-every se of this cfs_rq can get a changce to run within
-  one sched_latency period. Assume that there are three se
-  A, B, and C in cfs_rq, and the default sched_latency=24ms.
-In ideal state, A, B, and C take turns to get 8ms, The timing is:
-  A(8ms) -> B(8ms) -> C(8ms) -> A(8ms) -> B(8ms) -> C(8ms) ....
-So, the delay for each task is approximately 16ms.
+On Wed, Dec 5, 2018 at 11:11 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> From: Borislav Petkov <bp@suse.de>
+>
+> ... with the goal of eventually enabling -Wmissing-prototypes by
+> default. At least on x86.
+>
+> Make functions static where possible, otherwise add prototypes or make
+> them visible through includes.
+>
+> asm/trace/ changes courtesy of Steven Rostedt <rostedt@goodmis.org>.
+>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
-However, check_preempt_tick() is the clock interrupt granularity,
-and the clock interrupt may also have an indeterminate fine delay,
-so the time slice actually expires relative
-  to the ideal expiration time delay uncertain time.
-This may result in a timing of :
-      A -> B -> C -> B -> C -> A
-which increases the scheduling delay of A to 32ms.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-
-The more extreme scenario is wakeup sleepers. If a sleeper task
-  wakes up to a cpu, its vruntime will be sched_latency/2 less
-  than cfs_rq->min_vruntime /* place_entity() function do this */
-In the scene of the above A, B, C cycle time slice,
-a sleeper thread D woken up
-D->vruntime = cfs_rq->min_vruntime - sched_latency/2
-then the timing of the pick_task may be:
-
-A(8ms)->B(8ms)->C(8ms)->D(6ms)->D(6ms)->D(6ms,then dequeue)->C(8ms)-> 
-B(8ms)->A
-
-causing A's scheduling delay to reach 50ms
-so, I make changes to check_preempt_tick()：
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ee271bb..1f61b9c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4020,7 +4020,23 @@ static void clear_buddies(struct cfs_rq *cfs_rq, 
-struct sched_entity *se)
-         ideal_runtime = sched_slice(cfs_rq, curr);
-         delta_exec = curr->sum_exec_runtime - curr->prev_sum_exec_runtime;
-         if (delta_exec > ideal_runtime) {
-+               struct rb_node *next = NULL;
-+               struct rb_node *right_most = NULL;
-+               struct sched_entity *last;
-                 resched_curr(rq_of(cfs_rq));
-+
-+                /* always set to max vruntime */
-+                if (cfs_rq->nr_running > 1) {
-+                        next = &curr->run_node;
-+                        do {
-+                                right_most = next;
-+                                next = rb_next(next);
-+                        } while (next);
-+
-+                        last = rb_entry(right_most,
-+                                         struct sched_entity, run_node);
-+                        curr->vruntime = last->vruntime + 1; // maybe 
-+1 is not needed
-+                }
-+
-                 /*
-                  * The current task ran long enough, ensure it doesn't get
-                  * re-elected due to buddy favours.
-
-
-In this way, time sliced task in one sched_latency period will not get 
-runtime again,
-And for wake sleeper, it can meet the needs of wake-up preemption, and 
-this will not let it
-take too much time in a scheduling period.
-
-I wrote a small press program, bind it to 12 cpus, this program wake up 
-36 sub-processes
-  every second and each sub-process work 120ms, looping all the time..
-I‘ve tested on linux-stable 4.20-rc1 kernel, the maximum delay of press 
-program is about 80ms.
-After applying the above modifications, the maximum delay is stable at 27ms.
+for the ACPI and cpufreq bits.
