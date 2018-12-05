@@ -7,78 +7,89 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5AEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5898EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DC2214DB
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2E22087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:50:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR7HA8hy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DC2214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8LfZ0QD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2E22087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeLEJuY (ORCPT
+        id S1729709AbeLEJu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:50:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:50:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbeLEJuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:50:22 -0500
+        id S1729699AbeLEJuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:50:25 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 159E62082B;
-        Wed,  5 Dec 2018 09:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DD7F2087F;
+        Wed,  5 Dec 2018 09:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003421;
-        bh=CUucIqJcqngsgetMDF9380f7AZGAefgwYJLgpHt75zQ=;
+        s=default; t=1544003424;
+        bh=0m5WUZOb+SM93B+0x2UJhRDpdXVdRJJKZlAOCEVLNNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cR7HA8hyYaXz9P4hvZ/p5H644Dd7GEatNqVhCudkhiJZ5Bsd+ik1SKOfw+gYyyx+d
-         IuRiXBnmhQGpRa+2vEh0pTKCZtNO6YCIwLtBFa4w4sHZK8AC6mjjKy7BHG1/J7LExP
-         5/R+JKGLN3RK+hOQ7uY6nQ2adSyab3hGwRlxXfDM=
+        b=j8LfZ0QDWYVDH4x6aXb2i0B52jKzXo4nrohcTzEgtyDZzgFAeQLKSOp38esI81mJJ
+         +aKlxDLvO08SN+DYnLwn4CYVT+RtWiLxkqMLl9GnYRl9yL0WN9ZlFUY2K3IUDyS2IU
+         M1U/zbf2qsLJLFU4LqurGzKEX4+FnxkXm0UPGkus=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 25/45] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
-Date:   Wed,  5 Dec 2018 04:46:46 -0500
-Message-Id: <20181205094706.7225-25-sashal@kernel.org>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 26/45] KVM: x86: fix empty-body warnings
+Date:   Wed,  5 Dec 2018 04:46:47 -0500
+Message-Id: <20181205094706.7225-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205094706.7225-1-sashal@kernel.org>
 References: <20181205094706.7225-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Yi Wang <wang.yi59@zte.com.cn>
 
-[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
+[ Upstream commit 354cb410d87314e2eda344feea84809e4261570a ]
 
-On Palm TE nothing happens when you try to use gadget drivers and plug
-the USB cable. Fix by adding the board to the vbus sense quirk list.
+We get the following warnings about empty statements when building
+with 'W=1':
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+
+Rework the debug helper macro to get rid of these warnings.
+
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/lapic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 8f044caa8ad4..9eed4947aad8 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2037,6 +2037,7 @@ static inline int machine_without_vbus_sense(void)
- {
- 	return machine_is_omap_innovator()
- 		|| machine_is_omap_osk()
-+		|| machine_is_omap_palmte()
- 		|| machine_is_sx1()
- 		/* No known omap7xx boards with vbus sense */
- 		|| cpu_is_omap7xx();
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 69a81a7daa24..c8630569e392 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -57,7 +57,7 @@
+ #define APIC_BUS_CYCLE_NS 1
+ 
+ /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
+-#define apic_debug(fmt, arg...)
++#define apic_debug(fmt, arg...) do {} while (0)
+ 
+ /* 14 is the version for Xeon and Pentium 8.4.8*/
+ #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
 -- 
 2.17.1
 
