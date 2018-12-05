@@ -2,189 +2,140 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0A8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58C5C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5741320892
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:48:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5741320892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 969E0208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 19:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544039361;
+	bh=S75QfcoRBleggQyU1suN9Y4s8+dMub0dnVnPHlFzMPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iDzzDiVcXRWLUVlVF/BgjJ1jlyDH8Q/p3raUAnUvdE16sngsQNUo3bkkCb7pxKrom
+	 cxd/hWAS6PyoeQQiLRjIAljttvdqU1Q70k33AYjafnhbx5JFc9kqbbF/B6zjKmncyH
+	 2cxH4WqjSg+FQQ408MLqN/bZl4Df6zI9JjLs2zOs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969E0208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbeLETsO (ORCPT
+        id S1728457AbeLETtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:48:14 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:55911 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728653AbeLETru (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:47:50 -0500
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id wB5JHVXm013011;
-        Wed, 5 Dec 2018 21:17:31 +0200
-Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
-        id 5C5F162DA6; Wed,  5 Dec 2018 21:47:29 +0200 (IST)
-From:   Tali Perry <tali.perry1@gmail.com>
-To:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v1 1/1] clk: npcm: get fixed input clks from DT
-Date:   Wed,  5 Dec 2018 21:47:02 +0200
-Message-Id: <20181205194702.257430-3-tali.perry1@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181205194702.257430-1-tali.perry1@gmail.com>
-References: <20181205194702.257430-1-tali.perry1@gmail.com>
+        Wed, 5 Dec 2018 14:49:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727523AbeLETtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:49:19 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A37620892;
+        Wed,  5 Dec 2018 19:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544039358;
+        bh=S75QfcoRBleggQyU1suN9Y4s8+dMub0dnVnPHlFzMPc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HRMEK2bcwTnlg/mBuwysmfwu9+mDenVDogynr3x49mPVRwVUORlNltf0XgCXcbQju
+         mF+fBJaHbr0B3+ip5wzPSNGwoOsODW89/7WzKAvCSR1f8+HYcf8NE12GaiJHpLJJ6y
+         J/hKcyi1me30lsrEZHwJfvm3ratGyoilsysE8zoQ=
+Date:   Wed, 5 Dec 2018 20:49:16 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     linux-bluetooth@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kay Sievers <kay.sievers@vrfy.org>,
+        Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 BlueZ] hid2hci: Fix udev rules for linux-4.14+
+Message-ID: <20181205194916.GA20809@kroah.com>
+References: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
+ <20181204204117.14964-1-ville.syrjala@linux.intel.com>
+ <20181205070621.GE16346@kroah.com>
+ <20181205154032.GT9144@intel.com>
+ <20181205192036.GB434@kroah.com>
+ <20181205194051.GU9144@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205194051.GU9144@intel.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- drivers/clk/clk-npcm7xx.c | 64 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 53 insertions(+), 11 deletions(-)
+On Wed, Dec 05, 2018 at 09:40:51PM +0200, Ville Syrjälä wrote:
+> On Wed, Dec 05, 2018 at 08:20:36PM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Dec 05, 2018 at 05:40:32PM +0200, Ville Syrjälä wrote:
+> > > On Wed, Dec 05, 2018 at 08:06:21AM +0100, Greg Kroah-Hartman wrote:
+> > > > On Tue, Dec 04, 2018 at 10:41:17PM +0200, Ville Syrjala wrote:
+> > > > > From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > > > > 
+> > > > > Since commit 1455cf8dbfd0 ("driver core: emit uevents when
+> > > > > device is bound to a driver") the kernel started emitting
+> > > > > "bind" and "unbind" uevents which confuse the hid2hci
+> > > > > udev rules.
+> > > > > 
+> > > > > The symptoms on an affected machine (Dell E5400 in my case)
+> > > > > include bluetooth devices not appearing and udev hogging
+> > > > > the cpu as it's busy processing a constant stream of these
+> > > > > "bind"+"unbind" uevents.
+> > > > 
+> > > > What is causing a "stream" of bind and unbind events?  This only happens
+> > > > when a device is attached to a driver or removed from a driver, which is
+> > > > caused by something else happening.
+> > > 
+> > > Not sure if it's just due to this thing causing devices to
+> > > appear/disappear during bind/unbind events or what.
+> > 
+> > Someone has to be telling the kernel to bind/unbind from a driver to
+> > a device, it doesn't do it on its own.  Look at your other rules/scripts
+> > for that.
+> > 
+> > Also note that the kernel has been doing this for over a year now (since
+> > 4.l4), what just happened in 4.19 to cause this to be an issue?
+> 
+> It became an issue for me after I got a machine that suffers from
+> this. The regression has been present ever since commit 1455cf8dbfd0
+> ("driver core: emit uevents when device is bound to a driver").
+> 
+> You need a Dell E5400 or something similar to see it since those
+> have these magic bluetooth devices or whatever.
 
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index 27a86b7a34db..25f8ccaa3d2f 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -8,17 +8,23 @@
-  */
- 
- #include <linux/module.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/err.h>
-+#include <linux/rational.h>
- #include <linux/bitfield.h>
--
- #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
- 
-+
- struct npcm7xx_clk_pll {
- 	struct clk_hw	hw;
- 	void __iomem	*pllcon;
-@@ -44,7 +50,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct clk_hw *hw,
- 	u64 ret;
- 
- 	if (parent_rate == 0) {
--		pr_err("%s: parent rate is zero", __func__);
-+		pr_err("%s: parent rate is zero. reg=%s\n", __func__,
-+		       hw->init->name);
- 		return 0;
- 	}
- 
-@@ -65,9 +72,10 @@ static const struct clk_ops npcm7xx_clk_pll_ops = {
- 	.recalc_rate = npcm7xx_clk_pll_recalc_rate,
- };
- 
--static struct clk_hw *
--npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
--			 const char *parent_name, unsigned long flags)
-+static struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon,
-+					       const char *name,
-+					       const char *parent_name,
-+					       unsigned long flags)
- {
- 	struct npcm7xx_clk_pll *pll;
- 	struct clk_init_data init;
-@@ -544,12 +552,14 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	void __iomem *clk_base;
- 	struct resource res;
- 	struct clk_hw *hw;
-+	struct clk *clk;
- 	int ret;
- 	int i;
- 
-+	clk_base = NULL;
- 	ret = of_address_to_resource(clk_np, 0, &res);
- 	if (ret) {
--		pr_err("%pOFn: failed to get resource, ret %d\n", clk_np,
-+		pr_err("%s: failed to get resource, ret %d\n", clk_np->name,
- 			ret);
- 		return;
- 	}
-@@ -558,9 +568,10 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	if (!clk_base)
- 		goto npcm7xx_init_error;
- 
--	npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
--				   NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
--	if (!npcm7xx_clk_data)
-+	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
-+		NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
-+
-+	if (!npcm7xx_clk_data->hws)
- 		goto npcm7xx_init_np_err;
- 
- 	npcm7xx_clk_data->num = NPCM7XX_NUM_CLOCKS;
-@@ -568,6 +579,31 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	for (i = 0; i < NPCM7XX_NUM_CLOCKS; i++)
- 		npcm7xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
- 
-+	/* Read fixed clocks. These 3 clocks must be defined in DT */
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external REFCLK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external SYSBYPCK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external MCBYPCK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
- 	/* Register plls */
- 	for (i = 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
- 		const struct npcm7xx_clk_pll_data *pll_data = &npcm7xx_plls[i];
-@@ -646,11 +682,17 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 
- 	return;
- 
-+npcm7xx_init_fail_no_clk_on_dt:
-+	pr_err("see Documentation/devicetree/bindings/clock/");
-+	pr_err("nuvoton,npcm750-clk.txt  for details\n");
- npcm7xx_init_fail:
--	kfree(npcm7xx_clk_data->hws);
-+	if (npcm7xx_clk_data->num)
-+		kfree(npcm7xx_clk_data->hws);
- npcm7xx_init_np_err:
--	iounmap(clk_base);
-+	if (clk_base != NULL)
-+		iounmap(clk_base);
- npcm7xx_init_error:
- 	of_node_put(clk_np);
-+	pr_err("clk setup fail\n");
- }
- CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init);
--- 
-2.14.1
+What does the kernel log say is going on?  Is the device "bouncing" from
+being added/removed from the system all the time?
 
+What makes this system "magic"?
+
+> > > > This should not be a normal
+> > > > occurance, unless something odd is happening to your hardware?
+> > > 
+> > > It's not specific to my hardware. Lot's of people are affected.
+> > > See eg. 
+> > > https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1759836
+> > > 
+> > > Acutally looking through that bug it seems someone else noticed
+> > > hid2hci failing lot in the logs. So maybe it's just that we already
+> > > switched the mode during "add", and then we try to redo the same
+> > > thing during "bind" which fails, and that then causes and unbind?
+> > 
+> > You have to manually unbind the device, the kernel does not do that.  So
+> > perhaps you have a broken udev rule somewhere else that would do
+> > something odd like unbind/bind?
+> > 
+> > I don't see this happening on my systems, but hey, I know better than to
+> > run Ubuntu :)
+> 
+> As do I. And you don't see it because you don't have the right
+> hardware.
+
+Fair enough, what makes my hardware different from yours?
+
+thanks,
+
+greg k-h
