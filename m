@@ -2,135 +2,120 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12063C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0E7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90C42082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A8720850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 07:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="eRWv3+Qf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90C42082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l5l7Merw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hIxhtCy2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A8720850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeLEHnW (ORCPT
+        id S1727230AbeLEHna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:43:22 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39079 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEHnW (ORCPT
+        Wed, 5 Dec 2018 02:43:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45818 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEHn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:43:22 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c72so9589635pfc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 23:43:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EBqVvozobDiK8rTN862YjwPLK1Ridu5isMm/vw4kerU=;
-        b=eRWv3+QfhcOwyIKEqwVdHFJA8fA0aq2bMyyOSni5c9b7FkSaqd7CI2oXqDejgkRqiI
-         o2KqA+jE2OGfpMyCS/5r6kym6BliZy3hCAjC0ZF0BgSttmBtpkxBDyxc+sI4qql3Alag
-         1Kj+lS8wHqfXBNVQhTu5oj7MEyxVK4PrAetg5ZGaWZ+WgfLJEmcA4D+osAzWJCFZCVor
-         yMbuvGINL7Muq7RhKKt/9I3prgsC1BOtaHMMhJp5J+/vw3qyP7hfTv6GbeZsc+582du7
-         2SL7YVHCtcDR2jvhSVNPj2dOuS+N+Fak7BhZmzwLu9wJ+j+HgBilI776jvIFrDWEoR0j
-         CbAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EBqVvozobDiK8rTN862YjwPLK1Ridu5isMm/vw4kerU=;
-        b=eTsusL/ql/AT8f2miNUuucmrNtu9h7HfmKJGd8dTGwZTVLtcR9ElvCOe1dVXgpJTvw
-         e2K6CIHRTYxLUlx1f2Rxi145C4cX+Qgq9UlIWh0Wh1rjIxCP3TMqetjmYS8e6ufloKPU
-         pIUhy6mqWKUFeRFcPDMcNKUFo3I8qpi2m4iOIYTBbRjuuUzCLA3gYgYh19P32uzhU8IQ
-         PHXPl+yjzoVgJ229c+uJmHzzPxXORzcBJSaFu9PCREum5J9RemVTW4rv9MRXBAbTafWY
-         CoC6DRnWmViGDsOtu3yPr6j23WQKjsGgQGZ/XALkYQXLjw4eBkKH6Jj+JwEuwyl2gspB
-         8gaA==
-X-Gm-Message-State: AA+aEWZtA4nADWc6JjbE1cW4Me55G6AbXO+7si9LjFfNk8oEFzQOOHpy
-        xDnWUbfpqz78gHR0bOZL53Az2A==
-X-Google-Smtp-Source: AFSGD/WdIECFKFO/HH8HqGKGc65LSQ2jFWzVZtMWlHsqhQzGcJxLkNlOEXFK62MgWiZP4a6gyA2wkA==
-X-Received: by 2002:a63:1560:: with SMTP id 32mr19084145pgv.383.1543995801150;
-        Tue, 04 Dec 2018 23:43:21 -0800 (PST)
-Received: from localhost.localdomain (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
-        by smtp.gmail.com with ESMTPSA id m76sm22473535pfi.102.2018.12.04.23.43.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 23:43:20 -0800 (PST)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux@endlessm.com,
-        Chris Chiu <chiu@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>
-Subject: [PATCH 1/3] ALSA: hda/realtek: ALC294 mic and headset-mode fixups for ASUS X542UN
-Date:   Wed,  5 Dec 2018 15:42:10 +0800
-Message-Id: <20181205074212.31104-2-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181205074212.31104-1-jian-hong@endlessm.com>
-References: <20181205074212.31104-1-jian-hong@endlessm.com>
+        Wed, 5 Dec 2018 02:43:29 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0ECF1601B4; Wed,  5 Dec 2018 07:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543995809;
+        bh=12jFmU5tXf+SVFRvSVCk4b+WJPpbE6/LMwvc845YAaM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=l5l7MerwvLtJgM55fSy5V0rdRmIE1JDB4+mfdF4CHPYx2qtKz30CQ1TgjqDhMEXb8
+         BI0mgOzmtOt9nrGueFM7kz8tZehF+rsXMuomghwd2pT1fbmhKw2CL7YPGxATgq6KIm
+         0FHaPuSuMs/PAgS4B/8CA4w9HWkUXjW37VtDaIuU=
+Received: from [10.204.79.22] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2C756601B4;
+        Wed,  5 Dec 2018 07:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543995808;
+        bh=12jFmU5tXf+SVFRvSVCk4b+WJPpbE6/LMwvc845YAaM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hIxhtCy2JVUrok4W0+/tpNl4z9+gRLRewk7htvmQih+aPvhM2sp0phr+wgw2ZkxYC
+         szv7svadzmqC7wrPnL4QnYhqEgsMFHzA+1MBa2ourk41WAJ8/nK4XVR4WgugdtB6fm
+         QEyVN0GhfdvUn4lrJR+wRqRgsTXi3po0Ks5WCtwQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C756601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH] perf/core: declare the percpu variable properly
+To:     linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+References: <1543310012-7967-1-git-send-email-mojha@codeaurora.org>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <d3fe7070-6529-902f-7e8c-96ef244893c7@codeaurora.org>
+Date:   Wed, 5 Dec 2018 13:13:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1543310012-7967-1-git-send-email-mojha@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Chiu <chiu@endlessm.com>
+Hi All,
 
-The known ALC256_FIXUP_ASUS_MIC fixup can fix the headphone jack
-sensing and enable use of the internal microphone on this laptop
-X542UN. However, it's ALC294 so create a new fixup named
-ALC294_FIXUP_ASUS_MIC to avoid confusion.
+Can you please review the change ?
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Chris Chiu <chiu@endlessm.com>
----
- sound/pci/hda/patch_realtek.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Thanks,
+Mukesh
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index bb40624fb6d5..bbae06267054 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5517,6 +5517,7 @@ enum {
- 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
- 	ALC295_FIXUP_HP_AUTO_MUTE,
- 	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
-+	ALC294_FIXUP_ASUS_MIC,
- };
- 
- static const struct hda_fixup alc269_fixups[] = {
-@@ -6403,6 +6404,16 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_HEADSET_MIC
- 	},
-+	[ALC294_FIXUP_ASUS_MIC] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x13, 0x90a60160 }, /* use as internal mic */
-+			{ 0x19, 0x04a11120 }, /* use as headset mic, without its own jack detect */
-+			{ }
-+		},
-+		.chained = true,
-+		.chain_id = ALC256_FIXUP_ASUS_HEADSET_MODE
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -7152,6 +7163,10 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
- 	SND_HDA_PIN_QUIRK(0x10ec0293, 0x1028, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC292_STANDARD_PINS,
- 		{0x13, 0x90a60140}),
-+	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_MIC,
-+		{0x14, 0x90170110},
-+		{0x1b, 0x90a70130},
-+		{0x21, 0x04211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC295_STANDARD_PINS,
- 		{0x17, 0x21014020},
--- 
-2.11.0
+
+On 11/27/2018 2:43 PM, Mukesh Ojha wrote:
+> Sparse reports the current declaration of percpu variable with
+> below warning
+>
+> warning: incorrect type in initializer (different address spaces)
+>           expected void const [noderef] <asn:3>*__vpp_verify
+>           got struct perf_cpu_context *<noident>
+>
+> Fix it by declaring it properly.
+>
+> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+>
+> ---
+>   include/linux/perf_event.h | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 53c500f..1d5c551 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -262,8 +262,8 @@ struct pmu {
+>   	 */
+>   	int				capabilities;
+>   
+> -	int * __percpu			pmu_disable_count;
+> -	struct perf_cpu_context * __percpu pmu_cpu_context;
+> +	int __percpu			*pmu_disable_count;
+> +	struct perf_cpu_context __percpu *pmu_cpu_context;
+>   	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
+>   	int				task_ctx_nr;
+>   	int				hrtimer_interval_ms;
 
