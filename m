@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90BAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA74C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71F1F21508
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1FD221527
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:56:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nd3XvDFh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71F1F21508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJTcgy3i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FD221527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730247AbeLEJ4X (ORCPT
+        id S1730050AbeLEJ40 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:56:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34752 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:56:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730232AbeLEJ4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:56:20 -0500
+        id S1729584AbeLEJ4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:56:23 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3457621508;
-        Wed,  5 Dec 2018 09:56:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C959A2151B;
+        Wed,  5 Dec 2018 09:56:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003779;
-        bh=Nwh9PD8NKoFZDy2/1D6J8DvNiM/sP4SmpVvqT6LfxEY=;
+        s=default; t=1544003782;
+        bh=HWYeks8c5IbrUCLf1tHbLC1kdpyphP+zHyLArKeY0dQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nd3XvDFh4O4hKOxywB669A6h0GgRoaZmEH0WUYImE7ji5ueM7QMg2Lnq0URLCHesN
-         J1eew4T9w+aH9q+r70GzhvZDvYbp+zQ0SvgueghfyvfLZcyLEOyldKoQNHc1Upn4Wj
-         ykmTvEzeEODioGKxzN9QoD9nFxKu/jVy8PyjEqws=
+        b=qJTcgy3iWNDkhILtEdY/t7s2T6mWdkoc9wTeHn16AWm3RHp62KiOXqZT1/d6MhjFU
+         tNERPELI8KAwJvlJBHhR95OKdszH0gVUbxOvy/TBlzh/WEKrq0/eJZiIZigIWoTQTB
+         SG1t39wR5IFUKc0v0o7qDMOAr64MrSR7iOtoJ/ww=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>,
+Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 16/26] rapidio/rionet: do not free skb before reading its length
-Date:   Wed,  5 Dec 2018 04:54:20 -0500
-Message-Id: <20181205095430.8019-16-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 17/26] s390/qeth: fix length check in SNMP processing
+Date:   Wed,  5 Dec 2018 04:54:21 -0500
+Message-Id: <20181205095430.8019-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
 References: <20181205095430.8019-1-sashal@kernel.org>
@@ -53,36 +53,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit cfc435198f53a6fa1f656d98466b24967ff457d0 ]
+[ Upstream commit 9a764c1e59684c0358e16ccaafd870629f2cfe67 ]
 
-skb is freed via dev_kfree_skb_any, however, skb->len is read then. This
-may result in a use-after-free bug.
+The response for a SNMP request can consist of multiple parts, which
+the cmd callback stages into a kernel buffer until all parts have been
+received. If the callback detects that the staging buffer provides
+insufficient space, it bails out with error.
+This processing is buggy for the first part of the response - while it
+initially checks for a length of 'data_len', it later copies an
+additional amount of 'offsetof(struct qeth_snmp_cmd, data)' bytes.
 
-Fixes: e6161d64263 ("rapidio/rionet: rework driver initialization and removal")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+Fix the calculation of 'data_len' for the first part of the response.
+This also nicely cleans up the memcpy code.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Reviewed-by: Ursula Braun <ubraun@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/rionet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/rionet.c b/drivers/net/rionet.c
-index 18cc2c8d5447..45b939b1506d 100644
---- a/drivers/net/rionet.c
-+++ b/drivers/net/rionet.c
-@@ -215,9 +215,9 @@ static int rionet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 			 * it just report sending a packet to the target
- 			 * (without actual packet transfer).
- 			 */
--			dev_kfree_skb_any(skb);
- 			ndev->stats.tx_packets++;
- 			ndev->stats.tx_bytes += skb->len;
-+			dev_kfree_skb_any(skb);
- 		}
- 	}
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index 595c140cc79c..2ac6d6665834 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -4496,8 +4496,8 @@ static int qeth_snmp_command_cb(struct qeth_card *card,
+ {
+ 	struct qeth_ipa_cmd *cmd;
+ 	struct qeth_arp_query_info *qinfo;
+-	struct qeth_snmp_cmd *snmp;
+ 	unsigned char *data;
++	void *snmp_data;
+ 	__u16 data_len;
  
+ 	QETH_CARD_TEXT(card, 3, "snpcmdcb");
+@@ -4505,7 +4505,6 @@ static int qeth_snmp_command_cb(struct qeth_card *card,
+ 	cmd = (struct qeth_ipa_cmd *) sdata;
+ 	data = (unsigned char *)((char *)cmd - reply->offset);
+ 	qinfo = (struct qeth_arp_query_info *) reply->param;
+-	snmp = &cmd->data.setadapterparms.data.snmp;
+ 
+ 	if (cmd->hdr.return_code) {
+ 		QETH_CARD_TEXT_(card, 4, "scer1%i", cmd->hdr.return_code);
+@@ -4518,10 +4517,15 @@ static int qeth_snmp_command_cb(struct qeth_card *card,
+ 		return 0;
+ 	}
+ 	data_len = *((__u16 *)QETH_IPA_PDU_LEN_PDU1(data));
+-	if (cmd->data.setadapterparms.hdr.seq_no == 1)
+-		data_len -= (__u16)((char *)&snmp->data - (char *)cmd);
+-	else
+-		data_len -= (__u16)((char *)&snmp->request - (char *)cmd);
++	if (cmd->data.setadapterparms.hdr.seq_no == 1) {
++		snmp_data = &cmd->data.setadapterparms.data.snmp;
++		data_len -= offsetof(struct qeth_ipa_cmd,
++				     data.setadapterparms.data.snmp);
++	} else {
++		snmp_data = &cmd->data.setadapterparms.data.snmp.request;
++		data_len -= offsetof(struct qeth_ipa_cmd,
++				     data.setadapterparms.data.snmp.request);
++	}
+ 
+ 	/* check if there is enough room in userspace */
+ 	if ((qinfo->udata_len - qinfo->udata_offset) < data_len) {
+@@ -4534,16 +4538,9 @@ static int qeth_snmp_command_cb(struct qeth_card *card,
+ 	QETH_CARD_TEXT_(card, 4, "sseqn%i",
+ 		cmd->data.setadapterparms.hdr.seq_no);
+ 	/*copy entries to user buffer*/
+-	if (cmd->data.setadapterparms.hdr.seq_no == 1) {
+-		memcpy(qinfo->udata + qinfo->udata_offset,
+-		       (char *)snmp,
+-		       data_len + offsetof(struct qeth_snmp_cmd, data));
+-		qinfo->udata_offset += offsetof(struct qeth_snmp_cmd, data);
+-	} else {
+-		memcpy(qinfo->udata + qinfo->udata_offset,
+-		       (char *)&snmp->request, data_len);
+-	}
++	memcpy(qinfo->udata + qinfo->udata_offset, snmp_data, data_len);
+ 	qinfo->udata_offset += data_len;
++
+ 	/* check if all replies received ... */
+ 		QETH_CARD_TEXT_(card, 4, "srtot%i",
+ 			       cmd->data.setadapterparms.hdr.used_total);
 -- 
 2.17.1
 
