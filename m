@@ -2,102 +2,130 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7A0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C49BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 577F02082B
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1DC720834
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 01:05:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xamn7jVo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 577F02082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LR8LIybN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DC720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeLEBDz (ORCPT
+        id S1726702AbeLEBFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 4 Dec 2018 20:03:55 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:59740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbeLEBDy (ORCPT
+        Tue, 4 Dec 2018 20:05:38 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:19093 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLEBFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:03:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IjHY7AVpB4H2KxQj3YZU74Xk9phStzqzBystJrONwz0=; b=Xamn7jVo0m0b84iE/mpkLQOQhm
-        0sE6dbB3vm2w2KsYL+OQ4UgRm4SKlvA+4xMFZ3NPHcQ9zLC4mSMj2oT5AJR7Xw/BQC5H3vzACQuAW
-        F4IZazOH+PP3KIZsr6IhqSAGdGjiDkwe9rSH33i6CJhW1fjOt7hKqlbLn4FZx8l5lK3qjMNzRPXWX
-        UvdPGFUXUTnyBvAcn9sTVCloZKVFn24Ul7FIK1VEW+xlv8x+Pw/Gi8nGRlwoniGFUCDrf1YEtIXR5
-        mGQ/1fe7hjgza1rTGGgnb3OoRGEDdhiPjxdlXl2vMSe4/WFH08if0Zaok/N8xsgCTWAr8MP5VTd1n
-        Su1nT8hg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gULbS-0007En-CN; Wed, 05 Dec 2018 01:03:50 +0000
-Subject: Re: [PATCH v5 6/6] fieldbus_dev: support HMS Profinet IRT industrial
- controller
-To:     Sven Van Asbroeck <thesven73@gmail.com>, svendev@arcx.com,
-        robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
-        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20181204220224.27324-1-TheSven73@googlemail.com>
- <20181204220224.27324-7-TheSven73@googlemail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1d941b95-3580-46c9-1148-4333898d88d6@infradead.org>
-Date:   Tue, 4 Dec 2018 17:03:47 -0800
+        Tue, 4 Dec 2018 20:05:38 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c07245e0000>; Tue, 04 Dec 2018 17:05:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 04 Dec 2018 17:05:37 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 17:05:37 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 5 Dec
+ 2018 01:05:37 +0000
+Subject: Re: [PATCH 0/2] put_user_page*(): start converting the call sites
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "'john.hubbard@gmail.com'" <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     Jan Kara <jack@suse.cz>, Tom Talpey <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20181204001720.26138-1-jhubbard@nvidia.com>
+ <b31c7b3359344e778fc525013eeece64@AcuMS.aculab.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <cfba998a-8217-bf03-f0d0-c95708aea03d@nvidia.com>
+Date:   Tue, 4 Dec 2018 17:05:36 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181204220224.27324-7-TheSven73@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <b31c7b3359344e778fc525013eeece64@AcuMS.aculab.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543971934; bh=+r+7FKGjKDkL8pa6jmZv04z58r1rXWiJI/ilZa/ZAQ8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=LR8LIybNvNdXE4e2Y53L/XPiqTyr+AlckoIhwuxnMbyUk6RmTO2+KZRnWJzqgwmd5
+         oV0Qx9kj0b/dqmWVtcNfFfmcFErNXm1KziIgL5FU6kJdvkSSrqn4S5GAII7Pc3dxMC
+         ZY7SXjm90wbVQ+TK7YBxLOkimnjFi5vtMgIM2XGo+nZL8ZUbU3CXaOLHygLfUSw4B+
+         KlH9jb0pnsdq3gKHkkwEQexmw9ptN5UwPQLdHxI7yd126e9KsBLsETj/48bNOKQfsj
+         EVEKeU5P1VThtlETYkWONHlgGTxcxd7hl6257RXrICrkH5H9jK6g06QmKXc9FBcy9Q
+         kFKmwMMAK0Qrg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 2:02 PM, Sven Van Asbroeck wrote:
-> diff --git a/drivers/fieldbus/anybuss/Kconfig b/drivers/fieldbus/anybuss/Kconfig
-> index 7e563a78be13..1d0e7516b18e 100644
-> --- a/drivers/fieldbus/anybuss/Kconfig
-> +++ b/drivers/fieldbus/anybuss/Kconfig
-> @@ -20,4 +20,20 @@ config ARCX_ANYBUS_CONTROLLER
->  	  There is also a CAN power readout, unrelated to the Anybus,
->  	  modelled as a regulator.
->  
-> +config HMS_PROFINET
-> +	tristate "HMS Profinet IRT Controller (Anybus-S)"
-> +	depends on FIELDBUS_DEV && HMS_ANYBUSS_BUS
-> +	help
-> +	 If you say yes here you get support for the HMS Industrial
-> +	 Networks Profinet IRT Controller.
-> +
-> +	 It will be registered with the kernel as a fieldbus_dev,
-> +	 so userspace can interact with it via the fieldbus_dev userspace
-> +	 interface(s).
-> +
-> +	 This driver can also be built as a module. If so, the module
-> +	 will be called hms-profinet.
-> +
-> +	 If unsure, say N.
-> +
->  endif
+On 12/4/18 9:10 AM, David Laight wrote:
+> From: john.hubbard@gmail.com
+>> Sent: 04 December 2018 00:17
+>>
+>> Summary: I'd like these two patches to go into the next convenient cycle.
+>> I *think* that means 4.21.
+>>
+>> Details
+>>
+>> At the Linux Plumbers Conference, we talked about this approach [1], and
+>> the primary lingering concern was over performance. Tom Talpey helped me
+>> through a much more accurate run of the fio performance test, and now
+>> it's looking like an under 1% performance cost, to add and remove pages
+>> from the LRU (this is only paid when dealing with get_user_pages) [2]. So
+>> we should be fine to start converting call sites.
+>>
+>> This patchset gets the conversion started. Both patches already had a fair
+>> amount of review.
+> 
+> Shouldn't the commit message contain actual details of the change?
+> 
 
-Indent with tab + 2 spaces.
+Hi David,
 
+This "patch 0000" is not a commit message, as it never shows up in git log.
+Each of the follow-up patches does have details about the changes it makes.
+
+But maybe you are really asking for more background information, which I
+should have added in this cover letter. Here's a start:
+
+https://lore.kernel.org/r/20181110085041.10071-1-jhubbard@nvidia.com
+
+...and it looks like this small patch series is not going to work out--I'm
+going to have to fall back to another RFC spin. So I'll be sure to include 
+you and everyone on that. Hope that helps.
+
+thanks,
 -- 
-~Randy
+John Hubbard
+NVIDIA
