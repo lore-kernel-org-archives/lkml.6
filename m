@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338D1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C722C04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3D02084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4477220850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:42:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hak4kwB7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3D02084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXEnFpRp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4477220850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbeLEJmV (ORCPT
+        id S1729063AbeLEJm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:42:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46864 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:42:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728089AbeLEJmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:42:18 -0500
+        id S1728089AbeLEJmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:42:22 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F23FE2084C;
-        Wed,  5 Dec 2018 09:42:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 959C220878;
+        Wed,  5 Dec 2018 09:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544002937;
-        bh=+eWnZKSCPNkV1PBsI9Vo7kqBYXbS2cWzq0d9CAZtafQ=;
+        s=default; t=1544002942;
+        bh=D+ZOTnvoKwJz9xwjDGe8daEFHxGg1oDmrOogwgdet38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hak4kwB767rUPUGvChHQG3kLewCGcO0VlkZv0GM/AvQoPcE8rBS+gZbpN0IpaRYCU
-         R6rzrq77XXvfuFjLbUr2lnbWD4PwWtl5WlbmyG++/bpcDa8bXQ4aiyubHqITL9OWHJ
-         AoStekJHZv/ooRURm+W057CXXNHHL7esbAO9KsFU=
+        b=PXEnFpRpZzTd14dQkHTuar6JtyXqpovxAy23Q4tDdK93ZzH+lO3+y9Jm6YLExOUBU
+         sWYf95Hwi8rVo0TuhorfLsC8I9WC/L1lMtGQExaJRgelNTKrw9Ma2mJT1+PMiIFol2
+         SJNB5R4r9GrpyD+q+LIm8cL578DhWXH96LLABcC8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Joe Perches <joe@perches.com>,
+Cc:     Pan Bian <bianpan2016@163.com>,
         "Ernesto A . Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Joe Perches <joe@perches.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 117/123] hfs: do not free node before using
-Date:   Wed,  5 Dec 2018 04:35:49 -0500
-Message-Id: <20181205093555.5386-117-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 118/123] hfsplus: do not free node before using
+Date:   Wed,  5 Dec 2018 04:35:50 -0500
+Message-Id: <20181205093555.5386-118-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205093555.5386-1-sashal@kernel.org>
 References: <20181205093555.5386-1-sashal@kernel.org>
@@ -58,39 +59,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit ce96a407adef126870b3f4a1b73529dd8aa80f49 ]
+[ Upstream commit c7d7d620dcbd2a1c595092280ca943f2fced7bbd ]
 
-hfs_bmap_free() frees the node via hfs_bnode_put(node).  However, it
-then reads node->this when dumping error message on an error path, which
-may result in a use-after-free bug.  This patch frees the node only when
-it is never again used.
+hfs_bmap_free() frees node via hfs_bnode_put(node).  However it then
+reads node->this when dumping error message on an error path, which may
+result in a use-after-free bug.  This patch frees node only when it is
+never used.
 
-Link: http://lkml.kernel.org/r/1542963889-128825-1-git-send-email-bianpan2016@163.com
-Fixes: a1185ffa2fc ("HFS rewrite")
+Link: http://lkml.kernel.org/r/1543053441-66942-1-git-send-email-bianpan2016@163.com
 Signed-off-by: Pan Bian <bianpan2016@163.com>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>
 Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Joe Perches <joe@perches.com>
 Cc: Viacheslav Dubeyko <slava@dubeyko.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/btree.c | 3 ++-
+ fs/hfsplus/btree.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
-index 374b5688e29e..9bdff5e40626 100644
---- a/fs/hfs/btree.c
-+++ b/fs/hfs/btree.c
-@@ -329,13 +329,14 @@ void hfs_bmap_free(struct hfs_bnode *node)
+diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
+index de14b2b6881b..3de3bc4918b5 100644
+--- a/fs/hfsplus/btree.c
++++ b/fs/hfsplus/btree.c
+@@ -454,14 +454,15 @@ void hfs_bmap_free(struct hfs_bnode *node)
  
  		nidx -= len * 8;
  		i = node->next;
 -		hfs_bnode_put(node);
  		if (!i) {
  			/* panic */;
- 			pr_crit("unable to free bnode %u. bmap not found!\n",
+ 			pr_crit("unable to free bnode %u. "
+ 					"bmap not found!\n",
  				node->this);
 +			hfs_bnode_put(node);
  			return;
