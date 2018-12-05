@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4672C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B291BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B89920879
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B86320879
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 17:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544029867;
-	bh=0FrrbUlEI8CmS1B1EIIh39d1w2fN9l01bUzg08Wz0Gg=;
+	s=default; t=1544029876;
+	bh=8yCbP85SCsl5jYFdv43g52Dd3CujS7zzrGrQcgEiBgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wc6kc/os0/GZKVkO36d/lC1B3H8B5vRQnNjRaACxMg0eP+9LKZ5YqezpfsYTwEzcA
-	 14TydHUOO1T2zomX1HN8dK10Fg+hBItq81+x5uGXorguRS15azL2cwtXx9w5vjRFHi
-	 mWKaCUDpSQYKFJ3JWlo0TZOL1er4samrOkR15K/E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B89920879
+	b=hxhzxilIdqVI61CU4JcXUXtzVreY6xs4dn7yVgkSzV9Gg73oUL2G2ln0GUAWRJSyv
+	 aZA/AOdxWCzCK3lI76UvZX52Su+ReTd+vSE/z0YcXpkfwSj8W3gtBQOp0oLX2uetiW
+	 nLP+gS95zZCvc9EJEIbZaro8Diyvg/bOTmU9soCA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B86320879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbeLERLG (ORCPT
+        id S1728479AbeLERLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:11:06 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33334 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbeLERLC (ORCPT
+        Wed, 5 Dec 2018 12:11:15 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38192 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728390AbeLERLA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:11:02 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l11so23137890qtp.0;
-        Wed, 05 Dec 2018 09:11:01 -0800 (PST)
+        Wed, 5 Dec 2018 12:11:00 -0500
+Received: by mail-qt1-f193.google.com with SMTP id p17so23093288qtl.5;
+        Wed, 05 Dec 2018 09:10:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WntvJHPUjYLNcQdbBiZiFTJahfu4d23ydyTd8KYKRZI=;
-        b=ufAsyGaEAKP4s6S9O+evuOAhsTgoTjWlYO6oRNw8JWHfE88QW1FivkU7YT95xAJwQJ
-         GcpncMbtUYlaEYWdVP4IAjBSL6ic/l8PER8AqhQKWDHl7YKYu50qVFwATNnfSxwy6LGt
-         DMwtWCOAEejfJIhW6Ut0Jxz11R1k0/1F/sxd9Tvbdnz+R8LXiLN3mZMtRIlVs6mZ9M0j
-         guv67uH2GAUpmiIYUnmJRL8q5pJhnv+LFDuz3yKlEn4gcgeBmIf/kvh3S8YaYRMIglj7
-         MLHkaAkxwB3hClh2hRtiNz2OcnKTq2iwX9cR4LFd1GoYNK5Q040oSU1clJq0eeaDJZXo
-         4bNw==
-X-Gm-Message-State: AA+aEWZuTqX6i3Ikp65QBDFeiRinh0mlxzxFyd0G39+pTBJYPmuAHNjN
-        /G7x/NStX33BukLCGGvP2eA=
-X-Google-Smtp-Source: AFSGD/XXH7SUHJhOWX6aZ1F8Oe3GhfrhaXoKadOnaz64RORT7PRBfRz/6+Gdx2GmLZRDASFE5pXPkQ==
-X-Received: by 2002:a0c:81c4:: with SMTP id 4mr25404109qve.156.1544029861252;
-        Wed, 05 Dec 2018 09:11:01 -0800 (PST)
+        bh=4RJ1tad/iwAWBQQeHHB2twpexhanjcCN74RMuiZIAtk=;
+        b=kmYpE1gweKQul0lI5r6bn7ORrRXmtiPUM3XG5sM76WAdv8UTmKYxDOTuwBvn3d1Mf+
+         kn0xipPefMUzT0YLZxN5fUgRr+pwCf4lIe6ujUSIf9Rq5T8WdyUNuR5dcJzvA0Wa6O1v
+         qAn/H73ENz0wzL5uGbpJHikb2dO8n/YnqtLfxOaOCO9MuTIhNDbZAMDp+ldyByc8s8qu
+         ocXh4w+3mBdaZpUdiHIlk1zho7y+YKmx6lbRSQwZkcTbF/IYNGXsBJhuoOAE3XGELEkL
+         0fejnZUWcuG+jOY7h15sbOthXzK6AIDW+XuZRIu86VVIVSbc+FoGyTZNkV9Gmy4Njbrl
+         uPrQ==
+X-Gm-Message-State: AA+aEWaK2ZqBsdNmTOWsmVYaxURmYG4uqP9FQprB5GF8KHVL0Im88ZhJ
+        uZ4Jyx02fpPEyr9sjE1EZYciwfxXxI8=
+X-Google-Smtp-Source: AFSGD/ULOaMhyogQlXxeSBzKEbzztc/aVocCQj1WC7ttVagQsYB9D52lMSrhQfVxmzACQ+0Ykw5jJQ==
+X-Received: by 2002:aed:39a1:: with SMTP id m30mr23603353qte.354.1544029858679;
+        Wed, 05 Dec 2018 09:10:58 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.59
+        by smtp.gmail.com with ESMTPSA id q15sm12098751qkl.81.2018.12.05.09.10.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 09:11:00 -0800 (PST)
+        Wed, 05 Dec 2018 09:10:57 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -60,9 +59,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 14/14] blkcg: rename blkg_try_get() to blkg_tryget()
-Date:   Wed,  5 Dec 2018 12:10:39 -0500
-Message-Id: <20181205171039.73066-15-dennis@kernel.org>
+Subject: [PATCH 12/14] blkcg: remove bio_disassociate_task()
+Date:   Wed,  5 Dec 2018 12:10:37 -0500
+Message-Id: <20181205171039.73066-13-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181205171039.73066-1-dennis@kernel.org>
 References: <20181205171039.73066-1-dennis@kernel.org>
@@ -71,97 +70,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blkg reference counting now uses percpu_ref rather than atomic_t. Let's
-make this consistent with css_tryget. This renames blkg_try_get to
-blkg_tryget and now returns a bool rather than the blkg or %NULL.
+Now that a bio only holds a blkg reference, so clean up is simply
+putting back that reference. Remove bio_disassociate_task() as it just
+calls bio_disassociate_blkg() and call the latter directly.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- block/bio.c                |  2 +-
- block/blk-cgroup.c         |  3 +--
- block/blk-iolatency.c      |  2 +-
- include/linux/blk-cgroup.h | 12 +++++-------
- 4 files changed, 8 insertions(+), 11 deletions(-)
+ block/bio.c         | 11 +----------
+ include/linux/bio.h |  2 --
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 7ec5316e6ecc..06760543ec81 100644
+index ce1e512dca5a..7ec5316e6ecc 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1990,7 +1990,7 @@ static void __bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
+@@ -244,7 +244,7 @@ struct bio_vec *bvec_alloc(gfp_t gfp_mask, int nr, unsigned long *idx,
+ 
+ void bio_uninit(struct bio *bio)
  {
- 	bio_disassociate_blkg(bio);
- 
--	bio->bi_blkg = blkg_try_get_closest(blkg);
-+	bio->bi_blkg = blkg_tryget_closest(blkg);
+-	bio_disassociate_task(bio);
++	bio_disassociate_blkg(bio);
  }
+ EXPORT_SYMBOL(bio_uninit);
  
- /**
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 2ca7611fe274..6bd0619a7d6e 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1736,8 +1736,7 @@ void blkcg_maybe_throttle_current(void)
- 	blkg = blkg_lookup(blkcg, q);
- 	if (!blkg)
- 		goto out;
--	blkg = blkg_try_get(blkg);
--	if (!blkg)
-+	if (!blkg_tryget(blkg))
- 		goto out;
- 	rcu_read_unlock();
- 
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 5a79f06a730d..0b14c3d57769 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -698,7 +698,7 @@ static void blkiolatency_timer_fn(struct timer_list *t)
- 		 * We could be exiting, don't access the pd unless we have a
- 		 * ref on the blkg.
- 		 */
--		if (!blkg_try_get(blkg))
-+		if (!blkg_tryget(blkg))
- 			continue;
- 
- 		iolat = blkg_to_lat(blkg);
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index d19ef15a673d..752de1becb5c 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -491,27 +491,25 @@ static inline void blkg_get(struct blkcg_gq *blkg)
+@@ -2073,15 +2073,6 @@ void bio_associate_blkg(struct bio *bio)
  }
+ EXPORT_SYMBOL_GPL(bio_associate_blkg);
  
+-/**
+- * bio_disassociate_task - undo bio_associate_current()
+- * @bio: target bio
+- */
+-void bio_disassociate_task(struct bio *bio)
+-{
+-	bio_disassociate_blkg(bio);
+-}
+-
  /**
-- * blkg_try_get - try and get a blkg reference
-+ * blkg_tryget - try and get a blkg reference
-  * @blkg: blkg to get
-  *
-  * This is for use when doing an RCU lookup of the blkg.  We may be in the midst
-  * of freeing this blkg, so we can only use it if the refcnt is not zero.
-  */
--static inline struct blkcg_gq *blkg_try_get(struct blkcg_gq *blkg)
-+static inline bool blkg_tryget(struct blkcg_gq *blkg)
- {
--	if (percpu_ref_tryget(&blkg->refcnt))
--		return blkg;
--	return NULL;
-+	return percpu_ref_tryget(&blkg->refcnt);
- }
- 
- /**
-- * blkg_try_get_closest - try and get a blkg ref on the closet blkg
-+ * blkg_tryget_closest - try and get a blkg ref on the closet blkg
-  * @blkg: blkg to get
-  *
-  * This walks up the blkg tree to find the closest non-dying blkg and returns
-  * the blkg that it did association with as it may not be the passed in blkg.
-  */
--static inline struct blkcg_gq *blkg_try_get_closest(struct blkcg_gq *blkg)
-+static inline struct blkcg_gq *blkg_tryget_closest(struct blkcg_gq *blkg)
- {
- 	while (!percpu_ref_tryget(&blkg->refcnt))
- 		blkg = blkg->parent;
+  * bio_clone_blkg_association - clone blkg association from src to dst bio
+  * @dst: destination bio
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 84e1c4dc703a..7380b094dcca 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -516,7 +516,6 @@ void bio_disassociate_blkg(struct bio *bio);
+ void bio_associate_blkg(struct bio *bio);
+ void bio_associate_blkg_from_css(struct bio *bio,
+ 				 struct cgroup_subsys_state *css);
+-void bio_disassociate_task(struct bio *bio);
+ void bio_clone_blkg_association(struct bio *dst, struct bio *src);
+ #else	/* CONFIG_BLK_CGROUP */
+ static inline void bio_disassociate_blkg(struct bio *bio) { }
+@@ -524,7 +523,6 @@ static inline void bio_associate_blkg(struct bio *bio) { }
+ static inline void bio_associate_blkg_from_css(struct bio *bio,
+ 					       struct cgroup_subsys_state *css)
+ { }
+-static inline void bio_disassociate_task(struct bio *bio) { }
+ static inline void bio_clone_blkg_association(struct bio *dst,
+ 					      struct bio *src) { }
+ #endif	/* CONFIG_BLK_CGROUP */
 -- 
 2.17.1
 
