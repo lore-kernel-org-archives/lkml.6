@@ -7,88 +7,85 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D907C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA8EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C777214F1
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B380B20989
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 09:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCSh3Um2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C777214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7olsBIR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B380B20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbeLEJzX (ORCPT
+        id S1729906AbeLEJza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:55:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33734 "EHLO mail.kernel.org"
+        Wed, 5 Dec 2018 04:55:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbeLEJzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:55:20 -0500
+        id S1727271AbeLEJz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 04:55:26 -0500
 Received: from sasha-vm.mshome.net (unknown [213.57.143.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7325F20661;
-        Wed,  5 Dec 2018 09:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3DB220661;
+        Wed,  5 Dec 2018 09:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544003719;
-        bh=ZBkZQS9Ls4EgNzaYVDGAQEJ6U/wuGIllDXMF4ki6YOA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pCSh3Um2xCN1kHCqlET/hMr0/po8kN+R8Y8JVgMyDsGAU6Tsi6GZQN7xJo6jtj6WP
-         Sy217KXghR6MGwc5Oa17i2IVe/5YyLbv0yJ4zpyXpHrjBDGKF/U0xmFlaC0WScn/n7
-         C/KLVccEAnBCC6tzcUBNBKEPXhx6t+M8OWzq7ucY=
+        s=default; t=1544003725;
+        bh=2+LkGUCJA5F+CJuoOb9s4mjMsJTb5bXcUaxg5rQuJyw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l7olsBIRwHZNu0qJDyctd5nP/5JMO1+aHK8HUt4LQzZwBMYX/FqE9BYz3kKeQZefz
+         UHFoOrAKsG5X+Su0Bhcd893ouazcyhM0vyQ++REtgOtyLC+lTNb/BcU8ZlEGBsaZs0
+         myUQKlf5KPLEPpeVom1YpU/DiSJ0I9TzWePVHLLQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 01/26] ARM: OMAP2+: prm44xx: Fix section annotation on omap44xx_prm_enable_io_wakeup
-Date:   Wed,  5 Dec 2018 04:54:05 -0500
-Message-Id: <20181205095430.8019-1-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 03/26] sysv: return 'err' instead of 0 in __sysv_write_inode
+Date:   Wed,  5 Dec 2018 04:54:07 -0500
+Message-Id: <20181205095430.8019-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181205095430.8019-1-sashal@kernel.org>
+References: <20181205095430.8019-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit eef3dc34a1e0b01d53328b88c25237bcc7323777 ]
+[ Upstream commit c4b7d1ba7d263b74bb72e9325262a67139605cde ]
 
-When building the kernel with Clang, the following section mismatch
-warning appears:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-WARNING: vmlinux.o(.text+0x38b3c): Section mismatch in reference from
-the function omap44xx_prm_late_init() to the function
-.init.text:omap44xx_prm_enable_io_wakeup()
-The function omap44xx_prm_late_init() references
-the function __init omap44xx_prm_enable_io_wakeup().
-This is often because omap44xx_prm_late_init lacks a __init
-annotation or the annotation of omap44xx_prm_enable_io_wakeup is wrong.
+fs/sysv/inode.c: In function '__sysv_write_inode':
+fs/sysv/inode.c:239:6: warning:
+ variable 'err' set but not used [-Wunused-but-set-variable]
 
-Remove the __init annotation from omap44xx_prm_enable_io_wakeup so there
-is no more mismatch.
+__sysv_write_inode should return 'err' instead of 0
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/prm44xx.c | 2 +-
+ fs/sysv/inode.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
-index 0958d070d3db..46e29afe1c09 100644
---- a/arch/arm/mach-omap2/prm44xx.c
-+++ b/arch/arm/mach-omap2/prm44xx.c
-@@ -333,7 +333,7 @@ void omap44xx_prm_reconfigure_io_chain(void)
-  * to occur, WAKEUPENABLE bits must be set in the pad mux registers, and
-  * omap44xx_prm_reconfigure_io_chain() must be called.  No return value.
-  */
--static void __init omap44xx_prm_enable_io_wakeup(void)
-+static void omap44xx_prm_enable_io_wakeup(void)
- {
- 	s32 inst = omap4_prmst_get_prm_dev_inst();
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index 88956309cc86..9d26f2034d54 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -281,7 +281,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
+                 }
+         }
+ 	brelse(bh);
+-	return 0;
++	return err;
+ }
  
+ int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
 -- 
 2.17.1
 
