@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF8CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F63C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68AA2081C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:34:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137462087F
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 14:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Yoe0igk3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68AA2081C
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DFIyTJBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137462087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeLEOeH (ORCPT
+        id S1727710AbeLEOeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 09:34:07 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47246 "EHLO
+        Wed, 5 Dec 2018 09:34:15 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47310 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeLEOeH (ORCPT
+        with ESMTP id S1727103AbeLEOeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:34:07 -0500
+        Wed, 5 Dec 2018 09:34:15 -0500
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181205143404euoutp0200d85496831a8179ecd1d044645751f3~tdmnqzmjK2134921349euoutp02Q
-        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 14:34:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181205143404euoutp0200d85496831a8179ecd1d044645751f3~tdmnqzmjK2134921349euoutp02Q
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181205143413euoutp02ab45433c39c3056c0775f510e8340c13~tdmwdiPnt2134921349euoutp02S
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Dec 2018 14:34:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181205143413euoutp02ab45433c39c3056c0775f510e8340c13~tdmwdiPnt2134921349euoutp02S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544020444;
-        bh=tQgmyPhfWxlUoT9A/zAP4QR0b6JIMB6ZbPaEx1Hxyq8=;
+        s=mail20170921; t=1544020454;
+        bh=360O++Tlu3Gj+SOnGunFRnOgxXL62bacYenlerGi2k4=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Yoe0igk3SYjPpEhkmrJkC+CigiF6K5XJSOeCOIS0Zjh5ALu8p73D7TzmMDlLKTXmE
-         6G+YoP2/cRSXPf5Qcd+XHV5cV4egaBFsFWOQRWwGdZO4rwhqsgLbJZkMMVXNxkjgoT
-         sRqNivTFWdiCDSbZicnmo817c8vByEojUWnP7M14=
+        b=DFIyTJBzIIPQCyHCsZ6IxlLAr7gtOv6f2TxKDCEEds7XzVlT4Kb/LvXSp11Z1h8r7
+         Hob1Moy61djYjHb6xvRPRTexJ63+HcjhDVqDfV9emjejuc7neArlLpicQlUPSrCgRo
+         msfZo/7antCKNqXkngxBLHDrQ4jFw+0HT1oj8ZI0=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181205143403eucas1p2ed1d24777d93e9a1fe5fbbbd031fa990~tdmmdbxbF0544105441eucas1p2I;
-        Wed,  5 Dec 2018 14:34:03 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9D.2A.04294.AD1E70C5; Wed,  5
-        Dec 2018 14:34:02 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181205143413eucas1p1e470a976f378a58f9eae1cba87837828~tdmv1h4b82432124321eucas1p1r;
+        Wed,  5 Dec 2018 14:34:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 84.3A.04294.4E1E70C5; Wed,  5
+        Dec 2018 14:34:12 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181205143402eucas1p2a1507dde6c6875783d7fbf654f2050d1~tdmlnjnVp2069120691eucas1p25;
-        Wed,  5 Dec 2018 14:34:02 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        20181205143412eucas1p20fd9f69a63caa071cbe8004f0de7521b~tdmvIqcE50544005440eucas1p2E;
+        Wed,  5 Dec 2018 14:34:12 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181205143402eusmtrp21a27cb98e33d1b05d4a8da9913d43384~tdmlTugC21909919099eusmtrp2B;
-        Wed,  5 Dec 2018 14:34:01 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-41-5c07e1da93e5
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id DD.2B.04284.9D1E70C5; Wed,  5
-        Dec 2018 14:34:01 +0000 (GMT)
+        20181205143412eusmtrp2a3dc2a4777c952877a3c5d94e345b073~tdmu6RJ9g1909919099eusmtrp2Y;
+        Wed,  5 Dec 2018 14:34:12 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-5e-5c07e1e46dda
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 63.60.04128.4E1E70C5; Wed,  5
+        Dec 2018 14:34:12 +0000 (GMT)
 Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181205143401eusmtip251de9ea8fe3a7fe7c2de1485b35a0168~tdmk8VfQI1591115911eusmtip2G;
-        Wed,  5 Dec 2018 14:34:01 +0000 (GMT)
-Subject: Re: [PATCH 11/15 v3] gpio: Add devm_gpiod_unhinge()
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181205143411eusmtip12464e37de1217050df236cca12a2efb7~tdmugiX1q1839518395eusmtip17;
+        Wed,  5 Dec 2018 14:34:11 +0000 (GMT)
+Subject: Re: [PATCH 10/15 v3] gpio: devres: Handle nonexclusive GPIOs
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
@@ -68,51 +68,51 @@ Cc:     linux-kernel@vger.kernel.org,
         Charles Keepax <ckeepax@opensource.cirrus.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <0179c784-137d-b37a-1b93-cf2f957730a8@samsung.com>
-Date:   Wed, 5 Dec 2018 15:34:01 +0100
+Message-ID: <626564ae-8dd6-d271-7a4f-11071df2d7e8@samsung.com>
+Date:   Wed, 5 Dec 2018 15:34:11 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
         Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181205124721.26624-12-linus.walleij@linaro.org>
+In-Reply-To: <20181205124721.26624-11-linus.walleij@linaro.org>
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjt3d3uvVqz17nwwb5oiGCUZgqNlFUUNoggCkRKq5mXKW1Tdv1I
-        64cgmi4pEUWdH9WSpkKTLs2PGQunOCxEMw0dSQrLNLBJjigSzevV8t855zmH9xx4aULWLgmj
-        Mw05jNGg0SnIQHHn4O+Ro55ZKuWYu/mk0t/0VqysmfWSyvESDil/jpeJlNUrVpHyg6ORPE2q
-        fZMllLrHPE2pufZyUv3p42tSXdu4htTL3IFL5NXAhHRGl5nHGKNVNwMzPPVvJNmm8Ds2S72o
-        CD3cb0IBNOA4WCv5RZpQIC3DrQieW82EQPwIVl90iQSyjOBPXzPaitQ9Wth0WRG0jc5QAvEh
-        6LdaJCZE0yE4AXq5ND4gxznQUupAvIfAJQi4SifBH0gcA6ZFE8n7pVgFHstGJzEOh4WhCoKX
-        9+AUcHy9x8tSHAxD9V4xjwPwKbAMOCkeE/ggFNsbCAGHgsf7eKM0YI6C7w++kELpczDYVbY5
-        IAS+uV9RAt4Haz1bgWIE9+vMlEAqENgbuzfT8dDvfr8xjMCR0OGIFuQzYHJVULwMOAgmF4OF
-        EkFQ1VlLCLIUykplgjsCzG7bv2f7RseISqQwb5tm3jbHvG2O+f+7T5C4HYUyuaxey7DHDUx+
-        FKvRs7kGbdStLD2H1n/Qu1W3vxs5VtJcCNNIsUs6P0OlyCSaPLZA70JAEwq5tDVhXZKmawoK
-        GWPWDWOujmFdaC8tVoRK7+6YuSbDWk0Oc5thshnj1lVEB4QVoVhVau+F60esiXI3qwvPj4y0
-        nZ0u8A1fcQ00tOjjWO2hcU+IXZcx4VhKSx5esZ+Yuziqtf0IS3TuLm9Omnoa6V30vayW+Je7
-        OnS5say9bae857LMHa8q5bTnW6tqciKm6or6msKXQpLGCj9Hp8TMBzkn5lSX7M8yRoJTbckW
-        hZjN0MQcJoys5i9muejyPQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsVy+t/xe7o3H7LHGCzbbWnxZe4pFoupD5+w
-        WVxp3cRo8e1KB5PFlD/LmSwu75rD5sDm8f5GK7vHzll32T02repk87hzbQ+bx/Q5/xk9Pm+S
-        C2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mu4
-        NXM/a0GXSsW6RTOZGhj7ZLsYOTkkBEwkZvS/ZO5i5OIQEljKKPFufyMLREJG4uS0BlYIW1ji
-        z7UuNoiit4wSzUe2AjkcHMICNhK7NyWB1IgIlEh82L+THaSGWaCVUeLR4xtQDccYJRa1nWYG
-        qWITMJToetsF1swrYCdxaxHYFSwCKhIvT/aAlYgKxEhMufwabDGvgKDEyZlPwA7iFLCXWHRk
-        HzuIzSygLvFn3iVmCFteonnrbChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5N
-        zy021CtOzC0uzUvXS87P3cQIjLptx35u3sF4aWPwIUYBDkYlHt4XD9hjhFgTy4orcw8xSnAw
-        K4nwrrABCvGmJFZWpRblxxeV5qQWH2I0BXpuIrOUaHI+MCHklcQbmhqaW1gamhubG5tZKInz
-        njeojBISSE8sSc1OTS1ILYLpY+LglGpg5Cs/ku5aJXgr7mvGb4acCUtmy/x4/7Gk0rL5hqsH
-        W3L/+o0f24rtFyxiV7U4v3vScse4qMcesvdCbHvfRXuYyh1iPiKdLLEienr1bol5rAn/exL4
-        bpRsmXew/dq89lsblQO2L+7IYvfb++aFRFxHldj/GwuvcyTK6wl8tdM8qTqH+ah5vdo9JZbi
-        jERDLeai4kQAR/YTPtACAAA=
-X-CMS-MailID: 20181205143402eucas1p2a1507dde6c6875783d7fbf654f2050d1
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH++3e3XtdTn5Oy4NJ6YjCKF8lDDIzSBnZHxIUUobOvKno1DZn
+        +aBGpukKGZKoVyP/0HwQFStNh1hpubSX2TbNRygZpWCG2sPykdeb5X/fc87nfM85cBhCVi92
+        ZxJT0llNiipZTknIps65V7vGRukov5rSIMXs9W5SUTI6RimseSak+G4tECmuzdeKFG/NlVQI
+        pZzqz6OVLdwwrTQ1FFLKIXsrpSytXELKGdPmCOq4JCiOTU7MYDW+wTGShGnTLJlm8zhnv/mU
+        0qPhjQbkwADeA1PDzaQBSRgZrkNQVjH+N5hFoH9oIIRgBsHgrzbxaot1YQ7xWoZrEQzcEgvQ
+        FIL3dT3L7QzjgkPhS1Mcz7jidKjONyOeIXAeApOxjeALFPYHw6SB4rUUB0OnpWLFlMRbYdDW
+        hXifDTgKzJ9yBMQZusrHSF474P1QXVK1ogm8BXIbKwhBu8HA2A0RPwuwiQa7vZHmfQAfBK7o
+        grC/C0xY7tOC9oClllU+F8HlMo4WgqsIGiubKYHaCx2WN2LeiMDecMfsK6QPwEXrPST4O0H/
+        pLOwgxMUN5USQloKBfkygd4GnOX2v7GPe3oJI5Jzay7j1lzDrbmG+z+3CpENyI3VadXxrDYg
+        hT3ro1WptbqUeJ9TqWoTWn6g54uW2WZkno9tR5hBckfp5xE6SiZWZWgz1e0IGELuKq0LWk5J
+        41SZWawmNVqjS2a17WgTQ8rdpNnrRk7IcLwqnU1i2TRWs1oVMQ7uehQekBM65PNiqSG29Ij/
+        zr5nlO7Mvg+BlUMtE4eo8MIffTZL/fThkezMS0ZbtVeglxGORre2GvzCrkzMJckdA15OPqrv
+        15dv/7i+V9FB31V97XzHBn578psJ4zxfH6v5uRvGiwbp88W9MQsRuu7IxZxhR8vJyNMGTZnY
+        +8GoZ0iWnNQmqPx3EBqt6g8Iw/BTPAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xu7pPHrLHGLTd4rX4MvcUi8XUh0/Y
+        LK60bmK0+Halg8liyp/lTBaXd81hc2DzeH+jld1j56y77B6bVnWyedy5tofNY/qc/4wenzfJ
+        BbBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GV8
+        2vSFpeCqTMW1ZUfZGhjvinUxcnJICJhIXPn7k7GLkYtDSGApo8SZBZdZIRIyEienNUDZwhJ/
+        rnWxQRS9ZZR43vaCqYuRg0NYwFXi3bYUkBoRgRKJD/t3soPUMAu0Mko8enwDquEYo8TVtrfM
+        IFVsAoYSXW9BJnFy8ArYSRw7PpsRxGYRUJG4ffUkmC0qECMx5fJrVogaQYmTM5+wgNicAvYS
+        S6YuALOZBdQl/sy7xAxhy0s0b50NZYtL3Hoyn2kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXF
+        uem5xUZ6xYm5xaV56XrJ+bmbGIFxt+3Yzy07GLveBR9iFOBgVOLhffGAPUaINbGsuDL3EKME
+        B7OSCO8KG6AQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wNTQl5JvKGpobmFpaG5sbmxmYWS
+        OO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBkZ+d7uvuhN6TibmCunbW+mf4Kw6dc5G0sGYS3JB
+        mFiNd4rwVv0Ag5WVU2f4zMz4kfl4mb9ng5NB39s7c/bKe6lOM3g7ZRbDfenCN6tSt64QXpmQ
+        klm6vcJwZuzWKTMUc2XmWgZZl+9VmlL/iSv3xiH3+98ZGWyDT2uUXszql3wg/XV64vu4u0os
+        xRmJhlrMRcWJAIwQII/RAgAA
+X-CMS-MailID: 20181205143412eucas1p20fd9f69a63caa071cbe8004f0de7521b
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181205124846epcas3p1219065f3ca6c30f6e594a31ff3e72636
+X-RootMTR: 20181205124826epcas2p13d03e4a183731f285add6c87a8a1a42a
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181205124846epcas3p1219065f3ca6c30f6e594a31ff3e72636
+X-CMS-RootMailID: 20181205124826epcas2p13d03e4a183731f285add6c87a8a1a42a
 References: <20181205124721.26624-1-linus.walleij@linaro.org>
-        <CGME20181205124846epcas3p1219065f3ca6c30f6e594a31ff3e72636@epcas3p1.samsung.com>
-        <20181205124721.26624-12-linus.walleij@linaro.org>
+        <CGME20181205124826epcas2p13d03e4a183731f285add6c87a8a1a42a@epcas2p1.samsung.com>
+        <20181205124721.26624-11-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -121,124 +121,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Linus,
 
 On 2018-12-05 13:47, Linus Walleij wrote:
-> This adds a function named devm_gpiod_unhinge() that removes
-> the resource management from a GPIO descriptor.
+> When we get a nonexeclusive GPIO descriptor using managed
+> resources, we should only add it to the list of managed
+> resources once: on the first user. Augment the
+> devm_gpiod_get_index() and devm_gpiod_get_from_of_node()
+> calls to account for this by checking if the descriptor
+> is already resource managed before we proceed to allocate
+> a new resource management struct.
 >
-> I am not sure if this is the best anglosaxon name for the
-> function, no other managed resources have an equivalent
-> currently, but I chose "unhinge" as the closest intuitive
-> thing I could imagine that fits Rusty Russell's API design
-> criterions "the obvious use is the correct one" and
-> "the name tells you how to use it".
->
-> The idea came out of a remark from Mark Brown that it should
-> be possible to handle over management of a resource from
-> devres to the regulator core, and indeed we can do that.
->
+> Cc: Mark Brown <broonie@kernel.org>
 > Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: b0ce7b29bfcd ("regulator/gpio: Allow nonexclusive GPIO access")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> ChangeLog v2->v3:
-> - Make sure to bail out of gpiod_unhinge() if the descritor
->   passed in is NULL or an error pointer.
-> - Accept of devres_destroy() returns -ENOENT: if we have
->   nonexclusive GPIOs, we may attempt to remove resource
->   management from the same descriptor multiple times.
-> ChangeLog v1->v2:
-> - New patch to be able to hand over GPIO descriptors to
->   the regulator core.
-> - Mark: feel free to apply this to the regulator tree with
->   the regulator tree with the rest.
+> ChangeLog v1->v3:
+> - New patch.
+> - This fix is in response to an issue Marek saw in the fixups
+>   for resource-managed GPIO descriptors used with ena_gpiod
+>   in the regulator subsystem.
+> - I first thought to apply it to the GPIO tree directly, but
+>   since it is not a regression it is better to put it into
+>   the regulator tree with the rest of the patches.
 > ---
->  Documentation/driver-model/devres.txt |  1 +
->  drivers/gpio/gpiolib-devres.c         | 30 +++++++++++++++++++++++++++
->  include/linux/gpio/consumer.h         | 10 +++++++++
->  3 files changed, 41 insertions(+)
+>  drivers/gpio/gpiolib-devres.c | 50 ++++++++++++++++++++++++++---------
+>  1 file changed, 38 insertions(+), 12 deletions(-)
 >
-> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-> index 43681ca0837f..fc4cc24dfb97 100644
-> --- a/Documentation/driver-model/devres.txt
-> +++ b/Documentation/driver-model/devres.txt
-> @@ -254,6 +254,7 @@ GPIO
->    devm_gpiod_get_index_optional()
->    devm_gpiod_get_optional()
->    devm_gpiod_put()
-> +  devm_gpiod_unhinge()
->    devm_gpiochip_add_data()
->    devm_gpiochip_remove()
->    devm_gpio_request()
 > diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-> index a57e968025a8..e9a17ec4de02 100644
+> index 01959369360b..a57e968025a8 100644
 > --- a/drivers/gpio/gpiolib-devres.c
 > +++ b/drivers/gpio/gpiolib-devres.c
-> @@ -346,6 +346,36 @@ void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
->  }
->  EXPORT_SYMBOL(devm_gpiod_put);
+> @@ -98,15 +98,28 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
+>  	struct gpio_desc **dr;
+>  	struct gpio_desc *desc;
 >  
-> +/**
-> + * devm_gpiod_unhinge - Remove resource management from a gpio descriptor
-> + * @dev:	GPIO consumer
-> + * @desc:	GPIO descriptor to remove resource management from
-> + *
-> + * Remove resource management from a GPIO descriptor. This is needed when
-> + * you want to hand over lifecycle management of a descriptor to another
-> + * mechanism.
-> + */
+> +	desc = gpiod_get_index(dev, con_id, idx, flags);
+> +	if (IS_ERR(desc))
+> +		return desc;
 > +
-> +void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc)
-> +{
-> +	int ret;
-> +
-> +	if (IS_ERR_OR_NULL(desc))
-> +		return;
-> +	ret = devres_destroy(dev, devm_gpiod_release,
-> +			     devm_gpiod_match, desc);
-
-    devres_destroy(dev, devm_gpiod_release, devm_gpiod_match, &desc);
-
 > +	/*
-> +	 * If the GPIO descriptor is requested as nonexclusive, we
-> +	 * may call this function several times on the same descriptor
-> +	 * so it is OK if devres_destroy() returns -ENOENT.
+> +	 * For non-exclusive GPIO descriptors, check if this descriptor is
+> +	 * already under resource management by this device.
 > +	 */
-> +	if (ret == -ENOENT)
-> +		return;
-> +	/* Anything else we should warn about */
-> +	WARN_ON(ret);
-> +}
-> +EXPORT_SYMBOL(devm_gpiod_unhinge);
+> +	if (flags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
+> +		struct devres *dres;
 > +
->  /**
->   * devm_gpiod_put_array - Resource-managed gpiod_put_array()
->   * @dev:	GPIO consumer
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index 348885f2f3d3..8aebcf822082 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -104,6 +104,7 @@ struct gpio_descs *__must_check
->  devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
->  			      enum gpiod_flags flags);
->  void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
-> +void devm_gpiod_unhinge(struct device *dev, struct gpio_desc *desc);
->  void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs);
+> +		dres = devres_find(dev, devm_gpiod_release,
+> +				   devm_gpiod_match, desc);
+
+    devres_find(dev, devm_gpiod_release, devm_gpiod_match, &desc);
+
+> +		if (dres)
+> +			return desc;
+> +	}
+> +
+>  	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+>  			  GFP_KERNEL);
+> -	if (!dr)
+> +	if (!dr) {
+> +		gpiod_put(desc);
+>  		return ERR_PTR(-ENOMEM);
+> -
+> -	desc = gpiod_get_index(dev, con_id, idx, flags);
+> -	if (IS_ERR(desc)) {
+> -		devres_free(dr);
+> -		return desc;
+>  	}
 >  
->  int gpiod_get_direction(struct gpio_desc *desc);
-> @@ -249,6 +250,15 @@ static inline void gpiod_put(struct gpio_desc *desc)
->  	WARN_ON(1);
->  }
+>  	*dr = desc;
+> @@ -140,15 +153,28 @@ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+>  	struct gpio_desc **dr;
+>  	struct gpio_desc *desc;
 >  
-> +static inline void devm_gpiod_unhinge(struct device *dev,
-> +				      struct gpio_desc *desc)
-> +{
-> +	might_sleep();
+> +	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
+> +	if (IS_ERR(desc))
+> +		return desc;
 > +
-> +	/* GPIO can never have been requested */
-> +	WARN_ON(1);
-> +}
+> +	/*
+> +	 * For non-exclusive GPIO descriptors, check if this descriptor is
+> +	 * already under resource management by this device.
+> +	 */
+> +	if (dflags & GPIOD_FLAGS_BIT_NONEXCLUSIVE) {
+> +		struct devres *dres;
 > +
->  static inline void gpiod_put_array(struct gpio_descs *descs)
->  {
->  	might_sleep();
+> +		dres = devres_find(dev, devm_gpiod_release,
+> +				   devm_gpiod_match, desc);
+
+ 	devres_find(dev, devm_gpiod_release, devm_gpiod_match, &desc);
+
+> +		if (dres)
+> +			return desc;
+> +	}
+> +
+>  	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+>  			  GFP_KERNEL);
+> -	if (!dr)
+> +	if (!dr) {
+> +		gpiod_put(desc);
+>  		return ERR_PTR(-ENOMEM);
+> -
+> -	desc = gpiod_get_from_of_node(node, propname, index, dflags, label);
+> -	if (IS_ERR(desc)) {
+> -		devres_free(dr);
+> -		return desc;
+>  	}
+>  
+>  	*dr = desc;
 
 Best regards
 -- 
