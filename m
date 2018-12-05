@@ -2,156 +2,102 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15504C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4264C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94D52084C
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C5920850
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 06:15:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Xe/M04di"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94D52084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbGfMFfi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C5920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbeLEGLu (ORCPT
+        id S1727000AbeLEGPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:11:50 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:48625 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbeLEGLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:11:50 -0500
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id wB56BQ5x024859
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Dec 2018 15:11:26 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wB56BQ5x024859
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543990287;
-        bh=HOQIBPGxhmfjxUen8ioHXZgbxEuLiOVnO/JS61x0USQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Xe/M04dimj1bHZhD2o/dlyg6NyDy2J+a3Mbt5YxqnRbxdI18Yfwfejpgqht++mFWm
-         crm3+DidCLhevi4fJMDSKg0/hGDFmeQbR1tJaZ1CmZvd8DNog4JGtGANsqx0Lur9B2
-         wQRWfGnVl4/KgnKw5ijmgJJXx9vde2bzByuJsFgEryvgv3uRyDP0rVGxu+UeZZYyNj
-         eF+8PpVcjbgYTIZsm9XFdRHZuYjzIQB9nBZV4QM/IRQdOddDy68vb8QSELpS9E+88X
-         Ew12ISN0uOcxZ4H3m/eHDwVic3H/8ZVYBLb/reS9DscTInMgmvyVCUZqXL54T2UtiB
-         o6vWvTKzttFoQ==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id p9so6700110uaa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Dec 2018 22:11:26 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ1BV1g4Ri0boiMTX4qBScP2/58V+O8uwHTf8c3/oXBWSUHA+v1
-        EfErqI0tF1FN2AJfaecxWvDmSOgcR0q6FIk9ukc=
-X-Google-Smtp-Source: AFSGD/V8TYOySbnK3Q3JEcoDcvNmIlvrqcB9xj38JpuJa9wGpx/4Y41gKiP8cmawpwgXe29z+mII3roXXXfs6nm5Osw=
-X-Received: by 2002:a9f:3193:: with SMTP id v19mr10593921uad.55.1543990285835;
- Tue, 04 Dec 2018 22:11:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1543978802-24196-1-git-send-email-yamada.masahiro@socionext.com> <de8a06d6-11c5-19ea-07a6-37f8624c8b66@oracle.com>
-In-Reply-To: <de8a06d6-11c5-19ea-07a6-37f8624c8b66@oracle.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 5 Dec 2018 15:10:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR2HXGXr0YvkqO8eC3hNeVK=oVMOwrn08PgVNFH79Yq=w@mail.gmail.com>
-Message-ID: <CAK7LNAR2HXGXr0YvkqO8eC3hNeVK=oVMOwrn08PgVNFH79Yq=w@mail.gmail.com>
-Subject: Re: [PATCH] x86/build: fix compiler support check for CONFIG_RETPOLINE
-To:     zhenzhong.duan@oracle.com
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Meelis Roos <mroos@linux.ee>, "H. Peter Anvin" <hpa@zytor.com>,
-        Borislav Petkov <bp@alien8.de>,
+        Wed, 5 Dec 2018 01:15:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726853AbeLEGPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 01:15:16 -0500
+Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 832472084C;
+        Wed,  5 Dec 2018 06:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543990515;
+        bh=HQ7Wh7LgPhqcMGTkr6mXgXPw29SZy7Zp7vMTIe5lqkI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cbGfMFfi45BsvD7JawUvmjCfWqYalDh67O1wDlwBIgJAm6IqcU5pG+/Ltz5IdXqIM
+         Ym1tsTL1HOnhm5PDvWEJxwqgc+Sle0Hi84YFXgFekgvTdWMurtqB2prWNEX9A2q3bF
+         q5CyvrpS2Oz0IqyVP1zn+4dh/logvvf1J/Iu9feo=
+Date:   Tue, 4 Dec 2018 22:15:14 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Martin Willi <martin@strongswan.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Milan Broz <gmazyland@gmail.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 3/6] crypto: x86/chacha20 - limit the
+ preemption-disabled section
+Message-ID: <20181205061513.GB26750@sol.localdomain>
+References: <20181129230217.158038-1-ebiggers@kernel.org>
+ <20181129230217.158038-4-ebiggers@kernel.org>
+ <acad781e9981c49b83b6dfdc8cefed6246df469a.camel@strongswan.org>
+ <CAKv+Gu89RiDBx35rtGS2uOZ+TwPt6P8UjwpqE17xm7dtMx-nNQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu89RiDBx35rtGS2uOZ+TwPt6P8UjwpqE17xm7dtMx-nNQ@mail.gmail.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 3:08 PM Zhenzhong Duan <zhenzhong.duan@oracle.com> wrote:
->
->
-> On 2018/12/5 11:00, Masahiro Yamada wrote:
-> > It is wrong to add CONFIG option diagnostic to the Makefile parse
-> > stage.
+On Mon, Dec 03, 2018 at 03:13:37PM +0100, Ard Biesheuvel wrote:
+> On Sun, 2 Dec 2018 at 11:47, Martin Willi <martin@strongswan.org> wrote:
 > >
-> > Once you are hit by the error about non-retpoline compiler, the
-> > compilation still breaks even after disabling CONFIG_RETPOLINE.
 > >
-> > The easiest fix is to move this check to the "archprepare" like commit
-> > 829fe4aa9ac1 ("x86: Allow generating user-space headers without a
-> > compiler") did.
+> > > To improve responsiveness, disable preemption for each step of the
+> > > walk (which is at most PAGE_SIZE) rather than for the entire
+> > > encryption/decryption operation.
 > >
-> > Link: https://lkml.org/lkml/2018/12/4/206
-> > Reported-by: Meelis Roos <mroos@linux.ee>
-> > Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
+> > It seems that it is not that uncommon for IPsec to get small inputs
+> > scattered over multiple blocks. Doing FPU context saving for each walk
+> > step then can slow down things.
 > >
-> >   arch/x86/Makefile | 14 ++++++++------
-> >   1 file changed, 8 insertions(+), 6 deletions(-)
+> > An alternative approach could be to re-enable preemption not based on
+> > the walk steps, but on the amount of bytes processed. This would
+> > satisfy both users, I guess.
 > >
-> > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> > index f5d7f41..ae0148b 100644
-> > --- a/arch/x86/Makefile
-> > +++ b/arch/x86/Makefile
-> > @@ -219,12 +219,7 @@ KBUILD_CFLAGS += -Wno-sign-compare
-> >   KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+> > In the long run we probably need a better approach for FPU context
+> > saving, as this really hurts performance-wise. For IPsec we should find
+> > a way to avoid the (multiple) per-packet FPU save/restores in softirq
+> > context, but I guess this requires support from process context
+> > switching.
 > >
-> >   # Avoid indirect branches in kernel to deal with Spectre
-> > -ifdef CONFIG_RETPOLINE
-> > -ifeq ($(RETPOLINE_CFLAGS),)
-> > -  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
-> > -endif
-> > -  KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
-> > -endif
-> > +KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
->
-> Is it better to also move "# Avoid indirect branches in kernel to deal
-> with Spectre"
->
-> and "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)"?
->
-> Seems unconditionaly using "KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)" will
-> have compiler
->
-> using "__x86_indirect_thunk_\reg" call even ifCONFIG_RETPOLINE is
-> disabled. I guess
->
-> link process will fail?
+> 
+> At Jason's Zinc talk at plumbers, this came up, and apparently someone
+> is working on this, i.e., to ensure that on x86, the FPU restore only
+> occurs lazily, when returning to userland rather than every time you
+> call kernel_fpu_end() [like we do on arm64 as well]
+> 
+> Not sure what the ETA for that work is, though, nor did I get the name
+> of the guy working on it.
 
+Thanks for the suggestion; I'll replace this with a patch that re-enables
+preemption every 4 KiB encrypted.  That also avoids having to do a
+kernel_fpu_begin(), kernel_fpu_end() pair just for hchacha_block_ssse3().  But
+yes, I'd definitely like repeated kernel_fpu_begin(), kernel_fpu_end() to not be
+incredibly slow.  That would help in a lot of other places too.
 
-Good catch.
-
-I will send v2.
-
-Thanks.
-
-
-
-> Thanks
->
-> Zhenzhong
->
-> >
-> >   archscripts: scripts_basic
-> >       $(Q)$(MAKE) $(build)=arch/x86/tools relocs
-> > @@ -307,6 +302,13 @@ ifndef CC_HAVE_ASM_GOTO
-> >       @echo Compiler lacks asm-goto support.
-> >       @exit 1
-> >   endif
-> > +ifdef CONFIG_RETPOLINE
-> > +ifeq ($(RETPOLINE_CFLAGS),)
-> > +     @echo "You are building kernel with non-retpoline compiler." >&2
-> > +     @echo "Please update your compiler." >&2
-> > +     @false
-> > +endif
-> > +endif
-> >
-> >   archclean:
-> >       $(Q)rm -rf $(objtree)/arch/i386
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+- Eric
