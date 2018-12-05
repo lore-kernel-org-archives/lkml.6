@@ -2,131 +2,168 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47A8C04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C46C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9897208E7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6EF5208E7
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 22:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wPE6U43m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9897208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jVY9sw8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6EF5208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeLEW5X (ORCPT
+        id S1728681AbeLEW53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 17:57:23 -0500
-Received: from mail-eopbgr40056.outbound.protection.outlook.com ([40.107.4.56]:28961
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727337AbeLEW5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 17:57:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cUG+DpK5ANaSZHEYAi0TDgSBVe7BGEPIscsYzFjUufg=;
- b=wPE6U43mMeQkiwR1aPOmzpGrBiN7SmTOt980bj02Dx9L3q0/rP0S8V7iyIJ/nenvdGCIMXTs7e+PR9Nl0fdj1qYanQme+1r9VeOzCuxZdDA727K5aYzkXBy/yZ5Eb47LYAa1PnM9LY4cH3e2xIrLdSmDQ1BTrI/pgkp6EEHmBB8=
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com (52.134.90.16) by
- AM0PR04MB4404.eurprd04.prod.outlook.com (52.135.148.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Wed, 5 Dec 2018 22:57:19 +0000
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::f038:ecc0:3ab5:3bbd]) by AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::f038:ecc0:3ab5:3bbd%4]) with mapi id 15.20.1382.023; Wed, 5 Dec 2018
- 22:57:19 +0000
-From:   York Sun <york.sun@nxp.com>
-To:     Tracy Smith <tlsmith3777@gmail.com>
-CC:     "bp@alien8.de" <bp@alien8.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "util-linux@vger.kernel.org" <util-linux@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Layerscape behavior when a UE is detected
-Thread-Topic: Layerscape behavior when a UE is detected
-Thread-Index: AQHUjO1qaWrQQwRuwEuKdfrMIj+t+g==
-Date:   Wed, 5 Dec 2018 22:57:18 +0000
-Message-ID: <AM0PR04MB39717D1017A161D54940486D9AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
-References: <CAChUvXNO_8Frw1igaEAHSxmdtTy7MJVm8W1NpUqZ6tFD0hXwhA@mail.gmail.com>
- <0BF2A47F-7F33-4E4D-A566-23AF2F4CCD52@theinkpens.com>
- <CAChUvXMVHxhawLFPFzz_0+iFxjQ+dRwpTsCGo95oc8Y+7a-2DQ@mail.gmail.com>
- <AM0PR04MB3971FBCF6CB23BE778D39EED9AD80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXPCfwfHrntJHWpsydYZE=P692Axd0pFE+GjZCXtx1fgog@mail.gmail.com>
- <CAChUvXMWZ-LYyqnczM-bt9cDP0r1XT+F1dcYuRHiVcx=QR7_Jw@mail.gmail.com>
- <AM0PR04MB3971768EA5D50D7045B462619AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXN8rZqxBaV2qbdR8uymsmZAk_Jnc2kxSUf+kBf76QHV9A@mail.gmail.com>
- <AM0PR04MB3971FFCCDAF29E7DF0F0EE159AD10@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNz=XR37EeVRJFnF195BGgjPgCeFv6nbjR3yV2_mQwxBQ@mail.gmail.com>
- <20181128234415.GH16830@zn.tnic>
- <CAChUvXPgntzMbAhcg8y2HJyyZWwaqNPe66efmpfyHLgN1JSW_w@mail.gmail.com>
- <AM0PR04MB3971D326D037CFB2497B1A559AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNxcpHDOn1Rkxwp8VbuN5-k08JfrgwdbN95uvMWVh1Rwg@mail.gmail.com>
- <AM0PR04MB3971DE1C9A0B3D6C938CBADD9AA80@AM0PR04MB3971.eurprd04.prod.outlook.com>
- <CAChUvXNSGosbBbiBh-MF8FsnKpL3jMaS-fr_BzQAjEcPCWi7Ew@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=york.sun@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4404;6:w1+AtcHhhcgxih2RXlneHiT0QOi+nBCZ2/DkId3zsLh9xxAQ4+BlY3SIvLpuV2jeyt3qCQRz1R4g5OKm1b3cm4JiDx4tuP0ZWuT+x59U4BpqQ/Im+dNJU0O38uYEYoTvjFE27Y43EIPcmnVmILihwQpleZ7vTXNXa2IE7etXj1s8Fep4I9a9q4sS4pwoyD1qcC+wuBmN9d9vxBpGSMvqkFqlABLCHs1sZMaSRoS5GiaMH7r0xYWHNTbGa5TvSkPk/maNSXWREUbAc57y6X4Rw4y7+cie90WH5S+QGbFhhHoSi7ehN36SWrMq5hpBwJfx4AznWmGnUwVkF+dFcu+aSYJuKYvUJF+nl6QrNbt7PGXmx/4KD7D9zHM6lxZix4p3QhzOp0vP9G0XOkzZHM2H1ubSkk6TJBO6BsIRI5V3egrfciQUqYGyZ+0KGwMGHTk37u53km6OXW6uBI20wZ3Fgg==;5:PaGPIVv8TPt7Ks/nnHat/RjjwAD40/WTjYG7GYPSVegPsG3DHaUFEzLNeMURaGT9Sgj3shjLXbctW1zTJYQVI5qgCQvDmqlMdykS+b5RX9o6vrMlsp/PfJPdnuSA1oTJ6AkMjIS613RQcv1+3g74g6yBpejBxLotnEOJ1ufMeZ8=;7:IhKJBaBjdBt6XOZjQ3XtK5qtifNEM5Y+9TulEUt5dfM5GyZ1PfGEinhwHqZK/wzEaWIuGbRHRFE4+eh5B1u2HRkR+h6hKlujQn2tKw6ewnSTkLYhBlvGwHPSAXQGmyFt5Cqj5VhPwFuyxeYP0HaWPA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1f1502a3-9599-46c5-d2bc-08d65b050242
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4404;
-x-ms-traffictypediagnostic: AM0PR04MB4404:
-x-microsoft-antispam-prvs: <AM0PR04MB4404860E119792236E6FB5A59AA80@AM0PR04MB4404.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4404;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4404;
-x-forefront-prvs: 08770259B4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(346002)(376002)(39860400002)(189003)(199004)(446003)(486006)(102836004)(44832011)(54906003)(476003)(2906002)(6506007)(316002)(53546011)(6246003)(256004)(26005)(14444005)(3846002)(4326008)(53936002)(39060400002)(99286004)(55016002)(93886005)(66066001)(86362001)(186003)(6116002)(81156014)(33656002)(7696005)(76176011)(9686003)(14454004)(105586002)(25786009)(478600001)(1411001)(71190400001)(74316002)(81166006)(8936002)(8676002)(71200400001)(106356001)(6916009)(305945005)(229853002)(7736002)(5660300001)(97736004)(6436002)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4404;H:AM0PR04MB3971.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 26d3f5rqQlbjgsB9NSdGJlora2OIdikIS9rGTNMgJD2vgVJW+eL7rvWEmW5A3s83d5duHYov0HcxogrPoMRzsG4EU5HiVoLZ2nlfxQNuFF7fmQM14UbdozQ5hmYZb02PkndKQgtarWWufL+tuLBv43RC7y/HhHV6aa+v2Bl2ca1LSzsnwXyqDdbO0d94v1I+Me6JWp38+wGceLhRztFO9ar9ZfaF6yzf/YKBauxCFfo7aiZbnkrlSNW8SyHDfTpzp/u6n6vompMGlbrM5yB6fq5kGHozyV8p2J8i3VuU1x6ZBeZiUbV084F7HLyt/+580pN3kzqh++q3ATaiZQ31t9RX87uBGUlDaA0d9Dg3LI0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 5 Dec 2018 17:57:29 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45605 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbeLEW52 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 17:57:28 -0500
+Received: by mail-ua1-f68.google.com with SMTP id e16so7724779uam.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:57:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dytYqQ8H+2Qo4+mnYnqtUAAUisFwpo87CzvdCi+khvE=;
+        b=jVY9sw8TZSA8M89pM5bOVfcLyUC7u5GPgF1YCYC8bwMgTLhIpEQ4bWJ9Zx2k8YuYQi
+         1HlkfbYYp7Gfe2eFztpQEAvRABQb5LWQ5SVnYZdshqC1qtiFnRwUoHefiAM1o0dIxdZv
+         EUNlDUCzck2XYRT/2/nxUZCSV8jM3+h9jw420=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dytYqQ8H+2Qo4+mnYnqtUAAUisFwpo87CzvdCi+khvE=;
+        b=gG9K+Yw5IYn/jrOmp357TiwqYEpopt2erGFi1745tn3LORrTFsBPg00tP3UXu7iErR
+         7TRG/V6GdSKSxCYZhlKl0B4EsvXSFi49STbA/hwQtP1+S297zRe9nz1q66L8yj83q0VW
+         tVbRexMRLj+jLdGfxi0a8V9UJdsr/wPBPITGtm/Q7y94riQoijsBQ0wMtcLH12gfYeZ3
+         7ifCqTXR4yxuuu7ucqj/mX3mP1G29CmY5sPvaSEmr4tOwx2GUr+QZT69KgOOWHd2NoZ7
+         R4dpxOaQHT764vwdppKhiV4AdPnK3rf+QD9WKFQhxlXDeElqjveJTxniz0GA85CugWWn
+         y3VA==
+X-Gm-Message-State: AA+aEWYbBIda8MjK40bNbKsrRCrbvvgg0dZaejLuBGVhAcsuuHNjHLDN
+        F97b3Hi40iAKkyRVLLuUtpOuEJmyxio=
+X-Google-Smtp-Source: AFSGD/XApVo70X0584ajBuCLI+EgoSy99KC+xTrHpQqWVw7BX49s9e+rY6PMr1ONi4tZOIkOZY33xg==
+X-Received: by 2002:ab0:550b:: with SMTP id t11mr12591928uaa.31.1544050646159;
+        Wed, 05 Dec 2018 14:57:26 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id f68sm5587788uaf.9.2018.12.05.14.57.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 14:57:25 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id z3so13152832vsf.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 14:57:24 -0800 (PST)
+X-Received: by 2002:a67:208:: with SMTP id 8mr11630548vsc.48.1544050644280;
+ Wed, 05 Dec 2018 14:57:24 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f1502a3-9599-46c5-d2bc-08d65b050242
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Dec 2018 22:57:18.8950
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4404
+References: <20181205093555.5386-1-sashal@kernel.org> <20181205093555.5386-104-sashal@kernel.org>
+In-Reply-To: <20181205093555.5386-104-sashal@kernel.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 5 Dec 2018 14:57:08 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJuH+Nwh5J=-efDmH__GN9_wPLuX6FoJTUP8CwTxLnHGg@mail.gmail.com>
+Message-ID: <CAGXu5jJuH+Nwh5J=-efDmH__GN9_wPLuX6FoJTUP8CwTxLnHGg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.19 104/123] pstore/ram: Correctly calculate
+ usable PRZ bytes
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     "# 3.4.x" <stable@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 2:54 PM, Tracy Smith wrote:=0A=
->>> Question 4) If so, will a panic ever be called if there is a hardware=
-=0A=
->>> uncorrectable memory failure?=0A=
-> =0A=
->> No. It is up to upper layer of EDAC driver. Layerscape driver only repor=
-ts CEs and UEs.=0A=
-> =0A=
-> Just to be clear, the upper layer of the EDAC driver will or will not=0A=
-> panic when a UE is detected on layerscape?=0A=
-> =0A=
-> If there is no panic by the upper layer and no reset triggered by the=0A=
-> layerscape CPLD or memory controller, what happens on layerscape when=0A=
-> a UE is detected by the memory controller?=0A=
-> =0A=
-> Forcing a UE by grounding a dataline caused a reset on layerscape=0A=
-> after a few seconds, but no panic. It is unclear why it reset, but it=0A=
-> appears as though a WDT was tripped. The UE was reported by EDAC and=0A=
-> seen in the log.=0A=
-> =0A=
-I can't help you on that. I never tried to force errors by grounding the=0A=
-signals. You have read the driver. Do you see panic? The idea is to=0A=
-report the error and let upper layer to decide what to do. Sometimes=0A=
-limping forward is better than reset or panic. Again, it is not driver's=0A=
-responsibility.=0A=
-=0A=
-York=0A=
+On Wed, Dec 5, 2018 at 1:41 AM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Kees Cook <keescook@chromium.org>
+>
+> [ Upstream commit 89d328f637b9904b6d4c9af73c8a608b8dd4d6f8 ]
+>
+> The actual number of bytes stored in a PRZ is smaller than the
+> bytes requested by platform data, since there is a header on each
+> PRZ. Additionally, if ECC is enabled, there are trailing bytes used
+> as well. Normally this mismatch doesn't matter since PRZs are circular
+> buffers and the leading "overflow" bytes are just thrown away. However, in
+> the case of a compressed record, this rather badly corrupts the results.
+>
+> This corruption was visible with "ramoops.mem_size=204800 ramoops.ecc=1".
+> Any stored crashes would not be uncompressable (producing a pstorefs
+> "dmesg-*.enc.z" file), and triggering errors at boot:
+>
+>   [    2.790759] pstore: crypto_comp_decompress failed, ret = -22!
+>
+> Backporting this depends on commit 70ad35db3321 ("pstore: Convert console
+> write to use ->write_buf")
+
+Please note the above. If this gets backported, this one is needed too.
+
+-Kees
+
+>
+> Reported-by: Joel Fernandes <joel@joelfernandes.org>
+> Fixes: b0aad7a99c1d ("pstore: Add compression support to pstore")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/pstore/ram.c        | 15 ++++++---------
+>  include/linux/pstore.h |  5 ++++-
+>  2 files changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index f4fd2e72add4..03cd59375abe 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -806,17 +806,14 @@ static int ramoops_probe(struct platform_device *pdev)
+>
+>         cxt->pstore.data = cxt;
+>         /*
+> -        * Console can handle any buffer size, so prefer LOG_LINE_MAX. If we
+> -        * have to handle dumps, we must have at least record_size buffer. And
+> -        * for ftrace, bufsize is irrelevant (if bufsize is 0, buf will be
+> -        * ZERO_SIZE_PTR).
+> +        * Since bufsize is only used for dmesg crash dumps, it
+> +        * must match the size of the dprz record (after PRZ header
+> +        * and ECC bytes have been accounted for).
+>          */
+> -       if (cxt->console_size)
+> -               cxt->pstore.bufsize = 1024; /* LOG_LINE_MAX */
+> -       cxt->pstore.bufsize = max(cxt->record_size, cxt->pstore.bufsize);
+> -       cxt->pstore.buf = kmalloc(cxt->pstore.bufsize, GFP_KERNEL);
+> +       cxt->pstore.bufsize = cxt->dprzs[0]->buffer_size;
+> +       cxt->pstore.buf = kzalloc(cxt->pstore.bufsize, GFP_KERNEL);
+>         if (!cxt->pstore.buf) {
+> -               pr_err("cannot allocate pstore buffer\n");
+> +               pr_err("cannot allocate pstore crash dump buffer\n");
+>                 err = -ENOMEM;
+>                 goto fail_clear;
+>         }
+> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+> index a15bc4d48752..30fcec375a3a 100644
+> --- a/include/linux/pstore.h
+> +++ b/include/linux/pstore.h
+> @@ -90,7 +90,10 @@ struct pstore_record {
+>   *
+>   * @buf_lock:  spinlock to serialize access to @buf
+>   * @buf:       preallocated crash dump buffer
+> - * @bufsize:   size of @buf available for crash dump writes
+> + * @bufsize:   size of @buf available for crash dump bytes (must match
+> + *             smallest number of bytes available for writing to a
+> + *             backend entry, since compressed bytes don't take kindly
+> + *             to being truncated)
+>   *
+>   * @read_mutex:        serializes @open, @read, @close, and @erase callbacks
+>   * @flags:     bitfield of frontends the backend can accept writes for
+> --
+> 2.17.1
+>
+
+
+-- 
+Kees Cook
