@@ -2,202 +2,154 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B14C04EB9
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CF7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78622146D
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78622146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A1A5213A2
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 21:22:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYw2/cp4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1A5213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbeLEVWn (ORCPT
+        id S1728646AbeLEVWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:22:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727436AbeLEVWm (ORCPT
+        Wed, 5 Dec 2018 16:22:50 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44816 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeLEVWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:22:42 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB5LEQkB083910
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Dec 2018 16:22:41 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p6nq5hybm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 16:22:41 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 5 Dec 2018 21:22:39 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 5 Dec 2018 21:22:32 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB5LMVLH56098844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 21:22:31 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CFAD5A405B;
-        Wed,  5 Dec 2018 21:22:31 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96EF2A4060;
-        Wed,  5 Dec 2018 21:22:29 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.89])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  5 Dec 2018 21:22:29 +0000 (GMT)
-Date:   Wed, 5 Dec 2018 23:22:27 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        Greentime Hu <green.hu@gmail.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Michal Hocko <mhocko@suse.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Mark Salter <msalter@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] powerpc: prefer memblock APIs returning virtual
- address
-References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
- <1543852035-26634-2-git-send-email-rppt@linux.ibm.com>
- <87woophasy.fsf@concordia.ellerman.id.au>
- <20181204171327.GL26700@rapoport-lnx>
- <87mupkkv3b.fsf@concordia.ellerman.id.au>
+        Wed, 5 Dec 2018 16:22:50 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z13so15828789lfe.11;
+        Wed, 05 Dec 2018 13:22:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bb6R0lNoDRSvcSJTAtlwAlkyhi3D9kGRzDB5MlzRjH4=;
+        b=TYw2/cp4jzFaT/WfGTmdO4FZdniKNLmYLKf9cKek2QH2STtwKAh/N9e6cJOC7Q4AOG
+         /hy0LjwmYTZeOzdaAmEJcHHFPtTUWMiTrojEdy3vamlyTubz7631qXamm4Ta7UarTVg7
+         3FTA3sTw5cmk7kj0eke/Pior5gmq4KkkuU/YyHjLc4tTVHBGfl2Uwr5W3SbRsImRWBXE
+         14/6DjMUfxN2l7lUgyoRJuVcuWw67HAR5ZuV8WId/CKGd7Tl36y/ZyZ0ormvi6tW461x
+         a1/c3VlLaRRAysQWLad0oY7DJ4/F09Dc+JklARAxTDgv1MrrHXpRfP3CL2dKOXexZiru
+         0ldQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bb6R0lNoDRSvcSJTAtlwAlkyhi3D9kGRzDB5MlzRjH4=;
+        b=WgbsjN5Xzk5R2qzwcoUNebkhRaMRifX1yMelvukVKaS1bYWgFbzIFZfBAZ9dLxg5wt
+         LNNdBHdcEMGdiPU3Hl/HLCClbFVnSaSRzNp2VVTTb15klKjbqLKJg5tdlCHOyFfB0LdG
+         /7lVl4Dn9ijjwPvFIMO3rPDPAz7HhqTijpkgYJAdlO0fEFPywKOI10UsVQvl1oqIwrvz
+         FJJ/ZU8nEx+TfkSWip+Qdg+vDZCgC+HahuOySs+73YpESyM+OtC2FBBMrni9b/exmyg1
+         Fe4m0nlXfxDnbd7JDwkz6BCs9Kne4AbOzjDJ7gq3WSr5a6JCqTuIdmfu+cNd4JSQgY2r
+         8VyQ==
+X-Gm-Message-State: AA+aEWa99CYmFA/SBODvvCECg7WtVCgAh09yVXXBOns8Ps354aIuAcER
+        OqeHa4Xd1AEfSE4v3sWTPpQ=
+X-Google-Smtp-Source: AFSGD/XNQKdAlBogG98EMGmKZ4+qSosfnbAF1jlp9ldiqeCuAH6GrBhFKUwQi1iYRaDZ/lCAIeWv8A==
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr16070856lfa.32.1544044968182;
+        Wed, 05 Dec 2018 13:22:48 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:41e8:260c:942a:b736])
+        by smtp.googlemail.com with ESMTPSA id g66sm3843444lfe.42.2018.12.05.13.22.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 13:22:47 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2] Bluetooth: hci_bcm: Handle specific unknown packets after firmware loading
+Date:   Wed,  5 Dec 2018 22:22:32 +0100
+Message-Id: <20181205212232.3947-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87mupkkv3b.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18120521-0028-0000-0000-00000326A21B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120521-0029-0000-0000-000023E2B09E
-Message-Id: <20181205212226.GF19181@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-05_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812050186
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 11:37:44PM +1100, Michael Ellerman wrote:
-> Mike Rapoport <rppt@linux.ibm.com> writes:
-> > On Tue, Dec 04, 2018 at 08:59:41PM +1100, Michael Ellerman wrote:
-> >> Hi Mike,
-> >> 
-> >> Thanks for trying to clean these up.
-> >> 
-> >> I think a few could be improved though ...
-> >> 
-> >> Mike Rapoport <rppt@linux.ibm.com> writes:
-> >> > diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-> >> > index 913bfca..fa884ad 100644
-> >> > --- a/arch/powerpc/kernel/paca.c
-> >> > +++ b/arch/powerpc/kernel/paca.c
-> >> > @@ -42,17 +42,15 @@ static void *__init alloc_paca_data(unsigned long size, unsigned long align,
-> >> >  		nid = early_cpu_to_node(cpu);
-> >> >  	}
-> >> >  
-> >> > -	pa = memblock_alloc_base_nid(size, align, limit, nid, MEMBLOCK_NONE);
-> >> > -	if (!pa) {
-> >> > -		pa = memblock_alloc_base(size, align, limit);
-> >> > -		if (!pa)
-> >> > -			panic("cannot allocate paca data");
-> >> > -	}
-> >> > +	ptr = memblock_alloc_try_nid_raw(size, align, MEMBLOCK_LOW_LIMIT,
-> >> > +					 limit, nid);
-> >> > +	if (!ptr)
-> >> > +		panic("cannot allocate paca data");
-> >>   
-> >> The old code doesn't zero, but two of the three callers of
-> >> alloc_paca_data() *do* zero the whole allocation, so I'd be happy if we
-> >> did it in here instead.
-> >
-> > I looked at the callers and couldn't tell if zeroing memory in
-> > init_lppaca() would be ok.
-> > I'll remove the _raw here.
->   
-> Thanks.
-> 
-> >> That would mean we could use memblock_alloc_try_nid() avoiding the need
-> >> to panic() manually.
-> >
-> > Actual, my plan was to remove panic() from all memblock_alloc* and make all
-> > callers to check the returned value.
-> > I believe it's cleaner and also allows more meaningful panic messages. Not
-> > mentioning the reduction of memblock code.
-> 
-> Hmm, not sure.
-> 
-> I see ~200 calls to the panicking functions, that seems like a lot of
-> work to change all those.
+From: Jonathan Bakker <xc-racer2@live.ca>
 
-Yeah, I know :)
+The Broadcom controller on aries S5PV210 boards sends out a couple of
+unknown packets after the firmware is loaded.  This will cause
+logging of errors such as:
+	Bluetooth: hci0: Frame reassembly failed (-84)
 
-> And I think I disagree on the "more meaningful panic message". This is a
-> perfect example, compare:
-> 
-> 	panic("cannot allocate paca data");
-> to:
-> 	panic("%s: Failed to allocate %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa\n",
-> 	      __func__, (u64)size, (u64)align, nid, &min_addr, &max_addr);
-> 
-> The former is basically useless, whereas the second might at least give
-> you a hint as to *why* the allocation failed.
+This is probably also the case with other boards, as there are related
+Android userspace patches for custom ROMs such as
+https://review.lineageos.org/#/c/LineageOS/android_system_bt/+/142721/
+Since this appears to be intended behaviour, treated them as diagnostic
+packets.
 
-We can easily keep the memblock message, just make it pr_err instead of
-panic.
-The message at the call site can show where the problem was without the
-need to dive into the stack dump.
+Note that this is another variant of commit 01d5e44ace8a
+("Bluetooth: hci_bcm: Handle empty packet after firmware loading")
 
-> I know it's kind of odd for a function to panic() rather than return an
-> error, but memblock is kind of special because it's so early in boot.
-> Most of these allocations have to succeed to get the system up and
-> running.
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 
-The downside of having panic() inside some memblock functions is that it
-makes the API way too bloated. And, at least currently, it's inconsistent.
-For instance memblock_alloc_try_nid_raw() does not panic, but
-memblock_alloc_try_nid() does.
+---
+Changes from v1:
+	- Rename UNKNOWN to TYPE49
+	- Rename UNKNOWN2 to TYPE52
+---
+ drivers/bluetooth/hci_bcm.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-When it was about 2 functions and a wrapper, it was perfectly fine, but
-since than memblock has three sets of partially overlapping APIs with
-endless convenience wrappers.
-
-I believe that patching up ~200 calls is worth the reduction of memblock
-API to saner size.
-
-Another thing, the absence of check for return value for memory allocation
-is not only odd, but it also makes the code obfuscated.
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index ddbd8c6a0ceb..7e7a2cfb2f93 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -51,6 +51,12 @@
+ #define BCM_LM_DIAG_PKT 0x07
+ #define BCM_LM_DIAG_SIZE 63
  
-> cheers
-> 
-
++#define BCM_TYPE49_PKT 0x31
++#define BCM_TYPE49_SIZE 0
++
++#define BCM_TYPE52_PKT 0x34
++#define BCM_TYPE52_SIZE 0
++
+ #define BCM_AUTOSUSPEND_DELAY	5000 /* default autosleep delay */
+ 
+ /**
+@@ -561,12 +567,28 @@ static int bcm_setup(struct hci_uart *hu)
+ 	.lsize = 0, \
+ 	.maxlen = BCM_NULL_SIZE
+ 
++#define BCM_RECV_TYPE49 \
++	.type = BCM_TYPE49_PKT, \
++	.hlen = BCM_TYPE49_SIZE, \
++	.loff = 0, \
++	.lsize = 0, \
++	.maxlen = BCM_TYPE49_SIZE
++
++#define BCM_RECV_TYPE52 \
++	.type = BCM_TYPE52_PKT, \
++	.hlen = BCM_TYPE52_SIZE, \
++	.loff = 0, \
++	.lsize = 0, \
++	.maxlen = BCM_TYPE52_SIZE
++
+ static const struct h4_recv_pkt bcm_recv_pkts[] = {
+ 	{ H4_RECV_ACL,      .recv = hci_recv_frame },
+ 	{ H4_RECV_SCO,      .recv = hci_recv_frame },
+ 	{ H4_RECV_EVENT,    .recv = hci_recv_frame },
+ 	{ BCM_RECV_LM_DIAG, .recv = hci_recv_diag  },
+ 	{ BCM_RECV_NULL,    .recv = hci_recv_diag  },
++	{ BCM_RECV_TYPE49,  .recv = hci_recv_diag  },
++	{ BCM_RECV_TYPE52,  .recv = hci_recv_diag  },
+ };
+ 
+ static int bcm_recv(struct hci_uart *hu, const void *data, int count)
 -- 
-Sincerely yours,
-Mike.
+2.17.1
 
