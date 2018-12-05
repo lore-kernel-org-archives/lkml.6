@@ -2,266 +2,182 @@ Return-Path: <SRS0=bZ9D=OO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA9CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB1BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445E5206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:04:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cR/NTGET"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445E5206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 40B67205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  5 Dec 2018 15:05:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B67205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbeLEPEm (ORCPT
+        id S1727957AbeLEPF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 10:04:42 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51640 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeLEPEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:04:41 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB5F4K1k008691;
-        Wed, 5 Dec 2018 09:04:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544022260;
-        bh=TCEuzOFURhsIQBJniBkxDl5bGfdwFTkOlj1sEkXZMdk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cR/NTGETiFLLc2MWeJyfzWYz/GOY3b+ei2NMOGTliUkBetjxGVdi2kpkkc3J7Tk5e
-         E/5yjlWbyMaurRFq3lm/nLP3gDlVv+Lps21c7Xd2jbbSvHr5Y7rPIOCTrEeWw2LXNf
-         98LpsXouu7jNa5HlTQq05fMDMSvBuW1QoxU3DTls=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB5F4Ko5070243
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Dec 2018 09:04:20 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 5
- Dec 2018 09:04:19 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 5 Dec 2018 09:04:19 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB5F4GF4017571;
-        Wed, 5 Dec 2018 09:04:17 -0600
-Subject: Re: [PATCH 3/3] mmc: sdhci_am654: Add Initial Support for AM654 SDHCI
- driver
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <michal.simek@xilinx.com>, <kishon@ti.com>
-References: <20181129161513.31734-1-faiz_abbas@ti.com>
- <20181129161513.31734-4-faiz_abbas@ti.com>
- <2618ec91-09d1-26f3-361e-34a073b1e5ea@intel.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <dfe6c97a-6383-c697-88e5-279f6ca8136e@ti.com>
-Date:   Wed, 5 Dec 2018 20:37:06 +0530
+        Wed, 5 Dec 2018 10:05:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57403 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727177AbeLEPFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 10:05:25 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 230843B714;
+        Wed,  5 Dec 2018 15:05:24 +0000 (UTC)
+Received: from [10.36.116.113] (ovpn-116-113.ams2.redhat.com [10.36.116.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4964C5C545;
+        Wed,  5 Dec 2018 15:05:13 +0000 (UTC)
+Subject: Re: [PATCH RFC 7/7] mm: better document PG_reserved
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        yi.z.zhang@linux.intel.com, Dan Williams <dan.j.williams@intel.com>
+References: <20181205122851.5891-1-david@redhat.com>
+ <20181205122851.5891-8-david@redhat.com>
+ <20181205143510.GA17232@bombadil.infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <46d0e90f-f0bb-815e-7a5b-4429de1c502a@redhat.com>
+Date:   Wed, 5 Dec 2018 16:05:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <2618ec91-09d1-26f3-361e-34a073b1e5ea@intel.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181205143510.GA17232@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 05 Dec 2018 15:05:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
-
-On 05/12/18 7:12 PM, Adrian Hunter wrote:
-> On 29/11/18 6:15 PM, Faiz Abbas wrote:
->> The host controllers on TI's AM654 SOCs are not compatible with
->> the phy and consumer model of the sdhci-of-arasan driver. It turns out
->> that for optimal operation at higher speeds, a special tuning procedure
->> needs to be implemented which involves configuration of platform
->> specific phy registers.
->>
->> Therefore, branch out to a new sdhci_am654 driver and add the phy
->> register space with all phy configurations to it. Populate AM654
->> specific callbacks to sdhci_ops and add SDHCI_QUIRKS wherever
->> applicable.
->>
->> Only add support for upto High Speed for SD card and upto DDR52 speed
->> mode for eMMC. Higher speeds will be added in subsequent patches.
->>
-...
->> +		sdhci_am654->dll_on = true;
->> +	}
->> +}
->> +
->> +
+On 05.12.18 15:35, Matthew Wilcox wrote:
+> On Wed, Dec 05, 2018 at 01:28:51PM +0100, David Hildenbrand wrote:
+>> I don't see a reason why we have to document "Some of them might not even
+>> exist". If there is a user, we should document it. E.g. for balloon
+>> drivers we now use PG_offline to indicate that a page might currently
+>> not be backed by memory in the hypervisor. And that is independent from
+>> PG_reserved.
 > 
-> Double blank line
+> I think you're confused by the meaning of "some of them might not even
+> exist".  What this means is that there might not be memory there; maybe
+> writes to that memory will be discarded, or maybe they'll cause a machine
+> check.  Maybe reads will return ~0, or 0, or cause a machine check.
+> We just don't know what's there, and we shouldn't try touching the memory.
 
-Will fix.
+If there are users, let's document it. And I need more details for that :)
+
+1. machine check: if there is a HW error, we set PG_hwpoison (except
+ia64 MCA, see the list)
+
+2. Writes to that memory will be discarded
+
+Who is the user of that? When will we have such pages right now?
+
+3. Reads will return ~0, / 0?
+
+I think this is a special case of e.g. x86? But where do we have that,
+are there any user?
+
+
+In summary: When can we have memory sections that are online but pages
+reserved and not accessible? (one example is ballooning I mention here)
+
+(I classify this as dangerous as dump tools will happily dump
+PG_reserved pages (unless PG_hwpoison/PG_offline) and that's the right
+thing to do).
+
+I want to avoid documenting things that are not actually getting used.
 
 > 
->> +static void sdhci_am654_set_power(struct sdhci_host *host, unsigned char mode,
->> +				  unsigned short vdd)
->> +{
->> +	if (!IS_ERR(host->mmc->supply.vmmc)) {
->> +		struct mmc_host *mmc = host->mmc;
->> +
->> +		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
->> +	}
->> +	sdhci_set_power_noreg(host, mode, vdd);
->> +}
->> +
->> +struct sdhci_ops sdhci_am654_ops = {
->> +	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
->> +	.get_timeout_clock = sdhci_pltfm_clk_get_max_clock,
->> +	.set_uhs_signaling = sdhci_set_uhs_signaling,
->> +	.set_bus_width = sdhci_set_bus_width,
->> +	.set_power = sdhci_am654_set_power,
->> +	.set_clock = sdhci_am654_set_clock,
->> +	.reset = sdhci_reset,
->> +};
->> +
->> +static const struct sdhci_pltfm_data sdhci_am654_pdata = {
->> +	.ops = &sdhci_am654_ops,
->> +	.quirks = SDHCI_QUIRK_INVERTED_WRITE_PROTECT |
->> +		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
->> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
->> +};
->> +
->> +static int sdhci_am654_init(struct sdhci_host *host)
->> +{
->> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->> +	u32 ctl_cfg_2 = 0;
->> +	u32 val;
->> +	int ret;
->> +
->> +	regmap_read(sdhci_am654->base, PHY_STAT1, &val);
->> +	if (~val & CALDONE_MASK) {
->> +		/* Calibrate IO lines */
->> +		regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
->> +				   PDB_MASK, PDB_MASK);
->> +		ret = regmap_read_poll_timeout(sdhci_am654->base, PHY_STAT1,
->> +					       val, val & CALDONE_MASK, 1, 20);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	/* Enable pins by setting IO mux to 0 */
->> +	regmap_update_bits(sdhci_am654->base, PHY_CTRL1,
->> +			   IOMUX_ENABLE_MASK, 0);
->> +
->> +	/* Set slot type based on SD or eMMC */
->> +	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
->> +		ctl_cfg_2 = SLOTTYPE_EMBEDDED;
->> +
->> +	regmap_update_bits(sdhci_am654->base, CTL_CFG_2,
->> +			   ctl_cfg_2, SLOTTYPE_MASK);
->> +
->> +	return sdhci_add_host(host);
->> +}
->> +
->> +static int sdhci_am654_get_of_property(struct platform_device *pdev,
->> +					struct sdhci_am654_data *sdhci_am654)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	int drv_strength;
->> +	int ret;
->> +
->> +	ret = device_property_read_u32(dev, "ti,trm-icp",
->> +				       &sdhci_am654->trm_icp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = device_property_read_u32(dev, "ti,otap-del-sel",
->> +				       &sdhci_am654->otap_del_sel);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = device_property_read_u32(dev, "ti,driver-strength-ohm",
->> +				       &drv_strength);
->> +	if (ret)
->> +		return ret;
->> +
->> +	switch (drv_strength) {
->> +	case 50:
->> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_50_OHM;
->> +		break;
->> +	case 33:
->> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_33_OHM;
->> +		break;
->> +	case 66:
->> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_66_OHM;
->> +		break;
->> +	case 100:
->> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_100_OHM;
->> +		break;
->> +	case 40:
->> +		sdhci_am654->drv_strength = DRIVER_STRENGTH_40_OHM;
->> +		break;
->> +	default:
->> +		dev_err(dev, "Invalid driver strength\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	sdhci_get_of_property(pdev);
->> +
->> +	return 0;
->> +}
->> +
->> +static int sdhci_am654_probe(struct platform_device *pdev)
->> +{
->> +	struct sdhci_pltfm_host *pltfm_host;
->> +	struct sdhci_am654_data *sdhci_am654;
->> +	struct sdhci_host *host;
->> +	struct resource *res;
->> +	struct clk *clk_xin;
->> +	struct device *dev = &pdev->dev;
->> +	void __iomem *base;
->> +	int ret;
->> +
->> +	host = sdhci_pltfm_init(pdev, &sdhci_am654_pdata, sizeof(*sdhci_am654));
->> +	if (IS_ERR(host))
->> +		return PTR_ERR(host);
->> +
->> +	pltfm_host = sdhci_priv(host);
->> +	sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->> +
->> +	clk_xin = devm_clk_get(dev, "clk_xin");
->> +	if (IS_ERR(clk_xin)) {
->> +		dev_err(dev, "clk_xin clock not found.\n");
->> +		ret = PTR_ERR(clk_xin);
->> +		goto err_pltfm_free;
->> +	}
->> +
->> +	sdhci_am654->clk_ahb = devm_clk_get(dev, "clk_ahb");
->> +	if (IS_ERR(sdhci_am654->clk_ahb)) {
->> +		dev_err(dev, "clk_ahb clock not found.\n");
->> +		ret = PTR_ERR(sdhci_am654->clk_ahb);
->> +		goto err_pltfm_free;
->> +	}
+>> +++ b/include/linux/page-flags.h
+>> @@ -17,8 +17,22 @@
+>>  /*
+>>   * Various page->flags bits:
+>>   *
+>> - * PG_reserved is set for special pages, which can never be swapped out. Some
+>> - * of them might not even exist...
+>> + * PG_reserved is set for special pages. The "struct page" of such a page
+>> + * should in general not be touched (e.g. set dirty) except by their owner.
+>> + * Pages marked as PG_reserved include:
+>> + * - Kernel image (including vDSO) and similar (e.g. BIOS, initrd)
+>> + * - Pages allocated early during boot (bootmem, memblock)
+>> + * - Zero pages
+>> + * - Pages that have been associated with a zone but are not available for
+>> + *   the page allocator (e.g. excluded via online_page_callback())
+>> + * - Pages to exclude from the hibernation image (e.g. loaded kexec images)
+>> + * - MMIO pages (communicate with a device, special caching strategy needed)
+>> + * - MCA pages on ia64 (pages with memory errors)
+>> + * - Device memory (e.g. PMEM, DAX, HMM)
+>> + * Some architectures don't allow to ioremap pages that are not marked
+>> + * PG_reserved (as they might be in use by somebody else who does not respect
+>> + * the caching strategy). Consequently, PG_reserved for a page mapped into
+>> + * user space can indicate the zero page, the vDSO, MMIO pages or device memory.
 > 
-> Did you intend not to enable clks?
+> So maybe just add one more option to the list.
+> 
 
-Yes. Clocks get enabled as a part of pm_runtime calls.
-> 
->> +
->> +	pltfm_host->clk = clk_xin;
->> +
->> +	pm_runtime_enable(dev);
->> +	ret = pm_runtime_get_sync(dev);
->> +	if (ret > 0) {
-> 
-> Did you intend 'ret > 0'?
 
-Sorry. That was intended to be < 0.
+-- 
 
 Thanks,
-Faiz
+
+David / dhildenb
