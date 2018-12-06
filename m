@@ -6,50 +6,62 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7DFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F95C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617912082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99A5E2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107313;
-	bh=OWoON+Vn1PjHk/OZuVgYJUjxpbdY5dubG3M9tCf13rU=;
+	s=default; t=1544107318;
+	bh=nAdyrbpHQeuT9ArX37aspifME3DhwFj9sFh1TvpuBRc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zrfPUHfnZ2/GPmc5hGKS6lhi//TDk6cU7MA6WxINoRE/UQithknFTCYPpDhpmRW6W
-	 7+UulSv+DuRo43NKpvj/V9ttwo5zB+WAqxGo4aEKkk2kQmf/sqoKmktd5qC/zPpnLN
-	 cigd5QgsBuEzLxOWD32vWJHO5zMb+cel3MP1iXw0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617912082B
+	b=oDuAQ8TWXqBMT9OxNAXKfURQo4WG5kBJXN3EeiDeLwV0lo4c/fC2oSw4hlA+WG4RY
+	 nKXPUbxVRbZvoIFGT95G67/lH2XNTmySNGlzU4W0n28XoxdtfL13iMQ+FFZGdHnZ5B
+	 MYdKC8M76FEH1u50Bt/ljIB3DAqf4K4+7KRoe2sA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A5E2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730360AbeLFOlw (ORCPT
+        id S1730370AbeLFOl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46072 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730346AbeLFOlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:41:50 -0500
+        id S1729767AbeLFOlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:41:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB1C32082B;
-        Thu,  6 Dec 2018 14:41:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A96220661;
+        Thu,  6 Dec 2018 14:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107310;
-        bh=OWoON+Vn1PjHk/OZuVgYJUjxpbdY5dubG3M9tCf13rU=;
+        s=default; t=1544107312;
+        bh=nAdyrbpHQeuT9ArX37aspifME3DhwFj9sFh1TvpuBRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GuwwYGr6N3itHI6g7pVY7QyfYKuC1BhNqqdcq5kunY4OIAZpfwN6WRuynF3XjpMP+
-         fyYmn1Ye8Zz/XcP/2e34rhbzpACqB3/b1XDs1KnpLo0JHMTpFHn3KQwLXabz7OoVep
-         gzVo5e30iWgw+XKy7XqfPUzE+VcWlVH3JSq+5kXU=
+        b=W0CXVP5lfoF71HHDBXmkTPQbhl3YgPdklkAoqt5rlSB6/MIr/v0qB1Av3PogAHurF
+         xE5fkt0rnor9ijvC69M3pBX4i/vDIqrwXfiOc3SIccKvyzM0BOvyHnrRNc+cZe08Lb
+         7oWw+QbEwLuTA04VLVEXR9q9xwtKr0vyYcwP2tE0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 13/55] iser: set sector for ambiguous mr status errors
-Date:   Thu,  6 Dec 2018 15:38:47 +0100
-Message-Id: <20181206143002.432551444@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, stable@kernel.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 14/55] uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+Date:   Thu,  6 Dec 2018 15:38:48 +0100
+Message-Id: <20181206143002.487787211@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -68,47 +80,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-commit 24c3456c8d5ee6fc1933ca40f7b4406130682668 upstream.
+commit 09d3f015d1e1b4fee7e9bbdcf54201d239393391 upstream.
 
-If for some reason we failed to query the mr status, we need to make sure
-to provide sufficient information for an ambiguous error (guard error on
-sector 0).
+Commit:
 
-Fixes: 0a7a08ad6f5f ("IB/iser: Implement check_protection")
-Cc: <stable@vger.kernel.org>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+  142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
+
+added the UPROBE_COPY_INSN flag, and corresponding smp_wmb() and smp_rmb()
+memory barriers, to ensure that handle_swbp() uses fully-initialized
+uprobes only.
+
+However, the smp_rmb() is mis-placed: this barrier should be placed
+after handle_swbp() has tested for the flag, thus guaranteeing that
+(program-order) subsequent loads from the uprobe can see the initial
+stores performed by prepare_uprobe().
+
+Move the smp_rmb() accordingly.  Also amend the comments associated
+to the two memory barriers to indicate their actual locations.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: stable@kernel.org
+Fixes: 142b18ddc8143 ("uprobes: Fix handle_swbp() vs unregister() + register() race")
+Link: http://lkml.kernel.org/r/20181122161031.15179-1-andrea.parri@amarulasolutions.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/iser/iser_verbs.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/events/uprobes.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/ulp/iser/iser_verbs.c
-+++ b/drivers/infiniband/ulp/iser/iser_verbs.c
-@@ -1108,7 +1108,9 @@ u8 iser_check_task_pi_status(struct iscs
- 					 IB_MR_CHECK_SIG_STATUS, &mr_status);
- 		if (ret) {
- 			pr_err("ib_check_mr_status failed, ret %d\n", ret);
--			goto err;
-+			/* Not a lot we can do, return ambiguous guard error */
-+			*sector = 0;
-+			return 0x1;
- 		}
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -616,7 +616,7 @@ static int prepare_uprobe(struct uprobe
+ 	BUG_ON((uprobe->offset & ~PAGE_MASK) +
+ 			UPROBE_SWBP_INSN_SIZE > PAGE_SIZE);
  
- 		if (mr_status.fail_status & IB_MR_CHECK_SIG_STATUS) {
-@@ -1136,9 +1138,6 @@ u8 iser_check_task_pi_status(struct iscs
- 	}
+-	smp_wmb(); /* pairs with rmb() in find_active_uprobe() */
++	smp_wmb(); /* pairs with the smp_rmb() in handle_swbp() */
+ 	set_bit(UPROBE_COPY_INSN, &uprobe->flags);
  
- 	return 0;
--err:
--	/* Not alot we can do here, return ambiguous guard error */
--	return 0x1;
- }
+  out:
+@@ -1910,10 +1910,18 @@ static void handle_swbp(struct pt_regs *
+ 	 * After we hit the bp, _unregister + _register can install the
+ 	 * new and not-yet-analyzed uprobe at the same address, restart.
+ 	 */
+-	smp_rmb(); /* pairs with wmb() in install_breakpoint() */
+ 	if (unlikely(!test_bit(UPROBE_COPY_INSN, &uprobe->flags)))
+ 		goto out;
  
- void iser_err_comp(struct ib_wc *wc, const char *type)
++	/*
++	 * Pairs with the smp_wmb() in prepare_uprobe().
++	 *
++	 * Guarantees that if we see the UPROBE_COPY_INSN bit set, then
++	 * we must also see the stores to &uprobe->arch performed by the
++	 * prepare_uprobe() call.
++	 */
++	smp_rmb();
++
+ 	/* Tracing handlers use ->utask to communicate with fetch methods */
+ 	if (!get_utask())
+ 		goto out;
 
 
