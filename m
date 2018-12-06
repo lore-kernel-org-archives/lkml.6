@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C167C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FDCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3723820661
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA54F2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107375;
-	bh=VNuCzPdAy1mZABb9x1HRA4mo2MegTJxBcwnB7G3su/Y=;
+	s=default; t=1544107380;
+	bh=UUzGoy0XG7bk9+EelM1KYEeKQHSqX8St6oGMxXgXj2Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rlrdtZy9AkaBKF7wFqDbfpC/ya+iOaxxOWm6wnC+rTx5g6BQ6hrCWV4mKY188gzaJ
-	 QTa8ExKr1DPl/F9PKbFi5wLR+UaunMNUJVhu4jxm5B5/QXvrOZ81dl1tU0Efeku2/F
-	 NgciXvDTgQZEBDetNdF+08/+pys/fTa9hipvggpE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3723820661
+	b=zTl2ZMLBUBQk9b6Rhevsfprh5rsE0/iouEv5zCPyVOF5oi7azIE/LsIIHsyu9Yehh
+	 1iE01EbjC8jNJd6nay0Lh4rWoANhp/T/royl2Ty9ISYXPd0CtcEfbD/VWWBWnSAR5O
+	 Gp8GSiUw+2zKoE+GLUrhMsYU5XFwhIENxKa8dzBw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA54F2082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbeLFOmx (ORCPT
+        id S1730595AbeLFOm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:42:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47072 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:42:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730542AbeLFOmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:42:44 -0500
+        id S1730575AbeLFOmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:42:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C42720661;
-        Thu,  6 Dec 2018 14:42:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9456920661;
+        Thu,  6 Dec 2018 14:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107363;
-        bh=VNuCzPdAy1mZABb9x1HRA4mo2MegTJxBcwnB7G3su/Y=;
+        s=default; t=1544107374;
+        bh=UUzGoy0XG7bk9+EelM1KYEeKQHSqX8St6oGMxXgXj2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J50bUrPszs/U6WjAVHRl9yF+9OiBhOeTOY1R/EKPe4rW3y9oVjS4b04pQ62kXNa3n
-         3ASVgnDwEszoB8tP6uuqR5dMkjs+I00VNg3GOf1g4sdrLLCjquNEe2hXVNTnxpOSPp
-         nxDpGdCyGYkFeuv6yjHlhknFqYLVijHYooRdY4aE=
+        b=sMwwz60Ce7pdHHSFjjkexolZQ9p7iHN7ytxXdx45zDN51xTMuKgetDoIUTPjbQhmo
+         Cw/Grjo3jbCmSbKh4eyafYXb6iCoBirH+46WdEQRdXm0wHRGk5+IdtV0OrqBm69SOh
+         49zfMkPxjBj8+CQw34i6g6uXRwaEn7kU1GpclOo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        stable@vger.kernel.org, Patrick Gaskin <patrick@pgaskin.net>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 34/55] Input: synaptics - add PNP ID for ThinkPad P50 to SMBus
-Date:   Thu,  6 Dec 2018 15:39:08 +0100
-Message-Id: <20181206143003.555346375@linuxfoundation.org>
+Subject: [PATCH 4.14 37/55] Input: elan_i2c - add ELAN0620 to the ACPI table
+Date:   Thu,  6 Dec 2018 15:39:11 +0100
+Message-Id: <20181206143003.703639282@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -67,33 +68,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Patrick Gaskin <patrick@pgaskin.net>
 
-commit 9df39bedbf292680655c6a947c77d6562c693d4a upstream.
+commit 3ed64da3b790be7c63601e8ca6341b7dff74a660 upstream.
 
-Noticed the other day the trackpoint felt different on my P50, then
-realized it was because rmi4 wasn't loading for this machine
-automatically. Suspend/resume, hibernate, and everything else seem to
-work perfectly fine on here.
+Add ELAN0620 to the ACPI table to support the elan touchpad in
+the Lenovo IdeaPad 130-15IKB.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Patrick Gaskin <patrick@pgaskin.net>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    1 +
+ drivers/input/mouse/elan_i2c_core.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -170,6 +170,7 @@ static const char * const smbus_pnp_ids[
- 	"LEN0048", /* X1 Carbon 3 */
- 	"LEN0046", /* X250 */
- 	"LEN004a", /* W541 */
-+	"LEN005b", /* P50 */
- 	"LEN0071", /* T480 */
- 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
- 	"LEN0073", /* X1 Carbon G5 (Elantech) */
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1264,6 +1264,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN0620", 0 },
+ 	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
+ 	{ }
 
 
