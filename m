@@ -2,473 +2,97 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2641CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8ACC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D294C20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D294C20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8627121479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544103275;
+	bh=/brkj+bZc9NrR3D3W5uJBwFGEeeZyiyeMAwTVS7zWB4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=QVntl0h2H7UBxgJVceO5YhSgzo/oqXlx7NnSoyyx3DGuPS14mN9UNTzOP0mvh1nZZ
+	 hOM5QeNl7G8VZ/eguU3ewZl4Y/meDjLb+7rs+52fuZi3GfhIo81VQjx5xSZ0tG1HZf
+	 ROMBzKl7fydpFoTdfKnZLMXGacsy4epVfpeg28Kk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8627121479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbeLFNd7 (ORCPT
+        id S1729755AbeLFNee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:33:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15645 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728209AbeLFNdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:33:36 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9292BEE3A1674;
-        Thu,  6 Dec 2018 21:33:28 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 6 Dec 2018 21:33:20 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH v4 1/5] scsi: hisi_sas: Fix warnings detected by sparse
-Date:   Thu, 6 Dec 2018 21:34:40 +0800
-Message-ID: <1544103284-100497-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
-References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
+        Thu, 6 Dec 2018 08:34:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728209AbeLFNee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:34:34 -0500
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5876B214DB;
+        Thu,  6 Dec 2018 13:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544103273;
+        bh=/brkj+bZc9NrR3D3W5uJBwFGEeeZyiyeMAwTVS7zWB4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0uEHwq8N6kkKyL21e2wU1H4xbS32augUKuzU1A51NQWB0oHsMgQP8AgBctPjF1peA
+         EUiaAWiUNc/HhFRLolTHlI+lx+fFALJDIe3yTYvAixYuxubqNVhCcQQFdJ8gXnkv0q
+         rxG4nG/ZQzYB6npp0lFwlTjq4GvKGxeBkWMtQVzc=
+Received: by mail-qt1-f172.google.com with SMTP id y20so451512qtm.13;
+        Thu, 06 Dec 2018 05:34:33 -0800 (PST)
+X-Gm-Message-State: AA+aEWa/stq8Mlmj088X541ICNM+xeZceTSTF6fiSfoPLnZ/Xrebia8P
+        LQEnYOlbam2aHnuK47wqZFNAGAA+/7+CZP52Pg==
+X-Google-Smtp-Source: AFSGD/WMz6HaJ2c71Al6DS/WkKTMkdi1Wm/kJ9g79viEeAYh9z4otUggX3MLhuBcAD7eSuW4e6BiXEkYUkNgaGDianU=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr27099210qve.246.1544103272519;
+ Thu, 06 Dec 2018 05:34:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+References: <20181205195050.4759-33-robh@kernel.org> <CAGoOwPReuEgzgYng0YeffgejVKPcoQinnNeFu_f2QBgs5daGdg@mail.gmail.com>
+In-Reply-To: <CAGoOwPReuEgzgYng0YeffgejVKPcoQinnNeFu_f2QBgs5daGdg@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 6 Dec 2018 07:34:18 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJiQnQ0PgQz-G=Cj0-cEffMDx0H8vR7wjB25qwRWo-xRw@mail.gmail.com>
+Message-ID: <CAL_JsqJiQnQ0PgQz-G=Cj0-cEffMDx0H8vR7wjB25qwRWo-xRw@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: Use of_node_name_eq for node name comparisons
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset fixes some warnings detected by the sparse tool, like these:
-drivers/scsi/hisi_sas/hisi_sas_main.c:1469:52: warning: incorrect type in assignment (different base types)
-drivers/scsi/hisi_sas/hisi_sas_main.c:1469:52:    expected unsigned short [unsigned] [assigned] [usertype] tag_of_task_to_be_managed
-drivers/scsi/hisi_sas/hisi_sas_main.c:1469:52:    got restricted __le16 [usertype] <noident>
-drivers/scsi/hisi_sas/hisi_sas_main.c:1723:52: warning: incorrect type in assignment (different base types)
-drivers/scsi/hisi_sas/hisi_sas_main.c:1723:52:    expected unsigned short [unsigned] [assigned] [usertype] tag_of_task_to_be_managed
-drivers/scsi/hisi_sas/hisi_sas_main.c:1723:52:    got restricted __le16 [usertype] <noident>
+On Wed, Dec 5, 2018 at 7:53 PM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> Hi Rob,
+>
+> On Thu, Dec 6, 2018 at 3:51 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > Convert string compares of DT node names to use of_node_name_eq helper
+> > instead. This removes direct access to the node name pointer.
+> >
+> > For the FSL ASoC card, the full node names appear to be "ssi", "esai",
+> > and "sai", so there's not any reason to use strstr and of_node_name_eq
+>
+> I am not quite sure about the replacement of strstr.
+> IIRC, a node name in fsl dts might appear to be "ssi@xxxx".
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas.h       |  2 +-
- drivers/scsi/hisi_sas/hisi_sas_main.c  |  6 ++--
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 15 ++++----
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 66 +++++++++++++++++++---------------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 37 +++++++++++--------
- 5 files changed, 71 insertions(+), 55 deletions(-)
+That will work fine. Unit-addresses are not part of the node name for
+the comparison.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 535c613..912d234 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -211,7 +211,7 @@ struct hisi_sas_slot {
- 	/* Do not reorder/change members after here */
- 	void	*buf;
- 	dma_addr_t buf_dma;
--	int	idx;
-+	u16	idx;
- };
- 
- struct hisi_sas_hw {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 65dc749..c39c91c 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1461,12 +1461,12 @@ static int hisi_sas_abort_task(struct sas_task *task)
- 	if (task->lldd_task && task->task_proto & SAS_PROTOCOL_SSP) {
- 		struct scsi_cmnd *cmnd = task->uldd_task;
- 		struct hisi_sas_slot *slot = task->lldd_task;
--		u32 tag = slot->idx;
-+		u16 tag = slot->idx;
- 		int rc2;
- 
- 		int_to_scsilun(cmnd->device->lun, &lun);
- 		tmf_task.tmf = TMF_ABORT_TASK;
--		tmf_task.tag_of_task_to_be_managed = cpu_to_le16(tag);
-+		tmf_task.tag_of_task_to_be_managed = tag;
- 
- 		rc = hisi_sas_debug_issue_ssp_tmf(task->dev, lun.scsi_lun,
- 						  &tmf_task);
-@@ -1720,7 +1720,7 @@ static int hisi_sas_query_task(struct sas_task *task)
- 
- 		int_to_scsilun(cmnd->device->lun, &lun);
- 		tmf_task.tmf = TMF_QUERY_TASK;
--		tmf_task.tag_of_task_to_be_managed = cpu_to_le16(tag);
-+		tmf_task.tag_of_task_to_be_managed = tag;
- 
- 		rc = hisi_sas_debug_issue_ssp_tmf(device,
- 						  lun.scsi_lun,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-index d24342b..7186648 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-@@ -510,6 +510,7 @@ static void setup_itct_v1_hw(struct hisi_hba *hisi_hba,
- 	struct hisi_sas_itct *itct = &hisi_hba->itct[device_id];
- 	struct asd_sas_port *sas_port = device->port;
- 	struct hisi_sas_port *port = to_hisi_sas_port(sas_port);
-+	u64 sas_addr;
- 
- 	memset(itct, 0, sizeof(*itct));
- 
-@@ -534,8 +535,8 @@ static void setup_itct_v1_hw(struct hisi_hba *hisi_hba,
- 	itct->qw0 = cpu_to_le64(qw0);
- 
- 	/* qw1 */
--	memcpy(&itct->sas_addr, device->sas_addr, SAS_ADDR_SIZE);
--	itct->sas_addr = __swab64(itct->sas_addr);
-+	memcpy(&sas_addr, device->sas_addr, SAS_ADDR_SIZE);
-+	itct->sas_addr = cpu_to_le64(__swab64(sas_addr));
- 
- 	/* qw2 */
- 	itct->qw2 = cpu_to_le64((500ULL << ITCT_HDR_IT_NEXUS_LOSS_TL_OFF) |
-@@ -561,7 +562,7 @@ static void clear_itct_v1_hw(struct hisi_hba *hisi_hba,
- 	reg_val &= ~CFG_AGING_TIME_ITCT_REL_MSK;
- 	hisi_sas_write32(hisi_hba, CFG_AGING_TIME, reg_val);
- 
--	qw0 = cpu_to_le64(itct->qw0);
-+	qw0 = le64_to_cpu(itct->qw0);
- 	qw0 &= ~ITCT_HDR_VALID_MSK;
- 	itct->qw0 = cpu_to_le64(qw0);
- }
-@@ -1102,7 +1103,7 @@ static void slot_err_v1_hw(struct hisi_hba *hisi_hba,
- 	case SAS_PROTOCOL_SSP:
- 	{
- 		int error = -1;
--		u32 dma_err_type = cpu_to_le32(err_record->dma_err_type);
-+		u32 dma_err_type = le32_to_cpu(err_record->dma_err_type);
- 		u32 dma_tx_err_type = ((dma_err_type &
- 					ERR_HDR_DMA_TX_ERR_TYPE_MSK)) >>
- 					ERR_HDR_DMA_TX_ERR_TYPE_OFF;
-@@ -1110,9 +1111,9 @@ static void slot_err_v1_hw(struct hisi_hba *hisi_hba,
- 					ERR_HDR_DMA_RX_ERR_TYPE_MSK)) >>
- 					ERR_HDR_DMA_RX_ERR_TYPE_OFF;
- 		u32 trans_tx_fail_type =
--				cpu_to_le32(err_record->trans_tx_fail_type);
-+				le32_to_cpu(err_record->trans_tx_fail_type);
- 		u32 trans_rx_fail_type =
--				cpu_to_le32(err_record->trans_rx_fail_type);
-+				le32_to_cpu(err_record->trans_rx_fail_type);
- 
- 		if (dma_tx_err_type) {
- 			/* dma tx err */
-@@ -1560,7 +1561,7 @@ static irqreturn_t cq_interrupt_v1_hw(int irq, void *p)
- 		u32 cmplt_hdr_data;
- 
- 		complete_hdr = &complete_queue[rd_point];
--		cmplt_hdr_data = cpu_to_le32(complete_hdr->data);
-+		cmplt_hdr_data = le32_to_cpu(complete_hdr->data);
- 		idx = (cmplt_hdr_data & CMPLT_HDR_IPTT_MSK) >>
- 		      CMPLT_HDR_IPTT_OFF;
- 		slot = &hisi_hba->slot_info[idx];
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index e78a97e..8580c71 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -934,6 +934,7 @@ static void setup_itct_v2_hw(struct hisi_hba *hisi_hba,
- 	struct domain_device *parent_dev = device->parent;
- 	struct asd_sas_port *sas_port = device->port;
- 	struct hisi_sas_port *port = to_hisi_sas_port(sas_port);
-+	u64 sas_addr;
- 
- 	memset(itct, 0, sizeof(*itct));
- 
-@@ -966,8 +967,8 @@ static void setup_itct_v2_hw(struct hisi_hba *hisi_hba,
- 	itct->qw0 = cpu_to_le64(qw0);
- 
- 	/* qw1 */
--	memcpy(&itct->sas_addr, device->sas_addr, SAS_ADDR_SIZE);
--	itct->sas_addr = __swab64(itct->sas_addr);
-+	memcpy(&sas_addr, device->sas_addr, SAS_ADDR_SIZE);
-+	itct->sas_addr = cpu_to_le64(__swab64(sas_addr));
- 
- 	/* qw2 */
- 	if (!dev_is_sata(device))
-@@ -2046,11 +2047,11 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 	struct task_status_struct *ts = &task->task_status;
- 	struct hisi_sas_err_record_v2 *err_record =
- 			hisi_sas_status_buf_addr_mem(slot);
--	u32 trans_tx_fail_type = cpu_to_le32(err_record->trans_tx_fail_type);
--	u32 trans_rx_fail_type = cpu_to_le32(err_record->trans_rx_fail_type);
--	u16 dma_tx_err_type = cpu_to_le16(err_record->dma_tx_err_type);
--	u16 sipc_rx_err_type = cpu_to_le16(err_record->sipc_rx_err_type);
--	u32 dma_rx_err_type = cpu_to_le32(err_record->dma_rx_err_type);
-+	u32 trans_tx_fail_type = le32_to_cpu(err_record->trans_tx_fail_type);
-+	u32 trans_rx_fail_type = le32_to_cpu(err_record->trans_rx_fail_type);
-+	u16 dma_tx_err_type = le16_to_cpu(err_record->dma_tx_err_type);
-+	u16 sipc_rx_err_type = le16_to_cpu(err_record->sipc_rx_err_type);
-+	u32 dma_rx_err_type = le32_to_cpu(err_record->dma_rx_err_type);
- 	int error = -1;
- 
- 	if (err_phase == 1) {
-@@ -2061,8 +2062,7 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 					trans_tx_fail_type);
- 	} else if (err_phase == 2) {
- 		/* error in RX phase, the priority is: DW1 > DW3 > DW2 */
--		error = parse_trans_rx_err_code_v2_hw(
--					trans_rx_fail_type);
-+		error = parse_trans_rx_err_code_v2_hw(trans_rx_fail_type);
- 		if (error == -1) {
- 			error = parse_dma_rx_err_code_v2_hw(
- 					dma_rx_err_type);
-@@ -2360,6 +2360,7 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 			&complete_queue[slot->cmplt_queue_slot];
- 	unsigned long flags;
- 	bool is_internal = slot->is_internal;
-+	u32 dw0;
- 
- 	if (unlikely(!task || !task->lldd_task || !task->dev))
- 		return -EINVAL;
-@@ -2384,8 +2385,9 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 	}
- 
- 	/* Use SAS+TMF status codes */
--	switch ((complete_hdr->dw0 & CMPLT_HDR_ABORT_STAT_MSK)
--			>> CMPLT_HDR_ABORT_STAT_OFF) {
-+	dw0 = le32_to_cpu(complete_hdr->dw0);
-+	switch ((dw0 & CMPLT_HDR_ABORT_STAT_MSK) >>
-+		CMPLT_HDR_ABORT_STAT_OFF) {
- 	case STAT_IO_ABORTED:
- 		/* this io has been aborted by abort command */
- 		ts->stat = SAS_ABORTED_TASK;
-@@ -2410,9 +2412,8 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 		break;
- 	}
- 
--	if ((complete_hdr->dw0 & CMPLT_HDR_ERX_MSK) &&
--		(!(complete_hdr->dw0 & CMPLT_HDR_RSPNS_XFRD_MSK))) {
--		u32 err_phase = (complete_hdr->dw0 & CMPLT_HDR_ERR_PHASE_MSK)
-+	if ((dw0 & CMPLT_HDR_ERX_MSK) && (!(dw0 & CMPLT_HDR_RSPNS_XFRD_MSK))) {
-+		u32 err_phase = (dw0 & CMPLT_HDR_ERR_PHASE_MSK)
- 				>> CMPLT_HDR_ERR_PHASE_OFF;
- 		u32 *error_info = hisi_sas_status_buf_addr_mem(slot);
- 
-@@ -2528,22 +2529,23 @@ static void prep_ata_v2_hw(struct hisi_hba *hisi_hba,
- 	struct hisi_sas_tmf_task *tmf = slot->tmf;
- 	u8 *buf_cmd;
- 	int has_data = 0, hdr_tag = 0;
--	u32 dw1 = 0, dw2 = 0;
-+	u32 dw0, dw1 = 0, dw2 = 0;
- 
- 	/* create header */
- 	/* dw0 */
--	hdr->dw0 = cpu_to_le32(port->id << CMD_HDR_PORT_OFF);
-+	dw0 = port->id << CMD_HDR_PORT_OFF;
- 	if (parent_dev && DEV_IS_EXPANDER(parent_dev->dev_type))
--		hdr->dw0 |= cpu_to_le32(3 << CMD_HDR_CMD_OFF);
-+		dw0 |= 3 << CMD_HDR_CMD_OFF;
- 	else
--		hdr->dw0 |= cpu_to_le32(4 << CMD_HDR_CMD_OFF);
-+		dw0 |= 4 << CMD_HDR_CMD_OFF;
- 
- 	if (tmf && tmf->force_phy) {
--		hdr->dw0 |= CMD_HDR_FORCE_PHY_MSK;
--		hdr->dw0 |= cpu_to_le32((1 << tmf->phy_id)
--				<< CMD_HDR_PHY_ID_OFF);
-+		dw0 |= CMD_HDR_FORCE_PHY_MSK;
-+		dw0 |= (1 << tmf->phy_id) << CMD_HDR_PHY_ID_OFF;
- 	}
- 
-+	hdr->dw0 = cpu_to_le32(dw0);
-+
- 	/* dw1 */
- 	switch (task->data_dir) {
- 	case DMA_TO_DEVICE:
-@@ -3154,20 +3156,24 @@ static void cq_tasklet_v2_hw(unsigned long val)
- 
- 		/* Check for NCQ completion */
- 		if (complete_hdr->act) {
--			u32 act_tmp = complete_hdr->act;
-+			u32 act_tmp = le32_to_cpu(complete_hdr->act);
- 			int ncq_tag_count = ffs(act_tmp);
-+			u32 dw1 = le32_to_cpu(complete_hdr->dw1);
- 
--			dev_id = (complete_hdr->dw1 & CMPLT_HDR_DEV_ID_MSK) >>
-+			dev_id = (dw1 & CMPLT_HDR_DEV_ID_MSK) >>
- 				 CMPLT_HDR_DEV_ID_OFF;
- 			itct = &hisi_hba->itct[dev_id];
- 
- 			/* The NCQ tags are held in the itct header */
- 			while (ncq_tag_count) {
--				__le64 *ncq_tag = &itct->qw4_15[0];
-+				__le64 *_ncq_tag = &itct->qw4_15[0], __ncq_tag;
-+				u64 ncq_tag;
- 
--				ncq_tag_count -= 1;
--				iptt = (ncq_tag[ncq_tag_count / 5]
--					>> (ncq_tag_count % 5) * 12) & 0xfff;
-+				ncq_tag_count--;
-+				__ncq_tag = _ncq_tag[ncq_tag_count / 5];
-+				ncq_tag = le64_to_cpu(__ncq_tag);
-+				iptt = (ncq_tag >> (ncq_tag_count % 5) * 12) &
-+				       0xfff;
- 
- 				slot = &hisi_hba->slot_info[iptt];
- 				slot->cmplt_queue_slot = rd_point;
-@@ -3178,7 +3184,9 @@ static void cq_tasklet_v2_hw(unsigned long val)
- 				ncq_tag_count = ffs(act_tmp);
- 			}
- 		} else {
--			iptt = (complete_hdr->dw1) & CMPLT_HDR_IPTT_MSK;
-+			u32 dw1 = le32_to_cpu(complete_hdr->dw1);
-+
-+			iptt = dw1 & CMPLT_HDR_IPTT_MSK;
- 			slot = &hisi_hba->slot_info[iptt];
- 			slot->cmplt_queue_slot = rd_point;
- 			slot->cmplt_queue = queue;
-@@ -3554,7 +3562,7 @@ static void wait_cmds_complete_timeout_v2_hw(struct hisi_hba *hisi_hba,
- 	dev_dbg(dev, "wait commands complete %dms\n", time);
- }
- 
--struct device_attribute *host_attrs_v2_hw[] = {
-+static struct device_attribute *host_attrs_v2_hw[] = {
- 	&dev_attr_phy_event_threshold,
- 	NULL
- };
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 7e2b020..59b5f64 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -628,6 +628,7 @@ static void setup_itct_v3_hw(struct hisi_hba *hisi_hba,
- 	struct domain_device *parent_dev = device->parent;
- 	struct asd_sas_port *sas_port = device->port;
- 	struct hisi_sas_port *port = to_hisi_sas_port(sas_port);
-+	u64 sas_addr;
- 
- 	memset(itct, 0, sizeof(*itct));
- 
-@@ -660,8 +661,8 @@ static void setup_itct_v3_hw(struct hisi_hba *hisi_hba,
- 	itct->qw0 = cpu_to_le64(qw0);
- 
- 	/* qw1 */
--	memcpy(&itct->sas_addr, device->sas_addr, SAS_ADDR_SIZE);
--	itct->sas_addr = __swab64(itct->sas_addr);
-+	memcpy(&sas_addr, device->sas_addr, SAS_ADDR_SIZE);
-+	itct->sas_addr = cpu_to_le64(__swab64(sas_addr));
- 
- 	/* qw2 */
- 	if (!dev_is_sata(device))
-@@ -1592,15 +1593,16 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 			&complete_queue[slot->cmplt_queue_slot];
- 	struct hisi_sas_err_record_v3 *record =
- 			hisi_sas_status_buf_addr_mem(slot);
--	u32 dma_rx_err_type = record->dma_rx_err_type;
--	u32 trans_tx_fail_type = record->trans_tx_fail_type;
-+	u32 dma_rx_err_type = le32_to_cpu(record->dma_rx_err_type);
-+	u32 trans_tx_fail_type = le32_to_cpu(record->trans_tx_fail_type);
-+	u32 dw3 = le32_to_cpu(complete_hdr->dw3);
- 
- 	switch (task->task_proto) {
- 	case SAS_PROTOCOL_SSP:
- 		if (dma_rx_err_type & RX_DATA_LEN_UNDERFLOW_MSK) {
- 			ts->residual = trans_tx_fail_type;
- 			ts->stat = SAS_DATA_UNDERRUN;
--		} else if (complete_hdr->dw3 & CMPLT_HDR_IO_IN_TARGET_MSK) {
-+		} else if (dw3 & CMPLT_HDR_IO_IN_TARGET_MSK) {
- 			ts->stat = SAS_QUEUE_FULL;
- 			slot->abort = 1;
- 		} else {
-@@ -1614,7 +1616,7 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 		if (dma_rx_err_type & RX_DATA_LEN_UNDERFLOW_MSK) {
- 			ts->residual = trans_tx_fail_type;
- 			ts->stat = SAS_DATA_UNDERRUN;
--		} else if (complete_hdr->dw3 & CMPLT_HDR_IO_IN_TARGET_MSK) {
-+		} else if (dw3 & CMPLT_HDR_IO_IN_TARGET_MSK) {
- 			ts->stat = SAS_PHY_DOWN;
- 			slot->abort = 1;
- 		} else {
-@@ -1647,6 +1649,7 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 			&complete_queue[slot->cmplt_queue_slot];
- 	unsigned long flags;
- 	bool is_internal = slot->is_internal;
-+	u32 dw0, dw1, dw3;
- 
- 	if (unlikely(!task || !task->lldd_task || !task->dev))
- 		return -EINVAL;
-@@ -1670,11 +1673,14 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 		goto out;
- 	}
- 
-+	dw0 = le32_to_cpu(complete_hdr->dw0);
-+	dw1 = le32_to_cpu(complete_hdr->dw1);
-+	dw3 = le32_to_cpu(complete_hdr->dw3);
-+
- 	/*
- 	 * Use SAS+TMF status codes
- 	 */
--	switch ((complete_hdr->dw0 & CMPLT_HDR_ABORT_STAT_MSK)
--			>> CMPLT_HDR_ABORT_STAT_OFF) {
-+	switch ((dw0 & CMPLT_HDR_ABORT_STAT_MSK) >> CMPLT_HDR_ABORT_STAT_OFF) {
- 	case STAT_IO_ABORTED:
- 		/* this IO has been aborted by abort command */
- 		ts->stat = SAS_ABORTED_TASK;
-@@ -1697,7 +1703,7 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 	}
- 
- 	/* check for erroneous completion */
--	if ((complete_hdr->dw0 & CMPLT_HDR_CMPLT_MSK) == 0x3) {
-+	if ((dw0 & CMPLT_HDR_CMPLT_MSK) == 0x3) {
- 		u32 *error_info = hisi_sas_status_buf_addr_mem(slot);
- 
- 		slot_err_v3_hw(hisi_hba, task, slot);
-@@ -1706,8 +1712,7 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 				"CQ hdr: 0x%x 0x%x 0x%x 0x%x "
- 				"Error info: 0x%x 0x%x 0x%x 0x%x\n",
- 				slot->idx, task, sas_dev->device_id,
--				complete_hdr->dw0, complete_hdr->dw1,
--				complete_hdr->act, complete_hdr->dw3,
-+				dw0, dw1, complete_hdr->act, dw3,
- 				error_info[0], error_info[1],
- 				error_info[2], error_info[3]);
- 		if (unlikely(slot->abort))
-@@ -1805,11 +1810,13 @@ static void cq_tasklet_v3_hw(unsigned long val)
- 	while (rd_point != wr_point) {
- 		struct hisi_sas_complete_v3_hdr *complete_hdr;
- 		struct device *dev = hisi_hba->dev;
-+		u32 dw1;
- 		int iptt;
- 
- 		complete_hdr = &complete_queue[rd_point];
-+		dw1 = le32_to_cpu(complete_hdr->dw1);
- 
--		iptt = (complete_hdr->dw1) & CMPLT_HDR_IPTT_MSK;
-+		iptt = dw1 & CMPLT_HDR_IPTT_MSK;
- 		if (likely(iptt < HISI_SAS_COMMAND_ENTRIES_V3_HW)) {
- 			slot = &hisi_hba->slot_info[iptt];
- 			slot->cmplt_queue_slot = rd_point;
-@@ -2205,7 +2212,7 @@ static ssize_t intr_coal_count_v3_hw_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(intr_coal_count_v3_hw);
- 
--struct device_attribute *host_attrs_v3_hw[] = {
-+static struct device_attribute *host_attrs_v3_hw[] = {
- 	&dev_attr_phy_event_threshold,
- 	&dev_attr_intr_conv_v3_hw,
- 	&dev_attr_intr_coal_ticks_v3_hw,
-@@ -2651,7 +2658,7 @@ static int hisi_sas_v3_suspend(struct pci_dev *pdev, pm_message_t state)
- 	struct hisi_hba *hisi_hba = sha->lldd_ha;
- 	struct device *dev = hisi_hba->dev;
- 	struct Scsi_Host *shost = hisi_hba->shost;
--	u32 device_state;
-+	pci_power_t device_state;
- 	int rc;
- 
- 	if (!pdev->pm_cap) {
-@@ -2697,7 +2704,7 @@ static int hisi_sas_v3_resume(struct pci_dev *pdev)
- 	struct Scsi_Host *shost = hisi_hba->shost;
- 	struct device *dev = hisi_hba->dev;
- 	unsigned int rc;
--	u32 device_state = pdev->current_state;
-+	pci_power_t device_state = pdev->current_state;
- 
- 	dev_warn(dev, "resuming from operating state [D%d]\n",
- 			device_state);
--- 
-1.9.1
-
+> I am currently out of town so cannot verify the patch.
+>
+> Fabio, would it be possible for you to run a boot test?
+>
+> Thanks
+> Nicolin
