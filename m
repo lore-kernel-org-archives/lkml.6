@@ -2,164 +2,235 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D92C04EB9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50A9C65BB0
 	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065EB20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:22:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="inCNwoaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065EB20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 817EC20645
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817EC20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbeLFAWK (ORCPT
+        id S1728983AbeLFAWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:22:10 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44526 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFAWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:22:10 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z13so16105078lfe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 16:22:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lU+KJ32LvrRCha6GyVutzWlNczJ6WLBFRPG8vIcvH9w=;
-        b=inCNwoaS6JMyL6uIaV6kRbDdQK+Yd1sMPYoSTR7A4cagLFY8eTea27aRL7IC6p7wua
-         rCpEp3nz/vIRRDAgf65d5k/vipSJjC4XAyP8TR8dAntduSGl1L0dtTfJoFHAXpIlXAYQ
-         8SEMFG0jrHvX/WUoHjYxnvbejBW+MjrqGh0isspcV03gemMjozP1j3X0kziLfuSOq9Xa
-         tdPv+HO+MsseTWmhNRw+9l5zB/V6B3Gk6JEN3M9JHu4JIaNToAbzAQxHso2qaFVay30S
-         ya0rYAgu45FbKxKJOmsATa0qTPX3YMqIgHzGbYU5yG8lh4IuwWiReVcZu4ZgqX0nVCra
-         lk9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lU+KJ32LvrRCha6GyVutzWlNczJ6WLBFRPG8vIcvH9w=;
-        b=VufEs7BEnQ1qbXxJRrAxeu+I7N6VYGMzegwuLdsTn3tJPOld4Gg+jGglJybtKYce4G
-         T9Hbc+mYGthRddsV6ggZ33zQmKfMlKCzOXoiT8mKk4QXg2WhpPyCkY+9W894YEavW2bR
-         ViTb1TcqcEMiDEdJeUt1XPVc2bdgPKsHR+BKozZlrE3AVqdAmpg4DdgYa3WmmShm7y/h
-         JGKhPTMg5gAt3cbZkGtGukfo45zFvEpaXt58lMf3fH7s2lngN8v1MZknbw117RcXV/c1
-         eqY7e9DGQKgH+lh6SvT/0O3Z6G3nx0IKZd7WyE9md70ZRuw/CFUk87/NI+vxI8DS1vlC
-         lmgg==
-X-Gm-Message-State: AA+aEWYjkqW1YY0Dv/Nx58nZI8m79YtpN1XULdIxsVZvEIqx+mls/45I
-        s2B+NNCQwX4psyhS1tujP5Qhg6sa0MbnO1HuzvhIpg==
-X-Google-Smtp-Source: AFSGD/WgIBFAgfE1C+Uf/l1Jy4OSjeKQukTpHhXh5/DvOnXOz1/Msx/3SdrdutHPV9oO1AuzhFeP1oQTnEWZ3MfiNas=
-X-Received: by 2002:a19:1cb:: with SMTP id 194mr15423340lfb.61.1544055727271;
- Wed, 05 Dec 2018 16:22:07 -0800 (PST)
+        Wed, 5 Dec 2018 19:22:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48839 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727575AbeLFAWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 19:22:23 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EF3F489AC6;
+        Thu,  6 Dec 2018 00:22:21 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 403EF60F89;
+        Thu,  6 Dec 2018 00:22:15 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 08:22:11 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     axboe@kernel.dk, Gwendal Grignou <gwendal@chromium.org>,
+        asavery@chromium.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
+Message-ID: <20181206002210.GA3015@ming.t460p>
+References: <20181030230624.61834-1-evgreen@chromium.org>
+ <20181030230624.61834-3-evgreen@chromium.org>
+ <20181128012624.GB11128@ming.t460p>
+ <CAE=gft7Fyq+Jb3ZG3PSTR=C0Wjt3uu57+H2bshM6Gu=_0W0YQw@mail.gmail.com>
+ <20181205011059.GA17845@ming.t460p>
+ <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181205211601.75856-1-tkjos@google.com> <20181205220035.GX2217@ZenIV.linux.org.uk>
-In-Reply-To: <20181205220035.GX2217@ZenIV.linux.org.uk>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Wed, 5 Dec 2018 16:21:55 -0800
-Message-ID: <CAHRSSEwpYw312kBU4WGHs_P+xqx8cP+iripYVHxpV6pJBbH9Mw@mail.gmail.com>
-Subject: Re: [PATCH v2] binder: fix use-after-free due to fdget() optimization
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
-        Android Kernel Team <kernel-team@android.com>,
-        Jann Horn <jannh@google.com>, Martijn Coenen <maco@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 06 Dec 2018 00:22:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 2:00 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Dec 05, 2018 at 01:16:01PM -0800, Todd Kjos wrote:
-> > 44d8047f1d87a ("binder: use standard functions to allocate fds")
-> > exposed a pre-existing issue in the binder driver.
+On Wed, Dec 05, 2018 at 11:35:57AM -0800, Evan Green wrote:
+> Hi Ming,
+> 
+> On Tue, Dec 4, 2018 at 5:11 PM Ming Lei <ming.lei@redhat.com> wrote:
 > >
-> > fdget() is used in ksys_ioctl() as a performance optimization.
-> > One of the rules associated with fdget() is that ksys_close() must
-> > not be called between the fdget() and the fdput(). There is a case
-> > where this requirement is not met in the binder driver (and possibly
-> > other drivers) which results in the reference count dropping to 0
-> > when the device is still in use. This can result in use-after-free
-> > or other issues.
+> > On Tue, Dec 04, 2018 at 02:19:46PM -0800, Evan Green wrote:
+> > > Hi Ming,
+> > >
+> > > On Tue, Nov 27, 2018 at 5:26 PM Ming Lei <ming.lei@redhat.com> wrote:
+> > > >
+> > > > On Tue, Oct 30, 2018 at 04:06:24PM -0700, Evan Green wrote:
+> > > > > If the backing device for a loop device is a block device,
+> > > > > then mirror the discard properties of the underlying block
+> > > > > device into the loop device. While in there, differentiate
+> > > > > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
+> > > > > different for block devices, but which the loop device had
+> > > > > just been lumping together.
+> > > > >
+> > > > > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > > > > ---
+> > > > >
+> > > > >  drivers/block/loop.c | 61 +++++++++++++++++++++++++++++++++++-----------------
+> > > > >  1 file changed, 41 insertions(+), 20 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > > > > index 28990fc94841a..176e65101c4ef 100644
+> > > > > --- a/drivers/block/loop.c
+> > > > > +++ b/drivers/block/loop.c
+> > > > > @@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
+> > > > >       return ret;
+> > > > >  }
+> > > > >
+> > > > > -static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
+> > > > > +static int lo_discard(struct loop_device *lo, struct request *rq,
+> > > > > +             int mode, loff_t pos)
+> > > > >  {
+> > > > > -     /*
+> > > > > -      * We use punch hole to reclaim the free space used by the
+> > > > > -      * image a.k.a. discard. However we do not support discard if
+> > > > > -      * encryption is enabled, because it may give an attacker
+> > > > > -      * useful information.
+> > > > > -      */
+> > > > >       struct file *file = lo->lo_backing_file;
+> > > > > -     int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+> > > > > +     struct request_queue *q = lo->lo_queue;
+> > > > >       int ret;
+> > > > >
+> > > > > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+> > > > > +     if (!blk_queue_discard(q)) {
+> > > > >               ret = -EOPNOTSUPP;
+> > > > >               goto out;
+> > > > >       }
+> > > > > @@ -603,8 +598,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+> > > > >       case REQ_OP_FLUSH:
+> > > > >               return lo_req_flush(lo, rq);
+> > > > >       case REQ_OP_DISCARD:
+> > > > > +             return lo_discard(lo, rq,
+> > > > > +                     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
+> > > > > +
+> > > > >       case REQ_OP_WRITE_ZEROES:
+> > > > > -             return lo_discard(lo, rq, pos);
+> > > > > +             return lo_discard(lo, rq,
+> > > > > +                     FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
+> > > > > +
+> > > > >       case REQ_OP_WRITE:
+> > > > >               if (lo->transfer)
+> > > > >                       return lo_write_transfer(lo, rq, pos);
+> > > > > @@ -859,6 +859,25 @@ static void loop_config_discard(struct loop_device *lo)
+> > > > >       struct file *file = lo->lo_backing_file;
+> > > > >       struct inode *inode = file->f_mapping->host;
+> > > > >       struct request_queue *q = lo->lo_queue;
+> > > > > +     struct request_queue *backingq;
+> > > > > +
+> > > > > +     /*
+> > > > > +      * If the backing device is a block device, mirror its discard
+> > > > > +      * capabilities.
+> > > > > +      */
+> > > > > +     if (S_ISBLK(inode->i_mode)) {
+> > > > > +             backingq = bdev_get_queue(inode->i_bdev);
+> > > > > +             blk_queue_max_discard_sectors(q,
+> > > > > +                     backingq->limits.max_discard_sectors);
+> > > > > +
+> > > > > +             blk_queue_max_write_zeroes_sectors(q,
+> > > > > +                     backingq->limits.max_write_zeroes_sectors);
+> > > > > +
+> > > > > +             q->limits.discard_granularity =
+> > > > > +                     backingq->limits.discard_granularity;
+> > > > > +
+> > > > > +             q->limits.discard_alignment =
+> > > > > +                     backingq->limits.discard_alignment;
+> > > >
+> > > > I think it isn't necessary to mirror backing queue's discard/write_zeros
+> > > > capabilities, given either fs of the underlying queue can deal with well.
+> > > >
+> > > > >
+> > > > >       /*
+> > > > >        * We use punch hole to reclaim the free space used by the
+> > > > > @@ -866,22 +885,24 @@ static void loop_config_discard(struct loop_device *lo)
+> > > > >        * encryption is enabled, because it may give an attacker
+> > > > >        * useful information.
+> > > > >        */
+> > > > > -     if ((!file->f_op->fallocate) ||
+> > > > > -         lo->lo_encrypt_key_size) {
+> > > > > +     } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+> > > > >               q->limits.discard_granularity = 0;
+> > > > >               q->limits.discard_alignment = 0;
+> > > > >               blk_queue_max_discard_sectors(q, 0);
+> > > > >               blk_queue_max_write_zeroes_sectors(q, 0);
+> > > > > -             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+> > > > > -             return;
+> > > > > -     }
+> > > > >
+> > > > > -     q->limits.discard_granularity = inode->i_sb->s_blocksize;
+> > > > > -     q->limits.discard_alignment = 0;
+> > > > > +     } else {
+> > > > > +             q->limits.discard_granularity = inode->i_sb->s_blocksize;
+> > > > > +             q->limits.discard_alignment = 0;
+> > > > > +
+> > > > > +             blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
+> > > > > +             blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
+> > > > > +     }
+> > > > >
+> > > > > -     blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
+> > > > > -     blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
+> > > > > -     blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+> > > > > +     if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
+> > > > > +             blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+> > > > > +     else
+> > > > > +             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+> > > > >  }
+> > > >
+> > > > Looks it should work just by mirroring backing queue's discard
+> > > > capability to loop queue in case that the loop is backed by
+> > > > block device, doesn't it? Meantime the unified discard limits &
+> > > > write_zeros limits can be kept.
+> > >
+> > > I tested this out, and you're right that I could just flip the
+> > > QUEUE_FLAG_DISCARD based on whether its a block device, and leave
 > >
-> > This was observed with the following sequence of events:
+> > What I meant actually is to do the following discard config:
 > >
-> > Task A and task B are connected via binder; task A has /dev/binder open at
-> > file descriptor number X. Both tasks are single-threaded.
+> >         bool discard;
+> >         if (S_ISBLK(inode->i_mode)) {
+> >                 struct request_queue *backingq = bdev_get_queue(inode->i_bdev);
+> >                 discard = blk_queue_discard(backingq);
+> >         } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size)
+> >                 discard = false;
+> >         else
+> >                 discard = true;
 > >
-> > 1. task B sends a binder message with a file descriptor array
-> >    (BINDER_TYPE_FDA) containing one file descriptor to task A
-> > 2. task A reads the binder message with the translated file
-> >    descriptor number Y
-> > 3. task A uses dup2(X, Y) to overwrite file descriptor Y with
-> >    the /dev/binder file
-> > 4. task A unmaps the userspace binder memory mapping; the reference
-> >    count on task A's /dev/binder is now 2
-> > 5. task A closes file descriptor X; the reference count on task
-> >    A's /dev/binder is now 1
-> > 6. task A forks off a child, task C, duplicating the file descriptor
-> >    table; the reference count on task A's /dev/binder is now 2
-> > 7. task A invokes the BC_FREE_BUFFER command on file descriptor X
-> >    to release the incoming binder message
-> > 8. fdget() in ksys_ioctl() suppresses the reference count increment,
-> >    since the file descriptor table is not shared
-> > 9. the BC_FREE_BUFFER handler removes the file descriptor table
-> >    entry for X and decrements the reference count of task A's
-> >    /dev/binder file to 1
-> > 10.task C calls close(X), which drops the reference count of
-> >    task A's /dev/binder to 0 and frees it
-> > 11.task A continues processing of the ioctl and accesses some
-> >    property of e.g. the binder_proc => KASAN-detectable UAF
-> >
-> > Fixed by using get_file() / fput() in binder_ioctl().
->
-> Note that this patch does *not* remove the nasty trap caused by the garbage
-> in question - struct file can be freed before we even return from
-> ->unlocked_ioctl().  Could you describe in details the desired behaviour
-> of this interface?
+> >         if (discard) {
+> >                 blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
+> >                 blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
+> >                 blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+> >         } else {
+> >                 blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+> >         }
+> 
+> Ah, I see. But I think it's useful to reflect max_discard_sectors,
+> max_write_zeroes_sectors, discard_granularity, and discard_alignment
+> from the block device to the loop device. With the exception of
+> discard_alignment, these parameters are visible via sysfs, so usermode
+> can actually use these to make more intelligent use of fallocate.
 
-The ioctl(BC_FREE_BUFFER) frees the buffer memory associated with a
-transaction that has completed processing in userspace. If the buffer
-contains an FDA object (file-descriptor array), then it closes all of the
-fds passed in the transaction using ksys_close(). In the case with the
-issue, the fd associated with the binder driver has been passed in the
-array. Since the fdget() optimization didn't increment the reference, this
-makes us vulnerable to the UAF described above since the rules for
-fdget() are being violated (ksys_close()). This change did prevent the
-final close during the handling of BC_FREE_BUFFER, but as you point
-out, may still result in the final close being processed prematurely after
-the new fput() (no observed negative side-effects right now, but agreed
-this could be an issue).
+Could you share us what the intelligent use of fallocate is?
 
->
-> How about grabbing the references to all victims (*before* screwing with
-> ksys_close()), sticking them into a structure with embedded callback_head
-> and using task_work_add() on it, the callback doing those fput()?
->
-> The callback would trigger before the return to userland, so observable
-> timing of the final close wouldn't be changed.  And it would avoid the
-> kludges like this.
+The block layer code of blk_bio_discard_split() can deal with all the
+magic limits.
 
-I'll rework it according to your suggestion. I had hoped to do this in a way
-that doesn't require adding calls to non-exported functions since we are
-trying to clean up binder (I hear you snickering) to be a better citizen and
-not rely on internal functions that drivers shouldn't be using. I presume
-there are no plans to export task_work_add()...
+The unified discard limits is simpler from implement view of loop, or
+from userspace view.
 
->
-> Of course, the proper fix would require TARDIS and set of instruments for
-> treating severe case of retrocranial inversion, so that this "ABI" would've
-> never existed, but...
+> Without this part of it, I still see issues with GNU cp.
 
-There are indeed many things about the binder interface we'd do differently
-if we had the chance to start over...
+Could you investigate the cause of the GNU cp issue?
 
--Todd
+Thanks,
+Ming
