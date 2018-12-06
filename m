@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051A5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EA3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD64A2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E69D2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107707;
-	bh=eBA7gT3Rd+0e4dfnuM6juCumTJZnPnpfDIrWxFEtQM8=;
+	s=default; t=1544107713;
+	bh=K0jhA+iyecQIcYRqnI3eVroai9GbN7HBUQWYpYf6PzM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CQ+ZnB2e+PwkAxMQQopLKjI/ghzk5GZG4ThyjNbIKHO+W8Xl6sAGaop0RlmoNT5tP
-	 F/KEPGn0zeCZKBu/z9gzzkciRjVQzjjbuPAWBLL6MPUBinCRBT3XXPJxncJ529fem1
-	 Kt1juMeCw0Ut04euI0nx19FnOFwwm/TQXVuonv7o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD64A2146D
+	b=D8TPQhrX/EbHaZLuXYtlEvBm030vl/gClC5kfQQrjj5QCy4Qlh2/XgpUpSEineSOd
+	 3yfaMi38kkH0ImXPEmedc3FN4bZh9HLirG6lZnzyrLGiepNqEriJ7oX15YCDG1rZjo
+	 kIMTwwx8HmLI0UnXX19lvMsUM1o/HoGxyGmkkwgA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E69D2082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbeLFOs0 (ORCPT
+        id S1731606AbeLFOsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53590 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:48:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731122AbeLFOsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:48:24 -0500
+        id S1731122AbeLFOs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:48:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E389E2082B;
-        Thu,  6 Dec 2018 14:48:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61C2120892;
+        Thu,  6 Dec 2018 14:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107703;
-        bh=eBA7gT3Rd+0e4dfnuM6juCumTJZnPnpfDIrWxFEtQM8=;
+        s=default; t=1544107706;
+        bh=K0jhA+iyecQIcYRqnI3eVroai9GbN7HBUQWYpYf6PzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cxt+0v3TIqZ7n8rAebwz49G5iY8bF0gTnnH5MJYIyEdSjCYuzfwO8b39nBZENmHLv
-         UDqiwNJyi4CjjtPotKCilYk0669kQ3DyDl5+Dc5b86FVkzJ9+Ts+s4dWDgL83E9CPg
-         phw9oW4+4gi7O5/BBWt339PNIHolKdGCONG/Y+r0=
+        b=sPjm0yDLWrvCc8FhC1eBBSgh96oKK9oeknZ3kNejPn+Mvxxv94lqeSVENZaksZiLX
+         +bNS3ZHMls7S+RyR4k9UwdtZ+k0rFgSUbE+rdGQ6iThpwd8D4f4crUljuRNOV3EaA5
+         wnmY2LwW6q42AyGAy4hVDsSC1HDMUaaThQHfs3u8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, Su Yue <suy.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Su Yue <suy.fnst@cn.fujitsu.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 080/101] btrfs: Check that each block group has corresponding chunk at mount time
-Date:   Thu,  6 Dec 2018 15:39:19 +0100
-Message-Id: <20181206143016.797837482@linuxfoundation.org>
+Subject: [PATCH 4.9 081/101] btrfs: tree-checker: Check level for leaves and nodes
+Date:   Thu,  6 Dec 2018 15:39:20 +0100
+Message-Id: <20181206143016.958032211@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -72,81 +72,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Qu Wenruo <wqu@suse.com>
 
-commit 514c7dca85a0bf40be984dab0b477403a6db901f upstream.
+commit f556faa46eb4e96d0d0772e74ecf66781e132f72 upstream.
 
-A crafted btrfs image with incorrect chunk<->block group mapping will
-trigger a lot of unexpected things as the mapping is essential.
+Although we have tree level check at tree read runtime, it's completely
+based on its parent level.
+We still need to do accurate level check to avoid invalid tree blocks
+sneak into kernel space.
 
-Although the problem can be caught by block group item checker
-added in "btrfs: tree-checker: Verify block_group_item", it's still not
-sufficient.  A sufficiently valid block group item can pass the check
-added by the mentioned patch but could fail to match the existing chunk.
+The check itself is simple, for leaf its level should always be 0.
+For nodes its level should be in range [1, BTRFS_MAX_LEVEL - 1].
 
-This patch will add extra block group -> chunk mapping check, to ensure
-we have a completely matching (start, len, flags) chunk for each block
-group at mount time.
-
-Here we reuse the original helper find_first_block_group(), which is
-already doing the basic bg -> chunk checks, adding further checks of the
-start/len and type flags.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199837
-Reported-by: Xu Wen <wen.xu@gatech.edu>
 Signed-off-by: Qu Wenruo <wqu@suse.com>
 Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 4.9: Use root->fs_info instead of fs_info]
+[bwh: Backported to 4.9:
+ - Pass root instead of fs_info to generic_err()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent-tree.c |   28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-checker.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9896,6 +9896,8 @@ static int find_first_block_group(struct
- 	int ret = 0;
- 	struct btrfs_key found_key;
- 	struct extent_buffer *leaf;
-+	struct btrfs_block_group_item bg;
-+	u64 flags;
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -447,6 +447,13 @@ static int check_leaf(struct btrfs_root
+ 	u32 nritems = btrfs_header_nritems(leaf);
  	int slot;
  
- 	ret = btrfs_search_slot(NULL, root, key, path, 0, 0);
-@@ -9930,8 +9932,32 @@ static int find_first_block_group(struct
- 			"logical %llu len %llu found bg but no related chunk",
- 					  found_key.objectid, found_key.offset);
- 				ret = -ENOENT;
-+			} else if (em->start != found_key.objectid ||
-+				   em->len != found_key.offset) {
-+				btrfs_err(root->fs_info,
-+		"block group %llu len %llu mismatch with chunk %llu len %llu",
-+					  found_key.objectid, found_key.offset,
-+					  em->start, em->len);
-+				ret = -EUCLEAN;
- 			} else {
--				ret = 0;
-+				read_extent_buffer(leaf, &bg,
-+					btrfs_item_ptr_offset(leaf, slot),
-+					sizeof(bg));
-+				flags = btrfs_block_group_flags(&bg) &
-+					BTRFS_BLOCK_GROUP_TYPE_MASK;
++	if (btrfs_header_level(leaf) != 0) {
++		generic_err(root, leaf, 0,
++			"invalid level for leaf, have %d expect 0",
++			btrfs_header_level(leaf));
++		return -EUCLEAN;
++	}
 +
-+				if (flags != (em->map_lookup->type &
-+					      BTRFS_BLOCK_GROUP_TYPE_MASK)) {
-+					btrfs_err(root->fs_info,
-+"block group %llu len %llu type flags 0x%llx mismatch with chunk type flags 0x%llx",
-+						found_key.objectid,
-+						found_key.offset, flags,
-+						(BTRFS_BLOCK_GROUP_TYPE_MASK &
-+						 em->map_lookup->type));
-+					ret = -EUCLEAN;
-+				} else {
-+					ret = 0;
-+				}
- 			}
- 			free_extent_map(em);
- 			goto out;
+ 	/*
+ 	 * Extent buffers from a relocation tree have a owner field that
+ 	 * corresponds to the subvolume tree they are based on. So just from an
+@@ -589,9 +596,16 @@ int btrfs_check_node(struct btrfs_root *
+ 	unsigned long nr = btrfs_header_nritems(node);
+ 	struct btrfs_key key, next_key;
+ 	int slot;
++	int level = btrfs_header_level(node);
+ 	u64 bytenr;
+ 	int ret = 0;
+ 
++	if (level <= 0 || level >= BTRFS_MAX_LEVEL) {
++		generic_err(root, node, 0,
++			"invalid level for node, have %d expect [1, %d]",
++			level, BTRFS_MAX_LEVEL - 1);
++		return -EUCLEAN;
++	}
+ 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root)) {
+ 		btrfs_crit(root->fs_info,
+ "corrupt node: root=%llu block=%llu, nritems too %s, have %lu expect range [1,%u]",
 
 
