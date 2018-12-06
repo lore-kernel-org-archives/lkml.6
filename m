@@ -2,66 +2,129 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBCBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676DBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E05120672
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E05120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 399BA20672
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 399BA20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbeLFOga (ORCPT
+        id S1729678AbeLFOhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:36:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43326 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeLFOg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:36:29 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8D38620745; Thu,  6 Dec 2018 15:36:27 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 139DA20CC5;
-        Thu,  6 Dec 2018 15:36:10 +0100 (CET)
-Date:   Thu, 6 Dec 2018 15:36:10 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        Thu, 6 Dec 2018 09:37:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51902 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728482AbeLFOhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:37:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ACBFA78;
+        Thu,  6 Dec 2018 06:37:02 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0AE883F575;
+        Thu,  6 Dec 2018 06:37:02 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 249F41AE0BCF; Thu,  6 Dec 2018 14:37:23 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 14:37:23 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Guochun Mao <guochun.mao@mediatek.com>
-Subject: Re: [RESEND PATCH 2/4] mtd: spi-nor: mtk-quadspi: use ofpart for
- parsing partitions
-Message-ID: <20181206153610.26db522c@bbrezillon>
-In-Reply-To: <6cca6844f426d4ad4e7c878420b363cfb34499aa.1543472168.git.ryder.lee@mediatek.com>
-References: <235ade9c5cda19fb0c9356913e3f56ad86600f59.1543472168.git.ryder.lee@mediatek.com>
-        <6cca6844f426d4ad4e7c878420b363cfb34499aa.1543472168.git.ryder.lee@mediatek.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 08/34] dt-bindings: arm: Convert PMU binding to
+ json-schema
+Message-ID: <20181206143722.GA14887@arm.com>
+References: <20181203213223.16986-1-robh@kernel.org>
+ <20181203213223.16986-9-robh@kernel.org>
+ <20181205100858.GA14619@arm.com>
+ <CAL_Jsq+YsVB8Ew=cb5W54eirMpAAOR7ApahCbHOtp2m3wpJYSg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+YsVB8Ew=cb5W54eirMpAAOR7ApahCbHOtp2m3wpJYSg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Nov 2018 14:29:54 +0800
-Ryder Lee <ryder.lee@mediatek.com> wrote:
-
-> From: Guochun Mao <guochun.mao@mediatek.com>
+On Wed, Dec 05, 2018 at 09:42:04AM -0600, Rob Herring wrote:
+> On Wed, Dec 5, 2018 at 4:08 AM Will Deacon <will.deacon@arm.com> wrote:
+> > On Mon, Dec 03, 2018 at 03:31:57PM -0600, Rob Herring wrote:
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - apm,potenza-pmu
+> > > +              - arm,armv8-pmuv3
+> > > +              - arm,cortex-a73-pmu
+> > > +              - arm,cortex-a72-pmu
+> > > +              - arm,cortex-a57-pmu
+> > > +              - arm,cortex-a53-pmu
+> > > +              - arm,cortex-a35-pmu
+> > > +              - arm,cortex-a17-pmu
+> > > +              - arm,cortex-a15-pmu
+> > > +              - arm,cortex-a12-pmu
+> > > +              - arm,cortex-a9-pmu
+> > > +              - arm,cortex-a8-pmu
+> > > +              - arm,cortex-a7-pmu
+> > > +              - arm,cortex-a5-pmu
+> > > +              - arm,arm11mpcore-pmu
+> > > +              - arm,arm1176-pmu
+> > > +              - arm,arm1136-pmu
+> > > +              - brcm,vulcan-pmu
+> > > +              - cavium,thunder-pmu
+> > > +              - qcom,scorpion-pmu
+> > > +              - qcom,scorpion-mp-pmu
+> > > +              - qcom,krait-pmu
+> > > +      - items:
+> > > +          - const: arm,cortex-a7-pmu
+> > > +          - const: arm,cortex-a15-pmu
+> >
+> > What do these last two mean?
 > 
-> Replace mtd_device_register with mtd_device_parse_register for
-> parsing partitions and add ofpart support.
+> The first list only allows a single compatible string. This list says
+> there are 2 and that the compatible property should be:
+> compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
+> 
+> Which shows up here:
+> arch/arm/boot/dts/sun6i-a31.dtsi:               compatible =
+> "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
+> arch/arm/boot/dts/sun7i-a20.dtsi:               compatible =
+> "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
+> 
+> Maybe the dts is wrong and should be fixed?
 
-What's the problem with the default partition parser table [1]?
+Yes, that's wrong and you could end up with the kernel exposing the wrong
+events to userspace. So I think we can fix the .dts and leave the binding
+without this.
 
-[1]https://elixir.bootlin.com/linux/latest/source/drivers/mtd/mtdpart.c#L793
+> > > +required:
+> > > +  - compatible
+> >
+> > I probably said this before, but I do think that it's a shame to lose the
+> > example binding, especially for something like the PMU where you can
+> > pretty much take an example and bang in your own IRQ numbers to get it
+> > up and running.
+> 
+> I just thought it is so trivial that it didn't add much. I think most
+> folks would copy-n-paste from an actual dts file which has all the
+> other nodes you just need to update addresses and irq nums.
+
+True... even more of a reason to fix thise sun* .dts files then!
+
+Will
