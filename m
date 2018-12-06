@@ -2,168 +2,129 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1646C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314A3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B520D20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:32:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGgvnpJD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B520D20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F063C20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F063C20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbeLFHcG (ORCPT
+        id S1729280AbeLFHce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:32:06 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33023 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbeLFHbr (ORCPT
+        Thu, 6 Dec 2018 02:32:34 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:44698 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbeLFHcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:31:47 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so11370208pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 23:31:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2UAI3OUKoprsOY9OdCB9E22gIwtD9enXDzWD/fAxr8E=;
-        b=kGgvnpJD5ZK67Nrw9ngrxknNuTTD+rwOxBm+CTJ4vmBQ897PoeLijHC7L22hZ1DCTh
-         OFlCryuu3SpzKSJk+BiHLHquV94Auz63D/hN4pq3814QIZABHcp5rmtKEMSHU0GHYcJu
-         FNXeXPV8QjAfVx+82IX8JEtXjrY/61VwZBGSzkSebo6rqSGEuH0AlAFuUczPm6/hg2Ju
-         DF5BRKs1l+lHt9fu46k+onK3noefXuZ4Z8a3JCr2kzDuY5awJWaIYnQ/froXrHWWWYkf
-         f/ejsqzg/zQeJ6PrQBEKXbgmBz39HLeYIb0nZQ/bY3iPioktGV2xjHAz8OztGIFS3dgU
-         vEmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2UAI3OUKoprsOY9OdCB9E22gIwtD9enXDzWD/fAxr8E=;
-        b=Bei+iDPlugytxLZUFm6ETrDXO7hYTJiFNxFyiS5We5zU/BnjMrURR+EMF/AFcGieN9
-         oPaTmLld+I4adWyEFNyPYjGWpYFBhsArb85wrXqMRBr1CYpOhoeFgjVPNnbyhWknMiFD
-         mle8U3KQKhHB+08smYqLN8bysSnXEFbDKC1e/fELXXIkfKz8SIUArNBjrLdgDHHTrrJG
-         EeK44oyznQMC8KhCUlC2muYgTlCfF5aNeL/C3lc8npqUi9ZeJ0ayjCVb8/7aErePTkgv
-         snb1x9D1liQji46GG0TLglqLo9qw8cA/ccP4rWNyO6QPOnKW9EsPk/gF6X+5/p6bmQb8
-         bgpA==
-X-Gm-Message-State: AA+aEWZ1Qyr4nTpNd8LehGaEnaiPCmIpOIa1oDO1DTiL0csrwUCTWVVw
-        XufRbCRLsO7KeUfY14PxZ4c=
-X-Google-Smtp-Source: AFSGD/VUxg/Qt4R+bt4RCmL2WIGr0OLVj2NYMaKR7gAkMctBajPQDNHXsbzrJ4HblmDzb1xk6ZDmAg==
-X-Received: by 2002:a63:5c41:: with SMTP id n1mr21009907pgm.1.1544081506464;
-        Wed, 05 Dec 2018 23:31:46 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id o8sm55023141pfa.42.2018.12.05.23.31.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 23:31:45 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, cphealy@gmail.com,
-        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] irqchip/irq-imx-gpcv2: Share reg offset calculation code
-Date:   Wed,  5 Dec 2018 23:31:22 -0800
-Message-Id: <20181206073125.7255-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181206073125.7255-1-andrew.smirnov@gmail.com>
-References: <20181206073125.7255-1-andrew.smirnov@gmail.com>
+        Thu, 6 Dec 2018 02:32:33 -0500
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gUo96-0003I1-AH from Jiada_Wang@mentor.com ; Wed, 05 Dec 2018 23:32:28 -0800
+Received: from [172.30.112.134] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 5 Dec 2018 23:32:24 -0800
+Subject: Re: [PATCH linux-next v3 6/7] ASoC: rsnd: add avb clocks
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181205074932.28098-1-jiada_wang@mentor.com>
+ <87va48bbpa.wl-kuninori.morimoto.gx@renesas.com>
+ <612ee648-c217-e9b4-224c-87183e43d83d@mentor.com>
+ <878t13jx6y.wl-kuninori.morimoto.gx@renesas.com>
+ <011cfbf7-70d0-a649-52de-1689cdb5a10b@mentor.com>
+ <871s6vjkaz.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <590d14cc-4d08-514a-6edc-2b4bad3c1993@mentor.com>
+Date:   Thu, 6 Dec 2018 16:32:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <871s6vjkaz.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move identical offset calculation code into a small helper function
-and make use of it in the rest of the code.
+Hi Morimoto-san
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: cphealy@gmail.com
-Cc: l.stach@pengutronix.de
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/irqchip/irq-imx-gpcv2.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-index cbed00319315..b262ba8b2652 100644
---- a/drivers/irqchip/irq-imx-gpcv2.c
-+++ b/drivers/irqchip/irq-imx-gpcv2.c
-@@ -28,6 +28,11 @@ struct gpcv2_irqchip_data {
- 
- static struct gpcv2_irqchip_data *imx_gpcv2_instance;
- 
-+static void __iomem *gpcv2_idx_to_reg(struct gpcv2_irqchip_data *cd, int i)
-+{
-+	return cd->gpc_base + cd->cpu2wakeup + i * 4;
-+}
-+
- static int gpcv2_wakeup_source_save(void)
- {
- 	struct gpcv2_irqchip_data *cd;
-@@ -39,7 +44,7 @@ static int gpcv2_wakeup_source_save(void)
- 		return 0;
- 
- 	for (i = 0; i < IMR_NUM; i++) {
--		reg = cd->gpc_base + cd->cpu2wakeup + i * 4;
-+		reg = gpcv2_idx_to_reg(cd, i);
- 		cd->saved_irq_mask[i] = readl_relaxed(reg);
- 		writel_relaxed(cd->wakeup_sources[i], reg);
- 	}
-@@ -50,17 +55,14 @@ static int gpcv2_wakeup_source_save(void)
- static void gpcv2_wakeup_source_restore(void)
- {
- 	struct gpcv2_irqchip_data *cd;
--	void __iomem *reg;
- 	int i;
- 
- 	cd = imx_gpcv2_instance;
- 	if (!cd)
- 		return;
- 
--	for (i = 0; i < IMR_NUM; i++) {
--		reg = cd->gpc_base + cd->cpu2wakeup + i * 4;
--		writel_relaxed(cd->saved_irq_mask[i], reg);
--	}
-+	for (i = 0; i < IMR_NUM; i++)
-+		writel_relaxed(cd->saved_irq_mask[i], gpcv2_idx_to_reg(cd, i));
- }
- 
- static struct syscore_ops imx_gpcv2_syscore_ops = {
-@@ -97,7 +99,7 @@ static void imx_gpcv2_irq_unmask(struct irq_data *d)
- 	u32 val;
- 
- 	raw_spin_lock(&cd->rlock);
--	reg = cd->gpc_base + cd->cpu2wakeup + d->hwirq / 32 * 4;
-+	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
- 	val = readl_relaxed(reg);
- 	val &= ~(1 << d->hwirq % 32);
- 	writel_relaxed(val, reg);
-@@ -113,7 +115,7 @@ static void imx_gpcv2_irq_mask(struct irq_data *d)
- 	u32 val;
- 
- 	raw_spin_lock(&cd->rlock);
--	reg = cd->gpc_base + cd->cpu2wakeup + d->hwirq / 32 * 4;
-+	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
- 	val = readl_relaxed(reg);
- 	val |= 1 << (d->hwirq % 32);
- 	writel_relaxed(val, reg);
--- 
-2.19.1
+On 2018/12/06 14:38, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+>> SMSTPCR922 controls input of two clocks "S0D1ϕ" and "S0D4ϕ",
+> Ahh, OK I could check it via Block diagram.
+> But it is "Module stop" for these, anyway.
+> "Module stop" and "S0D1ϕ/S0D4ϕ" are completely different clocks.
+Yes, "module stop" is different from "S0D1ϕ/S0D4ϕ",
+both clk_i and avb_counter8's parent clock is same "module stop" clock,
+which is <&cpg CPG_MOD 922>, it is a shared gate clock between
+avb_counter8 and clk_i
+
+
+>
+>> "S0D4ϕ" is input to BRGA,
+>> "S0D1ϕ" is input to avb_counter8
+> It seems we need to update "clk_i" portion first for this purpose.
+> Then, we need to consider about Gen2 vs Gen3, etc, etc...
+> It seems we can't keep patch simple...
+Yes, I know it's not simple, so I want to discuss with you,
+how we can proceed on this topic,
+by adding avb_counter8, rcar audio can support arbitrary clock rate,
+which is a desired feature, IMO
+
+>>> 3rd, we need to create new clock/handler for
+>>> avb_counter8 / audio_clk_div3 / avb_div8 for "internal" purpose,
+>>> and need to create avb_adg_syn[] clock for "external" purpose for EAVB/IF.
+>>> Your code is creating / registering adg->clkavb[],
+>>> but it is for avb_counter8 in my understanding.
+>>> We don't need to register it as formal clock IMO.
+>> I agree, besides avb_counter8 there are other clocks which need to be
+>> added as you have mentioned,
+>> in this patch-set, I only added avb_counter8, because I want to keep
+>> the patch-set simple,
+>> other clocks can be added later.
+> No, No, No.
+> avb_counter8 is just "internal" clock, and one of
+> parent clock for avb_div8 which is needed for avb_adg_syn[].
+> We need to control/register is avb_adg_syn[], not avb_counter8.
+>
+> Your approach on this patch is very "Quick-Hack".
+> I have no objection for out-of-tree patches.
+> But, "Quick-Hack approach with changing formal DT on upstream"
+> is nightmare.
+>
+>> avb_counter8 is registered as formal clock is because,
+>> there is use case that EAVB-IF may use avb_div8, and avb_counter8 is
+>> input to avb_div8.
+>> if keeps avb_counter8 'internal', I am not sure how EAVB-IF can set
+>> clock rate for avb_counter8
+> EAVB/IF driver setups avb_adg_syn[].
+> Then, ADG considers/searchs avb_counter8/avb_div8/audio_clk_div3
+> settings internally.
+> Don't control avb_counter8 directly from EAVB.
+OK, I think I understand your point,
+which avb_counter8 / avb_div8/audio_clk_div3 need to be used,
+only need to be considered by adg internally.
+
+Thanks,
+Jiada
+
+> Best regards
+> ---
+> Kuninori Morimoto
 
