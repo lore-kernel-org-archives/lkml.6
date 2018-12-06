@@ -2,180 +2,149 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A65EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AA5C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D02D21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 948EB20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBfuNCNq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D02D21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDrsjMhM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948EB20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbeLFJtv (ORCPT
+        id S1729385AbeLFJuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:49:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45949 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeLFJtv (ORCPT
+        Thu, 6 Dec 2018 04:50:02 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39618 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbeLFJuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:49:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id o5so13199777iop.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:49:50 -0800 (PST)
+        Thu, 6 Dec 2018 04:50:01 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so22561884wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:50:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S0KIlzZELJVLYVe19PyEtQbi4RpFjlas2MpPq4GEk1Y=;
-        b=VBfuNCNqQwRbb8h3QXvoRkFgv7+EjGEbxDaqF/mzDW5NUAIpnhn/X9pysR0uZEIxAi
-         n8XL1IbzKU6yeag5uCOjdx4fjohbN1AbsOUAOUNGUmv7vrTaWWsMNEOdT4CboWGAv6FR
-         03tci/j6OoffLEhfI0u9tnbwoVyFmwvGhbUpY=
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=SLJYc++pqRvEbdPPcx04NW2WQIDy0+VqRd4VPyqYzUs=;
+        b=pDrsjMhMbtUsSRUBecI5Jwpt09ELfZmtOxGrWejSaKdQfbi3yYW+9C4Aikgbhle7yd
+         lX9dk7uYWictvcHa/rpRHFiYYEIeIssQHT3YUVaaM/BcdUednBU+x89H7WwZcAaXHIr/
+         rofkiMrh2xbOhcb7QZa2Pp31HJ2shzIt6HO71FTaZDUBEdu4t9U8O+r5UmQvLrrgXzVZ
+         6fIvDTaun/2T5nfC4+FweeJkGU0G5/n5mABO1i1jdXap135INHredODjdlVWk61Wiq0G
+         Ygxywu4aTESvHWtAsk8gBFXP/oYRi+ssk1nv6YCsVcgAhMBv+jQYkkdwoTCPXjWylbRi
+         2JTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S0KIlzZELJVLYVe19PyEtQbi4RpFjlas2MpPq4GEk1Y=;
-        b=K2BfzG6bKyifmTxsTJb4a5voCSzdGyPs0QfesOQ339TUVrV/sfIMYA5+iWmyXvwsr0
-         Q6Jr9eQY7pxr9g73z5lb24NcwAQVrv4MqK50gXi0xCdwbwc/TGHat1KqiEC0FWUVA7E3
-         KvfVohpODpCtqKi7hh7IGcevu5zHRSdtVWCB13PZuJqstL9CGLrxvYWDBqgN7CzMp5s3
-         GZ5NTqD9ZXap794YhJHyKkYJyVpTKr7wQlgqs9dVcl2VGLfiVemnnotaC36mjwqJqzjw
-         3764G3KLojW4vJcd8nCSikzPwY8VqqQCL546u7id19tWnzSmgtPHZ59Tk2wOv48usqDv
-         n3bw==
-X-Gm-Message-State: AA+aEWamQn5p9Rn9t//542S5FsRH6JYT/DmirBr0cHUibX5hrw9Va8VI
-        L/SnWQLzfwvDb27ZyQWVLjoeavCZ1JXBKvEZkDducg==
-X-Google-Smtp-Source: AFSGD/WBEWCuOwCCo2hvhEJ4Z0csNylJCE7h5moXE8MSk8NDNdhhqR2vQz3TsHKgiGd/5bbD14vQjRc0SBG4Jh6ga8A=
-X-Received: by 2002:a5d:8415:: with SMTP id i21mr13738731ion.173.1544089789848;
- Thu, 06 Dec 2018 01:49:49 -0800 (PST)
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=SLJYc++pqRvEbdPPcx04NW2WQIDy0+VqRd4VPyqYzUs=;
+        b=ca6Jj3Yp8umsyGSSQ6UPjXlfQUQj88lyw09/ZGkqvikSKu2dQqzJYVIINiEUxU92e6
+         DJ2BYWqJo1XsqhVVDhvDb4lPKGWj1uQRckM/H0zcuWNo+2Kwkp/MvOTLfhe3XCXhBRzC
+         0+ksYOftra80LG1IyXttmnp6BLZXXUtcMAPEuW5W5XiaJf6UDrljhLghoWmyh2MHk3FW
+         +GoxJMSdgM9kH/UvecLrRTindQrFm8mLFvZwoyWUCfcYVSA9/3TlsS0HWmwXkGTMMWQh
+         20K7Yor0RP8PiHAzb57SGKRGr49dEd1T9a88yuPNXBmLY0k++1bqNA7JpgphsAIMQOTF
+         j8xg==
+X-Gm-Message-State: AA+aEWbhftFWqZVY1szv7P6hY88bvv1TpIzFjXFQs0XX7lJntjVgP0Kb
+        m5QRBEftdPS8hhWP6QG6alufDFaL
+X-Google-Smtp-Source: AFSGD/WkYxbyaWeyEaZSpPSVkWBB0R2fKFth/1FINj1Hh29VWNMvzcjxLgtTfxx5LttNJV8Y22dD5A==
+X-Received: by 2002:a5d:538a:: with SMTP id d10mr23924998wrv.202.1544089799868;
+        Thu, 06 Dec 2018 01:49:59 -0800 (PST)
+Received: from ?IPv6:2a02:908:125b:9a00:a142:2be6:b7be:5a3a? ([2a02:908:125b:9a00:a142:2be6:b7be:5a3a])
+        by smtp.gmail.com with ESMTPSA id f192sm414735wmd.12.2018.12.06.01.49.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 01:49:59 -0800 (PST)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 2/2] drm/ttm: Use pr_debug for all output from
+ ttm_bo_evict
+To:     "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <20181205165621.5805-1-michel@daenzer.net>
+ <20181205165621.5805-2-michel@daenzer.net>
+ <b0b57acb-7152-ab1a-855a-3de8c77fa425@amd.com>
+ <3198051c-c09d-5bf9-e177-3a90b10b4149@daenzer.net>
+ <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
+ <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <50899531-c8ea-6562-f7f3-593481bcef60@gmail.com>
+Date:   Thu, 6 Dec 2018 10:49:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206091719.GH23332@shao2-debian>
-In-Reply-To: <20181206091719.GH23332@shao2-debian>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 6 Dec 2018 10:49:38 +0100
-Message-ID: <CAKv+Gu9upt+zHPB3Qc2P6fd4jc7yup71nj0VsmFuLnYdS5dX1A@mail.gmail.com>
-Subject: Re: [LKP] [x86/jump_table] b34006c425: BUG:unable_to_handle_kernel
-To:     rong.a.chen@intel.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKP <lkp@01.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 at 10:17, kernel test robot <rong.a.chen@intel.com> wrote:
+Am 06.12.18 um 10:39 schrieb Zhang, Jerry(Junwei):
+> On 12/6/18 5:33 PM, Koenig, Christian wrote:
+>> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
+>>> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
+>>>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
+>>>>> From: Michel Dänzer <michel.daenzer@amd.com>
+>>>>>
+>>>>> All the output is related, so it should all be printed the same way.
+>>>>> Some of it was using pr_debug, but some of it appeared in dmesg by
+>>>>> default. The caller should handle failure, so there's no need to spam
+>>>>> dmesg with potentially quite a lot of output by default.
+>>>>>
+>>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+>>>> Sounds reasonable, but personally prefer to show error when some
+>>>> vital incident happens, e.g. no memory on eviction.
+>>> The amdgpu driver still prints these in that case:
+>>>
+>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* 
+>>> amdgpu_cs_list_validate(validated) failed.
+>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for 
+>>> command submission!
 >
-> FYI, we noticed the following commit (built with gcc-7):
->
-> commit: b34006c4258c9c86597b6b7123d6a9a3513d6cd7 ("x86/jump_table: Use relative references")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> in testcase: boot
->
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->
->
-> +------------------------------------------+------------+------------+
-> |                                          | 9fc0f798ab | b34006c425 |
-> +------------------------------------------+------------+------------+
-> | boot_successes                           | 4          | 0          |
-> | boot_failures                            | 0          | 4          |
-> | BUG:unable_to_handle_kernel              | 0          | 4          |
-> | Oops:#[##]                               | 0          | 4          |
-> | RIP:memcmp                               | 0          | 4          |
-> | Kernel_panic-not_syncing:Fatal_exception | 0          | 4          |
-> +------------------------------------------+------------+------------+
->
+> That's from cs submit, perhaps it may come from other places by 
+> ttm_bo_evict_mm().
+> Is that right? Christian.
 
-From the attached log:
-[    0.000000] Linux version 4.19.0-rc5-00006-gb34006c
+Yeah, exactly my thinking as well. When we silence the TTM messages we 
+might miss those cases.
 
-while
+Additional to that other drivers using TTM might not have those messages 
+either.
 
-$ git tag --contains b34006c
-v4.20-rc1
-v4.20-rc2
-v4.20-rc3
-v4.20-rc4
-v4.20-rc5
+If TTM is to noisy we should use ratelimit and/or reduce the number and 
+size of the warning messages.
 
-If this is reproducible on a clean rebuild of b34006c425, I'm happy to
-look into it.
+A simple "Warning, I ran out of memory during eviction!" should do.
 
+Regards,
+Christian.
 
+>
+> Regards,
+> Jerry
+>>>
+>>> That's plenty as far as I'm concerned. :)
+>> Yeah, but in this case I would rather make the amdgpu messages debug
+>> level and leave the TTM meassages on error level.
+>>
+>> Christian.
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-> [   21.261613] BUG: unable to handle kernel paging request at 0000000001001893
-> [   21.262316] PGD 0 P4D 0
-> [   21.262578] Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC PTI
-> [   21.263139] CPU: 1 PID: 252 Comm: systemd-udevd Not tainted 4.19.0-rc5-00006-gb34006c #1
-> [   21.263952] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   21.264797] RIP: 0010:memcmp+0x7/0x1d
-> [   21.265179] Code: 39 ca 75 e7 41 c6 41 01 00 c3 c3 48 01 fa 48 89 f8 48 39 d0 74 0c 0f b6 08 39 f1 74 05 48 ff c0 eb ef c3 31 c9 48 39 d1 74 13 <0f> b6 04 0f 44 0f b6 04 0e 48 ff c1 44 29 c0 74 ea eb 02 31 c0 c3
-> [   21.267043] RSP: 0018:ffff880110aebc50 EFLAGS: 00010293
-> [   21.267579] RAX: ffffffff8101b80d RBX: 0000000001001893 RCX: 0000000000000000
-> [   21.268299] RDX: 0000000000000005 RSI: ffff880110aebc6b RDI: 0000000001001893
-> [   21.269015] RBP: ffffffff824019a4 R08: 0000000000000044 R09: 0000000000000008
-> [   21.269736] R10: 0000000701029ae0 R11: ffffffff82a42360 R12: ffffffff8101b80d
-> [   21.270458] R13: ffffc90001029ae0 R14: ffffc900010297e0 R15: ffffc900010295e0
-> [   21.271185] FS:  00007f22ad10e8c0(0000) GS:ffff88013b300000(0000) knlGS:0000000000000000
-> [   21.271989] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   21.272571] CR2: 0000000001001893 CR3: 0000000110ae6000 CR4: 00000000000406a0
-> [   21.273290] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   21.274006] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   21.274724] Call Trace:
-> [   21.274993]  __jump_label_transform+0xb6/0x11f
-> [   21.275455]  jump_label_apply_nops+0x5d/0x72
-> [   21.275894]  module_finalize+0x18d/0x1c3
-> [   21.276323]  load_module+0x1800/0x236d
-> [   21.276710]  ? vfs_read+0x108/0x116
-> [   21.277068]  ? set_fs+0x9/0x20
-> [   21.277390]  ? security_kernel_post_read_file+0x67/0x75
-> [   21.277916]  ? allow_write_access+0x13/0x24
-> [   21.278346]  ? kernel_read_file+0x1d3/0x1fa
-> [   21.278773]  ? __do_sys_finit_module+0xae/0xd4
-> [   21.279238]  __do_sys_finit_module+0xae/0xd4
-> [   21.279675]  do_syscall_64+0x20f/0x224
-> [   21.280063]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [   21.280602] RIP: 0033:0x7f22abf8b229
-> [   21.280970] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3f 4c 2b 00 f7 d8 64 89 01 48
-> [   21.282830] RSP: 002b:00007fff5c9d38e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> [   21.283599] RAX: ffffffffffffffda RBX: 000055e996bd96b0 RCX: 00007f22abf8b229
-> [   21.284316] RDX: 0000000000000000 RSI: 00007f22ac8a4265 RDI: 0000000000000007
-> [   21.285027] RBP: 00007f22ac8a4265 R08: 0000000000000000 R09: 000055e996bcd860
-> [   21.285743] R10: 0000000000000007 R11: 0000000000000246 R12: 0000000000000000
-> [   21.286459] R13: 000055e996bd04d0 R14: 0000000000020000 R15: 000055e996439cbc
-> [   21.287186] Modules linked in: button(+) ip_tables x_tables ipv6
-> [   21.287800] CR2: 0000000001001893
->          Starting LSB: Execute the kexec -e command to reboot system...
-> [   21.346498] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input4
-> [   21.347338] evbug: Connected device: input4 (Power Button at LNXPWRBN/button/input0)
-> [   21.347665] ---[ end trace 3282d04b21b84631 ]---
->
->
-> To reproduce:
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
->
->
->
-> Thanks,
-> lkp
