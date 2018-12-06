@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC596C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C40AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6004B20838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4728E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KaUpRP6Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6004B20838
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oo3+H9kl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4728E208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbeLFMZ3 (ORCPT
+        id S1729665AbeLFMZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:25:29 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34691 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbeLFMZ0 (ORCPT
+        Thu, 6 Dec 2018 07:25:33 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:46608 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729852AbeLFMZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:25:26 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so327058wrw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:23 -0800 (PST)
+        Thu, 6 Dec 2018 07:25:31 -0500
+Received: by mail-wr1-f49.google.com with SMTP id l9so245867wrt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=heqQTzvwfrIHsAI5JpRjsv0LC8ZlRkJYzlJbdu65MX0=;
-        b=KaUpRP6Z9pUaQk+HY1A45U7XZ5prx9o+GpppRKrj4DWhG15C5aL+qZjWEdegDBJ+nF
-         tJaoR0G3pnI84MfNyD7lJq1XVbC+oR56Fc4SqWLnsccWtVb37hQbl8qp5tpJQ0SoL7/j
-         baFDD0vcFVYkJvI8A6neTJ2OnD66nDsh2sz4rqijBfh78S7kGzNauknHYEb9J4Cea4Gm
-         k4XCjleH3OmsHzfrv3HIBlcthOshISPpTe1xaFklziAc623QPnpAj6ugdkO1Ic2OTSlI
-         ots1LbPDPm55KqvLE/KmZQHWEx3xwYApqh34ZgvxasZ5C/j8th9/70jfZ1nTtIKA3nfl
-         dFPQ==
+        bh=KjVNxOw/tL33or+YZX4CcI05bhFwdq3tUwMnDPh4OsI=;
+        b=oo3+H9klV662Z7l/sV9qWe+97OgA+3/vqJSjP7ORklWt6jkvGUcbWvgXiU/UVWdXkO
+         aRLkTeLwT+26S54LZ1tdSLxem3Ftzv1i5So9WjUy3XATaE+uANX/1fhMF+AgEwKXtAwg
+         rAkGmLrzYXP+yKAUEjpYbfuBC8hP5315ZeLkPCdoqz8/K4iUjij89tOCi8V9z1ejLgXv
+         9vlIuXu8j0RV2wo3dbpaQBpF6J/r83DeeQdLrHkg1Q9J7X1H5aZr7mfCp5owOkx7HZqS
+         vD+vfMjs6CnFWnveWnmJkNm2itflfgBDPdvXFej2Z386iBwGTvlr0kwYTm1qDAB9kXGW
+         pTvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=heqQTzvwfrIHsAI5JpRjsv0LC8ZlRkJYzlJbdu65MX0=;
-        b=FgumNqkIsoCY+bcrkBTLX9Fwfz+qgjmPKNbrsm6R+yfe+IQlIxEKxb4dHLd+d+Lycl
-         oE4OOPmF10Z6WaBNExq8aqg1wC3IL+5Cmw4BfNGqCYuTfG618XcVE9Vh0lMl1FiNGa1s
-         isUZExGyV7iJ+GAYp7Wd06t4h8QcTFPiTCP7qPwfysxtGKFzUjpYQMC4aDkXFXpWEjOh
-         V6uS3y4uADAorR4zEyPOdgAHoyMP7qdPOXgNo8GQQMNwR/Cclr3Jmjh6NHrKuGgkPSiW
-         Xw1Lrtlu+ewgoAXf2CigxzVg6Ebdaw1x5hoZgOk7XrpDs1XM1mVgdERSIseV8uQ2kBF+
-         1PUA==
-X-Gm-Message-State: AA+aEWY84X+OPuMTcl5OjGgIbolRZNgKmS2qhTKR44w8AgUXyPZuLL9n
-        rDTpK7QvBWeA2d7CT47oDt8g6w==
-X-Google-Smtp-Source: AFSGD/XscvNi8cFnh9sy9YrNAoSCZNKura0NtFA9sFcNnDfyu+tx+uY4MzG8yNMvey4oS4OZxMZayw==
-X-Received: by 2002:adf:e78f:: with SMTP id n15mr25721190wrm.115.1544099122725;
-        Thu, 06 Dec 2018 04:25:22 -0800 (PST)
+        bh=KjVNxOw/tL33or+YZX4CcI05bhFwdq3tUwMnDPh4OsI=;
+        b=sgrX0ilYcnZk5wIdnulSPstsR2/7aloFJQmjwarUsJ2/pwowEzw3+w9fhDXYT58k+D
+         D5SbZuOwc9DpNWc1+BmZE87nNd+v9TA6oVAZt9cGQkInrl6dYOXkSoCMZh5NVklHHUqQ
+         x6UKeswTZAdes55Vo8NxNqHuhwwh2M8qaYVL2RGT34ajtUZdPDqW95/Mg0PsRNTtHs1Y
+         BU0HG50jr01FvQfmpKSmGRD4M8D0fneFbDSv8DbSHmnBYKqBDpf0FGc2LfMjMRn67mOg
+         75s42NWOUATxHYKoQnu7yavHSERuzcsmtiBF4cb0Q0mkIcBKq3g1UQsQxhMQAm6nUi1r
+         GGxg==
+X-Gm-Message-State: AA+aEWaPHEM5qGYTlAmT6UViHihNqiOKQdYEh5KHv1YfTN2Cue5DaFZI
+        Gd+D5PAj6JXjX2t7lEyVZGOUCQ==
+X-Google-Smtp-Source: AFSGD/WkeEV102m8rxQR2fqB5liDyQXRSpSsg3Lo5uFcLBPqUhzjh0TSww8+pClypG1j70/WQ25UYQ==
+X-Received: by 2002:adf:e983:: with SMTP id h3mr24228215wrm.232.1544099129139;
+        Thu, 06 Dec 2018 04:25:29 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.21
+        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 04:25:22 -0800 (PST)
+        Thu, 06 Dec 2018 04:25:28 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v13 21/25] kasan, mm, arm64: tag non slab memory allocated via pagealloc
-Date:   Thu,  6 Dec 2018 13:24:39 +0100
-Message-Id: <d758ddcef46a5abc9970182b9137e2fbee202a2c.1544099024.git.andreyknvl@google.com>
+Subject: [PATCH v13 25/25] kasan: add SPDX-License-Identifier mark to source files
+Date:   Thu,  6 Dec 2018 13:24:43 +0100
+Message-Id: <bce2d1e618afa5142e81961ab8fa4b4165337380.1544099024.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <cover.1544099024.git.andreyknvl@google.com>
 References: <cover.1544099024.git.andreyknvl@google.com>
@@ -109,238 +109,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tag-based KASAN doesn't check memory accesses through pointers tagged with
-0xff. When page_address is used to get pointer to memory that corresponds
-to some page, the tag of the resulting pointer gets set to 0xff, even
-though the allocated memory might have been tagged differently.
-
-For slab pages it's impossible to recover the correct tag to return from
-page_address, since the page might contain multiple slab objects tagged
-with different values, and we can't know in advance which one of them is
-going to get accessed. For non slab pages however, we can recover the tag
-in page_address, since the whole page was marked with the same tag.
-
-This patch adds tagging to non slab memory allocated with pagealloc. To
-set the tag of the pointer returned from page_address, the tag gets stored
-to page->flags when the memory gets allocated.
+This patch adds a "SPDX-License-Identifier: GPL-2.0" mark to all source
+files under mm/kasan.
 
 Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/memory.h   |  8 +++++++-
- include/linux/mm.h                | 29 +++++++++++++++++++++++++++++
- include/linux/page-flags-layout.h | 10 ++++++++++
- mm/cma.c                          | 11 +++++++++++
- mm/kasan/common.c                 | 15 +++++++++++++--
- mm/page_alloc.c                   |  1 +
- mm/slab.c                         |  2 +-
- 7 files changed, 72 insertions(+), 4 deletions(-)
+ mm/kasan/common.c         | 1 +
+ mm/kasan/generic.c        | 1 +
+ mm/kasan/generic_report.c | 1 +
+ mm/kasan/init.c           | 1 +
+ mm/kasan/quarantine.c     | 1 +
+ mm/kasan/report.c         | 1 +
+ mm/kasan/tags.c           | 1 +
+ mm/kasan/tags_report.c    | 1 +
+ 8 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 5fe2353f111b..7db28404609b 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -314,7 +314,13 @@ static inline void *phys_to_virt(phys_addr_t x)
- #define __virt_to_pgoff(kaddr)	(((u64)(kaddr) & ~PAGE_OFFSET) / PAGE_SIZE * sizeof(struct page))
- #define __page_to_voff(kaddr)	(((u64)(kaddr) & ~VMEMMAP_START) * PAGE_SIZE / sizeof(struct page))
- 
--#define page_to_virt(page)	((void *)((__page_to_voff(page)) | PAGE_OFFSET))
-+#define page_to_virt(page)	({					\
-+	unsigned long __addr =						\
-+		((__page_to_voff(page)) | PAGE_OFFSET);			\
-+	__addr = __tag_set(__addr, page_kasan_tag(page));		\
-+	((void *)__addr);						\
-+})
-+
- #define virt_to_page(vaddr)	((struct page *)((__virt_to_pgoff(vaddr)) | VMEMMAP_START))
- 
- #define _virt_addr_valid(kaddr)	pfn_valid((((u64)(kaddr) & ~PAGE_OFFSET) \
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..b4d01969e700 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -804,6 +804,7 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_PGOFF		(SECTIONS_PGOFF - NODES_WIDTH)
- #define ZONES_PGOFF		(NODES_PGOFF - ZONES_WIDTH)
- #define LAST_CPUPID_PGOFF	(ZONES_PGOFF - LAST_CPUPID_WIDTH)
-+#define KASAN_TAG_PGOFF		(LAST_CPUPID_PGOFF - KASAN_TAG_WIDTH)
- 
- /*
-  * Define the bit shifts to access each section.  For non-existent
-@@ -814,6 +815,7 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_PGSHIFT		(NODES_PGOFF * (NODES_WIDTH != 0))
- #define ZONES_PGSHIFT		(ZONES_PGOFF * (ZONES_WIDTH != 0))
- #define LAST_CPUPID_PGSHIFT	(LAST_CPUPID_PGOFF * (LAST_CPUPID_WIDTH != 0))
-+#define KASAN_TAG_PGSHIFT	(KASAN_TAG_PGOFF * (KASAN_TAG_WIDTH != 0))
- 
- /* NODE:ZONE or SECTION:ZONE is used to ID a zone for the buddy allocator */
- #ifdef NODE_NOT_IN_PAGE_FLAGS
-@@ -836,6 +838,7 @@ vm_fault_t finish_mkwrite_fault(struct vm_fault *vmf);
- #define NODES_MASK		((1UL << NODES_WIDTH) - 1)
- #define SECTIONS_MASK		((1UL << SECTIONS_WIDTH) - 1)
- #define LAST_CPUPID_MASK	((1UL << LAST_CPUPID_SHIFT) - 1)
-+#define KASAN_TAG_MASK		((1UL << KASAN_TAG_WIDTH) - 1)
- #define ZONEID_MASK		((1UL << ZONEID_SHIFT) - 1)
- 
- static inline enum zone_type page_zonenum(const struct page *page)
-@@ -1101,6 +1104,32 @@ static inline bool cpupid_match_pid(struct task_struct *task, int cpupid)
- }
- #endif /* CONFIG_NUMA_BALANCING */
- 
-+#ifdef CONFIG_KASAN_SW_TAGS
-+static inline u8 page_kasan_tag(const struct page *page)
-+{
-+	return (page->flags >> KASAN_TAG_PGSHIFT) & KASAN_TAG_MASK;
-+}
-+
-+static inline void page_kasan_tag_set(struct page *page, u8 tag)
-+{
-+	page->flags &= ~(KASAN_TAG_MASK << KASAN_TAG_PGSHIFT);
-+	page->flags |= (tag & KASAN_TAG_MASK) << KASAN_TAG_PGSHIFT;
-+}
-+
-+static inline void page_kasan_tag_reset(struct page *page)
-+{
-+	page_kasan_tag_set(page, 0xff);
-+}
-+#else
-+static inline u8 page_kasan_tag(const struct page *page)
-+{
-+	return 0xff;
-+}
-+
-+static inline void page_kasan_tag_set(struct page *page, u8 tag) { }
-+static inline void page_kasan_tag_reset(struct page *page) { }
-+#endif
-+
- static inline struct zone *page_zone(const struct page *page)
- {
- 	return &NODE_DATA(page_to_nid(page))->node_zones[page_zonenum(page)];
-diff --git a/include/linux/page-flags-layout.h b/include/linux/page-flags-layout.h
-index 7ec86bf31ce4..1dda31825ec4 100644
---- a/include/linux/page-flags-layout.h
-+++ b/include/linux/page-flags-layout.h
-@@ -82,6 +82,16 @@
- #define LAST_CPUPID_WIDTH 0
- #endif
- 
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define KASAN_TAG_WIDTH 8
-+#if SECTIONS_WIDTH+NODES_WIDTH+ZONES_WIDTH+LAST_CPUPID_WIDTH+KASAN_TAG_WIDTH \
-+	> BITS_PER_LONG - NR_PAGEFLAGS
-+#error "KASAN: not enough bits in page flags for tag"
-+#endif
-+#else
-+#define KASAN_TAG_WIDTH 0
-+#endif
-+
- /*
-  * We are going to use the flags for the page to node mapping if its in
-  * there.  This includes the case where there is no node, so it is implicit.
-diff --git a/mm/cma.c b/mm/cma.c
-index 4cb76121a3ab..c7b39dd3b4f6 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -407,6 +407,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
- 	unsigned long pfn = -1;
- 	unsigned long start = 0;
- 	unsigned long bitmap_maxno, bitmap_no, bitmap_count;
-+	size_t i;
- 	struct page *page = NULL;
- 	int ret = -ENOMEM;
- 
-@@ -466,6 +467,16 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
- 
- 	trace_cma_alloc(pfn, page, count, align);
- 
-+	/*
-+	 * CMA can allocate multiple page blocks, which results in different
-+	 * blocks being marked with different tags. Reset the tags to ignore
-+	 * those page blocks.
-+	 */
-+	if (page) {
-+		for (i = 0; i < count; i++)
-+			page_kasan_tag_reset(page + i);
-+	}
-+
- 	if (ret && !no_warn) {
- 		pr_err("%s: alloc failed, req-size: %zu pages, ret: %d\n",
- 			__func__, count, ret);
 diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 27f0cae336c9..195ca385cf7a 100644
+index 1144e741feb6..03d5d1374ca7 100644
 --- a/mm/kasan/common.c
 +++ b/mm/kasan/common.c
-@@ -220,8 +220,15 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
- 
- void kasan_alloc_pages(struct page *page, unsigned int order)
- {
-+	u8 tag;
-+	unsigned long i;
-+
- 	if (unlikely(PageHighMem(page)))
- 		return;
-+
-+	tag = random_tag();
-+	for (i = 0; i < (1 << order); i++)
-+		page_kasan_tag_set(page + i, tag);
- 	kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
- }
- 
-@@ -319,6 +326,10 @@ struct kasan_free_meta *get_free_info(struct kmem_cache *cache,
- 
- void kasan_poison_slab(struct page *page)
- {
-+	unsigned long i;
-+
-+	for (i = 0; i < (1 << compound_order(page)); i++)
-+		page_kasan_tag_reset(page + i);
- 	kasan_poison_shadow(page_address(page),
- 			PAGE_SIZE << compound_order(page),
- 			KASAN_KMALLOC_REDZONE);
-@@ -517,7 +528,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
- 	page = virt_to_head_page(ptr);
- 
- 	if (unlikely(!PageSlab(page))) {
--		if (reset_tag(ptr) != page_address(page)) {
-+		if (ptr != page_address(page)) {
- 			kasan_report_invalid_free(ptr, ip);
- 			return;
- 		}
-@@ -530,7 +541,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
- 
- void kasan_kfree_large(void *ptr, unsigned long ip)
- {
--	if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
-+	if (ptr != page_address(virt_to_head_page(ptr)))
- 		kasan_report_invalid_free(ptr, ip);
- 	/* The object will be poisoned by page_alloc. */
- }
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2ec9cc407216..365dc0930f8c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1183,6 +1183,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	init_page_count(page);
- 	page_mapcount_reset(page);
- 	page_cpupid_reset_last(page);
-+	page_kasan_tag_reset(page);
- 
- 	INIT_LIST_HEAD(&page->lru);
- #ifdef WANT_PAGE_VIRTUAL
-diff --git a/mm/slab.c b/mm/slab.c
-index d2f827316dfc..d747433ecdbb 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2357,7 +2357,7 @@ static void *alloc_slabmgmt(struct kmem_cache *cachep,
- 	void *freelist;
- 	void *addr = page_address(page);
- 
--	page->s_mem = addr + colour_off;
-+	page->s_mem = kasan_reset_tag(addr) + colour_off;
- 	page->active = 0;
- 
- 	if (OBJFREELIST_SLAB(cachep))
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains common generic and tag-based KASAN code.
+  *
+diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+index b8de6d33c55c..ccb6207276e3 100644
+--- a/mm/kasan/generic.c
++++ b/mm/kasan/generic.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains core generic KASAN code.
+  *
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index a4604cceae59..5e12035888f2 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains generic KASAN specific error reporting code.
+  *
+diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+index 2b21d3717d62..34afad56497b 100644
+--- a/mm/kasan/init.c
++++ b/mm/kasan/init.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains some kasan initialization code.
+  *
+diff --git a/mm/kasan/quarantine.c b/mm/kasan/quarantine.c
+index b209dbaefde8..57334ef2d7ef 100644
+--- a/mm/kasan/quarantine.c
++++ b/mm/kasan/quarantine.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * KASAN quarantine.
+  *
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 214d85035f99..ca9418fe9232 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains common generic and tag-based KASAN error reporting code.
+  *
+diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+index 1d1b79350e28..0777649e07c4 100644
+--- a/mm/kasan/tags.c
++++ b/mm/kasan/tags.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains core tag-based KASAN code.
+  *
+diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+index 573c51d20d09..8eaf5f722271 100644
+--- a/mm/kasan/tags_report.c
++++ b/mm/kasan/tags_report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains tag-based KASAN specific error reporting code.
+  *
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
