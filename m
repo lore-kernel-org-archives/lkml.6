@@ -2,85 +2,155 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB713C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486F6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8306F20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:03:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bvKrU2mr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8306F20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 152A320989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:04:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152A320989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbeLFWDe (ORCPT
+        id S1726058AbeLFWEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:03:34 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36159 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLFWDe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:03:34 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so1557770lfg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:03:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lIVn1IANWXQA5i6a6TSAERV9VhpsMsPWC04vE2MleWU=;
-        b=bvKrU2mr+3sRGHREOdPQcAuDLSNkyu8hih2dUQRLQRqzRmoLvd40U2oq5yraQv7uHD
-         wswgJGVmtlsBdlPJ58CFW8w8eGluyz5VBPtzxagMp7yIdIhiDUy+yWuyqMWFulABIqoO
-         xSoButaovYJIMCF428wwMhPPzOapqAF3D/ZzA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lIVn1IANWXQA5i6a6TSAERV9VhpsMsPWC04vE2MleWU=;
-        b=geDk34DXmCN/hcr6zxgw73rlh/LiLyI0Q12eEKM/UHIIsT0V5KrDiTyLWwhCCSc8rC
-         SkyAcGJPspB1NVLVgKA1E83cB+XkGtK9aWILQ/C8uOcSMT4kbTUvcEfpw/99FDXA2BZ4
-         JBunjEMWvYNOS8SpoHUpfk+TIbLs26uAFWcuv20IOSKKPRlwbdBrp75KB/11DEOS3B8M
-         /ONbZsXghNGacbttMrko8S37CCm5yTikScLI2oynMCqfQmDHJUqurtuet26r7CnELgkE
-         vMVc6Pl2/a92acKZMayo4Ed9TyinDxrcDdnse5z1l+a3i+cF6LuJknoQTTHk6uTheJv+
-         XrpQ==
-X-Gm-Message-State: AA+aEWZP8p1amJ4/30BHNGHMoxDoSFWPRtQ5f7MvfR17SRwH058gcJ9H
-        TF7ZQKxcAxMRkILfPB4fnwGTA9mKSawni2NTU6kczQ==
-X-Google-Smtp-Source: AFSGD/Xf+QXl6BKq/IG/hxCeoUvPyGIDXH0BdyMXT9TfLY11cWOQM/WZRCHIXPM6BofaMo3UaW/2PbplLi+LptSWQYA=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr18901095lfb.96.1544133811837;
- Thu, 06 Dec 2018 14:03:31 -0800 (PST)
+        Thu, 6 Dec 2018 17:04:49 -0500
+Received: from mga04.intel.com ([192.55.52.120]:29843 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726003AbeLFWEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:04:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 14:04:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,323,1539673200"; 
+   d="scan'208";a="116652523"
+Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
+  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2018 14:04:46 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
+ <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+ <20181205021334.GB3045@redhat.com>
+ <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
+ <20181205175357.GG3536@redhat.com>
+ <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+ <20181206192050.GC3544@redhat.com>
+ <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
+ <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
+Date:   Thu, 6 Dec 2018 14:04:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-7-sboyd@kernel.org>
-In-Reply-To: <20181206215858.3880-7-sboyd@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 6 Dec 2018 23:03:19 +0100
-Message-ID: <CACRpkdbNs81HKTdtmVpo6swQj8Nc1dSutbyaDeJ1GsuDWzQToA@mail.gmail.com>
-Subject: Re: [PATCH 6/8] clk: versatile: sp810: Remove usage of CLK_IS_BASIC
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 10:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On 12/6/18 12:11 PM, Logan Gunthorpe wrote:
+>> My concern with having folks do per-program parsing, *and* having a huge
+>> amount of data to parse makes it unusable.  The largest systems will
+>> literally have hundreds of thousands of objects in /sysfs, even in a
+>> single directory.  That makes readdir() basically impossible, and makes
+>> even open() (if you already know the path you want somehow) hard to do fast.
+> Is this actually realistic? I find it hard to imagine an actual hardware
+> bus that can have even thousands of devices under a single node, let
+> alone hundreds of thousands.
 
-> This flag doesn't look to be used by any code, just set in the clk init
-> structure and then never tested again. Remove it from this driver as it
-> doesn't provide any benefit.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Jerome's proposal, as I understand it, would have generic "links".
+They're not an instance of bus, but characterize a class of "link".  For
+instance, a "link" might characterize the characteristics of the QPI bus
+between two CPU sockets. The link directory would enumerate the list of
+all *instances* of that link
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+So, a "link" directory for QPI would say Socket0<->Socket1,
+Socket1<->Socket2, Socket1<->Socket2, Socket2<->PCIe-1.2.3.4 etc...  It
+would have to enumerate the connections between every entity that shared
+those link properties.
 
-Can't help but wonder what semantic it was supposed to have.
-It seems a bit vague now.
-
-Yours,
-Linus Walleij
+While there might not be millions of buses, there could be millions of
+*paths* across all those buses, and that's what the HMAT describes, at
+least: the net result of all those paths.
