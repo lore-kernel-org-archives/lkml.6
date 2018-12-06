@@ -2,92 +2,125 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D3FC65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A718CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A65F20878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A65F20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F72920892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UD31QJ6G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F72920892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbeLFSij (ORCPT
+        id S1726073AbeLFSin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:38:39 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32804 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725916AbeLFSij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:38:39 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 9A066FCF10B52;
-        Thu,  6 Dec 2018 18:38:35 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Dec
- 2018 18:38:30 +0000
-Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-8-roberto.sassu@huawei.com>
- <20181205001417.GF1233@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <9d6e47d9-3b88-86f6-1b60-6652dfe8dc00@huawei.com>
-Date:   Thu, 6 Dec 2018 19:38:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Dec 2018 13:38:43 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33986 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbeLFSik (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:38:40 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so601854pfg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ng6k7XN2+E7qu+YJG+ewVaHjUak4Dnv0s5kVr6uQuLI=;
+        b=UD31QJ6GC66z7VnoRsNyMmQJNDtWDYhH1t1EhWvLVC35clbrhHvtCLfIDc3kuI/kjo
+         PhE6/Q4QGJNtbeVj2PuHR6i0D2aaPFSW/lrGYQAawYaJpSZ00GcK0STbAQbASLfKcXbW
+         KSmwt4pirPr0FbcPDgPDSPCxOIqY7CFQcfCnf1brtTusb4rK2TnWnnCiyvjOlAwhSnVj
+         fpCFVKaKzndenoWYom9LwhhOrVfEHUY+WbndNJqxZnMyKCBPm0+weR2X++USF0iNayF4
+         WigpOsLRPEHu9s0S1Xs9XsH4QUV/+2uVeBmsr+h8O/0evUYqwJAesx/WQW19miTVpRjC
+         i+ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ng6k7XN2+E7qu+YJG+ewVaHjUak4Dnv0s5kVr6uQuLI=;
+        b=hufYW8UTIdDScFEVfJLl5ID5p+Yp4B3Zc4dC/xbD+v/hPpTp8H1Bx9pgKYRMzVqvKD
+         X0hi6O+bAMBMBiU6cUXi4LqoFtUyXCvG8ufBxFwHqg032dltro1vVjbghyizUzvOOtRL
+         ruE4/UM9AZFMNsnJ0FXMqqaPoWIMTYZQsF3F3N8zwazHoF78hjLab+oa1wzkoMVxH64E
+         7lMg+87bOS5xcAv2Rp9kFHR6NbLALsKx3MtaNSen9mqU2/uGwBuYkqZG3prBNwbfx2wC
+         e4BCxgin57K0zzMomLr+1C7rETTdZYRMuxLVMmzAU6zQGQ7ADLAXP0aEM7Vo+r+eONWx
+         FsXw==
+X-Gm-Message-State: AA+aEWYdaPop3H9z+NbXF30t1nPi+TxsPEKFI8MFGPRGvBmMd93Uhf03
+        6s6iPc7aaT9dwhQlkI5m2uE=
+X-Google-Smtp-Source: AFSGD/VdfjPNYk7vJ3JQ1RT1pvFcY6rlX1YYQBpdVWgqyCdVx5xPkkuEuOXRFKVBkjSnBJ0Zx3q50w==
+X-Received: by 2002:a63:b81a:: with SMTP id p26mr25564117pge.433.1544121519885;
+        Thu, 06 Dec 2018 10:38:39 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([103.227.99.39])
+        by smtp.gmail.com with ESMTPSA id z9sm1534389pfd.99.2018.12.06.10.38.38
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 06 Dec 2018 10:38:39 -0800 (PST)
+Date:   Fri, 7 Dec 2018 00:12:27 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH v3 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
+ vm_insert_range
+Message-ID: <20181206184227.GA28656@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20181205001417.GF1233@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/2018 1:14 AM, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
->> The new tpm_bank_list structure has been preferred to the tpm_digest
->> structure, to let the caller specify the size of the digest (which may be
->> unknown to the TPM driver).
-> 
-> Why is that? Didn't previous commit query these?
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
-Since the TPM driver pads/truncates the first digest passed by the
-caller to extend PCRs for which no digest was provided, it must know
-which amount of data it can use. It is possible that the algorithm of
-the first digest is unknown for the TPM driver, if the caller of
-tpm_pcr_extend() didn't check chip->allocated_banks.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-By requiring that the caller passes also the digest size, this problem
-does not arise. It seems reasonable to me to pass this information, as
-the caller calculated the digest and it should know the digest size.
-
-Roberto
-
-
->> +struct tpm_bank_list {
->> +	u16 alg_id;
->> +	u16 extend_size;
->> +	const u8 *extend_array;
->> +};
-> 
-> Naming is not good here. If this only for extending shouldn't that
-> be in the structs name?
-> 
-> /Jarkko
-> 
-
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index a8db758..2cb83bb 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -221,26 +221,10 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+ 					      struct vm_area_struct *vma)
+ {
+ 	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+-	unsigned int i, count = obj->size >> PAGE_SHIFT;
+ 	unsigned long user_count = vma_pages(vma);
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff;
+-	unsigned long end = user_count + offset;
+-	int ret;
+-
+-	if (user_count == 0)
+-		return -ENXIO;
+-	if (end > count)
+-		return -ENXIO;
+ 
+-	for (i = offset; i < end; i++) {
+-		ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+-		if (ret)
+-			return ret;
+-		uaddr += PAGE_SIZE;
+-	}
+-
+-	return 0;
++	return vm_insert_range(vma, vma->vm_start, rk_obj->pages,
++				user_count);
+ }
+ 
+ static int rockchip_drm_gem_object_mmap_dma(struct drm_gem_object *obj,
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+1.9.1
+
