@@ -2,157 +2,225 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19FEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA54C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F37021508
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06AAA21508
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3jJcPaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F37021508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GbbPWGU1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AAA21508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729017AbeLFGD2 (ORCPT
+        id S1729052AbeLFGE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 01:03:28 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41263 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbeLFGD1 (ORCPT
+        Thu, 6 Dec 2018 01:04:57 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:54220 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbeLFGE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 01:03:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u6so11258275plm.8;
-        Wed, 05 Dec 2018 22:03:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=57oTXQ4VQufT9x0PRKi54O7D07V2teSLrtvD9DeC/4M=;
-        b=H3jJcPaKlALulQiGKdvaS75THuYCnHOCZbF25Srd2fr5UHghecLBgX2WjcgMBNdK2J
-         Ohw0tqB7sQnadWECzjaPxl7GHLNlAncLq3+oN06MEsuuF1F6515Yte1BbjrwphNE9isT
-         WcnMoY/e2nb8CaZtaU0qEY1GUSYNthbQFS6hJgJ9NTYa9iBjpgPMtbKdddR2aAvFSrRR
-         pMbP6zUxWgdb6dqikl55+FXIHJ0BtDsdc87dY7eI0J+WmapfEeDJBRd9msxW7cWHP5ql
-         3DlKwj3YBqZvOtIrUNKQDnSup59l1xvn50bguV0jgxVV50hh7OIy69X2N9Z2FGG6vHn4
-         qdZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=57oTXQ4VQufT9x0PRKi54O7D07V2teSLrtvD9DeC/4M=;
-        b=cRq6TOz63PA2lcC3BeS0O7FES/EB/sS3Dgkv110tnloeYJgWb/piz/+YoUUTvZ0+VT
-         o6HKDUAzBagZtlBttx1wdHekjPpUdBmneQxubvic+JEsb0ePSoWsxwRGSTK1jcRjlsd1
-         3d9VSmUCupvzB9ef4FmogfGZqRnfSB3igHc5eovk8Q942YRlhl0Q95pYEPZly5XICvap
-         6xOWSEioZ7OE1GiQ63V+37v9qgkAc9Y3ARoqO4RX976POFp/DLR1896T6gsxF1Oco1rp
-         nAsjAk/EhN8Ut//kaqQXpxAhbMkQ3/phxskobqbIOzuX68WkXyU8jHZQI5UMSGACR8vr
-         6HKA==
-X-Gm-Message-State: AA+aEWYfKygGTFdrEa5ekGOVKGCHUDLlT/NsinkaDHKgwL7B8igQqEjx
-        n1FdsRswqJWrPMkWmjXuRNMgoKv3kPs=
-X-Google-Smtp-Source: AFSGD/WdsKBeyU0gRCAsXEV0FF5HjseF6AA/PE2J7bHomaPhVI6YWsNyLwO3HWR9Mm+AEkrD+Mi9Ew==
-X-Received: by 2002:a17:902:7c82:: with SMTP id y2mr26660287pll.33.1544076206261;
-        Wed, 05 Dec 2018 22:03:26 -0800 (PST)
-Received: from [0.0.0.0] (97.64.17.87.16clouds.com. [97.64.17.87])
-        by smtp.gmail.com with ESMTPSA id h19sm27557451pfn.114.2018.12.05.22.03.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 22:03:25 -0800 (PST)
-Subject: Re: usb: thoughts of adding more support for FT232H
-To:     Anatolij Gustschin <agust@denx.de>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
- <20181205161718.7451d98f@crub>
-From:   Song Qiang <songqiang1304521@gmail.com>
-Message-ID: <924d4ebb-5f9c-f863-c698-9f978e9bc337@gmail.com>
-Date:   Thu, 6 Dec 2018 14:02:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181205161718.7451d98f@crub>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 6 Dec 2018 01:04:57 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB65xFUE182483;
+        Thu, 6 Dec 2018 06:02:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=01JQBA3N6kFT9Xy7iolrB9htJ7ADZ9tMeOcMqWbw/vo=;
+ b=GbbPWGU1xFx1jvsIXvHMko9z8dHljVFryVAe4cgIno5a0iBWP+3+H5DxNia2TA3A/lT0
+ f6z2e/D0u8ZyNmVsY7zaH81bW6A2XKdU3TfYF4siwY7ShUyrzEAmMBuKAKPuQy7WkG+D
+ gQaMbhxhKW+5Gt1EyQpUq7arCW6rXuum3wIDs1jEzMjih5CoNYaCm+HrgK74/0NqglIQ
+ x/jZk+KQlDxvrFaAn9Kh2yf1WuzXjC49/1SmQb/V6eRPP2bmMQIUP1VFUmicfYMOnzXi
+ kdO/5fQJjL6iBDGBqvE45ydLHHKgPtlN9FFdfm7dFf+VG8T6JwJFrCGDEMVE9q5pJJ1L kQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2p3jxrp7jh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Dec 2018 06:02:46 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB662jdO011970
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Dec 2018 06:02:45 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB662g6P014189;
+        Thu, 6 Dec 2018 06:02:42 GMT
+Received: from marawils-linux.us.oracle.com (/10.141.196.37)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 05 Dec 2018 22:02:41 -0800
+From:   Maran Wilson <maran.wilson@oracle.com>
+To:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, jgross@suse.com
+Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
+        dave.hansen@linux.intel.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
+        roger.pau@citrix.com, rkrcmar@redhat.com, maran.wilson@oracle.com
+Subject: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+Date:   Wed,  5 Dec 2018 22:02:32 -0800
+Message-Id: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812060055
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For certain applications it is desirable to rapidly boot a KVM virtual
+machine. In cases where legacy hardware and software support within the
+guest is not needed, Qemu should be able to boot directly into the
+uncompressed Linux kernel binary without the need to run firmware.
 
-On 12/5/18 11:17 PM, Anatolij Gustschin wrote:
-> Hi,
->
-> On Wed, 5 Dec 2018 22:10:40 +0800
-> Song Qiang songqiang1304521@gmail.com wrote:
-> ...
->> I've been developing some iio device drivers and found that some people
->> would like to test their devices with a qemu system which requires an
->> i2c or spi port on our development hosts. Usually this is achieved with
->> a DLN-2 adapter, while this is a bit difficult for me because it costs
->> ~175$ in my country. Then I found that FTDI's FT232H supports both these
->> two modes and costs only less than 5$ but without full support in kernel.
->> The ftdi-sio driver supports FT232H only as a serial converter.
->> So I'm planning to write a mfd driver for it supports both these three
->> modes, here are my thoughts:
-> There already has been a discussion [1] about adding an MFD driver for
-> FT232H, since the operating modes are mutually exclusive (and bus pins
-> shared between different modes), the MFD approach doesn't seem to be
-> a good fit.
->
->>   - This device cannot support these three modes together because they
->>     share some common pins, so I'm planning to add a sysfs entry
->>     'current_mode' for selecting which mode the device should be working
->>     on.
->>   - This device is in uart mode on reset, so default mode would be reset,
->>     too. This also helps for people only want to use this as a serial
->>     converter feels nothing has happened (compatible).
->>   - I was trying to reuse the ftdi-sio driver but it seems like mfd can
->>     only register platform devices, while this is a usb driver. I may
->>     have to copy some functions from this driver.
->>
->> Would you share any ideas? I'd appreciate it.
-> There is a patch series [2] adding an interface driver for FT232H-
-> based adapter devices, it already supports adding custom MPSSE based
-> SPI busses with SPI slaves for a custom USB PID. It already supports
-> adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
-> Adding I2C driver/adapter support should be easy, too. Maybe you can
-> re-use it.
->
-> Thanks,
-> Anatolij
->
-> [1] https://patchwork.kernel.org/patch/9828985
-> [2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
+There already exists an ABI to allow this for Xen PVH guests and the ABI
+is supported by Linux and FreeBSD:
 
-Hi Anatolij, Johan,
+   https://xenbits.xen.org/docs/unstable/misc/pvh.html
+
+This patch series would enable Qemu to use that same entry point for
+booting KVM guests.
+
+Changes from v7:
+
+ (No functional changes from v7 other than rebasing to latest upstream) 
+ * Added Review-by tags as provided by Juergen Gross (1,2,3,6,7)
+ * Rebasing to upstream 4.18 caused a minor conflict in patch 4 that had
+   to be hand merged due to this patch:
+      1fe8388 xen: share start flags between PV and PVH
+   I just had to make sure we were accounting for the xen_start_flags
+   in the new code path.
+ * Rebasing to upstream 4.20-rc4 caused a few minor conflicts in patches
+   2,3,5,7 that needed to be resolved by hand. The conflicts were due to
+   upstream non-functional code cleanup changes in arch/x86/xen/Makefile
+   and arch/x86/platform/pvh/enlighten.c due to these patches:
+      28c11b0 x86/xen: Move pv irq related functions under CONFIG_XEN_PV
+              umbrella
+      357d291 x86/xen: Fix boot loader version reported for PVH guests
+      3cfa210 xen: don't include <xen/xen.h> from <asm/io.h> and
+              <asm/dma-mapping.h>
+ * Qemu and qboot RFC patches have been posted to show one example of how
+   this functionality can be used. Some preliminary numbers are available
+   in those cover letters showing the KVM guest boot time improvement.
+      Qemu:
+      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00957.html
+      qboot:
+      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00953.html
+
+Changes from v6:
+
+ * Addressed issues caught by the kbuild test robot:
+    - Restored an #include line that had been dropped by mistake (patch 4)
+    - Removed a pair of #include lines that were no longer needed in a
+      common code file and causing problems for certain 32-bit configs
+      (patchs 4 and 7)
+
+Changes from v5:
+
+ * The interface changes to the x86/HVM start info layout have
+   now been accepted into the Xen tree.
+ * Rebase and merge upstream PVH file changes.
+ * (Patch 6) Synced up to the final version of the header file that was
+             acked and pulled into the Xen tree.
+ * (Patch 1) Fixed typo and removed redundant "def_bool n" line.
+
+Changes from v4:
+
+Note: I've withheld Juergen's earlier "Reviewed-by" tags from patches
+1 and 7 since there were minor changes (mostly just addition of
+CONFIG_KVM_GUEST_PVH as requested) that came afterwards.
+
+ * Changed subject prefix from RFC to PATCH
+ * Added CONFIG_KVM_GUEST_PVH as suggested
+ * Relocated the PVH common files to
+   arch/x86/platform/pvh/{enlighten.c,head.S}
+ * Realized I also needed to move the objtool override for those files
+ * Updated a few code comments per reviewer feedback
+ * Sent out a patch of the hvm_start_info struct changes against the Xen
+   tree since that is the canonical copy of the header. Discussions on
+   that thread have resulted in some (non-functional) updates to
+   start_info.h (patch 6/7) and those changes are reflected here as well
+   in order to keep the files in sync. The header file has since been
+   ack'ed for the Xen tree by Jan Beulich.
+
+Changes from v3:
+
+ * Implemented Juergen's suggestion for refactoring and moving the PVH
+   code so that CONFIG_XEN is no longer required for booting KVM guests
+   via the PVH entry point.
+   Functionally, nothing has changed from V3 really, but the patches
+   look completely different now because of all the code movement and
+   refactoring. Some of these patches can be combined, but I've left
+   them very small in some cases to make the refactoring and code
+   movement easier to review.
+   My approach for refactoring has been to create a PVH entry layer that
+   still has understanding and knowledge about Xen vs non-Xen guest types
+   so that it can make run time decisions to handle either case, as
+   opposed to going all the way and re-writing it to be a completely
+   hypervisor agnostic and architecturally pure layer that is separate
+   from guest type details. The latter seemed a bit overkill in this
+   situation. And I've handled the complexity of having to support
+   Qemu/KVM boot of kernels compiled with or without CONFIG_XEN via a
+   pair of xen specific __weak routines that can be overridden in kernels
+   that support Xen guests. Importantly, the __weak routines are for
+   xen specific code only (not generic "guest type" specific code) so
+   there is no clashing between xen version of the strong routine and,
+   say, a KVM version of the same routine. But I'm sure there are many
+   ways to skin this cat, so I'm open to alternate suggestions if there
+   is a compelling reason for not using __weak in this situation.
+
+Changes from v2:
+
+ * All structures (including memory map table entries) are padded and
+   aligned to an 8 byte boundary.
+
+ * Removed the "packed" attributes and made changes to comments as
+   suggested by Jan.
+
+Changes from v1:
+
+ * Adopted Paolo's suggestion for defining a v2 PVH ABI that includes the
+   e820 map instead of using the second module entry to pass the table.
+
+ * Cleaned things up a bit to reduce the number of xen vs non-xen special
+   cases.
 
 
-Great work you've done! While there still some thing confusing me.
+Maran Wilson (7):
+  xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
+  xen/pvh: Move PVH entry code out of Xen specific tree
+  xen/pvh: Create a new file for Xen specific PVH code
+  xen/pvh: Move Xen specific PVH VM initialization out of common file
+  xen/pvh: Move Xen code for getting mem map via hcall out of common
+    file
+  xen/pvh: Add memory map pointer to hvm_start_info struct
+  KVM: x86: Allow Qemu/KVM to use PVH entry point
 
-Patch series [2] added new custom PIDs to distinguish the mode this device 
-should be in when powered on, is this right? Since USB has a convention for all 
-the VIDs and PIDs, is this really a good approach to use some us-defined PIDs?
+ MAINTAINERS                                     |   1 +
+ arch/x86/Kbuild                                 |   2 +
+ arch/x86/Kconfig                                |  14 +++
+ arch/x86/kernel/head_64.S                       |   2 +-
+ arch/x86/platform/pvh/Makefile                  |   5 +
+ arch/x86/platform/pvh/enlighten.c               | 137 ++++++++++++++++++++++++
+ arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
+ arch/x86/xen/Kconfig                            |   3 +-
+ arch/x86/xen/Makefile                           |   2 -
+ arch/x86/xen/enlighten_pvh.c                    |  94 ++++------------
+ include/xen/interface/hvm/start_info.h          |  63 ++++++++++-
+ include/xen/xen.h                               |   3 +
+ 12 files changed, 245 insertions(+), 81 deletions(-)
+ create mode 100644 arch/x86/platform/pvh/Makefile
+ create mode 100644 arch/x86/platform/pvh/enlighten.c
+ rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
 
-In the discussion [1] #4, Johan said that mfd is not suitable for this situation 
-because 'all drivers for these devices be able to retrieve the current mode 
-during probe and only bind when the mode matches'.
-
-I think this is saying that we can only register these devices(i2c, spi, gpio) 
-when we plug it in, but FT232H's functions are surely mutually exclusive, so 
-can't we dynamically register these devices in userspace? I mean through a sysfs 
-interface, and through the implementation functions of this interface, we can 
-try to use mfd_add_devices() and mfd_remove_devices() to unload one 
-function(like uart) and load it as another device like a spi adapter. Is there 
-any side effects of doing this in this way?
-
-And also my English may be not very well so please correct me if I'm 
-understanding anything wrong. :)
-
-
-yours,
-
-Song
+-- 
+2.16.1
 
