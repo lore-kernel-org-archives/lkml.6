@@ -2,34 +2,34 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA11DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9BCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97FD920878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:11:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FD920878
+	by mail.kernel.org (Postfix) with ESMTP id 2625520850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:12:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2625520850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbeLFLLq (ORCPT
+        id S1729626AbeLFLMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:11:46 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50073 "EHLO
+        Thu, 6 Dec 2018 06:12:15 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53345 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFLLq (ORCPT
+        with ESMTP id S1727575AbeLFLMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:11:46 -0500
+        Thu, 6 Dec 2018 06:12:15 -0500
 Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
         by metis.ext.pengutronix.de with esmtp (Exim 4.89)
         (envelope-from <l.stach@pengutronix.de>)
-        id 1gUrZ3-0003Zt-Um; Thu, 06 Dec 2018 12:11:29 +0100
-Message-ID: <1544094689.3709.59.camel@pengutronix.de>
-Subject: Re: [PATCH 2/5] irqchip/irq-imx-gpcv2: Share reg offset calculation
- code
+        id 1gUrZd-0003iR-4q; Thu, 06 Dec 2018 12:12:05 +0100
+Message-ID: <1544094724.3709.60.camel@pengutronix.de>
+Subject: Re: [PATCH 3/5] irqchip/irq-imx-gpcv2: Make use of BIT() macro
 From:   Lucas Stach <l.stach@pengutronix.de>
 To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Marc Zyngier <marc.zyngier@arm.com>
@@ -39,10 +39,10 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Dec 2018 12:11:29 +0100
-In-Reply-To: <20181206073125.7255-3-andrew.smirnov@gmail.com>
+Date:   Thu, 06 Dec 2018 12:12:04 +0100
+In-Reply-To: <20181206073125.7255-4-andrew.smirnov@gmail.com>
 References: <20181206073125.7255-1-andrew.smirnov@gmail.com>
-         <20181206073125.7255-3-andrew.smirnov@gmail.com>
+         <20181206073125.7255-4-andrew.smirnov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -57,90 +57,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Am Mittwoch, den 05.12.2018, 23:31 -0800 schrieb Andrey Smirnov:
-> Move identical offset calculation code into a small helper function
-> and make use of it in the rest of the code.
+> Convert all instances of 1 << x to BIT(x) for consistency with other
+> kernel code.
 > 
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Jason Cooper <jason@lakedaemon.net>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > Cc: cphealy@gmail.com
 > Cc: l.stach@pengutronix.de
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
 > Cc: linux-imx@nxp.com
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-kernel@vger.kernel.org
 > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Nice cleanup!
-
 Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
->  drivers/irqchip/irq-imx-gpcv2.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
+>  drivers/irqchip/irq-imx-gpcv2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-> index cbed00319315..b262ba8b2652 100644
+> diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-
+> imx-gpcv2.c
+> index b262ba8b2652..077d56b3183a 100644
 > --- a/drivers/irqchip/irq-imx-gpcv2.c
 > +++ b/drivers/irqchip/irq-imx-gpcv2.c
-> @@ -28,6 +28,11 @@ struct gpcv2_irqchip_data {
+> @@ -78,7 +78,7 @@ static int imx_gpcv2_irq_set_wake(struct irq_data
+> *d, unsigned int on)
+>  	u32 mask, val;
 >  
->  static struct gpcv2_irqchip_data *imx_gpcv2_instance;
+>  	raw_spin_lock_irqsave(&cd->rlock, flags);
+> -	mask = 1 << d->hwirq % 32;
+> +	mask = BIT(d->hwirq % 32);
+>  	val = cd->wakeup_sources[idx];
 >  
-> +static void __iomem *gpcv2_idx_to_reg(struct gpcv2_irqchip_data *cd, int i)
-> +{
-> > +	return cd->gpc_base + cd->cpu2wakeup + i * 4;
-> +}
-> +
->  static int gpcv2_wakeup_source_save(void)
->  {
-> >  	struct gpcv2_irqchip_data *cd;
-> @@ -39,7 +44,7 @@ static int gpcv2_wakeup_source_save(void)
-> >  		return 0;
+>  	cd->wakeup_sources[idx] = on ? (val & ~mask) : (val | mask);
+> @@ -101,7 +101,7 @@ static void imx_gpcv2_irq_unmask(struct irq_data
+> *d)
+>  	raw_spin_lock(&cd->rlock);
+>  	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
+>  	val = readl_relaxed(reg);
+> -	val &= ~(1 << d->hwirq % 32);
+> +	val &= ~BIT(d->hwirq % 32);
+>  	writel_relaxed(val, reg);
+>  	raw_spin_unlock(&cd->rlock);
 >  
-> >  	for (i = 0; i < IMR_NUM; i++) {
-> > -		reg = cd->gpc_base + cd->cpu2wakeup + i * 4;
-> > +		reg = gpcv2_idx_to_reg(cd, i);
-> >  		cd->saved_irq_mask[i] = readl_relaxed(reg);
-> >  		writel_relaxed(cd->wakeup_sources[i], reg);
-> >  	}
-> @@ -50,17 +55,14 @@ static int gpcv2_wakeup_source_save(void)
->  static void gpcv2_wakeup_source_restore(void)
->  {
-> >  	struct gpcv2_irqchip_data *cd;
-> > -	void __iomem *reg;
-> >  	int i;
+> @@ -117,7 +117,7 @@ static void imx_gpcv2_irq_mask(struct irq_data
+> *d)
+>  	raw_spin_lock(&cd->rlock);
+>  	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
+>  	val = readl_relaxed(reg);
+> -	val |= 1 << (d->hwirq % 32);
+> +	val |= BIT(d->hwirq % 32);
+>  	writel_relaxed(val, reg);
+>  	raw_spin_unlock(&cd->rlock);
 >  
-> >  	cd = imx_gpcv2_instance;
-> >  	if (!cd)
-> >  		return;
->  
-> > -	for (i = 0; i < IMR_NUM; i++) {
-> > -		reg = cd->gpc_base + cd->cpu2wakeup + i * 4;
-> > -		writel_relaxed(cd->saved_irq_mask[i], reg);
-> > -	}
-> > +	for (i = 0; i < IMR_NUM; i++)
-> > +		writel_relaxed(cd->saved_irq_mask[i], gpcv2_idx_to_reg(cd, i));
->  }
->  
->  static struct syscore_ops imx_gpcv2_syscore_ops = {
-> @@ -97,7 +99,7 @@ static void imx_gpcv2_irq_unmask(struct irq_data *d)
-> >  	u32 val;
->  
-> >  	raw_spin_lock(&cd->rlock);
-> > -	reg = cd->gpc_base + cd->cpu2wakeup + d->hwirq / 32 * 4;
-> > +	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
-> >  	val = readl_relaxed(reg);
-> >  	val &= ~(1 << d->hwirq % 32);
-> >  	writel_relaxed(val, reg);
-> @@ -113,7 +115,7 @@ static void imx_gpcv2_irq_mask(struct irq_data *d)
-> >  	u32 val;
->  
-> >  	raw_spin_lock(&cd->rlock);
-> > -	reg = cd->gpc_base + cd->cpu2wakeup + d->hwirq / 32 * 4;
-> > +	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
-> >  	val = readl_relaxed(reg);
-> >  	val |= 1 << (d->hwirq % 32);
-> >  	writel_relaxed(val, reg);
