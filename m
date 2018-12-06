@@ -2,105 +2,502 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BADDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 016AE20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930DA21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107533;
-	bh=ibbxT192Ni6+FysnUDx/0+KhUMPYGHjBUB+iM8R4V0Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S5kZTcJ0K6ZSq3CiOWnQ4Ip6pJWWDG2UlGGTcCv+5HLMyHRCPhQmK3ZbMerOmB7FL
-	 aliGS8aL1sk8jpBAM1VxFDlW+zP3m45yop14qWf25vRo6LGQEDkq9lZa4UezOM2FZo
-	 twCqAo8JN8lLH3jETHc4nVef7Ur/xErOAgYegfuY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 016AE20892
+	s=default; t=1544107537;
+	bh=cZgAlzu8m0AIEgPHjlVaY4QZS3dwN2AmSrdeUWPi0KQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=tWJr8wHEqEf7gYCys4bIyJVnp+7Cb9IDbRDFCt0o79TCAnAHsgJovUlidEVHWMOAG
+	 swxbnru/TrRe2StE2bxSNLr/kMRtUc82giumSdi8FmRvFLc8n+FzXZp29g8i7dV0RX
+	 2+Oq6WlDv+hveBydbqr393FZ08a3vDSa8smtBs+U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930DA21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731082AbeLFOpb (ORCPT
+        id S1730540AbeLFOpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:45:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:45:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbeLFOp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:45:29 -0500
+        id S1728209AbeLFOpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:45:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3819620892;
-        Thu,  6 Dec 2018 14:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5462C20892;
+        Thu,  6 Dec 2018 14:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107528;
-        bh=ibbxT192Ni6+FysnUDx/0+KhUMPYGHjBUB+iM8R4V0Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nXSz/mYLSFnOzJgmKI4+1Wyq6idv1g0tHHbdvEP+JKmpDbxTFiyIMMWrpHxjFvrKt
-         8anV6Ft0Dc1hflb4HEwu0aVrXnFoU0uEGUI0B3n7JbovNQVhkcR9trbSuV4EAgsnJu
-         OIeWBYwkWkB9aN1yGEa1xl4m6xEZijIamenTb8vI=
+        s=default; t=1544107533;
+        bh=cZgAlzu8m0AIEgPHjlVaY4QZS3dwN2AmSrdeUWPi0KQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hiIRD0vKla7MBgAsin1+0Hep7dL+T58+AHN7bkf1zX7kTHSE1gg0WFcw40X8g6na4
+         CXwkDMu+MOlc3KyEkI5q1RsaybL8U6IuY7M59CDNkleQcJJLDzB3NC92nwvkhDeSu/
+         I2X5RcMKu1SYZA3yipLwKNTtTioLX9KlwpwHr7ns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.9 008/101] drm: gma500: fix logic error
-Date:   Thu,  6 Dec 2018 15:38:07 +0100
-Message-Id: <20181206143012.071271445@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 000/101] 4.9.144-stable review
+Date:   Thu,  6 Dec 2018 15:37:59 +0100
+Message-Id: <20181206143011.174892052@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
-References: <20181206143011.174892052@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.144-rc1
+X-KernelTest-Deadline: 2018-12-08T14:30+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.9.144 release.
+There are 101 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+Anything received after that time might be too late.
 
-From: Arnd Bergmann <arnd@arndb.de>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-commit 67a3b63a54cbe18944191f43d644686731cf30c7 upstream.
+thanks,
 
-gcc-8 points out a condition that almost certainly doesn't
-do what the author had in mind:
+greg k-h
 
-drivers/gpu/drm/gma500/mdfld_intel_display.c: In function 'mdfldWaitForPipeEnable':
-drivers/gpu/drm/gma500/mdfld_intel_display.c:102:37: error: bitwise comparison always evaluates to false [-Werror=tautological-compare]
+-------------
+Pseudo-Shortlog of commits:
 
-This changes it to a simple bit mask operation to check
-whether the bit is set.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.144-rc1
 
-Fixes: 026abc333205 ("gma500: initial medfield merge")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170905074741.435324-1-arnd@arndb.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: don't fail when converting shortform attr to long form during ATTR_REPLACE
 
----
- drivers/gpu/drm/gma500/mdfld_intel_display.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    f2fs: fix to do sanity check with cp_pack_start_sum
 
---- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-+++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-@@ -99,7 +99,7 @@ void mdfldWaitForPipeEnable(struct drm_d
- 	/* Wait for for the pipe enable to take effect. */
- 	for (count = 0; count < COUNT_MAX; count++) {
- 		temp = REG_READ(map->conf);
--		if ((temp & PIPEACONF_PIPE_STATE) == 1)
-+		if (temp & PIPEACONF_PIPE_STATE)
- 			break;
- 	}
- }
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: free meta pages if sanity check for ckpt is failed
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix to do sanity check with block address in main area v2
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: fix missing up_read
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix to do sanity check with block address in main area
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix to do sanity check with node footer and iblocks
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    f2fs: Add sanity_check_inode() function
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix to do sanity check with user_block_count
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix to do sanity check with secs_per_zone
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: introduce and spread verify_blkaddr
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: clean up with is_valid_blkaddr()
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: enhance sanity_check_raw_super() to avoid potential overflow
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: sanity check on sit entry
+
+Yunlei He <heyunlei@huawei.com>
+    f2fs: check blkaddr more accuratly before issue a bio
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: return error during fill_super
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: detect wrong layout
+
+Chao Yu <yuchao0@huawei.com>
+    f2fs: fix race condition in between free nid allocator/initializer
+
+Yunlei He <heyunlei@huawei.com>
+    f2fs: fix a panic caused by NULL flush_cmd_control
+
+Shaokun Zhang <zhangshaokun@hisilicon.com>
+    btrfs: tree-checker: Fix misleading group system information
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: Check level for leaves and nodes
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: Check that each block group has corresponding chunk at mount time
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: Detect invalid and empty essential trees
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: Verify block_group_item
+
+David Sterba <dsterba@suse.com>
+    btrfs: tree-check: reduce stack consumption in check_dir_item
+
+Arnd Bergmann <arnd@arndb.de>
+    btrfs: tree-checker: use %zu format string for size_t
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: Add checker for dir item
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: tree-checker: Fix false panic for sanity test
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: tree-checker: Enhance btrfs_check_node output
+
+Jeff Mahoney <jeffm@suse.com>
+    btrfs: struct-funcs, constify readers
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: Move leaf and node validation checker to tree-checker.c
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: Add checker for EXTENT_CSUM
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: Add sanity check for EXTENT_DATA when reading out leaf
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: Check if item pointer overlaps with the item itself
+
+Qu Wenruo <quwenruo.btrfs@gmx.com>
+    btrfs: Refactor check_leaf function for later expansion
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: Verify that every chunk has corresponding block group at mount time
+
+Gu Jinxiang <gujx@cn.fujitsu.com>
+    btrfs: validate type when reading a chunk
+
+Mike Kravetz <mike.kravetz@oracle.com>
+    hugetlbfs: check for pgoff value overflow
+
+Mike Kravetz <mike.kravetz@oracle.com>
+    hugetlbfs: fix offset overflow in hugetlbfs mmap
+
+Mike Kravetz <mike.kravetz@oracle.com>
+    mm/hugetlb.c: don't call region_abort if region_chg fails
+
+Lior David <qca_liord@qca.qualcomm.com>
+    wil6210: missing length check in wmi_set_ie
+
+Alexei Starovoitov <ast@kernel.org>
+    bpf: Prevent memory disambiguation attack
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    bpf/verifier: Pass instruction index to check_mem_access() and check_xadd()
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    bpf/verifier: Add spi variable to check_stack_write()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: check authorizer reply/challenge length before reading
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: weaken sizeof check in ceph_x_verify_authorizer_reply()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: implement CEPHX_V2 calculation mode
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: add authorizer challenge
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: factor out encrypt_authorizer()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: factor out __ceph_x_decrypt()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: factor out __prepare_write_connect()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: store ceph_auth_handshake pointer in ceph_connection
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: no need to drop con->mutex for ->get_authorizer()
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: drop len argument of *verify_authorizer_reply()
+
+Guoqing Jiang <gqjiang@suse.com>
+    tipc: use destination length for copy string
+
+Arnd Bergmann <arnd@arndb.de>
+    net: qed: use correct strncpy() size
+
+Arnd Bergmann <arnd@arndb.de>
+    usb: gadget: dummy: fix nonsensical comparisons
+
+Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+    mm: cleancache: fix corruption on missed inode invalidation
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    reset: remove remaining WARN_ON() in <linux/reset.h>
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    reset: make device_reset_optional() really optional
+
+Philipp Zabel <p.zabel@pengutronix.de>
+    reset: add exported __reset_control_get, return NULL if optional
+
+Philipp Zabel <p.zabel@pengutronix.de>
+    reset: fix optional reset_control_get stubs to return NULL
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    reset: core: fix reset_control_put
+
+Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
+    reset: make optional functions really optional
+
+Jan Kara <jack@suse.cz>
+    udf: Allow mounting volumes with incorrect identification strings
+
+Alexey Brodkin <abrodkin@synopsys.com>
+    arc: [devboards] Add support of NFSv3 ACL
+
+Kevin Hilman <khilman@baylibre.com>
+    ARC: change defconfig defaults to ARCv2
+
+Filipe Manana <fdmanana@suse.com>
+    Btrfs: fix use-after-free when dumping free space
+
+Nikolay Borisov <nborisov@suse.com>
+    btrfs: Always try all copies when reading extent buffers
+
+Adam Wong <adam@adamwong.me>
+    Input: elan_i2c - add support for ELAN0621 touchpad
+
+Noah Westervelt <nwestervelt@outlook.com>
+    Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15ARR
+
+Patrick Gaskin <patrick@pgaskin.net>
+    Input: elan_i2c - add ELAN0620 to the ACPI table
+
+Christian Hoff <christian_hoff@gmx.net>
+    Input: matrix_keypad - check for errors from of_get_named_gpio()
+
+Cameron Gutman <aicommander@gmail.com>
+    Input: xpad - quirk all PDP Xbox One gamepads
+
+Johan Hovold <johan@kernel.org>
+    drm/mediatek: fix OF sibling-node lookup
+
+Wei Wang <wawei@amazon.de>
+    svm: Add mutex_lock to protect apic_access_page_done on AMD systems
+
+Todd Kjos <tkjos@android.com>
+    binder: fix proc->files use-after-free
+
+Laura Abbott <labbott@redhat.com>
+    kgdboc: Fix warning with module build
+
+Laura Abbott <labbott@redhat.com>
+    kgdboc: Fix restrict error
+
+Kees Cook <keescook@chromium.org>
+    scsi: csiostor: Avoid content leaks and casts
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: trident: Suppress gcc string warning
+
+Martin Wilck <mwilck@suse.com>
+    scsi: scsi_devinfo: cleanly zero-pad devinfo strings
+
+Sergio Correia <sergio@correia.cc>
+    drm: set is_master to 0 upon drm_new_set_master() failure
+
+Sam Bobroff <sbobroff@linux.ibm.com>
+    drm/ast: Fix incorrect free on ioregs
+
+Michael Guralnik <michaelgur@mellanox.com>
+    IB/mlx5: Avoid load failure due to unknown link width
+
+Dmitry V. Levin <ldv@altlinux.org>
+    mips: fix mips_get_syscall_arg o32 check
+
+Mathias Kresin <dev@kresin.me>
+    MIPS: ralink: Fix mt7620 nd_sd pinmux
+
+Andrea Parri <andrea.parri@amarulasolutions.com>
+    uprobes: Fix handle_swbp() vs. unregister() + register() race once more
+
+Sagi Grimberg <sagi@grimberg.me>
+    iser: set sector for ambiguous mr status errors
+
+Kees Cook <keescook@chromium.org>
+    x86/power/64: Use char arrays for asm function names
+
+Arnd Bergmann <arnd@arndb.de>
+    kdb: use memmove instead of overlapping memcpy
+
+Arnd Bergmann <arnd@arndb.de>
+    staging: rts5208: fix gcc-8 logic error warning
+
+Arnd Bergmann <arnd@arndb.de>
+    scsi: bfa: convert to strlcpy/strlcat
+
+Arnd Bergmann <arnd@arndb.de>
+    drm: gma500: fix logic error
+
+Sultan Alsawaf <sultanxda@gmail.com>
+    ip_tunnel: Fix name string concatenate in __ip_tunnel_create()
+
+Guenter Roeck <linux@roeck-us.net>
+    kernfs: Replace strncpy with memcpy
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    unifdef: use memcpy instead of strncpy
+
+Guenter Roeck <linux@roeck-us.net>
+    kobject: Replace strncpy with memcpy
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    test_hexdump: use memcpy instead of strncpy
+
+Stephen Rothwell <sfr@canb.auug.org.au>
+    disable stringop truncation warnings for now
+
+Xiongfeng Wang <xiongfeng.wang@linaro.org>
+    Kbuild: suppress packed-not-aligned warning for default setting only
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                     |   7 +-
+ arch/arc/Kconfig                             |   2 +-
+ arch/arc/Makefile                            |   2 +-
+ arch/arc/configs/axs101_defconfig            |   2 +
+ arch/arc/configs/axs103_defconfig            |   1 +
+ arch/arc/configs/axs103_smp_defconfig        |   1 +
+ arch/arc/configs/nps_defconfig               |   2 +
+ arch/arc/configs/nsim_700_defconfig          |   1 +
+ arch/arc/configs/nsimosci_defconfig          |   2 +
+ arch/arc/configs/nsimosci_hs_defconfig       |   1 +
+ arch/arc/configs/nsimosci_hs_smp_defconfig   |   1 +
+ arch/arc/configs/tb10x_defconfig             |   1 +
+ arch/arc/configs/vdk_hs38_defconfig          |   1 +
+ arch/arc/configs/vdk_hs38_smp_defconfig      |   1 +
+ arch/mips/include/asm/syscall.h              |   2 +-
+ arch/mips/ralink/mt7620.c                    |   2 +-
+ arch/x86/include/asm/suspend_64.h            |   5 +-
+ arch/x86/kvm/svm.c                           |  19 +-
+ arch/x86/power/hibernate_64.c                |   6 +-
+ drivers/android/binder.c                     |  41 +-
+ drivers/gpu/drm/ast/ast_main.c               |   3 +-
+ drivers/gpu/drm/drm_auth.c                   |   2 +
+ drivers/gpu/drm/gma500/mdfld_intel_display.c |   2 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c          |   5 +-
+ drivers/infiniband/hw/mlx5/main.c            |  29 +-
+ drivers/infiniband/ulp/iser/iser_verbs.c     |   7 +-
+ drivers/input/joystick/xpad.c                |  16 +-
+ drivers/input/keyboard/matrix_keypad.c       |  23 +-
+ drivers/input/mouse/elan_i2c_core.c          |   3 +
+ drivers/net/ethernet/qlogic/qed/qed_debug.c  |   8 +-
+ drivers/net/wireless/ath/wil6210/wmi.c       |   8 +-
+ drivers/reset/core.c                         |  79 +++-
+ drivers/scsi/bfa/bfa_fcbuild.c               |   8 +-
+ drivers/scsi/bfa/bfa_fcs.c                   |  78 ++--
+ drivers/scsi/bfa/bfa_fcs_lport.c             |  62 +--
+ drivers/scsi/bfa/bfa_ioc.c                   |   2 +-
+ drivers/scsi/bfa/bfa_svc.c                   |   4 +-
+ drivers/scsi/bfa/bfad.c                      |  20 +-
+ drivers/scsi/bfa/bfad_attr.c                 |   2 +-
+ drivers/scsi/bfa/bfad_bsg.c                  |   6 +-
+ drivers/scsi/csiostor/csio_lnode.c           |  43 +-
+ drivers/scsi/scsi_devinfo.c                  |  22 +-
+ drivers/staging/rts5208/sd.c                 |   6 -
+ drivers/tty/serial/kgdboc.c                  |  43 +-
+ drivers/usb/gadget/udc/dummy_hcd.c           |   9 +-
+ fs/btrfs/Makefile                            |   2 +-
+ fs/btrfs/ctree.h                             | 128 +++---
+ fs/btrfs/disk-io.c                           | 162 +------
+ fs/btrfs/extent-tree.c                       |  86 +++-
+ fs/btrfs/extent_io.c                         |  24 +-
+ fs/btrfs/extent_io.h                         |  19 +-
+ fs/btrfs/free-space-cache.c                  |   2 +
+ fs/btrfs/struct-funcs.c                      |   9 +-
+ fs/btrfs/tree-checker.c                      | 649 +++++++++++++++++++++++++++
+ fs/btrfs/tree-checker.h                      |  38 ++
+ fs/btrfs/volumes.c                           |  30 +-
+ fs/btrfs/volumes.h                           |   2 +
+ fs/ceph/mds_client.c                         |  15 +-
+ fs/f2fs/checkpoint.c                         |  46 +-
+ fs/f2fs/data.c                               |  33 +-
+ fs/f2fs/f2fs.h                               |  41 +-
+ fs/f2fs/file.c                               |  21 +-
+ fs/f2fs/inode.c                              |  68 ++-
+ fs/f2fs/node.c                               |  73 ++-
+ fs/f2fs/recovery.c                           |   6 +-
+ fs/f2fs/segment.c                            |  34 +-
+ fs/f2fs/segment.h                            |  48 +-
+ fs/f2fs/super.c                              | 107 ++++-
+ fs/hugetlbfs/inode.c                         |  26 +-
+ fs/kernfs/symlink.c                          |   2 +-
+ fs/udf/super.c                               |  16 +-
+ fs/udf/unicode.c                             |  14 +-
+ fs/xfs/libxfs/xfs_attr.c                     |   9 +-
+ include/linux/bpf_verifier.h                 |   1 +
+ include/linux/ceph/auth.h                    |  13 +-
+ include/linux/ceph/ceph_features.h           |   4 +-
+ include/linux/ceph/messenger.h               |   8 +-
+ include/linux/ceph/msgr.h                    |   2 +-
+ include/linux/reset.h                        |  92 ++--
+ include/uapi/linux/btrfs_tree.h              |   1 +
+ kernel/bpf/verifier.c                        |  90 +++-
+ kernel/debug/kdb/kdb_support.c               |   4 +-
+ kernel/events/uprobes.c                      |  12 +-
+ lib/kobject.c                                |   2 +-
+ lib/test_hexdump.c                           |   2 +-
+ mm/hugetlb.c                                 |  10 +-
+ mm/truncate.c                                |   8 +-
+ net/ceph/auth.c                              |  20 +-
+ net/ceph/auth_x.c                            | 225 ++++++++--
+ net/ceph/auth_x_protocol.h                   |   7 +
+ net/ceph/messenger.c                         | 101 +++--
+ net/ceph/osd_client.c                        |  15 +-
+ net/ipv4/ip_tunnel.c                         |   4 +-
+ net/tipc/subscr.c                            |   2 +-
+ scripts/Makefile.extrawarn                   |   3 +
+ scripts/unifdef.c                            |   4 +-
+ sound/pci/trident/trident.c                  |   2 +-
+ 97 files changed, 2154 insertions(+), 778 deletions(-)
 
 
