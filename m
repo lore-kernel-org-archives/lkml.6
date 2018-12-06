@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 208D9C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C607C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B6D20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:48:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2B6D20850
+	by mail.kernel.org (Postfix) with ESMTP id 51EC920850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51EC920850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbeLFQsd (ORCPT
+        id S1726380AbeLFQsi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:48:33 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55696 "EHLO
+        Thu, 6 Dec 2018 11:48:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55736 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbeLFQsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:48:32 -0500
+        id S1725884AbeLFQsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:48:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12DBE1596;
-        Thu,  6 Dec 2018 08:48:32 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D13E415AB;
+        Thu,  6 Dec 2018 08:48:36 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A4623F5AF;
-        Thu,  6 Dec 2018 08:48:27 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6055B3F5AF;
+        Thu,  6 Dec 2018 08:48:32 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -48,9 +48,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: [PATCH v3 11/12] x86: perf/core: use PERF_PMU_CAP_NO_EXCLUDE for exclude incapable PMUs
-Date:   Thu,  6 Dec 2018 16:47:28 +0000
-Message-Id: <1544114849-47266-12-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH v3 12/12] perf/core: remove unused perf_flags
+Date:   Thu,  6 Dec 2018 16:47:29 +0000
+Message-Id: <1544114849-47266-13-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544114849-47266-1-git-send-email-andrew.murray@arm.com>
 References: <1544114849-47266-1-git-send-email-andrew.murray@arm.com>
@@ -59,105 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For x86 PMUs that do not support context exclusion let's advertise the
-PERF_PMU_CAP_NO_EXCLUDE capability. This ensures that perf will
-prevent us from handling events where any exclusion flags are set.
-Let's also remove the now unnecessary check for exclusion flags.
-
-This change means that amd/iommu and amd/uncore will now also
-indicate that they do not support exclude_{hv|idle} and intel/uncore
-that it does not support exclude_{guest|host}.
+Now that perf_flags is not used we remove it.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- arch/x86/events/amd/iommu.c    | 6 +-----
- arch/x86/events/amd/uncore.c   | 7 ++-----
- arch/x86/events/intel/uncore.c | 9 +--------
- 3 files changed, 4 insertions(+), 18 deletions(-)
+ include/uapi/linux/perf_event.h       | 2 --
+ tools/include/uapi/linux/perf_event.h | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
-index 3210fee..7635c23 100644
---- a/arch/x86/events/amd/iommu.c
-+++ b/arch/x86/events/amd/iommu.c
-@@ -223,11 +223,6 @@ static int perf_iommu_event_init(struct perf_event *event)
- 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
- 		return -EINVAL;
- 
--	/* IOMMU counters do not have usr/os/guest/host bits */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_host || event->attr.exclude_guest)
--		return -EINVAL;
--
- 	if (event->cpu < 0)
- 		return -EINVAL;
- 
-@@ -414,6 +409,7 @@ static const struct pmu iommu_pmu __initconst = {
- 	.read		= perf_iommu_read,
- 	.task_ctx_nr	= perf_invalid_context,
- 	.attr_groups	= amd_iommu_attr_groups,
-+	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index f35eb72..ba89bd3 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -445,8 +445,6 @@ struct perf_event_query_bpf {
+ 	__u32	ids[0];
  };
  
- static __init int init_one_iommu(unsigned int idx)
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 8671de1..988cb9c 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -201,11 +201,6 @@ static int amd_uncore_event_init(struct perf_event *event)
- 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
- 		return -EINVAL;
- 
--	/* NB and Last level cache counters do not have usr/os/guest/host bits */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_host || event->attr.exclude_guest)
--		return -EINVAL;
+-#define perf_flags(attr)	(*(&(attr)->read_format + 1))
 -
- 	/* and we do not enable counter overflow interrupts */
- 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx = -1;
-@@ -307,6 +302,7 @@ static struct pmu amd_nb_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
-+	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ /*
+  * Ioctls that can be done on a perf event fd:
+  */
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index f35eb72..ba89bd3 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -445,8 +445,6 @@ struct perf_event_query_bpf {
+ 	__u32	ids[0];
  };
  
- static struct pmu amd_llc_pmu = {
-@@ -317,6 +313,7 @@ static struct pmu amd_llc_pmu = {
- 	.start		= amd_uncore_start,
- 	.stop		= amd_uncore_stop,
- 	.read		= amd_uncore_read,
-+	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
- };
- 
- static struct amd_uncore *amd_uncore_alloc(unsigned int cpu)
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 27a4614..d516161 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -695,14 +695,6 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 	if (pmu->func_id < 0)
- 		return -ENOENT;
- 
--	/*
--	 * Uncore PMU does measure at all privilege level all the time.
--	 * So it doesn't make sense to specify any exclude bits.
--	 */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--			event->attr.exclude_hv || event->attr.exclude_idle)
--		return -EINVAL;
+-#define perf_flags(attr)	(*(&(attr)->read_format + 1))
 -
- 	/* Sampling not supported yet */
- 	if (hwc->sample_period)
- 		return -EINVAL;
-@@ -800,6 +792,7 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
- 			.stop		= uncore_pmu_event_stop,
- 			.read		= uncore_pmu_event_read,
- 			.module		= THIS_MODULE,
-+			.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
- 		};
- 	} else {
- 		pmu->pmu = *pmu->type->pmu;
+ /*
+  * Ioctls that can be done on a perf event fd:
+  */
 -- 
 2.7.4
 
