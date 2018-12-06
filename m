@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE96C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDD0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F81720989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B5820989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDW/bu3p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F81720989
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U56Xs3AL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B5820989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbeLFHeu (ORCPT
+        id S1729298AbeLFHez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:34:50 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45406 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728964AbeLFHet (ORCPT
+        Thu, 6 Dec 2018 02:34:55 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45382 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728964AbeLFHex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:34:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a14so11359492plm.12;
-        Wed, 05 Dec 2018 23:34:49 -0800 (PST)
+        Thu, 6 Dec 2018 02:34:53 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so11346742pfd.12;
+        Wed, 05 Dec 2018 23:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Wflgf3vXwnh/NSYRkoySbbMJEXzxzoKSWgrFRBiNdkE=;
-        b=DDW/bu3pOGbmLFs1yK/UylRVgagoX1wPc5aftiH/T7idPyQhx6XIlWnPoPJ2Ziu0oA
-         7Gcwa3WGBm+bS/55zmwuw6wgT3n2t9mZ2h870Tv7VkgOMmFt0d/k+euTvRGHdf1zyqd1
-         wwXDhjMseD+P1y+mAirWrIfiiwjmds4ilQEW4bswUwa1mH6dLjcHviVPpkmQLYqg922z
-         7IdS49l6MI7U9GjdUORdoWIRf4XkLfbmMKMyqthmgSIar9Jt5+zlk5xsI7HBdXAVX4Xr
-         UR23AcOFiRK0OL8Jq2TZzz5ZhgTvAogZcCkaBCg8R6gMlZm4FEzwSYWZgfsZIhP2nJRO
-         sYhQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KeUI7p8v5yfWvHehp5ot1Y8paMaTzOKHfaUhlRjkC70=;
+        b=U56Xs3ALHhn4bCRVPvKCuzjcxf31hqcBfPz4bxbopmrW6x8BYj+r7bPr70zAqNPTmA
+         2/YQX7tyzVcR7ZCDZDFxxeo7L8KDjseyCd9WlzFhedImjTzK86KTBJDkiSukIxoute5B
+         XjfDcIsZAPzK8v9bGzmyN4RJSlOkMueInslNM5b5J/cQD3D4Vy23sRAOa8FkaA/160lX
+         4irb6h49XeT+6A6AWFyPdT9FBiZlwAg1laT2UF/CjSgBhneET9ODgdKy9Nx6zkAkTTLO
+         gT2q1VBLPewiKIOx2coO1bRj+XpTI2YywedtUhZtW/Ap4RsT6Vgbk4woLJMwl3G84kEu
+         vuZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Wflgf3vXwnh/NSYRkoySbbMJEXzxzoKSWgrFRBiNdkE=;
-        b=YMP3KrHcy7jxQlUTKLlYBzb0aPAPTXFB1Ui25iXhnPV1KuNaAMwMKvDeBbxkXZbVjv
-         6UmSDaB7UDiGzVlIwfszFQ5GNt5mX5urPyDPq8dlfkH7FATh3BzUMHCQ1EzCXsjWmQc7
-         g+59Guj8D8h3w5OZi8iAN6P6mdH05ibTxsMsflGhmfXKFBLmg94/tyb3COuFhDnleGBQ
-         19xkXovK61/xhBUqnWjZO/LgVnwpJSTr+BdT+W6J9DcNQ7s/vdIGimlOXWHQusidliO+
-         Br1viZAK9ofIbcf3CljCdt5o48Mb808ZPC69OiPoTDOI8uEy7yG06I3A1Mjx3LFuzZSX
-         yq4Q==
-X-Gm-Message-State: AA+aEWYcmRPmOBQkcnAglk9M67YGwF1QqISB450Ict2oCRvs2Vo1UjqN
-        Zpakqx3LAQrC3Qm8++wdtzo=
-X-Google-Smtp-Source: AFSGD/UWxQ0d3461omH+E90NdX6NrbxSjZp2M+O/LZAdqhCFeh+2ka9OMqUzBBHYRW/VdeObw55XcQ==
-X-Received: by 2002:a17:902:b282:: with SMTP id u2mr27570866plr.89.1544081689162;
-        Wed, 05 Dec 2018 23:34:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=KeUI7p8v5yfWvHehp5ot1Y8paMaTzOKHfaUhlRjkC70=;
+        b=ssft8NiBxhKbTvu+OD5/q1VpYim+LeZ7OCYEUEQNKscJVNM4+GY9mMcTs//ygS/lTb
+         bn9YCX/Hpnufbmmr+wglPaVhM7pnt+0hE5J3p247pqxTCTLHROHkmBvOA/kNnb4TljRQ
+         0dPrdPlQ/o1AniZpNYuydRvh8npyWKsVDunFuz7PlogQag5bvNFCReOrkRLjX9uhitMP
+         8Myg7Fk+kgIPQjnOqwZ6MG5Z5UpiaIXYnauqog84x3Gf8hCGjC4vaQYZiHepD7gVHIbR
+         wKbyAqqqK0yYAN3IQ1ds7f6CqIwj5ooIxnzFtBIA8oCW94e8Fe7/b3wMPnXBt3e1azdh
+         nGMA==
+X-Gm-Message-State: AA+aEWaa/bF5d0feX1WeloSRxbSdPv9PMDA69eYjeZ2dTtEbxJnu7LpX
+        cjglLpoGSOBNqhJvOsWzoh4=
+X-Google-Smtp-Source: AFSGD/X8t/jRZiBv7nwKWrYJVBYTDH54PvA2J7PC3wVyFpS84Pbk6wYwQR+HyGB/4nF3HetqA1lzIQ==
+X-Received: by 2002:a62:c683:: with SMTP id x3mr26936107pfk.10.1544081693306;
+        Wed, 05 Dec 2018 23:34:53 -0800 (PST)
 Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id x3sm70418768pgt.45.2018.12.05.23.34.45
+        by smtp.googlemail.com with ESMTPSA id x3sm70418768pgt.45.2018.12.05.23.34.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 23:34:48 -0800 (PST)
+        Wed, 05 Dec 2018 23:34:52 -0800 (PST)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
@@ -64,10 +65,12 @@ Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
         bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
         kys@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH V2 1/2] KVM/VMX: Check ept_pointer before flushing ept tlb
-Date:   Thu,  6 Dec 2018 15:34:36 +0800
-Message-Id: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V2 2/2] KVM/VMX: Fix max line length problem in the vmx_hv_remote_flush_tlb()
+Date:   Thu,  6 Dec 2018 15:34:37 +0800
+Message-Id: <20181206073437.1995-2-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
+References: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -76,49 +79,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-This patch is to initialize ept_pointer to INVALID_PAGE and check it
-before flushing ept tlb. If ept_pointer is invalid, bypass the flush
-request.
+Fix max line length problem.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
- arch/x86/kvm/vmx.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index c379d0bfdcba..6577ec8cbb0f 100644
+index 6577ec8cbb0f..2356118ea440 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -1582,11 +1582,18 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
- 	/*
- 	 * FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE hypercall needs the address of the
- 	 * base of EPT PML4 table, strip off EPT configuration information.
-+	 * If ept_pointer is invalid pointer, bypass the flush request.
- 	 */
- 	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
--		kvm_for_each_vcpu(i, vcpu, kvm)
-+		kvm_for_each_vcpu(i, vcpu, kvm) {
-+			u64 ept_pointer = to_vmx(vcpu)->ept_pointer;
-+
-+			if (!VALID_PAGE(ept_pointer))
-+				continue;
-+
- 			ret |= hyperv_flush_guest_mapping(
--				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer & PAGE_MASK);
-+				ept_pointer & PAGE_MASK);
-+		}
+@@ -1596,7 +1596,7 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ 		}
  	} else {
  		ret = hyperv_flush_guest_mapping(
- 				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
-@@ -11614,6 +11621,8 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	vmx->pi_desc.nv = POSTED_INTR_VECTOR;
- 	vmx->pi_desc.sn = 1;
+-				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
++			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
+ 	}
  
-+	vmx->ept_pointer = INVALID_PAGE;
-+
- 	return &vmx->vcpu;
- 
- free_vmcs:
+ 	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
 -- 
 2.14.4
 
