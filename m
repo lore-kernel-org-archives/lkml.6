@@ -2,129 +2,109 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_RHS_DOB,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A424C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40606C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F402082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F402082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 04239208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:40:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AoRnD3pC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04239208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLFUib (ORCPT
+        id S1725985AbeLFUkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:38:31 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58281 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725967AbeLFUib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:38:31 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AA47620734; Thu,  6 Dec 2018 21:38:28 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5AB7920510;
-        Thu,  6 Dec 2018 21:38:28 +0100 (CET)
-Date:   Thu, 6 Dec 2018 21:38:27 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     yuankuiz@codeaurora.org
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc-owner@vger.kernel.org
-Subject: Re: [PATCH] rtc: proc: printf using alarm for alrm
-Message-ID: <20181206203827.GE8952@piout.net>
-References: <b44225b8e243a70c6ab63a40a3de630d@codeaurora.org>
- <acac27b279864ff8f938f79bcc49b238@codeaurora.org>
+        Thu, 6 Dec 2018 15:40:05 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34288 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeLFUkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:40:05 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p6so1406800lfc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MZAEYycWiumWKRAabgzjtBtryLX0wOeag1iCDMOhaII=;
+        b=AoRnD3pCwbSngf8j1zH0Bxu2g2s+V3hPzVjaXBx41VOxXkHwZKudsgnVTZuiP2/6vg
+         ZYydAkPAgIp/+Pf9Y8RuBkAa1uHDkCpcdo1cYCZI6PWYiJOGbFVTRhUyHGbUcuC/2y5b
+         eLLNc0yBgq2koEJ32D4C8ch6XDTTKgCTkzjEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MZAEYycWiumWKRAabgzjtBtryLX0wOeag1iCDMOhaII=;
+        b=gAyqn5AAciIwIYOzEWzb1fklpB1QhHp6EE2NehJkQ1DICxLSLzr2dIS6aOCj/arJg7
+         TMKGwvgdQ780ATwhg0QZG9wKgank8RRC/w7JXdyNoVTIhIiQHr7RcSr6oXECP5Xr0Wpe
+         Sgj7zak3JR+ApfkBs+v2FlTh1dQLjxPjGBYxeDq/YxqPOmiPP1g39BHmQRGUU+P2bRin
+         oU0UNj9tqTcewu/6is+icYMj1U4hWpF98RXCLB24cyxUex61/C+IPPCEMwu8DMrZ0uOR
+         l+ZSEAx4w+4W63JOzLMAqkrUW09LNXkmA+B9+T5cnHqxGXA8JfhdnEIDikxeBHO3S2On
+         Uj3Q==
+X-Gm-Message-State: AA+aEWa5mkhdvrgQ5YHFXJTsGq4PpPKV3ASFqAhuKZ/XFO2ntaDRIUI5
+        N9q1gtlQaCb4juSSxTqumNH+RlpjuOI=
+X-Google-Smtp-Source: AFSGD/VZA1qx08AzWhsOuy/sDepsAUxNUjCrethRZKjVgRtvxu2HYlSCvXDhnOMiOHtsHQ3YjeNFvg==
+X-Received: by 2002:a19:914b:: with SMTP id y11mr16776111lfj.98.1544128802936;
+        Thu, 06 Dec 2018 12:40:02 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id b25-v6sm241731lji.94.2018.12.06.12.39.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 12:40:00 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id u18so1361260lff.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:39:59 -0800 (PST)
+X-Received: by 2002:a19:cb94:: with SMTP id b142mr18592223lfg.117.1544128799426;
+ Thu, 06 Dec 2018 12:39:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acac27b279864ff8f938f79bcc49b238@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181205163624.1842-1-sean.j.christopherson@intel.com>
+ <20181206073409.GA64887@gmail.com> <CAHk-=wgrpUQyux2ZTJj8FUEdHcEoM0KUNrN3KCc+bBhi0fRhaQ@mail.gmail.com>
+ <CALCETrUc7Y+WFkS1=ECXgtLoUXb3HPXsF+x+TCpiuuh3sXFjfA@mail.gmail.com>
+ <CAHk-=wgOT0DW8a+VNgmrVybY1RJCajjJKskktzfNd1iJfhuV5Q@mail.gmail.com> <CALCETrWNGgYtFDQCBOH77dec3RctjsrMQaDuYaA4Ym5Zdo5SVQ@mail.gmail.com>
+In-Reply-To: <CALCETrWNGgYtFDQCBOH77dec3RctjsrMQaDuYaA4Ym5Zdo5SVQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Dec 2018 12:39:43 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
+Message-ID: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
+Subject: Re: [PATCH] x86/mm/fault: Streamline the fault error_code decoder
+ some more
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, sean.j.christopherson@intel.com,
+        dave.hansen@linux.intel.com, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>, yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 15:22:51+0800, yuankuiz@codeaurora.org wrote:
-> Hi,
-> 
->     Kindly, this format change formats the rtc dump from:
->         alrm_time	: 00:00:00
->         alrm_date	: 1970-01-01
->         alarm_IRQ	: no
->         alrm_pending	: no
-> 
->     to:
->         alarm time	: 00:00:00
->         alarm date	: 1970-01-01
->         alarm IRQ	: no
->         alarm pending	: no
-> 
+On Thu, Dec 6, 2018 at 12:28 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> "read" isn't an actual bit in the error code, so I thought it would be
+> polite to make it look a little bit different.
 
-Yes, and this would break the ABI as this file is in procfs. This is not
-something I'm willing to do, especially since this file has been
-deprecated since 2006.
+If you care about the bits in the error code, then just look at the number.
 
->     Thanks,
-> BR//John Zhao
-> 
-> On 2018-12-04 05:29 PM, yuankuiz@codeaurora.org wrote:
-> > Hi,
-> > 
-> > From 549bae59445c5ec67dd6a46f3ea4f58966d40c9b
-> > 
-> > Current the struct rtc_wkalrm is dumped as
-> > "alrm_" by printing converted from the struct
-> > name of "alrm.*" directly. Shall we use the
-> > "alarm *" to replace the "alrm_*" during this
-> > dumping?
-> > 
-> > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
-> > ---
-> >  drivers/rtc/rtc-proc.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-proc.c b/drivers/rtc/rtc-proc.c
-> > index a9dd921..d4a3c91 100644
-> > --- a/drivers/rtc/rtc-proc.c
-> > +++ b/drivers/rtc/rtc-proc.c
-> > @@ -58,7 +58,7 @@ static int rtc_proc_show(struct seq_file *seq, void
-> > *offset)
-> > 
-> >  	err = rtc_read_alarm(rtc, &alrm);
-> >  	if (err == 0) {
-> > -		seq_printf(seq, "alrm_time\t: ");
-> > +		seq_printf(seq, "alarm time\t: ");
-> >  		if ((unsigned int)alrm.time.tm_hour <= 24)
-> >  			seq_printf(seq, "%02d:", alrm.time.tm_hour);
-> >  		else
-> > @@ -72,7 +72,7 @@ static int rtc_proc_show(struct seq_file *seq, void
-> > *offset)
-> >  		else
-> >  			seq_printf(seq, "**\n");
-> > 
-> > -		seq_printf(seq, "alrm_date\t: ");
-> > +		seq_printf(seq, "alarm date\t: ");
-> >  		if ((unsigned int)alrm.time.tm_year <= 200)
-> >  			seq_printf(seq, "%04d-", alrm.time.tm_year + 1900);
-> >  		else
-> > @@ -85,9 +85,9 @@ static int rtc_proc_show(struct seq_file *seq, void
-> > *offset)
-> >  			seq_printf(seq, "%02d\n", alrm.time.tm_mday);
-> >  		else
-> >  			seq_printf(seq, "**\n");
-> > -		seq_printf(seq, "alarm_IRQ\t: %s\n",
-> > +		seq_printf(seq, "alarm IRQ\t: %s\n",
-> >  				alrm.enabled ? "yes" : "no");
-> > -		seq_printf(seq, "alrm_pending\t: %s\n",
-> > +		seq_printf(seq, "alarm pending\t: %s\n",
-> >  				alrm.pending ? "yes" : "no");
-> >  		seq_printf(seq, "update IRQ enabled\t: %s\n",
-> >  			(rtc->uie_rtctimer.enabled) ? "yes" : "no");
+And if you care about what the numbers mean, it doesn't matter how it's encoded.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I don't think you should mix up the two concepts.
+
+> Sure.  Although it's extremely odd for us to OOPS from user mode, so
+> maybe the OOPS code in general should print a big fat warning, and
+> we'll just otherwise assume it was from kernel mode.
+
+Yeah, the "from user mode" case is generally really something horribly
+bad (reserved bits being set or us screwing up LDT's etc), so yeah,
+maybe a better model is indeed to point that out explicitly, the same
+way the "user/kernel doesn't match U/S bit" is pointed out.
+
+              Linus
