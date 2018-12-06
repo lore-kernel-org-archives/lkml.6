@@ -2,742 +2,310 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E022EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8EDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F11020989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A782214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Khq8caNV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F11020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZ/wZuN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A782214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbeLFNVg (ORCPT
+        id S1729718AbeLFNVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:21:36 -0500
-Received: from mail-eopbgr700068.outbound.protection.outlook.com ([40.107.70.68]:59472
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727685AbeLFNVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:21:35 -0500
+        Thu, 6 Dec 2018 08:21:45 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41959 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728448AbeLFNVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:21:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so171959pfi.8;
+        Thu, 06 Dec 2018 05:21:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MNZZeSTA0QygW8/klVbJcvmaQlt8kE5eM4T0jjfEsOc=;
- b=Khq8caNV6Ss+okRuFvbzoj8E8QRqU56/CrwkMbeEGyH2BlwFj2XL44QmMuTNprKQqthif5omkarMBvuETc2sWGAdNh9n0GH+wGH4/ED+5y29vLBuLbaBlRgow58VUx/uLXjWkuuOwPuGYV5OL1GbN0qKITbGRM3bD6WzO5jeevI=
-Received: from BN7PR02CA0012.namprd02.prod.outlook.com (2603:10b6:408:20::25)
- by CY4PR0201MB3508.namprd02.prod.outlook.com (2603:10b6:910:95::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.22; Thu, 6 Dec
- 2018 13:21:27 +0000
-Received: from SN1NAM02FT015.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::205) by BN7PR02CA0012.outlook.office365.com
- (2603:10b6:408:20::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1404.17 via Frontend
- Transport; Thu, 6 Dec 2018 13:21:26 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT015.mail.protection.outlook.com (10.152.72.109) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1404.17
- via Frontend Transport; Thu, 6 Dec 2018 13:21:22 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:56263 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gUt4K-0005HB-Vl; Thu, 06 Dec 2018 04:47:52 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gUt4F-0007kA-SF; Thu, 06 Dec 2018 04:47:47 -0800
-Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wB6ClkuT005270;
-        Thu, 6 Dec 2018 04:47:46 -0800
-Received: from [172.23.37.108] (helo=xhdnagasure40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <naga.sureshkumar.relli@xilinx.com>)
-        id 1gUt4D-0007hn-O1; Thu, 06 Dec 2018 04:47:46 -0800
-From:   Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-To:     <mmayer@broadcom.com>, <f.fainelli@gmail.com>,
-        <ladis@linux-mips.org>, <treding@nvidia.com>, <digetx@gmail.com>,
-        <d-gerlach@ti.com>
-CC:     <linus.walleij@linaro.org>, <michals@xilinx.com>,
-        <linux-kernel@vger.kernel.org>, <nagasuresh12@gmail.com>,
-        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Subject: [LINUX PATCH v13 2/2] memory: pl353: Add driver for arm pl353 static memory controller
-Date:   Thu, 6 Dec 2018 18:17:34 +0530
-Message-ID: <1544100454-6357-3-git-send-email-naga.sureshkumar.relli@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544100454-6357-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-References: <1544100454-6357-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(2980300002)(54534003)(199004)(189003)(4326008)(186003)(305945005)(9786002)(316002)(106466001)(54906003)(63266004)(110136005)(7696005)(50466002)(36756003)(77096007)(26005)(2201001)(575784001)(2906002)(48376002)(39060400002)(107886003)(6666004)(356004)(8936002)(47776003)(8676002)(4744004)(478600001)(81166006)(81156014)(5660300001)(426003)(126002)(217873002)(446003)(476003)(11346002)(16586007)(14444005)(2616005)(486006)(76176011)(50226002)(336012)(36386004)(51416003)(106002)(107986001)(5001870100001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0201MB3508;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT015;1:f86agX9FE6ugPXaFvTR0r4bZD+RmcQnZG3mcTUfbJXqmDnmLqe0pJOkUqy8cnY/IZC3qUrgIMRemmf50w6q5rM5l8lx7LnYpkQbayuv4NV6bOvFi1xu55oUjFKIgUh7t
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 331b8ca2-ad29-4e41-5514-08d65b7db987
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:CY4PR0201MB3508;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;3:JfizvW4Tbfg0ov8OOWBQ8pjD9yjtGxsIjUs3AB5iyodTKG39Q7AbWrR2mY+MjW1RCP3yX8zPcxUIgnV0hTmXvX1YzpK141HqTEjmbnn5M62pUrxPdWWeRchUCL/5ilZEIw5hIolFjuDevHU6RtG/VSRjcJS/m595cdfxBYeaUk9OBpWioDgxjsOggavrart0KOp3gG1+c1T6e7ksFQAX1RsFL7Azop4nPqxVSOR9tkiAaG2vgHmhpgtuStCQ/Kb1AV57v9BCT8KBKTPB80i68+Y/Y6SOluD8FxNNTWFy/5Tq9VaENNcD4Nz+ikaywwxL9I+60qzxkISSh4HUa8wtWJaJbUoWs2s0VqDGPZtyp+A=;25:Y6z1W9O1ZR4LtkMfZXn1mV0oY3U+2amnvkELXYJUFbGRh9ScBDsQ6GGiL2cm8m1R7IEGgTpMoG+zFMZeMCN+QVwhBMPakhCLp6+7T/mBv0VgfbbrczR3Ld272cOQzKtpxJ6BneYdAN42JcH/XYDbXu1cYxhk6HpKa4bAsTecXA/+H9m2LKb0PK3ubH0qfRK+9oK/9UwgMYtIapYc7sShkH8rfMT9zNHKLB5836rNzVJxvHyT49tepHPZQQ/IGgiHnSJEOiYZuvG+QE2Bp7ZvCYkdr+Yu7J7Tzix3bpHN6BrWKpGX57sBIL/Fk+QdQkS7mUh2bFIvwrNvibz/GPZwQQ==
-X-MS-TrafficTypeDiagnostic: CY4PR0201MB3508:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;31:XLJ7B9P/kmufil1bIpe0TEc6RoUpqlvNeO3MHueSCJRyaFQ7Dk2nO2CvQoRxFJH9xz1c16iu79dOXYxiAP8iXZgBWIb36K7+1P6VwLch33tRVU0lY+u+4lMfe3IQ0rGk7Bi6KMhgzxlIjUDkvvdSgDuzG7XdGQoZMEQvZ2BGiCBY3x2oO+0SetRLeMRWznQ/1yqW4CqNJNr1e+7ew3AFtJ2SOY5y1G+IzirMycYS78k=;20:hqpfJKSg7aKzibjp211Qlh2zSi8YEdNlpwLrD4OtR9wrKmKeL9+Cots/5X+b89ZspJd4Uxp3iiOiMCz64CBpZ7qgXd8+M+7L9UrR/lNspi7gIBRESNmFlT3J63zxJB4sJHxeyRMksgXkw+z+1n8tGsus+7wAsAIlohhtWXgj1gsw8w61v9arkn72vCyDLxBkEWnuNf9OD67en+gDTtZM3O1rSKSFMDynvb49NMJHbvy2ZLa39Yjw8FtGnj++fJvhsWhZZZLXvKyhu43V3lSxgc83xq9AiqOU0nU1P2vSqT7uCTjJyneicNRZj8nkcAk9Y3wAn24QbCC2LCR4aGh2LEMG+sjIKaiQ38Wp1NmiIqLSIQdfF+9IzPNKtAGiQ5twis//7setqwmcKh29VfYes1HoPGSAQo+Psmg5LxeKa8MZW7O7CDFSNYwSTjj6aL2XhH7w91YgcmkGYcB01biNtAHTYdOmgGfVUyv4y8ABEPv+2xXj/dE2nPUjAa29KjxF
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CY4PR0201MB35086723611BAC5692011A27AFA90@CY4PR0201MB3508.namprd02.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501520)(52105112)(93006095)(93004095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:CY4PR0201MB3508;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0201MB3508;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;4:d5pJZcoo3Hbtxk1cFTLL5R9yatOFPY3P8T83b7W8abd12Gdfz/+Nhux0VRtod1+JN7bKG+6FvonEG0eoxEVvp9c1e2k77QQb+UsvWSZYP0dlniu8f3QpF/dAbDdDG9KMbQv+U1wRoni1xP/Ew5MFxInymgKMKNx4iuf5+EbyQ2Zgfa6duj+wS/9cS8bIje8GTgrw98tOxaO5fyz5LO0aArKY9E+Yp+eUTZAlklEkeqBPJUCqa+LXkVRHpLmE8Yx1+CbiqVA7RBqkMOgbwuKeQw==
-X-Forefront-PRVS: 087894CD3C
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR0201MB3508;23:7zBDGkI2ZEmAUYpxYnVFWbqzed+XU8qmjGSMGhw?=
- =?us-ascii?Q?EMFMe4xsB5qAcXtPn1xEwl+cnbDPlRMMPp5Bo2Z2Kk5fkOsCPnjhRvXZfNrq?=
- =?us-ascii?Q?jOOGP4h1Ym7YS4TYfj6cGFjf97STuhjIeBfKxYuiSY+Ps7hTDzY/FRnUG5Jx?=
- =?us-ascii?Q?COwjlDMzG4PfTpg8CeARXwzboivVuYX/Q9U/m9TSCkGYh+lAyVIN5FsCnloB?=
- =?us-ascii?Q?UfIQcQCwij3fjkiFe/OkBAnv1lHKl04wm9hVKx/j9HViu1T6nNJBFkh8917H?=
- =?us-ascii?Q?dAF6yWg+9/OYMy9N/fJQ2FaNV69q00XG9iXqPVQ8NY+P+fnKxUOmMbhJ2R8j?=
- =?us-ascii?Q?kM/iyxQFPFqzgLhBlTLT6QKPCiHodlZ9o5zsmcyACN+7t48Mju1cwm7GccEP?=
- =?us-ascii?Q?/a0qYXd4A1crcBepWijFGGOCh7ncq9cuDE5G5mK1l4pCfqwO73D2X6/FAqTX?=
- =?us-ascii?Q?nAExForcZSH18B49r6kUWrTCcL+nMk39wG2Vrryr2hTQ5THpRgv9rhnUl9n9?=
- =?us-ascii?Q?TUgGTIahmb7PF9kEIyPXEsewb/fCFCXHFVkofkdWdeo1MeZ/Ewb6/m8KoDO8?=
- =?us-ascii?Q?UuPGYO7T6Ve+O4+nW8hcVEwLuBdoPsdFbeTCIwQVBjlw+wAWx2rLLTet1ht2?=
- =?us-ascii?Q?3AduPdtJSF93eRt7y7glcao+E7xVZIlU8OxnXROD/e07eIASPLPSyCxObSqW?=
- =?us-ascii?Q?OsJ2018oXuPTZcr4NEicStNcfk9D5Q1SS+gC38lPawTtMSxohhW24XqMXrU5?=
- =?us-ascii?Q?YU+vEPtqMIgTO2SY1lXojweHYbU9Q94+/p8NQ8CP8IbsOpzVKnYcmmrBDFQY?=
- =?us-ascii?Q?U97ZGTNiE0rhZSA8aPVvIcOmvT0ggEAcKqdxo/o5+jrhXCNSvAe43LpHLVzo?=
- =?us-ascii?Q?N65/Fb+EG+wvmagWBHFBwvI+gK0bLablkqynkeQlSYQopqLcE6PQ2OfFt3kG?=
- =?us-ascii?Q?3g4eJYaKqOl8ufgXqcVPlO+XcFKCs83qKhRtx0FQKwZ5Ambh7AAQHesIqiGC?=
- =?us-ascii?Q?WcB6BX/1Pc8zMJD40TYpaJjAzMtWzsVACdMKqXdMFZUp0AvOl7dWI7amH3PH?=
- =?us-ascii?Q?+AOhIEW/tUdEUv34wZn+635loSVrM72mzzL78NxbST2EjSNew0yW3ln9gBgt?=
- =?us-ascii?Q?FCP6GieiI6oYLe0EXgvyLzQrKyc7IksTo+N5sPLHBJMUSqqZZGUnpyB8d6s/?=
- =?us-ascii?Q?qbnk+dSELrierMin0pn8Elqqv+Qtvt3faDCsbm6UVr/iPvF0DWwHXdjn3798?=
- =?us-ascii?Q?7z5q9uUIjc7Xcemc0ha4QkqkHPY1El5VwLOwYp8flgHMVEKQYzwCcsMYKia1?=
- =?us-ascii?Q?veQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 7EnXm+IBIG56nkC8Jh8nwTp5HujUVHxOYXqQY3HKMYirPcCycJedZ2oX3T36WWJbollTmiA9R4vdDY0pbOJM1xj40fO04nA7dxVR491Dou2TxjvLNuSi5939SX2kp7c3IpYazdpxzaA3HSz0Nk5BUVywP+h4Il8gjuN/ZNX6Rmgb+NCqzhfZNNSOzyQEx+Ln/PeIA0WIVGaZDFxV3BGaXCW+D1mjDNE5/Mmvf9TIhzBer3lR7t7TwllWTuotiYihU/n+V3ZGuexVmq0dtF1ESKKYjTg5Pa4nagNNWMEjCP8u83KdO8qxPVcN/dZjgZNkJzTy7w4ujwUSFSbAxkcs7AzbXEE0/t7NYHOuGKLhLqM=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;6:Ip56SAaSJycDgcU+b1d0bf25b4N6miytD0DkWT2Z48VX4SOpovoy+/B75sc10Yha2Hyrqufp94UqggcDrfjDpRagMHV98/29FuZNmii63T38YcdnuAcxwOpxqXiEYURTOvKp5K95ZrmXA2PAhtPu5g7LxRjv8HgvlAnFEluwxJMzz8AVCj4auw/tphNhYO2Mw53z33RicBhzbvtK+/XvNGhsmG4/SXzTa4HZZ/I20AGkDdv+F7tqwLmYH92Lk7Af0a1CcAdGZ1rXcl/kNSeL9wy7cDNAb2x2UiV2hMPbwWD4u1YlcxKjcex0qYUoP6O/By9x9vu6Hn9DoNN8yF5InvVUkXWi4ALmsCzgi4FDmm6JUky6XCPv/Rf1WIGLcR1TIiA7m2us27fw8cqRHYg81K0mbcrE4KAfTvY/izgxcxJddifRLeftfXZxEhcC7MHxzWhQVAu09ZLdJGq0TgWSVQ==;5:Nv+5YpfUEUUElB0FnEn/iQllmFSIPSzHwytxz9FbYfDaktuSIC0QqdbZQBk2GWkQw+DCXRXAdSpKqFl+dKTaf3FKlfqw7MXFeLqmvALJ0OfwE77zKbzbwEa4+9GAFA6vheNrm5b0ZrSjcNInAXsloIAhH2c1LLD9Ywxm1kpsWNs=;7:TU+wh1FCanU3Qf39/VEm7APxciSU8Q+y5VlNdyyuLhbjZtCHKJdVpBHW4hiO/fdxmYHHrDCLBL6X8+WcLJxMk8g1oIG+EHiVVSdhDCc5zsCKYn7cn2AOizwu94oXbLfX1PVlf/CBocbeMm277iUC8A==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2018 13:21:22.6353
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 331b8ca2-ad29-4e41-5514-08d65b7db987
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3508
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+S7SJ5bfWZvNyT+X230IvZbmjxt06W+jDJCB+AIfZhM=;
+        b=pZ/wZuN0klIHZbUPMIYZMz0zx98DtChtOP7DX4rUcpuDz4/OMeNKqS+rUjvgUCgi/e
+         RIFgOPj8f1Xom0UUenKZ2eQsvzKLCZe8WZ6sEAJa1jKtz3rothObVPuNnSvb5ppq5RPR
+         TjarYf9dhB3oieqwXLVQERtRjRFaK04r/GUZpXP7bX8RlSDZCW//zqUrm4uwWo00JDFh
+         f1Po2DA/ovwDQFVRY79vOsqlaprx7tRLNLpYSNM9nrl2j8so5z/lOi8tXOskQivQquvC
+         9FmwAi+ThYrcHV45e3ZwKws5EpJH6OZbzcPBk9HoOuwKo5DpLN63drN4iCP99D3iFwj+
+         wXiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+S7SJ5bfWZvNyT+X230IvZbmjxt06W+jDJCB+AIfZhM=;
+        b=TvBe+r1vVfQvPckFzrkOGLLgBPg0HPL87nv0bAgt8l8x8gBtOyxERgvncrzx292FZM
+         LCIr/j1cbwJq2gFKCC66lMaiZ1RwHyhM8MxMswGNwglm5dHfVUaX6yjd6hLW4yNg7yej
+         6Vv/WuBn9pSJlMBvC00ez4CTXC+cGaoLdBGDqdwQ+a64DxMYpbJ+PlSke7HaCknQYWNU
+         mvOpqPiA8zeArF5ENUW5llzK+YadafesmpuxxxgkNVTnTpAxjnESYEi7J7aoSknSnYSN
+         g16UhGLwZZ/Wa+qM4FGBF64jrug53eEP8XDcs7gltAxfUiRTdE0ErANWpXXCIGaNJCQz
+         ghZg==
+X-Gm-Message-State: AA+aEWaOygikAVCtDFvjS+6hxD50p+ggtz/I1B1x0m6mhvo+tpYYzwQ5
+        yvm/DOyJ0hx0N1pPAK5qBx4=
+X-Google-Smtp-Source: AFSGD/X9QcN1hDAodYE4/BDzQw/bkfDLpWXJH9haHfzb4HV/lG3PB9QECVTfOSvGTkJwe84P5tue0Q==
+X-Received: by 2002:a62:c28e:: with SMTP id w14mr28418646pfk.115.1544102502857;
+        Thu, 06 Dec 2018 05:21:42 -0800 (PST)
+Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
+        by smtp.googlemail.com with ESMTPSA id y5sm2409246pge.49.2018.12.06.05.21.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 05:21:42 -0800 (PST)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
+        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devel@linuxdriverproject.org, kvm@vger.kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+Subject: [Resend PATCH V5 2/10] x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+Date:   Thu,  6 Dec 2018 21:21:05 +0800
+Message-Id: <20181206132113.2691-3-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
+References: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver for arm pl353 static memory controller. This controller is used in
-Xilinx Zynq SoC for interfacing the NAND and NOR/SRAM memory devices.
+From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changes in v13:
- - Fixed sparse warnings
- - Fixed check-patch --strict warnings
- - Added change log
-Changes in v12:
- - Sent the patch with Reviewed-by tag
-Changes in v11:
- - Added amba device registration and removed platform device, since it
-   is an ARM Primecell Peripheral and it should register as an amba device
-   as per Linus Walleji.
-Changes in v10:
- - Corrected typos in commit message like xilinx to Xilinx
- - Added SoC specific compilation check in Kconfig as below
-   "depends on ARCH_ZYNQ"
- - Modified return type from int to bool to the function
-   pl353_smc_ecc_is_busy
- - Defined Macros for values in pl353_smc_get_ecc_val and modifed
-   the logic to read ecc value from all 4 registers
- - Assinged the timeout value in pl353_smc_init_nand_interface()
-   after declaration
- - Added compatibles on another line and aligned the data with them
- - Removed pl353-smc.h from platform-data and moved it to include/linux
-Changes in v9:
- - Addressed the comments given by Julia Cartwright to the v8 series.
-Changes in v8:
-- None
-Changes in v7:
-- Corrected the kconfig to use tristate selection
-- Corrected the GPL licence ident
-- Added boundary checks for nand timing parameters
-Changes in v6:
-- Fixed checkpatch.pl reported warnings
-Changes in v5:
-- Added pl353_smc_get_clkrate function, made pl353_smc_set_cycles as public
-  API
-- Removed nand timing parameter initialization and moved it to nand driver
-Changes in v4:
-- Modified driver to support multiple instances
-- Used sleep instaed of busywait for delay
-Changes in v3:
-- None
-Changes in v2:
-- Since now the timing parameters are in nano seconds, added logic to convert
-  them to the cycles
----
- drivers/memory/Kconfig     |   9 +
- drivers/memory/Makefile    |   1 +
- drivers/memory/pl353-smc.c | 464 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pl353-smc.h  |  30 +++
- 4 files changed, 504 insertions(+)
- create mode 100644 drivers/memory/pl353-smc.c
- create mode 100644 include/linux/pl353-smc.h
+Hyper-V provides HvFlushGuestAddressList() hypercall to flush EPT tlb
+with specified ranges. This patch is to add the hypercall support.
 
-diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-index 63389f0..2d91b00 100644
---- a/drivers/memory/Kconfig
-+++ b/drivers/memory/Kconfig
-@@ -145,6 +145,15 @@ config DA8XX_DDRCTL
- 	  Texas Instruments da8xx SoCs. It's used to tweak various memory
- 	  controller configuration options.
+Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+---
+Change sincd v4:
+       - Expose function hyperv_fill_flush_guest_mapping_list()
+       out of hyperv file
+       - Adjust parameter of hyperv_flush_guest_mapping_range()
+
+Change since v2:
+      Fix some coding style issues
+        - Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+	hyperv-tlfs.h.
+	- Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+	- Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+	struct hv_guest_mapping_flush_list.
+
+Change since v1:
+       Add hyperv tlb flush struct to avoid use kvm tlb flush struct
+in the hyperv file.
+---
+ arch/x86/hyperv/nested.c           | 79 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h | 32 +++++++++++++++
+ arch/x86/include/asm/mshyperv.h    | 15 ++++++++
+ 3 files changed, 126 insertions(+)
+
+diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
+index b8e60cc50461..3d0f31e46954 100644
+--- a/arch/x86/hyperv/nested.c
++++ b/arch/x86/hyperv/nested.c
+@@ -7,6 +7,7 @@
+  *
+  * Author : Lan Tianyu <Tianyu.Lan@microsoft.com>
+  */
++#define pr_fmt(fmt)  "Hyper-V: " fmt
  
-+config PL353_SMC
-+	tristate "ARM PL35X Static Memory Controller(SMC) driver"
-+	default y
-+	depends on ARM
-+	depends on ARM_AMBA
-+	help
-+	  This driver is for the ARM PL351/PL353 Static Memory
-+	  Controller(SMC) module.
-+
- source "drivers/memory/samsung/Kconfig"
- source "drivers/memory/tegra/Kconfig"
  
-diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-index a01ab3e..90161de 100644
---- a/drivers/memory/Makefile
-+++ b/drivers/memory/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MVEBU_DEVBUS)	+= mvebu-devbus.o
- obj-$(CONFIG_JZ4780_NEMC)	+= jz4780-nemc.o
- obj-$(CONFIG_MTK_SMI)		+= mtk-smi.o
- obj-$(CONFIG_DA8XX_DDRCTL)	+= da8xx-ddrctl.o
-+obj-$(CONFIG_PL353_SMC)		+= pl353-smc.o
- 
- obj-$(CONFIG_SAMSUNG_MC)	+= samsung/
- obj-$(CONFIG_TEGRA_MC)		+= tegra/
-diff --git a/drivers/memory/pl353-smc.c b/drivers/memory/pl353-smc.c
-new file mode 100644
-index 0000000..abb6cdf
---- /dev/null
-+++ b/drivers/memory/pl353-smc.c
-@@ -0,0 +1,464 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ARM PL353 SMC driver
-+ *
-+ * Copyright (C) 2012 - 2018 Xilinx, Inc
-+ * Author: Punnaiah Choudary Kalluri <punnaiah@xilinx.com>
-+ * Author: Naga Sureshkumar Relli <nagasure@xilinx.com>
-+ *
-+ */
+ #include <linux/types.h>
+@@ -54,3 +55,81 @@ int hyperv_flush_guest_mapping(u64 as)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping);
 +
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/pl353-smc.h>
-+#include <linux/amba/bus.h>
-+
-+/* Register definitions */
-+#define PL353_SMC_MEMC_STATUS_OFFS	0	/* Controller status reg, RO */
-+#define PL353_SMC_CFG_CLR_OFFS		0xC	/* Clear config reg, WO */
-+#define PL353_SMC_DIRECT_CMD_OFFS	0x10	/* Direct command reg, WO */
-+#define PL353_SMC_SET_CYCLES_OFFS	0x14	/* Set cycles register, WO */
-+#define PL353_SMC_SET_OPMODE_OFFS	0x18	/* Set opmode register, WO */
-+#define PL353_SMC_ECC_STATUS_OFFS	0x400	/* ECC status register */
-+#define PL353_SMC_ECC_MEMCFG_OFFS	0x404	/* ECC mem config reg */
-+#define PL353_SMC_ECC_MEMCMD1_OFFS	0x408	/* ECC mem cmd1 reg */
-+#define PL353_SMC_ECC_MEMCMD2_OFFS	0x40C	/* ECC mem cmd2 reg */
-+#define PL353_SMC_ECC_VALUE0_OFFS	0x418	/* ECC value 0 reg */
-+
-+/* Controller status register specific constants */
-+#define PL353_SMC_MEMC_STATUS_RAW_INT_1_SHIFT	6
-+
-+/* Clear configuration register specific constants */
-+#define PL353_SMC_CFG_CLR_INT_CLR_1	0x10
-+#define PL353_SMC_CFG_CLR_ECC_INT_DIS_1	0x40
-+#define PL353_SMC_CFG_CLR_INT_DIS_1	0x2
-+#define PL353_SMC_CFG_CLR_DEFAULT_MASK	(PL353_SMC_CFG_CLR_INT_CLR_1 | \
-+					 PL353_SMC_CFG_CLR_ECC_INT_DIS_1 | \
-+					 PL353_SMC_CFG_CLR_INT_DIS_1)
-+
-+/* Set cycles register specific constants */
-+#define PL353_SMC_SET_CYCLES_T0_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T0_SHIFT	0
-+#define PL353_SMC_SET_CYCLES_T1_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T1_SHIFT	4
-+#define PL353_SMC_SET_CYCLES_T2_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T2_SHIFT	8
-+#define PL353_SMC_SET_CYCLES_T3_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T3_SHIFT	11
-+#define PL353_SMC_SET_CYCLES_T4_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T4_SHIFT	14
-+#define PL353_SMC_SET_CYCLES_T5_MASK	0x7
-+#define PL353_SMC_SET_CYCLES_T5_SHIFT	17
-+#define PL353_SMC_SET_CYCLES_T6_MASK	0xF
-+#define PL353_SMC_SET_CYCLES_T6_SHIFT	20
-+
-+/* ECC status register specific constants */
-+#define PL353_SMC_ECC_STATUS_BUSY	BIT(6)
-+#define PL353_SMC_ECC_REG_SIZE_OFFS	4
-+
-+/* ECC memory config register specific constants */
-+#define PL353_SMC_ECC_MEMCFG_MODE_MASK	0xC
-+#define PL353_SMC_ECC_MEMCFG_MODE_SHIFT	2
-+#define PL353_SMC_ECC_MEMCFG_PGSIZE_MASK	0xC
-+
-+#define PL353_SMC_DC_UPT_NAND_REGS	((4 << 23) |	/* CS: NAND chip */ \
-+				 (2 << 21))	/* UpdateRegs operation */
-+
-+#define PL353_NAND_ECC_CMD1	((0x80)       |	/* Write command */ \
-+				 (0 << 8)     |	/* Read command */ \
-+				 (0x30 << 16) |	/* Read End command */ \
-+				 (1 << 24))	/* Read End command calid */
-+
-+#define PL353_NAND_ECC_CMD2	((0x85)	      |	/* Write col change cmd */ \
-+				 (5 << 8)     |	/* Read col change cmd */ \
-+				 (0xE0 << 16) |	/* Read col change end cmd */ \
-+				 (1 << 24)) /* Read col change end cmd valid */
-+#define PL353_NAND_ECC_BUSY_TIMEOUT	(1 * HZ)
-+/**
-+ * struct pl353_smc_data - Private smc driver structure
-+ * @memclk:		Pointer to the peripheral clock
-+ * @aclk:		Pointer to the APER clock
-+ */
-+struct pl353_smc_data {
-+	struct clk		*memclk;
-+	struct clk		*aclk;
-+};
-+
-+/* SMC virtual register base */
-+static void __iomem *pl353_smc_base;
-+
-+/**
-+ * pl353_smc_set_buswidth - Set memory buswidth
-+ * @bw:	Memory buswidth (8 | 16)
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_buswidth(unsigned int bw)
++int hyperv_fill_flush_guest_mapping_list(
++		struct hv_guest_mapping_flush_list *flush,
++		u64 start_gfn, u64 pages)
 +{
-+	if (bw != PL353_SMC_MEM_WIDTH_8  && bw != PL353_SMC_MEM_WIDTH_16)
-+		return -EINVAL;
++	u64 cur = start_gfn;
++	u64 additional_pages;
++	int gpa_n = 0;
 +
-+	writel(bw, pl353_smc_base + PL353_SMC_SET_OPMODE_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_buswidth);
-+
-+/**
-+ * pl353_smc_set_cycles - Set memory timing parameters
-+ * @timings: NAND controller timing parameters
-+ *
-+ * Sets NAND chip specific timing parameters.
-+ */
-+void pl353_smc_set_cycles(u32 timings[])
-+{
-+	/*
-+	 * Set write pulse timing. This one is easy to extract:
-+	 *
-+	 * NWE_PULSE = tWP
-+	 */
-+	timings[0] &= PL353_SMC_SET_CYCLES_T0_MASK;
-+	timings[1] = (timings[1] & PL353_SMC_SET_CYCLES_T1_MASK) <<
-+			PL353_SMC_SET_CYCLES_T1_SHIFT;
-+	timings[2] = (timings[2]  & PL353_SMC_SET_CYCLES_T2_MASK) <<
-+			PL353_SMC_SET_CYCLES_T2_SHIFT;
-+	timings[3] = (timings[3]  & PL353_SMC_SET_CYCLES_T3_MASK) <<
-+			PL353_SMC_SET_CYCLES_T3_SHIFT;
-+	timings[4] = (timings[4] & PL353_SMC_SET_CYCLES_T4_MASK) <<
-+			PL353_SMC_SET_CYCLES_T4_SHIFT;
-+	timings[5]  = (timings[5]  & PL353_SMC_SET_CYCLES_T5_MASK) <<
-+			PL353_SMC_SET_CYCLES_T5_SHIFT;
-+	timings[6]  = (timings[6]  & PL353_SMC_SET_CYCLES_T6_MASK) <<
-+			PL353_SMC_SET_CYCLES_T6_SHIFT;
-+	timings[0] |= timings[1] | timings[2] | timings[3] |
-+			timings[4] | timings[5] | timings[6];
-+
-+	writel(timings[0], pl353_smc_base + PL353_SMC_SET_CYCLES_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_cycles);
-+
-+/**
-+ * pl353_smc_ecc_is_busy - Read ecc busy flag
-+ * Return: the ecc_status bit from the ecc_status register. 1 = busy, 0 = idle
-+ */
-+bool pl353_smc_ecc_is_busy(void)
-+{
-+	return ((readl(pl353_smc_base + PL353_SMC_ECC_STATUS_OFFS) &
-+		  PL353_SMC_ECC_STATUS_BUSY) == PL353_SMC_ECC_STATUS_BUSY);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_ecc_is_busy);
-+
-+/**
-+ * pl353_smc_get_ecc_val - Read ecc_valueN registers
-+ * @ecc_reg:	Index of the ecc_value reg (0..3)
-+ * Return: the content of the requested ecc_value register.
-+ *
-+ * There are four valid ecc_value registers. The argument is truncated to stay
-+ * within this valid boundary.
-+ */
-+u32 pl353_smc_get_ecc_val(int ecc_reg)
-+{
-+	u32 addr, reg;
-+
-+	addr = PL353_SMC_ECC_VALUE0_OFFS +
-+		(ecc_reg * PL353_SMC_ECC_REG_SIZE_OFFS);
-+	reg = readl(pl353_smc_base + addr);
-+
-+	return reg;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_get_ecc_val);
-+
-+/**
-+ * pl353_smc_get_nand_int_status_raw - Get NAND interrupt status bit
-+ * Return: the raw_int_status1 bit from the memc_status register
-+ */
-+int pl353_smc_get_nand_int_status_raw(void)
-+{
-+	u32 reg;
-+
-+	reg = readl(pl353_smc_base + PL353_SMC_MEMC_STATUS_OFFS);
-+	reg >>= PL353_SMC_MEMC_STATUS_RAW_INT_1_SHIFT;
-+	reg &= 1;
-+
-+	return reg;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_get_nand_int_status_raw);
-+
-+/**
-+ * pl353_smc_clr_nand_int - Clear NAND interrupt
-+ */
-+void pl353_smc_clr_nand_int(void)
-+{
-+	writel(PL353_SMC_CFG_CLR_INT_CLR_1,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_clr_nand_int);
-+
-+/**
-+ * pl353_smc_set_ecc_mode - Set SMC ECC mode
-+ * @mode:	ECC mode (BYPASS, APB, MEM)
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_ecc_mode(enum pl353_smc_ecc_mode mode)
-+{
-+	u32 reg;
-+	int ret = 0;
-+
-+	switch (mode) {
-+	case PL353_SMC_ECCMODE_BYPASS:
-+	case PL353_SMC_ECCMODE_APB:
-+	case PL353_SMC_ECCMODE_MEM:
-+
-+		reg = readl(pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+		reg &= ~PL353_SMC_ECC_MEMCFG_MODE_MASK;
-+		reg |= mode << PL353_SMC_ECC_MEMCFG_MODE_SHIFT;
-+		writel(reg, pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_ecc_mode);
-+
-+/**
-+ * pl353_smc_set_ecc_pg_size - Set SMC ECC page size
-+ * @pg_sz:	ECC page size
-+ * Return: 0 on success or negative errno.
-+ */
-+int pl353_smc_set_ecc_pg_size(unsigned int pg_sz)
-+{
-+	u32 reg, sz;
-+
-+	switch (pg_sz) {
-+	case 0:
-+		sz = 0;
-+		break;
-+	case SZ_512:
-+		sz = 1;
-+		break;
-+	case SZ_1K:
-+		sz = 2;
-+		break;
-+	case SZ_2K:
-+		sz = 3;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	reg = readl(pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+	reg &= ~PL353_SMC_ECC_MEMCFG_PGSIZE_MASK;
-+	reg |= sz;
-+	writel(reg, pl353_smc_base + PL353_SMC_ECC_MEMCFG_OFFS);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pl353_smc_set_ecc_pg_size);
-+
-+static int __maybe_unused pl353_smc_suspend(struct device *dev)
-+{
-+	struct pl353_smc_data *pl353_smc = dev_get_drvdata(dev);
-+
-+	clk_disable(pl353_smc->memclk);
-+	clk_disable(pl353_smc->aclk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused pl353_smc_resume(struct device *dev)
-+{
-+	int ret;
-+	struct pl353_smc_data *pl353_smc = dev_get_drvdata(dev);
-+
-+	ret = clk_enable(pl353_smc->aclk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable axi domain clock.\n");
-+		return ret;
-+	}
-+
-+	ret = clk_enable(pl353_smc->memclk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable memory clock.\n");
-+		clk_disable(pl353_smc->aclk);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static struct amba_driver pl353_smc_driver;
-+
-+static SIMPLE_DEV_PM_OPS(pl353_smc_dev_pm_ops, pl353_smc_suspend,
-+			 pl353_smc_resume);
-+
-+/**
-+ * pl353_smc_init_nand_interface - Initialize the NAND interface
-+ * @adev:	Pointer to the amba_device struct
-+ * @nand_node:	Pointer to the pl353_nand device_node struct
-+ */
-+static void pl353_smc_init_nand_interface(struct amba_device *adev,
-+					  struct device_node *nand_node)
-+{
-+	unsigned long timeout;
-+
-+	pl353_smc_set_buswidth(PL353_SMC_MEM_WIDTH_8);
-+	writel(PL353_SMC_CFG_CLR_INT_CLR_1,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+	writel(PL353_SMC_DC_UPT_NAND_REGS, pl353_smc_base +
-+	       PL353_SMC_DIRECT_CMD_OFFS);
-+
-+	timeout = jiffies + PL353_NAND_ECC_BUSY_TIMEOUT;
-+	/* Wait till the ECC operation is complete */
 +	do {
-+		if (pl353_smc_ecc_is_busy())
-+			cpu_relax();
-+		else
-+			break;
-+	} while (!time_after_eq(jiffies, timeout));
++		/*
++		 * If flush requests exceed max flush count, go back to
++		 * flush tlbs without range.
++		 */
++		if (gpa_n >= HV_MAX_FLUSH_REP_COUNT)
++			return -ENOSPC;
 +
-+	if (time_after_eq(jiffies, timeout))
-+		return;
++		additional_pages = min_t(u64, pages, HV_MAX_FLUSH_PAGES) - 1;
 +
-+	writel(PL353_NAND_ECC_CMD1,
-+	       pl353_smc_base + PL353_SMC_ECC_MEMCMD1_OFFS);
-+	writel(PL353_NAND_ECC_CMD2,
-+	       pl353_smc_base + PL353_SMC_ECC_MEMCMD2_OFFS);
++		flush->gpa_list[gpa_n].page.additional_pages = additional_pages;
++		flush->gpa_list[gpa_n].page.largepage = false;
++		flush->gpa_list[gpa_n].page.basepfn = cur;
++
++		pages -= additional_pages + 1;
++		cur += additional_pages + 1;
++		gpa_n++;
++	} while (pages > 0);
++
++	return gpa_n;
 +}
++EXPORT_SYMBOL_GPL(hyperv_fill_flush_guest_mapping_list);
 +
-+static const struct of_device_id pl353_smc_supported_children[] = {
-+	{
-+		.compatible = "cfi-flash"
-+	},
-+	{
-+		.compatible = "arm,pl353-nand-r2p1",
-+		.data = pl353_smc_init_nand_interface
-+	},
-+	{}
-+};
-+
-+static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
++int hyperv_flush_guest_mapping_range(u64 as,
++		hyperv_fill_flush_list_func fill_flush_list_func, void *data)
 +{
-+	struct pl353_smc_data *pl353_smc;
-+	struct device_node *child;
-+	struct resource *res;
-+	int err;
-+	struct device_node *of_node = adev->dev.of_node;
-+	static void (*init)(struct amba_device *adev,
-+			    struct device_node *nand_node);
-+	const struct of_device_id *match = NULL;
++	struct hv_guest_mapping_flush_list **flush_pcpu;
++	struct hv_guest_mapping_flush_list *flush;
++	u64 status = 0;
++	unsigned long flags;
++	int ret = -ENOTSUPP;
++	int gpa_n = 0;
 +
-+	pl353_smc = devm_kzalloc(&adev->dev, sizeof(*pl353_smc), GFP_KERNEL);
-+	if (!pl353_smc)
-+		return -ENOMEM;
++	if (!hv_hypercall_pg || !fill_flush_list_func)
++		goto fault;
 +
-+	/* Get the NAND controller virtual address */
-+	res = &adev->res;
-+	pl353_smc_base = devm_ioremap_resource(&adev->dev, res);
-+	if (IS_ERR(pl353_smc_base))
-+		return PTR_ERR(pl353_smc_base);
++	local_irq_save(flags);
 +
-+	pl353_smc->aclk = devm_clk_get(&adev->dev, "apb_pclk");
-+	if (IS_ERR(pl353_smc->aclk)) {
-+		dev_err(&adev->dev, "aclk clock not found.\n");
-+		return PTR_ERR(pl353_smc->aclk);
++	flush_pcpu = (struct hv_guest_mapping_flush_list **)
++		this_cpu_ptr(hyperv_pcpu_input_arg);
++
++	flush = *flush_pcpu;
++	if (unlikely(!flush)) {
++		local_irq_restore(flags);
++		goto fault;
 +	}
 +
-+	pl353_smc->memclk = devm_clk_get(&adev->dev, "memclk");
-+	if (IS_ERR(pl353_smc->memclk)) {
-+		dev_err(&adev->dev, "memclk clock not found.\n");
-+		return PTR_ERR(pl353_smc->memclk);
++	flush->address_space = as;
++	flush->flags = 0;
++
++	gpa_n = fill_flush_list_func(flush, data);
++	if (gpa_n < 0) {
++		local_irq_restore(flags);
++		goto fault;
 +	}
 +
-+	err = clk_prepare_enable(pl353_smc->aclk);
-+	if (err) {
-+		dev_err(&adev->dev, "Unable to enable AXI clock.\n");
-+		return err;
-+	}
++	status = hv_do_rep_hypercall(HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST,
++				     gpa_n, 0, flush, NULL);
 +
-+	err = clk_prepare_enable(pl353_smc->memclk);
-+	if (err) {
-+		dev_err(&adev->dev, "Unable to enable memory clock.\n");
-+		goto out_clk_dis_aper;
-+	}
++	local_irq_restore(flags);
 +
-+	amba_set_drvdata(adev, pl353_smc);
-+
-+	/* clear interrupts */
-+	writel(PL353_SMC_CFG_CLR_DEFAULT_MASK,
-+	       pl353_smc_base + PL353_SMC_CFG_CLR_OFFS);
-+
-+	/* Find compatible children. Only a single child is supported */
-+	for_each_available_child_of_node(of_node, child) {
-+		match = of_match_node(pl353_smc_supported_children, child);
-+		if (!match) {
-+			dev_warn(&adev->dev, "unsupported child node\n");
-+			continue;
-+		}
-+		break;
-+	}
-+	if (!match) {
-+		dev_err(&adev->dev, "no matching children\n");
-+		goto out_clk_disable;
-+	}
-+
-+	init = match->data;
-+	if (init)
-+		init(adev, child);
-+	of_platform_device_create(child, NULL, &adev->dev);
-+
-+	return 0;
-+
-+out_clk_disable:
-+	clk_disable_unprepare(pl353_smc->memclk);
-+out_clk_dis_aper:
-+	clk_disable_unprepare(pl353_smc->aclk);
-+
-+	return err;
++	if (!(status & HV_HYPERCALL_RESULT_MASK))
++		ret = 0;
++	else
++		ret = status;
++fault:
++	return ret;
 +}
-+
-+static int pl353_smc_remove(struct amba_device *adev)
-+{
-+	struct pl353_smc_data *pl353_smc = amba_get_drvdata(adev);
-+
-+	clk_disable_unprepare(pl353_smc->memclk);
-+	clk_disable_unprepare(pl353_smc->aclk);
-+
-+	return 0;
-+}
-+
-+static const struct amba_id pl353_ids[] = {
-+	{
-+	.id = 0x00041353,
-+	.mask = 0x000fffff,
-+	},
-+	{ 0, 0 },
-+};
-+MODULE_DEVICE_TABLE(amba, pl353_ids);
-+
-+static struct amba_driver pl353_smc_driver = {
-+	.drv = {
-+		.owner = THIS_MODULE,
-+		.name = "pl353-smc",
-+		.pm = &pl353_smc_dev_pm_ops,
-+	},
-+	.id_table = pl353_ids,
-+	.probe		= pl353_smc_probe,
-+	.remove		= pl353_smc_remove,
-+};
-+
-+module_amba_driver(pl353_smc_driver);
-+
-+MODULE_AUTHOR("Xilinx, Inc.");
-+MODULE_DESCRIPTION("ARM PL353 SMC Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/pl353-smc.h b/include/linux/pl353-smc.h
-new file mode 100644
-index 0000000..0e0d3df
---- /dev/null
-+++ b/include/linux/pl353-smc.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping_range);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 4139f7650fe5..405a378e1c62 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -10,6 +10,7 @@
+ #define _ASM_X86_HYPERV_TLFS_H
+ 
+ #include <linux/types.h>
++#include <asm/page.h>
+ 
+ /*
+  * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
+@@ -358,6 +359,7 @@ struct hv_tsc_emulation_status {
+ #define HVCALL_POST_MESSAGE			0x005c
+ #define HVCALL_SIGNAL_EVENT			0x005d
+ #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE 0x00af
++#define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST 0x00b0
+ 
+ #define HV_X64_MSR_VP_ASSIST_PAGE_ENABLE	0x00000001
+ #define HV_X64_MSR_VP_ASSIST_PAGE_ADDRESS_SHIFT	12
+@@ -757,6 +759,36 @@ struct hv_guest_mapping_flush {
+ 	u64 flags;
+ };
+ 
 +/*
-+ * ARM PL353 SMC Driver Header
-+ *
-+ * Copyright (C) 2012 - 2018 Xilinx, Inc
++ *  HV_MAX_FLUSH_PAGES = "additional_pages" + 1. It's limited
++ *  by the bitwidth of "additional_pages" in union hv_gpa_page_range.
 + */
++#define HV_MAX_FLUSH_PAGES (2048)
 +
-+#ifndef __LINUX_PL353_SMC_H
-+#define __LINUX_PL353_SMC_H
-+
-+enum pl353_smc_ecc_mode {
-+	PL353_SMC_ECCMODE_BYPASS = 0,
-+	PL353_SMC_ECCMODE_APB = 1,
-+	PL353_SMC_ECCMODE_MEM = 2
++/* HvFlushGuestPhysicalAddressList hypercall */
++union hv_gpa_page_range {
++	u64 address_space;
++	struct {
++		u64 additional_pages:11;
++		u64 largepage:1;
++		u64 basepfn:52;
++	} page;
 +};
 +
-+enum pl353_smc_mem_width {
-+	PL353_SMC_MEM_WIDTH_8 = 0,
-+	PL353_SMC_MEM_WIDTH_16 = 1
++/*
++ * All input flush parameters should be in single page. The max flush
++ * count is equal with how many entries of union hv_gpa_page_range can
++ * be populated into the input parameter page.
++ */
++#define HV_MAX_FLUSH_REP_COUNT (PAGE_SIZE - 2 * sizeof(u64) /	\
++				sizeof(union hv_gpa_page_range))
++
++struct hv_guest_mapping_flush_list {
++	u64 address_space;
++	u64 flags;
++	union hv_gpa_page_range gpa_list[HV_MAX_FLUSH_REP_COUNT];
 +};
 +
-+u32 pl353_smc_get_ecc_val(int ecc_reg);
-+bool pl353_smc_ecc_is_busy(void);
-+int pl353_smc_get_nand_int_status_raw(void);
-+void pl353_smc_clr_nand_int(void);
-+int pl353_smc_set_ecc_mode(enum pl353_smc_ecc_mode mode);
-+int pl353_smc_set_ecc_pg_size(unsigned int pg_sz);
-+int pl353_smc_set_buswidth(unsigned int bw);
-+void pl353_smc_set_cycles(u32 timings[]);
-+#endif
+ /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+ struct hv_tlb_flush {
+ 	u64 address_space;
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 1d0a7778e163..7da712f65398 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -22,6 +22,11 @@ struct ms_hyperv_info {
+ 
+ extern struct ms_hyperv_info ms_hyperv;
+ 
++
++typedef int (*hyperv_fill_flush_list_func)(
++		struct hv_guest_mapping_flush_list *flush,
++		void *data);
++
+ /*
+  * Generate the guest ID.
+  */
+@@ -348,6 +353,11 @@ void set_hv_tscchange_cb(void (*cb)(void));
+ void clear_hv_tscchange_cb(void);
+ void hyperv_stop_tsc_emulation(void);
+ int hyperv_flush_guest_mapping(u64 as);
++int hyperv_flush_guest_mapping_range(u64 as,
++		hyperv_fill_flush_list_func fill_func, void *data);
++int hyperv_fill_flush_guest_mapping_list(
++		struct hv_guest_mapping_flush_list *flush,
++		u64 start_gfn, u64 end_gfn);
+ 
+ #ifdef CONFIG_X86_64
+ void hv_apic_init(void);
+@@ -370,6 +380,11 @@ static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
+ 	return NULL;
+ }
+ static inline int hyperv_flush_guest_mapping(u64 as) { return -1; }
++static inline int hyperv_flush_guest_mapping_range(u64 as,
++		hyperv_fill_flush_list_func fill_func, void *data);
++{
++	return -1;
++}
+ #endif /* CONFIG_HYPERV */
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
 -- 
-2.7.4
+2.14.4
 
