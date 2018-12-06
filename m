@@ -2,84 +2,102 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36759C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA221C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF23520868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF23520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B76F20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:07:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O1aEwCD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B76F20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbeLFXEd (ORCPT
+        id S1726194AbeLFXHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:04:33 -0500
-Received: from mga04.intel.com ([192.55.52.120]:36166 "EHLO mga04.intel.com"
+        Thu, 6 Dec 2018 18:07:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:36993 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbeLFXEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:04:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 15:04:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
-   d="scan'208";a="300024351"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Dec 2018 15:04:32 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
-Date:   Thu,  6 Dec 2018 15:04:18 -0800
-Message-Id: <1544137458-35994-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726040AbeLFXHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:07:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 439rpn4LDZz9s3l;
+        Fri,  7 Dec 2018 10:07:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544137649;
+        bh=/o2ZO0CPVxJNxmFq38QiBNKTuv8F8imMbwaRoN9Tl60=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O1aEwCD+dPip3ZlLwoeQBiX1XmiqgK5jdZOoYxhgDGkMbZovl722CweLbE+xgRMBP
+         J1vzzZ7pbZV8SG4GMjBkyvx/QPUM66QvX3yJ1rkcYjMz0Pnlff8RNlpfGCgZ9ebtev
+         uZYxXxuWLrpVR5jnG55SzicxXkTOL1cDhWFxFJLJQXfi4tLMqV9yTi9AlMcH4gT57h
+         VIOcJr9wUMtlQThDpR9cKzPFAW1MBvyP2nk/dBVjISFsl+u6TNEUTWGecoh+LSpeAm
+         Mr3CVRq+U5iLqXS40dgJRq3W3LkUq8oLVLzUWOR+1M24LyDxF/8FYQIVjt2Ig9v6hO
+         qgJawDf4N2wbA==
+Date:   Fri, 7 Dec 2018 10:07:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: bad merge in the y2038 tree
+Message-ID: <20181207100729.0ed0fc7a@canb.auug.org.au>
+In-Reply-To: <CAK8P3a1U9y7rHq9GUd-BrY4=aLLyBYZLm8X0JcKU6j2_sYCCmQ@mail.gmail.com>
+References: <20181207071147.3b41fb5c@canb.auug.org.au>
+        <CAK8P3a1U9y7rHq9GUd-BrY4=aLLyBYZLm8X0JcKU6j2_sYCCmQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2n92d5lkldTSpZBmyTD0Sgi"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+--Sig_/2n92d5lkldTSpZBmyTD0Sgi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-When a task, which is sampled by a PEBS event with a fixed period, is
-sched_in, the fixed period will always be used as new period for
-counter. It's inaccurate, because the left period from last sched_out
-isn't taken into account.
+Hi Arnd,
 
-The auto-reload feature is implicitly enabled for a PEBS event with a
-fixed period. The feature has specific
-intel_pmu_save_and_restart_reload(), which never records the left
-period. The period_left, which is used in perf_event_set_period() to
-calculate the new period, is always the user defined fixed period.
+On Thu, 6 Dec 2018 23:09:01 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, Dec 6, 2018 at 9:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wr=
+ote:
+> >
+> > The y2038 tree contains a merge of next-20181206.  I cannot use a tree
+> > that includes a version of linux-next.  I assume that this was just a
+> > test merge, so please remove it. =20
+>=20
+> Fixed now, I had pushed the wrong branch after I had done the test build =
+to
+> make sure that it wouldn't conflict with anything in yesterday's linux-ne=
+xt.
 
-With auto-reload, the counter always has a negative counter value. So
-the left period is -value. Update the period_left in
-intel_pmu_save_and_restart_reload().
+I figured something like that.  Thanks.
 
-Fixes: commit d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/ds.c | 2 ++
- 1 file changed, 2 insertions(+)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index b7b01d7..a04b52b 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1402,6 +1402,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
- 	old = ((s64)(prev_raw_count << shift) >> shift);
- 	local64_add(new - old + count * period, &event->count);
- 
-+	local64_set(&hwc->period_left, -new);
-+
- 	perf_event_update_userpage(event);
- 
- 	return 0;
--- 
-2.7.4
+--Sig_/2n92d5lkldTSpZBmyTD0Sgi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJq7EACgkQAVBC80lX
+0GyW+wgAoNLe/mgbo5DZpSjEUo1sPipkaP0RI+ROZgxzRYaZ05vNCy6hWtmsIFdg
+cBuiNlXbg3DwHWnylTr63CU8nZRrZ5ySys8CaQUcXaKa1IsIh2qRg0uo+1zlzJlk
+l9Mu8QzL9WMAayWWYCZcypNGRHOPjMF56tmKyXIVm7J77hwLUn4bcp+2MWnT/S0H
+ciMFqiPykjOcBVB5C2nIGYrBsN3rLCFZjSwCVJEoR9ye2/xAqhpV9tnmH96jjvbL
+eQ6vrZCt1uxur5Wn65DIyUMNnOiZJjhe3OGibLcOHK/g6nwrGcmhdaN7ivYodvfg
+OlR8W6wHSSidQUAeVn7DHbwfQ/v0sg==
+=jo/D
+-----END PGP SIGNATURE-----
+
+--Sig_/2n92d5lkldTSpZBmyTD0Sgi--
