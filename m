@@ -2,83 +2,89 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3816BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9565C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0641221479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0641221479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 99E7C21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E7C21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeLFJCV (ORCPT
+        id S1729275AbeLFJCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:02:21 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:38126 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbeLFJCV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:02:21 -0500
-Received: by mail-vk1-f195.google.com with SMTP id w72so5335570vkd.5;
-        Thu, 06 Dec 2018 01:02:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9+KEZUE1Nta3XMphlatUHgB3m0dTmUFZU2ZyMO3dwXw=;
-        b=CKT+H2WtwROF1E/559KZhpo3goPs9AtZsdPlkuZynEKUavBDZSYfAgCIzapLOSLQEW
-         RLpJ1LUQNh5a2Wht4Pf1qfgOI2czwEY34q2kRiqie+mL7fTsdc6LiJq2rXD8PfwZ6bbk
-         SxypJ9/M88q0vjrQhCPKJ+FM/KQy+bvbjUHfYt51pv6uCDWaOO0LMogJZgkdwiGjI0Nb
-         /fZdWVUPbDHYVeORwVOHw5IQPxDkt3dPfK+DrBQZq5Ss66ylG55zhJ7maJI0waGLKvqI
-         r58JvKAKaFDwOSlsmfpPxQock0omsKA3jwit19tYWnf8nDi/fHj+W+HyIZchFriMtbvF
-         zWiw==
-X-Gm-Message-State: AA+aEWYvWGX8B7ZVAAVxD1ol0p6/dLCQrCbb8tbSNvdOxOI+SV+r/Ehj
-        mnU13WMLxIHR0uOamLCNkFoa1foT9HNFdzXFNqEj/A==
-X-Google-Smtp-Source: AFSGD/Vv3MZ4l8n5RfkkMt2L3CLrnGW06nhRlVCRSBmQfuuO3IfovtUYrqrne8oQIQPyuhivsqvIkAs5QLbxhk6ASZg=
-X-Received: by 2002:a1f:2ed7:: with SMTP id u206mr11963253vku.72.1544086939726;
- Thu, 06 Dec 2018 01:02:19 -0800 (PST)
+        Thu, 6 Dec 2018 04:02:30 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:65318 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727832AbeLFJC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 04:02:29 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 7598CD9DC242AC97C52A;
+        Thu,  6 Dec 2018 17:02:27 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB692Hxv071226;
+        Thu, 6 Dec 2018 17:02:17 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120617024798-15105640 ;
+          Thu, 6 Dec 2018 17:02:47 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Bob Copeland <me@bobcopeland.com>
+Cc:     linux-karma-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] omfs: Use kmemdup instead of duplicating its function
+Date:   Thu, 6 Dec 2018 17:02:10 +0800
+Message-Id: <20181206090210.39624-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181205153945.13767-1-geert+renesas@glider.be>
-In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 6 Dec 2018 10:02:07 +0100
-Message-ID: <CAMuHMdU89s997JhFpWOaDTFohcy4+Ym5deUUuv1EO7EybdJrkg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] soc: renesas: rcar-sysc: Miscellaneous fixes and cleanups
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-06 17:02:48,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-06 17:02:06
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB692Hxv071226
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 4:39 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This series (against renesas-devel-20181204-v4.20-rc5) contains
-> miscellaneous fixes and cleanups for the R-Car SYSC driver.
->
-> This has been tested on R-Car Gen2 (H2 and M2-W) and R-Car Gen3 (H3
-> ES1.0, H3 ES2.0, M3-W, M3-N, D3, E3, and V3M) (without 3DG).
->
-> This not been tested on R-Car H1 and R-Car V3H.
+kmemdup has implemented the function that kmalloc() + memcpy().
+We prefer to kmemdup rather than code opened implementation.
 
-Now tested on R-Car H1 (Marzen), with no ill effects on secondary CPU
-boot and CPU hotplug.
+This issue was detected with the help of coccinelle.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Bob Copeland <me@bobcopeland.com>
+CC: linux-karma-devel@lists.sourceforge.net
+CC: linux-kernel@vger.kernel.org
+---
+ fs/omfs/inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-                        Geert
+diff --git a/fs/omfs/inode.c b/fs/omfs/inode.c
+index e5258fefcd2b..195c6baa3c8e 100644
+--- a/fs/omfs/inode.c
++++ b/fs/omfs/inode.c
+@@ -363,12 +363,11 @@ static int omfs=5Fget=5Fimap(struct super=5Fblock *sb)
+ 		bh =3D sb=5Fbread(sb, block++);
+ 		if (!bh)
+ 			goto nomem=5Ffree;
+-		*ptr =3D kmalloc(sb->s=5Fblocksize, GFP=5FKERNEL);
++		*ptr =3D kmemdup(bh->b=5Fdata, sb->s=5Fblocksize, GFP=5FKERNEL);
+ 		if (!*ptr) {
+ 			brelse(bh);
+ 			goto nomem=5Ffree;
+ 		}
+-		memcpy(*ptr, bh->b=5Fdata, sb->s=5Fblocksize);
+ 		if (count < sb->s=5Fblocksize)
+ 			memset((void *)*ptr + count, 0xff,
+ 				sb->s=5Fblocksize - count);
+--=20
+2.19.1
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
