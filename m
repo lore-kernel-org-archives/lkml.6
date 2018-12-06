@@ -2,126 +2,71 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05062C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDF3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC2E2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:50:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53E7D20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:51:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r0R4F5Lr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC2E2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="KXYY0U2y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E7D20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbeLFUu1 (ORCPT
+        id S1725998AbeLFUvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:50:27 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46920 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeLFUu1 (ORCPT
+        Thu, 6 Dec 2018 15:51:51 -0500
+Received: from one.firstfloor.org ([193.170.194.197]:41910 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeLFUvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:50:27 -0500
-Received: by mail-io1-f65.google.com with SMTP id v10so1472157ios.13;
-        Thu, 06 Dec 2018 12:50:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MxkfNPeZcrG8EjRvaPrQ+4BMehoT7MX1k7wo0sIAPv4=;
-        b=r0R4F5LrmXFDW5CH/dXCUHQKjmWyXPq2bFsse/o84D63gjkNAELkP37HI2STm2DqK7
-         HSScYwYOSC+oIoi0eQr3V5GQjYA97gfdUsE92tOfY4Ch8PVU15EPIZHbUePs/l4yfT/U
-         18SZheUwRA36aIFPJcpCa33MotK+oMsmU4OfVcZlbwXbpMXD29Yueml0bdzzxPAPZU69
-         8HlouKw8TZGIqFq7VRtOkvoD/YJVAYpE8xCRSP/0u8yNwc/YZCY6MNHZeWifBAE1gnN+
-         Kb3hIvKsZDDCg+zVvfWAIndgtGnJvcpEUpluowKT6sohb0G5X84MPVvjnvcKLwBcSjId
-         rnuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MxkfNPeZcrG8EjRvaPrQ+4BMehoT7MX1k7wo0sIAPv4=;
-        b=MKMFmj6hnHIXWFPJ/ipdknltK40AM/BkZQrkfSvEMroxju/qEfh6r8StAwERgeuG0d
-         x3rCXjFGv9lQYZWZRkQn98x/0PzqcybH2dgaNCTPYsGSUtMCYPqF16g6Y2bfa1V7+x22
-         5Xfvpn9C57VWt8kpgTLXekmUGDi+5bKOgX02YkK4m7c0pKybaEtQ+Nt12uEBt5ty5H2U
-         h9Dw2UpyVhyyPFy5zsSaz2xMVdfPhp58CMaddsRZh5MC6EbE1GfysW2BmmTCwT//PK6J
-         Jal0+vuaEvCAmA6Ibhf+TXSQ1e8Ld2CEmNwEnK7zKMXXbGZP0JgxpIF+GYJEDzvFI1Y3
-         TwfA==
-X-Gm-Message-State: AA+aEWbqJhxfvdBotVa4Inoxy1uBycFUM1rqfxA5ZipDSZoNGKggSGgY
-        XmdrTI3CGq6iS0js5QET7d1QqQ1YijQ0czAFtKJazA==
-X-Google-Smtp-Source: AFSGD/Urq3dddLWB7mI/R6BaIw5WKhTWrjl4n1H3cZckfVtVUWJjwLjRX/2YfiwpB/pZWwupwpwZQe/4CL5nLdx1Fh0=
-X-Received: by 2002:a6b:d318:: with SMTP id s24mr25690628iob.6.1544129425994;
- Thu, 06 Dec 2018 12:50:25 -0800 (PST)
+        Thu, 6 Dec 2018 15:51:50 -0500
+Received: by one.firstfloor.org (Postfix, from userid 503)
+        id 776D1868D9; Thu,  6 Dec 2018 21:51:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
+        s=mail; t=1544129508;
+        bh=QFmw1gurW4bI8zCF93EL1eld1hObV8GLNIf5qD6OanM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KXYY0U2y5lh1YSJOF/fCBd5RRTooR9a3xQnHnouhBRIgQ3hnxWh7T+Dra/ei8tb3W
+         K9be8KCR+eUtVJSR0oQr9z0FkN6uowwF+HOJVFkulIUXYXKmpAY376OjFcd+klJXjq
+         L/0+PMu5EuMObb9Hu6Wso5ID3oC/ysJOXpkCVys4=
+Date:   Thu, 6 Dec 2018 12:51:48 -0800
+From:   Andi Kleen <andi@firstfloor.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Milian Wolff <milian.wolff@kdab.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf script: Fix LBR skid dump problems in brstackinsn
+Message-ID: <20181206205146.hsiehbf6fyee2uec@two.firstfloor.org>
+References: <20181120050617.4119-1-andi@firstfloor.org>
+ <20181206170140.GJ19069@kernel.org>
 MIME-Version: 1.0
-References: <20181201160711.GA21373@ycd-dell-ltp> <20181206204407.GB247703@google.com>
-In-Reply-To: <20181206204407.GB247703@google.com>
-From:   Benjamin Young <youngcdev@gmail.com>
-Date:   Thu, 6 Dec 2018 12:50:14 -0800
-Message-ID: <CAKDnngEo9Yo8j9pNrJNEdzK2du3bzWA87+rqBX+T1OaTNZ_cDA@mail.gmail.com>
-Subject: Re: [PATCH] pcie: portdrv: Fix Unnecessary space before function
- pointer arguments
-To:     helgaas@kernel.org
-Cc:     linux-pci@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206170140.GJ19069@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, I will do that next time :)
+On Thu, Dec 06, 2018 at 02:01:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Nov 19, 2018 at 09:06:17PM -0800, Andi Kleen escreveu:
+> > From: Andi Kleen <ak@linux.intel.com>
+> > 
+> > This is a fix for another instance of the skid problem Milian
+> > recently found [1]
+> 
+> Milian, have you tested this?
 
-On Thu, Dec 6, 2018 at 12:44 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Sat, Dec 01, 2018 at 08:07:11AM -0800, Benjamin Young wrote:
-> > Made spacing more consistent in the code for function pointer
-> > declarations based on checkpatch.pl
-> >
-> > Signed-off-by: Benjamin Young <youngcdev@gmail.com>
->
-> Applied to pci/misc for v4.21, thanks!
->
-> I also made similar changes to include/linux/pci.h.  For trivial changes
-> like this I like to fix similar issues in all of PCI at the same time.
->
-> > ---
-> >  drivers/pci/pcie/portdrv.h | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-> > index e495f04..fbbf00b0 100644
-> > --- a/drivers/pci/pcie/portdrv.h
-> > +++ b/drivers/pci/pcie/portdrv.h
-> > @@ -71,19 +71,19 @@ static inline void *get_service_data(struct pcie_device *dev)
-> >
-> >  struct pcie_port_service_driver {
-> >       const char *name;
-> > -     int (*probe) (struct pcie_device *dev);
-> > -     void (*remove) (struct pcie_device *dev);
-> > -     int (*suspend) (struct pcie_device *dev);
-> > -     int (*resume_noirq) (struct pcie_device *dev);
-> > -     int (*resume) (struct pcie_device *dev);
-> > -     int (*runtime_suspend) (struct pcie_device *dev);
-> > -     int (*runtime_resume) (struct pcie_device *dev);
-> > +     int (*probe)(struct pcie_device *dev);
-> > +     void (*remove)(struct pcie_device *dev);
-> > +     int (*suspend)(struct pcie_device *dev);
-> > +     int (*resume_noirq)(struct pcie_device *dev);
-> > +     int (*resume)(struct pcie_device *dev);
-> > +     int (*runtime_suspend)(struct pcie_device *dev);
-> > +     int (*runtime_resume)(struct pcie_device *dev);
-> >
-> >       /* Device driver may resume normal operations */
-> >       void (*error_resume)(struct pci_dev *dev);
-> >
-> >       /* Link Reset Capability - AER service driver specific */
-> > -     pci_ers_result_t (*reset_link) (struct pci_dev *dev);
-> > +     pci_ers_result_t (*reset_link)(struct pci_dev *dev);
-> >
-> >       int port_type;  /* Type of the port this driver can handle */
-> >       u32 service;    /* Port service this device represents */
-> > --
-> > 2.5.0
-> >
+It won't fix Milians problem, which were with call graphs.
+
+For Milian's issue you would need Milian's patches,
+which AFAIK haven't been reviewed by anyone.
+
+-Andi
