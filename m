@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BDDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E36DC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCDA92082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18B03208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131628;
-	bh=4ZHIpXGs3X3aNF+ZxopMafrOv6oPkaRCuCcO5RJUKA0=;
+	s=default; t=1544131633;
+	bh=6Eqoxe+VVgIR0CC6kXYLY3aAYeKHChJtLdOwf2TIn5M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bq1rvLpwYhTKSiPqg+X4pzBCYTTi3NCe6Rt9Uz3mhfRYJVXZ80QXHTjqubzTi55FV
-	 xYGH/N8qj6umiSqQbrx/Gsk9mNNByn4Nz+dQY8C0jCO7nBadFvMc3OG1jlD1PDevgF
-	 +Viva8gfgl27KFIx0rGBUVFlZjQGtw0hjljNkOVw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDA92082B
+	b=lUH3NO/qG8lQhvB90WNe3IiP4qJf032IpCjSEUk1XjRdkL1NkucNbDChncq5yaHCU
+	 p4DGSAtRsc/kAGGzf6A6KvaKpH9Zd5ADoqr3uXbVscM13bo7Y0bcPo7tRGU6JniOBu
+	 tf24ih4WMIV4DwS9BJsusbAvgB121kjZKmrhrr4I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B03208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeLFV1H (ORCPT
+        id S1726134AbeLFV1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:27:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45940 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:27:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeLFV1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:27:06 -0500
+        id S1726119AbeLFV1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:27:11 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA8A72082B;
-        Thu,  6 Dec 2018 21:27:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BD5920989;
+        Thu,  6 Dec 2018 21:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131625;
-        bh=4ZHIpXGs3X3aNF+ZxopMafrOv6oPkaRCuCcO5RJUKA0=;
+        s=default; t=1544131629;
+        bh=6Eqoxe+VVgIR0CC6kXYLY3aAYeKHChJtLdOwf2TIn5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xSlvF//A2agxcDfWiCe5mgOCMxL3RIxXV+j7ePogGdMc/ZZc2plZFaopxQTg155WJ
-         LazuMd0vFTZlliJjvj+j2HaAIbvy2W0r5PTimVc5lKqJgZ6GaxS/BxYcDXS2FIPDNZ
-         2vlHb+xBmosUY3hdZsLQpzmoN8hasIAnshq92+Ro=
+        b=A/U2jwG3SIUpwUhDl364vnQlyZxohLYp8OKMqxWXnATnnJ1L13Gk12jTanTcwD/i4
+         QeJUJ1vJsLACPerwYgfhDKFsMICTvL574BobS6wif+kSnrJtktuLH2WP31sR8gSl92
+         vZDxC7aWSXVMJk58TrNBdqNTxh5HySumafVEzyMo=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 08/75] perf tools: Use fallback for sample_addr_correlates_sym() cases
-Date:   Thu,  6 Dec 2018 18:24:55 -0300
-Message-Id: <20181206212602.20474-9-acme@kernel.org>
+Subject: [PATCH 09/75] perf script: Use fallbacks for branch stacks
+Date:   Thu,  6 Dec 2018 18:24:56 -0300
+Message-Id: <20181206212602.20474-10-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -67,13 +67,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-thread__resolve() is used in the sample_addr_correlates_sym() cases
-where 'addr' is a destination of a branch which does not necessarily
-have the same cpumode as the 'ip'. Use the fallback function in that
-case.
+Branch stacks do not necessarily have the same cpumode as the 'ip'. Use
+the fallback functions in those cases.
 
-This patch depends on patch "perf tools: Add fallback functions for
-cases where cpumode is insufficient".
+This patch depends on patch "perf tools: Add fallback functions for cases
+where cpumode is insufficient".
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -82,25 +80,95 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181106210712.12098-3-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181106210712.12098-4-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-script.c                      | 12 ++++++------
+ .../util/scripting-engines/trace-event-python.c  | 16 ++++++++--------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 9431b20c1337..24493200cf80 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1706,7 +1706,7 @@ bool sample_addr_correlates_sym(struct perf_event_attr *attr)
- void thread__resolve(struct thread *thread, struct addr_location *al,
- 		     struct perf_sample *sample)
- {
--	thread__find_map(thread, sample->cpumode, sample->addr, al);
-+	thread__find_map_fb(thread, sample->cpumode, sample->addr, al);
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 04913136bac9..3ea98fe72f7f 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -724,8 +724,8 @@ static int perf_sample__fprintf_brstack(struct perf_sample *sample,
+ 		if (PRINT_FIELD(DSO)) {
+ 			memset(&alf, 0, sizeof(alf));
+ 			memset(&alt, 0, sizeof(alt));
+-			thread__find_map(thread, sample->cpumode, from, &alf);
+-			thread__find_map(thread, sample->cpumode, to, &alt);
++			thread__find_map_fb(thread, sample->cpumode, from, &alf);
++			thread__find_map_fb(thread, sample->cpumode, to, &alt);
+ 		}
  
- 	al->cpu = sample->cpu;
- 	al->sym = NULL;
+ 		printed += fprintf(fp, " 0x%"PRIx64, from);
+@@ -771,8 +771,8 @@ static int perf_sample__fprintf_brstacksym(struct perf_sample *sample,
+ 		from = br->entries[i].from;
+ 		to   = br->entries[i].to;
+ 
+-		thread__find_symbol(thread, sample->cpumode, from, &alf);
+-		thread__find_symbol(thread, sample->cpumode, to, &alt);
++		thread__find_symbol_fb(thread, sample->cpumode, from, &alf);
++		thread__find_symbol_fb(thread, sample->cpumode, to, &alt);
+ 
+ 		printed += symbol__fprintf_symname_offs(alf.sym, &alf, fp);
+ 		if (PRINT_FIELD(DSO)) {
+@@ -816,11 +816,11 @@ static int perf_sample__fprintf_brstackoff(struct perf_sample *sample,
+ 		from = br->entries[i].from;
+ 		to   = br->entries[i].to;
+ 
+-		if (thread__find_map(thread, sample->cpumode, from, &alf) &&
++		if (thread__find_map_fb(thread, sample->cpumode, from, &alf) &&
+ 		    !alf.map->dso->adjust_symbols)
+ 			from = map__map_ip(alf.map, from);
+ 
+-		if (thread__find_map(thread, sample->cpumode, to, &alt) &&
++		if (thread__find_map_fb(thread, sample->cpumode, to, &alt) &&
+ 		    !alt.map->dso->adjust_symbols)
+ 			to = map__map_ip(alt.map, to);
+ 
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 69aa93d4ee99..0c4b050f6fc2 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -494,14 +494,14 @@ static PyObject *python_process_brstack(struct perf_sample *sample,
+ 		pydict_set_item_string_decref(pyelem, "cycles",
+ 		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
+ 
+-		thread__find_map(thread, sample->cpumode,
+-				 br->entries[i].from, &al);
++		thread__find_map_fb(thread, sample->cpumode,
++				    br->entries[i].from, &al);
+ 		dsoname = get_dsoname(al.map);
+ 		pydict_set_item_string_decref(pyelem, "from_dsoname",
+ 					      _PyUnicode_FromString(dsoname));
+ 
+-		thread__find_map(thread, sample->cpumode,
+-				 br->entries[i].to, &al);
++		thread__find_map_fb(thread, sample->cpumode,
++				    br->entries[i].to, &al);
+ 		dsoname = get_dsoname(al.map);
+ 		pydict_set_item_string_decref(pyelem, "to_dsoname",
+ 					      _PyUnicode_FromString(dsoname));
+@@ -576,14 +576,14 @@ static PyObject *python_process_brstacksym(struct perf_sample *sample,
+ 		if (!pyelem)
+ 			Py_FatalError("couldn't create Python dictionary");
+ 
+-		thread__find_symbol(thread, sample->cpumode,
+-				    br->entries[i].from, &al);
++		thread__find_symbol_fb(thread, sample->cpumode,
++				       br->entries[i].from, &al);
+ 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
+ 		pydict_set_item_string_decref(pyelem, "from",
+ 					      _PyUnicode_FromString(bf));
+ 
+-		thread__find_symbol(thread, sample->cpumode,
+-				    br->entries[i].to, &al);
++		thread__find_symbol_fb(thread, sample->cpumode,
++				       br->entries[i].to, &al);
+ 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
+ 		pydict_set_item_string_decref(pyelem, "to",
+ 					      _PyUnicode_FromString(bf));
 -- 
 2.19.2
 
