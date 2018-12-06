@@ -7,156 +7,190 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C49C64EB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B72C65BAF
 	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D0A208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34D19214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1544131930;
-	bh=MaBBpAWMpYZgpQAWlIKHF2gFMboz1hZdvSLroX5LopU=;
+	bh=CLRbegxky/SkW/b6dC4fL21bhh2tYWjMPESWWnCefLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p5A+0TmwmuDHmo3XRExfwyfLOGKLGjyCj9HFu0w910X89rSrPPWnz2wBq3SOLR9Qd
-	 /toMlSKdkjIAOsB8Qkct/ThQ0OtlqtalKIvpaIyWn3SNFPdXJr2npxN6e5QYsq1P9x
-	 aeJprvN7Y0RX6OnOdFVAEbT466WQ6SYQEX5oYq4w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D0A208E7
+	b=rWgpJr8SHTc3HRHFXdgBBEU1R/EeCgCkC++oK0NkVOSMOZ2wk9A19LCRDybU7zKia
+	 W08WsiEFUkUQ4cgUrrwnlIc7NEI80QzNXZ8JFg3FiFAhPa7SwS0bpbnro9aC8HH/o8
+	 oteNnhfdzga/hnpFj/2qKsTz4hiy/SO9Ff092Qiw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D19214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeLFVbn (ORCPT
+        id S1726401AbeLFVbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:31:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49622 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbeLFVbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:31:07 -0500
+        id S1726091AbeLFVb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:31:28 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C2D8208E7;
-        Thu,  6 Dec 2018 21:31:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C008D208E7;
+        Thu,  6 Dec 2018 21:31:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131866;
-        bh=MaBBpAWMpYZgpQAWlIKHF2gFMboz1hZdvSLroX5LopU=;
+        s=default; t=1544131887;
+        bh=CLRbegxky/SkW/b6dC4fL21bhh2tYWjMPESWWnCefLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hqQdov7AF0agb/YRuIUZACKOhI/KNIG1SASeIAZzga5DOCh2oQLuE1kv1P7F3/9uc
-         7GD0cU3LOnUw7hEkkW23QUe6J7qPCrmVlQ/HljBT7TgmRh6nGBYt3hgK7Y1S3dQobU
-         +SUAQ9XcoFBKkr9d6jQ9pevRTpjIIvheO/tvC8f0=
+        b=tUrDFS7AmMP2UWUomauqeDTsuQTEntdAs6cr3zzYM5RIHDmstxU9GDqt4wtksASkO
+         s54uGuVVOssvvhXg6QiORj1SH7nPOPWT3XRXI7Ko+ZwY2Uz3m9uRAtcCC5Kf1R+8w5
+         R5GCEVzBxa6nm8tMR+IBvccwK7EmLrZIGMBrBwAs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        linux-snps-arc@lists.infradead.org,
-        Namhyung Kim <namhyung@kernel.org>,
+        Dmitry Levin <ldv@altlinux.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@uudg.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 71/75] perf annotate: Introduce basic support for ARC
-Date:   Thu,  6 Dec 2018 18:25:58 -0300
-Message-Id: <20181206212602.20474-72-acme@kernel.org>
+Subject: [PATCH 75/75] perf trace: Add ordered processing
+Date:   Thu,  6 Dec 2018 18:26:02 -0300
+Message-Id: <20181206212602.20474-76-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-Introduce basic 'perf annotate' support for ARC to be able to use
-anotation via stdio interface.
+Sort events to provide the precise outcome of ordered events, just like
+is done with 'perf report' and 'perf top'.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: linux-snps-arc@lists.infradead.org
+Cc: Dmitry Levin <ldv@altlinux.org>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Luis Cláudio Gonçalves <lclaudio@uudg.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Vineet Gupta <vineet.gupta1@synopsys.com>
-Link: http://lkml.kernel.org/r/20181204175118.25232-1-Eugeniy.Paltsev@synopsys.com
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181205160509.1168-9-jolsa@kernel.org
+[ split from a larger patch, added trace__ prefixes to new 'struct trace' methods ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arc/annotate/instructions.c |  9 +++++++++
- tools/perf/arch/common.c                    | 11 ++++++++++-
- tools/perf/util/annotate.c                  |  5 +++++
- 3 files changed, 24 insertions(+), 1 deletion(-)
- create mode 100644 tools/perf/arch/arc/annotate/instructions.c
+ tools/perf/builtin-trace.c | 52 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/arc/annotate/instructions.c b/tools/perf/arch/arc/annotate/instructions.c
-new file mode 100644
-index 000000000000..2f00e995c7e3
---- /dev/null
-+++ b/tools/perf/arch/arc/annotate/instructions.c
-@@ -0,0 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/compiler.h>
-+
-+static int arc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
-+{
-+	arch->initialized = true;
-+	arch->objdump.comment_char = ';';
-+	return 0;
-+}
-diff --git a/tools/perf/arch/common.c b/tools/perf/arch/common.c
-index 5f69fd0b745a..f3824ca7c20b 100644
---- a/tools/perf/arch/common.c
-+++ b/tools/perf/arch/common.c
-@@ -5,6 +5,13 @@
- #include "../util/util.h"
- #include "../util/debug.h"
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 3b6b1fecf2bb..366ec3c8f580 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -127,6 +127,10 @@ struct trace {
+ 	bool			force;
+ 	bool			vfs_getname;
+ 	int			trace_pgfaults;
++	struct {
++		struct ordered_events	data;
++		u64			last;
++	} oe;
+ };
  
-+const char *const arc_triplets[] = {
-+	"arc-linux-",
-+	"arc-snps-linux-uclibc-",
-+	"arc-snps-linux-gnu-",
-+	NULL
-+};
-+
- const char *const arm_triplets[] = {
- 	"arm-eabi-",
- 	"arm-linux-androideabi-",
-@@ -147,7 +154,9 @@ static int perf_env__lookup_binutils_path(struct perf_env *env,
- 		zfree(&buf);
- 	}
- 
--	if (!strcmp(arch, "arm"))
-+	if (!strcmp(arch, "arc"))
-+		path_list = arc_triplets;
-+	else if (!strcmp(arch, "arm"))
- 		path_list = arm_triplets;
- 	else if (!strcmp(arch, "arm64"))
- 		path_list = arm64_triplets;
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 51d291b0b81f..ac9805e0bc76 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -134,6 +134,7 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
+ struct tp_field {
+@@ -2652,6 +2656,42 @@ static int trace__deliver_event(struct trace *trace, union perf_event *event)
  	return 0;
  }
  
-+#include "arch/arc/annotate/instructions.c"
- #include "arch/arm/annotate/instructions.c"
- #include "arch/arm64/annotate/instructions.c"
- #include "arch/x86/annotate/instructions.c"
-@@ -142,6 +143,10 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
- #include "arch/sparc/annotate/instructions.c"
++static int trace__flush_ordered_events(struct trace *trace)
++{
++	u64 first = ordered_events__first_time(&trace->oe.data);
++	u64 flush = trace->oe.last - NSEC_PER_SEC;
++
++	/* Is there some thing to flush.. */
++	if (first && first < flush)
++		return ordered_events__flush_time(&trace->oe.data, flush);
++
++	return 0;
++}
++
++static int trace__deliver_ordered_event(struct trace *trace, union perf_event *event)
++{
++	struct perf_evlist *evlist = trace->evlist;
++	int err;
++
++	err = perf_evlist__parse_sample_timestamp(evlist, event, &trace->oe.last);
++	if (err && err != -1)
++		return err;
++
++	err = ordered_events__queue(&trace->oe.data, event, trace->oe.last, 0);
++	if (err)
++		return err;
++
++	return trace__flush_ordered_events(trace);
++}
++
++static int ordered_events__deliver_event(struct ordered_events *oe,
++					 struct ordered_event *event)
++{
++	struct trace *trace = container_of(oe, struct trace, oe.data);
++
++	return trace__deliver_event(trace, event->event);
++}
++
+ static int trace__run(struct trace *trace, int argc, const char **argv)
+ {
+ 	struct perf_evlist *evlist = trace->evlist;
+@@ -2819,7 +2859,9 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		while ((event = perf_mmap__read_event(md)) != NULL) {
+ 			++trace->nr_events;
  
- static struct arch architectures[] = {
-+	{
-+		.name = "arc",
-+		.init = arc__annotate_init,
-+	},
- 	{
- 		.name = "arm",
- 		.init = arm__annotate_init,
+-			trace__deliver_event(trace, event);
++			err = trace__deliver_ordered_event(trace, event);
++			if (err)
++				goto out_disable;
+ 
+ 			perf_mmap__consume(md);
+ 
+@@ -2842,6 +2884,9 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 				draining = true;
+ 
+ 			goto again;
++		} else {
++			if (trace__flush_ordered_events(trace))
++				goto out_disable;
+ 		}
+ 	} else {
+ 		goto again;
+@@ -2852,6 +2897,8 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 
+ 	perf_evlist__disable(evlist);
+ 
++	ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
++
+ 	if (!err) {
+ 		if (trace->summary)
+ 			trace__fprintf_thread_summary(trace, trace->output);
+@@ -3562,6 +3609,9 @@ int cmd_trace(int argc, const char **argv)
+ 		}
+ 	}
+ 
++	ordered_events__init(&trace.oe.data, ordered_events__deliver_event, &trace);
++	ordered_events__set_copy_on_queue(&trace.oe.data, true);
++
+ 	/*
+ 	 * If we are augmenting syscalls, then combine what we put in the
+ 	 * __augmented_syscalls__ BPF map with what is in the
 -- 
 2.19.2
 
