@@ -2,102 +2,137 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08DCC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BB1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55D720700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:19:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="oqwmfpK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55D720700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id A356420989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:21:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A356420989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbeLFPTb (ORCPT
+        id S1726013AbeLFPVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:19:31 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35075 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeLFPTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:19:31 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so1995822itp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NMb8x1M1yA6S+t3bU8+fBaScmnvLKxY2xxKbeilHybg=;
-        b=oqwmfpK6JK+lCqLoOUOAFcAXi7fiJamImbWbktdrqcrs1iuV8hl9TyK/OjCiNNPV/K
-         dU82sxg49w63uVMuLrJEF5pYnUy5r0y+Yn2s83U9xommKd3sPXDmmL31lgC6pHSDi6la
-         vrGOAJHEdQ41dNJ+VKsxcqD51np84O7ElRYzPSW57LyCSIUjn4gVy544UAklyvlUY6Jq
-         Adsjogis+WFvRZqDRlIqh9z6Tc7u2pkhrw0JtKZHMOe5VUZ6PZ6Pv6C3iRW5ysxjcPgS
-         UP/bVKUhI9SdIpTymbNd17rjkd5x2vUQZxUWqvhxx9ijgLhPQ7F2QL47I/T0i9DPlLLa
-         2QRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NMb8x1M1yA6S+t3bU8+fBaScmnvLKxY2xxKbeilHybg=;
-        b=ht98vqVoMt7t3DFfcLobfPMfvLW0QJUSwdzjYX/k6sX775mygtN7LtqQJOJy4ocEcZ
-         PTTSO94xahxE8GxaSe3ahUfd6v5O0CjKZRuC8NeaMNU8PZcQH9KLCE8l3Qm9LMFMB843
-         jC+COdqiIe1mIyBs5A98XhKAW9A+iGBuHsNnCs4wXezmViK+mwzx01shpOhtGIDYxWR4
-         OwJHO4MDyRMDUmfG5gImRFZbfG71ThVYovLq2YRUPC6qsW3bgNN0M2UGYwHjJfBTOph0
-         oFnvJLHckFBlHUr1UCj+SwGNe4JpKrziUKYDW8O1gc3C9C+IEhhhAv6RpRX8mS6Ty+3T
-         aVEg==
-X-Gm-Message-State: AA+aEWawoUmHaK8QTL2BkpbuFQfhcuHQDF5PZAePmtof5NWYNx3H9mEc
-        DgnNc1l95q33PL5XUHt4e9GaJ0snGLI=
-X-Google-Smtp-Source: AFSGD/XHkbjLGRg+iYEe9blfvmuXAu/w9tNrBJ9x90n528cCgj65lG5jQZHXC+ZUCFCdhszzp3ojRA==
-X-Received: by 2002:a24:2f82:: with SMTP id j124mr17888969itj.166.1544109569480;
-        Thu, 06 Dec 2018 07:19:29 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id f13sm245100iol.82.2018.12.06.07.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 07:19:27 -0800 (PST)
-Subject: Re: [PATCH V10 3/4] blk-mq: issue directly with bypass 'false' in
- blk_mq_sched_insert_requests
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544067160-20564-1-git-send-email-jianchao.w.wang@oracle.com>
- <1544067160-20564-4-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <840accff-5050-744d-9c95-febce5433ab2@kernel.dk>
-Date:   Thu, 6 Dec 2018 08:19:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 10:21:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56876 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725879AbeLFPVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:21:20 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68284CA369;
+        Thu,  6 Dec 2018 15:21:20 +0000 (UTC)
+Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0354D608C4;
+        Thu,  6 Dec 2018 15:21:18 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 10:21:17 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] dma-buf: fix debugfs versus rcu and fence dumping
+Message-ID: <20181206152116.GA3544@redhat.com>
+References: <20181206014103.1364-1-jglisse@redhat.com>
+ <b520e7b6-a8f6-da49-fc7d-460823eabf47@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <1544067160-20564-4-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b520e7b6-a8f6-da49-fc7d-460823eabf47@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 06 Dec 2018 15:21:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 8:32 PM, Jianchao Wang wrote:
-> It is not necessary to issue request directly with bypass 'true'
-> in blk_mq_sched_insert_requests and handle the non-issued requests
-> itself. Just set bypass to 'false' and let blk_mq_try_issue_directly
-> handle them totally. Remove the blk_rq_can_direct_dispatch check,
-> because blk_mq_try_issue_directly can handle it well.
+On Thu, Dec 06, 2018 at 08:09:28AM +0000, Koenig, Christian wrote:
+> Am 06.12.18 um 02:41 schrieb jglisse@redhat.com:
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> >
+> > The debugfs take reference on fence without dropping them. Also the
+> > rcu section are not well balance. Fix all that ...
+> >
+> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > Cc: Christian König <christian.koenig@amd.com>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Cc: Sumit Semwal <sumit.semwal@linaro.org>
+> > Cc: linux-media@vger.kernel.org
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: linaro-mm-sig@lists.linaro.org
+> > Cc: Stéphane Marchesin <marcheu@chromium.org>
+> > Cc: stable@vger.kernel.org
 > 
-> With respect to commit_rqs hook, we only need to care about the last
-> request's result. If it is inserted, invoke commit_rqs.
+> Well NAK, you are now taking the RCU lock twice and dropping the RCU and 
+> still accessing fobj has a huge potential for accessing freed up memory.
+> 
+> The only correct thing I can see here is to grab a reference to the 
+> fence before printing any info on it,
+> Christian.
 
-I don't think there's anything wrong, functionally, with this patch,
-but I question the logic of continuing to attempt direct dispatch
-if we fail one. If we get busy on one, for instance, we should just
-insert that one to the dispatch list, and insert the rest of the list
-normally.
+Hu ? That is exactly what i am doing, take reference under rcu,
+rcu_unlock print the fence info, drop the fence reference, rcu
+lock rinse and repeat ...
 
+Note that the fobj in _existing_ code is access outside the rcu
+end that there is an rcu imbalance in that code ie a lonlely
+rcu_unlock after the for loop.
 
--- 
-Jens Axboe
+So that the existing code is broken.
 
+> 
+> > ---
+> >   drivers/dma-buf/dma-buf.c | 11 +++++++++--
+> >   1 file changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> > index 13884474d158..f6f4de42ac49 100644
+> > --- a/drivers/dma-buf/dma-buf.c
+> > +++ b/drivers/dma-buf/dma-buf.c
+> > @@ -1051,24 +1051,31 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
+> >   			fobj = rcu_dereference(robj->fence);
+> >   			shared_count = fobj ? fobj->shared_count : 0;
+> >   			fence = rcu_dereference(robj->fence_excl);
+> > +			fence = dma_fence_get_rcu(fence);
+> >   			if (!read_seqcount_retry(&robj->seq, seq))
+> >   				break;
+> >   			rcu_read_unlock();
+> >   		}
+> > -
+> > -		if (fence)
+> > +		if (fence) {
+> >   			seq_printf(s, "\tExclusive fence: %s %s %ssignalled\n",
+> >   				   fence->ops->get_driver_name(fence),
+> >   				   fence->ops->get_timeline_name(fence),
+> >   				   dma_fence_is_signaled(fence) ? "" : "un");
+> > +			dma_fence_put(fence);
+> > +		}
+> > +
+> > +		rcu_read_lock();
+> >   		for (i = 0; i < shared_count; i++) {
+> >   			fence = rcu_dereference(fobj->shared[i]);
+> >   			if (!dma_fence_get_rcu(fence))
+> >   				continue;
+> > +			rcu_read_unlock();
+> >   			seq_printf(s, "\tShared fence: %s %s %ssignalled\n",
+> >   				   fence->ops->get_driver_name(fence),
+> >   				   fence->ops->get_timeline_name(fence),
+> >   				   dma_fence_is_signaled(fence) ? "" : "un");
+> > +			dma_fence_put(fence);
+> > +			rcu_read_lock();
+> >   		}
+> >   		rcu_read_unlock();
+> >   
+> 
