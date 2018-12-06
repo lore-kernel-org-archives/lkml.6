@@ -2,172 +2,184 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27762C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939EBC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92F521479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F521479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 44CC520878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KpCWlLny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CC520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbeLFWnb (ORCPT
+        id S1726145AbeLFWnm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:43:31 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:32940 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeLFWnb (ORCPT
+        Thu, 6 Dec 2018 17:43:42 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42209 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeLFWnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:43:31 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gV2Mk-0006e0-7i; Thu, 06 Dec 2018 15:43:30 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gV2Mj-0002jC-9A; Thu, 06 Dec 2018 15:43:30 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181112192443.GL3645@cisco> <20181127232126.GA23658@cisco>
-        <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
-        <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
-        <87zhtthkuy.fsf@xmission.com>
-        <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
-        <87k1ktqoe5.fsf@xmission.com>
-        <CAGXu5jJgFrWajK5m8ev72DV9ueznLnbGV2-UGECnz0iZ_EFDUg@mail.gmail.com>
-        <87r2euiuql.fsf@xmission.com>
-        <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
-        <20181206192059.GD10086@cisco> <87lg528io7.fsf@xmission.com>
-        <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
-Date:   Thu, 06 Dec 2018 16:43:18 -0600
-In-Reply-To: <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
-        (Kees Cook's message of "Thu, 6 Dec 2018 13:34:21 -0800")
-Message-ID: <87tvjq2s55.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 6 Dec 2018 17:43:41 -0500
+Received: by mail-vs1-f68.google.com with SMTP id b74so1329387vsd.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QGrQwYLmnukcpJtpUnCarc+d2xCO3T8JySHhNzbHxME=;
+        b=KpCWlLny6xFNYYEcX+tPuJ03w3WwN4CBMahyco3AuS3D29w9169o53THH18x5sUj7+
+         osxKGxHLOZtOmPan1/vbPUruyC4n5R6YbwRoUIMS30ka02uKdhyanPPV1M/9zlwXwmBs
+         nerGKz0Up9XZtOAYVYwc2DslP7o4CL+psB4VZpfUOrcGG2uU2GG8eTvs23t66bAR6Naj
+         K0cvo5lbnTxkz24ifqIsLZ3CRdsjxTNrPQF3Hl5CV8eo5Ne7rbVrlhp7wOTVwX0VRtUG
+         Q/bK0K/4Xhs5C3TuRm/N2vG8FMkCvXscqGGO32Ej/GyaCRAkNQCa2G4CQRQjWAjflXHK
+         XQ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QGrQwYLmnukcpJtpUnCarc+d2xCO3T8JySHhNzbHxME=;
+        b=uDLG/LtOzsvNa9mQ8cQy5w+ez+2oPKAQQtVNO9avxwl8DOXcrbl4L1aD3x4ComzCmp
+         1eCqxFl+108qLKJ+Y7MoEUW9j9r/nquJatqtPQTUdX+TGwC9fG+sKfSMy792uBh1uTqi
+         Z2/i2zE4gChuRINToJDzJqWGq5uZ7Gw7Y37HvP6PqI6FJf45bkvsNW2uZWtH5WpitHbO
+         o33jN1y2aUxoS8lzHrDC11oxxZnqhhsdvWtBrZgBlovPTqiLb5B7ELCAIEyP0jlILJGJ
+         uYnFfcAercuEzykxkNR2OJene1CRd8Q9d7bsHNdELK8qTdI9mY77lhWQQlVU8gDHOTXx
+         nIIA==
+X-Gm-Message-State: AA+aEWY7o6Zj8zji09jMyOnpysZuRwvzVUHL9+Vam1B7/Y6bl8IzskwT
+        uJtV0pVqC+WihrB7Kchk8wq7e2kXzZsPHAHWCC/D0Q==
+X-Google-Smtp-Source: AFSGD/VwBtA3V+lysm+1qJc4OdKNSJ4CWYDjYMZXjbXiNXLRpv6y/UiPrBOHOYP4eumga0g2sJCLBQ1H2mckddJ/2Ec=
+X-Received: by 2002:a67:6e87:: with SMTP id j129mr13761958vsc.171.1544136220011;
+ Thu, 06 Dec 2018 14:43:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gV2Mj-0002jC-9A;;;mid=<87tvjq2s55.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19KWdRu4sVJkszW8STVoh256z+tm6VZoU8=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: siginfo pid not populated from ptrace?
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20181206121858.12215-1-christian@brauner.io> <87sgzahf7k.fsf@xmission.com>
+ <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io> <875zw6bh2z.fsf@xmission.com>
+ <20181206193017.wpxls5p3zgjd6rv2@brauner.io> <871s6u9z6u.fsf@xmission.com>
+ <CAKOZuevgPv1CbAZF-ha0njdq6rd6QkU7T8qmmERJLsL45CeVzg@mail.gmail.com> <87in0647og.fsf@xmission.com>
+In-Reply-To: <87in0647og.fsf@xmission.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Thu, 6 Dec 2018 14:43:27 -0800
+Message-ID: <CAKOZuevqbmww0Ep+3gM73bm6H=1kUp1od8--QctuardSCaJxvw@mail.gmail.com>
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>, tglx@linutronix.de,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
-
-> On Thu, Dec 6, 2018 at 1:11 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Tycho Andersen <tycho@tycho.ws> writes:
->>
->> > On Thu, Dec 06, 2018 at 10:48:39AM -0800, Linus Torvalds wrote:
->> >> On Thu, Dec 6, 2018 at 6:40 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> >> >
->> >> > We have in the past had ptrace users that weren't just about debugging
->> >> > so I don't know that it is fair to just dismiss it as debugging
->> >> > infrastructure.
->> >>
->> >> Absolutely.
->> >>
->> >> Some uses are more than just debug. People occasionally use ptrace
->> >> because it's the only way to do what they want, so you'll find people
->> >> who do it for sandboxing, for example. It's not necessarily designed
->> >> for that, or particularly fast or well-suited for it, but I've
->> >> definitely seen it used that way.
->> >>
->> >> So I don't think the behavioral test breakage like this is necessarily
->> >> a huge deal, and until some "real use" actually shows that it cares it
->> >> might be something we dismiss as "just test", but it very much has the
->> >> potential to hit real uses.
->> >>
->> >> The fact that a behavioral test broke is definitely interesting.
->> >>
->> >> And maybe some of the siginfo allocations could depend on whether the
->> >> signal is actually ever caught or not.
->> >>
->> >> For example, a terminal signal (or one that is ignored) might not need
->> >> siginfo. But if the process is ptraced, maybe that terminal signal
->> >> isn't actually terminal? So we might have situations where we want to
->> >> simply check "is the signal target being ptraced"..
->> >
->> > Yes, something like this, I suppose? It works for me.
->>
->> The challenge is that we could be delivering this to a zombie signal
->> group leader.  At which point we won't deliver it to the target task.
->>
->> Sigh it is probably time that I dig in and figure out how to avoid that
->> case which we need to fix anyway because we can get the permission
->> checks wrong for multi-threaded processes that call setuid and friends.
->>
->> Once that is sorted your small change will at least be safe.
->>
->> Eric
->>
->> > From 3bcaadd56ebb532ab4d481556fcc0826d65efc43 Mon Sep 17 00:00:00 2001
->> > From: Tycho Andersen <tycho@tycho.ws>
->> > Date: Thu, 6 Dec 2018 12:15:22 -0700
->> > Subject: [PATCH] signal: allocate siginfo when a traced task gets SIGSTOP
->> >
->> > Tracers can view SIGSTOP:
->> >
->> > https://lore.kernel.org/lkml/87zhtthkuy.fsf@xmission.com/T/#u
->> >
->> > so let's allocate a siginfo for SIGSTOP when a task is traced.
->> >
->> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
->> > ---
->> >  kernel/signal.c | 9 ++++++---
->> >  1 file changed, 6 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/kernel/signal.c b/kernel/signal.c
->> > index 9a32bc2088c9..ab4ba00119f4 100644
->> > --- a/kernel/signal.c
->> > +++ b/kernel/signal.c
->> > @@ -1056,11 +1056,14 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
->> >               goto ret;
->> >
->> >       result = TRACE_SIGNAL_DELIVERED;
->> > +
->> >       /*
->> > -      * Skip useless siginfo allocation for SIGKILL SIGSTOP,
->> > -      * and kernel threads.
->> > +      * Skip useless siginfo allocation for SIGKILL and kernel threads.
->> > +      * SIGSTOP is visible to tracers, so only skip allocation when the task
->> > +      * is not traced.
->> >        */
->> > -     if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
->> > +     if ((sig == SIGKILL) || (!task_is_traced(t) && sig == SIGSTOP) ||
->> > +         (t->flags & PF_KTHREAD))
->> >               goto out_set;
->> >
->> >       /*
+On Thu, Dec 6, 2018 at 2:22 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> What should we do for v4.20? I need to have the selftests actually
-> passing. :)
+> Daniel Colascione <dancol@google.com> writes:
+>
+> > On Thu, Dec 6, 2018 at 12:29 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> Christian Brauner <christian@brauner.io> writes:
+> >>
+> >> > [1]: You cannot replicate certain aspects of kill *yet*. We have
+> >> > established this before. If we want process group support later we do
+> >> > have the flags argument to extend the sycall.
+> >>
+> >> Then you have horrible contradiction in the API.
+> >>
+> >> Either the grouping is a property of your file descriptor or the
+> >> grouping comes from the flags argument.
+> >>
+> >> If the grouping is specified in the flags argument then pidfd is the
+> >> proper name for your file descriptors, and the appropriate prefix
+> >> for your system call.
+> >
+> > Yes and no. "taskfd" is fine, since even if we do add a
+> > kill-process-group capability, the general facility under discussion
+> > is still *about* tasks in general, so "taskfd" still tells you in a
+> > general sense what the thing does. "pidfd" would be wrong, and for the
+> > same reason that the kernel's "struct pid" is badly-named: the object
+> > being named is a *task*, and signaling a particular task instead of
+> > whatever task happens to be labeled with a particular numeric PID at
+> > the time of all is the whole point of this change.
+>
+> No.  The object being named by struct pid is an identifier.
+>
+> The same identifier can label processes, the same identifier can
+> label threads, the same identifier can label process groups the
+> same identifier can label sessions.
+>
+> That is fundamental to how that identifier works.
+>
+> Now the new file descriptor can either be a handle to the struct pid
+> the general purpose identifier, or the file descriptor can be a handle
+> to a process.  Other file descriptor types would be handles to different
+> kinds of processes.
 
-For v4.20 we need to do one of two things.
-1) Present a plausible case that someone will could care about,
-   we document it in the commit we can perform my earlier partial revert.
+If you open /proc/pid, you get a file descriptor of type A. If you
+pass that file descriptor to taskfd_signal, you signal the process. If
+you open a file descriptor to /proc/pid/task/tid, you get a file
+descriptor of type B, and if you pass that file descriptor to
+taskfd_signal, you signal the thread. A and B are *already* distinct.
+The only reason you'd want to require a flag for case B is to reduce
+the probability of error. The flag wouldn't let you open /proc/pid,
+yielding an A, and then pass it to taskfd_signal with a flag saying
+"interpret as B".
 
-2) Remove the sanity check seccomp_bpf.c
+I understand that it'd be inconsistent to later add a flag saying
+"interpret this A as a reference to its whole process group", because
+with respect to the difference between threads and processes, it's the
+file descriptor type that controls the operation invoked, not the
+flags. We can solve that by introducing a new FD type for a process
+group or by just allowing the "casting" via flag, but we're not at the
+point of having to decide that just yet, and I don't think the API is
+particularly bad either way.
 
-I really just want to ensure we have clear reasoning here.
+If you don't want to require a flag value when passing a B, then fine.
+It'll work either with or without the flag. If, instead, you want the
+flag to allow "casting" an A to a B or vice versa, that's fine too.
 
-Eric
+> When people tell me the new interface can handle process groups or
+> sessions by just adding a flag.  I hear they want to have an handle
+> to struct pid then general purpose identifier.  Because it doesn't make
+> any sense at all to add a flag to when you need to add a new file
+> descriptor type to keep the API consistent.
+>
+> Later when I hear people say that they want an identifier for a process
+> and not have a handle to a general purpose identifier I think they need
+> to think about differnt types of file descriptors for the different
+> purposes.  The flags argument does not help at all there.
+>
+> >> If the grouping is a property of your file descriptor it does not make
+> >> sense to talk about using the flags argument later.
+> >>
+> >> Your intention is to add the thread case to support pthreads once the
+> >> process case is sorted out.  So this is something that needs to be made
+> >> clear.  Did I miss how you plan to handle threads?
+> >>
+> >> And this fundamentally and definitely gets into all of my concerns about
+> >> proper handling of pid_task and PIDTYPE_TGID etc.
+> >
+> > To the extent that it's possible, this system call should mimic the
+> > behavior of a signal-send to a positive numeric PID (i.e., a specific
+> > task), so if we change one, we should change both.
+>
+> There is a special case in kill(2) where we treat an identifier that
+> only identifies a thread as an identifier of a process.  We should
+> not copy that.
 
+Sure.
