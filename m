@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8443EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667FDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A18221479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EACB21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107679;
-	bh=nLNTGs0u1yjXrSpnDEKfdMLhqPbEcTYKzgcL1P8ZKbo=;
+	s=default; t=1544107684;
+	bh=uj41PPN0C8iNBqG2AdXb/gcKO7OlzYS7H/bqgRhy87Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gs/nnj8ASMTfmr2j5UBDlmQEDVRod7XKIZSKSWMUSlyDCZyKqjhclJPP5PGy31Bpy
-	 XbV+MrPPsX1FldTgwLC/kvLMibzeuCIll3dddSiNffpA0hbn4D5W2QU+N6JkOGVvin
-	 EJSciw1TnXjOmMudnR7oeWr62LYML846Hm2v0Tzw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A18221479
+	b=K8Mrp9fWtIo2qU/t6ltaSihmdPFRzUviOfBTxHGkRbBu/vsRLyKSqU5RIcep4uEMu
+	 uWhswvzrix8Awy+BELe7FdTn7kpiPg30QVb+gr28UJpyG3r9wX6zH0pJTDL/tG+wsA
+	 1zIYHdXW/hT+zYirVgfIpX/pfsjd2QPQ6JQ8up3I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EACB21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbeLFOr6 (ORCPT
+        id S1731541AbeLFOsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52932 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:48:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731503AbeLFOru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:47:50 -0500
+        id S1730774AbeLFOr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:47:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1B9621479;
-        Thu,  6 Dec 2018 14:47:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889B22082B;
+        Thu,  6 Dec 2018 14:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107670;
-        bh=nLNTGs0u1yjXrSpnDEKfdMLhqPbEcTYKzgcL1P8ZKbo=;
+        s=default; t=1544107679;
+        bh=uj41PPN0C8iNBqG2AdXb/gcKO7OlzYS7H/bqgRhy87Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PB0JYf23W+6egPKpnzZUHkWJgMZbIzhY0+ZWpQyfN/2YGPigxCLkLo0oD92SZ16l+
-         k2VZB2fbvCfTMuy+GmAcJMzI0vS3c+2MTyfxjlL3n/s7/rIMbe0qki/Q6mGIPQ44jD
-         PR5uEk8yct55zWdM3G/RpJSZBkkNymWZf2tZkuug=
+        b=0nBCkbPGrl64mjPsfhb4fwq1c+XM2KyZbQQluCuPEoBpLb8EDpgcNevKN3RlxvxWK
+         eJT5klo+DamPrTY+b1uM4aZNwpusF9HMxlD73uAG9T7MkAHfBOOuW5qFZOeGvseu+E
+         q2ehBu7M/vQpwYwiYyPy5prERmCs3Vb17Xjb1Urg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 094/101] f2fs: Add sanity_check_inode() function
-Date:   Thu,  6 Dec 2018 15:39:33 +0100
-Message-Id: <20181206143018.404273274@linuxfoundation.org>
+Subject: [PATCH 4.9 097/101] f2fs: fix missing up_read
+Date:   Thu,  6 Dec 2018 15:39:36 +0100
+Message-Id: <20181206143018.764350495@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,48 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This was done as part of commits 5d64600d4f33 "f2fs: avoid bug_on on
-corrupted inode" and 76d56d4ab4f2 "f2fs: fix to do sanity check with
-extra_attr feature" upstream, but the specific checks they added are
-not applicable to 4.9.
+commit 89d13c38501df730cbb2e02c4499da1b5187119d upstream.
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
+This patch fixes missing up_read call.
+
+Fixes: c9b60788fc76 ("f2fs: fix to do sanity check with block address in main area")
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/inode.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/f2fs/node.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -104,6 +104,13 @@ static void __recover_inline_status(stru
- 	return;
- }
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1606,8 +1606,10 @@ static int f2fs_write_node_page(struct p
+ 	}
  
-+static bool sanity_check_inode(struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	return true;
-+}
-+
- static int do_read_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -153,6 +160,11 @@ static int do_read_inode(struct inode *i
- 
- 	get_inline_info(inode, ri);
- 
-+	if (!sanity_check_inode(inode)) {
-+		f2fs_put_page(node_page, 1);
-+		return -EINVAL;
+ 	if (__is_valid_data_blkaddr(ni.blk_addr) &&
+-		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC))
++		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC)) {
++		up_read(&sbi->node_write);
+ 		goto redirty_out;
 +	}
-+
- 	/* check data exist */
- 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
- 		__recover_inline_status(inode, node_page);
+ 
+ 	set_page_writeback(page);
+ 	fio.old_blkaddr = ni.blk_addr;
 
 
