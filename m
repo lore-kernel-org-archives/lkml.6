@@ -2,151 +2,122 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24217C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F28E7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9F4214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:59:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xVOXXim2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9F4214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id ADAC7214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544133596;
+	bh=/mfoHx2kZTaQp8c5THvg+QbIVA2pPhgvvCcvtuZt20Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=oM52qeqoRhZ3RMbCXogZEQNLIZkBCz7Qsn91jpujPdHI5MM32cTolCnBqQ1vpEz02
+	 YsRDp0bYpfln98ixY7NvBvTz+lusIJm/iem2DNxEMPLFRAAcSa4DFSSofM17Jpn6b6
+	 moMty1q/Ecp3ZzNTdDXTrx/sLyHaRkuy0m8zSwk0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAC7214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbeLFV7p (ORCPT
+        id S1726250AbeLFV7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:59:45 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:51278 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeLFV7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:43 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6Lwgt0016659;
-        Thu, 6 Dec 2018 21:58:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+3ovsvc27VToPfca9wsRcRBSXtVvM69I56MgsMMPYp0=;
- b=xVOXXim2s0i9qinpk4t8/gUQu/hpnXPyxftLPmrEbfbGAos60bTbCl7iWuZIWvPeiwkT
- cXLLQxSp/Jo1V93O1Y3FsLTLg1swI6Rkdav0Z/1S01pcKGHiEdAf7XI+lUzvuUSCbHNH
- ckj3jWfEzjbn7ZL5kGJ/16P7Xume5d3IdP0m8+fIoxRAy+HIcSO0j3uPUrkofVDeVmDr
- 2pHruKs6kXeMTYZFAQ7gW+uMx558HvW69EeLwK9YZ8HBDlf379TPPLqy41sAWm5hinMv
- TuLEERZpOtvfoHyr7CYeFFWRF/BENHm4X27QFVuTmv8Y9MCtVxYIowzoDkv46LetpAu7 CQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hquatmx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:58:51 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6Lwo6i010259
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:58:50 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LwmA5001137;
-        Thu, 6 Dec 2018 21:58:49 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 13:58:48 -0800
-Subject: Re: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Borislav Petkov <bp@alien8.de>, Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <e8ed34e7-f82a-2314-9919-185d48510715@redhat.com>
- <20181206213752.GL3986@zn.tnic>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
-Date:   Thu, 6 Dec 2018 16:58:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Dec 2018 16:59:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbeLFV7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:59:00 -0500
+Received: from mail.kernel.org (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBD2B214DB;
+        Thu,  6 Dec 2018 21:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544133540;
+        bh=/mfoHx2kZTaQp8c5THvg+QbIVA2pPhgvvCcvtuZt20Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W+cUFUxT6Z3LZ1EHE2mtMsEOA0SwifB9vYqaET1kUAQ61Sxov22A8ZYQLEHlfYdzR
+         g3tlF7gMvqkl4TE/D1tbzuSSXtTRiavUzPki0cse6Q3YnSd2YqSRYzt99jowM9BDTO
+         phx4YjzlAMJN0AkjfXranRD0KOzLOS7OEp+8dRXM=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 2/8] clk: st: Remove usage of CLK_IS_BASIC
+Date:   Thu,  6 Dec 2018 13:58:52 -0800
+Message-Id: <20181206215858.3880-3-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
+In-Reply-To: <20181206215858.3880-1-sboyd@kernel.org>
+References: <20181206215858.3880-1-sboyd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181206213752.GL3986@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060185
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/18 4:37 PM, Borislav Petkov wrote:
-> On Thu, Dec 06, 2018 at 10:21:12PM +0100, Paolo Bonzini wrote:
->> Thanks!  I should be able to post a Tested-by next Monday.  Boris, are
->> you going to pick it up for 4.21?
-> Boris me or Boris O.?
->
-> :-)
->
+This flag doesn't look to be used by any code, just set in various clk
+init structures and then never tested again. Remove it from these
+drivers as it doesn't provide any benefit.
 
-O. ;-)
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/st/clk-flexgen.c | 2 +-
+ drivers/clk/st/clkgen-fsyn.c | 4 ++--
+ drivers/clk/st/clkgen-pll.c  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-There are some minor changes in non-xen x86 code so it would be good to
-get x86 maintainers' ack.
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 918ba3164da9..ca8d5350f94e 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -210,7 +210,7 @@ static struct clk *clk_register_flexgen(const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &flexgen_ops;
+-	init.flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE | flexgen_flags;
++	init.flags = CLK_GET_RATE_NOCACHE | flexgen_flags;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+ 
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index cfa000007622..946ceb14dbf7 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -404,7 +404,7 @@ static struct clk * __init st_clk_register_quadfs_pll(
+ 
+ 	init.name = name;
+ 	init.ops = quadfs->pll_ops;
+-	init.flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
++	init.flags = CLK_GET_RATE_NOCACHE;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+@@ -843,7 +843,7 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
+ 
+ 	init.name = name;
+ 	init.ops = &st_quadfs_ops;
+-	init.flags = flags | CLK_GET_RATE_NOCACHE | CLK_IS_BASIC;
++	init.flags = flags | CLK_GET_RATE_NOCACHE;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 7a7106dc80bf..6930348ce843 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -613,7 +613,7 @@ static struct clk * __init clkgen_pll_register(const char *parent_name,
+ 	init.name = clk_name;
+ 	init.ops = pll_data->ops;
+ 
+-	init.flags = pll_flags | CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
++	init.flags = pll_flags | CLK_GET_RATE_NOCACHE;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents  = 1;
+ 
+-- 
+Sent by a computer through tubes
 
-And as far as qemu/qboot changes, should we assume that the general
-approach is acceptable? I understand that the patches will probably need
-to go through some iterations but I want to make sure we have a path
-forward there.
-
-
--boris
