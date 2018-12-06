@@ -2,79 +2,81 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B7EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940E6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E386D2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E386D2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 399B92146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 399B92146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeLFDfF (ORCPT
+        id S1728907AbeLFDng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 22:35:05 -0500
-Received: from ozlabs.org ([203.11.71.1]:43505 "EHLO ozlabs.org"
+        Wed, 5 Dec 2018 22:43:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbeLFDfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 22:35:05 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1727940AbeLFDng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 22:43:36 -0500
+Received: from vmware.local.home (unknown [184.48.106.28])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439Lnv6lPZz9s1c;
-        Thu,  6 Dec 2018 14:34:59 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH] tty: Use of_node_name_{eq,prefix} for node name comparisons
-In-Reply-To: <20181205195050.4759-27-robh@kernel.org>
-References: <20181205195050.4759-27-robh@kernel.org>
-Date:   Thu, 06 Dec 2018 14:34:56 +1100
-Message-ID: <87ftvbl44f.fsf@concordia.ellerman.id.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D5BE213A2;
+        Thu,  6 Dec 2018 03:43:35 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 22:43:33 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3] stackleak: mark stackleak_track_stack() as notrace
+Message-ID: <20181205224333.3c589916@vmware.local.home>
+In-Reply-To: <CAGXu5jJeyBRHPhKKRyp1=NCCdBfrJw=mdg4+XCEL413ZtkyU1A@mail.gmail.com>
+References: <20181130150859.27366-1-anders.roxell@linaro.org>
+        <CAGXu5j+-w1qh3Jg6u8jM0XxFS-X4qJpzOtf_HO3eEjohL1dj=w@mail.gmail.com>
+        <20181205212651.488d9cd4@vmware.local.home>
+        <20181205212945.58edee31@vmware.local.home>
+        <CAGXu5jJeyBRHPhKKRyp1=NCCdBfrJw=mdg4+XCEL413ZtkyU1A@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
+On Wed, 5 Dec 2018 19:29:11 -0800
+Kees Cook <keescook@chromium.org> wrote:
 
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->
-> For hvc, the code can also be simplified by using of_stdout pointer
-> instead of searching again for the stdout node.
->
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: sparclinux@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/tty/hvc/hvc_opal.c      |  2 +-
->  drivers/tty/hvc/hvc_vio.c       | 11 +----------
->  drivers/tty/serial/pmac_zilog.c |  4 ++--
+> On Wed, Dec 5, 2018 at 6:29 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Wed, 5 Dec 2018 21:26:51 -0500
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >  
+> > > On Wed, 5 Dec 2018 17:08:34 -0800
+> > > Kees Cook <keescook@chromium.org> wrote:
+> > >  
+> >  
+> > > I'll Ack the Makefile
+> > > change in the tracing directory, but the rest belongs to others.  
+> 
+> Okay, I wasn't sure. Anders's patch was marked "1/3" so I thought it
+> was directed at you. :)
+> 
+> I'll grab this one in the gcc-plugins tree.
 
-LGTM.
+Should I just take patch 2 then? I'm thinking it's independent too.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+I'm collecting patches for the next merge window right now so it wont
+really be an issue if I do.
 
-cheers
+-- Steve
