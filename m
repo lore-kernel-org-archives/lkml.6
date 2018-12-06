@@ -2,149 +2,147 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AA5C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EC0C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948EB20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDrsjMhM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948EB20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 94E3120989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E3120989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbeLFJuC (ORCPT
+        id S1729399AbeLFJuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:50:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39618 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeLFJuB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:50:01 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so22561884wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:50:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=SLJYc++pqRvEbdPPcx04NW2WQIDy0+VqRd4VPyqYzUs=;
-        b=pDrsjMhMbtUsSRUBecI5Jwpt09ELfZmtOxGrWejSaKdQfbi3yYW+9C4Aikgbhle7yd
-         lX9dk7uYWictvcHa/rpRHFiYYEIeIssQHT3YUVaaM/BcdUednBU+x89H7WwZcAaXHIr/
-         rofkiMrh2xbOhcb7QZa2Pp31HJ2shzIt6HO71FTaZDUBEdu4t9U8O+r5UmQvLrrgXzVZ
-         6fIvDTaun/2T5nfC4+FweeJkGU0G5/n5mABO1i1jdXap135INHredODjdlVWk61Wiq0G
-         Ygxywu4aTESvHWtAsk8gBFXP/oYRi+ssk1nv6YCsVcgAhMBv+jQYkkdwoTCPXjWylbRi
-         2JTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=SLJYc++pqRvEbdPPcx04NW2WQIDy0+VqRd4VPyqYzUs=;
-        b=ca6Jj3Yp8umsyGSSQ6UPjXlfQUQj88lyw09/ZGkqvikSKu2dQqzJYVIINiEUxU92e6
-         DJ2BYWqJo1XsqhVVDhvDb4lPKGWj1uQRckM/H0zcuWNo+2Kwkp/MvOTLfhe3XCXhBRzC
-         0+ksYOftra80LG1IyXttmnp6BLZXXUtcMAPEuW5W5XiaJf6UDrljhLghoWmyh2MHk3FW
-         +GoxJMSdgM9kH/UvecLrRTindQrFm8mLFvZwoyWUCfcYVSA9/3TlsS0HWmwXkGTMMWQh
-         20K7Yor0RP8PiHAzb57SGKRGr49dEd1T9a88yuPNXBmLY0k++1bqNA7JpgphsAIMQOTF
-         j8xg==
-X-Gm-Message-State: AA+aEWbhftFWqZVY1szv7P6hY88bvv1TpIzFjXFQs0XX7lJntjVgP0Kb
-        m5QRBEftdPS8hhWP6QG6alufDFaL
-X-Google-Smtp-Source: AFSGD/WkYxbyaWeyEaZSpPSVkWBB0R2fKFth/1FINj1Hh29VWNMvzcjxLgtTfxx5LttNJV8Y22dD5A==
-X-Received: by 2002:a5d:538a:: with SMTP id d10mr23924998wrv.202.1544089799868;
-        Thu, 06 Dec 2018 01:49:59 -0800 (PST)
-Received: from ?IPv6:2a02:908:125b:9a00:a142:2be6:b7be:5a3a? ([2a02:908:125b:9a00:a142:2be6:b7be:5a3a])
-        by smtp.gmail.com with ESMTPSA id f192sm414735wmd.12.2018.12.06.01.49.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 01:49:59 -0800 (PST)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 2/2] drm/ttm: Use pr_debug for all output from
- ttm_bo_evict
-To:     "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20181205165621.5805-1-michel@daenzer.net>
- <20181205165621.5805-2-michel@daenzer.net>
- <b0b57acb-7152-ab1a-855a-3de8c77fa425@amd.com>
- <3198051c-c09d-5bf9-e177-3a90b10b4149@daenzer.net>
- <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
- <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <50899531-c8ea-6562-f7f3-593481bcef60@gmail.com>
-Date:   Thu, 6 Dec 2018 10:49:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 04:50:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43138 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727783AbeLFJuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 04:50:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95F8CA78;
+        Thu,  6 Dec 2018 01:50:22 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BEB013F5AF;
+        Thu,  6 Dec 2018 01:50:20 -0800 (PST)
+Subject: Re: [PATCH v6 10/24] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     daniel.thompson@linaro.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
+        james.morse@arm.com, Oleg Nesterov <oleg@redhat.com>,
+        joel@joelfernandes.org, linux-arm-kernel@lists.infradead.org
+References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
+ <1542023835-21446-11-git-send-email-julien.thierry@arm.com>
+ <20181204173610.GC19210@arrakis.emea.arm.com>
+ <bc8d0621-8b6c-c678-49ec-ad1c96bac88a@arm.com>
+ <20181205182616.GE27881@arrakis.emea.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <b8bcfa89-8c57-6e16-1861-9379f6762584@arm.com>
+Date:   Thu, 6 Dec 2018 09:50:18 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181205182616.GE27881@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 06.12.18 um 10:39 schrieb Zhang, Jerry(Junwei):
-> On 12/6/18 5:33 PM, Koenig, Christian wrote:
->> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
->>> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
->>>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
->>>>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>>>
->>>>> All the output is related, so it should all be printed the same way.
->>>>> Some of it was using pr_debug, but some of it appeared in dmesg by
->>>>> default. The caller should handle failure, so there's no need to spam
->>>>> dmesg with potentially quite a lot of output by default.
->>>>>
->>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>>> Sounds reasonable, but personally prefer to show error when some
->>>> vital incident happens, e.g. no memory on eviction.
->>> The amdgpu driver still prints these in that case:
+
+
+On 05/12/18 18:26, Catalin Marinas wrote:
+> On Wed, Dec 05, 2018 at 04:55:54PM +0000, Julien Thierry wrote:
+>> On 04/12/18 17:36, Catalin Marinas wrote:
+>>> On Mon, Nov 12, 2018 at 11:57:01AM +0000, Julien Thierry wrote:
+>>>> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+>>>> index 24692ed..e0a32e4 100644
+>>>> --- a/arch/arm64/include/asm/irqflags.h
+>>>> +++ b/arch/arm64/include/asm/irqflags.h
+>>>> @@ -18,7 +18,27 @@
+>>>>  
+>>>>  #ifdef __KERNEL__
+>>>>  
+>>>> +#include <asm/alternative.h>
+>>>> +#include <asm/cpufeature.h>
+>>>>  #include <asm/ptrace.h>
+>>>> +#include <asm/sysreg.h>
+>>>> +
+>>>> +
+>>>> +/*
+>>>> + * When ICC_PMR_EL1 is used for interrupt masking, only the bit indicating
+>>>> + * whether the normal interrupts are masked is kept along with the daif
+>>>> + * flags.
+>>>> + */
+>>>> +#define ARCH_FLAG_PMR_EN 0x1
+>>>> +
+>>>> +#define MAKE_ARCH_FLAGS(daif, pmr)					\
+>>>> +	((daif) | (((pmr) >> GIC_PRIO_STATUS_SHIFT) & ARCH_FLAG_PMR_EN))
+>>>> +
+>>>> +#define ARCH_FLAGS_GET_PMR(flags)				 \
+>>>> +	((((flags) & ARCH_FLAG_PMR_EN) << GIC_PRIO_STATUS_SHIFT) \
+>>>> +		| GIC_PRIO_IRQOFF)
+>>>> +
+>>>> +#define ARCH_FLAGS_GET_DAIF(flags) ((flags) & ~ARCH_FLAG_PMR_EN)
 >>>
->>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* 
->>> amdgpu_cs_list_validate(validated) failed.
->>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for 
->>> command submission!
->
-> That's from cs submit, perhaps it may come from other places by 
-> ttm_bo_evict_mm().
-> Is that right? Christian.
-
-Yeah, exactly my thinking as well. When we silence the TTM messages we 
-might miss those cases.
-
-Additional to that other drivers using TTM might not have those messages 
-either.
-
-If TTM is to noisy we should use ratelimit and/or reduce the number and 
-size of the warning messages.
-
-A simple "Warning, I ran out of memory during eviction!" should do.
-
-Regards,
-Christian.
-
->
-> Regards,
-> Jerry
->>>
->>> That's plenty as far as I'm concerned. :)
->> Yeah, but in this case I would rather make the amdgpu messages debug
->> level and leave the TTM meassages on error level.
+>>> I wonder whether we could just use the PSR_I_BIT here to decide whether
+>>> to set the GIC_PRIO_IRQ{ON,OFF}. We could clear the PSR_I_BIT in
+>>> _restore_daif() with an alternative.
 >>
->> Christian.
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> So, the issue with it is that some contexts might be using PSR.I to
+>> disable interrupts (any contexts with async errors or debug exceptions
+>> disabled, kvm guest entry paths, pseudo-NMIs, ...).
+>>
+>> If any of these contexts calls local_irq_save()/local_irq_restore() or
+>> local_daif_save()/local_daif_restore(), by only relying on PSR_I_BIT to
+>> represent the PMR status, we might end up clearing PSR.I when we shouldn't.
+>>
+>> I'm not sure whether there are no callers of these functions in those
+>> context. But if that is the case, we could simplify things, yes.
+> 
+> There are callers of local_daif_save() (3) and local_daif_mask() (7) but
+> do they all need to disable the pseudo-NMIs?
+> 
 
+Hmmm, I really think that both of those should be disabling NMIs.
+Otherwise, if we take an NMI, the first thing the el1_irq handler is
+going to do is "enable_da_f()" which could lead to potential issues.
+
+One thing that could be done is:
+- local_daif_save() and local_daif_mask() both mask all daif bits
+(taking care to represent PMR value in the I bit of the saved flags)
+- local_daif_restore() restores da_f as expected and decides values to
+put for PMR and PSR.I as follows:
+	* do the da_f restore
+	* if PSR.A bit is cleared in the saved flags, then we also do a start_nmi()
+
+However, this would not work with a local_daif_save()/restore() on the
+return path of an NMI because I think it is the only context with NMIs
+"stopped" that can take aborts. I can add a WARN_ON(in_nmi()) for
+local_daif_restore() if that doesn't affect performance too much.
+
+Does that sound alright?
+
+> At a brief look at x86, it seems that they have something like
+> stop_nmi() and restart_nmi(). These don't have save/restore semantics,
+> so we could do something similar on arm64 that only deals with the
+> PSTATE.I bit directly and keep the software (flags) PSR.I as the PMR
+> bit. But we'd have to go through the 10 local_daif_* cases above to see
+> which actually need the stop_nmi() semantics.
+> 
+
+Yes, having those could be useful to deal with the above and maybe some
+other places.
+
+Thanks,
+
+-- 
+Julien Thierry
