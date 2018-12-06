@@ -2,106 +2,84 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0ADC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36759C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C922146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:02:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pD/yQjgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C922146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id EF23520868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF23520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbeLFXCt (ORCPT
+        id S1726206AbeLFXEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:02:49 -0500
-Received: from ozlabs.org ([203.11.71.1]:58255 "EHLO ozlabs.org"
+        Thu, 6 Dec 2018 18:04:33 -0500
+Received: from mga04.intel.com ([192.55.52.120]:36166 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbeLFXCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:02:49 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439rjL4jYNz9s55;
-        Fri,  7 Dec 2018 10:02:46 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544137366;
-        bh=F7voqivZBIKK/T9jubRI69+twL+j9Q91GcraLeBfvbY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pD/yQjgrTF8f8kdj7g2kW52BfL8hnmOgQXo5Xb3LHJEsmDGCYwyT4vjjgvqTNISJK
-         uYf2uxcsirj/5YKW07Wwpi+k1OLzvy+3Hdye+E0vbdeNi8+RwjeTtKLM58NHHJ0bNj
-         OuPCfl3ngFalVMR5ICTPF9emnSiWyW3SvXerDMSv2ofhQabd8uR6WJLFlPfM5LO6bY
-         nuChsW86VJk1h156DwJfBsajP9wTGV2l3MHhSLXFeMnbguf8+nZ0bPooLvlzG5yXQH
-         cINPpFxkDlsAlou1syVBnjbE3etjifSrcP9KxeFQd0hvo6stsnnRAg4Uq7S2RBe/5h
-         ZtAUoeo8UNuxQ==
-Date:   Fri, 7 Dec 2018 10:02:46 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Palmer Dabbelt <palmer@dabbelt.com>, Christoph Hellwig <hch@lst.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the risc-v tree with the dma-mapping
- tree
-Message-ID: <20181207100246.4b19e808@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/q0pY_V.i1ErhzhB7hCMlyuf"; protocol="application/pgp-signature"
+        id S1725935AbeLFXEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:04:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 15:04:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="300024351"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Dec 2018 15:04:32 -0800
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Fix inaccurate period in context switch for auto-reload
+Date:   Thu,  6 Dec 2018 15:04:18 -0800
+Message-Id: <1544137458-35994-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/q0pY_V.i1ErhzhB7hCMlyuf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi all,
+When a task, which is sampled by a PEBS event with a fixed period, is
+sched_in, the fixed period will always be used as new period for
+counter. It's inaccurate, because the left period from last sched_out
+isn't taken into account.
 
-Today's linux-next merge of the risc-v tree got a conflict in:
+The auto-reload feature is implicitly enabled for a PEBS event with a
+fixed period. The feature has specific
+intel_pmu_save_and_restart_reload(), which never records the left
+period. The period_left, which is used in perf_event_set_period() to
+calculate the new period, is always the user defined fixed period.
 
-  Documentation/features/io/sg-chain/arch-support.txt
+With auto-reload, the counter always has a negative counter value. So
+the left period is -value. Update the period_left in
+intel_pmu_save_and_restart_reload().
 
-between commit:
+Fixes: commit d31fc13fdcb2 ("perf/x86/intel: Fix event update for auto-reload")
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/ds.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  7c703e54cc71 ("arch: switch the default on ARCH_HAS_SG_CHAIN")
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index b7b01d7..a04b52b 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1402,6 +1402,8 @@ intel_pmu_save_and_restart_reload(struct perf_event *event, int count)
+ 	old = ((s64)(prev_raw_count << shift) >> shift);
+ 	local64_add(new - old + count * period, &event->count);
+ 
++	local64_set(&hwc->period_left, -new);
++
+ 	perf_event_update_userpage(event);
+ 
+ 	return 0;
+-- 
+2.7.4
 
-from the dma-mapping tree and commits:
-
-  1df4d3866118 ("doc: features-refresh.sh for csky")
-  1b9f89553571 ("doc: Indicate that xtensa supports sg-chain")
-
-from the risc-v tree.
-
-I fixed it up (I deleted the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/q0pY_V.i1ErhzhB7hCMlyuf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJqpYACgkQAVBC80lX
-0Gx9IQf/SDDCgiKzOXEGFK7YE/2iR6pKaoEsOO281re/W3W8O7rI7v8iwdW+VGiz
-4uYlY18i/qAiGFytqimNtF5GZvy5ujQlzhskSK6gqufZllaX+ud5PqeqHgOD4sp+
-UoKXykwOl1fSui+ZIb4d3mxh4YZh+tV2XoakSiSQ0eVIDvwwHgK+1FBL9u0zuCE7
-9/YhNppLVvwm7C+Wwx4tD/eRYV1Fg+MZFIGkzLTKLo0aQpUhWcMGSdWA/etW3L6R
-JDl07wDlhbHOL/D3ZZPu7/CepZkJdX5Y7cgSij1KC4o6Kz60DhnZ6EVt2LvWx/A9
-540krDS3RqVxS9q26xIMBW0DX9nrCw==
-=6hOn
------END PGP SIGNATURE-----
-
---Sig_/q0pY_V.i1ErhzhB7hCMlyuf--
