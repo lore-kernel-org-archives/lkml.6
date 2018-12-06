@@ -2,134 +2,102 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1BDC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D96C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59C62146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544122181;
-	bh=c2FkfkWDfo0X+sfR3Y93kLhJbaEGXTN6njPigIWWPDQ=;
-	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=KCfA6S2015kc6ckc2L9uZk7SkVSZ5Ie5o5qeqdOfS7jRWrZMUuN/3qUvCM2DVCEpL
-	 CJwH1UahT6n8GzPBk+caFfaDK5WXwkbjhLQreXHn0d++AsaA5qdY3QyGCQ5b0UP2+u
-	 6bU07omP4wis6c8LX6TK+DNCIhgM39TH/NNrI+xE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59C62146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD23821527
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J8+MOyZ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD23821527
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbeLFStk (ORCPT
+        id S1725994AbeLFSvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFStk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:49:40 -0500
-Received: from localhost (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F1B420892;
-        Thu,  6 Dec 2018 18:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544122179;
-        bh=c2FkfkWDfo0X+sfR3Y93kLhJbaEGXTN6njPigIWWPDQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JAl5s94VPqFfFbh1gWNiJu22dLzK2B9x/9fi1g7vGsbe1XKX9J73zVYtm5oP7Hnmw
-         +nmxhmFCaaPBVR/LboMYG8rqFj3cIL2t1o1zYTFVTWCriYMypAhig8b0WDICIE0Dd/
-         tXE9tKIrf8pOz9Qk43YsWf6TepH45S+M18pvYAgA=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 6 Dec 2018 13:51:54 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37753 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbeLFSvx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:51:53 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e5-v6so1366521lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:51:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wtHJ3kp3x/vlLC5M0AAup4QJTGPpZ1IUQEvR5OziQYA=;
+        b=J8+MOyZ7elAOpBFAXOm/DFldjf3bMIRGwHcE9Z2JExH1aRrMhhr7zDbfKJ/330KtDb
+         pRXYgGym2+/eJK64Ck6id4J7l8akd2ew+OHirfnBah+Rjo/tZKxU7wrALb3zJ6o47QM3
+         03a4JqC5usku3K+Unl40IWLtK/ZBb9YsorTD8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wtHJ3kp3x/vlLC5M0AAup4QJTGPpZ1IUQEvR5OziQYA=;
+        b=B8S1NmQh1ROo/FY/q53kBjdQgSWf12cuzJZ3Q6s6HSkb/bNjncizjfbp19vMvKU2FV
+         lzUvM6N4dXC7NvPEEjwgZw1ScuxPAh1Wr6+J3/LKbct06Sv7gNnRy44h6Yfbb0PTqclJ
+         YcLMpX11Pq6ZYrJyH8joOOnsakJVSMrLNO1mZW1ZerwIdlQ4cH4hdAidPyQ+c6MlDE2X
+         krurKTBe5kl8/vFT2yp28EQw6GWdE4P/qyt2g2we4QoHYDNDgmxtYXnA2pYs4qyFqsnm
+         iVqYMDQRiso0R+Kd9GCL1vwffzX+W98EWav6klGLUEyVvqtOc7R/EAlJcWqBnLIkQT77
+         Qyjw==
+X-Gm-Message-State: AA+aEWbG43EtGmB/e6201hE879bqjsYLxZ8w/6M/NNw2kIJkhnDUJC0e
+        wy5YJ1Qu7B5jAfosBNqf84uMQN+NU3s=
+X-Google-Smtp-Source: AFSGD/Xxg8B9e1wJ7125gZFoJtHOZJ38JzNydQvfKdSdceTrZep0g+Q0wgiK6bcbwmmhSgnwcJm0Gw==
+X-Received: by 2002:a2e:7d15:: with SMTP id y21-v6mr1377634ljc.77.1544122311227;
+        Thu, 06 Dec 2018 10:51:51 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id x29-v6sm195853ljb.97.2018.12.06.10.51.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 10:51:50 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id k19-v6so1321593lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:51:50 -0800 (PST)
+X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr16949452ljj.120.1544122309785;
+ Thu, 06 Dec 2018 10:51:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Tali Perry <tali.perry1@gmail.com>, avifishman70@gmail.com,
-        brendanhiggins@google.com, mturquette@baylibre.com,
-        tmaimon77@gmail.com, venture@google.com, yuenn@google.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181206084431.315559-1-tali.perry1@gmail.com>
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-References: <20181206084431.315559-1-tali.perry1@gmail.com>
-Message-ID: <154412217893.88331.5801113240812610558@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: npcm7xx: get fixed clocks from DT
-Date:   Thu, 06 Dec 2018 10:49:38 -0800
+References: <20181206153720.10702-1-hch@lst.de> <CAHk-=wgz6PFCm+XMWN31dRHzA3JcNP0x0Y-z5NMMw3dHhrDXAw@mail.gmail.com>
+ <20181206184330.GB30039@lst.de>
+In-Reply-To: <20181206184330.GB30039@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Dec 2018 10:51:33 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh=aLuvLu++ZcehjDLgZfSqOVK+whecEq_-JP12VQ96sg@mail.gmail.com>
+Message-ID: <CAHk-=wh=aLuvLu++ZcehjDLgZfSqOVK+whecEq_-JP12VQ96sg@mail.gmail.com>
+Subject: Re: [RFC] avoid indirect calls for DMA direct mappings
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org, brouer@redhat.com,
+        tariqt@mellanox.com, ilias.apalodimas@linaro.org, toke@toke.dk,
+        robin.murphy@arm.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tali Perry (2018-12-06 00:44:31)
-> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-> index 27a86b7a34db..4bd2e40997d4 100644
-> --- a/drivers/clk/clk-npcm7xx.c
-> +++ b/drivers/clk/clk-npcm7xx.c
-> @@ -8,13 +8,19 @@
->   */
->  =
+On Thu, Dec 6, 2018 at 10:43 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> >
+> >  (a) the dma_is_direct() function/macro uses "likely()" for the test
+>
+> I'm a little worried about that.  Yes, for the common case it is
+> likely.  But if you run a setup where you say always have an iommu
+> it is not, in fact it is never called in that case, but we only know
+> that at runtime.
 
->  #include <linux/module.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/device.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> +#include <linux/rational.h>
+Note that "likely()" doesn't have any really huge overhead - it just
+makes the compiler move the unlikely case out-of-line.
 
-Why?
+Compared to the overhead of the indirect branch, it's simply not a
+huge deal, it's more a mispredict and cache layout issue.
 
->  #include <linux/bitfield.h>
->  =
+So marking something "likely()" when it isn't doesn't really penalize
+things too much. It's not like an exception or anything like that,
+it's really just a marker for better code layout.
 
->  #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
-> @@ -568,6 +575,31 @@ static void __init npcm7xx_clk_init(struct device_no=
-de *clk_np)
->         for (i =3D 0; i < NPCM7XX_NUM_CLOCKS; i++)
->                 npcm7xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
->  =
-
-> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external REFCLK on device tree, er=
-r=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external SYSBYPCK on device tree, =
-err=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external MCBYPCK on device tree, e=
-rr=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-
-Now this looks like a DT validator in the kernel. DT folks are working
-on a schema and validator, which should be able to make sure that the
-DTS file has the proper set of clks specified for this drivers' node so
-that we don't need to check in the kernel.
-
-So it looks like nothing needs to change here?
-
+                  Linus
