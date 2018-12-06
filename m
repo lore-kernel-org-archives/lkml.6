@@ -7,49 +7,53 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE42C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15529C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D4620892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D01052082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107494;
-	bh=nXkhXfamVvH5NSdTE2HV2+JastvviYodsgfp7vj9m80=;
+	s=default; t=1544107498;
+	bh=wFIyoeo1yQjY9hwlQVawILnGx4pvORLLHasgQ+/zi8I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VDTbpVEpm6Dg3tTB3KXm7v8eE/GUgeys4/qeyNYjP8qJF8JParUJBgVem0lQjC4h2
-	 o56qaXcDKD9paTYFPTnYD1vW7yhkxZE3Pxbv4HhpQMTMvqz6BUiDjzgfgXPmf/p92e
-	 8Q6hIl7RE2tWd1tQB5de0j0Ye/Rfw875NqlpXevo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D4620892
+	b=wDxdjoXtikTbYpC2kRL6z7m4KWMGqfidcG1JifjXAp7VOZBKdPCxgy+CoDVJ6ngWP
+	 3Pl6OgA1BffZadBGkN2YPsyWHq8uXFgDp8Jz4T6BW3B7C/Zd/clis+TKtVawsKKy97
+	 RkM2A9Z+p5WwR0AR5oVtwtoL0poRKN/qGXZlYBfI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01052082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730956AbeLFOox (ORCPT
+        id S1730074AbeLFOo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49488 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730936AbeLFOor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:47 -0500
+        id S1730949AbeLFOox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A086520661;
-        Thu,  6 Dec 2018 14:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC2320661;
+        Thu,  6 Dec 2018 14:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107487;
-        bh=nXkhXfamVvH5NSdTE2HV2+JastvviYodsgfp7vj9m80=;
+        s=default; t=1544107492;
+        bh=wFIyoeo1yQjY9hwlQVawILnGx4pvORLLHasgQ+/zi8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GgzyxKjumvCWhRezUBOi5O3UwUTEK5KnN6MzV2JRTxRzsRAEw1MfhbRxcv7R5uYhs
-         rDNYfu8ZPu+xzlYtnxTQfRTIygqXP8DgUEMPKhSy3UCzdJYAJ9hvnNHYhMQepKsgSK
-         Zm4448HFPArNG5WBPfO4HZCYCKCJ+xQETAeBbz5g=
+        b=iLoKTRk6gfTr4P2e9BJnwQkD4JzgSJysYLXZn/49Qwi5P2kY669aN4+wj3eVZOuDI
+         dyIayu3DZ02O2aa/qJLn3XiuMXrBeNVW0n5jiKr6Q3rXsj8tQqF8Da0gtAC7X2+0HY
+         czRo+ZBGm2f4EoF/5Td6PojvFZZ7qKUI9hhWyWp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 4.9 024/101] kgdboc: Fix warning with module build
-Date:   Thu,  6 Dec 2018 15:38:23 +0100
-Message-Id: <20181206143012.991185344@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Wang <wawei@amazon.de>,
+        Amadeusz Juskowiak <ajusk@amazon.de>,
+        Julian Stecklina <jsteckli@amazon.de>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 026/101] svm: Add mutex_lock to protect apic_access_page_done on AMD systems
+Date:   Thu,  6 Dec 2018 15:38:25 +0100
+Message-Id: <20181206143013.086132381@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -68,81 +72,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Wei Wang <wawei@amazon.de>
 
-commit 1cd25cbb2fedbc777f3a8c3cb1ba69b645aeaa64 upstream.
+commit 30510387a5e45bfcf8190e03ec7aa15b295828e2 upstream.
 
-After 2dd453168643 ("kgdboc: Fix restrict error"), kgdboc_option_setup is
-now only used when built in, resulting in a warning when compiled as a
-module:
+There is a race condition when accessing kvm->arch.apic_access_page_done.
+Due to it, x86_set_memory_region will fail when creating the second vcpu
+for a svm guest.
 
-drivers/tty/serial/kgdboc.c:134:12: warning: 'kgdboc_option_setup' defined but not used [-Wunused-function]
- static int kgdboc_option_setup(char *opt)
-            ^~~~~~~~~~~~~~~~~~~
+Add a mutex_lock to serialize the accesses to apic_access_page_done.
+This lock is also used by vmx for the same purpose.
 
-Move the function under the appropriate ifdef for builtin only.
-
-Fixes: 2dd453168643 ("kgdboc: Fix restrict error")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Wei Wang <wawei@amazon.de>
+Signed-off-by: Amadeusz Juskowiak <ajusk@amazon.de>
+Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |   37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ arch/x86/kvm/svm.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -131,24 +131,6 @@ static void kgdboc_unregister_kbd(void)
- #define kgdboc_restore_input()
- #endif /* ! CONFIG_KDB_KEYBOARD */
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1333,20 +1333,23 @@ static u64 *avic_get_physical_id_entry(s
+ static int avic_init_access_page(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+-	int ret;
++	int ret = 0;
  
--static int kgdboc_option_setup(char *opt)
--{
--	if (!opt) {
--		pr_err("kgdboc: config string not provided\n");
--		return -EINVAL;
--	}
--
--	if (strlen(opt) >= MAX_CONFIG_LEN) {
--		printk(KERN_ERR "kgdboc: config string too long\n");
--		return -ENOSPC;
--	}
--	strcpy(config, opt);
--
++	mutex_lock(&kvm->slots_lock);
+ 	if (kvm->arch.apic_access_page_done)
+-		return 0;
++		goto out;
+ 
+-	ret = x86_set_memory_region(kvm,
+-				    APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+-				    APIC_DEFAULT_PHYS_BASE,
+-				    PAGE_SIZE);
++	ret = __x86_set_memory_region(kvm,
++				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
++				      APIC_DEFAULT_PHYS_BASE,
++				      PAGE_SIZE);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	kvm->arch.apic_access_page_done = true;
 -	return 0;
--}
--
--__setup("kgdboc=", kgdboc_option_setup);
--
- static void cleanup_kgdboc(void)
- {
- 	if (kgdb_unregister_nmi_console())
-@@ -316,6 +298,25 @@ static struct kgdb_io kgdboc_io_ops = {
- };
++out:
++	mutex_unlock(&kvm->slots_lock);
++	return ret;
+ }
  
- #ifdef CONFIG_KGDB_SERIAL_CONSOLE
-+static int kgdboc_option_setup(char *opt)
-+{
-+	if (!opt) {
-+		pr_err("config string not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	if (strlen(opt) >= MAX_CONFIG_LEN) {
-+		pr_err("config string too long\n");
-+		return -ENOSPC;
-+	}
-+	strcpy(config, opt);
-+
-+	return 0;
-+}
-+
-+__setup("kgdboc=", kgdboc_option_setup);
-+
-+
- /* This is only available if kgdboc is a built in for early debugging */
- static int __init kgdboc_early_init(char *opt)
- {
+ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
 
 
