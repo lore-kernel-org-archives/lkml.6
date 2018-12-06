@@ -2,104 +2,84 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7351C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B734214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B734214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 965ED214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965ED214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbeLFPyG (ORCPT
+        id S1726283AbeLFPyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:54:06 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54022 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFPyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:54:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E356480D;
-        Thu,  6 Dec 2018 07:54:03 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B18F43F59C;
-        Thu,  6 Dec 2018 07:54:03 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id C9A9C1AE0BD1; Thu,  6 Dec 2018 15:54:24 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 15:54:24 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v16 06/16] lib: fdt: add a helper function for handling
- memory range property
-Message-ID: <20181206155424.GA4422@arm.com>
-References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
- <20181115055254.2812-7-takahiro.akashi@linaro.org>
- <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 6 Dec 2018 10:54:15 -0500
+Received: from nov-007-i650.relay.mailchannels.net ([46.232.183.204]:62629
+        "EHLO nov-007-i650.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbeLFPyP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:54:15 -0500
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id D58B91B6048B;
+        Thu,  6 Dec 2018 15:54:09 +0000 (UTC)
+Received: from srv17.tophost.ch (swiss-ingress-2.mailchannels.ch [46.232.183.6])
+        by relay.mailchannels.net (Postfix) with ESMTPA id 4E23C1B6042C;
+        Thu,  6 Dec 2018 15:54:05 +0000 (UTC)
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from srv17.tophost.ch (srv17.tophost.ch [193.33.128.141])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.15.2);
+        Thu, 06 Dec 2018 15:54:09 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Relation-Wide-Eyed: 3b06b8b9099e243c_1544111649530_3564411419
+X-MC-Loop-Signature: 1544111649530:2489107428
+X-MC-Ingress-Time: 1544111649530
+Received: from [80.219.231.201] (port=50240 helo=jzen.bitron.ch)
+        by srv17.tophost.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <j@bitron.ch>)
+        id 1gUvyV-00Fpfw-TX; Thu, 06 Dec 2018 16:54:03 +0100
+Message-ID: <9264c60225f95cb1ca4d3d529972520be08a95b0.camel@bitron.ch>
+Subject: Re: [PATCH v2 0/1] Add prctl to kill descendants on exit
+From:   =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 06 Dec 2018 16:54:03 +0100
+In-Reply-To: <20181130080004.23635-1-j@bitron.ch>
+References: <20181127225408.7553-2-j@bitron.ch>
+         <20181130080004.23635-1-j@bitron.ch>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-AuthUser: juerg@bitron.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-Thanks for reviewing this.
-
-On Thu, Dec 06, 2018 at 08:47:04AM -0600, Rob Herring wrote:
-> On Wed, Nov 14, 2018 at 11:52 PM AKASHI Takahiro
-> <takahiro.akashi@linaro.org> wrote:
-> >
-> > Added function, fdt_setprop_reg(), will be used later to handle
-> > kexec-specific property in arm64's kexec_file implementation.
-> > It will possibly be merged into libfdt in the future.
+On Fri, 2018-11-30 at 08:00 +0000, Jürg Billeter wrote:
+> This patch adds a new prctl to kill all descendant processes on exit.
+> See commit message for details of the prctl.
 > 
-> You generally can't modify libfdt files. Any changes will be blown
-> away with the next dtc sync (there's one in -next now). Though here
-> you are creating a new location with fdt code. lib/ is just a shim to
-> the actual libfdt code. Don't put any implementation there. You can
-> add this to drivers/of/fdt_address.c for the short term, but it still
-> needs to go upstream.
+> This is a replacement of PR_SET_PDEATHSIG_PROC I proposed last year [1].
+> In the following discussion, Oleg suggested this approach.
 > 
-> Otherwise, the implementation looks fine to me.
+> The motivation for this is to provide a lightweight mechanism to prevent
+> stray processes. There is also a related Bugzilla entry [2].
 
-I agree, but I don't think there's a real need for us to hack
-drivers/of/fdt_address.c in the meantime -- let's just target upstream
-and not carry this in the kernel.
+Andrew, Eric, does this look good to you as well?
 
-Akashi -- for now, I'll drop the kdump parts of this series which rely
-on this helper. The majority of the series is actually independent and
-can go in as-is.
+Jürg
 
-I've pushed out a kexec branch to the arm64 tree for you to take a look
-at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=kexec
-
-Thanks,
-
-Will
