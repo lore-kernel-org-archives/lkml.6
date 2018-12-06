@@ -2,205 +2,138 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E188C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A37C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0FE2223CB
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FE2223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D88A72146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88A72146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbeLFVvV (ORCPT
+        id S1726011AbeLFVwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:51:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbeLFVvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:51:21 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 45A80307EA9F;
-        Thu,  6 Dec 2018 21:51:20 +0000 (UTC)
-Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C8781608C4;
-        Thu,  6 Dec 2018 21:51:17 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 16:51:16 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 6 Dec 2018 16:52:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44846 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725935AbeLFVwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:52:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22381B068;
+        Thu,  6 Dec 2018 21:52:09 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Date:   Fri, 07 Dec 2018 08:51:58 +1100
+Cc:     devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
         linux-kernel@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] mm/mmu_notifier: contextual information for event
- triggering invalidation
-Message-ID: <20181206215115.GF3544@redhat.com>
-References: <20181203201817.10759-4-jglisse@redhat.com>
- <201812070514.QdWdUWIj%fengguang.wu@intel.com>
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix incompletely removed #if 0 block in sd.c
+In-Reply-To: <20181206155659.GA15420@nishad>
+References: <20181206155659.GA15420@nishad>
+Message-ID: <87d0qee329.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <201812070514.QdWdUWIj%fengguang.wu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 06 Dec 2018 21:51:20 +0000 (UTC)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Should be all fixed in v2 i built with and without mmu notifier and
-did not had any issue in v2.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 07, 2018 at 05:19:21AM +0800, kbuild test robot wrote:
-> Hi Jérôme,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.20-rc5]
-> [cannot apply to next-20181206]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/jglisse-redhat-com/mmu-notifier-contextual-informations/20181207-031930
-> config: x86_64-randconfig-x017-201848 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    fs///proc/task_mmu.c: In function 'clear_refs_write':
->    fs///proc/task_mmu.c:1099:29: error: storage size of 'range' isn't known
->       struct mmu_notifier_range range;
->                                 ^~~~~
-> >> fs///proc/task_mmu.c:1147:18: error: 'MMU_NOTIFY_SOFT_DIRTY' undeclared (first use in this function); did you mean 'CLEAR_REFS_SOFT_DIRTY'?
->        range.event = MMU_NOTIFY_SOFT_DIRTY;
->                      ^~~~~~~~~~~~~~~~~~~~~
->                      CLEAR_REFS_SOFT_DIRTY
->    fs///proc/task_mmu.c:1147:18: note: each undeclared identifier is reported only once for each function it appears in
->    fs///proc/task_mmu.c:1099:29: warning: unused variable 'range' [-Wunused-variable]
->       struct mmu_notifier_range range;
->                                 ^~~~~
-> 
-> vim +1147 fs///proc/task_mmu.c
-> 
->   1069	
->   1070	static ssize_t clear_refs_write(struct file *file, const char __user *buf,
->   1071					size_t count, loff_t *ppos)
->   1072	{
->   1073		struct task_struct *task;
->   1074		char buffer[PROC_NUMBUF];
->   1075		struct mm_struct *mm;
->   1076		struct vm_area_struct *vma;
->   1077		enum clear_refs_types type;
->   1078		struct mmu_gather tlb;
->   1079		int itype;
->   1080		int rv;
->   1081	
->   1082		memset(buffer, 0, sizeof(buffer));
->   1083		if (count > sizeof(buffer) - 1)
->   1084			count = sizeof(buffer) - 1;
->   1085		if (copy_from_user(buffer, buf, count))
->   1086			return -EFAULT;
->   1087		rv = kstrtoint(strstrip(buffer), 10, &itype);
->   1088		if (rv < 0)
->   1089			return rv;
->   1090		type = (enum clear_refs_types)itype;
->   1091		if (type < CLEAR_REFS_ALL || type >= CLEAR_REFS_LAST)
->   1092			return -EINVAL;
->   1093	
->   1094		task = get_proc_task(file_inode(file));
->   1095		if (!task)
->   1096			return -ESRCH;
->   1097		mm = get_task_mm(task);
->   1098		if (mm) {
-> > 1099			struct mmu_notifier_range range;
->   1100			struct clear_refs_private cp = {
->   1101				.type = type,
->   1102			};
->   1103			struct mm_walk clear_refs_walk = {
->   1104				.pmd_entry = clear_refs_pte_range,
->   1105				.test_walk = clear_refs_test_walk,
->   1106				.mm = mm,
->   1107				.private = &cp,
->   1108			};
->   1109	
->   1110			if (type == CLEAR_REFS_MM_HIWATER_RSS) {
->   1111				if (down_write_killable(&mm->mmap_sem)) {
->   1112					count = -EINTR;
->   1113					goto out_mm;
->   1114				}
->   1115	
->   1116				/*
->   1117				 * Writing 5 to /proc/pid/clear_refs resets the peak
->   1118				 * resident set size to this mm's current rss value.
->   1119				 */
->   1120				reset_mm_hiwater_rss(mm);
->   1121				up_write(&mm->mmap_sem);
->   1122				goto out_mm;
->   1123			}
->   1124	
->   1125			down_read(&mm->mmap_sem);
->   1126			tlb_gather_mmu(&tlb, mm, 0, -1);
->   1127			if (type == CLEAR_REFS_SOFT_DIRTY) {
->   1128				for (vma = mm->mmap; vma; vma = vma->vm_next) {
->   1129					if (!(vma->vm_flags & VM_SOFTDIRTY))
->   1130						continue;
->   1131					up_read(&mm->mmap_sem);
->   1132					if (down_write_killable(&mm->mmap_sem)) {
->   1133						count = -EINTR;
->   1134						goto out_mm;
->   1135					}
->   1136					for (vma = mm->mmap; vma; vma = vma->vm_next) {
->   1137						vma->vm_flags &= ~VM_SOFTDIRTY;
->   1138						vma_set_page_prot(vma);
->   1139					}
->   1140					downgrade_write(&mm->mmap_sem);
->   1141					break;
->   1142				}
->   1143	
->   1144				range.start = 0;
->   1145				range.end = -1UL;
->   1146				range.mm = mm;
-> > 1147				range.event = MMU_NOTIFY_SOFT_DIRTY;
->   1148				mmu_notifier_invalidate_range_start(&range);
->   1149			}
->   1150			walk_page_range(0, mm->highest_vm_end, &clear_refs_walk);
->   1151			if (type == CLEAR_REFS_SOFT_DIRTY)
->   1152				mmu_notifier_invalidate_range_end(&range);
->   1153			tlb_finish_mmu(&tlb, 0, -1);
->   1154			up_read(&mm->mmap_sem);
->   1155	out_mm:
->   1156			mmput(mm);
->   1157		}
->   1158		put_task_struct(task);
->   1159	
->   1160		return count;
->   1161	}
->   1162	
-> 
+On Thu, Dec 06 2018, Nishad Kamdar wrote:
+
+> Commit 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
+> does not completely remove an #if 0 block in sd.c. This causes the functi=
+on
+> msdc_select_clksrc() which was eariler not compiled, to be compiled.
+> That causes an error - MSDC_CLKSRC_REG is not defined.
+>
+> This patch completely removes the #if 0 block
+>
+> Reported-by: NeilBrown <neil@brown.name>
+> Fixes: 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+Perfect, thanks.
+ Reviewed-by: NeilBrown <neil@brown.name>
+
+NeilBrown
 
 
+> Changes in v2:
+>  - Modify commit message
+>  - Include Fixes: and Reported-by: tags
+> ---
+>  drivers/staging/mt7621-mmc/sd.c | 20 --------------------
+>  1 file changed, 20 deletions(-)
+>
+> diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc=
+/sd.c
+> index 7b66f9b0a094..3d918e481bd8 100644
+> --- a/drivers/staging/mt7621-mmc/sd.c
+> +++ b/drivers/staging/mt7621-mmc/sd.c
+> @@ -216,26 +216,6 @@ static void msdc_tasklet_card(struct work_struct *wo=
+rk)
+>  	spin_unlock(&host->lock);
+>  }
+>=20=20
+> -static void msdc_select_clksrc(struct msdc_host *host, unsigned char clk=
+src)
+> -{
+> -	u32 val;
+> -
+> -	BUG_ON(clksrc > 3);
+> -
+> -	val =3D readl(host->base + MSDC_CLKSRC_REG);
+> -	if (readl(host->base + MSDC_ECO_VER) >=3D 4) {
+> -		val &=3D ~(0x3  << clk_src_bit[host->id]);
+> -		val |=3D clksrc << clk_src_bit[host->id];
+> -	} else {
+> -		val &=3D ~0x3; val |=3D clksrc;
+> -	}
+> -	writel(val, host->base + MSDC_CLKSRC_REG);
+> -
+> -	host->hclk =3D hclks[clksrc];
+> -	host->hw->clk_src =3D clksrc;
+> -}
+> -#endif /* end of --- */
+> -
+>  static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int =
+hz)
+>  {
+>  	//struct msdc_hw *hw =3D host->hw;
+> --=20
+> 2.17.1
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwJmf8ACgkQOeye3VZi
+gbnE3w//aBUZMawbeSd0S94XmK0KiTxFv3Adi0FDK+nYX8su4lqlRcETPbMBdUUG
+NGz1BLc1hxI9nqD0BGtu5hGrDtA6yHawl2lWZU0c10nXlDCTciTzZnbrFSfx7bw4
+tlFOHuBGLq+bkBXaywC+aQe3z7/2l50D6aaoYqkcI4mEMByJpx0t+7YVVkx5G4I9
+3EqWEuKrzlkMSyiJR0x73LKeg3Xt/IoUReI0PzdSczxe01sIi7bpi2/qAeUcTrkj
+rhfs7gnudW/y6jKKyAHCEnbenyg7ee6C0LWflXU4nE+361W2CAto2K9g7cBZGFCP
+OJoI4Xhb08KWA3k8Tyb6IX0prYn0lsIcDorlYPBPLk808vroH4q38b6u3beOe9Nw
+J5FrsmSNimRz5bvQbBqlkiUuCVAmI+kIjBkCzXHV8poTXv8bEIIKOmbSKleITVBP
+cRrpQwxpfZwRxlU0/mCPhRl9uNd5bSP9Q0PkRPni49vb93fxDfRyrfi8V28IAU0Z
+xtkQSoyvk0MaMpOUghF5VtVoF5VMdZUY6LVDgrCOS/mHsfFjI53ozVvCOGVUpN1Z
+s4Y+Rtuy9f5fYaF0qLRpX4T3LWSjJxiQiohc3CqZ8NO6s95cxTXSeJzo0eVHoyky
+RQ4I5sJTH0p/OKqbd+DdxyXRJBQnO5lCxWwhpBBGehePxUQmY/M=
+=HVG9
+-----END PGP SIGNATURE-----
+--=-=-=--
