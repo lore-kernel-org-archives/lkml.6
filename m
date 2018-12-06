@@ -2,93 +2,119 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F74C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB344C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78DBC2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE7E20878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:20:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dWa69Sc0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DBC2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="TZ96w9Mt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE7E20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeLFER4 (ORCPT
+        id S1728991AbeLFEUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 23:17:56 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:33362 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbeLFERz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 23:17:55 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB64EHMr114109;
-        Thu, 6 Dec 2018 04:17:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=bu9/d6xqTZ19J8LHsvHXMGN9Q1LnMmEOm/aiDIYTwS4=;
- b=dWa69Sc0mCDfueI9vB1vzVy7nKmMC9m2GlzV43E+8cNWSd/LvEnBKmr9cAT4PLEPEN5G
- 0I293oZgksIM8ElN5Bu5WC2AC7eW8qhDeKppVT0d8hL0tcqKGoH5wGbQf6jdRVm42g1x
- URiRj7wy9SNCsvBPrqvZ8A1RAjd4MBv1eHCbdhFFv+K2YFFPtvC2f9M6NFIoKWgsXIUl
- l7XqmsGN4X6oeQo0TtemMBHHN35TyrJOND6HwNyGY4N1UcUX6X2zF/fz+C6r+G/jcslZ
- yYuu5lo/N/AWOCJml5nIUw9twIgwt52PP5tc/a+dR8LwyrHYDLZpn+BE7uhTLHijdMZy Gw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2p3jxrnyfs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 04:17:48 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB64HlUd010944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 04:17:47 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB64HkNw025298;
-        Thu, 6 Dec 2018 04:17:47 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 20:17:46 -0800
-To:     John Garry <john.garry@huawei.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>
-Subject: Re: [PATCH v3 4/4] scsi: hisi_sas: Add support for DIF feature for v3 hw
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1543838994-30028-1-git-send-email-john.garry@huawei.com>
-        <1543838994-30028-5-git-send-email-john.garry@huawei.com>
-        <yq1ftveszew.fsf@oracle.com>
-        <358aae82-394e-9df2-6b05-5af8e0f196b3@huawei.com>
-        <yq1k1kosorw.fsf@oracle.com>
-        <9c08d3fa-5043-7d38-7b6c-574b7344409b@huawei.com>
-Date:   Wed, 05 Dec 2018 23:17:43 -0500
-In-Reply-To: <9c08d3fa-5043-7d38-7b6c-574b7344409b@huawei.com> (John Garry's
-        message of "Wed, 5 Dec 2018 15:12:27 +0000")
-Message-ID: <yq1in07p9ug.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 5 Dec 2018 23:20:01 -0500
+Received: from ozlabs.org ([203.11.71.1]:43561 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727695AbeLFEUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 23:20:00 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 439Mnn2xg6z9s7h; Thu,  6 Dec 2018 15:19:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1544069997;
+        bh=QfCDKFem+tJn9rNn8MYnoPCP4PC1UJhmRYJ4KBb7coM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TZ96w9MtVoS99ghXZApZhoWNx8WuX/FMIGjPUAoBNaRVseslpSluwbzk0ZeaEaLvM
+         WM8SteRDD3oiMugu2haF5ucU+AtLrO3SZfuYHiwBmz2rRhsIe6nE70EiJZaGj0gG9+
+         zqjCZhQHXJlYkEXivu/LhE4VuTrQ1+ckaXa0SfS0=
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
+        tariqt@mellanox.com, bhelgaas@google.com, leon@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org, alex.williamson@redhat.com,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        sbest@redhat.com, paulus@samba.org, benh@kernel.crashing.org,
+        David Gibson <david@gibson.dropbear.id.au>
+Subject: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+Date:   Thu,  6 Dec 2018 15:19:51 +1100
+Message-Id: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=492
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060037
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mellanox ConnectX-5 IB cards (MT27800) seem to cause a call trace when
+unbound from their regular driver and attached to vfio-pci in order to pass
+them through to a guest.
 
-John,
+This goes away if the disable_idle_d3 option is used, so it looks like a
+problem with the hardware handling D3 state.  To fix that more permanently,
+use a device quirk to disable D3 state for these devices.
 
-> patchset with DIF and DIX support separated out, and we can leave the
-> DIX patch in limbo until we get to the bottom of the DIX issue.
+We do this by renaming the existing quirk_no_ata_d3() more generally and
+attaching it to the ConnectX-[45] devices (0x15b3:0x1013).
 
-Sure.
+Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
+---
+ drivers/pci/quirks.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 4700d24e5d55..add3f516ca12 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -1315,23 +1315,24 @@ static void quirk_ide_samemode(struct pci_dev *pdev)
+ }
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801CA_10, quirk_ide_samemode);
+ 
+-/* Some ATA devices break if put into D3 */
+-static void quirk_no_ata_d3(struct pci_dev *pdev)
++/* Some devices (including a number of ATA cards) break if put into D3 */
++static void quirk_no_d3(struct pci_dev *pdev)
+ {
+ 	pdev->dev_flags |= PCI_DEV_FLAGS_NO_D3;
+ }
++
+ /* Quirk the legacy ATA devices only. The AHCI ones are ok */
+ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_SERVERWORKS, PCI_ANY_ID,
+-				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
++				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_ATI, PCI_ANY_ID,
+-				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
++				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+ /* ALi loses some register settings that we cannot then restore */
+ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_AL, PCI_ANY_ID,
+-				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
++				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+ /* VIA comes back fine but we need to keep it alive or ACPI GTM failures
+    occur when mode detecting */
+ DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_VIA, PCI_ANY_ID,
+-				PCI_CLASS_STORAGE_IDE, 8, quirk_no_ata_d3);
++				PCI_CLASS_STORAGE_IDE, 8, quirk_no_d3);
+ 
+ /*
+  * This was originally an Alpha-specific thing, but it really fits here.
+@@ -3367,6 +3368,10 @@ static void mellanox_check_broken_intx_masking(struct pci_dev *pdev)
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MELLANOX, PCI_ANY_ID,
+ 			mellanox_check_broken_intx_masking);
+ 
++/* Mellanox MT27800 (ConnectX-5) IB card seems to break with D3
++ * In particular this shows up when the device is bound to the vfio-pci driver */
++DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_MELLANOX, PCI_DEVICE_ID_MELLANOX_CONNECTX4, quirk_no_d3)
++
+ static void quirk_no_bus_reset(struct pci_dev *dev)
+ {
+ 	dev->dev_flags |= PCI_DEV_FLAGS_NO_BUS_RESET;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.19.2
+
