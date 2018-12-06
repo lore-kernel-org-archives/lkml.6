@@ -2,122 +2,292 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B3FC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76227C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7C020850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7C020850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id 3872B20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544117367;
+	bh=TUvRntZk1OcEvqIqupsVSWgZe0g8MxaGp598uvL5RBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZR2E4DT4hoD10DM8kz4CL+R73yueC52hWEdkhGNvAJEg7ANxXvmb+ncTJR7SQ5Aea
+	 9teEZXUd/iP+elRpAjq4AE0sxLGGvUCzVGlG+TnxJ6KyydIhDKVyFMHKiqSyOODyVf
+	 4D6XQTVH3e4EJ3zHKTICcHIKUa3D6tLf8OZjgzys=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3872B20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLFR2v (ORCPT
+        id S1726105AbeLFR30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:28:51 -0500
-Received: from mail.netline.ch ([148.251.143.178]:35304 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbeLFR2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:28:49 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 2804F2A604C;
-        Thu,  6 Dec 2018 18:28:46 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id ETgXTDSsFyNR; Thu,  6 Dec 2018 18:28:41 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id BCD322A604B;
-        Thu,  6 Dec 2018 18:28:40 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gUxS4-0007mz-4k; Thu, 06 Dec 2018 18:28:40 +0100
-Subject: Re: [PATCH 2/2] drm/ttm: Use pr_debug for all output from
- ttm_bo_evict
-To:     Joe Perches <joe@perches.com>,
-        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20181205165621.5805-1-michel@daenzer.net>
- <20181205165621.5805-2-michel@daenzer.net>
- <b0b57acb-7152-ab1a-855a-3de8c77fa425@amd.com>
- <3198051c-c09d-5bf9-e177-3a90b10b4149@daenzer.net>
- <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
- <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
- <168bc68c9383cd379b3cd7a25b32edc731c8f5e6.camel@perches.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <30a65cd2-6dda-4459-82bb-cf0d449f5754@daenzer.net>
-Date:   Thu, 6 Dec 2018 18:28:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 12:29:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbeLFR3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:29:25 -0500
+Received: from linux-8ccs (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2BE220850;
+        Thu,  6 Dec 2018 17:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544117365;
+        bh=TUvRntZk1OcEvqIqupsVSWgZe0g8MxaGp598uvL5RBk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L2RaiNM8HGRox3/Y4EKlUTsQR8fbSnzuEpZ9+Qq2I8+Q1cpLTbP8OCE9QXt+PA0hr
+         1Yd5jurWdC5UcMdYVBB3jRkGDvwszi9Jvt2qeJTtqxih0eRO48iZ+Z+smFccdWckEr
+         zTHdWFNNxLJKaXPP5jYZi68crnBMRYYgz8NN6Bsc=
+Date:   Thu, 6 Dec 2018 18:29:20 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     linux@armlinux.org.uk, dave.martin@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: Re: [PATCH v5 2/2] ARM: module: Fix function kallsyms on Thumb-2
+Message-ID: <20181206172920.GA2728@linux-8ccs>
+References: <20181204141415.969-1-vincent.whitchurch@axis.com>
+ <20181204141415.969-2-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
-In-Reply-To: <168bc68c9383cd379b3cd7a25b32edc731c8f5e6.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181204141415.969-2-vincent.whitchurch@axis.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 5:46 p.m., Joe Perches wrote:
-> On Thu, 2018-12-06 at 17:39 +0800, Zhang, Jerry(Junwei) wrote:
->> On 12/6/18 5:33 PM, Koenig, Christian wrote:
->>> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
->>>> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
->>>>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
->>>>>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>>>>
->>>>>> All the output is related, so it should all be printed the same way.
->>>>>> Some of it was using pr_debug, but some of it appeared in dmesg by
->>>>>> default. The caller should handle failure, so there's no need to spam
->>>>>> dmesg with potentially quite a lot of output by default.
->>>>>>
->>>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>>>> Sounds reasonable, but personally prefer to show error when some
->>>>> vital incident happens, e.g. no memory on eviction.
->>>> The amdgpu driver still prints these in that case:
->>>>
->>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* amdgpu_cs_list_validate(validated) failed.
->>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for command submission!
-> 
-> Aren't dump_stack()s already done on all these allocation failures?
-> I don't notice any use of __GFP_NOWARN on generic allocations in drm.
++++ Vincent Whitchurch [04/12/18 15:14 +0100]:
+>Thumb-2 functions have the lowest bit set in the symbol value in the
+>symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
+>generated from the output of nm, and nm clears the lowest bit.
+>
+> $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
+>  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
+> $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
+> 8015dc88 T show_interrupts
+> $ cat /proc/kallsyms | grep show_interrupts
+> 8015dc88 T show_interrupts
+>
+>However, for modules, the kallsyms uses the values in the symbol table
+>without modification, so for functions in modules, the lowest bit is set
+>in kallsyms.
+>
+> $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
+>    333: 00002d4d    36 FUNC    GLOBAL DEFAULT    1 tun_get_socket
+> $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
+> 00002d4c T tun_get_socket
+> $ cat /proc/kallsyms | grep tun_get_socket
+> 7f802d4d t tun_get_socket      [tun]
+>
+>Because of this, the symbol+offset of the crashing instruction shown in
+>oopses is incorrect when the crash is in a module.  For example, given a
+>tun_get_socket which starts like this,
+>
+> 00002d4c <tun_get_socket>:
+>     2d4c:       6943            ldr     r3, [r0, #20]
+>     2d4e:       4a07            ldr     r2, [pc, #28]
+>     2d50:       4293            cmp     r3, r2
+>
+>a crash when tun_get_socket is called with NULL results in:
+>
+> PC is at tun_xdp+0xa3/0xa4 [tun]
+> pc : [<7f802d4c>]
+>
+>As can be seen, the "PC is at" line reports the wrong symbol name, and
+>the symbol+offset will point to the wrong source line if it is passed to
+>gdb.
+>
+>To solve this, add a way for archs to fixup the reading of these module
+>kallsyms values, and use that to clear the lowest bit for function
+>symbols on Thumb-2.
+>
+>After the fix:
+>
+> # cat /proc/kallsyms | grep tun_get_socket
+> 7f802d4c t tun_get_socket       [tun]
+>
+> PC is at tun_get_socket+0x0/0x24 [tun]
+> pc : [<7f802d4c>]
+>
+>Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-Most of the time, these messages are due to being unable to allocate a
-TTM BO or move it where it needs to go, not due to the kernel failing to
-allocate memory in general.
+Looks good, could I get an ACK from an ARM maintainer? (Russell?)
 
+Also, do you mind if I drop the module_ prefix from
+module_kallsyms_symbol_value()? I recently submitted some internal
+module kallsyms cleanups [1] and there we have the newly renamed
+kallsyms_symbol_name(), so I think it'd be nice if we kept the naming
+scheme consistent with just kallsyms_symbol_value(). I could just do
+this myself if you don't want to respin a v6.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Thanks!
+
+Jessica
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git/commit/?h=modules-next&id=2d25bc55235314d869459c574be14e8faa73aca3
+
+>---
+>v5: Use/move local variables to reduce calls and keep lines short.  Use const arg.
+>v4: Split out st_value overwrite change.  Add HAVE* macro to avoid function call.
+>v3: Do not overwrite st_value
+>v2: Fix build warning with !MODULES
+>
+> arch/arm/include/asm/module.h | 11 +++++++++++
+> include/linux/module.h        |  7 +++++++
+> kernel/module.c               | 45 +++++++++++++++++++++++++++----------------
+> 3 files changed, 46 insertions(+), 17 deletions(-)
+>
+>diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
+>index 9e81b7c498d8..c7bcf0347801 100644
+>--- a/arch/arm/include/asm/module.h
+>+++ b/arch/arm/include/asm/module.h
+>@@ -61,4 +61,15 @@ u32 get_module_plt(struct module *mod, unsigned long loc, Elf32_Addr val);
+> 	MODULE_ARCH_VERMAGIC_ARMTHUMB \
+> 	MODULE_ARCH_VERMAGIC_P2V
+>
+>+#ifdef CONFIG_THUMB2_KERNEL
+>+#define HAVE_ARCH_MODULE_KALLSYMS_SYMBOL_VALUE
+>+static inline unsigned long module_kallsyms_symbol_value(const Elf_Sym *sym)
+>+{
+>+	if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
+>+		return sym->st_value & ~1;
+>+
+>+	return sym->st_value;
+>+}
+>+#endif
+>+
+> #endif /* _ASM_ARM_MODULE_H */
+>diff --git a/include/linux/module.h b/include/linux/module.h
+>index fce6b4335e36..12146257eb5d 100644
+>--- a/include/linux/module.h
+>+++ b/include/linux/module.h
+>@@ -486,6 +486,13 @@ struct module {
+> #define MODULE_ARCH_INIT {}
+> #endif
+>
+>+#ifndef HAVE_ARCH_MODULE_KALLSYMS_SYMBOL_VALUE
+>+static inline unsigned long module_kallsyms_symbol_value(const Elf_Sym *sym)
+>+{
+>+	return sym->st_value;
+>+}
+>+#endif
+>+
+> extern struct mutex module_mutex;
+>
+> /* FIXME: It'd be nice to isolate modules during init, too, so they
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 3d86a38b580c..9364017fdc21 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -3922,7 +3922,7 @@ static const char *get_ksymbol(struct module *mod,
+> 			       unsigned long *offset)
+> {
+> 	unsigned int i, best = 0;
+>-	unsigned long nextval;
+>+	unsigned long nextval, bestval;
+> 	struct mod_kallsyms *kallsyms = rcu_dereference_sched(mod->kallsyms);
+>
+> 	/* At worse, next value is at end of module */
+>@@ -3931,10 +3931,15 @@ static const char *get_ksymbol(struct module *mod,
+> 	else
+> 		nextval = (unsigned long)mod->core_layout.base+mod->core_layout.text_size;
+>
+>+	bestval = module_kallsyms_symbol_value(&kallsyms->symtab[best]);
+>+
+> 	/* Scan for closest preceding symbol, and next symbol. (ELF
+> 	   starts real symbols at 1). */
+> 	for (i = 1; i < kallsyms->num_symtab; i++) {
+>-		if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
+>+		const Elf_Sym *sym = &kallsyms->symtab[i];
+>+		unsigned long thisval = module_kallsyms_symbol_value(sym);
+>+
+>+		if (sym->st_shndx == SHN_UNDEF)
+> 			continue;
+>
+> 		/* We ignore unnamed symbols: they're uninformative
+>@@ -3943,21 +3948,21 @@ static const char *get_ksymbol(struct module *mod,
+> 		    || is_arm_mapping_symbol(symname(kallsyms, i)))
+> 			continue;
+>
+>-		if (kallsyms->symtab[i].st_value <= addr
+>-		    && kallsyms->symtab[i].st_value > kallsyms->symtab[best].st_value)
+>+		if (thisval <= addr && thisval > bestval) {
+> 			best = i;
+>-		if (kallsyms->symtab[i].st_value > addr
+>-		    && kallsyms->symtab[i].st_value < nextval)
+>-			nextval = kallsyms->symtab[i].st_value;
+>+			bestval = thisval;
+>+		}
+>+		if (thisval > addr && thisval < nextval)
+>+			nextval = thisval;
+> 	}
+>
+> 	if (!best)
+> 		return NULL;
+>
+> 	if (size)
+>-		*size = nextval - kallsyms->symtab[best].st_value;
+>+		*size = nextval - bestval;
+> 	if (offset)
+>-		*offset = addr - kallsyms->symtab[best].st_value;
+>+		*offset = addr - bestval;
+> 	return symname(kallsyms, best);
+> }
+>
+>@@ -4060,8 +4065,10 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+> 			continue;
+> 		kallsyms = rcu_dereference_sched(mod->kallsyms);
+> 		if (symnum < kallsyms->num_symtab) {
+>-			*value = kallsyms->symtab[symnum].st_value;
+>-			*type = kallsyms->symtab[symnum].st_size;
+>+			const Elf_Sym *sym = &kallsyms->symtab[symnum];
+>+
+>+			*value = module_kallsyms_symbol_value(sym);
+>+			*type = sym->st_size;
+> 			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
+> 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+> 			*exported = is_exported(name, *value, mod);
+>@@ -4079,10 +4086,13 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
+> 	unsigned int i;
+> 	struct mod_kallsyms *kallsyms = rcu_dereference_sched(mod->kallsyms);
+>
+>-	for (i = 0; i < kallsyms->num_symtab; i++)
+>+	for (i = 0; i < kallsyms->num_symtab; i++) {
+>+		const Elf_Sym *sym = &kallsyms->symtab[i];
+>+
+> 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+>-		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+>-			return kallsyms->symtab[i].st_value;
+>+		    sym->st_shndx != SHN_UNDEF)
+>+			return module_kallsyms_symbol_value(sym);
+>+	}
+> 	return 0;
+> }
+>
+>@@ -4127,12 +4137,13 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
+> 		if (mod->state == MODULE_STATE_UNFORMED)
+> 			continue;
+> 		for (i = 0; i < kallsyms->num_symtab; i++) {
+>+			const Elf_Sym *sym = &kallsyms->symtab[i];
+>
+>-			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
+>+			if (sym->st_shndx == SHN_UNDEF)
+> 				continue;
+>
+>-			ret = fn(data, symname(kallsyms, i),
+>-				 mod, kallsyms->symtab[i].st_value);
+>+			ret = fn(data, symname(kallsyms, i), mod,
+>+				 module_kallsyms_symbol_value(sym));
+> 			if (ret != 0)
+> 				return ret;
+> 		}
+>-- 
+>2.11.0
+>
