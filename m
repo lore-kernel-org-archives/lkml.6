@@ -2,62 +2,121 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8056AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EFEC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6032054F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:48:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6032054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 11AD42054F
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11AD42054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbeLFTsX (ORCPT
+        id S1725989AbeLFTt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:48:23 -0500
-Received: from smtprelay0157.hostedemail.com ([216.40.44.157]:42073 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725935AbeLFTsW (ORCPT
+        Thu, 6 Dec 2018 14:49:26 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39920 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725939AbeLFTtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:48:22 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 94334100E806B;
-        Thu,  6 Dec 2018 19:48:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: north87_65f83cb04f71b
-X-Filterd-Recvd-Size: 1354
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  6 Dec 2018 19:48:20 +0000 (UTC)
-Message-ID: <db7126d92a47be3de74cc27fc50c2edd0e871a58.camel@perches.com>
-Subject: Re: [PATCH 00/13] hwmon: Introduce SENSOR_DEVICE_ATTR_{RO, RW, WO}
- and variants
-From:   Joe Perches <joe@perches.com>
-To:     Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Dec 2018 11:48:19 -0800
-In-Reply-To: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
-References: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
+        Thu, 6 Dec 2018 14:49:25 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB6Jj0T2061240
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 14:49:24 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p76y5sdhk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:49:23 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 6 Dec 2018 19:49:21 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 19:49:18 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB6JnHOU55443518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 19:49:18 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9C21AE045;
+        Thu,  6 Dec 2018 19:49:17 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8D6DAE058;
+        Thu,  6 Dec 2018 19:49:16 +0000 (GMT)
+Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Dec 2018 19:49:16 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Thu, 06 Dec 2018 14:49:16 -0500
+In-Reply-To: <1544041904.4017.8.camel@linux.ibm.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+         <20181204082138.24600-5-roberto.sassu@huawei.com>
+         <20181204234024.GC1233@linux.intel.com>
+         <1544041904.4017.8.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18120619-0012-0000-0000-000002D5ADC5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120619-0013-0000-0000-0000210B14DA
+Message-Id: <1544125756.4017.70.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=929 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 11:22 -0800, Guenter Roeck wrote:
-> Introduce SENSOR_DEVICE_ATTR_{RO,RW,WO} and SENSOR_DEVICE_ATTR_2_{RO,RW,WO}
-> as simplified variants of SENSOR_DEVICE_ATTR and SENSOR_DEVICE_ATTR_2 to
-> simplify the source code, improve readbility, and reduce the chance of
-> inconsistencies.
+On Wed, 2018-12-05 at 15:31 -0500, Mimi Zohar wrote:
+> On Tue, 2018-12-04 at 15:40 -0800, Jarkko Sakkinen wrote:
+> > On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+> > > Currently the TPM driver allows other kernel subsystems to read only the
+> > > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+> > > RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+> > > the new parameter is expected to be always not NULL.
+> > > 
+> > > Due to the API change, IMA functions have been modified.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > 
+> > Mimi, Nayna, can you help with testing this (because of the IMA change)?
 > 
-> This series introduces the new macros and converts some of the drivers.
+> It's up & running and the measurement list verifies against the TPM
+> PCR.  Although this system has two algorithms enabled, all of the PCRs
+> are allocated for one algorithm and none for the other.  I'm still
+> looking around for another system with PCR 10 enabled for multiple
+> algorithms.
 
-Thanks,  eliminating the S_<PERMS> uses would be nice and
-more consistent with the other DEVICE_ATTR_{RO,RW,WO} uses.
+PCRs for sha1 and sha256 algorithms are being updated and the
+measurement list verifies against the SHA1 PCR-10.
+
+Roberto, have you added support in ima-evm-utils to validate the other
+banks?
+
+Mimi
 
