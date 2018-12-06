@@ -2,172 +2,120 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E65C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B8EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DBD20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:17:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DBD20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D630B214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D630B214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbeLFIRu (ORCPT
+        id S1729212AbeLFIS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:17:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49280 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeLFIRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:17:49 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 48A34308403C;
-        Thu,  6 Dec 2018 08:17:49 +0000 (UTC)
-Received: from [10.72.12.143] (ovpn-12-143.pek2.redhat.com [10.72.12.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3E7305D6A6;
-        Thu,  6 Dec 2018 08:17:38 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     maxime.coquelin@redhat.com, tiwei.bie@intel.com, wexu@redhat.com,
-        jfreimann@redhat.com, "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20181205225323.12555-1-mst@redhat.com>
- <20181205225323.12555-2-mst@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <21384cb5-99a6-7431-1039-b356521e1bc3@redhat.com>
-Date:   Thu, 6 Dec 2018 16:17:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 03:18:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51318 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728144AbeLFIS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 03:18:27 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB68F1uO032254
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 03:18:26 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p7039g4hc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:18:26 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Thu, 6 Dec 2018 08:18:25 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 08:18:22 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB68ILjF18940126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 08:18:21 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A208B205F;
+        Thu,  6 Dec 2018 08:18:21 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDD99B2066;
+        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-5-roberto.sassu@huawei.com>
+ <20181204234024.GC1233@linux.intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Thu, 6 Dec 2018 13:44:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20181205225323.12555-2-mst@redhat.com>
+In-Reply-To: <20181204234024.GC1233@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 06 Dec 2018 08:17:49 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 18120608-2213-0000-0000-000003258CA2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010180; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01127715; UDB=6.00585774; IPR=6.00907847;
+ MB=3.00024475; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 08:18:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120608-2214-0000-0000-00005C81385A
+Message-Id: <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=957 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
-> When use_napi is set, let's enable BQLs.  Note: some of the issues are
-> similar to wifi.  It's worth considering whether something similar to
-> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
-> benefitial.
-
-
-I've played a similar patch several days before. The tricky part is the 
-mode switching between napi and no napi. We should make sure when the 
-packet is sent and trakced by BQL,  it should be consumed by BQL as 
-well. I did it by tracking it through skb->cb.  And deal with the freeze 
-by reset the BQL status. Patch attached.
-
-But when testing with vhost-net, I don't very a stable performance, it 
-was probably because we batch the used ring updating so tx interrupt may 
-come randomly. We probably need to implement time bounded coalescing 
-mechanism which could be configured from userspace.
-
-Btw, maybe it's time just enable napi TX by default. I get ~10% TCP_RR 
-regression on machine without APICv, (haven't found time to test APICv 
-machine). But consider it was for correctness, I think it's acceptable? 
-Then we can do optimization on top?
-
-
-Thanks
-
-
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->   drivers/net/virtio_net.c | 27 +++++++++++++++++++--------
->   1 file changed, 19 insertions(+), 8 deletions(-)
+On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+>> Currently the TPM driver allows other kernel subsystems to read only the
+>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+>> the new parameter is expected to be always not NULL.
+>>
+>> Due to the API change, IMA functions have been modified.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 >
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index cecfd77c9f3c..b657bde6b94b 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -1325,7 +1325,8 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
->   	return stats.packets;
->   }
->   
-> -static void free_old_xmit_skbs(struct send_queue *sq)
-> +static void free_old_xmit_skbs(struct send_queue *sq, struct netdev_queue *txq,
-> +			       bool use_napi)
->   {
->   	struct sk_buff *skb;
->   	unsigned int len;
-> @@ -1347,6 +1348,9 @@ static void free_old_xmit_skbs(struct send_queue *sq)
->   	if (!packets)
->   		return;
->   
-> +	if (use_napi)
-> +		netdev_tx_completed_queue(txq, packets, bytes);
-> +
->   	u64_stats_update_begin(&sq->stats.syncp);
->   	sq->stats.bytes += bytes;
->   	sq->stats.packets += packets;
-> @@ -1364,7 +1368,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
->   		return;
->   
->   	if (__netif_tx_trylock(txq)) {
-> -		free_old_xmit_skbs(sq);
-> +		free_old_xmit_skbs(sq, txq, true);
->   		__netif_tx_unlock(txq);
->   	}
->   
-> @@ -1440,7 +1444,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
->   	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
->   
->   	__netif_tx_lock(txq, raw_smp_processor_id());
-> -	free_old_xmit_skbs(sq);
-> +	free_old_xmit_skbs(sq, txq, true);
->   	__netif_tx_unlock(txq);
->   
->   	virtqueue_napi_complete(napi, sq->vq, 0);
-> @@ -1505,13 +1509,15 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->   	struct send_queue *sq = &vi->sq[qnum];
->   	int err;
->   	struct netdev_queue *txq = netdev_get_tx_queue(dev, qnum);
-> -	bool kick = !skb->xmit_more;
-> +	bool more = skb->xmit_more;
->   	bool use_napi = sq->napi.weight;
-> +	unsigned int bytes = skb->len;
-> +	bool kick;
->   
->   	/* Free up any pending old buffers before queueing new ones. */
-> -	free_old_xmit_skbs(sq);
-> +	free_old_xmit_skbs(sq, txq, use_napi);
->   
-> -	if (use_napi && kick)
-> +	if (use_napi && !more)
->   		virtqueue_enable_cb_delayed(sq->vq);
->   
->   	/* timestamp packet in software */
-> @@ -1552,7 +1558,7 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->   		if (!use_napi &&
->   		    unlikely(!virtqueue_enable_cb_delayed(sq->vq))) {
->   			/* More just got used, free them then recheck. */
-> -			free_old_xmit_skbs(sq);
-> +			free_old_xmit_skbs(sq, txq, false);
->   			if (sq->vq->num_free >= 2+MAX_SKB_FRAGS) {
->   				netif_start_subqueue(dev, qnum);
->   				virtqueue_disable_cb(sq->vq);
-> @@ -1560,7 +1566,12 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
->   		}
->   	}
->   
-> -	if (kick || netif_xmit_stopped(txq)) {
-> +	if (use_napi)
-> +		kick = __netdev_tx_sent_queue(txq, bytes, more);
-> +	else
-> +		kick = !more || netif_xmit_stopped(txq);
-> +
-> +	if (kick) {
->   		if (virtqueue_kick_prepare(sq->vq) && virtqueue_notify(sq->vq)) {
->   			u64_stats_update_begin(&sq->stats.syncp);
->   			sq->stats.kicks++;
+> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+
+Sure, I will try to do by end of my day tomorrow,
+
+Thanks & Regards,
+     - Nayna
+
+>
+> /Jarkko
+>
+
