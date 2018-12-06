@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3990C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D14C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78F1B20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1AEC2146F
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131703;
-	bh=aupo69Rt7c8xwKfOOD2rKj14MJW/bWk3OpVB//dUfMg=;
+	s=default; t=1544131707;
+	bh=5Zz9FQbKUYqA2xjdHllEs3ZqhmJzpAKonquVL14SvpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R+ayQaF2K30iKIttAktcAvClAklXrfLQaSBTGLieqyIqfSDRCDtXpDnHGrhaxeZQ/
-	 PopiZ8/xvGdF7niWUGkAi7isZK/RbOjxHMSNrdQbaJFRceJ65t/oLrljGDo8zoV+TI
-	 pYiEEv3myMhh9H87xB5K0IKxflSrhEBUnbCwP/D8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78F1B20989
+	b=Yurn+FltJOnVzlcocfgSvrzngZI+vjLTrC4ngfWtWZ2cAnIX+V0/YlpU2cMm+w3y2
+	 NM4+hHOrVXmyy/j7MlcpUhzr3BT0ymbOQ6REF0Mo/qKhcYxsmFwEGPJgL4uiIkqBM4
+	 GIO+fcXvYUpYmBMJxyhS0YrNskHwOjeDfHM1QTvw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1AEC2146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbeLFV2W (ORCPT
+        id S1726396AbeLFV2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:28:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47054 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:28:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726349AbeLFV2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:28:18 -0500
+        id S1726349AbeLFV2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:28:23 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBDF2146D;
-        Thu,  6 Dec 2018 21:28:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 276A52082B;
+        Thu,  6 Dec 2018 21:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131698;
-        bh=aupo69Rt7c8xwKfOOD2rKj14MJW/bWk3OpVB//dUfMg=;
+        s=default; t=1544131702;
+        bh=5Zz9FQbKUYqA2xjdHllEs3ZqhmJzpAKonquVL14SvpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mqtjHBOrnB8y6duY93fRBHKKfoPRj4A5qGyVlJ6GE+skfKVpp3PIv67n9szFbZG4R
-         nnP0mPgD5xboSTVtFjyXOrc1JFkEldtpn82Dq9CZE1W0YdOZYRbzYI7iKo5eyMnUe0
-         PSRtQFWA4zUBmP+R5T4N0tTYkT6oHSde/RGEfl3U=
+        b=Brq/3PpJnZd9BRSI8oVQtlDfzx0q+Ck6zLP4RY8Y7/D5nFIF2noJm2UjNro5Jh7/G
+         uH58PMYhn5TzR4jMxEPg/X8uJlNCIrVEAWXb96qftARgFlNVHTjYa6MGEuyYxHOvoR
+         IkTTiSFj1XA0BQr0KXrMOZnz+uPWJSAnOZF6+bko=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 26/75] perf report: Documentation average IPC and IPC coverage
-Date:   Thu,  6 Dec 2018 18:25:13 -0300
-Message-Id: <20181206212602.20474-27-acme@kernel.org>
+Subject: [PATCH 27/75] tools lib traceevent: Implement new API tep_get_ref()
+Date:   Thu,  6 Dec 2018 18:25:14 -0300
+Message-Id: <20181206212602.20474-28-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -65,47 +65,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-Add explanations for new columns "IPC" and "IPC coverage" in perf
-documentation.
+This patch implements a new API of the tracevent library:
 
- v5:
- ---
- Update the description according to Ingo's comments.
+  int tep_get_ref(struct tep_handle *tep);
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1543586097-27632-5-git-send-email-yao.jin@linux.intel.com
+The API returns the reference counter "ref_count" of the tep handler.
+As "struct tep_handle" is internal only, its members cannot be accessed
+by the library users, the API is used to get the reference counter.
+
+Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20181130154646.890615385@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-report.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/lib/traceevent/event-parse.c | 7 +++++++
+ tools/lib/traceevent/event-parse.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 474a4941f65d..ed2bf37ab132 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -126,6 +126,14 @@ OPTIONS
- 	And default sort keys are changed to comm, dso_from, symbol_from, dso_to
- 	and symbol_to, see '--branch-stack'.
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 2b5cb33046ce..d1e6ee3d43cf 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -6730,6 +6730,13 @@ void tep_ref(struct tep_handle *pevent)
+ 	pevent->ref_count++;
+ }
  
-+	When the sort key symbol is specified, columns "IPC" and "IPC Coverage"
-+	are enabled automatically. Column "IPC" reports the average IPC per function
-+	and column "IPC coverage" reports the percentage of instructions with
-+	sampled IPC in this function. IPC means Instruction Per Cycle. If it's low,
-+	it indicates there may be a performance bottleneck when the function is
-+	executed, such as a memory access bottleneck. If a function has high overhead
-+	and low IPC, it's worth further analyzing it to optimize its performance.
++int tep_get_ref(struct tep_handle *tep)
++{
++	if (tep)
++		return tep->ref_count;
++	return 0;
++}
 +
- 	If the --mem-mode option is used, the following sort keys are also available
- 	(incompatible with --branch-stack):
- 	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline.
+ void tep_free_format_field(struct tep_format_field *field)
+ {
+ 	free(field->type);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 16bf4c890b6f..44ec26c72c2e 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -581,6 +581,7 @@ struct tep_handle *tep_alloc(void);
+ void tep_free(struct tep_handle *pevent);
+ void tep_ref(struct tep_handle *pevent);
+ void tep_unref(struct tep_handle *pevent);
++int tep_get_ref(struct tep_handle *tep);
+ 
+ /* access to the internal parser */
+ void tep_buffer_init(const char *buf, unsigned long long size);
 -- 
 2.19.2
 
