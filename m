@@ -2,149 +2,118 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD62C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C49C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D76F2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:14:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D76F2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 65251214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:16:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iai2qTMt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65251214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbeLFBOT (ORCPT
+        id S1728702AbeLFBQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:14:19 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48576 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727575AbeLFBOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:14:18 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3B3D841C0605E;
-        Thu,  6 Dec 2018 09:14:14 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Thu, 6 Dec 2018
- 09:14:14 +0800
-Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
- in mem alloc
-From:   Hou Tao <houtao1@huawei.com>
-To:     <phillip@squashfs.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20181204020840.49576-1-houtao1@huawei.com>
-Message-ID: <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
-Date:   Thu, 6 Dec 2018 09:14:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 5 Dec 2018 20:16:54 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43793 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFBQx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 20:16:53 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 83-v6so20120277ljf.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:16:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bIARKccRROJyBU5Mh9PmrAjL909xKUQSNocjbfI8E6E=;
+        b=iai2qTMtOM8VOZ7kMdaTQD3Hsu/UFlS16DiPdoN35yz7UjPUzt7t/FcI+M2m9JtvjX
+         YQW1og1PWWwh38b8qJsrKywGewkXHwfHpInp/oqHKlGfW4iiLWmXGeap2Y4zD858x7In
+         KUbDvkbqY0VVV4vr+MN/kijZ6rsNqKa/bh1ISdlQk0pszzl3qApaFOp5WAucRVC+S71H
+         TDfPd7vKZKm7Z2ApMfDqpNlDp9x4VQcfZ+grIrBEA/ksbkbUdNePWpPeTJc+CLacZ9wD
+         erw+0cze30tbUqMtreQAbHoVq9b4ljnsbrXyoNMymEhV9u3hQf0GYUkCdTP9rd+FrKkH
+         ogYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bIARKccRROJyBU5Mh9PmrAjL909xKUQSNocjbfI8E6E=;
+        b=URKEgBe/3Yolnh8wX8g/CNBIFZalr14YZRAFsBmAu4qPEIDF5iKE0W/StR9ZHBJTsS
+         zFUctxj2cc8rwqEvGZaywoKIdOdasuw85btL5UzPbokAiAbSy/M/8jUulody1BV2XAd1
+         PW8h7973w9G5/flyrma7vUvU8YN99nxovqNJ5C9f1aZdq/ncqN4p0p809gq2RouHBNPx
+         M67yMDV35HIQ7PyR9JJsZv5L3yz23jQqwMJl5c3IgbRv3xFxTuZ6TRt+QbIRhzq2UAwe
+         qfr5+1+sNUMLtxngq53J7hiA2wEwMjn9/yEx6f/4mkyR785cw5KDdTEq4EgTNWW77ezA
+         kXJg==
+X-Gm-Message-State: AA+aEWaiVmtuukKxOObL8D/VjplYaNnRsfVFmLUCFZ+peXqllD52jJP0
+        Fy0WZMLRPu1tH6KJzkd98TfU6bpRDY4tuEMy6uNGSA==
+X-Google-Smtp-Source: AFSGD/XTqaeYVYfEds0q45DegGqszHDqy/HMkyKZ1m9ih8VmpmUUE5NfcDRjkQKbIAeTBHYpJevxMypHjXnYmqKOjlo=
+X-Received: by 2002:a2e:890b:: with SMTP id d11-v6mr16667579lji.113.1544059011201;
+ Wed, 05 Dec 2018 17:16:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204020840.49576-1-houtao1@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
+References: <20181205211601.75856-1-tkjos@google.com> <20181205220035.GX2217@ZenIV.linux.org.uk>
+ <CAHRSSEwpYw312kBU4WGHs_P+xqx8cP+iripYVHxpV6pJBbH9Mw@mail.gmail.com> <20181206004037.GY2217@ZenIV.linux.org.uk>
+In-Reply-To: <20181206004037.GY2217@ZenIV.linux.org.uk>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Wed, 5 Dec 2018 17:16:39 -0800
+Message-ID: <CAHRSSEzLKc4dv0+4waD4fOiwoEO6j+PTYoHOBh-MJQgHR7+YbA@mail.gmail.com>
+Subject: Re: [PATCH v2] binder: fix use-after-free due to fdget() optimization
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
+        Android Kernel Team <kernel-team@android.com>,
+        Jann Horn <jannh@google.com>, Martijn Coenen <maco@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ?
+On Wed, Dec 5, 2018 at 4:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Dec 05, 2018 at 04:21:55PM -0800, Todd Kjos wrote:
+>
+> > > How about grabbing the references to all victims (*before* screwing with
+> > > ksys_close()), sticking them into a structure with embedded callback_head
+> > > and using task_work_add() on it, the callback doing those fput()?
+> > >
+> > > The callback would trigger before the return to userland, so observable
+> > > timing of the final close wouldn't be changed.  And it would avoid the
+> > > kludges like this.
+> >
+> > I'll rework it according to your suggestion. I had hoped to do this in a way
+> > that doesn't require adding calls to non-exported functions since we are
+> > trying to clean up binder (I hear you snickering) to be a better citizen and
+> > not rely on internal functions that drivers shouldn't be using. I presume
+> > there are no plans to export task_work_add()...
+>
+> Er...  Your variant critically depends upon binder being non-modular; if it
+> *was* built as a module, you could
+>         * lose the timeslice just after your fput()
+>         * have another process hit the final fput() *and* close the struct file
+>         * now that module refcount is not pinned by anything, get rmmod remove
+> your module
+>         * have the process in binder_ioctl() regain the timeslice and find the
+> code under it gone.
+>
+> That's one of the reasons why such kludges are brittle as hell - normally you
+> are guaranteed that once fdget() has succeeded, the final fput() won't happen
+> until fdput().  With everything that guarantees in terms of code/data not going
+> away under you.  This patch relies upon the lack of accesses to anything
+> sensitive after that fput() added into binder_ioctl().  Which is actually
+> true, but only because the driver is not modular...
+>
+> At least this variant (task_work_add()-based) doesn't depend on anything
+> subtle - the lack of exports is the only problem there (IOW, it would've
+> worked in a module if not for that).
 
-On 2018/12/4 10:08, Hou Tao wrote:
-> There is no need to disable __GFP_FS in ->readpage:
-> * It's a read-only fs, so there will be no dirty/writeback page and
->   there will be no deadlock against the caller's locked page
-> * It just allocates one page, so compaction will not be invoked
-> * It doesn't take any inode lock, so the reclamation of inode will be fine
-> 
-> And no __GFP_FS may lead to hang in __alloc_pages_slowpath() if a
-> squashfs page fault occurs in the context of a memory hogger, because
-> the hogger will not be killed due to the logic in __alloc_pages_may_oom().
-> 
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
-> ---
->  fs/squashfs/file.c          |  3 ++-
->  fs/squashfs/file_direct.c   |  4 +++-
->  fs/squashfs/squashfs_fs_f.h | 25 +++++++++++++++++++++++++
->  3 files changed, 30 insertions(+), 2 deletions(-)
->  create mode 100644 fs/squashfs/squashfs_fs_f.h
-> 
-> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-> index f1c1430ae721..8603dda4a719 100644
-> --- a/fs/squashfs/file.c
-> +++ b/fs/squashfs/file.c
-> @@ -51,6 +51,7 @@
->  #include "squashfs_fs.h"
->  #include "squashfs_fs_sb.h"
->  #include "squashfs_fs_i.h"
-> +#include "squashfs_fs_f.h"
->  #include "squashfs.h"
->  
->  /*
-> @@ -414,7 +415,7 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
->  		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
->  
->  		push_page = (i == page->index) ? page :
-> -			grab_cache_page_nowait(page->mapping, i);
-> +			squashfs_grab_cache_page_nowait(page->mapping, i);
->  
->  		if (!push_page)
->  			continue;
-> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-> index 80db1b86a27c..a0fdd6215348 100644
-> --- a/fs/squashfs/file_direct.c
-> +++ b/fs/squashfs/file_direct.c
-> @@ -17,6 +17,7 @@
->  #include "squashfs_fs.h"
->  #include "squashfs_fs_sb.h"
->  #include "squashfs_fs_i.h"
-> +#include "squashfs_fs_f.h"
->  #include "squashfs.h"
->  #include "page_actor.h"
->  
-> @@ -60,7 +61,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
->  	/* Try to grab all the pages covered by the Squashfs block */
->  	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
->  		page[i] = (n == target_page->index) ? target_page :
-> -			grab_cache_page_nowait(target_page->mapping, n);
-> +			squashfs_grab_cache_page_nowait(
-> +					target_page->mapping, n);
->  
->  		if (page[i] == NULL) {
->  			missing_pages++;
-> diff --git a/fs/squashfs/squashfs_fs_f.h b/fs/squashfs/squashfs_fs_f.h
-> new file mode 100644
-> index 000000000000..fc5fb7aeb27d
-> --- /dev/null
-> +++ b/fs/squashfs/squashfs_fs_f.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef SQUASHFS_FS_F
-> +#define SQUASHFS_FS_F
-> +
-> +/*
-> + * No need to use FGP_NOFS here:
-> + * 1. It's a read-only fs, so there will be no dirty/writeback page and
-> + *    there will be no deadlock against the caller's locked page.
-> + * 2. It just allocates one page, so compaction will not be invoked.
-> + * 3. It doesn't take any inode lock, so the reclamation of inode
-> + *    will be fine.
-> + *
-> + * And GFP_NOFS may lead to infinite loop in __alloc_pages_slowpath() if a
-> + * squashfs page fault occurs in the context of a memory hogger, because
-> + * the hogger will not be killed due to the logic in __alloc_pages_may_oom().
-> + */
-> +static inline struct page *
-> +squashfs_grab_cache_page_nowait(struct address_space *mapping, pgoff_t index)
-> +{
-> +	return pagecache_get_page(mapping, index,
-> +			FGP_LOCK|FGP_CREAT|FGP_NOWAIT,
-> +			mapping_gfp_mask(mapping));
-> +}
-> +#endif
-> +
-> 
-
+Thanks for the detailed responses. I'll rework it for v3.
