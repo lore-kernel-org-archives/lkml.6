@@ -2,85 +2,104 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2CAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E8FC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BB7208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544100602;
-	bh=/Dvw4wp6P6s5iK4EZUDnjkxQ3J7Mcv/P4lyEgMWC8Gs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ilbg1I2Y/hqcATI6p+fY1GG60KGVJ+iNTVdAxIzDHWCI5qnJCng+VbFEF1K7tHL5e
-	 3/trCiyzIDVv0c0AeTJjB3WIWRAnAnWCqoyLDkrjzHjYzdUcuTtnlWeiIXBEDS4wfN
-	 E5SMgY2J9tV73bDkdC04XwGhlb7nbl9kpvZ519ug=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69BB7208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BAF0320878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:52:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF0320878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbeLFMuB (ORCPT
+        id S1729580AbeLFMwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:50:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59800 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 07:52:46 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:32548 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729404AbeLFMuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:50:00 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4075D20878;
-        Thu,  6 Dec 2018 12:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544100599;
-        bh=/Dvw4wp6P6s5iK4EZUDnjkxQ3J7Mcv/P4lyEgMWC8Gs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yHnFEtaOTdlRA8jGXdag+pD+A6TtKl5ApCTbnsJEaZdNcRldvRdz8xyrClmlCummm
-         d6Q9oBTSCuLniWsWwF9CgFtpyBq0t2K3fRnNSfx55RTwFL2wsG3c2fhlfLI+fqaCFs
-         v6yaNqIEFj79BGIPxZCwkmDHFXmo2MDDQQqubU1U=
-Date:   Thu, 6 Dec 2018 13:49:57 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Xiaozhou Liu <lxz1983@gmail.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Compiler Attributes: move kernel-only attributes into
- __KERNEL__
-Message-ID: <20181206124957.GA22907@kroah.com>
-References: <20181128140852.178260-1-liuxiaozhou@bytedance.com>
- <CANiq72kzHqQ-M2Gyrf7iy1BQMabM6txChYwa8hrDkMmc3w8ORw@mail.gmail.com>
- <20181129021635.rzmehzzfgt2jvpgi@bytedancedeMacBook-Air.local>
- <CANiq72=uwbHqPB_1b7q+dD7FaqZ+HOmOvXMPX3d=z7-xqzwFzQ@mail.gmail.com>
- <20181206123926.q5gd5u62vg2u7s5w@bytedancedeMacBook-Air.local>
+        id S1728482AbeLFMwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 07:52:46 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 98821D6411D58018E514;
+        Thu,  6 Dec 2018 20:52:43 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB6CqXAW072381;
+        Thu, 6 Dec 2018 20:52:33 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120620530589-15149764 ;
+          Thu, 6 Dec 2018 20:53:05 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+Subject: [PATCH v2] PCI: endpoint: functions: Use kmemdup instead of duplicating its function
+Date:   Thu, 6 Dec 2018 20:52:25 +0800
+Message-Id: <20181206125225.9497-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206123926.q5gd5u62vg2u7s5w@bytedancedeMacBook-Air.local>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-06 20:53:05,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-06 20:52:21
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB6CqXAW072381
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 08:39:26PM +0800, Xiaozhou Liu wrote:
-> On Thu, Nov 29, 2018 at 11:42:11AM +0100, Miguel Ojeda wrote:
-> 
-> > Exactly, thanks a lot for clarifying it up (we should put this in the
-> > commit message, I would say). That also answers my question: it is
-> > clear everything should be back into __KERNEL__. The only worry is
-> > that the v4.19 release contained 815f0ddb346c, so it has them exposed,
-> > so someone could have started relying on them. Or, more likely, the
-> > exposed macros could break some source code out there. Hm... Should a
-> > "fix" be backported?
-> 
-> What about letting v4.19 maintainers make the decision?
+kmemdup has implemented the function that kmalloc() + memcpy().
+We prefer to kmemdup rather than code opened implementation.
 
-If something is fixed in Linus's tree for this, I want to take it into
-the 4.19-stable tree as well.
+This issue was detected with the help of coccinelle.
 
-thanks,
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Kishon Vijay Abraham I <kishon@ti.com>
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+CC: Niklas Cassel <niklas.cassel@axis.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+CC: linux-pci@vger.kernel.org (open list:PCI ENDPOINT SUBSYSTEM)
+CC: linux-kernel@vger.kernel.org (open list)
+---
+ drivers/pci/endpoint/functions/pci-epf-test.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/en=
+dpoint/functions/pci-epf-test.c
+index 3e86fa3c7da3..8df6c019f8a2 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -169,14 +169,12 @@ static int pci=5Fepf=5Ftest=5Fread(struct pci=5Fepf=
+=5Ftest *epf=5Ftest)
+ 		goto err=5Faddr;
+ 	}
+=20
+-	buf =3D kzalloc(reg->size, GFP=5FKERNEL);
++	buf =3D kmemdup(src=5Faddr, reg->size, GFP=5FKERNEL);
+ 	if (!buf) {
+ 		ret =3D -ENOMEM;
+ 		goto err=5Fmap=5Faddr;
+ 	}
+=20
+-	memcpy(buf, src=5Faddr, reg->size);
+-
+ 	crc32 =3D crc32=5Fle(~0, buf, reg->size);
+ 	if (crc32 !=3D reg->checksum)
+ 		ret =3D -EIO;
+--=20
+2.19.1
+
