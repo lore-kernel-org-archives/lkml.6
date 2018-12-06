@@ -2,110 +2,98 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5487CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6AFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2B320850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2B320850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id B8BEE20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:44:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="SAWxsPXn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BEE20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeLFIn6 (ORCPT
+        id S1729082AbeLFIok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:43:58 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:33260 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeLFIn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:43:58 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 9E7647B1CEEFA50B69E0;
-        Thu,  6 Dec 2018 16:43:52 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB68hilO035360;
-        Thu, 6 Dec 2018 16:43:44 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120616441495-15101499 ;
-          Thu, 6 Dec 2018 16:44:14 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH] ocfs2: fix memdup.cocci warnings
-Date:   Thu, 6 Dec 2018 16:43:25 +0800
-Message-Id: <20181206084325.20773-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        Thu, 6 Dec 2018 03:44:40 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39621 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFIok (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 03:44:40 -0500
+Received: by mail-vk1-f193.google.com with SMTP id q80so5312129vka.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 00:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6pFJ3VI5G4p8DpfIC9/fgRuZm55TzzFm6pvGBFskL2o=;
+        b=SAWxsPXn7cNX4AX/DiYNk9SAcNu5+QpR/HmrgEk6Fk+x1ia2BvqqO9by4O6VVIKRwt
+         AuK9tj/FPJ7EWiZD93uAktdstrxhogWqzJ8Qy6V4tiHz2lX1WuNDacEEOCrF3uzfroZ/
+         vdChAfdt22Ndukx1I+JVSeePRgY6gws401lwPpzZjtRpnknaaGDrOaOuMN5CFN8qDfmP
+         01Q3tRE5/E34SZO8ZE0daXV4FQ7pBEai0NWOv5KLceFb1RxNV/ItwjjDWls6puMI6eMl
+         aEDh2QYj9RZdyoVsFMFQFA4v3Qoxrkh9PI6UuYmdEaF9BNl1pyY6vcYQoBUAyJU5fLH1
+         qoVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6pFJ3VI5G4p8DpfIC9/fgRuZm55TzzFm6pvGBFskL2o=;
+        b=eGegVsM26pmt29raBkBIYiro++21md16DJ+WhehTbVtAyEb/9Ek475ptU/ZWMmRupZ
+         Kr9v0a1EJ4+sG9WiiFhcJhvDCODiTqmXFNsY5Q2IrXL5IhQ3GZrDJXl9LY2cyqd1nQqW
+         tEw8ig1FPuK2BOiLkoiE7XwPU9JgRGrDioob80y+TO5A/a49CQflKGekcHT2V+ybKs6q
+         FYzpZ2xG4wAM+6wv2XoSJSZZ7fKmY4tZhCzzo/foCwkEQKiYOWMnOc4Bv2Ds8vwRkvIj
+         OZNnGjeD7wYbkJct2MhstYLTafsqUEJYCjbeLDQauoSVlhJmeockt15p1Plsztf+cQru
+         hZlw==
+X-Gm-Message-State: AA+aEWaRS4+dzf3nI7ZeDaupwGDYYvr7/Uamj6+z24kx66aAnbH3ISnT
+        nRAK8KXEHRQ7GUuk7qcAiRysQGQ0zEIatvxd6qIu6g==
+X-Google-Smtp-Source: AFSGD/W1ggVz0s5TvMN7W00CkESwsuq4oam3BqvWxBMuc3dxxLFq51hsn72J0Xe5/Vq8ZThQFhiQ9hxH0t1NMt8aNqo=
+X-Received: by 2002:a1f:8d94:: with SMTP id p142mr11965304vkd.58.1544085878550;
+ Thu, 06 Dec 2018 00:44:38 -0800 (PST)
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-06 16:44:15,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-06 16:43:32
+References: <20181205074212.31104-1-jian-hong@endlessm.com>
+ <20181205074212.31104-2-jian-hong@endlessm.com> <6FAB7C47BCF00940BB0999A99BE3547A18420099@RTITMBSV02.realtek.com.tw>
+ <CAPpJ_ed5qbhxUONdoACcQhH8jv1J_vvw4M-Vp4QwDsgQ1w8Vdw@mail.gmail.com> <6FAB7C47BCF00940BB0999A99BE3547A184200EB@RTITMBSV02.realtek.com.tw>
+In-Reply-To: <6FAB7C47BCF00940BB0999A99BE3547A184200EB@RTITMBSV02.realtek.com.tw>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Thu, 6 Dec 2018 16:44:02 +0800
+Message-ID: <CAPpJ_eez=1ie2B8rA=GeW+hx7kQU0wBAhW3XCBX3zGPW+kXDZA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ALSA: hda/realtek: ALC294 mic and headset-mode fixups
+ for ASUS X542UN
+To:     Kailang Yang <kailang@realtek.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Chris Chiu <chiu@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB68hilO035360
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fs/ocfs2/localalloc.c:1289:14-21: WARNING opportunity for kmemdup
-fs/ocfs2/localalloc.c:441:14-21: WARNING opportunity for kmemdup
+> Kailang <kailang@realtek.com> =E6=96=BC 2018=E5=B9=B412=E6=9C=885=E6=97=
+=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:36=E5=AF=AB=E9=81=93=EF=BC=9A
+> >
+> > Hi Jian-Hong,
+> >
+> > Could you test to change the model to ALC269_FIXUP_HEADSET_MODE_NO_HP_M=
+IC?
+> >
+> > .chain_id =3D ALC256_FIXUP_ASUS_HEADSET_MODE  =3D=3D> change to ALC269_=
+FIXUP_HEADSET_MODE_NO_HP_MIC
 
-Use kmemdup rather than duplicating its implementation
+We do not have ASUS X542UN in hand right now, but we have ASUS X542UQ
+which goes with the same quirk as X542UN.
+I tested with ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC, and it also works.
+So, I am going to send new patch set using
+ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC for ALC294.
 
-Generated by: scripts/coccinelle/api/memdup.cocci
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Mark Fasheh <mark@fasheh.com>
-CC: Joel Becker <jlbec@evilplan.org>
-CC: ocfs2-devel@oss.oracle.com
-CC: linux-kernel@vger.kernel.org
----
- fs/ocfs2/localalloc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index 58973e4d2471..3f3047fb934b 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -438,12 +438,11 @@ void ocfs2=5Fshutdown=5Flocal=5Falloc(struct ocfs2=5F=
-super *osb)
- 	bh =3D osb->local=5Falloc=5Fbh;
- 	alloc =3D (struct ocfs2=5Fdinode *) bh->b=5Fdata;
-=20
--	alloc=5Fcopy =3D kmalloc(bh->b=5Fsize, GFP=5FNOFS);
-+	alloc=5Fcopy =3D kmemdup(alloc, bh->b=5Fsize, GFP=5FNOFS);
- 	if (!alloc=5Fcopy) {
- 		status =3D -ENOMEM;
- 		goto out=5Fcommit;
- 	}
--	memcpy(alloc=5Fcopy, alloc, bh->b=5Fsize);
-=20
- 	status =3D ocfs2=5Fjournal=5Faccess=5Fdi(handle, INODE=5FCACHE(local=5Fal=
-loc=5Finode),
- 					 bh, OCFS2=5FJOURNAL=5FACCESS=5FWRITE);
-@@ -1286,13 +1285,12 @@ static int ocfs2=5Flocal=5Falloc=5Fslide=5Fwindow(s=
-truct ocfs2=5Fsuper *osb,
- 	 * local alloc shutdown won't try to double free main bitmap
- 	 * bits. Make a copy so the sync function knows which bits to
- 	 * free. */
--	alloc=5Fcopy =3D kmalloc(osb->local=5Falloc=5Fbh->b=5Fsize, GFP=5FNOFS);
-+	alloc=5Fcopy =3D kmemdup(alloc, osb->local=5Falloc=5Fbh->b=5Fsize, GFP=5F=
-NOFS);
- 	if (!alloc=5Fcopy) {
- 		status =3D -ENOMEM;
- 		mlog=5Ferrno(status);
- 		goto bail;
- 	}
--	memcpy(alloc=5Fcopy, alloc, osb->local=5Falloc=5Fbh->b=5Fsize);
-=20
- 	status =3D ocfs2=5Fjournal=5Faccess=5Fdi(handle,
- 					 INODE=5FCACHE(local=5Falloc=5Finode),
---=20
-2.19.1
-
+Thanks,
+Jian-Hong Pan
