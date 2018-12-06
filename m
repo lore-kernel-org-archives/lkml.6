@@ -2,398 +2,155 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85062C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16725C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D64B214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C2120838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:07:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIlU2GSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D64B214DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcgTJo/v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C2120838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbeLFLGl (ORCPT
+        id S1729544AbeLFLHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:06:41 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44391 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728245AbeLFLGk (ORCPT
+        Thu, 6 Dec 2018 06:07:32 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44859 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeLFLHb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:06:40 -0500
-Received: by mail-qk1-f193.google.com with SMTP id n12so3803qkh.11;
-        Thu, 06 Dec 2018 03:06:39 -0800 (PST)
+        Thu, 6 Dec 2018 06:07:31 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so2545pfh.11;
+        Thu, 06 Dec 2018 03:07:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=V+n76mU7dWY7iFR7pe0NMYgw2CGekq8wfADxVNSjPH4=;
-        b=TIlU2GSPKacfZ4giuEkRVs0vR7/QnyDpCpv8IjfnBi9R0drlv4aN60cMUbR5Wlc83J
-         nThFojia3WbcaOytD0MPN4w5QtB+wy9f1V0jYKX3qAMN5xFMtp7bDyr3WCT8LPlJS7gb
-         bym0TfkrLFs8FmbaueP8P1KP9oR29w6jxaQXz781uQvY7fQ4oAY+PMTALud51DUvPVdg
-         l4b8L4XEck2Je4eMnoH5AsWHFbFM3vEq9hmLBB5AlJx7QOce4gK1T4zQImYT5LbHRQ5n
-         7GAKYw7JviHHOYpEfEImbjoeMKhApBVSznErn5vZ0M7SRGOIbg9ZVZShePGR2xwHQFWy
-         DLqw==
+         :content-disposition:in-reply-to:user-agent;
+        bh=vrIhM/xlP5eUuLKgNu2kW1ruJtamdfeClZVoyt+Kzqw=;
+        b=OcgTJo/v4Bh9xJrXmxDhIVekknqqELwtqvPGkPQTXVjI2tX2ESuLPvcoGcjOxzd16h
+         jzGlKx7ZqZOa6cuW8eTmk2LMXo5GGFN+r5NpOo2f27i5jZ3uaLEYGwZBY8g9ZuO7Wo69
+         2u/cVVWITZ7DuDeXzmS54nxS4JBP9fi7Ka8Y5oOMd/Qq9jurUWtpBSrg/U8pGXbSsIRj
+         8eVo/Pz77nZtkixyXq61wrtkxqAjs2eUvtvicKx6VGL2CmdrDNVHH/Zd1qJC3v9kYE5j
+         hg5sebyAlehp4rOKI2auopTRGiimQeWpo4lhaD2uNR3IBPwnpJ6hDEwZpgBrCDSbfPn7
+         0vZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=V+n76mU7dWY7iFR7pe0NMYgw2CGekq8wfADxVNSjPH4=;
-        b=fHVTQYTKjIfvP6yxinnC5HBirM6NAxfoNY6zM9FpsU37xNG/qaWEtvh8zI8o944X3A
-         hPOo+crxPd2GH5QT5TBiIOClOw2jgNGwdLNk33zpzf4nNwCdXXKx1b1uT3G8s9//JJO0
-         rTVzAQpv+EGTZmoNhW0twUBhiDtkw1sOKJt5iXD5uf5+2j9Z3Lf6sgOtp5r8bwol7MsA
-         m3jyzBrDrXYKl7WnBqy7LfbRp30QAkVMIhStDG1d7OQdrvlsv6TaoEGbNOGlm/OjcJrT
-         TRpNhqHZtsBqZXNLHuPEcIJdmFFCcd2I9+y8NMwFuzOfLgR7WDHoBn8ND4eLpemm2n9r
-         tUOA==
-X-Gm-Message-State: AA+aEWZNQnt+BMR28Nd0xmU+lYyXbgXg/ZfUxRCh7odnaqdcbdX5vyFW
-        AmzZVkYy82rdCmuv1zd6eKk=
-X-Google-Smtp-Source: AFSGD/V79cqJNKTP7r/OljmDlxW7J15GGj9e5mtbkUKAMOc3WkNDKiEr3IXGqStTxO7FvjFK2E62+A==
-X-Received: by 2002:a37:6155:: with SMTP id v82mr25074100qkb.72.1544094399099;
-        Thu, 06 Dec 2018 03:06:39 -0800 (PST)
-Received: from localhost.localdomain ([177.220.172.149])
-        by smtp.gmail.com with ESMTPSA id j89sm25528qkh.34.2018.12.06.03.06.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 03:06:38 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id DB432180B7B; Thu,  6 Dec 2018 09:06:34 -0200 (-02)
-Date:   Thu, 6 Dec 2018 09:06:34 -0200
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Subject: Re: KMSAN: kernel-infoleak in sctp_getsockopt
-Message-ID: <20181206110634.GA9056@localhost.localdomain>
-References: <000000000000311344057c4b6cc3@google.com>
- <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vrIhM/xlP5eUuLKgNu2kW1ruJtamdfeClZVoyt+Kzqw=;
+        b=KO+kzU9wn6N5rUNV8JcrDVrkBf+M0u39jtcZ5S/AbtaKZGwNLX60/vItuOA0CnOQk/
+         IZk3f6yulNebgSd3xAsvVerHbCKj+1D4hc0/pJrLwHJLtn2XFEaA1JvGFtVMB8+sY8ON
+         G340uhEWK8vPWtfB9issLodb4QhtfwKhLckJ6CYdIENeNqo18W0KIgVNJT0o84FOxNah
+         zNBlp3qBybSlapXcTXO+2PJxnGzacPF4ddO1EaSJ8FcnUBdvf27pEzkBz49ORMpTRaau
+         8FxF+mzRBvk8c0kM10EbzhVieNo6fdZmKQU31el1giA/gAvxNaC0rCarXNX2MjAacTCE
+         W6/g==
+X-Gm-Message-State: AA+aEWY9WyH9Ak6CF53cwL543hpjJGOUoMzKmDk6mV+/PoJa7wi41bhT
+        +07Vaalu7hnTSBvg0lfkZpM=
+X-Google-Smtp-Source: AFSGD/U3h+40h5wRcfDvc0hEezaIXKtvZ+hAk2iuW01kuGxznf39p14QJWN4Crk7s7vZq9MsnCEe4g==
+X-Received: by 2002:a62:ea09:: with SMTP id t9mr24319012pfh.228.1544094450202;
+        Thu, 06 Dec 2018 03:07:30 -0800 (PST)
+Received: from gmail.com (219x123x27x194.ap219.ftth.ucom.ne.jp. [219.123.27.194])
+        by smtp.gmail.com with ESMTPSA id k15sm143857pfb.147.2018.12.06.03.07.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 03:07:29 -0800 (PST)
+Date:   Thu, 6 Dec 2018 20:08:25 +0900
+From:   Alice Ferrazzi <alice.ferrazzi@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 01/11] livepatch: Change unsigned long old_addr ->
+ void *old_func in struct klp_func
+Message-ID: <20181206110817.GA14038@gmail.com>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-2-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
+In-Reply-To: <20181129094431.7801-2-pmladek@suse.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 11:36:08AM +0100, Alexander Potapenko wrote:
-> On Wed, Dec 5, 2018 at 8:31 PM syzbot
-> <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_CSUM o..
-> > git tree:       https://github.com/google/kmsan.git/master
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12e84a47400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=56b48b46dafe4516
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=ad5d327e6936a2e284be
-> > compiler:       clang version 8.0.0 (trunk 343298)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103cd225400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
-> >
-> > 8021q: adding VLAN 0 to HW filter on device team0
-> > 8021q: adding VLAN 0 to HW filter on device team0
-> > 8021q: adding VLAN 0 to HW filter on device team0
-> > 8021q: adding VLAN 0 to HW filter on device team0
-> > ==================================================================
-> > BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-> > CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0x32d/0x480 lib/dump_stack.c:113
-> >   kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
-> >   kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
-> >   kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
-> >   _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-> >   copy_to_user include/linux/uaccess.h:183 [inline]
-> >   sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
-> >   sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
-> >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> > RIP: 0033:0x457569
-> > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-> > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-> > RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
-> > RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
-> > R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
-> > R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
-> >
-> > Uninit was stored to memory at:
-> >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-> >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-> >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-> >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-> >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-> >   sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
-> >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-> >   sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
-> >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> >
-> > Uninit was stored to memory at:
-> >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-> >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-> >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-> >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-> >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-> >   sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
-> >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-> >   sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
-> >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> >
-> > Uninit was created at:
-> >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> >   kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
-> >   kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
-> >   __kmalloc+0x14c/0x4d0 mm/slub.c:3825
-> >   kmalloc include/linux/slab.h:551 [inline]
-> >   sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
-> >   notifier_call_chain kernel/notifier.c:93 [inline]
-> >   __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-> >   atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
-> >   inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:107
-> >   ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
-> >   inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
-> >   inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
-> >   rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
-> >   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
-> >   rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
-> >   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-> >   netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
-> >   netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
-> >   sock_sendmsg_nosec net/socket.c:621 [inline]
-> >   sock_sendmsg net/socket.c:631 [inline]
-> >   ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
-> >   __sys_sendmsg net/socket.c:2154 [inline]
-> >   __do_sys_sendmsg net/socket.c:2163 [inline]
-> >   __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-> >   __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-> >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> >
-> > Bytes 32-35 of 2100 are uninitialized
-> > Memory access of size 2100 starts at ffff888185d8b000
-> > Data copied to user address 0000000020001108
-> > ==================================================================
-> When a network device goes up and sctp_inetaddr_event() is called, it
-> allocates a partially initialized struct sctp_sockaddr_entry to hold
-> the newly created address.
-> The attached reproducer can be then used to read up to 8 uninit bytes
-> for each of the local addresses.
-> I guess the devices aren't created so often that this can pose any
-> security risk, but we probably still need to allocate this structure
-> with __GFP_ZERO.
 
-Agree. Thanks Alexander.
-Looks like this is the last/only place left with this issue.
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> > syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000311344057c4b6cc3%40google.com.
-> > For more options, visit https://groups.google.com/d/optout.
-> 
-> 
-> 
-> -- 
-> Alexander Potapenko
-> Software Engineer
-> 
-> Google Germany GmbH
-> Erika-Mann-Straße, 33
-> 80636 München
-> 
-> Geschäftsführer: Paul Manicle, Halimah DeLaine Prado
-> Registergericht und -nummer: Hamburg, HRB 86891
-> Sitz der Gesellschaft: Hamburg
+The 11/29/2018 10:44, Petr Mladek wrote:
+> The address of the to be patched function and new function is stored
+s/new/the new/
+> in struct klp_func as:
+>=20
+> 	void *new_func;
+> 	unsigned long old_addr;
+>=20
+> The different naming scheme and type is derived from the way how
+s/is/are/
+> the addresses are set. @old_addr is assigned at runtime using
+> kallsyms-based search. @new_func is statically initialized,
+> for example:
+>=20
+>   static struct klp_func funcs[] =3D {
+> 	{
+> 		.old_name =3D "cmdline_proc_show",
+> 		.new_func =3D livepatch_cmdline_proc_show,
+> 	}, { }
+>   };
+>=20
+> This patch changes unsigned log old_addr -> void *old_func. It removes
+> some confusion when these address are later used in the code. It is
+> motivated by a followup patch that adds special NOP struct klp_func
+> where we want to assign func->new_func =3D func->old_addr respectively
+> func->new_func =3D func->old_func.
+>=20
+> This patch does not modify the existing behavior.
+>=20
+> Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
 
-> #ifndef DUMP_BUF_H
-> #define DUMP_BUF_H
-> 
-> #ifndef DUMP_MIN_STRLEN
-> #define DUMP_MIN_STRLEN 1
-> #endif
-> 
-> #ifndef DUMP_PARALLEL
-> #define DUMP_PARALLEL 0
-> #endif
-> 
-> #ifndef DUMP_PRINT_BUF_ADDR
-> #define DUMP_PRINT_BUF_ADDR 0
-> #endif
-> 
-> #ifndef DUMP_PRINT_HEX
-> #define DUMP_PRINT_HEX 0
-> #endif
-> 
-> #ifndef DUMP_PRINT_STRING
-> #define DUMP_PRINT_STRING 0
-> #endif
-> 
-> #if DUMP_PARALLEL
-> pthread_mutex_t out_mutex = PTHREAD_MUTEX_INITIALIZER;
-> #endif
-> 
-> void dump_buf(unsigned char *buf, int len) {
->   int i, nz = 0;
->   for (i = 0; i < len; i++) {
->     if (buf[i]) {
->       nz = 1;
->       break;
->     }
->   }
->   if (!nz) {
->     // The buffer is empty.
->     return;
->   } else {
-> #if DUMP_PARALLEL
->     pthread_mutex_lock(&out_mutex);
-> #endif
-> #if DUMP_PRINT_BUF_ADDR
->     fprintf(stderr, "nonempty buffer at %p\n", buf);
-> #endif
-> #if DUMP_PRINT_HEX
->     for (i=0; i < len; i++) {
->       if (buf[i]) {
->         fprintf(stderr, "buf[%d]: %x (%p)\n", i, buf[i], *(void**)&buf[i]);
->       }
->     }
-> #endif // DUMP_PRINT_HEX
-> #if DUMP_PARALLEL
->     pthread_mutex_unlock(&out_mutex);
-> #endif
->   }
-> #if DUMP_PARALLEL
->   pthread_mutex_lock(&out_mutex);
-> #endif
-> #if DUMP_PRINT_STRING
->   for (i = 0; i < len; i++) {
->     if (buf[i]) {
->       int str_len = strlen(&buf[i]);
->       // Short string pieces are too boring.
->       if (str_len >= DUMP_MIN_STRLEN) {
->         unsigned char *c;
->         for (c = &buf[i]; c < &buf[i + str_len]; c++) {
->           if ((*c > 127) || ((*c < 32) && (*c != 10) && (*c != 13)))  {
->             *c = ' ';
->             continue;
->           }
->         }
->         // Dump the buffer.
->         fprintf(stderr, "%s\n", &buf[i]);
->       }
->       i += str_len;
->     }
->   }
-> #endif // DUMP_PRINT_STRING
-> #if DUMP_PARALLEL
->   pthread_mutex_unlock(&out_mutex);
-> #endif
-> }
-> 
-> #endif
+Acked-by: Alice Ferrazzi <alice.ferrazzi@gmail.com>
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Alice Ferrazzi
+PGP: 2E4E 0856 461C 0585 1336 F496 5621 A6B2 8638 781A
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-> #include <stdio.h>
-> #include <pthread.h>
-> #include <sys/types.h>          /* See NOTES */
-> #include <sys/socket.h>
-> #include <unistd.h>
-> 
-> #define DUMP_PARALLEL 1
-> #define DUMP_PRINT_BUF_ADDR 1
-> #define DUMP_PRINT_STRING 1
-> #define DUMP_PRINT_HEX 1
-> #include "dump_buf.h"
-> 
-> void *setsockopt_fn(void *arg) {
->   int sock = (int)arg;
->   struct sockaddr addr;
->   memset(&addr, 0, sizeof(addr));
->   addr.sa_family = 2;
->   addr.sa_data[2] = 0xac;
->   addr.sa_data[3] = 0x14;
->   addr.sa_data[4] = 0x14;
->   setsockopt(sock, 0x84, 0x6e, &addr, 0x10);
-> }
-> 
-> #define BUFLEN (0x2c2)
-> void *getsockopt_fn(void *arg) {
->   int sock = (int)arg;
->   char buf[BUFLEN];
->   memset(buf, 0, BUFLEN);
->   int socklen = BUFLEN;
->   getsockopt(sock, 0x84, /*SCTP_GET_LOCAL_ADDRS*/0x6d, buf, &socklen);
->   dump_buf(&(buf[8]), 32);
-> }
-> 
-> void do_work(int sock) {
->   pthread_t t1, t2;
->   for (int i = 0; i < 10; i++) {
->     pthread_create(&t1, NULL, getsockopt_fn, (void*)sock);
->     pthread_create(&t2, NULL, setsockopt_fn, (void*)sock);
->     usleep(100);
->   }
-> }
-> 
-> int main(int argc, char *argv[]) {
->   int res;
->   int pid = fork();
->   if (pid == 0) {
->     int sock = socket(0x2, 0x1, 0x84);
->     do_work(sock);
->   }
->   sleep(10);
->   return 0;
-> }
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+h5loMdcUfRgx4r+1IFYAAgoofkFAlwJAyAACgkQ1IFYAAgo
+ofleMQ//a5bAaJIVa7d2BY/vSKA3JMe4dW1vXNu+wDI9msj+uFr7ECBmacvdoIsy
+xZVentWe336ewwinsCS5IQ2MLWk8wDYWWnpaO3CNnCL1p9cmTiLrG6jvHI2Q1rL9
+ac9aYD9d60HofN2RO6aaznh4KPlajXa8ceJftSJAbwZ2PMNX2L+dAZV+myRRC5q5
+YTRIC6uvwkCqdXbZzd0HlBGYaK1gARDXqCZPna2RRS9yiOGVo194tY98m+cyHo5s
+QVQndYvBbo1zJDFEcrSnNKQhdYhxQJ7EZBli8KMhn8NlwM7MVj4cqr+Ii6/tX5vO
+Old1h5U/J3TI8aUkh30R4m2cJNEZnV0//ROmFGHfdsmg5/S+o4idxOLeeX0UsERM
+2QU0zhMd631iWty1RWUb+p7MuAeLzKvlCO2oNIrK7TIno459U+y9RbJiDWpR9oZz
+AMdxyBAtuU9sURMnD9HKGSXK2D7pOz/xtmSvyEHokBmqt2qu/CVM0HjH3EO+9oGr
+GC2Y0ftsY5K61L5b3gOqVoQpt8EKhQC9vArbR54W3ggRt7oXWWi8ce6G7kuuNSA4
+7jGnPLS744i2tsMYKLKzMTQRcpDvb+svghiIWi2ZCPdrAxr4Y2oN69ljJE2CmHgY
+KpBfGB8xQd7BXPOhd/Bh95ypMAtd5TMEAlzHck6EaEnf5cmtCpE=
+=25iN
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
