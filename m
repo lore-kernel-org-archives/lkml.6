@@ -2,72 +2,142 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A267C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C53C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C34A221479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34A221479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5358821479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5358821479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726113AbeLFWJU (ORCPT
+        id S1726152AbeLFWJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:09:20 -0500
-Received: from mail-qt1-f173.google.com ([209.85.160.173]:34077 "EHLO
-        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeLFWJU (ORCPT
+        Thu, 6 Dec 2018 17:09:24 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50015 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLFWJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:09:20 -0500
-Received: by mail-qt1-f173.google.com with SMTP id r14so2408497qtp.1;
-        Thu, 06 Dec 2018 14:09:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PnpOFDQU6TKhogeL5a038+X22pfiNvy0rJAumA4g9sY=;
-        b=HJ1RxEQhUSeeGDu+JQ/1g6/dzHcdK1Vk6FTURFZ2Ao9AS6rNRqSNrB+fNdA7+AO01e
-         SJa2+gdNlgKZV3BoJLGkJMd9bzrG7URgpnqL6lbyNlV4lfBvuTfAVfCv/szvQZYiFLES
-         x4YjJUMwreXc0OgOOSMkebeFWPMmzW0Ej6ec6c3QuprheRDRrjHvoCR1OL7Lq5Ypg0qc
-         pgMO8ZxtPecYPMSAIoC+EZrhy944RBH7WlA/zRzoMukP3BwdOreNuwdny2RSc7GHcjUv
-         84VTs+qnEbtHgJ23cV3NI7JwbXjs0oj/irhPY+EU0PK/P5vWJ2LLiNnoMVA0dEaZO4z3
-         VPZg==
-X-Gm-Message-State: AA+aEWa97UBcEehMP4UbQqdtp2JAFdIOByQwlfNycrm+U9dWyP3V4wge
-        ucW9gN5bOIKcRdcS1IJFixDDe/1z11nEowx5QkCIfA==
-X-Google-Smtp-Source: AFSGD/Wjg3Ru74pzwMJgstHGlr0BFFUYzfwcVMm5W/mz6uliX7Lj9253NtfOOEWtN58DI9f+cVqajs0ZcD5kYY5ptu8=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr28657329qtr.319.1544134159283;
- Thu, 06 Dec 2018 14:09:19 -0800 (PST)
+        Thu, 6 Dec 2018 17:09:21 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 3AE8A809ED; Thu,  6 Dec 2018 23:09:15 +0100 (CET)
+Date:   Thu, 6 Dec 2018 23:09:18 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Jyri Sarha <jsarha@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kbuild-all@01.org
+Subject: Re: [PATCH] leds: tlc591xx: fix device_node_continue.cocci warnings
+ (fwd)
+Message-ID: <20181206220918.GA32650@amd>
+References: <alpine.DEB.2.21.1812062126130.2464@hadrien>
 MIME-Version: 1.0
-References: <20181207071147.3b41fb5c@canb.auug.org.au>
-In-Reply-To: <20181207071147.3b41fb5c@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Dec 2018 23:09:01 +0100
-Message-ID: <CAK8P3a1U9y7rHq9GUd-BrY4=aLLyBYZLm8X0JcKU6j2_sYCCmQ@mail.gmail.com>
-Subject: Re: linux-next: bad merge in the y2038 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1812062126130.2464@hadrien>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 9:12 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Arnd,
->
-> The y2038 tree contains a merge of next-20181206.  I cannot use a tree
-> that includes a version of linux-next.  I assume that this was just a
-> test merge, so please remove it.
 
-Fixed now, I had pushed the wrong branch after I had done the test build to
-make sure that it wouldn't conflict with anything in yesterday's linux-next.
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about that.
+On Thu 2018-12-06 21:28:16, Julia Lawall wrote:
+> Hello,
+>=20
+> The code seems to be wrong in several ways.  If the continue is wanted,
+> the of_node_put is not needed; it will happen on the next iteration.  If
+> the continue is not wanted, the of_node_put is needed, and the continue
+> should be dropped.
 
-        Arnd
+Yep, code is confusing. But the patch is bad, we don't want "continue; retu=
+rn;"
+
+Hmm, continue seems more logical to me -- but I guess Jyri should
+decde?
+
+									Pavel
+
+> ---------- Forwarded message ----------
+> Date: Thu, 6 Dec 2018 19:48:54 +0800
+> From: kbuild test robot <lkp@intel.com>
+> To: kbuild@01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: [PATCH] leds: tlc591xx: fix device_node_continue.cocci warnings
+>=20
+> CC: kbuild-all@01.org
+> TO: Jyri Sarha <jsarha@ti.com>
+> CC: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> CC: Pavel Machek <pavel@ucw.cz>
+> CC: linux-leds@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+>=20
+> From: kbuild test robot <fengguang.wu@intel.com>
+>=20
+> drivers/leds/leds-tlc591xx.c:342:3-14: ERROR: probable double put.
+>=20
+>  Device node iterators put the previous value of the index variable, so an
+>  explicit put causes a double put.
+>=20
+> Generated by: scripts/coccinelle/iterators/device_node_continue.cocci
+>=20
+> Fixes: 7b2d34aaede7 ("leds: tlc591xx: Add gpio output support")
+> CC: Jyri Sarha <jsarha@ti.com>
+> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+> ---
+>=20
+> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/w=
+ip
+> head:   838f24e2deaf1229002bd6555eb7e889b09ac1f9
+> commit: 7b2d34aaede727b4abfc78061bbd2202fcd92bc8 [62/67] leds: tlc591xx: =
+Add gpio output support
+> :::::: branch date: 26 hours ago
+> :::::: commit date: 26 hours ago
+>=20
+> Please take the patch only if it's a positive warning. Thanks!
+>=20
+>  leds-tlc591xx.c |    1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> --- a/drivers/leds/leds-tlc591xx.c
+> +++ b/drivers/leds/leds-tlc591xx.c
+> @@ -339,7 +339,6 @@ tlc591xx_probe(struct i2c_client *client
+>  	for_each_child_of_node(np, child) {
+>  		err =3D of_property_read_u32(child, "reg", &reg);
+>  		if (err) {
+> -			of_node_put(child);
+>  			continue;
+>  			return err;
+>  		}
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwJng4ACgkQMOfwapXb+vJvgwCeNZSCkXYhPkheNnMJ4SLmjB01
+ZTYAoIbXVR2d3bnSsMgMikgMlOWN6JNJ
+=VtYE
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
