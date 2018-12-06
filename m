@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7619EC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69229C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C08214DB
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BF920661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107573;
-	bh=MyTu3xdYBiblvFe/6zO3NB+JeaiCinEE7VctIRGKf5U=;
+	s=default; t=1544107577;
+	bh=biqZa9E7+DYMNiPbZUwNpVukGDZcWsU6eSLkRLloIAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=if7csMP8cNmzTjyBMEh7huwORoHTh3254Efw7WJOSTe9kbex1fT5KqMWMaYWmrnZ3
-	 UN5SEM1JSgK8XT66B/4RtFjyraVPIh/0rWADMWgfMNvRPSdgSvTDjqMx9LJlWqWb+9
-	 spYxetl+pOIN1SQ5QfKkJk8Z9RWG+/X9k0rf7KhQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C08214DB
+	b=ew1n6Y40wb9kiVtIGMCt97/7BBrTCb+uwSkRrpBOz2/A4rJD5pa0vuQvK0r/m/Z+b
+	 bPTR/vdsCmvOL6tZdnCJ8Assv4dReu2HTPpev3/TCCiNYcdfIs30gvjOvVK0yqXcvE
+	 MIye7YXB1pUgMenDgrA0sVfnYgs2R5RLahXroPAo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BF920661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731211AbeLFOqL (ORCPT
+        id S1731220AbeLFOqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:46:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731193AbeLFOqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:06 -0500
+        id S1731209AbeLFOqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D11820661;
-        Thu,  6 Dec 2018 14:46:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 717832082B;
+        Thu,  6 Dec 2018 14:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107565;
-        bh=MyTu3xdYBiblvFe/6zO3NB+JeaiCinEE7VctIRGKf5U=;
+        s=default; t=1544107570;
+        bh=biqZa9E7+DYMNiPbZUwNpVukGDZcWsU6eSLkRLloIAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pgS55CWgPoR5NfMo4E8YOvPlBVg5esxj8K4i3qhyagJMc8okOcLfNYTAtHvk0rslc
-         M15Vzxh6ildyLhGduVlzzpUYj+q73UqwtONAjh95USsoUF/xUH1ldEmkDykB+3T4kb
-         LW8wxqVGUrgGJiWbmuNyCZYcSZOn8O0YGl9fvnEI=
+        b=jPfSVOlSr4xx4cyEPVwPfFyHdDbd9oJoJYyD8wh89DxlBQABtyKXFwmzz/ctslTRS
+         UjWQ/9WhUVbwa6K+WYC1f9k/P0NGMnxCwuU21DZD7HV4e1YqVAY4o4iz/h1CgnApbb
+         zjYeVY457Xar9m0JimMW0rlWQddUqk6ELslkUQ/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 037/101] udf: Allow mounting volumes with incorrect identification strings
-Date:   Thu,  6 Dec 2018 15:38:36 +0100
-Message-Id: <20181206143013.675701706@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Sage Weil <sage@redhat.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 056/101] libceph: weaken sizeof check in ceph_x_verify_authorizer_reply()
+Date:   Thu,  6 Dec 2018 15:38:55 +0100
+Message-Id: <20181206143014.801941330@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -68,94 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit b54e41f5efcb4316b2f30b30c2535cc194270373 upstream.
+commit f1d10e04637924f2b00a0fecdd2ca4565f5cfc3f upstream.
 
-Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
-started to be more strict when checking whether converted strings are
-properly formatted. Sudip reports that there are DVDs where the volume
-identification string is actually too long - UDF reports:
+Allow for extending ceph_x_authorize_reply in the future.
 
-[  632.309320] UDF-fs: incorrect dstring lengths (32/32)
-
-during mount and fails the mount. This is mostly harmless failure as we
-don't need volume identification (and even less volume set
-identification) for anything. So just truncate the volume identification
-string if it is too long and replace it with 'Invalid' if we just cannot
-convert it for other reasons. This keeps slightly incorrect media still
-mountable.
-
-CC: stable@vger.kernel.org
-Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
-Reported-and-tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Sage Weil <sage@redhat.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/udf/super.c   |   16 ++++++++++------
- fs/udf/unicode.c |   14 +++++++++++---
- 2 files changed, 21 insertions(+), 9 deletions(-)
+ net/ceph/auth_x.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -929,16 +929,20 @@ static int udf_load_pvoldesc(struct supe
- 	}
- 
- 	ret = udf_dstrCS0toUTF8(outstr, 31, pvoldesc->volIdent, 32);
--	if (ret < 0)
--		goto out_bh;
--
--	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
-+	if (ret < 0) {
-+		strcpy(UDF_SB(sb)->s_volume_ident, "InvalidName");
-+		pr_warn("incorrect volume identification, setting to "
-+			"'InvalidName'\n");
-+	} else {
-+		strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
+--- a/net/ceph/auth_x.c
++++ b/net/ceph/auth_x.c
+@@ -733,8 +733,10 @@ static int ceph_x_verify_authorizer_repl
+ 	ret = ceph_x_decrypt(&au->session_key, &p, p + CEPHX_AU_ENC_BUF_LEN);
+ 	if (ret < 0)
+ 		return ret;
+-	if (ret != sizeof(*reply))
+-		return -EPERM;
++	if (ret < sizeof(*reply)) {
++		pr_err("bad size %d for ceph_x_authorize_reply\n", ret);
++		return -EINVAL;
 +	}
- 	udf_debug("volIdent[] = '%s'\n", UDF_SB(sb)->s_volume_ident);
  
- 	ret = udf_dstrCS0toUTF8(outstr, 127, pvoldesc->volSetIdent, 128);
--	if (ret < 0)
-+	if (ret < 0) {
-+		ret = 0;
- 		goto out_bh;
--
-+	}
- 	outstr[ret] = 0;
- 	udf_debug("volSetIdent[] = '%s'\n", outstr);
- 
---- a/fs/udf/unicode.c
-+++ b/fs/udf/unicode.c
-@@ -341,6 +341,11 @@ try_again:
- 	return u_len;
- }
- 
-+/*
-+ * Convert CS0 dstring to output charset. Warning: This function may truncate
-+ * input string if it is too long as it is used for informational strings only
-+ * and it is better to truncate the string than to refuse mounting a media.
-+ */
- int udf_dstrCS0toUTF8(uint8_t *utf_o, int o_len,
- 		      const uint8_t *ocu_i, int i_len)
- {
-@@ -349,9 +354,12 @@ int udf_dstrCS0toUTF8(uint8_t *utf_o, in
- 	if (i_len > 0) {
- 		s_len = ocu_i[i_len - 1];
- 		if (s_len >= i_len) {
--			pr_err("incorrect dstring lengths (%d/%d)\n",
--			       s_len, i_len);
--			return -EINVAL;
-+			pr_warn("incorrect dstring lengths (%d/%d),"
-+				" truncating\n", s_len, i_len);
-+			s_len = i_len - 1;
-+			/* 2-byte encoding? Need to round properly... */
-+			if (ocu_i[0] == 16)
-+				s_len -= (s_len - 1) & 2;
- 		}
- 	}
- 
+ 	if (au->nonce + 1 != le64_to_cpu(reply->nonce_plus_one))
+ 		ret = -EPERM;
 
 
