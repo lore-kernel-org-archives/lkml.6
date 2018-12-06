@@ -2,128 +2,124 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD9DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5388C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE8320878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:30:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE8320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 81E6F2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:32:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VqWlnJe+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81E6F2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbeLFXav (ORCPT
+        id S1726296AbeLFXcN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:30:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56294 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbeLFXav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:30:51 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFC3D3002DAD;
-        Thu,  6 Dec 2018 23:30:50 +0000 (UTC)
-Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05B7A1001F5B;
-        Thu,  6 Dec 2018 23:30:45 +0000 (UTC)
-Subject: Re: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
- CONFIG_XEN_PVH
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kvm@vger.kernel.org, jgross@suse.com
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com, bp@suse.de,
-        thomas.lendacky@amd.com, luto@kernel.org,
-        dave.hansen@linux.intel.com, roger.pau@citrix.com,
-        rkrcmar@redhat.com, rdunlap@infradead.org
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
- <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
- <3b4fdddd-67d8-30d3-2a5d-c4d07b6f31c9@oracle.com>
- <e76da394-c721-87ae-c721-1f6efdc93a50@redhat.com>
- <becd5f82-0cca-f74b-93bd-6b4f13bc8bf0@oracle.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <cef985c3-a687-c1af-83ac-2c71af45a366@redhat.com>
-Date:   Fri, 7 Dec 2018 00:30:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <becd5f82-0cca-f74b-93bd-6b4f13bc8bf0@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Dec 2018 23:30:51 +0000 (UTC)
+        Thu, 6 Dec 2018 18:32:13 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39045 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeLFXcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:32:12 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c72so938126pfc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:32:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=J+thtozG+VIwbvwMC4BGUpsaChxCrbkm//cZCBKZ+y0=;
+        b=VqWlnJe+FJUR2hCcmJ7r/sh0nK82BTVFUsHG7i2Dn4ZaWwf7VIh+2na51vBJ/ND6+c
+         5QxLvcPgpBZm0fvcPM5VO4yL+RRdEc29QBzcTThWd/f0bh6bWlusYQt/i9hdZ24jqu0s
+         ZI4u15DtdtgKgwX8Fa5PTsJLTkgzWyYY9VOJ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=J+thtozG+VIwbvwMC4BGUpsaChxCrbkm//cZCBKZ+y0=;
+        b=tf6jduVw4S2CxUeC8TJyRI8/flQgH5yiSs0wrOiXl+nooo8WIVNna5AmMFaVMTKP9s
+         vcvMZCxaNGD4ipjxiSbCBS39gjYakpGglfcmbLcLACtmpYI8qN9Mh8Mj20u9OeBXGlNc
+         qieI/MKIYDcpVTHPUQ0OgzexglKNVBJeEb2BffTlNZRBPS2EeIA/zQdoqKyzjqZTnUuC
+         A9cBtFY2OJH7oD+7BupeRPQKY8R5R/JvBBEdaibobIP0aICl9y1lwcWa03svqcrzkSGu
+         khugFMNmY6EPlS1wWNWJZq/nDoVAOWK6u88+JKWm/xSwceOlpcTJyrEWZzG9SuffeUgB
+         TOAA==
+X-Gm-Message-State: AA+aEWahWUfpNz1BWIu2BQYJxNFFire26FvQHp8FdspdwlhMecDderSW
+        BmThKecdTAM3azJzJwsV/JXsaA==
+X-Google-Smtp-Source: AFSGD/XE6iYik5lMWnowCo7JHhYSsApifeev+NAnOHPh/eJ90M/BBIlav6/sNlCx5STEPmqAat1UFQ==
+X-Received: by 2002:a63:451a:: with SMTP id s26mr26112759pga.150.1544139130812;
+        Thu, 06 Dec 2018 15:32:10 -0800 (PST)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id s190sm2100875pfb.103.2018.12.06.15.32.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 06 Dec 2018 15:32:10 -0800 (PST)
+From:   Evan Green <evgreen@chromium.org>
+To:     Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v6 0/5] arm64: dts: qcom: sdm845: Add UFS DT nodes
+Date:   Thu,  6 Dec 2018 15:31:59 -0800
+Message-Id: <20181206233205.193244-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/18 00:11, Boris Ostrovsky wrote:
-> On 12/6/18 5:49 PM, Paolo Bonzini wrote:
->> On 06/12/18 23:34, Boris Ostrovsky wrote:
->>> On 12/6/18 5:11 PM, Paolo Bonzini wrote:
->>>
->>>> and also
->>>>
->>>> 	depends on !EFI
->>>>
->>>> because even though in principle it would be possible to write a PVH
->>>> loader for UEFI, PVH's start info does not support the EFI handover
->>>> protocol.
->>> But we should be able to build the binary with both EFI and PVH?
->> Can you?  It's a completely different binary format, the EFI handover
->> protocol is invoked via a special entry point and needs the Linux header
->> format, not ELF.
-> 
-> Right, but I think it is desirable to be able to build both from the
-> same config file.
+Update the device tree bindings for the QMP PHY to properly
+specify the registers for dual-lane PHYs. Update the driver to use
+those new registers. Add the DT nodes for UFS on SDM845 and MTP.
+Finally, fix up the USB3 PHY on SDM845, which also has a dual-lane phy
 
-Ah, "make bzImage" and use the vmlinux for PVH, because PVH fetches the
-entry point from the special note.  That's clever. :)
+Andy/Kishon,
+Just a heads up that these changes stack on top of each other,
+and if taken through separate trees might break things a little until
+they come back together.
 
-I don't see why it should not work, and if so the "depends on !EFI" is
-indeed unnecessary.
+Changes in v6:
+- Removed resets and reset-names (Bjorn)
+- Renamed nodes (Bjorn)
+- Fix renamed nodes in MTP (Bjorn)
 
-Paolo
+Changes in v5:
+- Fix incorrect register value in example, copied from real life!
+
+Changes in v4:
+- Remove "status" from DT binding example (Rob)
+
+Changes in v3:
+ - Removed erroneous fixup for USB UniPro PHY, which is not dual lane (Doug)
+
+Changes in v2:
+- Added dt bindings change, corresponding driver fixup, and USB PHY fixup
+- Renamed ufsphy to phy (Vivek)
+- Removed #clock-cells (Vivek)
+
+Can Guo (1):
+  arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
+
+Evan Green (4):
+  dt-bindings: phy-qcom-qmp: Fix register underspecification
+  phy: qcom-qmp: Utilize fully-specified DT registers
+  arm64: dts: qcom: sdm845: add UFS controller
+  arm64: dts: qcom: sdm845: Add USB PHY lane two
+
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt  | 70 ++++++++++++++++---
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts       | 14 ++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 68 +++++++++++++++++-
+ drivers/phy/qualcomm/phy-qcom-qmp.c           | 51 ++++++++++----
+ 4 files changed, 181 insertions(+), 22 deletions(-)
+
+-- 
+2.18.1
 
