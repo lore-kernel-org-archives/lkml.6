@@ -2,208 +2,147 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B60C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045CEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E208220878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:04:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MwQOcziZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E208220878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C591A20878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:04:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C591A20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbeLFFEb (ORCPT
+        id S1728995AbeLFFEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 00:04:31 -0500
-Received: from mail-eopbgr60060.outbound.protection.outlook.com ([40.107.6.60]:60928
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728489AbeLFFEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 00:04:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/yMI0MOEd+kzBBGULO11/7goxSIpkRtopH8X8KW1ECY=;
- b=MwQOcziZ4jMLGlhCYbfZdVmxaI0lxy0A97hkGvrsDkqq8w48VCttg8C+nYZA6jwZ/EvRMRGk3vx0fdJEnlX1vEKYtc4jDc+HePY8slE8nSV03kSZ3SA4MJau0jbsPrnaN+yrVoxBga2qmbbdik0XNq46dHZWqrreNXa7zc3eZj8=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3804.eurprd04.prod.outlook.com (52.134.73.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Thu, 6 Dec 2018 05:03:46 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1382.023; Thu, 6 Dec 2018
- 05:03:46 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "jic23@kernel.org" <jic23@kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        Thu, 6 Dec 2018 00:04:43 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:42085 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbeLFFEn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 00:04:43 -0500
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gUlq1-0007aU-Rq from Jiada_Wang@mentor.com ; Wed, 05 Dec 2018 21:04:37 -0800
+Received: from [172.30.112.134] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 5 Dec 2018 21:04:34 -0800
+Subject: Re: [PATCH linux-next v3 6/7] ASoC: rsnd: add avb clocks
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+CC:     "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "vladimir_zapolskiy@mentor.com" <vladimir_zapolskiy@mentor.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH] iio: magnetometer: mag3110: add optional vcc regulator
- operation support
-Thread-Topic: [PATCH] iio: magnetometer: mag3110: add optional vcc regulator
- operation support
-Thread-Index: AQHUjSER+Ji9XAJzL0q2bdJrOs0hTQ==
-Date:   Thu, 6 Dec 2018 05:03:46 +0000
-Message-ID: <1544072280-26932-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR0302CA0001.apcprd03.prod.outlook.com
- (2603:1096:202::11) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3804;6:1pemgqbSKlAj4xT8W/65f7biOcubr1uU/RK7ZIA9OwCCYJK3BgwQbwnFYib7gsPw6/42sFYF2PFr/QKip1n9eGsZaCm+i9WFV+uxGsTfdIw0U5OjIMYdz0wOkfJuhTmnNF1CIBvR0Cs+3o7pAsG5OvVCob1wkbEIU6/oAyNjrs9xdJz991O3xUV5QyI8SDIjsQDNfr2PeAz41GyUBwgPn63RzquALobmujC5XMdisff2L9IbKnXOP3vHHPMFjA86DdlTjP71BUxLFEfvPykjaj/LFvEMpGL/3fhs0+/gk53t/Bh+bgAnp8uOIcR2ArLuFCNjuw+nIrFsueOai4QVOxo4Q+gLhA2L4gQ/BOsHAkJj1Eg9U4MXB+iTtbygVYPpSUkZ1P/rsEAKhyw5OJn0B8Ryr7ViyHpvWmEo7MEPuRENYdp7/72rrPwQJJZ1Mufwi+NnCWMcu6alaqqQobztNg==;5:z1N1R9l95XfBuaYiG6yhGaH2lcbQG5Rtfkhs1mBTthtIkNFcdNZ496dqvROTvSVkfvQoNNYRTzABjN1TN3AYCCcJDdx8A0EbSSwkwNit39sbMIoJt2udfhptHzMqDB199jMZcYRa5QpzJawmglKxQLFqtCFDZd/kFAwxZnWBkcE=;7:iH1XrW8xyAgfX1t3/+TOqp4WomItyyuYIjb5LOKSt92+I2IJqza2xjmPxNyrPk9L7v4YQpAbxmamPCE1i5RebfCcndmoyqynUizkK7dzCJ+P+ZBQlqnkpc5V/y4WfhZO9Ube8foYMP0UUfKE5vpFBw==
-x-ms-office365-filtering-correlation-id: 57fc5e40-9402-4134-25de-08d65b3833dc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3804;
-x-ms-traffictypediagnostic: DB3PR0402MB3804:
-x-microsoft-antispam-prvs: <DB3PR0402MB38041FF7F73F06BA29919E95F5A90@DB3PR0402MB3804.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3804;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3804;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(39860400002)(346002)(396003)(199004)(189003)(478600001)(26005)(5660300001)(386003)(6506007)(2501003)(7736002)(110136005)(316002)(68736007)(4326008)(2906002)(256004)(97736004)(14444005)(25786009)(102836004)(3846002)(14454004)(8936002)(6512007)(476003)(305945005)(6486002)(71190400001)(53936002)(71200400001)(486006)(52116002)(36756003)(105586002)(81156014)(2201001)(66066001)(106356001)(186003)(6116002)(81166006)(86362001)(2616005)(99286004)(50226002)(6436002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3804;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: JIKq++84mK0RNSs/1fPG0oNqwKUHYZGdC2LCFaKM79zzwjbSdZ5EqWLVu2B0pi6OLNgXsuqlnOCV+bjUVPc7aY+CYABIZQMhdDpS154wDwmARZVZu+QIqKvX5XpHjq45BUIrLn+SNdf7ZaeRtflSI2jhkdow0ab3A4F3EHD6xuVznKDvP8xDWs9s1789shZoJTfqE0+6yM4t/ABn3KaFIQj+u+lWaSIIndZrc4PoVtOOaVRP/oRUuJJOHEi8o+bYhSCxUr18Gns17+QgVipY4/NSVi5elUXMgNbifLHWQTZldNbaZdlVdwUTGFmMoWoM02aWcJ1/2qdcEJDVTI51GJQ5NwthzvIDXYHwxsKHSDs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <20181205074932.28098-1-jiada_wang@mentor.com>
+ <87va48bbpa.wl-kuninori.morimoto.gx@renesas.com>
+ <612ee648-c217-e9b4-224c-87183e43d83d@mentor.com>
+ <878t13jx6y.wl-kuninori.morimoto.gx@renesas.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <011cfbf7-70d0-a649-52de-1689cdb5a10b@mentor.com>
+Date:   Thu, 6 Dec 2018 14:04:32 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57fc5e40-9402-4134-25de-08d65b3833dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 05:03:46.8547
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3804
+In-Reply-To: <878t13jx6y.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The magnetometer's power supply could be controlled by regulator
-on some platforms, such as i.MX6Q-SABRESD board, the mag3110's
-power supply is controlled by a GPIO fixed regulator, need to make
-sure the regulator is enabled before any communication with mag3110,
-this patch adds optional vcc regulator operation support.
+Hi Morimoto-san
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/iio/magnetometer/mag3110.c | 49 +++++++++++++++++++++++++++++++++-=
-----
- 1 file changed, 43 insertions(+), 6 deletions(-)
+Thanks for your comments
 
-diff --git a/drivers/iio/magnetometer/mag3110.c b/drivers/iio/magnetometer/=
-mag3110.c
-index f063355..e2d5b22 100644
---- a/drivers/iio/magnetometer/mag3110.c
-+++ b/drivers/iio/magnetometer/mag3110.c
-@@ -20,6 +20,7 @@
- #include <linux/iio/buffer.h>
- #include <linux/iio/triggered_buffer.h>
- #include <linux/delay.h>
-+#include <linux/regulator/consumer.h>
-=20
- #define MAG3110_STATUS 0x00
- #define MAG3110_OUT_X 0x01 /* MSB first */
-@@ -56,6 +57,7 @@ struct mag3110_data {
- 	struct mutex lock;
- 	u8 ctrl_reg1;
- 	int sleep_val;
-+	struct regulator *vcc_reg;
- };
-=20
- static int mag3110_request(struct mag3110_data *data)
-@@ -469,17 +471,27 @@ static int mag3110_probe(struct i2c_client *client,
- 	struct iio_dev *indio_dev;
- 	int ret;
-=20
-+	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data =3D iio_priv(indio_dev);
-+
-+	data->vcc_reg =3D devm_regulator_get_optional(&client->dev, "vcc");
-+	if (!IS_ERR(data->vcc_reg)) {
-+		ret =3D regulator_enable(data->vcc_reg);
-+		if (ret) {
-+			dev_err(&client->dev, "failed to enable VCC regulator\n");
-+			return ret;
-+		}
-+	}
-+
- 	ret =3D i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
- 	if (ret < 0)
- 		return ret;
- 	if (ret !=3D MAG3110_DEVICE_ID)
- 		return -ENODEV;
-=20
--	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
--	if (!indio_dev)
--		return -ENOMEM;
--
--	data =3D iio_priv(indio_dev);
- 	data->client =3D client;
- 	mutex_init(&data->lock);
-=20
-@@ -537,14 +549,39 @@ static int mag3110_remove(struct i2c_client *client)
- #ifdef CONFIG_PM_SLEEP
- static int mag3110_suspend(struct device *dev)
- {
--	return mag3110_standby(iio_priv(i2c_get_clientdata(
-+	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
-+		to_i2c_client(dev)));
-+	int ret;
-+
-+	ret =3D mag3110_standby(iio_priv(i2c_get_clientdata(
- 		to_i2c_client(dev))));
-+	if (ret)
-+		return ret;
-+
-+	if (!IS_ERR(data->vcc_reg)) {
-+		ret =3D regulator_disable(data->vcc_reg);
-+		if (ret) {
-+			dev_err(dev, "failed to disable VCC regulator\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
- }
-=20
- static int mag3110_resume(struct device *dev)
- {
- 	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
- 		to_i2c_client(dev)));
-+	int ret;
-+
-+	if (!IS_ERR(data->vcc_reg)) {
-+		ret =3D regulator_enable(data->vcc_reg);
-+		if (ret) {
-+			dev_err(dev, "failed to enable VCC regulator\n");
-+			return ret;
-+		}
-+	}
-=20
- 	return i2c_smbus_write_byte_data(data->client, MAG3110_CTRL_REG1,
- 		data->ctrl_reg1);
---=20
-2.7.4
+On 2018/12/06 9:59, Kuninori Morimoto wrote:
+> Hi Jiada
+>
+>>>> +	avb = devm_kzalloc(dev, sizeof(*avb), GFP_KERNEL);
+>>>> +	if (!avb)
+>>>> +		return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +	parent_name = __clk_get_name(adg->clkadg);
+>>> This parent_name is very strange to me.
+>>> AVB parent clk is "AUDIO_CLK_A/B/C/I" (= clk_a/b/c/i in this driver)
+>>> or "AUDIO_CLK_OUT_A/B/C/D" (= audio_clkout/1/2/3 in this driver).
+>>> And we don't have "adg" clock.
+>>> Please double check it.
+>> I have some local device-tree change, which expends 'adg' register
+>> range and add
+>> "adg" clock to rcar_sound node which refer to newly added 'adg' clock
+>> (S0D1ϕ) in this patch-set
+> (snip)
+>> -                       clocks = <&cpg CPG_MOD 1005>,
+>> +                       clocks = <&cpg CPG_MOD 922>, <&cpg CPG_MOD 1005>,
+>>                                   <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+>>                                   <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+>>                                   <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+>> @@ -1856,7 +1856,7 @@
+>>                                   <&audio_clk_a>, <&audio_clk_b>,
+>>                                   <&audio_clk_c>,
+>>                                   <&cpg CPG_CORE R8A7795_CLK_S0D4>;
+>> -                       clock-names = "ssi-all",
+>> +                       clock-names = "adg", "ssi-all",
+>>                                        "ssi.9", "ssi.8", "ssi.7", "ssi.6",
+>>                                        "ssi.5", "ssi.4", "ssi.3", "ssi.2",
+>>                                        "ssi.1", "ssi.0",
+> Noooo !!
+> It breaks sound clock / module stop controling !!
+Can you let me know how it breaks sound clock / module stop
+so that I can come up with a fix
+> OK, now I checked more detail of ADG for EAVB/IF.
+>
+> 1st, I don't think we need to add "adg" clock.
+> It is not exist on Gen2, and default ON on Gen3.
+> If you want to add it, please add it to "last" of clocks, not "first".
+> "first" clock is handling whole SSI power.
+as this device-tree change is only local, I will move 'adg' clock to 
+'last' of clocks,
+when I submit it.
+> 2nd, it is "Module stop clock", not "S0D1ϕ".
+> We already handling it as "clk_i".
+SMSTPCR922 controls input of two clocks "S0D1ϕ" and "S0D4ϕ",
+"S0D4ϕ" is input to BRGA,
+"S0D1ϕ" is input to avb_counter8
+>
+> 3rd, we need to create new clock/handler for
+> avb_counter8 / audio_clk_div3 / avb_div8 for "internal" purpose,
+> and need to create avb_adg_syn[] clock for "external" purpose for EAVB/IF.
+> Your code is creating / registering adg->clkavb[],
+> but it is for avb_counter8 in my understanding.
+> We don't need to register it as formal clock IMO.
+I agree, besides avb_counter8 there are other clocks which need to be 
+added as you have mentioned,
+in this patch-set, I only added avb_counter8, because I want to keep the 
+patch-set simple,
+other clocks can be added later.
+
+avb_counter8 is registered as formal clock is because,
+there is use case that EAVB-IF may use avb_div8, and avb_counter8 is 
+input to avb_div8.
+if keeps avb_counter8 'internal', I am not sure how EAVB-IF can set 
+clock rate for avb_counter8
+> 4th, EAVB driver need to get clock from AVB via DT
+> as "avb_adg_syn[]" clock, not "avb_counter8".
+>
+> I'm not sure EAVB side driver, but please double check these.
+yes, EAVB driver only needs to get 'avb_adg_sync[]' clock,
+and avb_adg_sync clock is child clock of audio_clk_div3 / avb_div8
+
+
+Thanks,
+Jiada
+>
+>
+> Best regards
+> ---
+> Kuninori Morimoto
 
