@@ -2,91 +2,114 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC55C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FE9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03EAB2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62DA2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:05:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ToKs4kSx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03EAB2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xcd3IfUo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62DA2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbeLFVB1 (ORCPT
+        id S1725976AbeLFVFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:01:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:59073 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeLFVB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:01:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439p1H3xPNz9s47;
-        Fri,  7 Dec 2018 08:01:23 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544130084;
-        bh=tvYMXjtFhHAY8sIZ9WjIoHcnf0D/XYHLosjxxKrVdkA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ToKs4kSxq6iGweon22S8zn/LDurTbUDFTZV8xmO+m7ShUZj7XuZ4UQIsCZZKbkaaw
-         pcm1N3289VfbqrMQ63kv6F3beIDSnbrbQJ53vLQQFxCyBcVWETgrW89CTxZH4IOQC3
-         D+p64kmSnjhCnjhV2n21prGSA9H8l5OP54dok8X2lYIfkXoQhIGgAntxImINy6UDnx
-         BLnClRJyDxTlbOnla3ZDO8XXuZoODdjw2SqI0unMTUKP5HyEsYWXq8J5bGx2VHm5+7
-         J3YxJs0ttbK9aPqGS1EL8/BEmaqvtS4KkRZbcs7u+NOs7cMfY3A4unWYidWcKxsnZi
-         hUAczsnQcSasg==
-Date:   Fri, 7 Dec 2018 08:01:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>
-Subject: linux-next: Signed-off-by missing for commit in the sound-asoc tree
-Message-ID: <20181207080122.20d3d342@canb.auug.org.au>
+        Thu, 6 Dec 2018 16:05:12 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44620 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeLFVFM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:05:12 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k19-v6so1652440lji.11;
+        Thu, 06 Dec 2018 13:05:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qlckCdPuY2t2qCWWyGwxN4+a8ep4ZV8vwpKhBBe/rkY=;
+        b=Xcd3IfUoBMIpAVpGSWJYQvadKlS8CMl0K/jA0jHms0vZUBP3RWEPw7PpDA4P0sJnBu
+         xVJLwjj1WmKMWD7kO9Nb+g75Bity61Eg9Xg0OSz79D33oaJ2FJ98QRNpVh0JOOl3hjbe
+         jrEFXHIe32/en+ERBAXVuDbqUiFg+egGXLc4rVyE82hUpkBys/o4W4njSiNf2gfpIjg8
+         9L5zMK8Rpvifi4NALWBJD2RdLLt69ux9Fa/y3boK9vlvs9zuzH3srPCA5oRi9PHPzKbn
+         dg8iDynZtDkxKW5U2DG2uwJ+6kdhDJDgmsQvII9otMXU0yN0CqhFrFfBbK3G0krsg5VJ
+         PeJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qlckCdPuY2t2qCWWyGwxN4+a8ep4ZV8vwpKhBBe/rkY=;
+        b=Qo7xhCn7NwLmBAPP0pMCBrJizPlwYI7By5w7CVEzSYglgQqX2ttyHJEzOqJLMrLGoN
+         xv/GzhSgJUmj/IWy5jn0GOVYgUbEwO2BVa1Ghoyb9cf9UxNWDgyBT73Z4imNW2HPtvYy
+         +uSvanCiG7/PIapMMRzhZlsMcC+cznkDrc+tW2n/Hl2WkMaDg6UjN0qy41jzfU0a4K9L
+         W2l0RwS8q3JoQLL7eZhG9Mrp0ay+I4I3G9f+cYgkvYtLA/YcdJIu89xQ/ZJ+Drk4Iron
+         3ZMr20pHQ/8BQo5HYfpvlSu73sElyOPSXbsN9wiVVoQQLKwUYXRh6lV+o8HEDJZR9Mp7
+         P2/w==
+X-Gm-Message-State: AA+aEWZ0744MN69+DkPtXZuHdLgg24C5n1CkEfg0RojZBjpOOTf3ozml
+        r7OVKKPMSb3wH5+3HrreZaT3QUZg
+X-Google-Smtp-Source: AFSGD/Wp3u5+A4Cn5HOe3az/aTUCQK5egYDuOEZ3VPX8x01gYAnYnQWJf5gj60dlU2My/vT+g12Nng==
+X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr8031302lji.93.1544130309269;
+        Thu, 06 Dec 2018 13:05:09 -0800 (PST)
+Received: from arch.domain.name (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
+        by smtp.gmail.com with ESMTPSA id e94sm267366lfi.23.2018.12.06.13.05.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 13:05:08 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, jic23@jic23.retrosnub.co.uk,
+        a.brauchli@elementarea.net, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH v2 0/3] add support for Sensirion SPS30 PM sensor
+Date:   Thu,  6 Dec 2018 22:04:40 +0100
+Message-Id: <20181206210443.21052-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/glcZ8AYzY_LBswDhEZ.VN0P"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/glcZ8AYzY_LBswDhEZ.VN0P
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series adds support for Sensirion SPS30 particulate matter
+sensor. Along with a driver itself, new channel type and modifiers
+for distinguishing between coarse and fine particles measurements are
+introduced.
 
-Hi all,
+Sensor datasheet can be downloaded from
 
-Commit
+https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/0_Datasheets/Particulate_Matter/Sensirion_PM_Sensors_SPS30_Datasheet.pdf
 
-  972fd1f58267 ("ASoC: max9867: Remove useless assignment")
+v2:
+ * add support for PM1 and PM4 measurements
+ * get rid of variable length arrays
+ * do proper cleanup via devm_add_action_or_reset()
+ * add extra level of precision (two decimal places) while displaying
+   measurements
+ * improve comments a little bit
+ * slight refactoring and general improvements here and there
 
-is missing a Signed-off-by from its author.
+Tomasz Duszynski (3):
+  iio: add IIO_MASSCONCENTRATION channel type
+  iio: chemical: add support for Sensirion SPS30 sensor
+  iio: chemical: sps30: add device tree support
 
---=20
-Cheers,
-Stephen Rothwell
+ Documentation/ABI/testing/sysfs-bus-iio       |  17 +-
+ .../bindings/iio/chemical/sensirion,sps30.txt |  12 +
+ drivers/iio/chemical/Kconfig                  |  11 +
+ drivers/iio/chemical/Makefile                 |   1 +
+ drivers/iio/chemical/sps30.c                  | 406 ++++++++++++++++++
+ drivers/iio/industrialio-core.c               |   5 +
+ include/uapi/linux/iio/types.h                |   5 +
+ tools/iio/iio_event_monitor.c                 |  10 +
+ 8 files changed, 466 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
+ create mode 100644 drivers/iio/chemical/sps30.c
 
---Sig_/glcZ8AYzY_LBswDhEZ.VN0P
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--
+2.19.2
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJjiIACgkQAVBC80lX
-0GwSuwgAjrxc87HUf9k0XD+2rGqnCTdMprW3hbVZcO9qANQY4k1uvaNjQ1z4Sm9t
-QogVs8aZk8vdZdN1wMCWUua28m/ECS7U4xQmSYzpjGCj3e2PGe2XxpHOwfx8Ilkp
-33kBiSDm1MVs/BGOTeWTdwk635p2vNLCYCZE+ECwysJ9wmmvnnmPx9cQFNbwUQMt
-rs4eI8mDchB39t1RlOTZcYM3/KepUA/BQWCjjAHYG98UbcNRnMav6BP/Yj6ntB7p
-6M5LBlbA6eiTOl5JdoGO4nqN9cBrEeu/xvm5PqnqE5pe25Ji4z8x16q8rVK++DG3
-lX+3IsMBpOLdr3Fp7XBXh9MeUn3A4Q==
-=daze
------END PGP SIGNATURE-----
-
---Sig_/glcZ8AYzY_LBswDhEZ.VN0P--
