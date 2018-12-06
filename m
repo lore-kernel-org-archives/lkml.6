@@ -2,56 +2,60 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2743FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A276C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D124A2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C0420989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131814;
-	bh=MnfQ0ZIFGXDl3K70jwpBMyJ40SHMhB2O8Tann/2MgcE=;
+	s=default; t=1544131821;
+	bh=kalhg6BjUEjBPqLkTfeR+KzRWOd6nI7iVDMjU7Q3CVY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tofyeQcayqSCbKQ/u8qWiYDAqVWSWyRzzgUo9BJfcCn10mPJQIV+tVXPJzpXdt7X7
-	 MErzblQZJKb6rm9C0qJsqdyD3YMbhxQ3x33SQf0K/RZvM56NWfqKir3WNwMYeB8DVl
-	 aSoP6669HYszafOa6R2Smxks+yr7/s+gtNyODRAc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D124A2146D
+	b=HRWJ8E3NXtyKmQuprF8halyYkk108aklKHTEEbgeDVVHmq8V5I0zEQpvKFeXwGTvG
+	 EYrTrJaMb+3ytq6iEBh1DiWOCcZ2pukdTOgaDlLIa9pAxJ9s38LjqTzbi5g0v3312V
+	 TV/YBuZhDU0KcqIp45syU7HTQrgUGwBAUJn6anUk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C0420989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeLFVaN (ORCPT
+        id S1726714AbeLFVaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:30:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48608 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:30:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbeLFVaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:30:11 -0500
+        id S1726710AbeLFVaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:30:15 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 363322082B;
-        Thu,  6 Dec 2018 21:30:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC12D2146F;
+        Thu,  6 Dec 2018 21:30:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131810;
-        bh=MnfQ0ZIFGXDl3K70jwpBMyJ40SHMhB2O8Tann/2MgcE=;
+        s=default; t=1544131814;
+        bh=kalhg6BjUEjBPqLkTfeR+KzRWOd6nI7iVDMjU7Q3CVY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YUxv97++A7ujivU0aJ4o6p9XuDSfp5KcvYpt5anzwVLhrBeOFi7UoCzvTMSez+y9o
-         z+3RcccNuo+XhMkRScCVCj2oisa46BTc7l8+NRJBzjkHmpaJIpl6fIPIzevN5ay90T
-         KkmP0PoDqWeB3pF/jCSdNG7qvmVt1ztjN1tS0O+8=
+        b=m70DW2pC6bPZ592di+g/wcojEcCo/kprhHr6LR5Y4Q2N17h18V9kfAxSsesxFE9G8
+         IQcVoaCBq7hSJ0txUeYjMa4UZlmQ1fwRM5rFThuc0t5+kcA3RmckMOqV4hq5RkNUc/
+         /v/cBJqznzYXJnC/pnp/a7g1BmguezcpBDL215Qk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 56/75] perf top: Move perf_top__reset_sample_counters() to after counts display
-Date:   Thu,  6 Dec 2018 18:25:43 -0300
-Message-Id: <20181206212602.20474-57-acme@kernel.org>
+Subject: [PATCH 57/75] perf cs-etm: Add configuration for ETMv3 trace protocol
+Date:   Thu,  6 Dec 2018 18:25:44 -0300
+Message-Id: <20181206212602.20474-58-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -62,74 +66,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Move the perf_top__reset_sample_counters() call to right after we
-display the counters so we can see the updated numbers for longer.
+This patch deals with the proper initialisation of configuration
+parameters for the ETMv3 trace protocol in order to properly handle
+packets generated by tracers following this specification.
 
-Acked-by: David S. Miller <davem@davemloft.net>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-o72pyiwt05f3p2juprwmz2jo@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1543955944-10042-2-git-send-email-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c       | 4 ----
- tools/perf/ui/browsers/hists.c | 3 +++
- tools/perf/util/top.c          | 1 +
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.h |  8 +++
+ tools/perf/util/cs-etm.c                      | 54 ++++++++++++++-----
+ 2 files changed, 48 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index f22c531be366..fe3ecfb2e64b 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -273,8 +273,6 @@ static void perf_top__print_sym_table(struct perf_top *top)
- 	perf_top__header_snprintf(top, bf, sizeof(bf));
- 	printf("%s\n", bf);
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index 9351bd10d864..6b5525410a43 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -53,6 +53,13 @@ struct cs_etm_queue;
+ typedef u32 (*cs_etm_mem_cb_type)(struct cs_etm_queue *, u64,
+ 				  size_t, u8 *);
  
--	perf_top__reset_sample_counters(top);
--
- 	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
- 
- 	if (!top->record_opts.overwrite &&
-@@ -573,8 +571,6 @@ static void perf_top__sort_new_samples(void *arg)
- 
- 	if (t->lost || t->drop)
- 		pr_warning("Too slow to read ring buffer (change period (-c/-F) or limit CPUs (-C)\n");
--
--	perf_top__reset_sample_counters(t);
- }
- 
- static void stop_top(void)
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 36b262c49f51..ffac1d54a3d4 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2229,8 +2229,11 @@ static int hists_browser__scnprintf_title(struct hist_browser *browser, char *bf
- 
- 		if (top->zero)
- 			printed += scnprintf(bf + printed, size - printed, " [z]");
++struct cs_etmv3_trace_params {
++	u32 reg_ctrl;
++	u32 reg_trc_id;
++	u32 reg_ccer;
++	u32 reg_idr;
++};
 +
-+		perf_top__reset_sample_counters(top);
+ struct cs_etmv4_trace_params {
+ 	u32 reg_idr0;
+ 	u32 reg_idr1;
+@@ -65,6 +72,7 @@ struct cs_etmv4_trace_params {
+ struct cs_etm_trace_params {
+ 	int protocol;
+ 	union {
++		struct cs_etmv3_trace_params etmv3;
+ 		struct cs_etmv4_trace_params etmv4;
+ 	};
+ };
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 48ad217bf0df..76e509c32a28 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -114,15 +114,28 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
+ 	/* Use metadata to fill in trace parameters for trace decoder */
+ 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
+ 	for (i = 0; i < etm->num_cpu; i++) {
+-		t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
+-		t_params[i].etmv4.reg_idr0 = etm->metadata[i][CS_ETMV4_TRCIDR0];
+-		t_params[i].etmv4.reg_idr1 = etm->metadata[i][CS_ETMV4_TRCIDR1];
+-		t_params[i].etmv4.reg_idr2 = etm->metadata[i][CS_ETMV4_TRCIDR2];
+-		t_params[i].etmv4.reg_idr8 = etm->metadata[i][CS_ETMV4_TRCIDR8];
+-		t_params[i].etmv4.reg_configr =
++		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
++			t_params[i].etmv3.reg_ctrl =
++					etm->metadata[i][CS_ETM_ETMCR];
++			t_params[i].etmv3.reg_trc_id =
++					etm->metadata[i][CS_ETM_ETMTRACEIDR];
++		} else if (etm->metadata[i][CS_ETM_MAGIC] ==
++						      __perf_cs_etmv4_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
++			t_params[i].etmv4.reg_idr0 =
++					etm->metadata[i][CS_ETMV4_TRCIDR0];
++			t_params[i].etmv4.reg_idr1 =
++					etm->metadata[i][CS_ETMV4_TRCIDR1];
++			t_params[i].etmv4.reg_idr2 =
++					etm->metadata[i][CS_ETMV4_TRCIDR2];
++			t_params[i].etmv4.reg_idr8 =
++					etm->metadata[i][CS_ETMV4_TRCIDR8];
++			t_params[i].etmv4.reg_configr =
+ 					etm->metadata[i][CS_ETMV4_TRCCONFIGR];
+-		t_params[i].etmv4.reg_traceidr =
++			t_params[i].etmv4.reg_traceidr =
+ 					etm->metadata[i][CS_ETMV4_TRCTRACEIDR];
++		}
  	}
  
-+
- 	return printed;
- }
+ 	/* Set decoder parameters to simply print the trace packets */
+@@ -352,15 +365,28 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 		goto out_free;
  
-diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
-index 31a8dee9af69..4c8da8c4435f 100644
---- a/tools/perf/util/top.c
-+++ b/tools/perf/util/top.c
-@@ -107,6 +107,7 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
- 					top->evlist->cpus->nr > 1 ? "s" : "");
+ 	for (i = 0; i < etm->num_cpu; i++) {
+-		t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
+-		t_params[i].etmv4.reg_idr0 = etm->metadata[i][CS_ETMV4_TRCIDR0];
+-		t_params[i].etmv4.reg_idr1 = etm->metadata[i][CS_ETMV4_TRCIDR1];
+-		t_params[i].etmv4.reg_idr2 = etm->metadata[i][CS_ETMV4_TRCIDR2];
+-		t_params[i].etmv4.reg_idr8 = etm->metadata[i][CS_ETMV4_TRCIDR8];
+-		t_params[i].etmv4.reg_configr =
++		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
++			t_params[i].etmv3.reg_ctrl =
++					etm->metadata[i][CS_ETM_ETMCR];
++			t_params[i].etmv3.reg_trc_id =
++					etm->metadata[i][CS_ETM_ETMTRACEIDR];
++		} else if (etm->metadata[i][CS_ETM_MAGIC] ==
++							__perf_cs_etmv4_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
++			t_params[i].etmv4.reg_idr0 =
++					etm->metadata[i][CS_ETMV4_TRCIDR0];
++			t_params[i].etmv4.reg_idr1 =
++					etm->metadata[i][CS_ETMV4_TRCIDR1];
++			t_params[i].etmv4.reg_idr2 =
++					etm->metadata[i][CS_ETMV4_TRCIDR2];
++			t_params[i].etmv4.reg_idr8 =
++					etm->metadata[i][CS_ETMV4_TRCIDR8];
++			t_params[i].etmv4.reg_configr =
+ 					etm->metadata[i][CS_ETMV4_TRCCONFIGR];
+-		t_params[i].etmv4.reg_traceidr =
++			t_params[i].etmv4.reg_traceidr =
+ 					etm->metadata[i][CS_ETMV4_TRCTRACEIDR];
++		}
  	}
  
-+	perf_top__reset_sample_counters(top);
- 	return ret;
- }
- 
+ 	/* Set decoder parameters to simply print the trace packets */
 -- 
 2.19.2
 
