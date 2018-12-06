@@ -2,397 +2,179 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E670CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D3F214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C707214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:37:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cyPAP4gz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D3F214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="poWJSR2I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C707214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeLFPhf (ORCPT
+        id S1726210AbeLFPhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:37:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35530 "EHLO
+        Thu, 6 Dec 2018 10:37:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35556 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeLFPhe (ORCPT
+        with ESMTP id S1726072AbeLFPhk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:37:34 -0500
+        Thu, 6 Dec 2018 10:37:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=r2tCfy0gv7xX8wChvI6rLRILuCXpaIpp+3rmaZAl7QI=; b=cyPAP4gz+4vJOlYc75qFExBksH
-        13Nvyhff2v3TvR4ZBnk/LOBTNY+vmKOTdqo3gAEMy4Qr4q1R5IXmbYxH0Ry227AySkJKFIgiBSRTh
-        3s9jp7MtoKJKwHAqkuFshwcy/G/PWl1OC9upwOWdGK5MADVJqVhxypEarWiGEcAfywTWOISXzT1Py
-        8H/xnl4vAldkl5yIl6E3ehWHXmrtdGGsEIsq+NT8tyLkDfq9skF6otUSmdB/9LwqCoySdgn0rX2GE
-        yEBlZrIuOjllZUxNFfwGt8HfBM74nYcFPCGA0y7r7Pxl5jRFoDXUc69ggE7dWLG2DdMkeFfGp6us4
-        uIFzdOcQ==;
-Received: from [38.126.112.138] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUviQ-0000nY-Hk; Thu, 06 Dec 2018 15:37:26 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dma-mapping: bypass indirect calls for dma-direct
-Date:   Thu,  6 Dec 2018 07:37:20 -0800
-Message-Id: <20181206153720.10702-2-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181206153720.10702-1-hch@lst.de>
-References: <20181206153720.10702-1-hch@lst.de>
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ec2sGWfH2YxunsjK4iQ19kl/2O5cfAXHuth37RafTjk=; b=poWJSR2IyLEugQxQdIL+3sOZp
+        ATogC1ZEnIKkMT+M5PU0ym5WJWK+QIJobobAVDMGk/AJtW7fC9zCX4sfN7fYsMVpuY+vpsLk/NWQA
+        CDQZF/yMOEDoys3MeOOJrgbd9VXEeWxhurdDxgf9VtqUDGB2FjLorGUg5QFFJQeHpf+PJchX4FAzU
+        nIekDPrXKEajcu6SdegA5TVjz2kaOmuA6bXl8NCMyrvH6xiALv2hRPmiiusq9usa6fCAnrE8zzRtT
+        5GNLNakxxz0eiPTO6LXVLZTnIBxAk0Pjf2wMdVNbIhvKRRqtDFiBPST1NJPHeQWNuyMUyrds5nr0T
+        dhn6jKGjA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUviI-0000mn-82; Thu, 06 Dec 2018 15:37:18 +0000
+Date:   Thu, 6 Dec 2018 07:37:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@sandeen.net>, jeffm@suse.com,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>, mpe@ellerman.id.au,
+        joe@perches.com, brakmo@fb.com, rostedt@goodmis.org,
+        Tim.Bird@sony.com, khilman@baylibre.com,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
+ config and kernel
+Message-ID: <20181206153718.GD24603@bombadil.infradead.org>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-12-brendanhiggins@google.com>
+ <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
+ <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
+ <20181204204701.GT28501@garbanzo.do-not-panic.com>
+ <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid expensive indirect calls in the fast path DMA mapping
-operations by directly calling the dma_direct_* ops if we are using
-the directly mapped DMA operations.
+On Thu, Dec 06, 2018 at 12:32:47PM +0000, Kieran Bingham wrote:
+> On 04/12/2018 20:47, Luis Chamberlain wrote:
+> > On Mon, Dec 03, 2018 at 03:48:15PM -0800, Brendan Higgins wrote:
+> >> On Thu, Nov 29, 2018 at 5:54 AM Kieran Bingham
+> >> <kieran.bingham@ideasonboard.com> wrote:
+> >>>
+> >>> Hi Brendan,
+> >>>
+> >>> Thanks again for this series!
+> >>>
+> >>> On 28/11/2018 19:36, Brendan Higgins wrote:
+> >>>> The ultimate goal is to create minimal isolated test binaries; in the
+> >>>> meantime we are using UML to provide the infrastructure to run tests, so
+> >>>> define an abstract way to configure and run tests that allow us to
+> >>>> change the context in which tests are built without affecting the user.
+> >>>> This also makes pretty and dynamic error reporting, and a lot of other
+> >>>> nice features easier.
+> >>>
+> >>>
+> >>> I wonder if we could somehow generate a shared library object
+> >>> 'libkernel' or 'libumlinux' from a UM configured set of headers and
+> >>> objects so that we could create binary targets directly ?
+> >>
+> >> That's an interesting idea. I think it would be difficult to figure
+> >> out exactly where to draw the line of what goes in there and what
+> >> needs to be built specific to a test a priori. Of course, that leads
+> >> into the biggest problem in general, needed to know what I need to
+> >> build to test the thing that I want to test.
+> >>
+> >> Nevertheless, I could definitely imagine that being useful in a lot of cases.
+> > 
+> > Whether or not we can abstract away the kernel into such a mechanism
+> > with uml libraries is a good question worth exploring.
+> > 
+> > Developers working upstream do modify their kernels a lot, so we'd have
+> > to update such libraries quite a bit, but I think that's fine too. The
+> > *real* value I think from the above suggestion would be enterprise /
+> > mobile distros or stable kernel maintainers which have a static kernel
+> > they need to support for a relatively *long time*, consider a 10 year
+> > time frame. Running unit tests without qemu with uml and libraries for
+> > respective kernels seems real worthy.
+> 
+> I think any such library might be something generated by the kernel
+> build system, so if someone makes substantial changes to a core
+> component provided by the library - it can be up to them to build a
+> corresponding userspace library as well.
+> 
+> We could also consider to only provide *static* libraries rather than
+> dynamic. So any one building some userspace tool / test with this would
+> be required to compile against (the version of) the kernel they expect
+> perhaps... - much like we expect modules to be compiled currently.
+> 
+> And then the userspace binary would be sufficiently able to live it's
+> life on it's own :)
+> 
+> > The overhead for testing a unit test for said targets, *ideally*, would
+> > just be to to reboot into the system with such libraries available, a
+> > unit test would just look for the respective uname -r library and mimic
+> > that kernel, much the same way enterprise distributions today rely on
+> > having debugging symbols available to run against crash / gdb. Having
+> > debug modules / kernel for crash requires such effort already, so this
+> > would just be an extra layer of other prospect tests.
+> 
+> Oh - although, yes - there are some good concepts there - but I'm a bit
+> weary of how easy it would be to 'run' the said test against multiple
+> kernel version libraries... there would be a lot of possible ABI
+> conflicts perhaps.
+> 
+> My main initial idea for a libumlinux is to provide infrastructure such
+> as our linked-lists and other kernel formatting so that we can take
+> kernel code directly to userspace for test and debug (assuming that
+> there are no hardware dependencies or things that we can't mock out)
+> 
+> I think all of this could complement kunit of course - this isn't
+> suggesting an alternative implementation :-)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/dma-direct.h  |  17 -----
- include/linux/dma-mapping.h | 138 +++++++++++++++++++++++++++++++-----
- kernel/dma/direct.c         |  13 ++--
- 3 files changed, 127 insertions(+), 41 deletions(-)
+I suspect the reason Luis cc'd me on this is that we already have some
+artisinally-crafted userspace kernel-mocking interfaces under tools/.
+The tools/testing/radix-tree directory is the source of some of this,
+but I've been moving pieces out into tools/ more generally where it
+makes sense to.
 
-diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-index 3b0a3ea3876d..b7338702592a 100644
---- a/include/linux/dma-direct.h
-+++ b/include/linux/dma-direct.h
-@@ -60,22 +60,5 @@ void dma_direct_free_pages(struct device *dev, size_t size, void *cpu_addr,
- struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
- 		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs);
- void __dma_direct_free_pages(struct device *dev, size_t size, struct page *page);
--dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
--		unsigned long offset, size_t size, enum dma_data_direction dir,
--		unsigned long attrs);
--void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
--		size_t size, enum dma_data_direction dir, unsigned long attrs);
--int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
--		enum dma_data_direction dir, unsigned long attrs);
--void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
--		int nents, enum dma_data_direction dir, unsigned long attrs);
--void dma_direct_sync_single_for_device(struct device *dev,
--		dma_addr_t addr, size_t size, enum dma_data_direction dir);
--void dma_direct_sync_sg_for_device(struct device *dev,
--		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
--void dma_direct_sync_single_for_cpu(struct device *dev,
--		dma_addr_t addr, size_t size, enum dma_data_direction dir);
--void dma_direct_sync_sg_for_cpu(struct device *dev,
--		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
- int dma_direct_supported(struct device *dev, u64 mask);
- #endif /* _LINUX_DMA_DIRECT_H */
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 8916499d2805..648ca7da3bb3 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -221,6 +221,69 @@ static inline const struct dma_map_ops *get_dma_ops(struct device *dev)
- }
- #endif
- 
-+static inline bool dma_is_direct(const struct dma_map_ops *ops)
-+{
-+	return IS_ENABLED(CONFIG_DMA_DIRECT_OPS) && ops == &dma_direct_ops;
-+}
-+
-+/*
-+ * All the dma_direct_* declarations are here just for the indirect call bypass,
-+ * and must not be used directly drivers!
-+ */
-+dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
-+		unsigned long offset, size_t size, enum dma_data_direction dir,
-+		unsigned long attrs);
-+int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
-+		enum dma_data_direction dir, unsigned long attrs);
-+
-+#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
-+    defined(CONFIG_SWIOTLB)
-+void dma_direct_sync_single_for_device(struct device *dev,
-+		dma_addr_t addr, size_t size, enum dma_data_direction dir);
-+void dma_direct_sync_sg_for_device(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
-+#else
-+static inline void dma_direct_sync_single_for_device(struct device *dev,
-+		dma_addr_t addr, size_t size, enum dma_data_direction dir)
-+{
-+}
-+static inline void dma_direct_sync_sg_for_device(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
-+{
-+}
-+#endif
-+
-+#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
-+    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL) || \
-+    defined(CONFIG_SWIOTLB)
-+void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs);
-+void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
-+		int nents, enum dma_data_direction dir, unsigned long attrs);
-+void dma_direct_sync_single_for_cpu(struct device *dev,
-+		dma_addr_t addr, size_t size, enum dma_data_direction dir);
-+void dma_direct_sync_sg_for_cpu(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
-+#else
-+static inline void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs)
-+{
-+}
-+static inline void dma_direct_unmap_sg(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir,
-+		unsigned long attrs)
-+{
-+}
-+static inline void dma_direct_sync_single_for_cpu(struct device *dev,
-+		dma_addr_t addr, size_t size, enum dma_data_direction dir)
-+{
-+}
-+static inline void dma_direct_sync_sg_for_cpu(struct device *dev,
-+		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
-+{
-+}
-+#endif
-+
- static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
- 					      size_t size,
- 					      enum dma_data_direction dir,
-@@ -231,9 +294,12 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
- 
- 	BUG_ON(!valid_dma_direction(dir));
- 	debug_dma_map_single(dev, ptr, size);
--	addr = ops->map_page(dev, virt_to_page(ptr),
--			     offset_in_page(ptr), size,
--			     dir, attrs);
-+	if (dma_is_direct(ops))
-+		addr = dma_direct_map_page(dev, virt_to_page(ptr),
-+				offset_in_page(ptr), size, dir, attrs);
-+	else
-+		addr = ops->map_page(dev, virt_to_page(ptr),
-+				offset_in_page(ptr), size, dir, attrs);
- 	debug_dma_map_page(dev, virt_to_page(ptr),
- 			   offset_in_page(ptr), size,
- 			   dir, addr, true);
-@@ -248,8 +314,12 @@ static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->unmap_page)
--		ops->unmap_page(dev, addr, size, dir, attrs);
-+	if (ops->unmap_page) {
-+		if (dma_is_direct(ops))
-+			dma_direct_unmap_page(dev, addr, size, dir, attrs);
-+		else
-+			ops->unmap_page(dev, addr, size, dir, attrs);
-+	}
- 	debug_dma_unmap_page(dev, addr, size, dir, true);
- }
- 
-@@ -265,7 +335,10 @@ static inline int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
- 	int ents;
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	ents = ops->map_sg(dev, sg, nents, dir, attrs);
-+	if (dma_is_direct(ops))
-+		ents = dma_direct_map_sg(dev, sg, nents, dir, attrs);
-+	else
-+		ents = ops->map_sg(dev, sg, nents, dir, attrs);
- 	BUG_ON(ents < 0);
- 	debug_dma_map_sg(dev, sg, nents, ents, dir);
- 
-@@ -280,8 +353,12 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
- 
- 	BUG_ON(!valid_dma_direction(dir));
- 	debug_dma_unmap_sg(dev, sg, nents, dir);
--	if (ops->unmap_sg)
--		ops->unmap_sg(dev, sg, nents, dir, attrs);
-+	if (ops->unmap_sg) {
-+		if (dma_is_direct(ops))
-+			dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
-+		else
-+			ops->unmap_sg(dev, sg, nents, dir, attrs);
-+	}
- }
- 
- static inline dma_addr_t dma_map_page_attrs(struct device *dev,
-@@ -294,7 +371,10 @@ static inline dma_addr_t dma_map_page_attrs(struct device *dev,
- 	dma_addr_t addr;
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	addr = ops->map_page(dev, page, offset, size, dir, attrs);
-+	if (dma_is_direct(ops))
-+		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
-+	else
-+		addr = ops->map_page(dev, page, offset, size, dir, attrs);
- 	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
- 
- 	return addr;
-@@ -308,8 +388,12 @@ static inline void dma_unmap_page_attrs(struct device *dev,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->unmap_page)
--		ops->unmap_page(dev, addr, size, dir, attrs);
-+	if (ops->unmap_page) {
-+		if (dma_is_direct(ops))
-+			dma_direct_unmap_page(dev, addr, size, dir, attrs);
-+		else
-+			ops->unmap_page(dev, addr, size, dir, attrs);
-+	}
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
- }
- 
-@@ -355,8 +439,12 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->sync_single_for_cpu)
--		ops->sync_single_for_cpu(dev, addr, size, dir);
-+	if (ops->sync_single_for_cpu) {
-+		if (dma_is_direct(ops))
-+			dma_direct_sync_single_for_cpu(dev, addr, size, dir);
-+		else
-+			ops->sync_single_for_cpu(dev, addr, size, dir);
-+	}
- 	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
- }
- 
-@@ -374,8 +462,12 @@ static inline void dma_sync_single_for_device(struct device *dev,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->sync_single_for_device)
--		ops->sync_single_for_device(dev, addr, size, dir);
-+	if (ops->sync_single_for_device) {
-+		if (dma_is_direct(ops))
-+			dma_direct_sync_single_for_device(dev, addr, size, dir);
-+		else
-+			ops->sync_single_for_device(dev, addr, size, dir);
-+	}
- 	debug_dma_sync_single_for_device(dev, addr, size, dir);
- }
- 
-@@ -393,8 +485,12 @@ dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->sync_sg_for_cpu)
--		ops->sync_sg_for_cpu(dev, sg, nelems, dir);
-+	if (ops->sync_sg_for_cpu) {
-+		if (dma_is_direct(ops))
-+			dma_direct_sync_sg_for_cpu(dev, sg, nelems, dir);
-+		else
-+			ops->sync_sg_for_cpu(dev, sg, nelems, dir);
-+	}
- 	debug_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
- }
- 
-@@ -405,8 +501,12 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	if (ops->sync_sg_for_device)
--		ops->sync_sg_for_device(dev, sg, nelems, dir);
-+	if (ops->sync_sg_for_device) {
-+		if (dma_is_direct(ops))
-+			dma_direct_sync_sg_for_device(dev, sg, nelems, dir);
-+		else
-+			ops->sync_sg_for_device(dev, sg, nelems, dir);
-+	}
- 	debug_dma_sync_sg_for_device(dev, sg, nelems, dir);
- 
- }
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 372c1955454a..cd535e7c67d7 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -223,6 +223,7 @@ void dma_direct_sync_single_for_device(struct device *dev,
- 	if (!dev_is_dma_coherent(dev))
- 		arch_sync_dma_for_device(dev, paddr, size, dir);
- }
-+EXPORT_SYMBOL(dma_direct_sync_single_for_device);
- 
- void dma_direct_sync_sg_for_device(struct device *dev,
- 		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
-@@ -240,6 +241,7 @@ void dma_direct_sync_sg_for_device(struct device *dev,
- 					dir);
- 	}
- }
-+EXPORT_SYMBOL(dma_direct_sync_sg_for_device);
- #endif
- 
- #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
-@@ -258,6 +260,7 @@ void dma_direct_sync_single_for_cpu(struct device *dev,
- 	if (is_swiotlb_buffer(paddr))
- 		swiotlb_tbl_sync_single(dev, paddr, size, dir, SYNC_FOR_CPU);
- }
-+EXPORT_SYMBOL(dma_direct_sync_single_for_cpu);
- 
- void dma_direct_sync_sg_for_cpu(struct device *dev,
- 		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
-@@ -277,6 +280,7 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
- 	if (!dev_is_dma_coherent(dev))
- 		arch_sync_dma_for_cpu_all(dev);
- }
-+EXPORT_SYMBOL(dma_direct_sync_sg_for_cpu);
- 
- void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
-@@ -289,6 +293,7 @@ void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
- 	if (is_swiotlb_buffer(phys))
- 		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
- }
-+EXPORT_SYMBOL(dma_direct_unmap_page);
- 
- void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
- 		int nents, enum dma_data_direction dir, unsigned long attrs)
-@@ -300,11 +305,7 @@ void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
- 		dma_direct_unmap_page(dev, sg->dma_address, sg_dma_len(sg), dir,
- 			     attrs);
- }
--#else
--void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
--		int nents, enum dma_data_direction dir, unsigned long attrs)
--{
--}
-+EXPORT_SYMBOL(dma_direct_unmap_sg);
- #endif
- 
- static inline bool dma_direct_possible(struct device *dev, dma_addr_t dma_addr,
-@@ -331,6 +332,7 @@ dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
- 		arch_sync_dma_for_device(dev, phys, size, dir);
- 	return dma_addr;
- }
-+EXPORT_SYMBOL(dma_direct_map_page);
- 
- int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
- 		enum dma_data_direction dir, unsigned long attrs)
-@@ -352,6 +354,7 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
- 	dma_direct_unmap_sg(dev, sgl, i, dir, attrs | DMA_ATTR_SKIP_CPU_SYNC);
- 	return 0;
- }
-+EXPORT_SYMBOL(dma_direct_map_sg);
- 
- /*
-  * Because 32-bit DMA masks are so common we expect every architecture to be
--- 
-2.19.1
+We have liburcu already, which is good.  The main sticking points are:
 
+ - No emulation of kernel thread interfaces
+ - The kernel does not provide the ability to aggressively fail memory
+   allocations (which is useful when trying to exercise the memory failure
+   paths).
+ - printk has started adding a lot of %pX enhancements which printf
+   obviously doesn't know about.
+ - No global pseudo-random number generator in the kernel.  Probably
+   we should steal the i915 one.
+
+I know Dan Williams has also done a lot of working mocking kernel
+interfaces for libnvdimm.
