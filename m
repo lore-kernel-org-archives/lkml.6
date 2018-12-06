@@ -5,81 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E60C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639DAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2527F2082D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:40:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2527F2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 32A1E21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A1E21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeLFIk0 (ORCPT
+        id S1729228AbeLFIkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:40:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46484 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727832AbeLFIkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:40:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EBDCAADE6;
-        Thu,  6 Dec 2018 08:40:23 +0000 (UTC)
+        Thu, 6 Dec 2018 03:40:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35372 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728941AbeLFIkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 03:40:41 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 528E95276F;
+        Thu,  6 Dec 2018 08:40:41 +0000 (UTC)
+Received: from nostromo.localnet (ovpn-204-252.brq.redhat.com [10.40.204.252])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1305060CD1;
+        Thu,  6 Dec 2018 08:40:39 +0000 (UTC)
+Subject: Re: [PATCH 0/2] Fix return code and improve feature check for
+ synthetic uevents
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     rafael@kernel.org, jeyu@kernel.org, linux-kernel@vger.kernel.org,
+        msekleta@redhat.com
+References: <20181205112745.12276-1-prajnoha@redhat.com>
+ <20181205163044.GB7185@kroah.com>
+From:   Peter Rajnoha <prajnoha@redhat.com>
+Message-ID: <a2ca5544-55d2-10d4-cc6e-a3554c84b341@redhat.com>
+Date:   Thu, 6 Dec 2018 09:40:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Dec 2018 09:40:23 +0100
-From:   osalvador@suse.de
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>, owner-linux-mm@kvack.org
-Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
- be offlined
-In-Reply-To: <20181206083206.GC1286@dhcp22.suse.cz>
-References: <20181203100309.14784-1-mhocko@kernel.org>
- <20181205122918.GL1286@dhcp22.suse.cz>
- <20181205165716.GS1286@dhcp22.suse.cz>
- <20181206052137.GA28595@hori1.linux.bs1.fc.nec.co.jp>
- <20181206083206.GC1286@dhcp22.suse.cz>
-Message-ID: <ec66e12d8140ba117a0e98c37f6557bd@suse.de>
-X-Sender: osalvador@suse.de
-User-Agent: Roundcube Webmail
+In-Reply-To: <20181205163044.GB7185@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 06 Dec 2018 08:40:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> This commit adds shake_page() for mlocked pages to make sure that the 
->> target
->> page is flushed out from LRU cache. Without this shake_page(), 
->> subsequent
->> delete_from_lru_cache() (from me_pagecache_clean()) fails to isolate 
->> it and
->> the page will finally return back to LRU list.  So this scenario leads 
->> to
->> "hwpoisoned by still linked to LRU list" page.
+Dňa 5. 12. 2018 o 17:30 Greg KH napísal(a):
+> On Wed, Dec 05, 2018 at 12:27:43PM +0100, Peter Rajnoha wrote:
+>> Two small patches to aid handling of synthetic uevents back in userspace:
+>>
+>>   - Return error code back to userspace on /sys/.../uevent file write
+>>     failure so userspace knows and it can act accordingly.
+>>
+>>   - Add new 'kernel/uevent_features' sysfs file to make it possible for
+>>     userspace to check that the extended synthetic uevent arguments are
+>>     supported without relying on kernel version check only.
+>>
+>> Peter Rajnoha (2):
+>>   kobject: return error code if writing /sys/.../uevent fails
+>>   kobject: add kernel/uevent_features sysfs file
 > 
-> OK, I see. So does that mean that the LRU handling is no longer needed
-> and there is a guanratee that all kernels with the above commit cannot
-> ever get an LRU page?
+> Did you send this series twice?  Which one should I pay attention to?
+> 
+> confused,
+> 
+> greg k-h
+> 
 
-For the sake of completeness:
+They're same, I just sent it again because I forgot to add the LKML list
+with the first one. So please take the latter one with that list on CC.
+Sorry for the confusion.
 
-I made a quick test reverting 286c469a988 on upstream kernel.
-As expected, the poisoned page is in LRU when it hits do_migrate_range,
-and so, the migration path is taken and I see the exact failure I saw 
-on. 4.4
-
-
-Oscar Salvador
----
-Suse L3
-
-
-
+-- 
+Peter
