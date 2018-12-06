@@ -3,159 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9061BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE498C07E85
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 597612146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597612146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 638AF214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638AF214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbeLFBJ3 (ORCPT
+        id S1728862AbeLFBJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:09:29 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40651 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728758AbeLFBJ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:09:29 -0500
-X-UUID: f925863b2cee4e619ee0f4992650c4a3-20181206
-X-UUID: f925863b2cee4e619ee0f4992650c4a3-20181206
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <jianjun.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2003207512; Thu, 06 Dec 2018 09:09:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 6 Dec 2018 09:09:20 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 6 Dec 2018 09:09:19 +0800
-From:   Jianjun Wang <jianjun.wang@mediatek.com>
-To:     <ryder.lee@mediatek.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <lorenzo.pieralisi@arm.com>,
-        <matthias.bgg@gmail.com>, <linux-pci@vger.kernel.org>
-CC:     <mark.rutland@arm.com>, <linux-mediatek@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>
-Subject: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
-Date:   Thu, 6 Dec 2018 09:09:13 +0800
-Message-ID: <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
-References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
+        Wed, 5 Dec 2018 20:09:33 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:7790 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728758AbeLFBJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 20:09:32 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 4118F4AFD19892376DF3;
+        Thu,  6 Dec 2018 09:09:27 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB619KFv034498;
+        Thu, 6 Dec 2018 09:09:20 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120609094780-15005750 ;
+          Thu, 6 Dec 2018 09:09:47 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] platform/x86: intel_ips: Remove unnecessary NULL check before debugfs_remove_recursive
+Date:   Thu, 6 Dec 2018 09:09:14 +0800
+Message-Id: <20181206010914.21964-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: A023BCEA8D70FAFF7E6DD84C093D03E3E7BD40AA7C98361D308535D6AD2714F52000:8
-X-MTK:  N
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-06 09:09:48,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-06 09:09:09
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB619KFv034498
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MT7629 is an arm platform SoC which has the same PCIe IP with MT7622.
+debugfs=5Fremove=5Frecursive() accepts a NULL parameter and returns
+immediately, there's no need for a NULL check in the caller.
 
-The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
-in arm64 but bogus alignment values at arm32, the pcie device and devices
-behind this bridge will not be enabled. Fix it's BAR0 resource size to
-guarantee the pcie devices will be enabled correctly.
+This issue was detected with the help of Coccinelle.
 
-The HW default value of its device id is invalid, fix it's device id to
-match the hardware implementation.
-
-Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Darren Hart <dvhart@infradead.org>
+CC: Andy Shevchenko <andy@infradead.org>
+CC: platform-driver-x86@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
 ---
- drivers/pci/controller/pcie-mediatek.c | 26 ++++++++++++++++++++++++++
- include/linux/pci_ids.h                |  1 +
- 2 files changed, 27 insertions(+)
+ drivers/platform/x86/intel=5Fips.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index d20cf461ba00..f8937cc3c87c 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -73,6 +73,7 @@
- #define PCIE_MSI_VECTOR		0x0c0
- 
- #define PCIE_CONF_VEND_ID	0x100
-+#define PCIE_CONF_DEVICE_ID	0x102
- #define PCIE_CONF_CLASS_ID	0x106
- 
- #define PCIE_INT_MASK		0x420
-@@ -135,12 +136,14 @@ struct mtk_pcie_port;
- /**
-  * struct mtk_pcie_soc - differentiate between host generations
-  * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-+ * @need_fix_device_id: whether this host's device ID needed to be fixed or not
-  * @ops: pointer to configuration access functions
-  * @startup: pointer to controller setting functions
-  * @setup_irq: pointer to initialize IRQ functions
-  */
- struct mtk_pcie_soc {
- 	bool need_fix_class_id;
-+	bool need_fix_device_id;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
- 	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-@@ -692,6 +695,11 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 		writew(val, port->base + PCIE_CONF_CLASS_ID);
- 	}
- 
-+	if (soc->need_fix_device_id) {
-+		val = PCI_DEVICE_ID_MEDIATEK_7629;
-+		writew(val, port->base + PCIE_CONF_DEVICE_ID);
-+	}
-+
- 	/* 100ms timeout value should be enough for Gen1/2 training */
- 	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
- 				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-@@ -1238,11 +1246,29 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.setup_irq = mtk_pcie_setup_irq,
- };
- 
-+static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
-+	.need_fix_class_id = true,
-+	.need_fix_device_id = true,
-+	.ops = &mtk_pcie_ops_v2,
-+	.startup = mtk_pcie_startup_port_v2,
-+	.setup_irq = mtk_pcie_setup_irq,
-+};
-+
-+static void mtk_fixup_bar_size(struct pci_dev *dev)
-+{
-+	struct resource *dev_res = &dev->resource[0];
-+	/* 32bit resource length will calculate size to 0, set it smaller */
-+	dev_res->end = 0xfffffffe;
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MEDIATEK, PCI_DEVICE_ID_MEDIATEK_7629,
-+			 mtk_fixup_bar_size);
-+
- static const struct of_device_id mtk_pcie_ids[] = {
- 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
- 	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
-+	{ .compatible = "mediatek,mt7629-pcie", .data = &mtk_pcie_soc_mt7629 },
- 	{},
- };
- 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 69f0abe1ba1a..77b278bac3a8 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2126,6 +2126,7 @@
- #define PCI_VENDOR_ID_MYRICOM		0x14c1
- 
- #define PCI_VENDOR_ID_MEDIATEK		0x14c3
-+#define PCI_DEVICE_ID_MEDIATEK_7629	0x7629
- 
- #define PCI_VENDOR_ID_TITAN		0x14D2
- #define PCI_DEVICE_ID_TITAN_010L	0x8001
--- 
+diff --git a/drivers/platform/x86/intel=5Fips.c b/drivers/platform/x86/inte=
+l=5Fips.c
+index 225638a1b09e..f8175b972537 100644
+--- a/drivers/platform/x86/intel=5Fips.c
++++ b/drivers/platform/x86/intel=5Fips.c
+@@ -1300,9 +1300,7 @@ static const struct file=5Foperations ips=5Fdebugfs=
+=5Fops =3D {
+=20
+ static void ips=5Fdebugfs=5Fcleanup(struct ips=5Fdriver *ips)
+ {
+-	if (ips->debug=5Froot)
+-		debugfs=5Fremove=5Frecursive(ips->debug=5Froot);
+-	return;
++	debugfs=5Fremove=5Frecursive(ips->debug=5Froot);
+ }
+=20
+ static void ips=5Fdebugfs=5Finit(struct ips=5Fdriver *ips)
+--=20
 2.19.1
 
