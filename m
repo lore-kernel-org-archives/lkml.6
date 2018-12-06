@@ -7,56 +7,49 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55600C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84ACC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1917720672
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EBD720892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107237;
-	bh=n2etj/aLbhXQZz7JkwKYtaUphVyn2ZjHwRpAYdxSqtM=;
+	s=default; t=1544107241;
+	bh=FTMk4WcfPQeBq33644+IZ/94Hn3JG/xQT6GJwP7oJGo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0kQ8HKRadcbMyH/GLHNF2c79bqXxMh2gouhlqHAx9DOGPc+bKv9s+WI8vhYHyFX+F
-	 gjnDnwhc4BLPwEpboXoOMwp4Ub1NLGFC5hA3kR5LwISv0dalT72Fn6uYQYUx2A81lt
-	 fCXKNdNVNpS9gaau+HnNvHNlrPei+6msSSrTQb4Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1917720672
+	b=cjJaSHDRBW7G8o6UgLENAcOy5mIWGkOtvzZGZZtBBD6hC3IYEHAd965qadwqx7nw9
+	 2GuM1fkKR5AsHwbmRiwR3v2/2WuoYdg8OXwaNVEk+D6Dh7LfCeRNz4IT/7JxBd2+8m
+	 pSQmSFbIKtRAcjm+9ydRjy/+oxznRoQQh1TeuFy8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EBD720892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbeLFOkg (ORCPT
+        id S1730016AbeLFOkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:40:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44638 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729966AbeLFOkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:32 -0500
+        id S1729966AbeLFOkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC4E520661;
-        Thu,  6 Dec 2018 14:40:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5ACD20661;
+        Thu,  6 Dec 2018 14:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107231;
-        bh=n2etj/aLbhXQZz7JkwKYtaUphVyn2ZjHwRpAYdxSqtM=;
+        s=default; t=1544107236;
+        bh=FTMk4WcfPQeBq33644+IZ/94Hn3JG/xQT6GJwP7oJGo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWcrLv5LN7bimI2LJNgPtrvn6ZpnnIRDpunthYxAjMhOek62hCQIJv7wJpvEwticE
-         BCUqfjgDSyLf/W8Tb0a/eWPHqg6x94YsjdYJRbTgHzkJWfJJtYKH/tSyQw7rfERq1W
-         4DZfEbrLrVdoxwS4GgInIkYh4wQ/JZycmNhRVRIk=
+        b=K2YZhqvJDOhXbTwAXqZ4o1ml8njrucnaQCbIw+XDunMt7JWSfzsmbdm3Un0bMmKXC
+         I8W0+HVPKeUqDMYsYF5PrJKEbw8s7L+HYbc62bm5Tyj2yEATwD6qipCTpUtZ35P5Sx
+         EIVQ/vRrQoQb9NCNNAWewPI2AdY7JPC8ZsYfKGi4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 24/41] userfaultfd: shmem: UFFDIO_COPY: set the page dirty if VM_WRITE is not set
-Date:   Thu,  6 Dec 2018 15:39:04 +0100
-Message-Id: <20181206142951.798212731@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 4.19 26/41] kgdboc: Fix warning with module build
+Date:   Thu,  6 Dec 2018 15:39:06 +0100
+Message-Id: <20181206142952.013741780@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -75,64 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Laura Abbott <labbott@redhat.com>
 
-commit dcf7fe9d89763a28e0f43975b422ff141fe79e43 upstream.
+commit 1cd25cbb2fedbc777f3a8c3cb1ba69b645aeaa64 upstream.
 
-Set the page dirty if VM_WRITE is not set because in such case the pte
-won't be marked dirty and the page would be reclaimed without writepage
-(i.e.  swapout in the shmem case).
+After 2dd453168643 ("kgdboc: Fix restrict error"), kgdboc_option_setup is
+now only used when built in, resulting in a warning when compiled as a
+module:
 
-This was found by source review.  Most apps (certainly including QEMU)
-only use UFFDIO_COPY on PROT_READ|PROT_WRITE mappings or the app can't
-modify the memory in the first place.  This is for correctness and it
-could help the non cooperative use case to avoid unexpected data loss.
+drivers/tty/serial/kgdboc.c:134:12: warning: 'kgdboc_option_setup' defined but not used [-Wunused-function]
+ static int kgdboc_option_setup(char *opt)
+            ^~~~~~~~~~~~~~~~~~~
 
-Link: http://lkml.kernel.org/r/20181126173452.26955-6-aarcange@redhat.com
-Reviewed-by: Hugh Dickins <hughd@google.com>
-Cc: stable@vger.kernel.org
-Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
-Reported-by: Hugh Dickins <hughd@google.com>
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Peter Xu <peterx@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Move the function under the appropriate ifdef for builtin only.
+
+Fixes: 2dd453168643 ("kgdboc: Fix restrict error")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/shmem.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/tty/serial/kgdboc.c |   37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2325,6 +2325,16 @@ static int shmem_mfill_atomic_pte(struct
- 	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
- 	if (dst_vma->vm_flags & VM_WRITE)
- 		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
-+	else {
-+		/*
-+		 * We don't set the pte dirty if the vma has no
-+		 * VM_WRITE permission, so mark the page dirty or it
-+		 * could be freed from under us. We could do it
-+		 * unconditionally before unlock_page(), but doing it
-+		 * only if VM_WRITE is not set is faster.
-+		 */
-+		set_page_dirty(page);
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -128,24 +128,6 @@ static void kgdboc_unregister_kbd(void)
+ #define kgdboc_restore_input()
+ #endif /* ! CONFIG_KDB_KEYBOARD */
+ 
+-static int kgdboc_option_setup(char *opt)
+-{
+-	if (!opt) {
+-		pr_err("kgdboc: config string not provided\n");
+-		return -EINVAL;
+-	}
+-
+-	if (strlen(opt) >= MAX_CONFIG_LEN) {
+-		printk(KERN_ERR "kgdboc: config string too long\n");
+-		return -ENOSPC;
+-	}
+-	strcpy(config, opt);
+-
+-	return 0;
+-}
+-
+-__setup("kgdboc=", kgdboc_option_setup);
+-
+ static void cleanup_kgdboc(void)
+ {
+ 	if (kgdb_unregister_nmi_console())
+@@ -314,6 +296,25 @@ static struct kgdb_io kgdboc_io_ops = {
+ };
+ 
+ #ifdef CONFIG_KGDB_SERIAL_CONSOLE
++static int kgdboc_option_setup(char *opt)
++{
++	if (!opt) {
++		pr_err("config string not provided\n");
++		return -EINVAL;
 +	}
- 
- 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
- 
-@@ -2358,6 +2368,7 @@ out:
- 	return ret;
- out_release_uncharge_unlock:
- 	pte_unmap_unlock(dst_pte, ptl);
-+	ClearPageDirty(page);
- 	delete_from_page_cache(page);
- out_release_uncharge:
- 	mem_cgroup_cancel_charge(page, memcg, false);
++
++	if (strlen(opt) >= MAX_CONFIG_LEN) {
++		pr_err("config string too long\n");
++		return -ENOSPC;
++	}
++	strcpy(config, opt);
++
++	return 0;
++}
++
++__setup("kgdboc=", kgdboc_option_setup);
++
++
+ /* This is only available if kgdboc is a built in for early debugging */
+ static int __init kgdboc_early_init(char *opt)
+ {
 
 
