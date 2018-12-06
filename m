@@ -2,78 +2,72 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C94C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C361C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23EFB2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544082578;
-	bh=IhsvX3tAIC6PSu1rEDbS+2fb0icL3i6xBY/uXKm9xhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1bi9SJvbbJnYQfP0c6scNToJbAo1EZZAYgg0hVNEpes0TRNzwLFeyc2I1jFgRxRWP
-	 5fGZVJVHlPxyUuvVY1SYC6VJXiDxuFPA3/hgcSwqXrek7OjuOtjKYHH9e1fwy3YE0h
-	 EtnqohYLKy7Ddz9hrrw8vXYIafGr+yDA2aGeVRTg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23EFB2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CC2C321479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:49:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2C321479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redracingparts.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbeLFHth (ORCPT
+        id S1729185AbeLFHt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:49:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45584 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 02:49:56 -0500
+Received: from mx4.mailmox.it ([78.47.95.75]:42384 "EHLO mx4.mailmox.it"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728294AbeLFHtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:49:36 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83C9A20892;
-        Thu,  6 Dec 2018 07:49:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544082576;
-        bh=IhsvX3tAIC6PSu1rEDbS+2fb0icL3i6xBY/uXKm9xhM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2YrpcLFx87DIwU5MudZRzhQ/7Jp3lcDPOwWEGYSWDZLuwFJZfhL6CRgOIBSJRF4Wv
-         qOkHysmAAt6PNB4M+8KxoDjH3nMZNc3U57P5lPMx132yklg14mpdHQ15gVxF+qGdgf
-         CoNMCcOxAFvuHFx6U7QSS5EMxhhwqROQGWrEj8uI=
-Date:   Thu, 6 Dec 2018 15:48:55 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 1/4] ARM: dts: imx6qdl-sabresd: Move regulators
- outside of "simple-bus"
-Message-ID: <20181206074853.GL3987@dragon>
-References: <1544060203-22163-1-git-send-email-Anson.Huang@nxp.com>
+        id S1728294AbeLFHt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 02:49:56 -0500
+X-Greylist: delayed 496 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Dec 2018 02:49:55 EST
+Received: from mx7.mailmox.it (mx7.mailmox.it [217.146.207.17])
+        by mx4.mailmox.it (Postfix) with ESMTP id 195005413F
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 08:41:38 +0100 (CET)
+Received: from mx6.mailmox.it (mx6.mailmox.it [217.146.207.33])
+        by mx7.mailmox.it (Postfix) with ESMTPS id 2FB6F60BA4
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 08:41:37 +0100 (CET)
+Received: from lx.redracingparts.com (red.defende.it [217.146.207.57])
+        by mx6.mailmox.it (Postfix) with ESMTPSA id 20781210B8
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 08:41:37 +0100 (CET)
+Date:   Thu, 6 Dec 2018 08:41:37 +0100
+To:     linux-kernel@vger.kernel.org
+From:   "RED Racing Parts (Info)" <newsletter@redracingparts.com>
+Reply-To: "RED Racing Parts (Info)" <red@redracingparts.com>
+Subject: New RED Racing Parts: 10% / 15% off and free shipping
+Message-ID: <i9qeLgYoU9b0xPsqf6lei9Yb9gBvrUyN7AB9330g3E@lx.redracingparts.com>
+X-Mailer: PHPMailer 6.0.5 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544060203-22163-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=iso-8859-1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:42:30AM +0000, Anson Huang wrote:
-> From: Fabio Estevam <festevam@gmail.com>
-> 
-> It is not recommended to place regulators inside "simple-bus", so move
-> them out to make it cleaner the addition of new regulators.
-> 
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
 
-Applied all, thanks.
+Dear Rider,
+
+RED Racing Parts offers the new full line of carbon fiber parts for your motorbike.
+
+For road / offroad motorcycles, visit our website on 
+https://www.redracingparts.com/english/motorbikesmotorcycles/productsandcomponents/general/intro/carbonfibrefiber.php
+
+For trial motorcycles, visit our website on 
+https://www.redracingparts.com/english/motorbikesmotorcycles/productsandcomponents/general/intro/2mCarbonFiberParts.php
+
+Free shipping and 10% OFF (15% OFF paying with Bitcoin) for today only.
+
+
+RED Racing Parts Staff
+
+
+
+
+If you found this email useful, please forward it on to your friends.
+
+To unsubscribe our newsletters click here
+https://www.redracingparts.com/news/u.php?l=e&p=CVAidQZXnFCIHWM8B9U2linux-kernel@vger.kernel.org
+
+
