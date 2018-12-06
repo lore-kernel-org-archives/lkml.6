@@ -2,91 +2,77 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8B0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E081FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0195020878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0195020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id B10D820878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:03:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10D820878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbeLFNC4 (ORCPT
+        id S1729582AbeLFNDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:02:56 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:63606 "EHLO mxhk.zte.com.cn"
+        Thu, 6 Dec 2018 08:03:33 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:41822 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeLFNCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:02:55 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 024FCE376B459117948D;
-        Thu,  6 Dec 2018 21:02:53 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB6D2mEx080766;
-        Thu, 6 Dec 2018 21:02:48 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120621032063-15152368 ;
-          Thu, 6 Dec 2018 21:03:20 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     Hannes Reinecke <hare@suse.com>, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH] scsi: aic7xxx: Use kmemdup instead of duplicating its function
-Date:   Thu, 6 Dec 2018 21:02:18 +0800
-Message-Id: <20181206130218.19776-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
+        id S1728939AbeLFNDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:03:33 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gUtJP-00069e-HA; Thu, 06 Dec 2018 14:03:27 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     agajjar <Akash_Gajjar@mentor.com>
+Cc:     Oskari Lemmela <oskari@lemmela.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: rockpro64 fix video output chain
+Date:   Thu, 06 Dec 2018 14:03:27 +0100
+Message-ID: <3141294.pN5WgFrMoD@phil>
+In-Reply-To: <09287391-d541-cddb-4168-55ca6fee3f16@mentor.com>
+References: <20181201100817.20688-1-oskari@lemmela.net> <20181201100817.20688-3-oskari@lemmela.net> <09287391-d541-cddb-4168-55ca6fee3f16@mentor.com>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-06 21:03:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-06 21:02:36
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB6D2mEx080766
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmemdup has implemented the function that kmalloc() + memcpy().
-We prefer to kmemdup rather than code opened implementation.
+Am Mittwoch, 5. Dezember 2018, 14:03:29 CET schrieb agajjar:
+> 
+> On 12/1/2018 3:38 PM, Oskari Lemmela wrote:
+> > Rockpro64 is not able boot if kernel is compiled with
+> > CONFIG_DRM_ROCKCHIP=m
+> >
+> > Enable Rockpro64 board HDMI output to fix issue.
+> 
+> Hi Oskari,
+> 
+> Could you please describe this issue in detail.
+> 
+> I am not able to reproduce this issue if CONFIG_DRM_ROCKCHIP is compile 
+> in or as a loadable module at the same time hdmi node is present or not.
 
-This issue was detected with the help of coccinelle.
+I've now simply adjusted the commit message to:
+"arm64: dts: rockchip: enable hdmi output on rk3399-rockpro64
+    
+The rockpro64 does have hdmi support, so add the necessary
+devicetree node to enable it."
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Hannes Reinecke <hare@suse.com>
-CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
-CC: "Martin K. Petersen" <martin.petersen@oracle.com>
-CC: linux-scsi@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/scsi/aic7xxx/aic79xx=5Fcore.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+and applied it for 4.21.
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c b/drivers/scsi/aic7xxx/a=
-ic79xx=5Fcore.c
-index 9ee75c9a9aa1..3e72fac6d248 100644
---- a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
-+++ b/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
-@@ -9438,10 +9438,10 @@ ahd=5Floadseq(struct ahd=5Fsoftc *ahd)
- 	if (cs=5Fcount !=3D 0) {
-=20
- 		cs=5Fcount *=3D sizeof(struct cs);
--		ahd->critical=5Fsections =3D kmalloc(cs=5Fcount, GFP=5FATOMIC);
-+		ahd->critical=5Fsections =3D kmemdup(cs=5Ftable, cs=5Fcount,
-+						GFP=5FATOMIC);
- 		if (ahd->critical=5Fsections =3D=3D NULL)
- 			panic("ahd=5Floadseq: Could not malloc");
--		memcpy(ahd->critical=5Fsections, cs=5Ftable, cs=5Fcount);
- 	}
- 	ahd=5Foutb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
-=20
---=20
-2.19.1
+While it still would be good to find out where the issue comes from Oskari
+is seeing, the rockpro64 does have hdmi, so we can just enable it ;-)
+
+
+Heiko
+
 
