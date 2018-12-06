@@ -2,180 +2,99 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCD8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990B0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35ABF20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544120809;
-	bh=p4Z8Z7b5X2ovRh4clK0IoLz45oV6YqmfXPdNaDaia0c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Twe0vupwfVzhWTkkfEJILJxSyBASzazHzX8VxyWOFzSWaA0fSfOBsS587rJFKtD2B
-	 V3bEKLbNHjv0wRuOaJ8CPfc8cvfQOqzVbg9WWx3pspljngWaHkoVzSU/Vt6lk2PkmQ
-	 HoN+oorqE8u7gLTY+/ME6QTDGvXXjc77pFYlmqXg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35ABF20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6051120892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:27:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hINl6urH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6051120892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726085AbeLFS0s (ORCPT
+        id S1726100AbeLFS1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:26:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbeLFS0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:26:48 -0500
-Received: from gmail.com (unknown [104.132.1.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D61020892;
-        Thu,  6 Dec 2018 18:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544120806;
-        bh=p4Z8Z7b5X2ovRh4clK0IoLz45oV6YqmfXPdNaDaia0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ATxWtf2YodOhuHUnrQ7PJ5rlfcx2EcDvPo3v3G9VPZZafvr6o2AxPKeM63lOsLVjB
-         mjb0Qwf8mroMXCZ4gqvcACcTsKlteSHDj8kLdVSPLFC0iSrAsQzjKn6dgZQ7qhUmQg
-         73e/CPz+bVzd8VYPhsjh5rP9S7GpXR1/Lu9HxT4E=
-Date:   Thu, 6 Dec 2018 10:26:44 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
-Message-ID: <20181206182644.GB90507@gmail.com>
-References: <000000000000a722550577796543@google.com>
- <20181103015854.7380-1-ebiggers@kernel.org>
- <20181128231940.GB131170@gmail.com>
+        Thu, 6 Dec 2018 13:27:36 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:37864 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbeLFS1g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:27:36 -0500
+Received: by mail-ot1-f47.google.com with SMTP id 40so1342073oth.4;
+        Thu, 06 Dec 2018 10:27:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5n+zWl4xbkMx8mGg8ZcgMlW8k79qQc8MJHDCwegTH0w=;
+        b=hINl6urHHIw71EbDX4T8ARBUFbs3OCSyX/9brproxk85J2cDDftpPLlUAMJZOfBFfq
+         DJknljxyDEpn0BbawoqJhOLEUhQsFe1rRknYWoMuFPNJkxx59SfRn8/zlk6U0k4RwDwE
+         gOBEOqmsDdu+u04duI2/vYaUpHqpRW1vBGmCkCymRiZ7AaxesTcqvYBWje/sMnlfTZYH
+         dOtgbC5zDYw4zEpZRtsQkXTE6xGTSJlPXWpx3QAaxoyeZ0ZXRyPVFpzKAr+Uau8hMF4Q
+         LaqcPyUVmBm4OmBh91LyCFAU59KW16pHcKjt1D15nUXXP5ZA1oB0s3OMCg8d4d8Q8WF8
+         kMfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5n+zWl4xbkMx8mGg8ZcgMlW8k79qQc8MJHDCwegTH0w=;
+        b=K5K4KntjybWoGoDJG02EeMOj0P8uZOwXSBA7Do/wXwmN3pKzzhNMdnAN4batB27cXB
+         U9UhUxONOxAyq54hbRPx+EPSX92SQ0Ia2VZOtxLneVXdj92GMWAZCpuD1zo2gDQYrIMU
+         rQUxG5qkiAHbikc68ywO4fliDCdJzDLOKsZy26UGXCViZEYG9j+/jlmCr54FTnF6rZDa
+         QfJWPAgq7Gvy1v5BA25QUVBv8M8VRJGlK2N4guRaVYlvmsgjDlx5LxG26tlrUit771Wm
+         u35JaoYcyZ11ZutPpZI/jj4rqHHs5b5ulks3HJzE1YwGsMRGKkzF+fD/WZ/8mFEiApW9
+         JQqA==
+X-Gm-Message-State: AA+aEWYi4eu27odCDa/bf0kUggtLCbqTT48WKBiVs15B6G9+oI00OD6u
+        w7UjtJuOhdycv+l1w1FN9R6APDGb0YE2nDu6CvY=
+X-Google-Smtp-Source: AFSGD/XmSXjTsgXmDFqMhPPtYTK67ngc4vbkAoPzCY7lqQEEjgwdmfVkxYiKaapEiIeOSkDWKVuVDZhfcP/UENyYus0=
+X-Received: by 2002:a9d:1b0:: with SMTP id e45mr19997378ote.16.1544120855310;
+ Thu, 06 Dec 2018 10:27:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128231940.GB131170@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181025110530.22826-1-muvarov@gmail.com> <20181025230611.GE6276@lunn.ch>
+In-Reply-To: <20181025230611.GE6276@lunn.ch>
+From:   Maxim Uvarov <muvarov@gmail.com>
+Date:   Thu, 6 Dec 2018 21:27:24 +0300
+Message-ID: <CAJGZr0+fJR1uF8H=sH6FgHxt6xP1cc=FHdGpbqPjqJOuZZ8P8Q@mail.gmail.com>
+Subject: Re: [PATCH] dp83867: fix speed 10 in sgmii mode
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 03:19:41PM -0800, Eric Biggers wrote:
-> On Fri, Nov 02, 2018 at 06:58:54PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-> > called from construct_alloc_key() during sys_request_key(), because the
-> > length of the key description was never calculated.
-> > 
-> > The problem is that we rely on ->desc_len being initialized by
-> > search_process_keyrings(), specifically by search_nested_keyrings().
-> > But, if the process isn't subscribed to any keyrings that never happens.
-> > 
-> > Fix it by always initializing keyring_index_key::desc_len as soon as the
-> > description is set, like we already do in some places.
-> > 
-> > The following program reproduces the BUG_ON() when it's run as root and
-> > no session keyring has been installed.  If it doesn't work, try removing
-> > pam_keyinit.so from /etc/pam.d/login and rebooting.
-> > 
-> >     #include <stdlib.h>
-> >     #include <unistd.h>
-> >     #include <keyutils.h>
-> > 
-> >     int main(void)
-> >     {
-> >             int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
-> > 
-> >             keyctl_setperm(id, KEY_OTH_WRITE);
-> >             setreuid(5000, 5000);
-> >             request_key("user", "desc", "", id);
-> >     }
-> > 
-> > Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-> > Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> > Cc: <stable@vger.kernel.org> # v3.13+
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> > 
-> > v2: In proc_keys_show(), assign index_key directly
-> > 
-> >  security/keys/keyring.c          | 4 +---
-> >  security/keys/proc.c             | 3 +--
-> >  security/keys/request_key.c      | 1 +
-> >  security/keys/request_key_auth.c | 2 +-
-> >  4 files changed, 4 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> > index 41bcf57e96f21..99a55145ddcd2 100644
-> > --- a/security/keys/keyring.c
-> > +++ b/security/keys/keyring.c
-> > @@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
-> >  	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
-> >  	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
-> >  
-> > -	if (ctx->index_key.description)
-> > -		ctx->index_key.desc_len = strlen(ctx->index_key.description);
-> > -
-> >  	/* Check to see if this top-level keyring is what we are looking for
-> >  	 * and whether it is valid or not.
-> >  	 */
-> > @@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
-> >  	struct keyring_search_context ctx = {
-> >  		.index_key.type		= type,
-> >  		.index_key.description	= description,
-> > +		.index_key.desc_len	= strlen(description),
-> >  		.cred			= current_cred(),
-> >  		.match_data.cmp		= key_default_cmp,
-> >  		.match_data.raw_data	= description,
-> > diff --git a/security/keys/proc.c b/security/keys/proc.c
-> > index 5af2934965d80..d38be9db2cc07 100644
-> > --- a/security/keys/proc.c
-> > +++ b/security/keys/proc.c
-> > @@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
-> >  	int rc;
-> >  
-> >  	struct keyring_search_context ctx = {
-> > -		.index_key.type		= key->type,
-> > -		.index_key.description	= key->description,
-> > +		.index_key		= key->index_key,
-> >  		.cred			= m->file->f_cred,
-> >  		.match_data.cmp		= lookup_user_key_possessed,
-> >  		.match_data.raw_data	= key,
-> > diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-> > index 114f7408feee6..7385536986497 100644
-> > --- a/security/keys/request_key.c
-> > +++ b/security/keys/request_key.c
-> > @@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
-> >  	struct keyring_search_context ctx = {
-> >  		.index_key.type		= type,
-> >  		.index_key.description	= description,
-> > +		.index_key.desc_len	= strlen(description),
-> >  		.cred			= current_cred(),
-> >  		.match_data.cmp		= key_default_cmp,
-> >  		.match_data.raw_data	= description,
-> > diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-> > index 424e1d90412ea..6797843154f03 100644
-> > --- a/security/keys/request_key_auth.c
-> > +++ b/security/keys/request_key_auth.c
-> > @@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
-> >  	struct key *authkey;
-> >  	key_ref_t authkey_ref;
-> >  
-> > -	sprintf(description, "%x", target_id);
-> > +	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
-> >  
-> >  	authkey_ref = search_process_keyrings(&ctx);
-> >  
-> > -- 
-> > 2.19.1
-> > 
-> 
-> Ping.  David, are you planning to apply this?
-> 
-> - Eric
-> 
+=D0=BF=D1=82, 26 =D0=BE=D0=BA=D1=82. 2018 =D0=B3. =D0=B2 02:06, Andrew Lunn=
+ <andrew@lunn.ch>:
+>
+> On Thu, Oct 25, 2018 at 02:05:30PM +0300, Max Uvarov wrote:
+>
+> Hi Max
+>
+> > For support 10Mps sped in SGMII mode DP83867_10M_SGMII_RATE_ADAPT bit
+>
+> speed.
+>
+> > of DP83867_10M_SGMII_CFG register has to be cleared by software.
+> > That does not affect speeds 100 and 1000 so can be done on init.
+>
+> It would be good to add a Fixes: tag. Has this always been broken?
+>
 
-Ping.
+I somehow skipped this reply. I guess that was always broken. More
+likely 10M is not the speed what people use nowadays. But anyway it
+will be great to fix anyway.
+
+Max.
+
+> Thanks
+>         Andrew
