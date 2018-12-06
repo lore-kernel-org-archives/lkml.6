@@ -2,142 +2,89 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C53C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B25C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5358821479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5358821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id C8CE321479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544134171;
+	bh=yzBCV+vlwG9a/4A7GWu4nolhlBV47XOEOYk6RlMsoeI=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=rmGChw11DbKeFwFX9glspV7EUhmHbzHC86XrYo5MBB68mYPm3rwjZ/W2xL5Aj/iy+
+	 xo+yeYu1a0TIxW8oxblu6Cxxv7ltv4HFSTkTCGC7mNTQsXilBcMArGfghevIvitpko
+	 9iR4jeES3hslIm4sr+0rLoKt+c8tzZ5B9UjAIENk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8CE321479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbeLFWJY (ORCPT
+        id S1726211AbeLFWJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:09:24 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50015 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLFWJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbeLFWJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 17:09:21 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3AE8A809ED; Thu,  6 Dec 2018 23:09:15 +0100 (CET)
-Date:   Thu, 6 Dec 2018 23:09:18 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Jyri Sarha <jsarha@ti.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kbuild-all@01.org
-Subject: Re: [PATCH] leds: tlc591xx: fix device_node_continue.cocci warnings
- (fwd)
-Message-ID: <20181206220918.GA32650@amd>
-References: <alpine.DEB.2.21.1812062126130.2464@hadrien>
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B25962082B;
+        Thu,  6 Dec 2018 22:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544134161;
+        bh=yzBCV+vlwG9a/4A7GWu4nolhlBV47XOEOYk6RlMsoeI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ry95nh9Pnjb/NkybFAwkjg1foFJ4AcTEsx901g84vEMbm4rIHx36e6X6UIauhq0wS
+         0L1iv0+exTNoXcVyhOqxskIIQQ/1EmKo3RKeVqhyf+JI5U5tmlGAlH/Pw+cZSjop+r
+         ccZZS+7Vjk2lTeI22fioCELf8bKa6F2bhSL6Nmec=
+Subject: Re: [PATCH 4.14 00/55] 4.14.87-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20181206143001.749982936@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <642b3327-b247-4e57-471f-b3e05a8b6273@kernel.org>
+Date:   Thu, 6 Dec 2018 15:09:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812062126130.2464@hadrien>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/6/18 7:38 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.87 release.
+> There are 55 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec  8 14:29:38 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.87-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Compiled and booted on my test system. No dmesg regressions.
 
-On Thu 2018-12-06 21:28:16, Julia Lawall wrote:
-> Hello,
->=20
-> The code seems to be wrong in several ways.  If the continue is wanted,
-> the of_node_put is not needed; it will happen on the next iteration.  If
-> the continue is not wanted, the of_node_put is needed, and the continue
-> should be dropped.
-
-Yep, code is confusing. But the patch is bad, we don't want "continue; retu=
-rn;"
-
-Hmm, continue seems more logical to me -- but I guess Jyri should
-decde?
-
-									Pavel
-
-> ---------- Forwarded message ----------
-> Date: Thu, 6 Dec 2018 19:48:54 +0800
-> From: kbuild test robot <lkp@intel.com>
-> To: kbuild@01.org
-> Cc: Julia Lawall <julia.lawall@lip6.fr>
-> Subject: [PATCH] leds: tlc591xx: fix device_node_continue.cocci warnings
->=20
-> CC: kbuild-all@01.org
-> TO: Jyri Sarha <jsarha@ti.com>
-> CC: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> CC: Pavel Machek <pavel@ucw.cz>
-> CC: linux-leds@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
->=20
-> From: kbuild test robot <fengguang.wu@intel.com>
->=20
-> drivers/leds/leds-tlc591xx.c:342:3-14: ERROR: probable double put.
->=20
->  Device node iterators put the previous value of the index variable, so an
->  explicit put causes a double put.
->=20
-> Generated by: scripts/coccinelle/iterators/device_node_continue.cocci
->=20
-> Fixes: 7b2d34aaede7 ("leds: tlc591xx: Add gpio output support")
-> CC: Jyri Sarha <jsarha@ti.com>
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-> ---
->=20
-> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/w=
-ip
-> head:   838f24e2deaf1229002bd6555eb7e889b09ac1f9
-> commit: 7b2d34aaede727b4abfc78061bbd2202fcd92bc8 [62/67] leds: tlc591xx: =
-Add gpio output support
-> :::::: branch date: 26 hours ago
-> :::::: commit date: 26 hours ago
->=20
-> Please take the patch only if it's a positive warning. Thanks!
->=20
->  leds-tlc591xx.c |    1 -
->  1 file changed, 1 deletion(-)
->=20
-> --- a/drivers/leds/leds-tlc591xx.c
-> +++ b/drivers/leds/leds-tlc591xx.c
-> @@ -339,7 +339,6 @@ tlc591xx_probe(struct i2c_client *client
->  	for_each_child_of_node(np, child) {
->  		err =3D of_property_read_u32(child, "reg", &reg);
->  		if (err) {
-> -			of_node_put(child);
->  			continue;
->  			return err;
->  		}
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwJng4ACgkQMOfwapXb+vJvgwCeNZSCkXYhPkheNnMJ4SLmjB01
-ZTYAoIbXVR2d3bnSsMgMikgMlOWN6JNJ
-=VtYE
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+thanks,
+-- Shuah
