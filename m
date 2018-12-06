@@ -2,165 +2,208 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5335CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0EEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022172146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:37:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ACKuU5K2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022172146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6927C20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544135940;
+	bh=VbcGlGAAJz1C5lG5tVujtKGSK3Bzi9ksK0uLYUy4iTs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qN+CpqCphQ88/baMBa7JwZhlVeyptDlfQbZnuC/hkzs/wbFbN8B/zPWKTZFZ6fisd
+	 b2jMGBI6G1QWs5aRSkD1wE14tlu/AxqfOqA4EBpNSVd0uGET8cGev5ROguWqH6i0Dw
+	 boAHbgGbLTU7qUeT6GrukHe2UHKnp2Dhr7a3+of4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6927C20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbeLFWhd (ORCPT
+        id S1726145AbeLFWi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:37:33 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:58216 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeLFWhd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:37:33 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6MYnfx005015;
-        Thu, 6 Dec 2018 22:34:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=eDETIj2T0OvXSszCEG/jpnEUgNMjQZY6UsG+cHdxrgQ=;
- b=ACKuU5K2ciwV5jHx7ORjQMVvY3+DbyhWdYKyg4G5zdEvY6Atrr7AEwsC3HuVuvoC9S6w
- bX00ZLb/GNWdY7uO2pYNG1b4w1a8pScoBAG6BPNRpinF+LXtoOpaXnNILeeYptvko9R+
- fgmQ3PXaxPSh4woypOzbqlOP3rfPlSq3+eujYnOLaJxx7vog5m1g/iDO5szsCIBv02a5
- QI2FdKO8YO5ktRKo16sONVGRLDZCrQtMxvnhOzY/7hoI+vxULmcgG1yYuNnVvaWQyw2k
- kg78ONUk6FUiEUlYuB9MHBI396S5KheVwFbGm2/0ihsP3DwVvnntDF6BI3rgdpMdhvjM mA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2p3jxrttvy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 22:34:56 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB6MYoat005789
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 22:34:50 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6MYnhe019715;
-        Thu, 6 Dec 2018 22:34:49 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 14:34:49 -0800
-Subject: Re: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
- CONFIG_XEN_PVH
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kvm@vger.kernel.org, jgross@suse.com
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com, bp@suse.de,
-        thomas.lendacky@amd.com, luto@kernel.org,
-        dave.hansen@linux.intel.com, roger.pau@citrix.com,
-        rkrcmar@redhat.com, rdunlap@infradead.org
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
- <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <3b4fdddd-67d8-30d3-2a5d-c4d07b6f31c9@oracle.com>
-Date:   Thu, 6 Dec 2018 17:34:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Dec 2018 17:38:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbeLFWi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:38:58 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2067120989;
+        Thu,  6 Dec 2018 22:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544135937;
+        bh=VbcGlGAAJz1C5lG5tVujtKGSK3Bzi9ksK0uLYUy4iTs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qwWX3CXUokZ5RG8Lnane13bLAiRnSZecN5UyfBcgcWUuVM9iMuC3c3kkxeutUE8LB
+         /4oIpNkh1WUjpscOzImeHx6nRPLRR4J/4GPWvoYFwGGglepAlD73BPhKakTn57nF9o
+         FSZpqCXCfPhshg92VJ1ERjAxrWcrMx3ApwFmFEV0=
+Received: by mail-qt1-f180.google.com with SMTP id l11so2491673qtp.0;
+        Thu, 06 Dec 2018 14:38:57 -0800 (PST)
+X-Gm-Message-State: AA+aEWYf3ayype3dTBizMbUEpDwswPNBKuSuUgFRVaEx5hmSIzd8caYb
+        kh9S1xRgakjAzURkOIoJ2j6wSfIHctXYCtRVrQ==
+X-Google-Smtp-Source: AFSGD/WRcxX6FyCGvj2OcZXNFbrOhz0ZTMGsJJyitoIl5YZ2WGpr7kucAG1ka5etxdncf7t9pJXcHjiB2cB+i17nrWE=
+X-Received: by 2002:a0c:c389:: with SMTP id o9mr29359172qvi.90.1544135936338;
+ Thu, 06 Dec 2018 14:38:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060190
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-31-robh@kernel.org>
+ <20181204085022.GB25962@ulmo>
+In-Reply-To: <20181204085022.GB25962@ulmo>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 6 Dec 2018 16:38:44 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+NWVoFzBCYVwu-YM_90mYUdgmaW4ctJim2LkxfpRbg=Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+NWVoFzBCYVwu-YM_90mYUdgmaW4ctJim2LkxfpRbg=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 30/34] dt-bindings: arm: Convert Tegra board/soc
+ bindings to json-schema
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        ARM-SoC Maintainers <arm@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/18 5:11 PM, Paolo Bonzini wrote:
-> On 06/12/18 07:04, Maran Wilson wrote:
->> +config PVH
->> +	bool "Support for running PVH guests"
->> +	---help---
->> +	  This option enables the PVH entry point for guest virtual machines
->> +	  as specified in the x86/HVM direct boot ABI.
->> +
-> IIUC this breaks "normal" bzImage boot, so we should have something like
+On Tue, Dec 4, 2018 at 2:50 AM Thierry Reding <thierry.reding@gmail.com> wrote:
 >
-> 	The resulting kernel will not boot with most x86 boot loaders
-> 	such as GRUB 
-
-
-Grub support for PVH guests (for Xen) is well under way.
-
-
-> or SYSLINUX.  Unless you plan to start the kernel
-> 	using QEMU or Xen, you probably want to say N here.
-
-I think PVH should not be user-selectable at all. It should be selected
-by either XEN_PVH or KVM_GUEST_PVH (which you suggested to drop).
-
+> On Mon, Dec 03, 2018 at 03:32:19PM -0600, Rob Herring wrote:
+> > Convert Tegra SoC bindings to DT schema format using json-schema.
+> >
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-tegra@vger.kernel.org
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/arm/tegra.txt         |  65 -----------
+> >  .../devicetree/bindings/arm/tegra.yaml        | 101 ++++++++++++++++++
+> >  2 files changed, 101 insertions(+), 65 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/tegra.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/tegra.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> > deleted file mode 100644
+> > index c59b15f64346..000000000000
+> > --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> > +++ /dev/null
+> > @@ -1,65 +0,0 @@
+> > -NVIDIA Tegra device tree bindings
+> > --------------------------------------------
+> > -
+> > -SoCs
+> > --------------------------------------------
+> > -
+> > -Each device tree must specify which Tegra SoC it uses, using one of the
+> > -following compatible values:
+> > -
+> > -  nvidia,tegra20
+> > -  nvidia,tegra30
+> > -  nvidia,tegra114
+> > -  nvidia,tegra124
+> > -  nvidia,tegra132
+> > -  nvidia,tegra210
+> > -  nvidia,tegra186
+> > -  nvidia,tegra194
+> > -
+> > -Boards
+> > --------------------------------------------
+> > -
+> > -Each device tree must specify which one or more of the following
+> > -board-specific compatible values:
+> > -
+> > -  ad,medcom-wide
+> > -  ad,plutux
+> > -  ad,tamonten
+> > -  ad,tec
+> > -  compal,paz00
+> > -  compulab,trimslice
+> > -  nvidia,beaver
+> > -  nvidia,cardhu
+> > -  nvidia,cardhu-a02
+> > -  nvidia,cardhu-a04
+> > -  nvidia,dalmore
+> > -  nvidia,harmony
+> > -  nvidia,jetson-tk1
+> > -  nvidia,norrin
+> > -  nvidia,p2371-0000
+> > -  nvidia,p2371-2180
+> > -  nvidia,p2571
+> > -  nvidia,p2771-0000
+> > -  nvidia,p2972-0000
+> > -  nvidia,roth
+> > -  nvidia,seaboard
+> > -  nvidia,tn7
+> > -  nvidia,ventana
+> > -  toradex,apalis_t30
+> > -  toradex,apalis_t30-eval
+> > -  toradex,apalis_t30-v1.1
+> > -  toradex,apalis_t30-v1.1-eval
+> > -  toradex,apalis-tk1
+> > -  toradex,apalis-tk1-eval
+> > -  toradex,apalis-tk1-v1.2
+> > -  toradex,apalis-tk1-v1.2-eval
+> > -  toradex,colibri_t20
+> > -  toradex,colibri_t20-eval-v3
+> > -  toradex,colibri_t20-iris
+> > -  toradex,colibri_t30
+> > -  toradex,colibri_t30-eval-v3
+> > -
+> > -Trusted Foundations
+> > --------------------------------------------
+> > -Tegra supports the Trusted Foundation secure monitor. See the
+> > -"tlm,trusted-foundations" binding's documentation for more details.
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+> > new file mode 100644
+> > index 000000000000..66493892ffc1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+> > @@ -0,0 +1,101 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/tegra.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >
-> and also
->
-> 	depends on !EFI
->
-> because even though in principle it would be possible to write a PVH
-> loader for UEFI, PVH's start info does not support the EFI handover
-> protocol.
+> Could you explain what these are? They give 404, so I assume they are
+> more like placeholders and not actually used?
 
-But we should be able to build the binary with both EFI and PVH?
+Please read the documentation in patch 2. They are used, but aren't live URLs.
 
--boris
+> > +
+> > +title: NVIDIA Tegra device tree bindings
+> > +
+> > +maintainers:
+> > +  - Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > +  - Peter De Schrijver <pdeschrijver@nvidia.com>
+>
+> Not sure how you got that list, but probably from git history. I think
+> it makes sense to replace Marcel and Peter with Jon and myself.
+
+Will do.
+
+> Other than that, looks fine to me. Some of the enumerations below look
+> somewhat hard to parse, but I suspect that it will become second nature
+> in no time.
+
+We can add descriptions and/or comments if that helps. I didn't add
+them if not already there.
+
+> Acked-by: Thierry Reding <treding@nvidia.com>
+
+Thanks.
+
+Rob
