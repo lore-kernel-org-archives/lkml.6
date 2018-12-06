@@ -2,70 +2,71 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA54C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B22FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AAA21508
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61FB220989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GbbPWGU1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AAA21508
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Oic6+YcY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FB220989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbeLFGE5 (ORCPT
+        id S1729086AbeLFGFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 01:04:57 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:54220 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbeLFGE5 (ORCPT
+        Thu, 6 Dec 2018 01:05:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60124 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728996AbeLFGFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 01:04:57 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB65xFUE182483;
-        Thu, 6 Dec 2018 06:02:46 GMT
+        Thu, 6 Dec 2018 01:05:16 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB65xIJY025070;
+        Thu, 6 Dec 2018 06:04:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=01JQBA3N6kFT9Xy7iolrB9htJ7ADZ9tMeOcMqWbw/vo=;
- b=GbbPWGU1xFx1jvsIXvHMko9z8dHljVFryVAe4cgIno5a0iBWP+3+H5DxNia2TA3A/lT0
- f6z2e/D0u8ZyNmVsY7zaH81bW6A2XKdU3TfYF4siwY7ShUyrzEAmMBuKAKPuQy7WkG+D
- gQaMbhxhKW+5Gt1EyQpUq7arCW6rXuum3wIDs1jEzMjih5CoNYaCm+HrgK74/0NqglIQ
- x/jZk+KQlDxvrFaAn9Kh2yf1WuzXjC49/1SmQb/V6eRPP2bmMQIUP1VFUmicfYMOnzXi
- kdO/5fQJjL6iBDGBqvE45ydLHHKgPtlN9FFdfm7dFf+VG8T6JwJFrCGDEMVE9q5pJJ1L kQ== 
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=umL3QlzI1scxxJBtvRJMPSB2eyKHEmgVLZanod1IdxM=;
+ b=Oic6+YcYsKhv+Pneqw6grCw1SAjVQ9UUJFcDfmgZphVgf5BEEuFk8aOZDlRQzsJ2C2gJ
+ sUCXujiJa7QqvqNQ1XZN/OFlD4IPkGKALzFiSc/VP8xdNiZcRtID0+WAu2gKKYkwB5Xe
+ 7BuLdmylOCKkMw4QXg3+c3rSQLhP/Kv7fVrY1amDeCR++4md0SJtsMDVYUU1hjLO1vgC
+ 4WHlz87TZauMwH2OTlyQwoNcpQ3RqzJgFGj7O+pWIrmWpZkWDXWCzLiourewg27HufP8
+ iXkLRjecM5j19y70TPP0E7jQZjOfkZZN0LrDqlmUuia8QfHH9mo3bh3JyO5+XkSoGLjC 2g== 
 Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2p3jxrp7jh-1
+        by userp2130.oracle.com with ESMTP id 2p3hqu6bxw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 06:02:46 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB662jdO011970
+        Thu, 06 Dec 2018 06:04:25 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB664P0K017104
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 06:02:45 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB662g6P014189;
-        Thu, 6 Dec 2018 06:02:42 GMT
+        Thu, 6 Dec 2018 06:04:25 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB664Od4006576;
+        Thu, 6 Dec 2018 06:04:24 GMT
 Received: from marawils-linux.us.oracle.com (/10.141.196.37)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 22:02:41 -0800
+        with ESMTP ; Wed, 05 Dec 2018 22:04:23 -0800
 From:   Maran Wilson <maran.wilson@oracle.com>
-To:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+To:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
         pbonzini@redhat.com, jgross@suse.com
-Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com, maran.wilson@oracle.com
-Subject: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-Date:   Wed,  5 Dec 2018 22:02:32 -0800
-Message-Id: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de,
+        thomas.lendacky@amd.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com, maran.wilson@oracle.com, rdunlap@infradead.org
+Subject: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
+Date:   Wed,  5 Dec 2018 22:04:17 -0800
+Message-Id: <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -76,151 +77,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For certain applications it is desirable to rapidly boot a KVM virtual
-machine. In cases where legacy hardware and software support within the
-guest is not needed, Qemu should be able to boot directly into the
-uncompressed Linux kernel binary without the need to run firmware.
+In order to pave the way for hypervisors other than Xen to use the PVH
+entry point for VMs, we need to factor the PVH entry code into Xen specific
+and hypervisor agnostic components. The first step in doing that, is to
+create a new config option for PVH entry that can be enabled
+independently from CONFIG_XEN.
 
-There already exists an ABI to allow this for Xen PVH guests and the ABI
-is supported by Linux and FreeBSD:
+Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/Kconfig          | 6 ++++++
+ arch/x86/kernel/head_64.S | 2 +-
+ arch/x86/xen/Kconfig      | 3 ++-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-   https://xenbits.xen.org/docs/unstable/misc/pvh.html
-
-This patch series would enable Qemu to use that same entry point for
-booting KVM guests.
-
-Changes from v7:
-
- (No functional changes from v7 other than rebasing to latest upstream) 
- * Added Review-by tags as provided by Juergen Gross (1,2,3,6,7)
- * Rebasing to upstream 4.18 caused a minor conflict in patch 4 that had
-   to be hand merged due to this patch:
-      1fe8388 xen: share start flags between PV and PVH
-   I just had to make sure we were accounting for the xen_start_flags
-   in the new code path.
- * Rebasing to upstream 4.20-rc4 caused a few minor conflicts in patches
-   2,3,5,7 that needed to be resolved by hand. The conflicts were due to
-   upstream non-functional code cleanup changes in arch/x86/xen/Makefile
-   and arch/x86/platform/pvh/enlighten.c due to these patches:
-      28c11b0 x86/xen: Move pv irq related functions under CONFIG_XEN_PV
-              umbrella
-      357d291 x86/xen: Fix boot loader version reported for PVH guests
-      3cfa210 xen: don't include <xen/xen.h> from <asm/io.h> and
-              <asm/dma-mapping.h>
- * Qemu and qboot RFC patches have been posted to show one example of how
-   this functionality can be used. Some preliminary numbers are available
-   in those cover letters showing the KVM guest boot time improvement.
-      Qemu:
-      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00957.html
-      qboot:
-      http://lists.nongnu.org/archive/html/qemu-devel/2018-12/msg00953.html
-
-Changes from v6:
-
- * Addressed issues caught by the kbuild test robot:
-    - Restored an #include line that had been dropped by mistake (patch 4)
-    - Removed a pair of #include lines that were no longer needed in a
-      common code file and causing problems for certain 32-bit configs
-      (patchs 4 and 7)
-
-Changes from v5:
-
- * The interface changes to the x86/HVM start info layout have
-   now been accepted into the Xen tree.
- * Rebase and merge upstream PVH file changes.
- * (Patch 6) Synced up to the final version of the header file that was
-             acked and pulled into the Xen tree.
- * (Patch 1) Fixed typo and removed redundant "def_bool n" line.
-
-Changes from v4:
-
-Note: I've withheld Juergen's earlier "Reviewed-by" tags from patches
-1 and 7 since there were minor changes (mostly just addition of
-CONFIG_KVM_GUEST_PVH as requested) that came afterwards.
-
- * Changed subject prefix from RFC to PATCH
- * Added CONFIG_KVM_GUEST_PVH as suggested
- * Relocated the PVH common files to
-   arch/x86/platform/pvh/{enlighten.c,head.S}
- * Realized I also needed to move the objtool override for those files
- * Updated a few code comments per reviewer feedback
- * Sent out a patch of the hvm_start_info struct changes against the Xen
-   tree since that is the canonical copy of the header. Discussions on
-   that thread have resulted in some (non-functional) updates to
-   start_info.h (patch 6/7) and those changes are reflected here as well
-   in order to keep the files in sync. The header file has since been
-   ack'ed for the Xen tree by Jan Beulich.
-
-Changes from v3:
-
- * Implemented Juergen's suggestion for refactoring and moving the PVH
-   code so that CONFIG_XEN is no longer required for booting KVM guests
-   via the PVH entry point.
-   Functionally, nothing has changed from V3 really, but the patches
-   look completely different now because of all the code movement and
-   refactoring. Some of these patches can be combined, but I've left
-   them very small in some cases to make the refactoring and code
-   movement easier to review.
-   My approach for refactoring has been to create a PVH entry layer that
-   still has understanding and knowledge about Xen vs non-Xen guest types
-   so that it can make run time decisions to handle either case, as
-   opposed to going all the way and re-writing it to be a completely
-   hypervisor agnostic and architecturally pure layer that is separate
-   from guest type details. The latter seemed a bit overkill in this
-   situation. And I've handled the complexity of having to support
-   Qemu/KVM boot of kernels compiled with or without CONFIG_XEN via a
-   pair of xen specific __weak routines that can be overridden in kernels
-   that support Xen guests. Importantly, the __weak routines are for
-   xen specific code only (not generic "guest type" specific code) so
-   there is no clashing between xen version of the strong routine and,
-   say, a KVM version of the same routine. But I'm sure there are many
-   ways to skin this cat, so I'm open to alternate suggestions if there
-   is a compelling reason for not using __weak in this situation.
-
-Changes from v2:
-
- * All structures (including memory map table entries) are padded and
-   aligned to an 8 byte boundary.
-
- * Removed the "packed" attributes and made changes to comments as
-   suggested by Jan.
-
-Changes from v1:
-
- * Adopted Paolo's suggestion for defining a v2 PVH ABI that includes the
-   e820 map instead of using the second module entry to pass the table.
-
- * Cleaned things up a bit to reduce the number of xen vs non-xen special
-   cases.
-
-
-Maran Wilson (7):
-  xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
-  xen/pvh: Move PVH entry code out of Xen specific tree
-  xen/pvh: Create a new file for Xen specific PVH code
-  xen/pvh: Move Xen specific PVH VM initialization out of common file
-  xen/pvh: Move Xen code for getting mem map via hcall out of common
-    file
-  xen/pvh: Add memory map pointer to hvm_start_info struct
-  KVM: x86: Allow Qemu/KVM to use PVH entry point
-
- MAINTAINERS                                     |   1 +
- arch/x86/Kbuild                                 |   2 +
- arch/x86/Kconfig                                |  14 +++
- arch/x86/kernel/head_64.S                       |   2 +-
- arch/x86/platform/pvh/Makefile                  |   5 +
- arch/x86/platform/pvh/enlighten.c               | 137 ++++++++++++++++++++++++
- arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
- arch/x86/xen/Kconfig                            |   3 +-
- arch/x86/xen/Makefile                           |   2 -
- arch/x86/xen/enlighten_pvh.c                    |  94 ++++------------
- include/xen/interface/hvm/start_info.h          |  63 ++++++++++-
- include/xen/xen.h                               |   3 +
- 12 files changed, 245 insertions(+), 81 deletions(-)
- create mode 100644 arch/x86/platform/pvh/Makefile
- create mode 100644 arch/x86/platform/pvh/enlighten.c
- rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8689e794a43c..c2a22a74abee 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -796,6 +796,12 @@ config KVM_GUEST
+ 	  underlying device model, the host provides the guest with
+ 	  timing infrastructure such as time of day, and system time
+ 
++config PVH
++	bool "Support for running PVH guests"
++	---help---
++	  This option enables the PVH entry point for guest virtual machines
++	  as specified in the x86/HVM direct boot ABI.
++
+ config KVM_DEBUG_FS
+ 	bool "Enable debug information for KVM Guests in debugfs"
+ 	depends on KVM_GUEST && DEBUG_FS
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 747c758f67b7..d1dbe8e4eb82 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -386,7 +386,7 @@ NEXT_PAGE(early_dynamic_pgts)
+ 
+ 	.data
+ 
+-#if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
++#if defined(CONFIG_XEN_PV) || defined(CONFIG_PVH)
+ NEXT_PGD_PAGE(init_top_pgt)
+ 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.org    init_top_pgt + L4_PAGE_OFFSET*8, 0
+diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+index 1ef391aa184d..e07abefd3d26 100644
+--- a/arch/x86/xen/Kconfig
++++ b/arch/x86/xen/Kconfig
+@@ -74,6 +74,7 @@ config XEN_DEBUG_FS
+ 	  Enabling this option may incur a significant performance overhead.
+ 
+ config XEN_PVH
+-	bool "Support for running as a PVH guest"
++	bool "Support for running as a Xen PVH guest"
+ 	depends on XEN && XEN_PVHVM && ACPI
++	select PVH
+ 	def_bool n
 -- 
 2.16.1
 
