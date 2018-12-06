@@ -2,193 +2,187 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C39BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3183C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0724220850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D3B20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GlOxq9IU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0724220850
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KgSuak+z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D3B20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbeLFLN2 (ORCPT
+        id S1729632AbeLFLNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:13:28 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39077 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729380AbeLFLN1 (ORCPT
+        Thu, 6 Dec 2018 06:13:47 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52140 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729404AbeLFLNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:13:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b14so423597edt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:13:25 -0800 (PST)
+        Thu, 6 Dec 2018 06:13:46 -0500
+Received: by mail-it1-f195.google.com with SMTP id x19so734700itl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a1s83AK4TLnZTcRKSLvfFSH6O7s+l2s09s9ys7iYbHg=;
-        b=GlOxq9IUHOfR0uMwxRcRUkCdEhlHuL4KOD9TdXzRnJY5ppcJt5Wvbdozkn488iNFaS
-         4WJ0/q6CsOUabTf8lgTGbYt7uBs/yKVXzh+FsKVp4t2GrUaGt3ks43GOMGLra+9g5HWj
-         woCf0MOIYuAfww0jfTGSqfz374GtJDdMg7ZwM=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vj32qMVVqi6/ofzNPokT7fWYP1x6Tmk73xihbhtsudQ=;
+        b=KgSuak+zZgxr7hdXV1+3diY6BhdW5gsTRaxv+gsfhbKvDkOiYfEYQOyIQzl8buSXRy
+         UE8rXZtvTA+T0Dj2BneSITTCCGRV9KOUHrzgIkA1gBIc/Tdm4tTnGKRxU86JdRx86Kyn
+         gxMhKl7Kl1xHKZ/wWQ1eOVgJwNCAbhmQmmwgM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a1s83AK4TLnZTcRKSLvfFSH6O7s+l2s09s9ys7iYbHg=;
-        b=j9Ocm4EnVQxoDPoJyOAe86z88kHf17jfM9ArsYVIc7/TLx8kqTvwlKc07n276f+VX0
-         WNVQM9JSp9uTy1yr/lAuqesCH4s2qybaJ0ChEM12c7CO4X1+z9WB35TdLHwRPOK744XD
-         vo8Ww+DDRkXctdZRj1CH/9cQeU0/OjCejvlKeM0P88SlNV8ZMROlwtIMh7YZ/jYRbysX
-         XLv7L8Rx2TQRFaTGuh4lEjI1dM/Nx28qGfDldJRzQhEISP9BSIKrYMtSXEAbFIqhk1bj
-         B5/QY+bFvDzm6PlsLjqQ1NMYdLUU/TH47xW1DBwsDyUX0EP/gcLzQuk7ss0bMqssMegH
-         gtGg==
-X-Gm-Message-State: AA+aEWa7G60WREnLjqHhM5ta+ixXOzNPXavh4pPjqTPe6B+VMcDCMKrb
-        mDP8Q6HefFbndZeJ4yhkkOoXZQ==
-X-Google-Smtp-Source: AFSGD/VhEYEs9sffHDxdtU9Ck02Ul1jNbaUoAIx74TR252YBwrhSx8JcA1LCWXgsQxcQ5Vwt2gjN9Q==
-X-Received: by 2002:a50:8799:: with SMTP id a25mr24564573eda.96.1544094804989;
-        Thu, 06 Dec 2018 03:13:24 -0800 (PST)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id c53sm107539ede.26.2018.12.06.03.13.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 03:13:24 -0800 (PST)
-Date:   Thu, 6 Dec 2018 12:13:17 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Jessica Yu <jeyu@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
- freeing
-Message-ID: <20181206111317.GA5685@andrea>
-References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-14-namit@vmware.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vj32qMVVqi6/ofzNPokT7fWYP1x6Tmk73xihbhtsudQ=;
+        b=QtVQQ9sKfMDbx0uLLL+vZ4Y2yQ//YEviiBVwdgPTfrPJbC+O89Rkgf8RbkWNhwNBDH
+         J6lfmkQWma865M1EJ7ZpAfiCcJFqTcX6KvOJedGVhZDazLPc+WyIjwXnSZyXOYV0Kcgw
+         1QJ3HiSD7Cvsy3dziYInwK82uc01FpXYgz/bxpLRN3N8j0baF1V0wN18xcjkU4HF95aF
+         pWXbJtj/FGehFW3Hly6U1qoHqM/p44ilSFJ0CUommw3sCFcuDRfPOFyqp6Ch+ky6T+1X
+         4SrW5/q7uZ08RqVTD1LKSILIRyRgzN7WtY62bkKPYW/LbnqX/Hg9IvLkJgnI5Pd07yfj
+         pKLA==
+X-Gm-Message-State: AA+aEWbZ88aob8j4eQDXaPtNfGTV+iaNMLm7xiL1+L+HN+0apBZfk2sa
+        LsOHPCYYRnuau/0/4iOkugCekhl+SGxBJuUFItRdlQ==
+X-Google-Smtp-Source: AFSGD/UbozYhj6vuPIK1+h81UN1S1mC9snecLkVi502yTqbuUoxEhdW+jH8hMe4nWVSGcSOrqCWf4bqyyzewScHfs0I=
+X-Received: by 2002:a24:4f07:: with SMTP id c7mr1364648itb.107.1544094824912;
+ Thu, 06 Dec 2018 03:13:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205013408.47725-14-namit@vmware.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181203100747.16442-1-jagan@amarulasolutions.com>
+ <20181203100747.16442-6-jagan@amarulasolutions.com> <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
+In-Reply-To: <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 6 Dec 2018 16:43:33 +0530
+Message-ID: <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64-amarula-relic: Add OV5640
+ camera node
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:34:07PM -0800, Nadav Amit wrote:
-> When module memory is about to be freed, there is no apparent reason to
-> make it (and its data) executable, but that's exactly what is done
-> today. This is not efficient and not secure.
+On Mon, Dec 3, 2018 at 3:55 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > Amarula A64-Relic board by default bound with OV5640 camera,
+> > so add support for it with below pin information.
+> >
+> > - PE13, PE12 via i2c-gpio bitbanging
+> > - CLK_CSI_MCLK as external clock
+> > - PE1 as external clock pin muxing
+> > - DLDO3 as vcc-csi supply
+> > - DLDO3 as AVDD supply
+> > - ALDO1 as DOVDD supply
+> > - ELDO3 as DVDD supply
+> > - PE14 gpio for reset pin
+> > - PE15 gpio for powerdown pin
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  5 ++
+> >  2 files changed, 59 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > index 6cb2b7f0c817..9ac6d773188b 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > @@ -22,6 +22,41 @@
+> >                 stdout-path = "serial0:115200n8";
+> >         };
+> >
+> > +       i2c-csi {
+> > +               compatible = "i2c-gpio";
+> > +               sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+> > +               scl-gpios = <&pio 4 12 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+>
+> FYI our hardware doesn't do open drain.
 
-Looks to me like you forgot to Cc the maintainer of this file: doing it
-now.  The same consideration would hold for 14/14.
+True, but the kernel is enforcing it seems, from the change from [1].
+does that mean Linux use open drain even though hardware doens't have?
+or did I miss anything?
 
-  Andrea
+[    3.659235] gpio-141 (sda): enforced open drain please flag it
+properly in DT/ACPI DSDT/board file
+[    3.679954] gpio-140 (scl): enforced open drain please flag it
+properly in DT/ACPI DSDT/board file
+[    3.814878] i2c-gpio i2c-csi: using lines 141 (SDA) and 140 (SCL)
 
+>
+> > +               i2c-gpio,delay-us = <5>;
+> > +               #address-cells = <1>;
+> > +               #size-cells = <0>;
+> > +
+> > +               ov5640: camera@3c {
+> > +                       compatible = "ovti,ov5640";
+> > +                       reg = <0x3c>;
+> > +                       pinctrl-names = "default";
+> > +                       pinctrl-0 = <&csi_mclk_pin>;
+> > +                       clocks = <&ccu CLK_CSI_MCLK>;
+> > +                       clock-names = "xclk";
+> > +
+> > +                       AVDD-supply = <&reg_dldo3>;
+> > +                       DOVDD-supply = <&reg_aldo1>;
+>
+> DOVDD is the supply for I/O. You say it is ALDO1 here.
+>
+> > +                       DVDD-supply = <&reg_eldo3>;
+> > +                       reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PE14 */
+> > +                       powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PE15 */
+> > +
+> > +                       port {
+> > +                               ov5640_ep: endpoint {
+> > +                                       remote-endpoint = <&csi_ep>;
+> > +                                       bus-width = <8>;
+> > +                                       hsync-active = <1>; /* Active high */
+> > +                                       vsync-active = <0>; /* Active low */
+> > +                                       data-active = <1>;  /* Active high */
+> > +                                       pclk-sample = <1>;  /* Rising */
+> > +                               };
+> > +                       };
+> > +               };
+> > +       };
+> > +
+> >         wifi_pwrseq: wifi-pwrseq {
+> >                 compatible = "mmc-pwrseq-simple";
+> >                 clocks = <&rtc 1>;
+> > @@ -30,6 +65,25 @@
+> >         };
+> >  };
+> >
+> > +&csi {
+> > +       vcc-csi-supply = <&reg_dldo3>;
+>
+> But here you say the SoC-side pins are driven from DLDO3.
+>
+> This is a somewhat odd mismatch.
+>
+> Regardless, the ov5640 driver enables all three regulators at probe time.
+> Shouldn't that be enough to get the I2C bus working? The pin voltage
+> supply does not belong here.
 
-> 
-> There are various theories why it was done, but none of them seem as
-> something that really require it today. nios2 uses kmalloc for module
-> memory, but anyhow it does not change the PTEs of the module memory.  In
-> x86, changing vmalloc'd memory mappings also modifies the direct mapping
-> alias, but the NX-bit is not modified in such way.
-> 
-> So let's remove it. Andy suggested that the changes of the PTEs can be
-> avoided (excluding the direct-mapping alias), which is true. However,
-> in x86 it requires some cleanup of the contiguous page allocator, which
-> is outside of the scope of this patch-set.
-> 
-> Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  kernel/module.c | 35 ++++++++++++++++++++++-------------
->  1 file changed, 22 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 7cb207249437..57c5b23746e7 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -2027,20 +2027,29 @@ void set_all_modules_text_ro(void)
->  	mutex_unlock(&module_mutex);
->  }
->  
-> -static void disable_ro_nx(const struct module_layout *layout)
-> +static void module_restore_mappings(const struct module_layout *layout)
->  {
-> -	if (rodata_enabled) {
-> -		frob_text(layout, set_memory_rw);
-> -		frob_rodata(layout, set_memory_rw);
-> -		frob_ro_after_init(layout, set_memory_rw);
-> -	}
-> -	frob_rodata(layout, set_memory_x);
-> -	frob_ro_after_init(layout, set_memory_x);
-> -	frob_writable_data(layout, set_memory_x);
-> +	/*
-> +	 * First, make the mappings of the code non-executable to prevent
-> +	 * transient W+X mappings from being set when the text is set as RW.
-> +	 */
-> +	frob_text(layout, set_memory_nx);
-> +
-> +	if (!rodata_enabled)
-> +		return;
-> +
-> +	/*
-> +	 * Second, set the memory as writable. Although the module memory is
-> +	 * about to be freed, these calls are required (at least on x86) to
-> +	 * restore the direct map to its "correct" state.
-> +	 */
-> +	frob_text(layout, set_memory_rw);
-> +	frob_rodata(layout, set_memory_rw);
-> +	frob_ro_after_init(layout, set_memory_rw);
->  }
->  
->  #else
-> -static void disable_ro_nx(const struct module_layout *layout) { }
-> +static void module_restore_mappings(const struct module_layout *layout) { }
->  static void module_enable_nx(const struct module *mod) { }
->  static void module_disable_nx(const struct module *mod) { }
->  #endif
-> @@ -2173,7 +2182,7 @@ static void free_module(struct module *mod)
->  	mutex_unlock(&module_mutex);
->  
->  	/* This may be empty, but that's OK */
-> -	disable_ro_nx(&mod->init_layout);
-> +	module_restore_mappings(&mod->init_layout);
->  	module_arch_freeing_init(mod);
->  	module_memfree(mod->init_layout.base);
->  	kfree(mod->args);
-> @@ -2183,7 +2192,7 @@ static void free_module(struct module *mod)
->  	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
->  
->  	/* Finally, free the core (containing the module structure) */
-> -	disable_ro_nx(&mod->core_layout);
-> +	module_restore_mappings(&mod->core_layout);
->  	module_memfree(mod->core_layout.base);
->  }
->  
-> @@ -3507,7 +3516,7 @@ static noinline int do_init_module(struct module *mod)
->  #endif
->  	module_enable_ro(mod, true);
->  	mod_tree_remove_init(mod);
-> -	disable_ro_nx(&mod->init_layout);
-> +	module_restore_mappings(&mod->init_layout);
->  	module_arch_freeing_init(mod);
->  	mod->init_layout.base = NULL;
->  	mod->init_layout.size = 0;
-> -- 
-> 2.17.1
-> 
+It is working w/o supplying PE group, but I think that may be reason
+of supplying similar regulator via DOVDD on sensor side. But we need
+to make sure the pin-group must be powered right like DSI, HDMI? if
+yes may be we do something via power-domain driver like other SoC's
+does or do we have any other option.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpio/gpiolib.c?id=f926dfc112bc6cf41d7068ee5e3f261e13a5bec8
