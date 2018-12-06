@@ -2,126 +2,109 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361F4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D944C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002762146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:42:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002762146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 09E7F214DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:46:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E25F0M4z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09E7F214DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeLFHmH (ORCPT
+        id S1729119AbeLFHqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:42:07 -0500
-Received: from mx.socionext.com ([202.248.49.38]:33393 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728294AbeLFHmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:42:07 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 06 Dec 2018 16:42:05 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 9231760062;
-        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 6 Dec 2018 16:42:05 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 5D715403E6;
-        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 40696120304;
-        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
-Subject: Re: [PATCH 04/14] dt-bindings: timer: Add Milbeaut M10V timer
- description
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-5-git-send-email-sugaya.taichi@socionext.com>
- <20181204230354.GA26204@bogus>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <230f9c6d-afc1-7e24-eb26-0bc7d1fee333@socionext.com>
-Date:   Thu, 6 Dec 2018 16:42:04 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 6 Dec 2018 02:46:07 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38249 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728294AbeLFHqH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 02:46:07 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q1so11371478pfi.5;
+        Wed, 05 Dec 2018 23:46:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FWUNuBobrQGS8tPzC7mZOSiomc02hqs3O+/8VlJOcu4=;
+        b=E25F0M4zMsqLFvdU+s7GP8/PEb4WgujJde7XOmYvDnAzcNeb0QdcJa3zdYQyJB7vvn
+         QjKY3mDFt9+S9Z2m6F6HjFJXtzm30yxFlCB8rJiU/PKLy+h4Gu9PoGnaOee0jE1+cKMS
+         ljM04Ivxsgo7ybjTNiApj/vOVvGckj8NSRPh5vsbN1Lo2VN5NsBGIwDH8xOK9MQj37mG
+         rQfVJkadSpGveaLiM58cQ6Bkt3N4EzVhbmCa5Hf2DMhRiPbJ2O/RCD7wPOcyxYA5hbdw
+         HNl5b2XeTdPW8kxXQgoh1jpni9NvHF/PFhdrIjgg3oo+2jj2Bl5xZ/qqZsIXfAh4KmKj
+         9U8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FWUNuBobrQGS8tPzC7mZOSiomc02hqs3O+/8VlJOcu4=;
+        b=pb67SO0wgC8f5bGdFDeyyThHSqCxAZGQtx6pwqZZLmwJeP+0L7OavEGDZ8BPuEZslB
+         62B6RGO5gDn7dg9/Di3Ox35WScgdYp7Kwr8eNmuYLCex7WWz3+2yBa1YPO9sGNRO+sF0
+         MLhZTq2KWnCABygscfl/FDIPaML5xJQdDRUo8UmCT4aM/TKyf5LpujHSRHLIYlezD0Cp
+         +PgBmRnkhLYUxBVwIVNfretKazmcY1k+wYWRfnxQSTtPF9KzhliBG5aNEryIM2uj9ooJ
+         MoYveOeTNfNdq3vb8qdtYqT5tI+5q/XzESQEGksIVcvvXFaj4lvsqTSrYLkgZHGNFNZw
+         uBPw==
+X-Gm-Message-State: AA+aEWYY1Pbc0OsMO8Phz8Q0BZSq6aqWrz7XosgEUifcQpiZS5Ky1gFd
+        aH+lJD5xIJ9Gs0YqYOjuLgSS79Q1
+X-Google-Smtp-Source: AFSGD/UQefWq+hnPci7nzwdxqF0q9fBq2vntcT00HEgmLc4u3kL9oimYNMvYqzuEide+WDsdtdqxtw==
+X-Received: by 2002:a62:e30d:: with SMTP id g13mr27285081pfh.151.1544082366337;
+        Wed, 05 Dec 2018 23:46:06 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id l11sm29198232pff.65.2018.12.05.23.46.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 23:46:05 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>, bhelgaas@google.com,
+        cphealy@gmail.com, l.stach@pengutronix.de,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
+Date:   Wed,  5 Dec 2018 23:45:55 -0800
+Message-Id: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181204230354.GA26204@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+to pcieport driver. This, in turn, results in a PCIE bus that is
+capable of enumerating attached PCIE device, but lacks functional
+interrupt support.
 
-Thank you for your comments.
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
 
-On 2018/12/05 8:03, Rob Herring wrote:
-> On Mon, Nov 19, 2018 at 10:01:09AM +0900, Sugaya Taichi wrote:
->> Add DT bindings document for Milbeaut M10V timer.
->>
->> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
->> ---
->>   .../bindings/timer/socionext,milbeaut-timer.txt         | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
->>
->> diff --git a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
->> new file mode 100644
->> index 0000000..ddb1b31
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
->> @@ -0,0 +1,17 @@
->> +Milbeaut SoCs Timer Controller
->> +
->> +Required properties:
->> +
->> +- compatible : should be "socionext,milbeaut-m10v-timer"
->> +- reg : Specifies base physical address and size of the registers.
-> 
-> How many register ranges? Looks like 2.
+Assuming this is a reasonable dependency, shold this be done to more
+than just i.MX6 driver?
 
-Yes, has two ranges.
-So add the description about it.
+ drivers/pci/controller/dwc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->> +- interrupts : The interrupt of the first timer
->> +- clocks: should be "rclk"
->> +
->> +Example:
->> +
->> +timer {
-> 
-> timer@1e000050
-
-Okay.
-
-Thanks
-Sugaya Taichi
-
-> 
->> +	compatible = "socionext,milbeaut-m10v-timer";
->> +	reg = <0x1e000050 0x10>, <0x1e000060 0x10>;
->> +	interrupts = <0 91 4>;
->> +	clocks = <&rclk>;
->> +};
->> -- 
->> 1.9.1
->>
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 2b139acccf32..44ededbeab85 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -92,6 +92,7 @@ config PCI_IMX6
+ 	bool "Freescale i.MX6 PCIe controller"
+ 	depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	depends on PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 
+ config PCIE_SPEAR13XX
+-- 
+2.19.1
 
