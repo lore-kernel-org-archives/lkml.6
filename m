@@ -2,129 +2,282 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00012C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40C8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C4F20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B4CE20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a14vI2Q+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C4F20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DhdVVUXn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4CE20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbeLFOME (ORCPT
+        id S1729675AbeLFONJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:12:04 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48087 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727737AbeLFOMD (ORCPT
+        Thu, 6 Dec 2018 09:13:09 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42536 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbeLFONI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:12:03 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181206141200euoutp0162e1d842a61caf2a426b615b3a1ab52f~tw8o_6wfH2332023320euoutp01i;
-        Thu,  6 Dec 2018 14:12:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181206141200euoutp0162e1d842a61caf2a426b615b3a1ab52f~tw8o_6wfH2332023320euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544105520;
-        bh=lMLWrX+5Bsf84uPOArjJkoCJCh1Tz0mxK8Q0pSp56L4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=a14vI2Q+bZrsVnYud+XMK0jTtIZn7pVc0iiuake/EYdI7NbhaoITd/2tH4MnWuarj
-         hp1VV7V30p7jJWwCy+46GkjOq5/b1vt54e4E+Ejn6NKVSJd0jRT7yECr8R8qU4ilC+
-         mmr8UqT8SL1CzgDKkRXfv7bU6sJ7OSqbFGslHfsw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181206141159eucas1p2b3b19e805788d77562301acd5aad3c0c~tw8oRe9d13178231782eucas1p25;
-        Thu,  6 Dec 2018 14:11:59 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9C.13.04441.F2E290C5; Thu,  6
-        Dec 2018 14:11:59 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181206141159eucas1p2d8855194db968d33f30a82f0fe1ae638~tw8noC6oa3179831798eucas1p22;
-        Thu,  6 Dec 2018 14:11:59 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-74-5c092e2fcdd2
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 11.69.04128.F2E290C5; Thu,  6
-        Dec 2018 14:11:59 +0000 (GMT)
-Received: from AMDC3748.DIGITAL.local ([106.120.43.17]) by
-        eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PJB009DDJFYZ760@eusync1.samsung.com>;
-        Thu, 06 Dec 2018 14:11:59 +0000 (GMT)
-From:   Andrzej Hajda <a.hajda@samsung.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: [PATCH] component: do not stop components lookup after first fail
-Date:   Thu, 06 Dec 2018 15:11:47 +0100
-Message-id: <20181206141147.15375-1-a.hajda@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7djPc7r6epwxBl29qha31p1jtdg4Yz2r
-        RfPi9WwWl3fNYbM4NHUvo8XaI3fZLeZ+mcrswO5x+dpFZo9NqzrZPPbPXcPu0bdlFaPH501y
-        AaxRXDYpqTmZZalF+nYJXBmrVq9mKtjKXrHv43bWBsZ+ti5GTg4JAROJX1u+A9lcHEICKxgl
-        Wt/OZoJwPjNKXNl9gxmmqu3XJxaIxDJGiWs3e6Cq/jNKHGrZC1bFJqAp8XfzTbC5IgJxElv/
-        LWIFKWIWeMAosWPJBLAiYQEvidcTP7CA2CwCqhIXL8xi72Lk4OAVsJC4cUkaYpu8xOoNB5hB
-        eiUE3rJKfOi5wAqRcJFYfOEJC4QtLPHq+BZ2CFtG4vLkbqh4vUTTzCtQzR2MEicWL4f61Fri
-        8PGLYIOYBfgkJm2bzgyyWEKAV6KjTQiixEOie8NHsHIhgViJf3euMk9glFjAyLCKUTy1tDg3
-        PbXYMC+1XK84Mbe4NC9dLzk/dxMjMNJO/zv+aQfj10tJhxgFOBiVeHhfPGCPEWJNLCuuzD3E
-        KMHBrCTCy6DHESPEm5JYWZValB9fVJqTWnyIUZqDRUmct5rhQbSQQHpiSWp2ampBahFMlomD
-        U6qBUagp1vJ8zt3DWlOOSE1z+XVtRdGptaYzfjjUJei5/eo9Upz6brN1UKvn/nuKi7nKGdky
-        KoXCbDSbP/yXOxj381tB05KXO94LatksnCG6WyeO5eP32xNmToiOVd1iHnVpOzcDo+yF7U8z
-        3eRedIgLGfz7qybhLMY4oV7YefqcsFkXn3WpxTAsUmIpzkg01GIuKk4EAPRcSyuwAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHJMWRmVeSWpSXmKPExsVy+t/xy7r6epwxBm8OcFvcWneO1WLjjPWs
-        Fs2L17NZXN41h83i0NS9jBZrj9xlt5j7ZSqzA7vH5WsXmT02repk89g/dw27R9+WVYwenzfJ
-        BbBGcdmkpOZklqUW6dslcGWsWr2aqWAre8W+j9tZGxj72boYOTkkBEwk2n59Yuli5OIQEljC
-        KHHr8iRmCKeRSeJjw0ewKjYBTYm/m28C2RwcIgJxEgv2lILUMAs8YJQ4f/kJI0iNsICXxOuJ
-        H1hAbBYBVYmLF2axg9TzClhI3LgkDbFMXmL1hgPMExi5FjAyrGIUSS0tzk3PLTbSK07MLS7N
-        S9dLzs/dxAgMhW3Hfm7Zwdj1LvgQowAHoxIP74sH7DFCrIllxZW5hxglOJiVRHgZ9DhihHhT
-        EiurUovy44tKc1KLDzFKc7AoifOeN6iMEhJITyxJzU5NLUgtgskycXBKNTDac/f6T7TcKDHp
-        C7fYbE9ZjRlr38U+vZvHkZfW6SvxSU3D/oFnq3V4YfiixXPPO9m0HX++/XvMsZz+X6fz9LPl
-        xS2tFxz1mVperV7ssfBge3iheFzsneNnC5MM4379/BJYcjqm7tjD7C/vfmqe2N0ksul5hUvL
-        3eicTUGxjUZPHy4RXc9+2kGJpTgj0VCLuag4EQD/AEWuAQIAAA==
-X-CMS-MailID: 20181206141159eucas1p2d8855194db968d33f30a82f0fe1ae638
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181206141159eucas1p2d8855194db968d33f30a82f0fe1ae638
-References: <CGME20181206141159eucas1p2d8855194db968d33f30a82f0fe1ae638@eucas1p2.samsung.com>
+        Thu, 6 Dec 2018 09:13:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PMWwlz1Rp3FGP1S0BmTNwyIHN10oYPgixjpO1G2iji0=; b=DhdVVUXnjhgYNeYjslMFivM+p
+        Qu8Kd/HPJliEYcYc9SLgMt5qZWCy7kCA59TLDl9WBlhNXCOJrfkPCmkZgJi56xyHEdGYeErCmniEe
+        k2L+2HWYTYMckLzjW7NkjrkaHKNbCgLVJzDTQyTsEaOgJxj+Yeou7QSHOfW/cJkq3HGz4wXJzpWrd
+        Ln+u2eC7iTl+clM9g3IHy2fALdgaxy3Q0SQweiLcWIPBl5LK4+yKGgweh5KtTElseDL/PGAnvguqX
+        XlozDDOXUnUmTIp6GSTMxcQ+Io4zHcMYXEdUfG5XlffdtpPuhQgsBO3miqYGlLDY/hs5T6r00dlRu
+        lx333kGkg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUuMI-0001Cj-T1; Thu, 06 Dec 2018 14:10:30 +0000
+Date:   Thu, 6 Dec 2018 06:10:30 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/34] powerpc/dma: untangle vio_dma_mapping_ops from
+ dma_iommu_ops
+Message-ID: <20181206141030.GH29741@infradead.org>
+References: <20181114082314.8965-1-hch@lst.de>
+ <20181114082314.8965-9-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114082314.8965-9-hch@lst.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently showing content of /sys/kernel/debug/device_component/*
-works partially, in case one of the components is not available this and
-all remaining components have status not-registered, but the problem
-is only with the first one.
-Allowing to finish lookup for other components in case one is missing
-solves the issue.
+ping?
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/base/component.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index e8d676fad0c9..e9572b37d5cf 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -179,7 +179,7 @@ static int find_components(struct master *master)
- 		c = find_component(master, mc->compare, mc->data);
- 		if (!c) {
- 			ret = -ENXIO;
--			break;
-+			continue;
- 		}
- 
- 		dev_dbg(master->dev, "found component %s, duplicate %u\n", dev_name(c->dev), !!c->master);
--- 
-2.17.1
-
+On Wed, Nov 14, 2018 at 09:22:48AM +0100, Christoph Hellwig wrote:
+> vio_dma_mapping_ops currently does a lot of indirect calls through
+> dma_iommu_ops, which not only make the code harder to follow but are
+> also expensive in the post-spectre world.  Unwind the indirect calls
+> by calling the ppc_iommu_* or iommu_* APIs directly applicable, or
+> just use the dma_iommu_* methods directly where we can.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/powerpc/include/asm/iommu.h     |  1 +
+>  arch/powerpc/kernel/dma-iommu.c      |  2 +-
+>  arch/powerpc/platforms/pseries/vio.c | 87 ++++++++++++----------------
+>  3 files changed, 38 insertions(+), 52 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/iommu.h b/arch/powerpc/include/asm/iommu.h
+> index 35db0cbc9222..75daa10f31a4 100644
+> --- a/arch/powerpc/include/asm/iommu.h
+> +++ b/arch/powerpc/include/asm/iommu.h
+> @@ -242,6 +242,7 @@ static inline int __init tce_iommu_bus_notifier_init(void)
+>  }
+>  #endif /* !CONFIG_IOMMU_API */
+>  
+> +u64 dma_iommu_get_required_mask(struct device *dev);
+>  int dma_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr);
+>  
+>  #else
+> diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
+> index 2ca6cfaebf65..0613278abf9f 100644
+> --- a/arch/powerpc/kernel/dma-iommu.c
+> +++ b/arch/powerpc/kernel/dma-iommu.c
+> @@ -92,7 +92,7 @@ int dma_iommu_dma_supported(struct device *dev, u64 mask)
+>  		return 1;
+>  }
+>  
+> -static u64 dma_iommu_get_required_mask(struct device *dev)
+> +u64 dma_iommu_get_required_mask(struct device *dev)
+>  {
+>  	struct iommu_table *tbl = get_iommu_table_base(dev);
+>  	u64 mask;
+> diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
+> index 88f1ad1d6309..ea3a9745c812 100644
+> --- a/arch/powerpc/platforms/pseries/vio.c
+> +++ b/arch/powerpc/platforms/pseries/vio.c
+> @@ -492,7 +492,9 @@ static void *vio_dma_iommu_alloc_coherent(struct device *dev, size_t size,
+>  		return NULL;
+>  	}
+>  
+> -	ret = dma_iommu_ops.alloc(dev, size, dma_handle, flag, attrs);
+> +	ret = iommu_alloc_coherent(dev, get_iommu_table_base(dev), size,
+> +				    dma_handle, dev->coherent_dma_mask, flag,
+> +				    dev_to_node(dev));
+>  	if (unlikely(ret == NULL)) {
+>  		vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
+>  		atomic_inc(&viodev->cmo.allocs_failed);
+> @@ -507,8 +509,7 @@ static void vio_dma_iommu_free_coherent(struct device *dev, size_t size,
+>  {
+>  	struct vio_dev *viodev = to_vio_dev(dev);
+>  
+> -	dma_iommu_ops.free(dev, size, vaddr, dma_handle, attrs);
+> -
+> +	iommu_free_coherent(get_iommu_table_base(dev), size, vaddr, dma_handle);
+>  	vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
+>  }
+>  
+> @@ -518,22 +519,22 @@ static dma_addr_t vio_dma_iommu_map_page(struct device *dev, struct page *page,
+>                                           unsigned long attrs)
+>  {
+>  	struct vio_dev *viodev = to_vio_dev(dev);
+> -	struct iommu_table *tbl;
+> +	struct iommu_table *tbl = get_iommu_table_base(dev);
+>  	dma_addr_t ret = IOMMU_MAPPING_ERROR;
+>  
+> -	tbl = get_iommu_table_base(dev);
+> -	if (vio_cmo_alloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)))) {
+> -		atomic_inc(&viodev->cmo.allocs_failed);
+> -		return ret;
+> -	}
+> -
+> -	ret = dma_iommu_ops.map_page(dev, page, offset, size, direction, attrs);
+> -	if (unlikely(dma_mapping_error(dev, ret))) {
+> -		vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
+> -		atomic_inc(&viodev->cmo.allocs_failed);
+> -	}
+> -
+> +	if (vio_cmo_alloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl))))
+> +		goto out_fail;
+> +	ret = iommu_map_page(dev, tbl, page, offset, size, device_to_mask(dev),
+> +			direction, attrs);
+> +	if (unlikely(ret == IOMMU_MAPPING_ERROR))
+> +		goto out_deallocate;
+>  	return ret;
+> +
+> +out_deallocate:
+> +	vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
+> +out_fail:
+> +	atomic_inc(&viodev->cmo.allocs_failed);
+> +	return IOMMU_MAPPING_ERROR;
+>  }
+>  
+>  static void vio_dma_iommu_unmap_page(struct device *dev, dma_addr_t dma_handle,
+> @@ -542,11 +543,9 @@ static void vio_dma_iommu_unmap_page(struct device *dev, dma_addr_t dma_handle,
+>  				     unsigned long attrs)
+>  {
+>  	struct vio_dev *viodev = to_vio_dev(dev);
+> -	struct iommu_table *tbl;
+> -
+> -	tbl = get_iommu_table_base(dev);
+> -	dma_iommu_ops.unmap_page(dev, dma_handle, size, direction, attrs);
+> +	struct iommu_table *tbl = get_iommu_table_base(dev);
+>  
+> +	iommu_unmap_page(tbl, dma_handle, size, direction, attrs);
+>  	vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
+>  }
+>  
+> @@ -555,34 +554,32 @@ static int vio_dma_iommu_map_sg(struct device *dev, struct scatterlist *sglist,
+>                                  unsigned long attrs)
+>  {
+>  	struct vio_dev *viodev = to_vio_dev(dev);
+> -	struct iommu_table *tbl;
+> +	struct iommu_table *tbl = get_iommu_table_base(dev);
+>  	struct scatterlist *sgl;
+>  	int ret, count;
+>  	size_t alloc_size = 0;
+>  
+> -	tbl = get_iommu_table_base(dev);
+>  	for_each_sg(sglist, sgl, nelems, count)
+>  		alloc_size += roundup(sgl->length, IOMMU_PAGE_SIZE(tbl));
+>  
+> -	if (vio_cmo_alloc(viodev, alloc_size)) {
+> -		atomic_inc(&viodev->cmo.allocs_failed);
+> -		return 0;
+> -	}
+> -
+> -	ret = dma_iommu_ops.map_sg(dev, sglist, nelems, direction, attrs);
+> -
+> -	if (unlikely(!ret)) {
+> -		vio_cmo_dealloc(viodev, alloc_size);
+> -		atomic_inc(&viodev->cmo.allocs_failed);
+> -		return ret;
+> -	}
+> +	if (vio_cmo_alloc(viodev, alloc_size))
+> +		goto out_fail;
+> +	ret = ppc_iommu_map_sg(dev, tbl, sglist, nelems, device_to_mask(dev),
+> +			direction, attrs);
+> +	if (unlikely(!ret))
+> +		goto out_deallocate;
+>  
+>  	for_each_sg(sglist, sgl, ret, count)
+>  		alloc_size -= roundup(sgl->dma_length, IOMMU_PAGE_SIZE(tbl));
+>  	if (alloc_size)
+>  		vio_cmo_dealloc(viodev, alloc_size);
+> -
+>  	return ret;
+> +
+> +out_deallocate:
+> +	vio_cmo_dealloc(viodev, alloc_size);
+> +out_fail:
+> +	atomic_inc(&viodev->cmo.allocs_failed);
+> +	return 0;
+>  }
+>  
+>  static void vio_dma_iommu_unmap_sg(struct device *dev,
+> @@ -591,30 +588,18 @@ static void vio_dma_iommu_unmap_sg(struct device *dev,
+>  		unsigned long attrs)
+>  {
+>  	struct vio_dev *viodev = to_vio_dev(dev);
+> -	struct iommu_table *tbl;
+> +	struct iommu_table *tbl = get_iommu_table_base(dev);
+>  	struct scatterlist *sgl;
+>  	size_t alloc_size = 0;
+>  	int count;
+>  
+> -	tbl = get_iommu_table_base(dev);
+>  	for_each_sg(sglist, sgl, nelems, count)
+>  		alloc_size += roundup(sgl->dma_length, IOMMU_PAGE_SIZE(tbl));
+>  
+> -	dma_iommu_ops.unmap_sg(dev, sglist, nelems, direction, attrs);
+> -
+> +	ppc_iommu_unmap_sg(tbl, sglist, nelems, direction, attrs);
+>  	vio_cmo_dealloc(viodev, alloc_size);
+>  }
+>  
+> -static int vio_dma_iommu_dma_supported(struct device *dev, u64 mask)
+> -{
+> -        return dma_iommu_ops.dma_supported(dev, mask);
+> -}
+> -
+> -static u64 vio_dma_get_required_mask(struct device *dev)
+> -{
+> -        return dma_iommu_ops.get_required_mask(dev);
+> -}
+> -
+>  static const struct dma_map_ops vio_dma_mapping_ops = {
+>  	.alloc             = vio_dma_iommu_alloc_coherent,
+>  	.free              = vio_dma_iommu_free_coherent,
+> @@ -623,8 +608,8 @@ static const struct dma_map_ops vio_dma_mapping_ops = {
+>  	.unmap_sg          = vio_dma_iommu_unmap_sg,
+>  	.map_page          = vio_dma_iommu_map_page,
+>  	.unmap_page        = vio_dma_iommu_unmap_page,
+> -	.dma_supported     = vio_dma_iommu_dma_supported,
+> -	.get_required_mask = vio_dma_get_required_mask,
+> +	.dma_supported     = dma_iommu_mapping_error,
+> +	.get_required_mask = dma_iommu_get_required_mask,
+>  	.mapping_error	   = dma_iommu_mapping_error,
+>  };
+>  
+> -- 
+> 2.19.1
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+---end quoted text---
