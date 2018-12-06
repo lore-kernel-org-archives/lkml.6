@@ -2,60 +2,55 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D83C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AB3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBE220700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F9020700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108174;
-	bh=cam+E+F7uqsaNknv2th6KtRUGoXkJ0sj0/ywuuWU0PM=;
+	s=default; t=1544108204;
+	bh=ZUIW6LxHPBXJjvpJtlJFdRcY3wVMHGxrQ/jy+QdcK1U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yp/R559r0IBqvvP50eaiktVfH9NsdqTEZTc90sIT4xuxtL3vQy/c1Gza+MJmXWO9M
-	 zk4q0bI2hQsHd6NzdZ7MB+ytwyQvMGKeflqSkix1fc5PcebSk1KQMt2rX0bAX+q9dA
-	 /70y2gLNM0mwc+I150gTJAf+CMBDZkg81830sL8g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBE220700
+	b=RTiyho3IC91U+mAZMPHo8EwTsHpiJBw/dWaLSE15aPArl5H7kvVuklZPhSXBkwbRd
+	 ip4f8aSkGpmewBMGPxtx0m1Be7ZRS+Li8p7rQPZgehMOrO6EUzZoLz3PhlN7fU3jAz
+	 Mws8tZe3CtEqLAljZ6BE0HwcDkkiGjPnFQGCy5Vs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F9020700
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbeLFO4N (ORCPT
+        id S1726244AbeLFO4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:56:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48184 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:56:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730712AbeLFOnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:42 -0500
+        id S1730141AbeLFOnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:43:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2F562082B;
-        Thu,  6 Dec 2018 14:43:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A45E20892;
+        Thu,  6 Dec 2018 14:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107421;
-        bh=cam+E+F7uqsaNknv2th6KtRUGoXkJ0sj0/ywuuWU0PM=;
+        s=default; t=1544107397;
+        bh=ZUIW6LxHPBXJjvpJtlJFdRcY3wVMHGxrQ/jy+QdcK1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uGawKfyYfk7LUl9d0b+AOv76lRdKqo6wwx2fQ4NiMTkaAoB0dfu8z0bJyOP0bRg0/
-         /CticpwDYlzwqqCLRB0B9J55PWtRXuF4HBJp6D1C9rpHzvNAMLf3hgQKfMzqyyFViQ
-         Cvs7eNPwKLS/q6qiE6lAqr1QGKZZe5nphTaPHR/o=
+        b=X1KvimOKZ15t4nEXfEOAagw0FM1F2PbWxT0Uhi7Hv2fvKkKwLe9jsVasTuxqIQKSC
+         4xpmU8c9usUkQlZGPeeLGoUAh3kEQdgVajIfCJhpHmuoyq8Xsy34iggqVOY9qwkQWW
+         7X6nVAc7Sa4V9gllCExq7V/yRn/CNz80dtlY/6Gs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.14 21/55] drm/meson: Fix OOB memory accesses in meson_viu_set_osd_lut()
-Date:   Thu,  6 Dec 2018 15:38:55 +0100
-Message-Id: <20181206143002.881189154@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH 4.14 46/55] reset: remove remaining WARN_ON() in <linux/reset.h>
+Date:   Thu,  6 Dec 2018 15:39:20 +0100
+Message-Id: <20181206143004.231275920@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -74,138 +69,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit 97b2a3180a559a33852ac0cd77904166069484fd upstream.
+commit bb6c7768385b200063a14d6615cc1246c3d00760 upstream.
 
-Currently on driver bringup with KASAN enabled, meson triggers an OOB
-memory access as shown below:
+Commit bb475230b8e5 ("reset: make optional functions really optional")
+gave a new meaning to _get_optional variants.
 
-[  117.904528] ==================================================================
-[  117.904560] BUG: KASAN: global-out-of-bounds in meson_viu_set_osd_lut+0x7a0/0x890
-[  117.904588] Read of size 4 at addr ffff20000a63ce24 by task systemd-udevd/498
-[  117.904601]
-[  118.083372] CPU: 4 PID: 498 Comm: systemd-udevd Not tainted 4.20.0-rc3Lyude-Test+ #20
-[  118.091143] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
-[  118.099768] Call trace:
-[  118.102181]  dump_backtrace+0x0/0x3e8
-[  118.105796]  show_stack+0x14/0x20
-[  118.109083]  dump_stack+0x130/0x1c4
-[  118.112539]  print_address_description+0x60/0x25c
-[  118.117214]  kasan_report+0x1b4/0x368
-[  118.120851]  __asan_report_load4_noabort+0x18/0x20
-[  118.125566]  meson_viu_set_osd_lut+0x7a0/0x890
-[  118.129953]  meson_viu_init+0x10c/0x290
-[  118.133741]  meson_drv_bind_master+0x474/0x748
-[  118.138141]  meson_drv_bind+0x10/0x18
-[  118.141760]  try_to_bring_up_master+0x3d8/0x768
-[  118.146249]  component_add+0x214/0x570
-[  118.149978]  meson_dw_hdmi_probe+0x18/0x20 [meson_dw_hdmi]
-[  118.155404]  platform_drv_probe+0x98/0x138
-[  118.159455]  really_probe+0x2a0/0xa70
-[  118.163070]  driver_probe_device+0x1b4/0x2d8
-[  118.167299]  __driver_attach+0x200/0x280
-[  118.171189]  bus_for_each_dev+0x10c/0x1a8
-[  118.175144]  driver_attach+0x38/0x50
-[  118.178681]  bus_add_driver+0x330/0x608
-[  118.182471]  driver_register+0x140/0x388
-[  118.186361]  __platform_driver_register+0xc8/0x108
-[  118.191117]  meson_dw_hdmi_platform_driver_init+0x1c/0x1000 [meson_dw_hdmi]
-[  118.198022]  do_one_initcall+0x12c/0x3bc
-[  118.201883]  do_init_module+0x1fc/0x638
-[  118.205673]  load_module+0x4b4c/0x6808
-[  118.209387]  __se_sys_init_module+0x2e8/0x3c0
-[  118.213699]  __arm64_sys_init_module+0x68/0x98
-[  118.218100]  el0_svc_common+0x104/0x210
-[  118.221893]  el0_svc_handler+0x48/0xb8
-[  118.225594]  el0_svc+0x8/0xc
-[  118.228429]
-[  118.229887] The buggy address belongs to the variable:
-[  118.235007]  eotf_33_linear_mapping+0x84/0xc0
-[  118.239301]
-[  118.240752] Memory state around the buggy address:
-[  118.245522]  ffff20000a63cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.252695]  ffff20000a63cd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.259850] >ffff20000a63ce00: 00 00 00 00 04 fa fa fa fa fa fa fa 00 00 00 00
-[  118.267000]                                ^
-[  118.271222]  ffff20000a63ce80: 00 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
-[  118.278393]  ffff20000a63cf00: 00 00 00 00 00 00 00 00 00 00 00 00 04 fa fa fa
-[  118.285542] ==================================================================
-[  118.292699] Disabling lock debugging due to kernel taint
+The differentiation by WARN_ON() is not needed any more.  We already
+have inconsistency about this; (devm_)reset_control_get_exclusive()
+has WARN_ON() check, but of_reset_control_get_exclusive() does not.
 
-It seems that when looping through the OSD EOTF LUT maps, we use the
-same max iterator for OETF: 20. This is wrong though, since 20*2 is 40,
-which means that we'll stop out of bounds on the EOTF maps.
-
-But, this whole thing is already confusing enough to read through as-is,
-so let's just replace all of the hardcoded sizes with
-OSD_(OETF/EOTF)_LUT_SIZE / 2.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: <stable@vger.kernel.org> # v4.10+
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181125012117.31915-1-lyude@redhat.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/meson/meson_viu.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/reset.h |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/gpu/drm/meson/meson_viu.c
-+++ b/drivers/gpu/drm/meson/meson_viu.c
-@@ -184,18 +184,18 @@ void meson_viu_set_osd_lut(struct meson_
- 	if (lut_sel == VIU_LUT_OSD_OETF) {
- 		writel(0, priv->io_base + _REG(addr_port));
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -125,9 +125,6 @@ static inline int device_reset_optional(
+ static inline struct reset_control *
+ __must_check reset_control_get_exclusive(struct device *dev, const char *id)
+ {
+-#ifndef CONFIG_RESET_CONTROLLER
+-	WARN_ON(1);
+-#endif
+ 	return __reset_control_get(dev, id, 0, false, false);
+ }
  
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
- 		writel(r_map[OSD_OETF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
-@@ -211,18 +211,18 @@ void meson_viu_set_osd_lut(struct meson_
- 	} else if (lut_sel == VIU_LUT_OSD_EOTF) {
- 		writel(0, priv->io_base + _REG(addr_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
- 		writel(r_map[OSD_EOTF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
+@@ -273,9 +270,6 @@ static inline struct reset_control *
+ __must_check devm_reset_control_get_exclusive(struct device *dev,
+ 					      const char *id)
+ {
+-#ifndef CONFIG_RESET_CONTROLLER
+-	WARN_ON(1);
+-#endif
+ 	return __devm_reset_control_get(dev, id, 0, false, false);
+ }
  
 
 
