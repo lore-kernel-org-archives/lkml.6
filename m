@@ -2,136 +2,125 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872D9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BAEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476A420892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:34:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHnyJ6/y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476A420892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id BEFA620892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFA620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbeLFMem (ORCPT
+        id S1729594AbeLFMfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:34:42 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50663 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729069AbeLFMel (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:34:41 -0500
-Received: by mail-it1-f196.google.com with SMTP id z7so1074444iti.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:34:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nM+uQOx9zVJ8TTDrLmJDveS5niw0RvoquTiTM/JIbLw=;
-        b=QHnyJ6/yH1EW8wjSmjDnHSybVF3eCxoG9OkhLo5sURlwI01Pae6pEQvUlJsCDaHhwL
-         G5Cd0KNGuaAj/ArVykwK2mLAPerPTIgmOQ5Q1on6L+lMwIiASbdSu37Fs//KLDjiC04l
-         gn9wWyu3uDky0aLZ1hvFbH9Xc+fTbWS4EoIIS5s4DtydWN3R8iypwu3sV2u1f17zvwNG
-         npmu2Pho+qxFun7F39seB2GkAAI5ILuX8ogvU3FI6GeHMZWdBv5PSt08LQO8bp8fsiwv
-         L+nhIJ01aqxbN1cSawS17opGL3Mx73CqRDXsS2KC9lyrvN+/i9V8NQp6xW2gi+Fs7rdC
-         JkPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nM+uQOx9zVJ8TTDrLmJDveS5niw0RvoquTiTM/JIbLw=;
-        b=p9LbYHr8t+M6j+hbxgBqoDLe4CAcj9YdPNdZckZvQQAyC73jfVd5sXIAP+q+MTKaxe
-         ubLPXEwrCaYHt0r9o948pHMCk1ADGc6iW6EKbpjc65efbHewfCA5Aq3mi5sMG3lJshk3
-         1RQe6KzybpoS+yHzw99B23yBgb7R4uMdoHxlXqwSLPLSehmUTKqiwgUSHEwjAumcoqBo
-         LQH/4EDPxFLwqG0ELGR8HyX7VPE0z+YnIi93DWIbPOqFH3di/7tG5P24u6pBBv1kJrhp
-         LMHf/H/mGDl9AM43WN8z+sfW/FQmepniBidftOz0TBR9xjzTsT/cQd/gUr1sKCCDpbvC
-         3IkA==
-X-Gm-Message-State: AA+aEWbLI6gZ6t5VtT8NHYwtpVtn9eoaUcLmms185n5PiJ2FccVRotEW
-        6l0mFRPel6sABQ5X4aopFV1d5ViQlWj82mWQZhyoiA==
-X-Google-Smtp-Source: AFSGD/VcGSD8ikWZwwSM3NrN8u9F7ooCVd7MOzvHziuFtTWLcldbEDKMv2fzZYPc4Ei/J45KpUmfQ3cx0v8+PATAUoU=
-X-Received: by 2002:a02:93c2:: with SMTP id z60mr24418458jah.51.1544099679394;
- Thu, 06 Dec 2018 04:34:39 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1541687720.git.andreyknvl@google.com> <4a4063a3e074608b99cf22ab447fecc36d056251.1541687720.git.andreyknvl@google.com>
- <20181129182218.GH22027@arrakis.emea.arm.com>
-In-Reply-To: <20181129182218.GH22027@arrakis.emea.arm.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 6 Dec 2018 13:34:28 +0100
-Message-ID: <CAAeHK+z3uJrkwunH6DDuJOVg_trk6pmKgN4QLx7LnDLEP1TSDw@mail.gmail.com>
-Subject: Re: [PATCH v8 1/8] arm64: add type casts to untagged_addr macro
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Evgenii Stepanov <eugenis@google.com>
+        Thu, 6 Dec 2018 07:35:04 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:42044 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeLFMfE (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 6 Dec 2018 07:35:04 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 13:35:01 +0100
+Received: from [192.168.1.132] (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 10:28:08 +0000
+Message-ID: <1544092087.5492.3.camel@suse.com>
+Subject: Re: [PATCH] Revert "firmware: dmi_scan: Use lowercase letters for
+ UUID"
+From:   Jean Delvare <jdelvare@suse.com>
+To:     Peter Korsgaard <peter@korsgaard.com>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Thu, 06 Dec 2018 11:28:07 +0100
+In-Reply-To: <87a7ljyppx.fsf@dell.be.48ers.dk>
+References: <20181205211351.5309-1-peter@korsgaard.com>
+         <1544086444.5492.1.camel@suse.com> <87a7ljyppx.fsf@dell.be.48ers.dk>
+Organization: Suse Linux
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 7:22 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> On Thu, Nov 08, 2018 at 03:36:08PM +0100, Andrey Konovalov wrote:
-> > This patch makes the untagged_addr macro accept all kinds of address types
-> > (void *, unsigned long, etc.) and allows not to specify type casts in each
-> > place where it is used. This is done by using __typeof__.
-> >
-> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > ---
-> >  arch/arm64/include/asm/uaccess.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-> > index 07c34087bd5e..c1325271e368 100644
-> > --- a/arch/arm64/include/asm/uaccess.h
-> > +++ b/arch/arm64/include/asm/uaccess.h
-> > @@ -101,7 +101,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
-> >   * up with a tagged userland pointer. Clear the tag to get a sane pointer to
-> >   * pass on to access_ok(), for instance.
-> >   */
-> > -#define untagged_addr(addr)          sign_extend64(addr, 55)
-> > +#define untagged_addr(addr)          \
-> > +     ((__typeof__(addr))sign_extend64((__u64)(addr), 55))
->
-> Nitpick: same comment as here (use u64):
->
-> http://lkml.kernel.org/r/20181123173739.osgvnnhmptdgtlnl@lakrids.cambridge.arm.com
+On Thu, 2018-12-06 at 10:22 +0100, Peter Korsgaard wrote:
+> > > > > > "Jean" == Jean Delvare <jdelvare@suse.com> writes:
+> 
+>  > On Wed, 2018-12-05 at 22:13 +0100, Peter Korsgaard wrote:
+>  >> This reverts commit 712ff25450bd01366301eef81c33e865d901e7b7.
+>  >> 
+>  >> The output of dmi_save_uuid() is exposed to user space as
+>  >> /sys/devices/virtual/dmi/id/*_uuid, so this breaks backwards compatibility,
+>  >> E.G.  I have systems that include the content of dmi/id/product_uuid as part
+>  >> of the keyphrase for cryptsetup luksOpen.
+>  >> 
+>  >> As the change was purely cosmetical, revert it to fix such breakage.
+> 
+>  > The change is not "cosmetical". The change was done to comply with RFC
+>  > 4122:
+> 
+>  > https://tools.ietf.org/html/rfc4122
+> 
+>  >   The hexadecimal values "a" through "f" are output as
+>  >   lower case characters and are case insensitive on input.
+> 
+> I get that - but it changes the content of sysfs entries, breaking real
+> systems - E.G. a user space ABI regression.
 
-Will do in v9.
+I know it's very convenient to play the "user-space ABI regression"
+card whenever you want a change reverted. However the interface itself
+did not change. The sysfs file name did not change, the nature of its
+contents did not change. The only thing which changed is the exact
+contents details of the file. In my opinion that does not qualify as an
+"ABI regression".
 
->
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> (not acking the whole series just yet, only specific patches to remember
-> what I reviewed)
+> It is a cosmetic code change in the sense that no known software was
+> broken with the upper case characters.
 
-OK.
+It bothered someone enough to create a ticket asking me to fix it in
+dmidecode:
+https://savannah.nongnu.org/bugs/index.php?53569
 
-Thanks!
+And it wouldn't make sense that the kernel uses a different format from
+dmidecode.
+
+>  > If "cryptsetup luksOpen" does not lowercase digits before computing its
+>  > key passphrase, then it's not RFC 4122-compliant and should be fixed.
+> 
+> cryptsetup naturally doesn't know anything about RFC 4122. It just reads
+> a disk encryption keyphrase which happen to include the content of
+> id/product_uuid because of my scripts.
+
+OK, so basically your script infringes RFC 4122, and instead of fixing
+that, you ask me to stop respecting that RFC on my side.
+
+Out of curiosity, what's the purpose of your encryption strategy? That
+someone who would open your computer and steal only the disk (as
+opposed to stealing the whole computer) would be unable to read the
+disk's contents? Do thieves really do that?
+
+>  > Nak. This is too late. Changing it again would just add confusion.
+> 
+> Please reconsider. 4.17 is from June, and 4.19 has only recently become
+> LTS.
+
+I can't see how this is related with kernel 4.19 becoming LTS.
+
+My patch has been public since April 8th, 2018. It has been in 3
+official kernel versions already. I did not hear any complaint about
+that change in 8 months. You are the first one to complain, and that's
+about a custom script that's not RFC-compliant and that you could fix
+with a one-liner.
+
+Look, you can imagine that I was perfectly aware of what I was doing
+when I made that change, and that I pondered the decision carefully at
+that time. And my decision was that the change should be made. As far
+as I'm concerned, this ship has sailed already, sorry.
+
+-- 
+Jean Delvare
+SUSE L3 Support
