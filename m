@@ -2,172 +2,157 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AB1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19FEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930D720838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:54:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930D720838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F37021508
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:03:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3jJcPaK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F37021508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbeLFFyI (ORCPT
+        id S1729017AbeLFGD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 00:54:08 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:60021 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728294AbeLFFyI (ORCPT
+        Thu, 6 Dec 2018 01:03:28 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41263 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbeLFGD1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 00:54:08 -0500
-X-UUID: e899e5154b84451297bbb2e5e49e94bd-20181206
-X-UUID: e899e5154b84451297bbb2e5e49e94bd-20181206
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 877240392; Thu, 06 Dec 2018 13:53:55 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 6 Dec
- 2018 13:53:53 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 6 Dec 2018 13:53:53 +0800
-Message-ID: <1544075633.3753.11.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Jianjun Wang <jianjun.wang@mediatek.com>
-CC:     <ryder.lee@mediatek.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <lorenzo.pieralisi@arm.com>,
-        <matthias.bgg@gmail.com>, <linux-pci@vger.kernel.org>,
-        <mark.rutland@arm.com>, <linux-mediatek@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <youlin.pei@mediatek.com>
-Date:   Thu, 6 Dec 2018 13:53:53 +0800
-In-Reply-To: <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
-         <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 01:03:27 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u6so11258275plm.8;
+        Wed, 05 Dec 2018 22:03:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=57oTXQ4VQufT9x0PRKi54O7D07V2teSLrtvD9DeC/4M=;
+        b=H3jJcPaKlALulQiGKdvaS75THuYCnHOCZbF25Srd2fr5UHghecLBgX2WjcgMBNdK2J
+         Ohw0tqB7sQnadWECzjaPxl7GHLNlAncLq3+oN06MEsuuF1F6515Yte1BbjrwphNE9isT
+         WcnMoY/e2nb8CaZtaU0qEY1GUSYNthbQFS6hJgJ9NTYa9iBjpgPMtbKdddR2aAvFSrRR
+         pMbP6zUxWgdb6dqikl55+FXIHJ0BtDsdc87dY7eI0J+WmapfEeDJBRd9msxW7cWHP5ql
+         3DlKwj3YBqZvOtIrUNKQDnSup59l1xvn50bguV0jgxVV50hh7OIy69X2N9Z2FGG6vHn4
+         qdZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=57oTXQ4VQufT9x0PRKi54O7D07V2teSLrtvD9DeC/4M=;
+        b=cRq6TOz63PA2lcC3BeS0O7FES/EB/sS3Dgkv110tnloeYJgWb/piz/+YoUUTvZ0+VT
+         o6HKDUAzBagZtlBttx1wdHekjPpUdBmneQxubvic+JEsb0ePSoWsxwRGSTK1jcRjlsd1
+         3d9VSmUCupvzB9ef4FmogfGZqRnfSB3igHc5eovk8Q942YRlhl0Q95pYEPZly5XICvap
+         6xOWSEioZ7OE1GiQ63V+37v9qgkAc9Y3ARoqO4RX976POFp/DLR1896T6gsxF1Oco1rp
+         nAsjAk/EhN8Ut//kaqQXpxAhbMkQ3/phxskobqbIOzuX68WkXyU8jHZQI5UMSGACR8vr
+         6HKA==
+X-Gm-Message-State: AA+aEWYfKygGTFdrEa5ekGOVKGCHUDLlT/NsinkaDHKgwL7B8igQqEjx
+        n1FdsRswqJWrPMkWmjXuRNMgoKv3kPs=
+X-Google-Smtp-Source: AFSGD/WdsKBeyU0gRCAsXEV0FF5HjseF6AA/PE2J7bHomaPhVI6YWsNyLwO3HWR9Mm+AEkrD+Mi9Ew==
+X-Received: by 2002:a17:902:7c82:: with SMTP id y2mr26660287pll.33.1544076206261;
+        Wed, 05 Dec 2018 22:03:26 -0800 (PST)
+Received: from [0.0.0.0] (97.64.17.87.16clouds.com. [97.64.17.87])
+        by smtp.gmail.com with ESMTPSA id h19sm27557451pfn.114.2018.12.05.22.03.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 22:03:25 -0800 (PST)
+Subject: Re: usb: thoughts of adding more support for FT232H
+To:     Anatolij Gustschin <agust@denx.de>
+Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
+ <20181205161718.7451d98f@crub>
+From:   Song Qiang <songqiang1304521@gmail.com>
+Message-ID: <924d4ebb-5f9c-f863-c698-9f978e9bc337@gmail.com>
+Date:   Thu, 6 Dec 2018 14:02:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20181205161718.7451d98f@crub>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 09:09 +0800, Jianjun Wang wrote:
-> MT7629 is an arm platform SoC which has the same PCIe IP with MT7622.
-> 
-> The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
-> in arm64 but bogus alignment values at arm32, the pcie device and devices
 
-:s /the pcie device /the bridge device
+On 12/5/18 11:17 PM, Anatolij Gustschin wrote:
+> Hi,
+>
+> On Wed, 5 Dec 2018 22:10:40 +0800
+> Song Qiang songqiang1304521@gmail.com wrote:
+> ...
+>> I've been developing some iio device drivers and found that some people
+>> would like to test their devices with a qemu system which requires an
+>> i2c or spi port on our development hosts. Usually this is achieved with
+>> a DLN-2 adapter, while this is a bit difficult for me because it costs
+>> ~175$ in my country. Then I found that FTDI's FT232H supports both these
+>> two modes and costs only less than 5$ but without full support in kernel.
+>> The ftdi-sio driver supports FT232H only as a serial converter.
+>> So I'm planning to write a mfd driver for it supports both these three
+>> modes, here are my thoughts:
+> There already has been a discussion [1] about adding an MFD driver for
+> FT232H, since the operating modes are mutually exclusive (and bus pins
+> shared between different modes), the MFD approach doesn't seem to be
+> a good fit.
+>
+>>   - This device cannot support these three modes together because they
+>>     share some common pins, so I'm planning to add a sysfs entry
+>>     'current_mode' for selecting which mode the device should be working
+>>     on.
+>>   - This device is in uart mode on reset, so default mode would be reset,
+>>     too. This also helps for people only want to use this as a serial
+>>     converter feels nothing has happened (compatible).
+>>   - I was trying to reuse the ftdi-sio driver but it seems like mfd can
+>>     only register platform devices, while this is a usb driver. I may
+>>     have to copy some functions from this driver.
+>>
+>> Would you share any ideas? I'd appreciate it.
+> There is a patch series [2] adding an interface driver for FT232H-
+> based adapter devices, it already supports adding custom MPSSE based
+> SPI busses with SPI slaves for a custom USB PID. It already supports
+> adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
+> Adding I2C driver/adapter support should be easy, too. Maybe you can
+> re-use it.
+>
+> Thanks,
+> Anatolij
+>
+> [1] https://patchwork.kernel.org/patch/9828985
+> [2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
 
-> behind this bridge will not be enabled. Fix it's BAR0 resource size to
-> guarantee the pcie devices will be enabled correctly.
-> 
-> The HW default value of its device id is invalid, fix it's device id to
-> match the hardware implementation.
-> 
-> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 26 ++++++++++++++++++++++++++
->  include/linux/pci_ids.h                |  1 +
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index d20cf461ba00..f8937cc3c87c 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -73,6 +73,7 @@
->  #define PCIE_MSI_VECTOR		0x0c0
->  
->  #define PCIE_CONF_VEND_ID	0x100
-> +#define PCIE_CONF_DEVICE_ID	0x102
->  #define PCIE_CONF_CLASS_ID	0x106
->  
->  #define PCIE_INT_MASK		0x420
-> @@ -135,12 +136,14 @@ struct mtk_pcie_port;
->  /**
->   * struct mtk_pcie_soc - differentiate between host generations
->   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> + * @need_fix_device_id: whether this host's device ID needed to be fixed or not
->   * @ops: pointer to configuration access functions
->   * @startup: pointer to controller setting functions
->   * @setup_irq: pointer to initialize IRQ functions
->   */
->  struct mtk_pcie_soc {
->  	bool need_fix_class_id;
-> +	bool need_fix_device_id;
->  	struct pci_ops *ops;
->  	int (*startup)(struct mtk_pcie_port *port);
->  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> @@ -692,6 +695,11 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  		writew(val, port->base + PCIE_CONF_CLASS_ID);
->  	}
->  
-> +	if (soc->need_fix_device_id) {
-> +		val = PCI_DEVICE_ID_MEDIATEK_7629;
-> +		writew(val, port->base + PCIE_CONF_DEVICE_ID);
-> +	}
-> +
->  	/* 100ms timeout value should be enough for Gen1/2 training */
->  	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
->  				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-> @@ -1238,11 +1246,29 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
->  	.setup_irq = mtk_pcie_setup_irq,
->  };
->  
-> +static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
-> +	.need_fix_class_id = true,
-> +	.need_fix_device_id = true,
-> +	.ops = &mtk_pcie_ops_v2,
-> +	.startup = mtk_pcie_startup_port_v2,
-> +	.setup_irq = mtk_pcie_setup_irq,
-> +};
-> +
-> +static void mtk_fixup_bar_size(struct pci_dev *dev)
-> +{
-> +	struct resource *dev_res = &dev->resource[0];
-> +	/* 32bit resource length will calculate size to 0, set it smaller */
-> +	dev_res->end = 0xfffffffe;
-> +}
+Hi Anatolij, Johan,
 
-I'm not sure assign the BAR0 size in driver to fit in the bogus
-alignment is a good idea. Seems the size value of 0xffff_fffe also is an
-arbitrary value.
-Do we have a chance to change the resource framework code to make it
-adopt this scenario?
 
-Thanks.
+Great work you've done! While there still some thing confusing me.
 
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MEDIATEK, PCI_DEVICE_ID_MEDIATEK_7629,
-> +			 mtk_fixup_bar_size);
-> +
->  static const struct of_device_id mtk_pcie_ids[] = {
->  	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
->  	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
->  	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
->  	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
-> +	{ .compatible = "mediatek,mt7629-pcie", .data = &mtk_pcie_soc_mt7629 },
->  	{},
->  };
->  
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 69f0abe1ba1a..77b278bac3a8 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2126,6 +2126,7 @@
->  #define PCI_VENDOR_ID_MYRICOM		0x14c1
->  
->  #define PCI_VENDOR_ID_MEDIATEK		0x14c3
-> +#define PCI_DEVICE_ID_MEDIATEK_7629	0x7629
->  
->  #define PCI_VENDOR_ID_TITAN		0x14D2
->  #define PCI_DEVICE_ID_TITAN_010L	0x8001
+Patch series [2] added new custom PIDs to distinguish the mode this device 
+should be in when powered on, is this right? Since USB has a convention for all 
+the VIDs and PIDs, is this really a good approach to use some us-defined PIDs?
 
+In the discussion [1] #4, Johan said that mfd is not suitable for this situation 
+because 'all drivers for these devices be able to retrieve the current mode 
+during probe and only bind when the mode matches'.
+
+I think this is saying that we can only register these devices(i2c, spi, gpio) 
+when we plug it in, but FT232H's functions are surely mutually exclusive, so 
+can't we dynamically register these devices in userspace? I mean through a sysfs 
+interface, and through the implementation functions of this interface, we can 
+try to use mfd_add_devices() and mfd_remove_devices() to unload one 
+function(like uart) and load it as another device like a spi adapter. Is there 
+any side effects of doing this in this way?
+
+And also my English may be not very well so please correct me if I'm 
+understanding anything wrong. :)
+
+
+yours,
+
+Song
 
