@@ -2,84 +2,99 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C99C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C039CC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FCA208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FCA208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id 7130820850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GvTaENsb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7130820850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbeLFSFL (ORCPT
+        id S1726035AbeLFSGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:05:11 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:35961 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbeLFSFK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:05:10 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 6 Dec 2018 13:06:11 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:39778 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbeLFSGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:06:10 -0500
+Received: from zn.tnic (p200300EC2BCE8F00FC176F88AC425FE9.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:8f00:fc17:6f88:ac42:5fe9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 483402007D;
-        Thu,  6 Dec 2018 19:05:00 +0100 (CET)
-Date:   Thu, 6 Dec 2018 19:04:59 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH 2/3] kbuild: generate asm-generic wrappers if mandatory
- headers are missing
-Message-ID: <20181206180459.GA19166@ravnborg.org>
-References: <1544009286-15705-1-git-send-email-yamada.masahiro@socionext.com>
- <1544009286-15705-2-git-send-email-yamada.masahiro@socionext.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D0D0C1EC04DF;
+        Thu,  6 Dec 2018 19:06:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544119569;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=sgxX7qOiwpthTwIR7mh7W6yCw4yrP+yNggi7kHFKdU0=;
+        b=GvTaENsb3Xpazttulvcz97DrDHK+nRIbxnABcmQ2TknlGKM0Pkqb2A43dIC/yyGI+PYSad
+        uuSjX13WxxYVQkhk+q/sO9GTX9dykvKdsY+Yu+7DgehOMsv4UOipLxDOnoJRTtgNmI9hsi
+        TN4zd9xy4aKaNyAEGACJNctqBGQD4Os=
+Date:   Thu, 6 Dec 2018 19:05:52 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: Re: [PATCH] x86/mce: Streamline MCE subsystem's naming
+Message-ID: <20181206180552.GB3986@zn.tnic>
+References: <20181205141323.14995-1-bp@alien8.de>
+ <20181205163037.GC109259@gmail.com>
+ <20181205170006.GK29510@zn.tnic>
+ <20181205180158.GA64770@gmail.com>
+ <20181205190355.GP29510@zn.tnic>
+ <20181206162703.GA119163@gmail.com>
+ <3908561D78D1C84285E8C5FCA982C28F7D47B665@ORSMSX110.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1544009286-15705-2-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=D19gQVrFAAAA:8 a=7gkXJVJtAAAA:8 a=c-n4J4-pAAAA:8
-        a=X64D9lSbaCuUP_jgSmEA:9 a=CjuIK1q_8ugA:10 a=W4TVW4IDbPiebHqcZpNg:22
-        a=E9Po1WZjFZOl8hwRPBS3:22 a=L0NDqeB7ZLmQzAogN4cw:22
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D47B665@ORSMSX110.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 08:28:05PM +0900, Masahiro Yamada wrote:
-> Some time ago, Sam pointed out a certain degree of overwrap between
-> generic-y and mandatory-y. (https://lkml.org/lkml/2017/7/10/121)
+On Thu, Dec 06, 2018 at 05:36:03PM +0000, Luck, Tony wrote:
+> > So the real question is, is there a signifcant class of MCE events that 
+> > are not tied to the reporting channel which is per CPU (-ish ...) MCA 
+> > banks?
 > 
-> I a bit tweaked the meaning of mandatory-y; now it defines the minimum
-> set of ASM headers that all architectures must have.
-> 
-> If arch does not have specific implementation of a mandatory header,
-> Kbuild will let it fallback to the asm-generic one by automatically
-> generating a wrapper. This will allow to drop lots of redundant
-> generic-y defines.
-> 
-> Previously, "mandatory" was used in the context of UAPI, but I guess
-> this can be extended to kernel space ASM headers.
-> 
-> Suggested-by: Sam Ravnborg <sam@ravnborg.org>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Perhaps QPI/UPI interconnect errors?
 
-Nice work!
+Whatever, this is pure bikeshedding what we're doing right now. All the
+errors are reported through the CPU's MCA banks and the argument whether
+an error class which is maybe not really tied to the CPU, should dictate
+which path to put the files in, does not make any sense to me.
 
-For the full series:
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+The only argument which makes sense IMO is whether the path should be
+short. :-)
 
-Have you considered to warn if generic-y contains a header listed
-in mandatory-y - to prevent that they sneak back in.
-And to catch when we lift a header from available to mandatory.
+And both
 
-	Sam
+arch/x86/cpu/mce/
+arch/x86/mce/
+
+are short enough to me.
+
+Now, the real question is, how do we want to place the rest of the
+files/folders so that we can get rid of deeper directory structures.
+
+If we say, we don't want to have .../cpu/... and put everything in
+arch/x86/ then this answers the above question too.
+
+IMO, of course.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
