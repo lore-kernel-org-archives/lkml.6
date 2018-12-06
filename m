@@ -2,155 +2,164 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60064C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AACCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1B72146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:30:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eobayvG5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1B72146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id DABAA20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:31:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABAA20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbeLFHaK (ORCPT
+        id S1729138AbeLFHb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:30:10 -0500
-Received: from ozlabs.org ([203.11.71.1]:56415 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728758AbeLFHaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:30:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439S1B5GBgz9s47;
-        Thu,  6 Dec 2018 18:30:06 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544081407;
-        bh=euibUqfaRMDcZ6GXyQtDDxDOVsSnHai9F9dlX17U38E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=eobayvG5aSGHWxpBjkP0uV4JxIQLokJjGkQJkRqXvopDZMqkTThWmsrfcX7Ak1rTb
-         ATHmG6UMjzZ/8Hug+RY9tnzHGZQn4z3lATIAlbDO0DkbUz0iprgslIzSPfiWG4/T2N
-         i4jfsWVqIYYZSYemh3b/5cJgCGaWO4asT6SKTe0njfjCByFV1wEHerhrL9njUVPDh0
-         r79XAcEbEi0C01BVdhct3tYnifOMPMZuVefBouu8ypuSZFgW+Q1rP2MBE8bVtmvInJ
-         tKBFx/jfJaJPtrre6z3jPRqn5FJ1BUnRhwg7wb+h2uqR4oUbnzyQhflC0MxDxLCO/M
-         lsubYpBQ1IxSQ==
-Date:   Thu, 6 Dec 2018 18:29:38 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Sterba <dsterba@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: linux-next: manual merge of the akpm-current tree with the
- btrfs-kdave tree
-Message-ID: <20181206182938.3b153d04@canb.auug.org.au>
+        Thu, 6 Dec 2018 02:31:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41838 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728758AbeLFHb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 02:31:27 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB67OrHd145966
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 02:31:26 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p6ubnhf8h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 02:31:26 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 6 Dec 2018 07:31:23 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 07:31:17 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB67VGI28192444
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 07:31:16 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45CBBA406B;
+        Thu,  6 Dec 2018 07:31:16 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ACE95A405B;
+        Thu,  6 Dec 2018 07:31:13 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.89])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  6 Dec 2018 07:31:13 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 09:31:11 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v2 2/6] microblaze: prefer memblock API returning virtual
+ address
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+ <1543852035-26634-3-git-send-email-rppt@linux.ibm.com>
+ <0a5e0aef-15fd-2d0c-765c-e7ba60219b00@monstr.eu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Iv7HK=v6yOLt0qJmRnJoNSC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a5e0aef-15fd-2d0c-765c-e7ba60219b00@monstr.eu>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18120607-0020-0000-0000-000002F35181
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120607-0021-0000-0000-000021435F4D
+Message-Id: <20181206073111.GH19181@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=742 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Iv7HK=v6yOLt0qJmRnJoNSC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 05, 2018 at 04:29:40PM +0100, Michal Simek wrote:
+> On 03. 12. 18 16:47, Mike Rapoport wrote:
+> > Rather than use the memblock_alloc_base that returns a physical address and
+> > then convert this address to the virtual one, use appropriate memblock
+> > function that returns a virtual address.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> > ---
+> >  arch/microblaze/mm/init.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+> > index b17fd8a..44f4b89 100644
+> > --- a/arch/microblaze/mm/init.c
+> > +++ b/arch/microblaze/mm/init.c
+> > @@ -363,8 +363,9 @@ void __init *early_get_page(void)
+> >  	 * Mem start + kernel_tlb -> here is limit
+> >  	 * because of mem mapping from head.S
+> >  	 */
+> > -	return __va(memblock_alloc_base(PAGE_SIZE, PAGE_SIZE,
+> > -				memory_start + kernel_tlb));
+> > +	return memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
+> > +				MEMBLOCK_LOW_LIMIT, memory_start + kernel_tlb,
+> > +				NUMA_NO_NODE);
+> >  }
+> >  
+> >  #endif /* CONFIG_MMU */
+> > 
+> 
+> I can't see any issue with functionality when this patch is applied.
+> If you want me to take this via my tree please let me know.
 
-Hi all,
+I thought to route this via mmotm tree.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+> Otherwise:
+> 
+> Tested-by: Michal Simek <michal.simek@xilinx.com>
 
-  fs/btrfs/extent_io.c
+Thanks!
 
-between commit:
+ 
+> Thanks,
+> Michal
+> 
+> -- 
+> Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+> w: www.monstr.eu p: +42-0-721842854
+> Maintainer of Linux kernel - Xilinx Microblaze
+> Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+> U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
+> 
+> 
 
-  e42c38c80535 ("btrfs: Refactor main loop in extent_readpages")
 
-from the btrfs-kdave tree and commit:
 
-  "fs: don't open code lru_to_page()"
 
-from the akpm-current tree.
+-- 
+Sincerely yours,
+Mike.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/btrfs/extent_io.c
-index 5104714212b4,3707c95a6598..000000000000
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@@ -4103,24 -4103,28 +4103,24 @@@ int extent_readpages(struct address_spa
-  	int nr =3D 0;
-  	u64 prev_em_start =3D (u64)-1;
- =20
- -	for (page_idx =3D 0; page_idx < nr_pages; page_idx++) {
- -		page =3D lru_to_page(pages);
- +	while (!list_empty(pages)) {
- +		for (nr =3D 0; nr < BTRFS_PAGES_BATCH && !list_empty(pages);) {
-- 			struct page *page =3D list_entry(pages->prev, struct page, lru);
-++			struct page *page =3D lru_to_page(pages);
- =20
- -		prefetchw(&page->flags);
- -		list_del(&page->lru);
- -		if (add_to_page_cache_lru(page, mapping,
- -					page->index,
- -					readahead_gfp_mask(mapping))) {
- -			put_page(page);
- -			continue;
- +			prefetchw(&page->flags);
- +			list_del(&page->lru);
- +			if (add_to_page_cache_lru(page, mapping, page->index,
- +						readahead_gfp_mask(mapping))) {
- +				put_page(page);
- +				continue;
- +			}
- +
- +			pagepool[nr++] =3D page;
-  		}
- =20
- -		pagepool[nr++] =3D page;
- -		if (nr < ARRAY_SIZE(pagepool))
- -			continue;
-  		__extent_readpages(tree, pagepool, nr, &em_cached, &bio,
- -				&bio_flags, &prev_em_start);
- -		nr =3D 0;
- +				   &bio_flags, &prev_em_start);
-  	}
- -	if (nr)
- -		__extent_readpages(tree, pagepool, nr, &em_cached, &bio,
- -				&bio_flags, &prev_em_start);
- =20
-  	if (em_cached)
-  		free_extent_map(em_cached);
-
---Sig_/Iv7HK=v6yOLt0qJmRnJoNSC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwIz+IACgkQAVBC80lX
-0GwhEQf8CcgSw40AqORCOSFn30nqJIiClLVz6z3OFB9XgB0+gCKFf6OJOT+jxRPB
-tHBKV5/SuaKqYb4MRVtbrtPlnLqmMFwSGMWWqhKWVRHLOW/D/jAdJcpojF6AWkq+
-Lfm7N2+rdYfFhcCU5LHaudjUIW2OE3O4magQcud5zDjQQOVqKMjH5q+uZMPVQxGu
-wexMEL8WCUMzfo3aMfoD4go/pwL3NQx9MO2kE2SHzTIIgQLnL+TBAL3Ekpknc2ho
-ME/gN760CHv/kZjVsmls2ZzgC5yZ4T2jpmCSKHH2m2NX+ULiw+IdDiYx1VgRPzkj
-GZzdEw0GIQpXHeUFNm0GYFAurixtpg==
-=yC2B
------END PGP SIGNATURE-----
-
---Sig_/Iv7HK=v6yOLt0qJmRnJoNSC--
