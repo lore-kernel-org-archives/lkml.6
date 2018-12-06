@@ -2,326 +2,184 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6840EC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B85C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2120E2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:15:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2120E2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5651220659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544127450;
+	bh=aYpSE6/Viuz7vX/vVqaS/BRu788gryMJQ+HeFYlEIWo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=hG0oi8o0Z/bzB89uhl17juziELFrTcmSjLod0sMhBVnuB9fbQVciuUXP59y3xAYQs
+	 s3+Qtey+m76E1s/BDJG5p79qvgXqrsYMnIRPNkCugLz9ZWUKrS+jEXy6e4JKLCmhrB
+	 Y2uQU/dOjGnRosR8Ez0MuiYevIfAnviGaki5bIRs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5651220659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbeLFUP0 (ORCPT
+        id S1725998AbeLFUR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:15:26 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:65401 "EHLO pegase1.c-s.fr"
+        Thu, 6 Dec 2018 15:17:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbeLFUPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:15:25 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 439n0B71Wvz9tyh6;
-        Thu,  6 Dec 2018 21:15:22 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 2mtvfETmqdqw; Thu,  6 Dec 2018 21:15:22 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 439n0B5jmwz9tyh5;
-        Thu,  6 Dec 2018 21:15:22 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DA3368B89D;
-        Thu,  6 Dec 2018 21:15:22 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id aMlPjUKYU4SA; Thu,  6 Dec 2018 21:15:22 +0100 (CET)
-Received: from [192.168.232.3] (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2DD788B88E;
-        Thu,  6 Dec 2018 21:15:18 +0100 (CET)
-Subject: Re: [PATCH 2/2] kgdb/treewide: constify struct kgdb_arch
- arch_kgdb_ops
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ley Foon Tan <lftan@altera.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jason Wessel <jason.wessel@windriver.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net
-References: <75bbcdd1e9277d66ebb06e349dda304bd01ce761.1543957194.git.christophe.leroy@c-s.fr>
- <6b1a19ffa0da02cff9b82b866ba31d57478501ce.1543957194.git.christophe.leroy@c-s.fr>
- <20181206140716.apapnpmdk3nrn7i3@holly.lan>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <0aeb76ee-7250-3833-82f9-44db98cc142a@c-s.fr>
-Date:   Thu, 6 Dec 2018 21:15:17 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        id S1725916AbeLFUR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:17:28 -0500
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1587621527
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 20:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544127447;
+        bh=aYpSE6/Viuz7vX/vVqaS/BRu788gryMJQ+HeFYlEIWo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=W/m0XLYQit/3nqGKvUd6irx5sIOXFRWuTmldMpj5xBFbBKROYGD9i+yFTpFTUs7/X
+         XDSc43shDdXnv7gyUFbNSdwZEmd8xLU2L35RInoJlGNZWT+ftUW+IENyxCbwwmLmM0
+         bhKJgOQgSRHrRuf/wl3bGBKlWnTarc5fpz8NAo8I=
+Received: by mail-wm1-f43.google.com with SMTP id n190so2283874wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:17:27 -0800 (PST)
+X-Gm-Message-State: AA+aEWZ7PrLzMn1pJM2FoFh0xrA8Q9hKMF1q8nYoNuAdzFzCEkT6jZos
+        icO+tmkJc13fo8bCAQDUvbxPvgx62upuSKkx/cSIRg==
+X-Google-Smtp-Source: AFSGD/XRODg+sY7/+saMJzWVtKxbbhfg1W5DYXXIXSrqX1nLHzDH0wcsLGKX3r/PC/pnMKtPOouVAIef4+Z3KGBbFkU=
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr19642431wmh.83.1544127445386;
+ Thu, 06 Dec 2018 12:17:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181206140716.apapnpmdk3nrn7i3@holly.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+ <20181204160304.GB7195@arm.com> <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+ <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
+ <20181205114148.GA15160@arm.com> <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+ <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com>
+ <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
+ <20181206190115.GC10086@cisco> <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
+ <F5664C1D-C3E7-433B-8E5A-7967023E0567@gmail.com>
+In-Reply-To: <F5664C1D-C3E7-433B-8E5A-7967023E0567@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 6 Dec 2018 12:17:13 -0800
+X-Gmail-Original-Message-ID: <CALCETrUbmmcL7pixsP9AH1-AE2WMVgbDkoP_E4wAJMbuZ0CzCg@mail.gmail.com>
+Message-ID: <CALCETrUbmmcL7pixsP9AH1-AE2WMVgbDkoP_E4wAJMbuZ0CzCg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jann Horn <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 6, 2018 at 11:39 AM Nadav Amit <nadav.amit@gmail.com> wrote:
+>
+> > On Dec 6, 2018, at 11:19 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > On Thu, Dec 6, 2018 at 11:01 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> >> On Thu, Dec 06, 2018 at 10:53:50AM -0800, Andy Lutomirski wrote:
+> >>>> If we are going to unmap the linear alias, why not do it at vmalloc(=
+)
+> >>>> time rather than vfree() time?
+> >>>
+> >>> That=E2=80=99s not totally nuts. Do we ever have code that expects __=
+va() to
+> >>> work on module data?  Perhaps crypto code trying to encrypt static
+> >>> data because our APIs don=E2=80=99t understand virtual addresses.  I =
+guess if
+> >>> highmem is ever used for modules, then we should be fine.
+> >>>
+> >>> RO instead of not present might be safer.  But I do like the idea of
+> >>> renaming Rick's flag to something like VM_XPFO or VM_NO_DIRECT_MAP an=
+d
+> >>> making it do all of this.
+> >>
+> >> Yeah, doing it for everything automatically seemed like it was/is
+> >> going to be a lot of work to debug all the corner cases where things
+> >> expect memory to be mapped but don't explicitly say it. And in
+> >> particular, the XPFO series only does it for user memory, whereas an
+> >> additional flag like this would work for extra paranoid allocations
+> >> of kernel memory too.
+> >
+> > I just read the code, and I looks like vmalloc() is already using
+> > highmem (__GFP_HIGH) if available, so, on big x86_32 systems, for
+> > example, we already don't have modules in the direct map.
+> >
+> > So I say we go for it.  This should be quite simple to implement --
+> > the pageattr code already has almost all the needed logic on x86.  The
+> > only arch support we should need is a pair of functions to remove a
+> > vmalloc address range from the address map (if it was present in the
+> > first place) and a function to put it back.  On x86, this should only
+> > be a few lines of code.
+> >
+> > What do you all think?  This should solve most of the problems we have.
+> >
+> > If we really wanted to optimize this, we'd make it so that
+> > module_alloc() allocates memory the normal way, then, later on, we
+> > call some function that, all at once, removes the memory from the
+> > direct map and applies the right permissions to the vmalloc alias (or
+> > just makes the vmalloc alias not-present so we can add permissions
+> > later without flushing), and flushes the TLB.  And we arrange for
+> > vunmap to zap the vmalloc range, then put the memory back into the
+> > direct map, then free the pages back to the page allocator, with the
+> > flush in the appropriate place.
+> >
+> > I don't see why the page allocator needs to know about any of this.
+> > It's already okay with the permissions being changed out from under it
+> > on x86, and it seems fine.  Rick, do you want to give some variant of
+> > this a try?
+>
+> Setting it as read-only may work (and already happens for the read-only
+> module data). I am not sure about setting it as non-present.
+>
+> At some point, a discussion about a threat-model, as Rick indicated, woul=
+d
+> be required. I presume ROP attacks can easily call set_all_modules_text_r=
+w()
+> and override all the protections.
+>
 
+I am far from an expert on exploit techniques, but here's a
+potentially useful model: let's assume there's an attacker who can
+write controlled data to a controlled kernel address but cannot
+directly modify control flow.  It would be nice for such an attacker
+to have a very difficult time of modifying kernel text or of
+compromising control flow.  So we're assuming a feature like kernel
+CET or that the attacker finds it very difficult to do something like
+modifying some thread's IRET frame.
 
-Le 06/12/2018 à 15:07, Daniel Thompson a écrit :
-> On Wed, Dec 05, 2018 at 04:41:11AM +0000, Christophe Leroy wrote:
->> checkpatch.pl reports the following:
->>
->>    WARNING: struct kgdb_arch should normally be const
->>    #28: FILE: arch/mips/kernel/kgdb.c:397:
->>    +struct kgdb_arch arch_kgdb_ops = {
->>
->> This report makes sense, as all other ops struct, this
->> one should also be const. This patch does the change.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> 
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> Similar to https://patchwork.kernel.org/patch/10701129/ I would be more
-> comfortable to see a resend with the relevant arch maintainers
-> explicitly called out with a Cc: entry here.
+Admittedly, for the kernel, this is an odd threat model, since an
+attacker can presumably quite easily learn the kernel stack address of
+one of their tasks, do some syscall, and then modify their kernel
+thread's stack such that it will IRET right back to a fully controlled
+register state with RSP pointing at an attacker-supplied kernel stack.
+So this threat model gives very strong ROP powers. unless we have
+either CET or some software technique to harden all the RET
+instructions in the kernel.
 
-Done in v2
-
-And
-Acked-by: Paul Burton <paul.burton@mips.com>
-
-Thanks
-Christophe
-
-> 
-> 
->> ---
->>   arch/arc/kernel/kgdb.c        | 2 +-
->>   arch/arm/kernel/kgdb.c        | 2 +-
->>   arch/arm64/kernel/kgdb.c      | 2 +-
->>   arch/h8300/kernel/kgdb.c      | 2 +-
->>   arch/hexagon/kernel/kgdb.c    | 2 +-
->>   arch/microblaze/kernel/kgdb.c | 2 +-
->>   arch/mips/kernel/kgdb.c       | 2 +-
->>   arch/nios2/kernel/kgdb.c      | 2 +-
->>   arch/powerpc/kernel/kgdb.c    | 2 +-
->>   arch/sh/kernel/kgdb.c         | 2 +-
->>   arch/sparc/kernel/kgdb_32.c   | 2 +-
->>   arch/sparc/kernel/kgdb_64.c   | 2 +-
->>   arch/x86/kernel/kgdb.c        | 2 +-
->>   include/linux/kgdb.h          | 2 +-
->>   14 files changed, 14 insertions(+), 14 deletions(-)
->>
->> diff --git a/arch/arc/kernel/kgdb.c b/arch/arc/kernel/kgdb.c
->> index 9a3c34af2ae8..bfd04b442e36 100644
->> --- a/arch/arc/kernel/kgdb.c
->> +++ b/arch/arc/kernel/kgdb.c
->> @@ -204,7 +204,7 @@ void kgdb_roundup_cpus(unsigned long flags)
->>   	local_irq_disable();
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* breakpoint instruction: TRAP_S 0x3 */
->>   #ifdef CONFIG_CPU_BIG_ENDIAN
->>   	.gdb_bpt_instr		= {0x78, 0x7e},
->> diff --git a/arch/arm/kernel/kgdb.c b/arch/arm/kernel/kgdb.c
->> index caa0dbe3dc61..21a6d5958955 100644
->> --- a/arch/arm/kernel/kgdb.c
->> +++ b/arch/arm/kernel/kgdb.c
->> @@ -274,7 +274,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
->>    * and we handle the normal undef case within the do_undefinstr
->>    * handler.
->>    */
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   #ifndef __ARMEB__
->>   	.gdb_bpt_instr		= {0xfe, 0xde, 0xff, 0xe7}
->>   #else /* ! __ARMEB__ */
->> diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
->> index a20de58061a8..fe1d1f935b90 100644
->> --- a/arch/arm64/kernel/kgdb.c
->> +++ b/arch/arm64/kernel/kgdb.c
->> @@ -357,7 +357,7 @@ void kgdb_arch_exit(void)
->>   	unregister_die_notifier(&kgdb_notifier);
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops;
->> +const struct kgdb_arch arch_kgdb_ops;
->>   
->>   int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
->>   {
->> diff --git a/arch/h8300/kernel/kgdb.c b/arch/h8300/kernel/kgdb.c
->> index 1a1d30cb0609..602e478afbd5 100644
->> --- a/arch/h8300/kernel/kgdb.c
->> +++ b/arch/h8300/kernel/kgdb.c
->> @@ -129,7 +129,7 @@ void kgdb_arch_exit(void)
->>   	/* Nothing to do */
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: trapa #2 */
->>   	.gdb_bpt_instr = { 0x57, 0x20 },
->>   };
->> diff --git a/arch/hexagon/kernel/kgdb.c b/arch/hexagon/kernel/kgdb.c
->> index 16c24b22d0b2..f1924d483e78 100644
->> --- a/arch/hexagon/kernel/kgdb.c
->> +++ b/arch/hexagon/kernel/kgdb.c
->> @@ -83,7 +83,7 @@ struct dbg_reg_def_t dbg_reg_def[DBG_MAX_REG_NUM] = {
->>   	{ "syscall_nr", GDB_SIZEOF_REG, offsetof(struct pt_regs, syscall_nr)},
->>   };
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* trap0(#0xDB) 0x0cdb0054 */
->>   	.gdb_bpt_instr = {0x54, 0x00, 0xdb, 0x0c},
->>   };
->> diff --git a/arch/microblaze/kernel/kgdb.c b/arch/microblaze/kernel/kgdb.c
->> index 6366f69d118e..130cd0f064ce 100644
->> --- a/arch/microblaze/kernel/kgdb.c
->> +++ b/arch/microblaze/kernel/kgdb.c
->> @@ -143,7 +143,7 @@ void kgdb_arch_exit(void)
->>   /*
->>    * Global data
->>    */
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   #ifdef __MICROBLAZEEL__
->>   	.gdb_bpt_instr = {0x18, 0x00, 0x0c, 0xba}, /* brki r16, 0x18 */
->>   #else
->> diff --git a/arch/mips/kernel/kgdb.c b/arch/mips/kernel/kgdb.c
->> index 31eff1bec577..edfdc2ec2d16 100644
->> --- a/arch/mips/kernel/kgdb.c
->> +++ b/arch/mips/kernel/kgdb.c
->> @@ -394,7 +394,7 @@ int kgdb_arch_handle_exception(int vector, int signo, int err_code,
->>   	return -1;
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   #ifdef CONFIG_CPU_BIG_ENDIAN
->>   	.gdb_bpt_instr = { spec_op << 2, 0x00, 0x00, break_op },
->>   #else
->> diff --git a/arch/nios2/kernel/kgdb.c b/arch/nios2/kernel/kgdb.c
->> index 117859122d1c..37b25f844a2d 100644
->> --- a/arch/nios2/kernel/kgdb.c
->> +++ b/arch/nios2/kernel/kgdb.c
->> @@ -165,7 +165,7 @@ void kgdb_arch_exit(void)
->>   	/* Nothing to do */
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: trap 30 */
->>   	.gdb_bpt_instr = { 0xba, 0x6f, 0x3b, 0x00 },
->>   };
->> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
->> index 59c578f865aa..bdb588b1d8fb 100644
->> --- a/arch/powerpc/kernel/kgdb.c
->> +++ b/arch/powerpc/kernel/kgdb.c
->> @@ -477,7 +477,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
->>   /*
->>    * Global data
->>    */
->> -struct kgdb_arch arch_kgdb_ops;
->> +const struct kgdb_arch arch_kgdb_ops;
->>   
->>   static int kgdb_not_implemented(struct pt_regs *regs)
->>   {
->> diff --git a/arch/sh/kernel/kgdb.c b/arch/sh/kernel/kgdb.c
->> index 4f04c6638a4d..a24c48446e98 100644
->> --- a/arch/sh/kernel/kgdb.c
->> +++ b/arch/sh/kernel/kgdb.c
->> @@ -382,7 +382,7 @@ void kgdb_arch_exit(void)
->>   	unregister_die_notifier(&kgdb_notifier);
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: trapa #0x3c */
->>   #ifdef CONFIG_CPU_LITTLE_ENDIAN
->>   	.gdb_bpt_instr		= { 0x3c, 0xc3 },
->> diff --git a/arch/sparc/kernel/kgdb_32.c b/arch/sparc/kernel/kgdb_32.c
->> index 639c8e54530a..7580775a14b9 100644
->> --- a/arch/sparc/kernel/kgdb_32.c
->> +++ b/arch/sparc/kernel/kgdb_32.c
->> @@ -166,7 +166,7 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
->>   	regs->npc = regs->pc + 4;
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: ta 0x7d */
->>   	.gdb_bpt_instr		= { 0x91, 0xd0, 0x20, 0x7d },
->>   };
->> diff --git a/arch/sparc/kernel/kgdb_64.c b/arch/sparc/kernel/kgdb_64.c
->> index a68bbddbdba4..5d6c2d287e85 100644
->> --- a/arch/sparc/kernel/kgdb_64.c
->> +++ b/arch/sparc/kernel/kgdb_64.c
->> @@ -195,7 +195,7 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
->>   	regs->tnpc = regs->tpc + 4;
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: ta 0x72 */
->>   	.gdb_bpt_instr		= { 0x91, 0xd0, 0x20, 0x72 },
->>   };
->> diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
->> index 8e36f249646e..e7effc02f13c 100644
->> --- a/arch/x86/kernel/kgdb.c
->> +++ b/arch/x86/kernel/kgdb.c
->> @@ -804,7 +804,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
->>   				  (char *)bpt->saved_instr, BREAK_INSTR_SIZE);
->>   }
->>   
->> -struct kgdb_arch arch_kgdb_ops = {
->> +const struct kgdb_arch arch_kgdb_ops = {
->>   	/* Breakpoint instruction: */
->>   	.gdb_bpt_instr		= { 0xcc },
->>   	.flags			= KGDB_HW_BREAKPOINT,
->> diff --git a/include/linux/kgdb.h b/include/linux/kgdb.h
->> index e465bb15912d..3bf313311cca 100644
->> --- a/include/linux/kgdb.h
->> +++ b/include/linux/kgdb.h
->> @@ -281,7 +281,7 @@ struct kgdb_io {
->>   	int			is_console;
->>   };
->>   
->> -extern struct kgdb_arch		arch_kgdb_ops;
->> +extern const struct kgdb_arch		arch_kgdb_ops;
->>   
->>   extern unsigned long kgdb_arch_pc(int exception, struct pt_regs *regs);
->>   
->> -- 
->> 2.13.3
->>
+I wonder if there's a better model to use.  Maybe with stack-protector
+we get some degree of protection?  Or is all of this is rather weak
+until we have CET or a RAP-like feature.
