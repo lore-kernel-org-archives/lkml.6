@@ -2,99 +2,130 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF3EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADA4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85380208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85380208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6598E20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:15:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JzQFlNcp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6598E20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbeLFSOV (ORCPT
+        id S1725984AbeLFSP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:14:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53138 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFSOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:14:21 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FCC020868;
-        Thu,  6 Dec 2018 18:14:20 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 13:14:17 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     akpm@linux-foundation.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] kernel/kcov.c: mark func write_comp_data() as notrace
-Message-ID: <20181206131417.5019b1e8@vmware.local.home>
-In-Reply-To: <20181206143011.23719-1-anders.roxell@linaro.org>
-References: <20181206143011.23719-1-anders.roxell@linaro.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 6 Dec 2018 13:15:29 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41448 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFSP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:15:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c16so1058771lfj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:15:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yjaI9EIjhMeyEcd+7fU+c//AJmqzUhVXJJD+k1+XWKE=;
+        b=JzQFlNcpKtAxsBBKZgR9TgNyuNSJaKrwXWgjx92htfytb080iwN4ki6H8NkRiOHHFD
+         hS3T1TlJx4TM+fsXF1FVrqfJyXStQasDERNUwz6aqILmR8NUNSrFl4p15ozKfhgXMhPD
+         PWKETm+yQ6QeyNGfZdTRvpH0b5hesuUT1U+o4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yjaI9EIjhMeyEcd+7fU+c//AJmqzUhVXJJD+k1+XWKE=;
+        b=gPWa20jrl7/M0+nSem1/vDWQrJZd35HIWpVmpZITtmhZG7T3PsPdpzKftiMUnEOCxs
+         Qy43DWkuwH8z+i8M3zh6NViZUMRtVtXW3uN6c3rbOR3IqhxnNf0iopOXigM8Y43V5rHs
+         b2xbU1BKOYTT++e6H44GnT3ql8JaXW0rgrca6I6EOzsvA3ax+9MWTv/8qm3/S8njWOY0
+         Fxn+Xa40ltFZbI+t4I1tHN16YpMPLNMIiZa82YK0DOt+PwdJqhal4BiCjCASCD4wtc3y
+         0fZE5++6oMEM3t8NgQne1Rfzvb9VpYxEJOgQfSDQdYlsB+V5XvqCNTmzXch/WioOMmzT
+         yoBw==
+X-Gm-Message-State: AA+aEWZB8AjkxbtV/gJUv3yQaCRT7V2Ah7x/IhYM9g6xvUxI6zLETBqy
+        ohIRG8D8FV+k0WbGINePI/AqXjmU2Wg=
+X-Google-Smtp-Source: AFSGD/ViRY6Q21Oe1/RinFxS8qaCNuThqbConx3RyBp9DblU7MKYID8+j9uGGA5lyeCHANjeiTqZZA==
+X-Received: by 2002:a19:f204:: with SMTP id q4mr18667879lfh.133.1544120126158;
+        Thu, 06 Dec 2018 10:15:26 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id p77-v6sm212380lja.0.2018.12.06.10.15.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 10:15:25 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id n18so1071286lfh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:15:24 -0800 (PST)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr16822120lfa.106.1544120124263;
+ Thu, 06 Dec 2018 10:15:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181205163624.1842-1-sean.j.christopherson@intel.com> <20181206073409.GA64887@gmail.com>
+In-Reply-To: <20181206073409.GA64887@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 6 Dec 2018 10:15:08 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgrpUQyux2ZTJj8FUEdHcEoM0KUNrN3KCc+bBhi0fRhaQ@mail.gmail.com>
+Message-ID: <CAHk-=wgrpUQyux2ZTJj8FUEdHcEoM0KUNrN3KCc+bBhi0fRhaQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/mm/fault: Streamline the fault error_code decoder
+ some more
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     sean.j.christopherson@intel.com, dave.hansen@linux.intel.com,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Anvin <hpa@zytor.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>, yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  6 Dec 2018 15:30:11 +0100
-Anders Roxell <anders.roxell@linaro.org> wrote:
+On Wed, Dec 5, 2018 at 11:34 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+> Yeah, so I don't like the overly long 'SUPERVISOR' and the somewhat
+> inconsistent, sporadic handling of negatives. Here's our error code bits:
+>
+> /*
+>  * Page fault error code bits:
+>  *
+>  *   bit 0 ==    0: no page found       1: protection fault
+>  *   bit 1 ==    0: read access         1: write access
+>  *   bit 2 ==    0: kernel-mode access  1: user-mode access
 
-> Since __sanitizer_cov_trace_const_cmp4 is marked as notrace, the
-> function called from __sanitizer_cov_trace_const_cmp4 shouldn't be
-> traceable either.  ftrace_graph_caller() gets called every time func
-> write_comp_data() gets called if it isn't marked 'notrace'. This is the
-> backtrace from gdb:
-> 
->  #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
->  #1  0xffffff8010201920 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
->  #2  0xffffff8010439714 in write_comp_data (type=5, arg1=0, arg2=0, ip=18446743524224276596) at ../kernel/kcov.c:116
->  #3  0xffffff8010439894 in __sanitizer_cov_trace_const_cmp4 (arg1=<optimized out>, arg2=<optimized out>) at ../kernel/kcov.c:188
->  #4  0xffffff8010201874 in prepare_ftrace_return (self_addr=18446743524226602768, parent=0xffffff801014b918, frame_pointer=18446743524223531344) at ./include/generated/atomic-instrumented.h:27
->  #5  0xffffff801020194c in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
-> 
-> Rework so that write_comp_data() that are called from
-> __sanitizer_cov_trace_*_cmp*() are marked as 'notrace'.
-> 
-> Commit 903e8ff86753 ("kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace")
-> missed to mark write_comp_data() as 'notrace'. When that patch was
-> created gcc-7 was used. In lib/Kconfig.debug
-> config KCOV_ENABLE_COMPARISONS
-> 	depends on $(cc-option,-fsanitize-coverage=trace-cmp)
-> 
-> That code path isn't hit with gcc-7. However, it were that with gcc-8.
-> 
-> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+No. Really not at all.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Bit 2 is *not* "kernel vs user".  Never has been. Never will be.
 
--- Steve
+It's a single bit that mixes up *three* different cases:
 
-> ---
->  kernel/kcov.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> index 97959d7b77e2..c2277dbdbfb1 100644
-> --- a/kernel/kcov.c
-> +++ b/kernel/kcov.c
-> @@ -112,7 +112,7 @@ void notrace __sanitizer_cov_trace_pc(void)
->  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
->  
->  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
-> -static void write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
-> +static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
->  {
->  	struct task_struct *t;
->  	u64 *area;
+ - regular user mode access (value: 1)
 
+ - regular CPL0 access (value: 0)
+
+ - CPU system access (value: 0)
+
+and that third case really is important and relevant. And importantly,
+it can happen from user space.
+
+In fact, these days we possibly have a fourth case:
+
+ - kernel access using wruss (value: 1)
+
+and I'd rather see just the numbers (which you have to know to decode)
+than see the simplified AND WRONG decoding of those numbers.
+
+Please don't ever confuse the fault U/S bit with "user vs kernel".
+It's just not true, and people should be very very aware of it now
+being true.
+
+If you care whether a page fault happened in user mode or not, you
+have to look at the register state (ie "user_mode(regs)").
+
+Please call the U/S bit something else than "user" or "kernel".
+
+           Linus
