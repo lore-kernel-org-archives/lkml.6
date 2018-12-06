@@ -4,233 +4,171 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50A9C65BB0
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3D4C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 817EC20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:22:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817EC20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B366214DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B366214DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbeLFAWX (ORCPT
+        id S1728892AbeLFA1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:22:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48839 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeLFAWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:22:23 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF3F489AC6;
-        Thu,  6 Dec 2018 00:22:21 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 403EF60F89;
-        Thu,  6 Dec 2018 00:22:15 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 08:22:11 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     axboe@kernel.dk, Gwendal Grignou <gwendal@chromium.org>,
-        asavery@chromium.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
-Message-ID: <20181206002210.GA3015@ming.t460p>
-References: <20181030230624.61834-1-evgreen@chromium.org>
- <20181030230624.61834-3-evgreen@chromium.org>
- <20181128012624.GB11128@ming.t460p>
- <CAE=gft7Fyq+Jb3ZG3PSTR=C0Wjt3uu57+H2bshM6Gu=_0W0YQw@mail.gmail.com>
- <20181205011059.GA17845@ming.t460p>
- <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
+        Wed, 5 Dec 2018 19:27:48 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:46445 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727514AbeLFA1s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 19:27:48 -0500
+X-Originating-IP: 134.134.139.73
+Received: from localhost (jfdmzpr04-ext.jf.intel.com [134.134.139.73])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2807DC0002;
+        Thu,  6 Dec 2018 00:27:42 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 16:27:38 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:core/rcu] rcutorture: Make initrd/init execute in userspace
+Message-ID: <20181206002738.GA23990@localhost>
+References: <tip-229ab0cb5be3bfbac5947df7240f6905470ca413@git.kernel.org>
+ <20181204222412.GA6874@localhost>
+ <20181204230423.GP4170@linux.ibm.com>
+ <20181205222523.GA14609@localhost>
+ <20181206000809.GX4170@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 06 Dec 2018 00:22:22 +0000 (UTC)
+In-Reply-To: <20181206000809.GX4170@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 11:35:57AM -0800, Evan Green wrote:
-> Hi Ming,
+On Wed, Dec 05, 2018 at 04:08:09PM -0800, Paul E. McKenney wrote:
+> On Wed, Dec 05, 2018 at 02:25:24PM -0800, Josh Triplett wrote:
+> > On Tue, Dec 04, 2018 at 03:04:23PM -0800, Paul E. McKenney wrote:
+> > > On Tue, Dec 04, 2018 at 02:24:13PM -0800, Josh Triplett wrote:
+> > > > On Tue, Dec 04, 2018 at 02:09:42PM -0800, tip-bot for Paul E. McKenney wrote:
+> > > > > --- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+> > > > > +++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+> > > > > @@ -39,9 +39,22 @@ mkdir $T
+> > > > >  
+> > > > >  cat > $T/init << '__EOF___'
+> > > > >  #!/bin/sh
+> > > > > +# Run in userspace a few milliseconds every second.  This helps to
+> > > > > +# exercise the NO_HZ_FULL portions of RCU.
+> > > > >  while :
+> > > > >  do
+> > > > > -	sleep 1000000
+> > > > > +	q=
+> > > > > +	for i in \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> > > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+> > > > 
+> > > > Ow. If there's no better way to do this, please do at least comment how many 'a's
+> > > > this is. (And why 186, exactly?)
+> > > 
+> > > Yeah, that is admittedly a bit strange.  The reason for 186 occurrences of
+> > > "a" to one-time calibration, measuring a few millisecond's worth of delay.
+> > > 
+> > > > Please also consider calibrating the delay loop as you do in the C code.
+> > > 
+> > > Good point.  And a quick web search finds me "date '+%s%N'", which gives
+> > > me nanoseconds since the epoch.  I probably don't want to do a 2038 to
+> > > myself (after all, I might still be alive then), so I should probably try
+> > > to make something work with "date '+%N'".  Or use something like this:
+> > > 
+> > > 	$ date '+%4N'; date '+%4N';date '+%4N'; date '+%4N'
+> > > 	6660
+> > > 	6685
+> > > 	6697
+> > > 	6710
+> > > 
+> > > Ah, but that means I need to add the "date" command to my initrd, doesn't
+> > > it?  And calculation requires either bash or the "test" command.  And it
+> > > would be quite good to restrict this to what can be done with Bourne shell
+> > > built-in commands, since a big point of this is to maintain a small-sized
+> > > initrd.  :-/
+> > 
+> > Sure, and I'm not suggesting adding commands to the initrd, hence my
+> > mention of "If there's no better way".
+> > 
+> > > So how about the following patch, which attempts to explain the situation?
+> > 
+> > That would help, but please also consider consolidating with something
+> > like a10="a a a a a a a a a a" to make it more readable (and perhaps
+> > rounding up to 200 for simplicity).
 > 
-> On Tue, Dec 4, 2018 at 5:11 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >
-> > On Tue, Dec 04, 2018 at 02:19:46PM -0800, Evan Green wrote:
-> > > Hi Ming,
-> > >
-> > > On Tue, Nov 27, 2018 at 5:26 PM Ming Lei <ming.lei@redhat.com> wrote:
-> > > >
-> > > > On Tue, Oct 30, 2018 at 04:06:24PM -0700, Evan Green wrote:
-> > > > > If the backing device for a loop device is a block device,
-> > > > > then mirror the discard properties of the underlying block
-> > > > > device into the loop device. While in there, differentiate
-> > > > > between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
-> > > > > different for block devices, but which the loop device had
-> > > > > just been lumping together.
-> > > > >
-> > > > > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > > > > ---
-> > > > >
-> > > > >  drivers/block/loop.c | 61 +++++++++++++++++++++++++++++++++++-----------------
-> > > > >  1 file changed, 41 insertions(+), 20 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > > > > index 28990fc94841a..176e65101c4ef 100644
-> > > > > --- a/drivers/block/loop.c
-> > > > > +++ b/drivers/block/loop.c
-> > > > > @@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
-> > > > >       return ret;
-> > > > >  }
-> > > > >
-> > > > > -static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-> > > > > +static int lo_discard(struct loop_device *lo, struct request *rq,
-> > > > > +             int mode, loff_t pos)
-> > > > >  {
-> > > > > -     /*
-> > > > > -      * We use punch hole to reclaim the free space used by the
-> > > > > -      * image a.k.a. discard. However we do not support discard if
-> > > > > -      * encryption is enabled, because it may give an attacker
-> > > > > -      * useful information.
-> > > > > -      */
-> > > > >       struct file *file = lo->lo_backing_file;
-> > > > > -     int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-> > > > > +     struct request_queue *q = lo->lo_queue;
-> > > > >       int ret;
-> > > > >
-> > > > > -     if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> > > > > +     if (!blk_queue_discard(q)) {
-> > > > >               ret = -EOPNOTSUPP;
-> > > > >               goto out;
-> > > > >       }
-> > > > > @@ -603,8 +598,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
-> > > > >       case REQ_OP_FLUSH:
-> > > > >               return lo_req_flush(lo, rq);
-> > > > >       case REQ_OP_DISCARD:
-> > > > > +             return lo_discard(lo, rq,
-> > > > > +                     FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-> > > > > +
-> > > > >       case REQ_OP_WRITE_ZEROES:
-> > > > > -             return lo_discard(lo, rq, pos);
-> > > > > +             return lo_discard(lo, rq,
-> > > > > +                     FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-> > > > > +
-> > > > >       case REQ_OP_WRITE:
-> > > > >               if (lo->transfer)
-> > > > >                       return lo_write_transfer(lo, rq, pos);
-> > > > > @@ -859,6 +859,25 @@ static void loop_config_discard(struct loop_device *lo)
-> > > > >       struct file *file = lo->lo_backing_file;
-> > > > >       struct inode *inode = file->f_mapping->host;
-> > > > >       struct request_queue *q = lo->lo_queue;
-> > > > > +     struct request_queue *backingq;
-> > > > > +
-> > > > > +     /*
-> > > > > +      * If the backing device is a block device, mirror its discard
-> > > > > +      * capabilities.
-> > > > > +      */
-> > > > > +     if (S_ISBLK(inode->i_mode)) {
-> > > > > +             backingq = bdev_get_queue(inode->i_bdev);
-> > > > > +             blk_queue_max_discard_sectors(q,
-> > > > > +                     backingq->limits.max_discard_sectors);
-> > > > > +
-> > > > > +             blk_queue_max_write_zeroes_sectors(q,
-> > > > > +                     backingq->limits.max_write_zeroes_sectors);
-> > > > > +
-> > > > > +             q->limits.discard_granularity =
-> > > > > +                     backingq->limits.discard_granularity;
-> > > > > +
-> > > > > +             q->limits.discard_alignment =
-> > > > > +                     backingq->limits.discard_alignment;
-> > > >
-> > > > I think it isn't necessary to mirror backing queue's discard/write_zeros
-> > > > capabilities, given either fs of the underlying queue can deal with well.
-> > > >
-> > > > >
-> > > > >       /*
-> > > > >        * We use punch hole to reclaim the free space used by the
-> > > > > @@ -866,22 +885,24 @@ static void loop_config_discard(struct loop_device *lo)
-> > > > >        * encryption is enabled, because it may give an attacker
-> > > > >        * useful information.
-> > > > >        */
-> > > > > -     if ((!file->f_op->fallocate) ||
-> > > > > -         lo->lo_encrypt_key_size) {
-> > > > > +     } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-> > > > >               q->limits.discard_granularity = 0;
-> > > > >               q->limits.discard_alignment = 0;
-> > > > >               blk_queue_max_discard_sectors(q, 0);
-> > > > >               blk_queue_max_write_zeroes_sectors(q, 0);
-> > > > > -             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> > > > > -             return;
-> > > > > -     }
-> > > > >
-> > > > > -     q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> > > > > -     q->limits.discard_alignment = 0;
-> > > > > +     } else {
-> > > > > +             q->limits.discard_granularity = inode->i_sb->s_blocksize;
-> > > > > +             q->limits.discard_alignment = 0;
-> > > > > +
-> > > > > +             blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> > > > > +             blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> > > > > +     }
-> > > > >
-> > > > > -     blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> > > > > -     blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> > > > > -     blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> > > > > +     if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
-> > > > > +             blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> > > > > +     else
-> > > > > +             blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> > > > >  }
-> > > >
-> > > > Looks it should work just by mirroring backing queue's discard
-> > > > capability to loop queue in case that the loop is backed by
-> > > > block device, doesn't it? Meantime the unified discard limits &
-> > > > write_zeros limits can be kept.
-> > >
-> > > I tested this out, and you're right that I could just flip the
-> > > QUEUE_FLAG_DISCARD based on whether its a block device, and leave
-> >
-> > What I meant actually is to do the following discard config:
-> >
-> >         bool discard;
-> >         if (S_ISBLK(inode->i_mode)) {
-> >                 struct request_queue *backingq = bdev_get_queue(inode->i_bdev);
-> >                 discard = blk_queue_discard(backingq);
-> >         } else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size)
-> >                 discard = false;
-> >         else
-> >                 discard = true;
-> >
-> >         if (discard) {
-> >                 blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-> >                 blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-> >                 blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-> >         } else {
-> >                 blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
-> >         }
+> How about powers of four and one factor of three for 192, as shown below?
+
+Perfect, thanks. That's much better.
+
+Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+
+> 							Thanx, Paul
 > 
-> Ah, I see. But I think it's useful to reflect max_discard_sectors,
-> max_write_zeroes_sectors, discard_granularity, and discard_alignment
-> from the block device to the loop device. With the exception of
-> discard_alignment, these parameters are visible via sysfs, so usermode
-> can actually use these to make more intelligent use of fallocate.
-
-Could you share us what the intelligent use of fallocate is?
-
-The block layer code of blk_bio_discard_split() can deal with all the
-magic limits.
-
-The unified discard limits is simpler from implement view of loop, or
-from userspace view.
-
-> Without this part of it, I still see issues with GNU cp.
-
-Could you investigate the cause of the GNU cp issue?
-
-Thanks,
-Ming
+> ------------------------------------------------------------------------
+> 
+> commit 4f8f751961b536f77c8f82394963e8e2d26efd84
+> Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> Date:   Tue Dec 4 14:59:12 2018 -0800
+> 
+>     torture: Explain and simplify odd "for" loop in mkinitrd.sh
+>     
+>     Why a Bourne-shell "for" loop?  And why 192 instances of "a"?  This commit
+>     adds a shell comment to present the answer to these mysteries.  It also
+>     uses a series of factor-of-four Bourne-shell assignments to make it
+>     easy to see how many instances there are, replacing the earlier wall of
+>     'a' characters.
+>     
+>     Reported-by: Josh Triplett <josh@joshtriplett.org>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> 
+> diff --git a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+> index da298394daa2..ff69190604ea 100755
+> --- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+> +++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+> @@ -40,17 +40,24 @@ mkdir $T
+>  cat > $T/init << '__EOF___'
+>  #!/bin/sh
+>  # Run in userspace a few milliseconds every second.  This helps to
+> -# exercise the NO_HZ_FULL portions of RCU.
+> +# exercise the NO_HZ_FULL portions of RCU.  The 192 instances of "a" was
+> +# empirically shown to give a nice multi-millisecond burst of user-mode
+> +# execution on a 2GHz CPU, as desired.  Modern CPUs will vary from a
+> +# couple of milliseconds up to perhaps 100 milliseconds, which is an
+> +# acceptable range.
+> +#
+> +# Why not calibrate an exact delay?  Because within this initrd, we
+> +# are restricted to Bourne-shell builtins, which as far as I know do not
+> +# provide any means of obtaining a fine-grained timestamp.
+> +
+> +a4="a a a a"
+> +a16="$a4 $a4 $a4 $a4"
+> +a64="$a8 $a8 $a8 $a8"
+> +a192="$a64 $a64 $a64"
+>  while :
+>  do
+>  	q=
+> -	for i in \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
+> -		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
+> +	for i in $a192
+>  	do
+>  		q="$q $i"
+>  	done
+> 
