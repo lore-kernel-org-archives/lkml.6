@@ -2,161 +2,415 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A555C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6216C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C530C21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544122461;
-	bh=KnXbT3lr38Q1FlPwwiq2uSCrY+8HSNulIIaUpUqMkj0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=lj61EcQvJXxh4ggn7weEg/5BN8HGBKBvnzc9WlUl5uEMsydbk0i4rS8RM8MXV/+v6
-	 NVPRXEBVLFdNJhcJXF+2Y0v4h/uhYDsFMap9KbouWEwK3uZMcjlgJ12H2pxMBP/yUL
-	 I0mo1Pf/gPCq0CFowL4bVSlhEZXWXVl1rQ0aBvrM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C530C21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 650FA20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:54:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 650FA20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbeLFSyT (ORCPT
+        id S1726079AbeLFSyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:54:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36360 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 13:54:25 -0500
+Received: from foss.arm.com ([217.140.101.70]:58772 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeLFSyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:54:18 -0500
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 543EC214F1
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 18:54:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544122456;
-        bh=KnXbT3lr38Q1FlPwwiq2uSCrY+8HSNulIIaUpUqMkj0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HqrxaB13+ZAdFk1V6ad3CpmZk02RP91GmGbVAopoC0rHpIz133Hz65XDiB9EYp/Me
-         423AuJM+opJoY1MK5+wZWC4Nn2AzMP0kcZpY08beJpGZ6ye5vlArqbxOUIVqnDwRfh
-         Vn5vjn8GBh1mcZFnkgwh597+ESBMSJ4SAHXCA/oU=
-Received: by mail-wr1-f46.google.com with SMTP id r10so1507340wrs.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:54:16 -0800 (PST)
-X-Gm-Message-State: AA+aEWZPUdQ3HyOcSGwcdbKSR/vwZNhawi3VSoK/TpwEMecr5EAsyyqN
-        VzlmsXHs6FL3moO4/VJpBClYn+RQ2GmkrdR4Y+h+ug==
-X-Google-Smtp-Source: AFSGD/VuCQmtMgT+H4B0Ln1j+ZvLkV4nM6O4NiEe6fYyRRiH139VCy3xcxFqDqJR49r71lLncnJnyzyR1ETp9tDq0pE=
-X-Received: by 2002:adf:8323:: with SMTP id 32mr25261943wrd.176.1544122454807;
- Thu, 06 Dec 2018 10:54:14 -0800 (PST)
+        id S1726011AbeLFSyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:54:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E27B7A78;
+        Thu,  6 Dec 2018 10:54:20 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6691A3F5AF;
+        Thu,  6 Dec 2018 10:54:19 -0800 (PST)
+Subject: Re: [RFC] avoid indirect calls for DMA direct mappings
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     iommu@lists.linux-foundation.org, brouer@redhat.com,
+        tariqt@mellanox.com, ilias.apalodimas@linaro.org, toke@toke.dk,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20181206153720.10702-1-hch@lst.de>
+ <CAHk-=wgz6PFCm+XMWN31dRHzA3JcNP0x0Y-z5NMMw3dHhrDXAw@mail.gmail.com>
+ <20181206184330.GB30039@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <173bfba7-033d-93c4-6ef1-48c9e39c9efc@arm.com>
+Date:   Thu, 6 Dec 2018 18:54:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com>
- <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io> <20181202100304.labt63mzrlr5utdl@brauner.io>
- <8736rebl9s.fsf@oldenburg.str.redhat.com> <20181203180224.fkvw4kajtbvru2ku@brauner.io>
- <874lbtjvtd.fsf@oldenburg2.str.redhat.com>
-In-Reply-To: <874lbtjvtd.fsf@oldenburg2.str.redhat.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Dec 2018 10:54:02 -0800
-X-Gmail-Original-Message-ID: <CALCETrViXJ0gD34yVd8QpB-CSeKZzzncvkPHReycTiQin4r4WQ@mail.gmail.com>
-Message-ID: <CALCETrViXJ0gD34yVd8QpB-CSeKZzzncvkPHReycTiQin4r4WQ@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181206184330.GB30039@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 4, 2018, at 4:55 AM, Florian Weimer <fweimer@redhat.com> wrote:
->
-> * Christian Brauner:
->
->>> On Mon, Dec 03, 2018 at 05:57:51PM +0100, Florian Weimer wrote:
->>> * Christian Brauner:
->>>
->>>> Ok, I finally have access to source code again. Scratch what I said ab=
-ove!
->>>> I looked at the code and tested it. If the process has exited but not
->>>> yet waited upon aka is a zombie procfd_send_signal() will return 0. Th=
-is
->>>> is identical to kill(2) behavior. It should've been sort-of obvious
->>>> since when a process is in zombie state /proc/<pid> will still be arou=
-nd
->>>> which means that struct pid must still be around.
->>>
->>> Should we make this state more accessible, by providing a different
->>> error code?
+On 06/12/2018 18:43, Christoph Hellwig wrote:
+> On Thu, Dec 06, 2018 at 10:28:22AM -0800, Linus Torvalds wrote:
+>> which is counterproductive because it checks for the fast case *after*
+>> you've done a load (and a check) that is entirely pointless for the
+>> fast case.
 >>
->> No, I don't think we want that. Imho, It's not really helpful. Signals
->> are still delivered to zombies. If zombie state were to always mean that
->> no-one is going to wait on this thread anymore then it would make sense
->> to me. But given that zombie can also mean that someone put a
->> sleep(1000) right before their wait() call in the parent it seems odd to
->> report back that it is a zombie.
->
-> It allows for error checking that the recipient of a signal is still
-> running.  It's obviously not reliable, but I think it could be helpful
-> in the context of closely cooperating processes.
->
->>> Will the system call ever return ESRCH, given that you have a handle fo=
-r
->>> the process?
+>> Put another way, you made the fast case unnecessarily slow.
 >>
->> Yes, whenever you signal a process that has already been waited upon:
->> - get procfd handle referring to <proc>
->> - <proc> exits and is waited upon
->> - procfd_send_signal(procfd, ...) returns -1 with errno =3D=3D ESRCH
->
-> I see, thanks.
->
->>> Do you want to land all this in one kernel release?  I wonder how
->>> applications are supposed to discover kernel support if functionality i=
-s
->>> split across several kernel releases.  If you get EINVAL or EBADF, it
->>> may not be obvious what is going on.
+>> If this fast case matters (and the whole point of the series is that
+>> it *does* matter), then you should make sure that
 >>
->> Sigh, I get that but I really don't want to have to land this in one big
->> chunk. I want this syscall to go in in a as soon as we can to fulfill
->> the most basic need: having a way that guarantees us that we signal the
->> process that we intended to signal.
+>>   (a) the dma_is_direct() function/macro uses "likely()" for the test
+> 
+> I'm a little worried about that.  Yes, for the common case it is
+> likely.  But if you run a setup where you say always have an iommu
+> it is not, in fact it is never called in that case, but we only know
+> that at runtime.
+> 
+>>   (b) the code is organized like this instead:
 >>
->> The thread case is easy to implement on top of it. But I suspect we will
->> quibble about the exact semantics for a long time. Even now we have been
->> on multiple - justified - detrous. That's all pefectly fine and
->> expected. But if we have the basic functionality in we have time to do
->> all of that. We might even land it in the same kernel release still. I
->> really don't want to come of as tea-party-kernel-conservative here but I
->> have time-and-time again seen that making something fancy and cover ever
->> interesting feature in one patchset takes a very very long time.
+>> +       if (dma_is_direct(ops))
+>> +               dma_direct_unmap_page(dev, addr, size, dir, attrs);
+>> +       else if (ops->unmap_page)
+>> +               ops->unmap_page(dev, addr, size, dir, attrs);
 >>
->> If you care about userspace being able to detect that case I can return
->> EOPNOTSUPP when a tid descriptor is passed.
->
-> I suppose that's fine.  Or alternatively, when thread group support is
-> added, introduce a flag that applications have to use to enable it, so
-> that they can probe for support by checking support for the flag.
->
-> I wouldn't be opposed to a new system call like this either:
->
->  int procfd_open (pid_t thread_group, pid_t thread_id, unsigned flags);
->
-> But I think this is frowned upon on the kernel side.
+>> because now you avoid that unnecessary conditional for the common
+>> case, and you hopefully never even access the pointer (because you
+>> know what's behind it: the direct ops cases that you're
+>> short-circuiting).
+> 
+> Agreed on that, I've fixed it up now (current patch attached below).
+> 
+>> In fact, as a further micro-optimization it might be a good idea to
+>> just specify that the dma_is_direct() ops is a special pointer
+>> (perhaps even just say that "NULL means it's direct"), because that
+>> then makes the fast-case test much simpler (avoids a whole nasty
+>> constant load, and testing for NULL in particular is often much
+>> better).
+> 
+> So I wanted to do the NULL case, and it would be much nicer.  But the
+> arm folks went to great length to make sure they don't have a default
+> set of dma ops and require it to be explicitly set on every device
+> to catch cases where people don't set things up properly and I didn't
+> want to piss them off..  But maybe I should just go for it and see who
+> screams, as the benefit is pretty obvious.
 
-I have no problem with it, except that I think it shouldn=E2=80=99t return =
-an
-fd that can be used for proc filesystem access.
+I'm pretty sure we used to assign dummy_dma_ops explicitly to devices at 
+the point we detected the ACPI properties are wrong - that shouldn't be 
+too much of a headache to go back to.
+
+Robin.
+
+> 
+> ---
+>  From 89cc8ab03798177339ad916efabd320e792ee034 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Mon, 3 Dec 2018 16:49:29 +0100
+> Subject: dma-mapping: bypass indirect calls for dma-direct
+> 
+> Avoid expensive indirect calls in the fast path DMA mapping
+> operations by directly calling the dma_direct_* ops if we are using
+> the directly mapped DMA operations.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   include/linux/dma-direct.h  |  17 ------
+>   include/linux/dma-mapping.h | 110 ++++++++++++++++++++++++++++++++----
+>   kernel/dma/direct.c         |  13 +++--
+>   3 files changed, 106 insertions(+), 34 deletions(-)
+> 
+> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> index 3b0a3ea3876d..b7338702592a 100644
+> --- a/include/linux/dma-direct.h
+> +++ b/include/linux/dma-direct.h
+> @@ -60,22 +60,5 @@ void dma_direct_free_pages(struct device *dev, size_t size, void *cpu_addr,
+>   struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+>   		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs);
+>   void __dma_direct_free_pages(struct device *dev, size_t size, struct page *page);
+> -dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+> -		unsigned long offset, size_t size, enum dma_data_direction dir,
+> -		unsigned long attrs);
+> -void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> -		size_t size, enum dma_data_direction dir, unsigned long attrs);
+> -int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+> -		enum dma_data_direction dir, unsigned long attrs);
+> -void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs);
+> -void dma_direct_sync_single_for_device(struct device *dev,
+> -		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> -void dma_direct_sync_sg_for_device(struct device *dev,
+> -		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> -void dma_direct_sync_single_for_cpu(struct device *dev,
+> -		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> -void dma_direct_sync_sg_for_cpu(struct device *dev,
+> -		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+>   int dma_direct_supported(struct device *dev, u64 mask);
+>   #endif /* _LINUX_DMA_DIRECT_H */
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 8916499d2805..98e4dd67c906 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -221,6 +221,69 @@ static inline const struct dma_map_ops *get_dma_ops(struct device *dev)
+>   }
+>   #endif
+>   
+> +static inline bool dma_is_direct(const struct dma_map_ops *ops)
+> +{
+> +	return IS_ENABLED(CONFIG_DMA_DIRECT_OPS) && ops == &dma_direct_ops;
+> +}
+> +
+> +/*
+> + * All the dma_direct_* declarations are here just for the indirect call bypass,
+> + * and must not be used directly drivers!
+> + */
+> +dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+> +		unsigned long offset, size_t size, enum dma_data_direction dir,
+> +		unsigned long attrs);
+> +int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+> +		enum dma_data_direction dir, unsigned long attrs);
+> +
+> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
+> +    defined(CONFIG_SWIOTLB)
+> +void dma_direct_sync_single_for_device(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> +void dma_direct_sync_sg_for_device(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> +#else
+> +static inline void dma_direct_sync_single_for_device(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+> +{
+> +}
+> +static inline void dma_direct_sync_sg_for_device(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> +{
+> +}
+> +#endif
+> +
+> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL) || \
+> +    defined(CONFIG_SWIOTLB)
+> +void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs);
+> +void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> +		int nents, enum dma_data_direction dir, unsigned long attrs);
+> +void dma_direct_sync_single_for_cpu(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> +void dma_direct_sync_sg_for_cpu(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> +#else
+> +static inline void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +}
+> +static inline void dma_direct_unmap_sg(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir,
+> +		unsigned long attrs)
+> +{
+> +}
+> +static inline void dma_direct_sync_single_for_cpu(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+> +{
+> +}
+> +static inline void dma_direct_sync_sg_for_cpu(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> +{
+> +}
+> +#endif
+> +
+>   static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>   					      size_t size,
+>   					      enum dma_data_direction dir,
+> @@ -231,9 +294,12 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+>   	debug_dma_map_single(dev, ptr, size);
+> -	addr = ops->map_page(dev, virt_to_page(ptr),
+> -			     offset_in_page(ptr), size,
+> -			     dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		addr = dma_direct_map_page(dev, virt_to_page(ptr),
+> +				offset_in_page(ptr), size, dir, attrs);
+> +	else
+> +		addr = ops->map_page(dev, virt_to_page(ptr),
+> +				offset_in_page(ptr), size, dir, attrs);
+>   	debug_dma_map_page(dev, virt_to_page(ptr),
+>   			   offset_in_page(ptr), size,
+>   			   dir, addr, true);
+> @@ -248,7 +314,9 @@ static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->unmap_page)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+> +	else if (ops->unmap_page)
+>   		ops->unmap_page(dev, addr, size, dir, attrs);
+>   	debug_dma_unmap_page(dev, addr, size, dir, true);
+>   }
+> @@ -265,7 +333,10 @@ static inline int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+>   	int ents;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	ents = ops->map_sg(dev, sg, nents, dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		ents = dma_direct_map_sg(dev, sg, nents, dir, attrs);
+> +	else
+> +		ents = ops->map_sg(dev, sg, nents, dir, attrs);
+>   	BUG_ON(ents < 0);
+>   	debug_dma_map_sg(dev, sg, nents, ents, dir);
+>   
+> @@ -280,7 +351,9 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+>   	debug_dma_unmap_sg(dev, sg, nents, dir);
+> -	if (ops->unmap_sg)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+> +	else if (ops->unmap_sg)
+>   		ops->unmap_sg(dev, sg, nents, dir, attrs);
+>   }
+>   
+> @@ -294,7 +367,10 @@ static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+>   	dma_addr_t addr;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+> +	else
+> +		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+>   	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+>   
+>   	return addr;
+> @@ -308,7 +384,9 @@ static inline void dma_unmap_page_attrs(struct device *dev,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->unmap_page)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+> +	else if (ops->unmap_page)
+>   		ops->unmap_page(dev, addr, size, dir, attrs);
+>   	debug_dma_unmap_page(dev, addr, size, dir, false);
+>   }
+> @@ -355,7 +433,9 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_single_for_cpu)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_single_for_cpu(dev, addr, size, dir);
+> +	else if (ops->sync_single_for_cpu)
+>   		ops->sync_single_for_cpu(dev, addr, size, dir);
+>   	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
+>   }
+> @@ -374,7 +454,9 @@ static inline void dma_sync_single_for_device(struct device *dev,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_single_for_device)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_single_for_device(dev, addr, size, dir);
+> +	else if (ops->sync_single_for_device)
+>   		ops->sync_single_for_device(dev, addr, size, dir);
+>   	debug_dma_sync_single_for_device(dev, addr, size, dir);
+>   }
+> @@ -393,7 +475,9 @@ dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_sg_for_cpu)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_sg_for_cpu(dev, sg, nelems, dir);
+> +	else if (ops->sync_sg_for_cpu)
+>   		ops->sync_sg_for_cpu(dev, sg, nelems, dir);
+>   	debug_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
+>   }
+> @@ -405,7 +489,9 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>   	const struct dma_map_ops *ops = get_dma_ops(dev);
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_sg_for_device)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_sg_for_device(dev, sg, nelems, dir);
+> +	else if (ops->sync_sg_for_device)
+>   		ops->sync_sg_for_device(dev, sg, nelems, dir);
+>   	debug_dma_sync_sg_for_device(dev, sg, nelems, dir);
+>   
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 372c1955454a..cd535e7c67d7 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -223,6 +223,7 @@ void dma_direct_sync_single_for_device(struct device *dev,
+>   	if (!dev_is_dma_coherent(dev))
+>   		arch_sync_dma_for_device(dev, paddr, size, dir);
+>   }
+> +EXPORT_SYMBOL(dma_direct_sync_single_for_device);
+>   
+>   void dma_direct_sync_sg_for_device(struct device *dev,
+>   		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> @@ -240,6 +241,7 @@ void dma_direct_sync_sg_for_device(struct device *dev,
+>   					dir);
+>   	}
+>   }
+> +EXPORT_SYMBOL(dma_direct_sync_sg_for_device);
+>   #endif
+>   
+>   #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> @@ -258,6 +260,7 @@ void dma_direct_sync_single_for_cpu(struct device *dev,
+>   	if (is_swiotlb_buffer(paddr))
+>   		swiotlb_tbl_sync_single(dev, paddr, size, dir, SYNC_FOR_CPU);
+>   }
+> +EXPORT_SYMBOL(dma_direct_sync_single_for_cpu);
+>   
+>   void dma_direct_sync_sg_for_cpu(struct device *dev,
+>   		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> @@ -277,6 +280,7 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
+>   	if (!dev_is_dma_coherent(dev))
+>   		arch_sync_dma_for_cpu_all(dev);
+>   }
+> +EXPORT_SYMBOL(dma_direct_sync_sg_for_cpu);
+>   
+>   void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+>   		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> @@ -289,6 +293,7 @@ void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+>   	if (is_swiotlb_buffer(phys))
+>   		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
+>   }
+> +EXPORT_SYMBOL(dma_direct_unmap_page);
+>   
+>   void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+>   		int nents, enum dma_data_direction dir, unsigned long attrs)
+> @@ -300,11 +305,7 @@ void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+>   		dma_direct_unmap_page(dev, sg->dma_address, sg_dma_len(sg), dir,
+>   			     attrs);
+>   }
+> -#else
+> -void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -}
+> +EXPORT_SYMBOL(dma_direct_unmap_sg);
+>   #endif
+>   
+>   static inline bool dma_direct_possible(struct device *dev, dma_addr_t dma_addr,
+> @@ -331,6 +332,7 @@ dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+>   		arch_sync_dma_for_device(dev, phys, size, dir);
+>   	return dma_addr;
+>   }
+> +EXPORT_SYMBOL(dma_direct_map_page);
+>   
+>   int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>   		enum dma_data_direction dir, unsigned long attrs)
+> @@ -352,6 +354,7 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>   	dma_direct_unmap_sg(dev, sgl, i, dir, attrs | DMA_ATTR_SKIP_CPU_SYNC);
+>   	return 0;
+>   }
+> +EXPORT_SYMBOL(dma_direct_map_sg);
+>   
+>   /*
+>    * Because 32-bit DMA masks are so common we expect every architecture to be
+> 
