@@ -2,111 +2,166 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC0FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64A8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE2D214DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:56:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="QhrYItHv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE2D214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id 9298D214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9298D214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbeLFK4E (ORCPT
+        id S1729376AbeLFK70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:56:04 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:13445 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFK4D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:56:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544093757;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=LqgLvWQCzXAjNm+GnvRwa47uJidaxtrk50msZKlMirk=;
-        b=QhrYItHvmGSFFYc9c8ltRyYBSQYsrmrSGHFNpIVK78df7QgcywCQj1SHS7y1n5HixU
-        hnhv22T/RogYl/gJb7pyWkUzARXnD29QbkP7dwIf0lX1vGh4QoQSGdmUeBDPigpwyhMI
-        zzqD6bKjVNLwqxe5XhbwAMw/BqWUkyAmCsBKipImqqToWq8uum8wgbABOmLbZnu57lah
-        ETq7vTIrVr9MdvDrc8JhzJWbisMhcIxCc04PJSE2trXa3nJ6v26a/OXwyTVO0P4Mor0J
-        4ZdsnOt9MG2YOG2ZVkT7Zb2jOrnaaZ3AiXLoTSX/Hi2fix3x7FhB3AzIPDrUd5T0B7ZY
-        YouQ==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7Clah083p0L+zOUdqqrGyoEsky3a6w=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:e974:195f:70c8:702a]
-        by smtp.strato.de (RZmta 44.6 AUTH)
-        with ESMTPSA id 404b20uB6AtsltX
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 6 Dec 2018 11:55:54 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <20181129170351.GC27951@lst.de>
- <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
- <20181130105346.GB26765@lst.de>
- <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
- <20181130131056.GA5211@lst.de>
- <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
- <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
- <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
- <20181204142426.GA2743@lst.de>
- <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
- <20181205140550.GA27549@lst.de>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
-Date:   Thu, 6 Dec 2018 11:55:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 6 Dec 2018 05:59:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44814 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727763AbeLFK70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 05:59:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D93331256C4;
+        Thu,  6 Dec 2018 10:59:25 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8DD2F5D9CD;
+        Thu,  6 Dec 2018 10:59:25 +0000 (UTC)
+Received: from zmail25.collab.prod.int.phx2.redhat.com (zmail25.collab.prod.int.phx2.redhat.com [10.5.83.31])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 7D0B5181B9E4;
+        Thu,  6 Dec 2018 10:59:25 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 05:59:25 -0500 (EST)
+From:   Frediano Ziglio <fziglio@redhat.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Message-ID: <207905511.48580418.1544093965441.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20181206103352.20587-1-kraxel@redhat.com>
+References: <20181206103352.20587-1-kraxel@redhat.com>
+Subject: Re: [Spice-devel] [PATCH] drm/qxl: use qxl_num_crtc directly
 MIME-Version: 1.0
-In-Reply-To: <20181205140550.GA27549@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+X-Originating-IP: [10.33.32.16, 10.4.195.26]
+Thread-Topic: drm/qxl: use qxl_num_crtc directly
+Thread-Index: 6gu8SzX0lYQlCzMHMHMoA70PwbJvvQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 06 Dec 2018 10:59:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05 December 2018 at 3:05PM, Christoph Hellwig wrote:
->
-> Thanks.  Can you try a few stepping points in the tree?
->
-> First just with commit 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6
-> (the first one) applied?
->
-> Second with all commits up to 5da11e49df21f21dac25a2491aa788307bdacb6b
->
-> And if that still works with commits up to
-> c1bfcad4b0cf38ce5b00f7ad880d3a13484c123a
->
-Hi Christoph,
+> 
+> Just use qxl_num_crtc directly everywhere instead of using
+> qdev->monitors_config->max_allowed.  Drops pointless indirection
+> and also is less confusing.
+> 
 
-I undid the commit 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6 with the 
-following command:
+To me is MORE confusing, why comparing number of something with
+another number? Previously code was comparing number of monitors
+with number of monitors, not number of CRTs with number of
+monitors.
 
-git checkout 7fd3bb05b73beea1f9840b505aa09beb9c75a8c6
+Why we are optimizing code that, as yours same saying, we are
+not much actively improving?
 
-Result: PASEMI onboard ethernet works again and the P5020 board boots.
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/qxl/qxl_display.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c
+> b/drivers/gpu/drm/qxl/qxl_display.c
+> index ce0b9c40fc..6437369a31 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -80,10 +80,10 @@ static int
+> qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
+>  		DRM_DEBUG_KMS("no client monitors configured\n");
+>  		return status;
+>  	}
+> -	if (num_monitors > qdev->monitors_config->max_allowed) {
+> +	if (num_monitors > qxl_num_crtc) {
+>  		DRM_DEBUG_KMS("client monitors list will be truncated: %d < %d\n",
+> -			      qdev->monitors_config->max_allowed, num_monitors);
+> -		num_monitors = qdev->monitors_config->max_allowed;
+> +			      qxl_num_crtc, num_monitors);
+> +		num_monitors = qxl_num_crtc;
+>  	} else {
+>  		num_monitors = qdev->rom->client_monitors_config.count;
+>  	}
+> @@ -96,8 +96,7 @@ static int
+> qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
+>  		return status;
+>  	}
+>  	/* we copy max from the client but it isn't used */
+> -	qdev->client_monitors_config->max_allowed =
+> -				qdev->monitors_config->max_allowed;
+> +	qdev->client_monitors_config->max_allowed = qxl_num_crtc;
+>  	for (i = 0 ; i < qdev->client_monitors_config->count ; ++i) {
+>  		struct qxl_urect *c_rect =
+>  			&qdev->rom->client_monitors_config.heads[i];
+> @@ -204,7 +203,7 @@ static int qxl_add_monitors_config_modes(struct
+> drm_connector *connector,
+>  
+>  	if (!qdev->monitors_config)
+>  		return 0;
+> -	if (h >= qdev->monitors_config->max_allowed)
+> +	if (h >= qxl_num_crtc)
+>  		return 0;
+>  	if (!qdev->client_monitors_config)
+>  		return 0;
+> @@ -307,8 +306,7 @@ static void qxl_crtc_update_monitors_config(struct
+> drm_crtc *crtc,
+>  		return;
+>  	}
+>  
+> -	if (!qdev->monitors_config ||
+> -	    qdev->monitors_config->max_allowed <= i)
+> +	if (!qdev->monitors_config || qxl_num_crtc <= i)
+>  		return;
+>  
+>  	head.id = i;
+> @@ -348,9 +346,10 @@ static void qxl_crtc_update_monitors_config(struct
+> drm_crtc *crtc,
+>  	if (oldcount != qdev->monitors_config->count)
+>  		DRM_DEBUG_KMS("active heads %d -> %d (%d total)\n",
+>  			      oldcount, qdev->monitors_config->count,
+> -			      qdev->monitors_config->max_allowed);
+> +			      qxl_num_crtc);
+>  
+>  	qdev->monitors_config->heads[i] = head;
+> +	qdev->monitors_config->max_allowed = qxl_num_crtc;
+>  	qxl_send_monitors_config(qdev);
+>  }
+>  
+> @@ -1097,9 +1096,8 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
+>  {
+>  	int ret;
+>  	struct drm_gem_object *gobj;
+> -	int max_allowed = qxl_num_crtc;
+>  	int monitors_config_size = sizeof(struct qxl_monitors_config) +
+> -		max_allowed * sizeof(struct qxl_head);
+> +		qxl_num_crtc * sizeof(struct qxl_head);
+>  
+>  	ret = qxl_gem_object_create(qdev, monitors_config_size, 0,
+>  				    QXL_GEM_DOMAIN_VRAM,
+> @@ -1121,7 +1119,6 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
+>  		qxl_bo_physical_address(qdev, qdev->monitors_config_bo, 0);
+>  
+>  	memset(qdev->monitors_config, 0, monitors_config_size);
+> -	qdev->monitors_config->max_allowed = max_allowed;
+>  	return 0;
+>  }
+>  
 
-I will test the other commits in the next days.
-
-@All
-It is really important, that you also test Christoph's work on your 
-PASEMI and NXP boards. Could you please help us with solving the issues?
-
-'git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.5 a'
-
-Thanks,
-Christian
-
+Frediano
