@@ -2,131 +2,260 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2938DC65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:14 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF00B20989
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4511C04EB8
 	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF00B20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 90CAA2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="fG5VY4b1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CAA2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbeLFVcs (ORCPT
+        id S1726474AbeLFVco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:32:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41154 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726200AbeLFVcY (ORCPT
+        Thu, 6 Dec 2018 16:32:44 -0500
+Received: from mail-pl1-f172.google.com ([209.85.214.172]:33986 "EHLO
+        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbeLFVcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:32:24 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB6LToPu138628
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 16:32:22 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p7bdd92gg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 16:32:22 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 6 Dec 2018 21:32:20 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Dec 2018 21:32:16 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB6LWF5v64815120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 21:32:15 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B446C42045;
-        Thu,  6 Dec 2018 21:32:15 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DDC542042;
-        Thu,  6 Dec 2018 21:32:14 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.110])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Dec 2018 21:32:14 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 23:32:12 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Jann Horn <jannh@google.com>, Peter Xu <peterx@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH 1/1] userfaultfd: check VM_MAYWRITE was set after
- verifying the uffd is registered
-References: <20181206212028.18726-1-aarcange@redhat.com>
- <20181206212028.18726-2-aarcange@redhat.com>
+        Thu, 6 Dec 2018 16:32:09 -0500
+Received: by mail-pl1-f172.google.com with SMTP id w4so774390plz.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 13:32:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=SQGgSb/KnMtoG4jQJN1PfQ9jFVjQzn4lSqrAShZGfPc=;
+        b=fG5VY4b1Jj+02ynTkkJlhLNJ5mOWWC2oEPd0XbfgVFWPLunFfJ+1t9Rt6I118mngnM
+         GIGOotAraCLPxrjGqJEX+N/6fJSrl0AMiVpKOblJcGDjxH0xR2plVonZb/pvyE6jIPUE
+         lHWWiKnq5dLaBfIDppJ6FDaeCpq+qT6T7rfsxv+KKHuIs1tQ93tQADHrgoDujBj/8Ycl
+         /Nh1w5VZu30UF5ZRNk9K3TbemXwq5/yRy4rVqyAiZoJzivv/r40waWQ2OoajJ18FS7we
+         N1G5PWQjgrpdecnG2JvLiJv1fPlA8aNS1Krv2P5/uqsEdH3FPSZqpEHPnqWmQQyX9mPe
+         vvjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=SQGgSb/KnMtoG4jQJN1PfQ9jFVjQzn4lSqrAShZGfPc=;
+        b=ORoasb4XCF0T1CmSymjLd1dgQTVocouxWwavuH0bmgIdhmdZbJoLN6BQj4KolANt1r
+         FIgPJDqLobP2MkGPeNy5yhmFriRIO6WXRNwdGU5Qh/fyFGefjoc8tKJUuVs/g9wQm3MH
+         0pvvVfkn5FoZP1qN5UwkzT69Qc8zgzGKFLbo5vQ1INlkgjxuX6RnGy594AEwPirE3wSn
+         1TetVu0WqcgyYSkGABfbm4ir6KBdKesGX0XuyNBtlJ5fL68dqQN/CcEzkDG+9m7G85kM
+         w1z3OIQozzrmLI/bFQkvNMpIDEC27x8QsQApquCuqvAHyIaecTHXBwcVkVWCNtV8FHRG
+         O2NA==
+X-Gm-Message-State: AA+aEWY9vkGavOgYXBFVEaWPCto8ssOKXo1I5HqdULfW4EYAwNa3atp9
+        QDD7crLycYoUsUO7+emcZbTzyxOx5FGZQw==
+X-Google-Smtp-Source: AFSGD/X+exnoI51REF40RGArGEdD14EJuN4S8BZVYIr34h3VJs5qKXikeU3h0QH6jtbINCf9kXXN6A==
+X-Received: by 2002:a17:902:7c82:: with SMTP id y2mr29404714pll.33.1544131928434;
+        Thu, 06 Dec 2018 13:32:08 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:b824:a031:b50e:f401])
+        by smtp.gmail.com with ESMTPSA id m20sm1147218pgv.93.2018.12.06.13.32.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 13:32:07 -0800 (PST)
+Date:   Thu, 6 Dec 2018 22:31:57 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+Message-ID: <20181206213152.gvci7ijr3dokew7w@brauner.io>
+References: <20181206121858.12215-1-christian@brauner.io>
+ <87sgzahf7k.fsf@xmission.com>
+ <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
+ <875zw6bh2z.fsf@xmission.com>
+ <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
+ <871s6u9z6u.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181206212028.18726-2-aarcange@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18120621-0020-0000-0000-000002F3A712
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120621-0021-0000-0000-00002143B9BB
-Message-Id: <20181206213212.GB7479@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812060180
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <871s6u9z6u.fsf@xmission.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:20:28PM -0500, Andrea Arcangeli wrote:
-> Calling UFFDIO_UNREGISTER on virtual ranges not yet registered in uffd
-> could trigger an harmless false positive WARN_ON. Check the vma is
-> already registered before checking VM_MAYWRITE to shut off the
-> false positive warning.
+On Thu, Dec 06, 2018 at 02:29:13PM -0600, Eric W. Biederman wrote:
+> Christian Brauner <christian@brauner.io> writes:
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 29ec90660d68 ("userfaultfd: shmem/hugetlbfs: only allow to register VM_MAYWRITE vmas")
-> Reported-by: syzbot+06c7092e7d71218a2c16@syzkaller.appspotmail.com
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > On Thu, Dec 06, 2018 at 01:17:24PM -0600, Eric W. Biederman wrote:
+> >> Christian Brauner <christian@brauner.io> writes:
+> >> 
+> >> > On December 7, 2018 4:01:19 AM GMT+13:00, ebiederm@xmission.com wrote:
+> >> >>Christian Brauner <christian@brauner.io> writes:
+> >> >>
+> >> >>> The kill() syscall operates on process identifiers (pid). After a
+> >> >>process
+> >> >>> has exited its pid can be reused by another process. If a caller
+> >> >>sends a
+> >> >>> signal to a reused pid it will end up signaling the wrong process.
+> >> >>This
+> >> >>> issue has often surfaced and there has been a push [1] to address
+> >> >>this
+> >> >>> problem.
+> >> >>>
+> >> >>> This patch uses file descriptors (fd) from proc/<pid> as stable
+> >> >>handles on
+> >> >>> struct pid. Even if a pid is recycled the handle will not change. The
+> >> >>fd
+> >> >>> can be used to send signals to the process it refers to.
+> >> >>> Thus, the new syscall taskfd_send_signal() is introduced to solve
+> >> >>this
+> >> >>> problem. Instead of pids it operates on process fds (taskfd).
+> >> >>
+> >> >>I am not yet thrilled with the taskfd naming.
+> >> >
+> >> > Userspace cares about what does this thing operate on?
+> >> > It operates on processes and threads.
+> >> > The most common term people use is "task".
+> >> > I literally "polled" ten non-kernel people for that purpose and asked:
+> >> > "What term would you use to refer to a process and a thread?"
+> >> > Turns out it is task. So if find this pretty apt.
+> >> > Additionally, the proc manpage uses task in the exact same way (also see the commit message).
+> >> > If you can get behind that name even if feeling it's not optimal it would be great.
+> >> 
+> >> Once I understand why threads and not process groups.  I don't see that
+> >> logic yet.
+> >
+> > The point is: userspace takes "task" to be a generic term for processes
+> > and tasks. Which is what is important. The term also covers process
+> > groups for all that its worth. Most of userspace isn't even aware of
+> > that distinction necessarily.
+> >
+> > fd_send_signal() makes the syscall name meaningless: what is userspace
+> > signaling too? The point being that there's a lot more that you require
+> > userspace to infer from fd_send_signal() than from task_send_signal()
+> > where most people get the right idea right away: "signals to a process
+> > or thread".
+> >
+> >> 
+> >> >>Is there any plan to support sesssions and process groups?
+> >> >
+> >> > I don't see the necessity.
+> >> > As I said in previous mails:
+> >> > we can emulate all interesting signal syscalls with this one.
+> >> 
+> >> I don't know what you mean by all of the interesting signal system
+> >> calls.  I do know you can not replicate kill(2).
+> >
+> > [1]: You cannot replicate certain aspects of kill *yet*. We have
+> > established this before. If we want process group support later we do
+> > have the flags argument to extend the sycall.
+> 
+> Then you have horrible contradiction in the API.
+> 
+> Either the grouping is a property of your file descriptor or the
+> grouping comes from the flags argument.
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+See the first part of Daniel's answer in [1] answer which makes sense to
+me. I won't repeat it here.
+[1]: https://lore.kernel.org/lkml/CAKOZuevgPv1CbAZF-ha0njdq6rd6QkU7T8qmmERJLsL45CeVzg@mail.gmail.com/
 
-> ---
->  fs/userfaultfd.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index cd58939dc977..7a85e609fc27 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1566,7 +1566,6 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		cond_resched();
+> If the grouping is specified in the flags argument then pidfd is the
+> proper name for your file descriptors, and the appropriate prefix
+> for your system call.
 > 
->  		BUG_ON(!vma_can_userfault(vma));
-> -		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+> If the grouping is a property of your file descriptor it does not make
+> sense to talk about using the flags argument later.
 > 
->  		/*
->  		 * Nothing to do: this vma is already registered into this
-> @@ -1575,6 +1574,8 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		if (!vma->vm_userfaultfd_ctx.ctx)
->  			goto skip;
-> 
-> +		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-> +
->  		if (vma->vm_start > start)
->  			start = vma->vm_start;
->  		vma_end = min(end, vma->vm_end);
-> 
+> Your intention is to add the thread case to support pthreads once the
+> process case is sorted out.  So this is something that needs to be made
+> clear.  Did I miss how you plan to handle threads?
 
--- 
-Sincerely yours,
-Mike.
+Yeah, maybe you missed it in the commit message [2] which is based on a
+discussion with Andy [3] and Arnd [4]:
 
+[2]: https://lore.kernel.org/lkml/20181206121858.12215-1-christian@brauner.io/
+     /* taskfd_send_signal() replaces multiple pid-based syscalls */
+    The taskfd_send_signal() syscall currently takes on the job of the
+    following syscalls that operate on pids:
+    - kill(2)
+    - rt_sigqueueinfo(2)
+    The syscall is defined in such a way that it can also operate on thread fds
+    instead of process fds. In a future patchset I will extend it to operate on
+    taskfds from /proc/<pid>/task/<tid> at which point it will additionally
+    take on the job of:
+    - tgkill(2)
+    - rt_tgsigqueueinfo(2)
+    Right now this is intentionally left out to keep this patchset as simple as
+    possible (cf. [4]). If a taskfd of /proc/<pid>/task/<tid> is passed
+    EOPNOTSUPP will be returned to give userspace a way to detect when I add
+    support for such taskfds (cf. [10]).
+
+[3]: https://lore.kernel.org/lkml/CALCETrUY=Hk6=BjgPuDBgj5J1T_b5Q5u1uVOWHjGWXwmHoZBEQ@mail.gmail.com/
+     > Yes, I see no reason why not. My idea is to extend it - after we have a
+     > basic version in - to also work with:
+     > /proc/<pid>/task/<tid>
+     > If I'm not mistaken this should be sufficient to get rt_tgsigqueueinfo.
+     > The thread will be uniquely identified by the tid descriptor and no
+     > combination of /proc/<pid> and /proc/<pid>/task/<tid> is needed. Does
+     > that sound reasonable?
+    
+     Yes. So it would currently replace rt_gsigqueueinfo() but
+     not rt_tgsigqueueinfo(), and could be extended to do both
+     afterwards, without making the interface ugly in any form?
+     
+     I suppose we can always add more flags if needed, and you
+     already ensure that flags is zero for the moment.
+
+[4]: https://lore.kernel.org/lkml/CAK8P3a1_if7+Ak2eefU6JeZT9KW827gkLHaObX-QOsHrB5ZwfA@mail.gmail.com/
+     "Is the current procfd_signal() proposal (under whichever name)
+     sufficient to correctly implement both sys_rt_sigqueueinfo() and
+     sys_rt_tgsigqueueinfo()?"
+
+> 
+> And this fundamentally and definitely gets into all of my concerns about
+> proper handling of pid_task and PIDTYPE_TGID etc.
+> 
+> >> Sending signals to a process group the "kill(-pgrp)" case with kill
+> >> sends the signals to an atomic snapshot of processes.  If the signal
+> >> is SIGKILL then it is guaranteed that then entire process group is
+> >> killed with no survivors.
+> >
+> > See [1].
+> >
+> >> 
+> >> > We succeeded in doing that.
+> >> 
+> >> I am not certain you have.
+> >
+> > See [1].
+> >
+> >> 
+> >> > No need to get more fancy.
+> >> > There's currently no obvious need for more features.
+> >> > Features should be implemented when someone actually needs them.
+> >> 
+> >> That is fair.  I don't understand what you are doing with sending
+> >> signals to a thread.  That seems like one of the least useful
+> >> corner cases of sending signals.
+> >
+> > It's what glibc and Florian care about for pthreads and their our
+> > biggest user atm so they get some I'd argue they get some say in this. :)
+> 
+> Fair enough.  If glibc could use this then we certainly have users and a
+> user case.
+
+Florian was asking specifically in [5]:
+
+[5]: https://lore.kernel.org/lkml/87in0g5aqo.fsf@oldenburg.str.redhat.com/
+     "Looking at the rt_tgsigqueueinfo interface, is there a way to implement
+     the “tg” part with the current procfd_signal interface?"
+
+> 
+> Eric
