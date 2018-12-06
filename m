@@ -2,179 +2,122 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27902C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC48C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15BA20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96CC520878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108149;
-	bh=GZ934Ioc4i3NP9GMoOMP5kb20stv8ZY33+NfQqMwpdE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e6O6+pVkp5DMe5P9degN601AY22Eh1Gex3jG2zCNGZ6lgKJtZ9W8q/ouXAV6+EQgn
-	 ZLwNM0Z1mhNxd1uBRg/O1cb0DTWKx8qXollGFzn6tKgDajXTKw8HH0BvWoVcObjaNZ
-	 k9gng4RyLVIL4zHRW66rFJgqKYFZfD3mq4a7nwcM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15BA20850
+	s=default; t=1544108153;
+	bh=KhuHcI54qejZzgMJEA/PeUcsTUuPrybT0KJnwKINenI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gMdzhj8XJ2xa8cwGulLI+C6UQXcAbMeJw8SI1jguvrZukzGkthpEfFapTUvtXGi8w
+	 ySU7LFkj6yYdeIaobpw3gTmEtmmV/OAOJCRGRrOtacSRYKrriefM+mv3gvrvE4iZkz
+	 6FKZltH8c/VY6l0JDf7RbnRSs7JLloOdrvfVdY8I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CC520878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeLFOnt (ORCPT
+        id S1726317AbeLFOzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:43:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48252 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:55:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730270AbeLFOno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:44 -0500
+        id S1726204AbeLFOzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:55:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FAB420661;
-        Thu,  6 Dec 2018 14:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F2CE20850;
+        Thu,  6 Dec 2018 14:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107423;
-        bh=GZ934Ioc4i3NP9GMoOMP5kb20stv8ZY33+NfQqMwpdE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rpo0/fwEIIDBvK3StjTmsQAiQnx5e/km+UZDTuC/HqG/OB/2PvaGbY4Xf/4kW858n
-         Ten9v30YAlWJtgS+V587NSoLOh0rjuWuNQWv/GsQbmsZ0Cg76UieS4awACHsCwdVrz
-         0VOAr2QVjA+aBRqIPt9yd+iLRR9i2jYMhVsAaX+o=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Jann Horn <jannh@google.com>, Peter Xu <peterx@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 22/55] userfaultfd: use ENOENT instead of EFAULT if the atomic copy user fails
-Date:   Thu,  6 Dec 2018 15:38:56 +0100
-Message-Id: <20181206143002.952207928@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
-References: <20181206143001.749982936@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1544108149;
+        bh=KhuHcI54qejZzgMJEA/PeUcsTUuPrybT0KJnwKINenI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Vz/fJM7LCn16OuyLD8ZRCP5nbDjwcVOD6TYrKuqudnKPDQgDhKhjw91HDknvYdmSY
+         k2TEFHPb4VGhFS1Wa8D8dDtN1VipJLXz6bAbDMb+71Rqjat7zFCTl+lRo3oKNIVj/r
+         8TtGNPx6opuT06JVtCKt1S4ZHBZW2B7iHb4boVE8=
+Date:   Thu, 6 Dec 2018 15:55:47 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     georgi.djakov@linaro.org, linux-pm@vger.kernel.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, Alexandre Bailon <abailon@baylibre.com>,
+        maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v10 0/8] Introduce on-chip interconnect API
+Message-ID: <20181206145547.GA7884@kroah.com>
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=gft4jUjr3oDAZrM=-orLM-YoVAwa+e=crDDC_p9ArGE1dig@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Dec 05, 2018 at 12:41:35PM -0800, Evan Green wrote:
+> On Tue, Nov 27, 2018 at 10:03 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >
+> > Modern SoCs have multiple processors and various dedicated cores (video, gpu,
+> > graphics, modem). These cores are talking to each other and can generate a
+> > lot of data flowing through the on-chip interconnects. These interconnect
+> > buses could form different topologies such as crossbar, point to point buses,
+> > hierarchical buses or use the network-on-chip concept.
+> >
+> > These buses have been sized usually to handle use cases with high data
+> > throughput but it is not necessary all the time and consume a lot of power.
+> > Furthermore, the priority between masters can vary depending on the running
+> > use case like video playback or CPU intensive tasks.
+> >
+> > Having an API to control the requirement of the system in terms of bandwidth
+> > and QoS, so we can adapt the interconnect configuration to match those by
+> > scaling the frequencies, setting link priority and tuning QoS parameters.
+> > This configuration can be a static, one-time operation done at boot for some
+> > platforms or a dynamic set of operations that happen at run-time.
+> >
+> > This patchset introduce a new API to get the requirement and configure the
+> > interconnect buses across the entire chipset to fit with the current demand.
+> > The API is NOT for changing the performance of the endpoint devices, but only
+> > the interconnect path in between them.
+> 
+> For what it's worth, we are ready to land this in Chrome OS. I think
+> this series has been very well discussed and reviewed, hasn't changed
+> much in the last few spins, and is in good enough shape to use as a
+> base for future patches. Georgi's also done a great job reaching out
+> to other SoC vendors, and there appears to be enough consensus that
+> this framework will be usable by more than just Qualcomm. There are
+> also several drivers out on the list trying to add patches to use this
+> framework, with more to come, so it made sense (to us) to get this
+> base framework nailed down. In my experiments this is an important
+> piece of the overall power management story, especially on systems
+> that are mostly idle.
+> 
+> I'll continue to track changes to this series and we will ultimately
+> reconcile with whatever happens upstream, but I thought it was worth
+> sending this note to express our "thumbs up" towards this framework.
 
-------------------
+Looks like a v11 will be forthcoming, so I'll wait for that one to apply
+it to the tree if all looks good.
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+thanks,
 
-commit 9e368259ad988356c4c95150fafd1a06af095d98 upstream.
-
-Patch series "userfaultfd shmem updates".
-
-Jann found two bugs in the userfaultfd shmem MAP_SHARED backend: the
-lack of the VM_MAYWRITE check and the lack of i_size checks.
-
-Then looking into the above we also fixed the MAP_PRIVATE case.
-
-Hugh by source review also found a data loss source if UFFDIO_COPY is
-used on shmem MAP_SHARED PROT_READ mappings (the production usages
-incidentally run with PROT_READ|PROT_WRITE, so the data loss couldn't
-happen in those production usages like with QEMU).
-
-The whole patchset is marked for stable.
-
-We verified QEMU postcopy live migration with guest running on shmem
-MAP_PRIVATE run as well as before after the fix of shmem MAP_PRIVATE.
-Regardless if it's shmem or hugetlbfs or MAP_PRIVATE or MAP_SHARED, QEMU
-unconditionally invokes a punch hole if the guest mapping is filebacked
-and a MADV_DONTNEED too (needed to get rid of the MAP_PRIVATE COWs and
-for the anon backend).
-
-This patch (of 5):
-
-We internally used EFAULT to communicate with the caller, switch to
-ENOENT, so EFAULT can be used as a non internal retval.
-
-Link: http://lkml.kernel.org/r/20181126173452.26955-2-aarcange@redhat.com
-Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Hugh Dickins <hughd@google.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc: <stable@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/hugetlb.c     |    2 +-
- mm/shmem.c       |    2 +-
- mm/userfaultfd.c |    6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4037,7 +4037,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_s
- 
- 		/* fallback to copy_from_user outside mmap_sem */
- 		if (unlikely(ret)) {
--			ret = -EFAULT;
-+			ret = -ENOENT;
- 			*pagep = page;
- 			/* don't free the page */
- 			goto out;
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2266,7 +2266,7 @@ static int shmem_mfill_atomic_pte(struct
- 				*pagep = page;
- 				shmem_inode_unacct_blocks(inode, 1);
- 				/* don't free the page */
--				return -EFAULT;
-+				return -ENOENT;
- 			}
- 		} else {		/* mfill_zeropage_atomic */
- 			clear_highpage(page);
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -49,7 +49,7 @@ static int mcopy_atomic_pte(struct mm_st
- 
- 		/* fallback to copy_from_user outside mmap_sem */
- 		if (unlikely(ret)) {
--			ret = -EFAULT;
-+			ret = -ENOENT;
- 			*pagep = page;
- 			/* don't free the page */
- 			goto out;
-@@ -275,7 +275,7 @@ retry:
- 
- 		cond_resched();
- 
--		if (unlikely(err == -EFAULT)) {
-+		if (unlikely(err == -ENOENT)) {
- 			up_read(&dst_mm->mmap_sem);
- 			BUG_ON(!page);
- 
-@@ -521,7 +521,7 @@ retry:
- 				       src_addr, &page, zeropage);
- 		cond_resched();
- 
--		if (unlikely(err == -EFAULT)) {
-+		if (unlikely(err == -ENOENT)) {
- 			void *page_kaddr;
- 
- 			up_read(&dst_mm->mmap_sem);
-
-
+greg k-h
