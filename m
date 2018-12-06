@@ -6,51 +6,56 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39C8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21CAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769FD21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85FD520892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107426;
-	bh=OboAAzRK4GuOHQz+m3z/bYVCPdICGl4zIbMDCO2FlFw=;
+	s=default; t=1544107432;
+	bh=hJAY9MHq6YJiDw9xDHCSHyvOWbT8lTxHWzqBQ+8LupY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ViTFSGVScShIkOyEIhKUeX+prp/wU0BqwLMRDGmubC1kFcxUEYUJQQfXzQKp4zCH2
-	 RSQIMPfAfQvAF/VfTIPUFEj4rlwB95ZFnS/I75RvQKIy4rUE2jZsqDYSW+DZ5xVfUT
-	 QllDVErb0y5DmfP0TP+0BkPNV9Nff5K96UKz2vEk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769FD21479
+	b=eT1pffidx1yYKX2Nhhrt7bCXzNM8ZgKzBApZfwm1QWGAEX/j3/RXkTIB9DvePviIh
+	 1gF4Xkza35mZ7aQUk/K3vnaS+l3Ak48FejMRw5fUfNoYfC74TxImG+Na1hgbcXtyT/
+	 ahVI8sNjR4718mjuqaXeR0BRjwVmEVjrNgALNhOw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FD520892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730735AbeLFOnp (ORCPT
+        id S1730759AbeLFOnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:43:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48128 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:43:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730703AbeLFOnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:39 -0500
+        id S1730241AbeLFOnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:43:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83ED120661;
-        Thu,  6 Dec 2018 14:43:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6EAA20892;
+        Thu,  6 Dec 2018 14:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107418;
-        bh=OboAAzRK4GuOHQz+m3z/bYVCPdICGl4zIbMDCO2FlFw=;
+        s=default; t=1544107426;
+        bh=hJAY9MHq6YJiDw9xDHCSHyvOWbT8lTxHWzqBQ+8LupY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D2v9DacGc6dHxxnoys8saZnxZIjne6M5g3qmRpDOGtN9oJA++i/97Kx6LciLDNGnx
-         miK/j27F3FoMvCF8lBXRmQEsMuDDQXYVE/a9iYrz7F6SqBK8orUanoJxNuzqjXYyLO
-         JNB0CrSgvLnKkJPD0CPn5vF9pjr+O1pG1AshiSzo=
+        b=w6C921TXjZY2h0qu1HrbDq7qDFpBHl1WhkiDX0kEgiJ3WA6EyBgCZfpaRKqFtC5AW
+         QvlwQM4ftNUwADBca3kkG/C/0MRUD2mBbeI84A4b/e1UILDJ5e06Ea3dkXxYxg9oai
+         yBm2hGOTUViQb7SZAxlQ5fbjomDju35f3VwGmnfY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yongqin Liu <yongqin.liu@linaro.org>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.14 53/55] mm: hide incomplete nr_indirectly_reclaimable in /proc/zoneinfo
-Date:   Thu,  6 Dec 2018 15:39:27 +0100
-Message-Id: <20181206143004.604880125@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 23/55] userfaultfd: shmem: allocate anonymous memory for MAP_PRIVATE shmem
+Date:   Thu,  6 Dec 2018 15:38:57 +0100
+Message-Id: <20181206143003.002397136@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -69,68 +74,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Gushchin <guro@fb.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-[fixed differently upstream, this is a work-around to resolve it for 4.14.y]
+commit 5b51072e97d587186c2f5390c8c9c1fb7e179505 upstream.
 
-Yongqin reported that /proc/zoneinfo format is broken in 4.14
-due to commit 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable
-in /proc/vmstat")
+Userfaultfd did not create private memory when UFFDIO_COPY was invoked
+on a MAP_PRIVATE shmem mapping.  Instead it wrote to the shmem file,
+even when that had not been opened for writing.  Though, fortunately,
+that could only happen where there was a hole in the file.
 
-Node 0, zone      DMA
-  per-node stats
-      nr_inactive_anon 403
-      nr_active_anon 89123
-      nr_inactive_file 128887
-      nr_active_file 47377
-      nr_unevictable 2053
-      nr_slab_reclaimable 7510
-      nr_slab_unreclaimable 10775
-      nr_isolated_anon 0
-      nr_isolated_file 0
-      <...>
-      nr_vmscan_write 0
-      nr_vmscan_immediate_reclaim 0
-      nr_dirtied   6022
-      nr_written   5985
-                   74240
-      ^^^^^^^^^^
-  pages free     131656
+Fix the shmem-backed implementation of UFFDIO_COPY to create private
+memory for MAP_PRIVATE mappings.  The hugetlbfs-backed implementation
+was already correct.
 
-The problem is caused by the nr_indirectly_reclaimable counter,
-which is hidden from the /proc/vmstat, but not from the
-/proc/zoneinfo. Let's fix this inconsistency and hide the
-counter from /proc/zoneinfo exactly as from /proc/vmstat.
+This change is visible to userland, if userfaultfd has been used in
+unintended ways: so it introduces a small risk of incompatibility, but
+is necessary in order to respect file permissions.
 
-BTW, in 4.19+ the counter has been renamed and exported by
-the commit b29940c1abd7 ("mm: rename and change semantics of
-nr_indirectly_reclaimable_bytes"), so there is no such a problem
+An app that uses UFFDIO_COPY for anything like postcopy live migration
+won't notice the difference, and in fact it'll run faster because there
+will be no copy-on-write and memory waste in the tmpfs pagecache
 anymore.
 
-Cc: <stable@vger.kernel.org> # 4.14.x-4.18.x
-Fixes: 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable in /proc/vmstat")
-Reported-by: Yongqin Liu <yongqin.liu@linaro.org>
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Userfaults on MAP_PRIVATE shmem keep triggering only on file holes like
+before.
+
+The real zeropage can also be built on a MAP_PRIVATE shmem mapping
+through UFFDIO_ZEROPAGE and that's safe because the zeropage pte is
+never dirty, in turn even an mprotect upgrading the vma permission from
+PROT_READ to PROT_READ|PROT_WRITE won't make the zeropage pte writable.
+
+Link: http://lkml.kernel.org/r/20181126173452.26955-3-aarcange@redhat.com
+Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmstat.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ mm/userfaultfd.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1500,6 +1500,10 @@ static void zoneinfo_show_print(struct s
- 	if (is_zone_first_populated(pgdat, zone)) {
- 		seq_printf(m, "\n  per-node stats");
- 		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
-+			/* Skip hidden vmstat items. */
-+			if (*vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
-+					 NR_VM_NUMA_STAT_ITEMS] == '\0')
-+				continue;
- 			seq_printf(m, "\n      %-12s %lu",
- 				vmstat_text[i + NR_VM_ZONE_STAT_ITEMS +
- 				NR_VM_NUMA_STAT_ITEMS],
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -381,7 +381,17 @@ static __always_inline ssize_t mfill_ato
+ {
+ 	ssize_t err;
+ 
+-	if (vma_is_anonymous(dst_vma)) {
++	/*
++	 * The normal page fault path for a shmem will invoke the
++	 * fault, fill the hole in the file and COW it right away. The
++	 * result generates plain anonymous memory. So when we are
++	 * asked to fill an hole in a MAP_PRIVATE shmem mapping, we'll
++	 * generate anonymous memory directly without actually filling
++	 * the hole. For the MAP_PRIVATE case the robustness check
++	 * only happens in the pagetable (to verify it's still none)
++	 * and not in the radix tree.
++	 */
++	if (!(dst_vma->vm_flags & VM_SHARED)) {
+ 		if (!zeropage)
+ 			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+ 					       dst_addr, src_addr, page);
+@@ -480,7 +490,8 @@ retry:
+ 	 * dst_vma.
+ 	 */
+ 	err = -ENOMEM;
+-	if (vma_is_anonymous(dst_vma) && unlikely(anon_vma_prepare(dst_vma)))
++	if (!(dst_vma->vm_flags & VM_SHARED) &&
++	    unlikely(anon_vma_prepare(dst_vma)))
+ 		goto out_unlock;
+ 
+ 	while (src_addr < src_start + len) {
 
 
