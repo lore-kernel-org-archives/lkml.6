@@ -2,130 +2,162 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0548EC64EB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9ACC65BAF
 	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7DA20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131897;
-	bh=vX46L8R7a+NtDaBYRnY7AM6Mr/JxMyI03/0OHnel6TE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QNuMEykcWw77KEwmAoCVy1UkoDCTAopOtRd8cM1hZZE61WtfOPZMyocTzkpSVClFJ
-	 aqXvAK/AGrWA5yacsI6uv4dWss+D939rZwK2d7Ie5xpL4jw6ZmAXND7hK+ygiKUjBw
-	 D/6lz/ouJa6/Xm5W44VyF+quiTmvGP0bTCf0UH+s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7DA20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0CAF220989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAF220989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbeLFVbD (ORCPT
+        id S1726806AbeLFVaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:31:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbeLFVaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 16:30:55 -0500
-Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD91D208E7;
-        Thu,  6 Dec 2018 21:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131854;
-        bh=vX46L8R7a+NtDaBYRnY7AM6Mr/JxMyI03/0OHnel6TE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BruxMzlZgQz1dNL16KaecdE0m3xKc8JtlXwvrr3LlW97NFs1EuuYmnSIkGsscBRri
-         EpvtTf1TVsbJaVWNefhw5xpLGtvCkyOjOxlgnT4fKXogAntDV6pSl+pI5aF1oZhZvv
-         8UvhQCbUBxKXG3+ub36wMzInAkkr/LOB197uWwXU=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 68/75] perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
-Date:   Thu,  6 Dec 2018 18:25:55 -0300
-Message-Id: <20181206212602.20474-69-acme@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
-References: <20181206212602.20474-1-acme@kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50856 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726438AbeLFVav (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:30:51 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB6LUXKf067690
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 16:30:50 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p7b899h75-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 16:30:48 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 6 Dec 2018 21:30:40 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 21:30:33 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB6LUW1u31391866
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 21:30:32 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1BB16A4059;
+        Thu,  6 Dec 2018 21:30:32 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE2AEA4057;
+        Thu,  6 Dec 2018 21:30:29 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.110])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  6 Dec 2018 21:30:29 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 23:30:27 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Mark Salter <msalter@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] arch: simplify several early memory allocations
+References: <1543852035-26634-1-git-send-email-rppt@linux.ibm.com>
+ <1543852035-26634-6-git-send-email-rppt@linux.ibm.com>
+ <20181203162908.GB4244@ravnborg.org>
+ <20181203164920.GB26700@rapoport-lnx>
+ <20181206180826.GB19166@ravnborg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206180826.GB19166@ravnborg.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18120621-0028-0000-0000-0000032726E3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120621-0029-0000-0000-000023E33A7C
+Message-Id: <20181206213026.GA7479@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=895 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On Thu, Dec 06, 2018 at 07:08:26PM +0100, Sam Ravnborg wrote:
+> On Mon, Dec 03, 2018 at 06:49:21PM +0200, Mike Rapoport wrote:
+> > On Mon, Dec 03, 2018 at 05:29:08PM +0100, Sam Ravnborg wrote:
+> > > Hi Mike.
+> > > 
+> > > > index c37955d..2a17665 100644
+> > > > --- a/arch/sparc/kernel/prom_64.c
+> > > > +++ b/arch/sparc/kernel/prom_64.c
+> > > > @@ -34,16 +34,13 @@
+> > > >  
+> > > >  void * __init prom_early_alloc(unsigned long size)
+> > > >  {
+> > > > -	unsigned long paddr = memblock_phys_alloc(size, SMP_CACHE_BYTES);
+> > > > -	void *ret;
+> > > > +	void *ret = memblock_alloc(size, SMP_CACHE_BYTES);
+> > > >  
+> > > > -	if (!paddr) {
+> > > > +	if (!ret) {
+> > > >  		prom_printf("prom_early_alloc(%lu) failed\n", size);
+> > > >  		prom_halt();
+> > > >  	}
+> > > >  
+> > > > -	ret = __va(paddr);
+> > > > -	memset(ret, 0, size);
+> > > >  	prom_early_allocated += size;
+> > > >  
+> > > >  	return ret;
+> > > 
+> > > memblock_alloc() calls memblock_alloc_try_nid().
+> > > And if allocation fails then memblock_alloc_try_nid() calls panic().
+> > > So will we ever hit the prom_halt() code?
+> > 
+> > memblock_phys_alloc_try_nid() also calls panic if an allocation fails. So
+> > in either case we never reach prom_halt() code.
+> 
+> So we have code here we never reach - not nice.
+> If the idea is to avoid relying on the panic inside memblock_alloc() then
+> maybe replace it with a variant that do not call panic?
+> To make it clear what happens.
 
-Fix incorrect event names for the Load_Miss_Real_Latency metric for
-Skylake and Skylake Server.
+My plan is to completely remove memblock variants that call panic() and
+make the callers check the return value.
 
-Fixes https://github.com/andikleen/pmu-tools/issues/158
+I've started to work on it, but with the holidays it progresses slower than
+I'd like to.
 
-Before:
+Since the code here was unreachable for several year, a few more weeks
+won't make real difference so I'd prefer to keep the variant with panic()
+for now. 
+ 
+> 	Sam
+> 
 
-  % perf stat -M Load_Miss_Real_Latency true
-  event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
-                                    \___ parser error
-
-   Usage: perf stat [<options>] [<command>]
-
-      -M, --metrics <metric/metric group list>
-                            monitor specified metrics or metric groups (separated by ,)
-
-After:
-
-  % perf stat -M Load_Miss_Real_Latency true
-
-   Performance counter stats for 'true':
-
-             279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
-               4,784      mem_load_uops_retired.l1_miss
-              15,188      mem_load_uops_retired.hit_lfb
-
-         0.000899640 seconds time elapsed
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: http://lkml.kernel.org/r/20181120050635.4215-1-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
- tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
-diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
 -- 
-2.19.2
+Sincerely yours,
+Mike.
 
