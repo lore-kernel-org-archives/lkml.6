@@ -2,138 +2,221 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A37C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3766AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D88A72146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:52:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88A72146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id E3EE421508
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:53:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AuRqnsHB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qk6N1dXh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EE421508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeLFVwL (ORCPT
+        id S1726030AbeLFVx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:52:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbeLFVwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:52:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 22381B068;
-        Thu,  6 Dec 2018 21:52:09 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>
-Date:   Fri, 07 Dec 2018 08:51:58 +1100
-Cc:     devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix incompletely removed #if 0 block in sd.c
-In-Reply-To: <20181206155659.GA15420@nishad>
-References: <20181206155659.GA15420@nishad>
-Message-ID: <87d0qee329.fsf@notabene.neil.brown.name>
+        Thu, 6 Dec 2018 16:53:27 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39948 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeLFVx0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:53:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1BAF060B7E; Thu,  6 Dec 2018 21:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544133205;
+        bh=Q8BIfm9Udyijxho8wELnzvz/rcNmTRyjFuV2hlA5Ty0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AuRqnsHBkYSzfFPlk/gZglFDUh0zFLqXLD0OalilLTJ4MXdVMWVgEaJVcd/ou5zQk
+         drYlXj1FhL1S3s9mDCaI6KliiBZcdj1R8rR2xrQHvPaRwXwKgzmdJK0liAk7lJX2CE
+         Si+M6LTwlqbpmOZ8GJ7BjHUoEvmWyJQNSYs++vB8=
+Received: from [10.46.162.234] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: daidavid1@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5942F6019F;
+        Thu,  6 Dec 2018 21:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544133203;
+        bh=Q8BIfm9Udyijxho8wELnzvz/rcNmTRyjFuV2hlA5Ty0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Qk6N1dXhax+JGynONfXAz1NccXegykdM6lPQtGMxnMem+QL/Ka+tA4s1wVhevQmWH
+         TrBmhQlI25qYnFlxPJAdW+89VjuK1DXH3K/peAwIvCA5zhCesjS8Br6ExYEuux8Xsj
+         n+WHWTWLieJXJ3Mvs/Iwt25g3lm7XW8GZisS5f0o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5942F6019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
+Subject: Re: [PATCH v10 5/7] interconnect: qcom: Add sdm845 interconnect
+ provider driver
+To:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Evan Green <evgreen@chromium.org>
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        Alexandre Bailon <abailon@baylibre.com>,
+        maxime.ripard@bootlin.com, Arnd Bergmann <arnd@arndb.de>,
+        thierry.reding@gmail.com, ksitaraman@nvidia.com,
+        sanjayc@nvidia.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20181127180349.29997-1-georgi.djakov@linaro.org>
+ <20181127180349.29997-6-georgi.djakov@linaro.org>
+ <CAE=gft4tO96n0vAubo1_vvcTO4yarDcTNOTuL6cLpmLDDNxrfA@mail.gmail.com>
+ <cfcb39ba-860c-5a3f-911f-ab52b5250390@linaro.org>
+From:   David Dai <daidavid1@codeaurora.org>
+Message-ID: <266c7bf9-18c1-8255-eca2-814aab3850c6@codeaurora.org>
+Date:   Thu, 6 Dec 2018 13:53:21 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <cfcb39ba-860c-5a3f-911f-ab52b5250390@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 06 2018, Nishad Kamdar wrote:
 
-> Commit 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
-> does not completely remove an #if 0 block in sd.c. This causes the functi=
-on
-> msdc_select_clksrc() which was eariler not compiled, to be compiled.
-> That causes an error - MSDC_CLKSRC_REG is not defined.
+On 12/5/2018 8:00 AM, Georgi Djakov wrote:
+> Hi Evan,
 >
-> This patch completely removes the #if 0 block
+> On 12/1/18 02:39, Evan Green wrote:
+>> On Tue, Nov 27, 2018 at 10:04 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>>> From: David Dai <daidavid1@codeaurora.org>
+>>>
+>>> Introduce Qualcomm SDM845 specific provider driver using the
+>>> interconnect framework.
+>>>
+>>> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+>>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>>> ---
+>>>   .../bindings/interconnect/qcom,sdm845.txt     |  24 +
+>>>   drivers/interconnect/Kconfig                  |   5 +
+>>>   drivers/interconnect/Makefile                 |   1 +
+>>>   drivers/interconnect/qcom/Kconfig             |  13 +
+>>>   drivers/interconnect/qcom/Makefile            |   5 +
+>>>   drivers/interconnect/qcom/sdm845.c            | 836 ++++++++++++++++++
+>>>   .../dt-bindings/interconnect/qcom,sdm845.h    | 143 +++
+>>>   7 files changed, 1027 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+>>>   create mode 100644 drivers/interconnect/qcom/Kconfig
+>>>   create mode 100644 drivers/interconnect/qcom/Makefile
+>>>   create mode 100644 drivers/interconnect/qcom/sdm845.c
+>>>   create mode 100644 include/dt-bindings/interconnect/qcom,sdm845.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+>>> new file mode 100644
+>>> index 000000000000..d45150e99665
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+>>> @@ -0,0 +1,24 @@
+>>> +Qualcomm SDM845 Network-On-Chip interconnect driver binding
+>>> +-----------------------------------------------------------
+>>> +
+>>> +SDM845 interconnect providers support system bandwidth requirements through
+>>> +RPMh hardware accelerators known as Bus Clock Manager(BCM). The provider is able
+>>> +to communicate with the BCM through the Resource State Coordinator(RSC)
+>>> +associated with each execution environment. Provider nodes must reside within
+>>> +an RPMh device node pertaining to their RSC and each provider maps to
+>>> +a single RPMh resource.
+>>> +
+>>> +Required properties :
+>>> +- compatible : shall contain only one of the following:
+>>> +                       "qcom,sdm845-rsc-hlos"
+>> I wonder if maybe hlos isn't necessary. Unless you somehow imagine
+>> secure mode would have a device tree entry in here as well? Probably
+>> not.
+> Ok, will remove it. David, please chime in if you have any concerns with
+> this.
+
+No strong preferences in terms of naming, but need to make the 
+distinction between this and potential other rsc types if we're to add 
+additional provider drivers.
+
+>>> +- #interconnect-cells : should contain 1
+>>> +
+>>> +Examples:
+>>> +
+>>> +apps_rsc: rsc {
+>>> +               qnoc: qnoc-rsc-hlos {
+>>> +                       compatible = "qcom,sdm845-rsc-hlos";
+>>> +                       #interconnect-cells = <1>;
+>>> +               };
+>>> +};
+>>> +
+>> ...
+>>> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
+>>> new file mode 100644
+>>> index 000000000000..1678de91ca52
+>>> --- /dev/null
+>>> +++ b/drivers/interconnect/qcom/sdm845.c
+>>> @@ -0,0 +1,836 @@
+>> ...
+>>> +
+>>> +static void tcs_list_gen(struct list_head *bcm_list,
+>>> +                        struct tcs_cmd *tcs_list, int *n)
+>> We could make the prototype of this function be:
+>>
+>> static void tcs_list_gen(struct list_head *bcm_list,
+>>          struct tcs_cmd tcs_list[SDM845_MAX_VCD], int n[SDM845_MAX_VCD])
+>>
+>> which would catch errors if somebody later passed in an array that
+>> wasn't the right size, since we blindly memset below.
+> Yes, sounds good. I will try to optimize it.
 >
-> Reported-by: NeilBrown <neil@brown.name>
-> Fixes: 2a54e3259e2a ("staging: mt7621-mmc: Remove #if 0 blocks in sd.c")
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
-
-Perfect, thanks.
- Reviewed-by: NeilBrown <neil@brown.name>
-
-NeilBrown
-
-
-> Changes in v2:
->  - Modify commit message
->  - Include Fixes: and Reported-by: tags
-> ---
->  drivers/staging/mt7621-mmc/sd.c | 20 --------------------
->  1 file changed, 20 deletions(-)
+> Thanks,
+> Georgi
 >
-> diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc=
-/sd.c
-> index 7b66f9b0a094..3d918e481bd8 100644
-> --- a/drivers/staging/mt7621-mmc/sd.c
-> +++ b/drivers/staging/mt7621-mmc/sd.c
-> @@ -216,26 +216,6 @@ static void msdc_tasklet_card(struct work_struct *wo=
-rk)
->  	spin_unlock(&host->lock);
->  }
->=20=20
-> -static void msdc_select_clksrc(struct msdc_host *host, unsigned char clk=
-src)
-> -{
-> -	u32 val;
-> -
-> -	BUG_ON(clksrc > 3);
-> -
-> -	val =3D readl(host->base + MSDC_CLKSRC_REG);
-> -	if (readl(host->base + MSDC_ECO_VER) >=3D 4) {
-> -		val &=3D ~(0x3  << clk_src_bit[host->id]);
-> -		val |=3D clksrc << clk_src_bit[host->id];
-> -	} else {
-> -		val &=3D ~0x3; val |=3D clksrc;
-> -	}
-> -	writel(val, host->base + MSDC_CLKSRC_REG);
-> -
-> -	host->hclk =3D hclks[clksrc];
-> -	host->hw->clk_src =3D clksrc;
-> -}
-> -#endif /* end of --- */
-> -
->  static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int =
-hz)
->  {
->  	//struct msdc_hw *hw =3D host->hw;
-> --=20
-> 2.17.1
+>>> +{
+>>> +       struct qcom_icc_bcm *bcm;
+>>> +       bool commit;
+>>> +       size_t idx = 0, batch = 0, cur_vcd_size = 0;
+>>> +
+>>> +       memset(n, 0, sizeof(int) * SDM845_MAX_VCD);
+>>> +
+>>> +       list_for_each_entry(bcm, bcm_list, list) {
+>>> +               commit = false;
+>>> +               cur_vcd_size++;
+>>> +               if ((list_is_last(&bcm->list, bcm_list)) ||
+>>> +                   bcm->aux_data.vcd != list_next_entry(bcm, list)->aux_data.vcd) {
+>>> +                       commit = true;
+>>> +                       cur_vcd_size = 0;
+>>> +               }
+>>> +               tcs_cmd_gen(&tcs_list[idx], bcm->vote_x, bcm->vote_y,
+>>> +                           bcm->addr, commit);
+>>> +               idx++;
+>>> +               n[batch]++;
+>>> +               /*
+>>> +                * Batch the BCMs in such a way that we do not split them in
+>>> +                * multiple payloads when they are under the same VCD. This is
+>>> +                * to ensure that every BCM is committed since we only set the
+>>> +                * commit bit on the last BCM request of every VCD.
+>>> +                */
+>>> +               if (n[batch] >= MAX_RPMH_PAYLOAD) {
+>>> +                       if (!commit) {
+>>> +                               n[batch] -= cur_vcd_size;
+>>> +                               n[batch + 1] = cur_vcd_size;
+>>> +                       }
+>>> +                       batch++;
+>>> +               }
+>>> +       }
+>>> +}
+>>> +
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwJmf8ACgkQOeye3VZi
-gbnE3w//aBUZMawbeSd0S94XmK0KiTxFv3Adi0FDK+nYX8su4lqlRcETPbMBdUUG
-NGz1BLc1hxI9nqD0BGtu5hGrDtA6yHawl2lWZU0c10nXlDCTciTzZnbrFSfx7bw4
-tlFOHuBGLq+bkBXaywC+aQe3z7/2l50D6aaoYqkcI4mEMByJpx0t+7YVVkx5G4I9
-3EqWEuKrzlkMSyiJR0x73LKeg3Xt/IoUReI0PzdSczxe01sIi7bpi2/qAeUcTrkj
-rhfs7gnudW/y6jKKyAHCEnbenyg7ee6C0LWflXU4nE+361W2CAto2K9g7cBZGFCP
-OJoI4Xhb08KWA3k8Tyb6IX0prYn0lsIcDorlYPBPLk808vroH4q38b6u3beOe9Nw
-J5FrsmSNimRz5bvQbBqlkiUuCVAmI+kIjBkCzXHV8poTXv8bEIIKOmbSKleITVBP
-cRrpQwxpfZwRxlU0/mCPhRl9uNd5bSP9Q0PkRPni49vb93fxDfRyrfi8V28IAU0Z
-xtkQSoyvk0MaMpOUghF5VtVoF5VMdZUY6LVDgrCOS/mHsfFjI53ozVvCOGVUpN1Z
-s4Y+Rtuy9f5fYaF0qLRpX4T3LWSjJxiQiohc3CqZ8NO6s95cxTXSeJzo0eVHoyky
-RQ4I5sJTH0p/OKqbd+DdxyXRJBQnO5lCxWwhpBBGehePxUQmY/M=
-=HVG9
------END PGP SIGNATURE-----
---=-=-=--
