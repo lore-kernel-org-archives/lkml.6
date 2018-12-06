@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E255C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E7C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BB020838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A090620838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:25:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tSllCbYh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08BB020838
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y2VohwGt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A090620838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbeLFMZC (ORCPT
+        id S1729696AbeLFMZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:25:02 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37635 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729571AbeLFMZA (ORCPT
+        Thu, 6 Dec 2018 07:25:09 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56193 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729664AbeLFMZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:25:00 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j10so306030wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:24:58 -0800 (PST)
+        Thu, 6 Dec 2018 07:25:08 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y139so774959wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kdXJRxv4fyHhhgwNYAW9KeDDpz520moerszNmxFBOyU=;
-        b=tSllCbYhK8CTwm062EuJ9YxzX5azvNPGwSixQNdttv0wG7HbPvJ4HWqvcMlUyhbXFI
-         qfiFNFadH9dyUfmPDcs07QkW+5tVlzIzfHGL34eDJb+aCwpLDI+2Jq5bSjS1DLLPtZSY
-         QFM+Ke7eo58l5DlGpf90kwlk+F8UGcaPSuYzmSUtZxOfKt7BqigtuJmeH3dzl6XZlk3b
-         783OT0Gs76sD8FegLNM/9btM6Wz3FXl34UjM6CMRJGkzceNPCf13AnIagkuNdqYjAyt7
-         RRwXrFNgjBuXIhljtYHX/uaiR16N7FvbWMvVcpbfwmpfzQrZi0JChiYAum3bkh0bt5QX
-         zWyQ==
+        bh=UqMDiL5pFL/+tkei1G/AIx7zwZMP99eD4KugQS7K55g=;
+        b=Y2VohwGtLIqo6t/3aMQeakdW1sJ7UgqyXRDUNidOjVdD5M1bxlNFiaWPSn1bXLUyyF
+         mCCWKClMkXpRl/CkEYHFhkecgRkp6UBK6sfIgjgkARPZuNzpSqHnINsuMeuueMsTmNvD
+         Mb970K6ZZtXOqMs4Gaek4O18mqjDkafHoZWEvQa4fKAWweR9DbpR2Q7eZR4APBPmIkFH
+         N3qGtFuiC24t7PZgMXta7ZPzCIcCq8Yl7LCg8wCFP5JpIj2RfyVIiKy7tRwzK6WESWKq
+         SjD/5xD4Wzs6YWFY2xHp4H4kAcqBkIOdh05TJR5kuzLQ14sH63IMtTkNdNhpUY1CH8hi
+         OqTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kdXJRxv4fyHhhgwNYAW9KeDDpz520moerszNmxFBOyU=;
-        b=kSfEWKTKidSGxUo2FCFP2MKXs27ZlMO7dH3D7CVbziIcgL16XmIiqgGfdYwnhS+ZuM
-         jQBUmOZ5154nsgN+1ngaGwihIuOlLQYE1d3vHn37jTUDV2JO+Kq2cWudRIKXmpUZA08E
-         jReqk2/vhUuBho0ZcrIn4DJDoBX1o/Koy544k6n8gK7iq3EVrJDEKpPghFoznQS0l7uU
-         Vue8B9Y757wRMuVAID14VQFDBdCAOUCYTKV4jXMv4mnUvzwoknfwPHm/ZZTVs3v+vCst
-         ujSqV3Bewmm7j/qd/7DVF3koNehFdOl1b6o9u40uI/dxzavB9R15+WN28ARK4DXU8v9u
-         AD1A==
-X-Gm-Message-State: AA+aEWYoXZHgSwXj43Z3pEh/EUkc7jsu8c06OvhbB1B1uDsw6CAlXW7c
-        MrjY7Ek1di7CVLdAx+0/8t5uzw==
-X-Google-Smtp-Source: AFSGD/VDT3EJaRa30kcxnPk5C86z+Ev8IK3EjEUH0BceyiJnKYlqR1isJoV6wqdMtEO6xCDR+R+/9g==
-X-Received: by 2002:a5d:6a42:: with SMTP id t2mr27012161wrw.50.1544099097573;
-        Thu, 06 Dec 2018 04:24:57 -0800 (PST)
+        bh=UqMDiL5pFL/+tkei1G/AIx7zwZMP99eD4KugQS7K55g=;
+        b=WpI3XvWxwC2tNSO6mL5MtMbP3AGr0a9FDcsPVXmMKhokV630NyrJRmK+rlxbEw83i/
+         7IkE5adzOF1UQILiNrULxdHXs4z/pZ+BczukhpuNbGHltWnUI50qB8QpQHAZDukd3Ckr
+         s7LcKQnofBPLeHbJ+DR0xPN7Wy1lLYZuG33pQZEKWOKigNsTgVwsLra58APN4o8HxVZ2
+         dl/SsRESdOj10wBPhzZnHYGVNOs26P3glKRu9lCwR2xE/13Cb3zEd21XCs4nbXuJdtvX
+         MsrFyR5yrDfnjCYaoBB5gpkWJQYEcHm1kSDrge7otnSPOiXkF4MRCpMMjMlUwXomaDHj
+         CMSA==
+X-Gm-Message-State: AA+aEWbOSB91MsnLmL3A099QGRQ71xJDtyCPemtoTC7y5OkRErvrvmwB
+        MVMbODxXDwzkPGjVnw5T3zNUrQ==
+X-Google-Smtp-Source: AFSGD/UGniPFpytnR5EvX1mvUQCqi8xKkHyAIiafnkUS1yg6vUphxPqdq7r3o6WSEF+mrgSfvm3zrg==
+X-Received: by 2002:a1c:2007:: with SMTP id g7mr18924469wmg.79.1544099106379;
+        Thu, 06 Dec 2018 04:25:06 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.24.55
+        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 04:24:56 -0800 (PST)
+        Thu, 06 Dec 2018 04:25:05 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v13 06/25] kasan, arm64: adjust shadow size for tag-based mode
-Date:   Thu,  6 Dec 2018 13:24:24 +0100
-Message-Id: <308b6bd49f756bb5e533be93c6f085ba99b30339.1544099024.git.andreyknvl@google.com>
+Subject: [PATCH v13 11/25] kasan, arm64: untag address in _virt_addr_is_linear
+Date:   Thu,  6 Dec 2018 13:24:29 +0100
+Message-Id: <df73a37dd5ed37f4deaf77bc718e9f2e590e69b1.1544099024.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <cover.1544099024.git.andreyknvl@google.com>
 References: <cover.1544099024.git.andreyknvl@google.com>
@@ -109,65 +109,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tag-based KASAN uses 1 shadow byte for 16 bytes of kernel memory, so it
-requires 1/16th of the kernel virtual address space for the shadow memory.
+virt_addr_is_linear (which is used by virt_addr_valid) assumes that the
+top byte of the address is 0xff, which isn't always the case with
+tag-based KASAN.
 
-This commit sets KASAN_SHADOW_SCALE_SHIFT to 4 when the tag-based KASAN
-mode is enabled.
+This patch resets the tag in this macro.
 
 Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/Makefile             | 11 ++++++++++-
- arch/arm64/include/asm/memory.h |  7 +++----
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/memory.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 6cb9fc7e9382..99e7d08c6083 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -91,10 +91,19 @@ else
- TEXT_OFFSET := 0x00080000
- endif
- 
-+ifeq ($(CONFIG_KASAN_SW_TAGS), y)
-+KASAN_SHADOW_SCALE_SHIFT := 4
-+else
-+KASAN_SHADOW_SCALE_SHIFT := 3
-+endif
-+
-+KBUILD_CFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
-+KBUILD_CPPFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
-+KBUILD_AFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
-+
- # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
- #				 - (1 << (64 - KASAN_SHADOW_SCALE_SHIFT))
- # in 32-bit arithmetic
--KASAN_SHADOW_SCALE_SHIFT := 3
- KASAN_SHADOW_OFFSET := $(shell printf "0x%08x00000000\n" $$(( \
- 	(0xffffffff & (-1 << ($(CONFIG_ARM64_VA_BITS) - 32))) \
- 	+ (1 << ($(CONFIG_ARM64_VA_BITS) - 32 - $(KASAN_SHADOW_SCALE_SHIFT))) \
 diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b96442960aea..05fbc7ffcd31 100644
+index 83c1366a1233..5fe2353f111b 100644
 --- a/arch/arm64/include/asm/memory.h
 +++ b/arch/arm64/include/asm/memory.h
-@@ -74,12 +74,11 @@
- #define KERNEL_END        _end
+@@ -322,9 +322,10 @@ static inline void *phys_to_virt(phys_addr_t x)
+ #endif
+ #endif
  
- /*
-- * KASAN requires 1/8th of the kernel virtual address space for the shadow
-- * region. KASAN can bloat the stack significantly, so double the (minimum)
-- * stack size when KASAN is in use.
-+ * Generic and tag-based KASAN require 1/8th and 1/16th of the kernel virtual
-+ * address space for the shadow region respectively. They can bloat the stack
-+ * significantly, so double the (minimum) stack size when they are in use.
-  */
- #ifdef CONFIG_KASAN
--#define KASAN_SHADOW_SCALE_SHIFT 3
- #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
- #define KASAN_THREAD_SHIFT	1
- #else
+-#define _virt_addr_is_linear(kaddr)	(((u64)(kaddr)) >= PAGE_OFFSET)
+-#define virt_addr_valid(kaddr)		(_virt_addr_is_linear(kaddr) && \
+-					 _virt_addr_valid(kaddr))
++#define _virt_addr_is_linear(kaddr)	\
++	(__tag_reset((u64)(kaddr)) >= PAGE_OFFSET)
++#define virt_addr_valid(kaddr)		\
++	(_virt_addr_is_linear(kaddr) && _virt_addr_valid(kaddr))
+ 
+ #include <asm-generic/memory_model.h>
+ 
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
