@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268E4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017F3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5243208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 909EB20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XC2QUx1P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5243208E7
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N/Xsw282"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909EB20700
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbeLFVit (ORCPT
+        id S1726135AbeLFViw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:38:49 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35908 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLFVip (ORCPT
+        Thu, 6 Dec 2018 16:38:52 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33070 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeLFViu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:38:45 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYfw1154728;
-        Thu, 6 Dec 2018 21:38:17 GMT
+        Thu, 6 Dec 2018 16:38:50 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYdeM192449;
+        Thu, 6 Dec 2018 21:38:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=z8D5sEmL565RwCB23O/6Oz3RqPg2sXiVRhWhBuRa/Zs=;
- b=XC2QUx1PM3vX3Dm411xLaJInFbVGV5qwXakmBQO1GtwEhIKAEmuSH6JOmeBssCj6XeZT
- Ifs0ZbZNaX/t57ltDJEFEjRG3OYYxVpQVEz0nm74xYQbUWZkwosYWSs/v/n704Ilxx63
- tJ160HH1sSsTFnN1wtXpi/NbYNVLWJ3be+nG3+NMBeXnUU8U6/VK5JzyxL3rX5fdgfXv
- XZ90vucsRMMXemHl/za3mbgSmoLCv1ZdoauTPIB8jIsURUed5V1JIom+xTEkbbtk2ob7
- XSwWn6pNNGwWTbNo5KL6i9NlbkwbhOOYMSN8KkT4k947O4i4/ZYoJT1Vgje8GdZ/qg2o 3g== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2p3jxrtmds-1
+ bh=zX73jRty4CkzFP/CDT+E6BBDCUMdG7xEQ768qydm/8M=;
+ b=N/Xsw282S5CsDnNmxEd6NNBdvDwZN5QB9Py/mR6alDAPU1f429mXNWqti7taBjGY0EQP
+ vldP2cXF4eefA33mqtY0NpObcvvOKxg9m9UEz2ijScD3hknTMYV7IUIqQALZGf3Wel1b
+ ssjHlBkbUloNCkT/GvghTbe+Cf5ZbnxXJNxDb2RFR5xHv3b/tQFC1qAcjWRR15OrAJVQ
+ QUDtovAOjD6A11LC4yIw+REXvSy+45ptuIYQdQ5GReP+ckCIQ74Bhu1Wu3XF/8J1sROG
+ fIiZ93P2vU4wLzMovSHy5iReVaVJxWxapQJ5471uR825SEMEtxqrzKmy++MfogQBlafV 1A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2p3hquar5p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:38:16 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcFA6004471
+        Thu, 06 Dec 2018 21:38:23 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcMY5007380
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:38:16 GMT
+        Thu, 6 Dec 2018 21:38:22 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcFb1021691;
-        Thu, 6 Dec 2018 21:38:15 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcLKV001150;
+        Thu, 6 Dec 2018 21:38:21 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 21:38:15 +0000
+        with ESMTP ; Thu, 06 Dec 2018 21:38:21 +0000
 From:   Steve Sistare <steven.sistare@oracle.com>
 To:     mingo@redhat.com, peterz@infradead.org
 Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
@@ -60,14 +60,14 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         valentin.schneider@arm.com, vincent.guittot@linaro.org,
         quentin.perret@arm.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 01/10] sched: Provide sparsemask, a reduced contention bitmap
-Date:   Thu,  6 Dec 2018 13:28:07 -0800
-Message-Id: <1544131696-2888-2-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH v4 08/10] sched/fair: Steal work from an overloaded CPU when CPU goes idle
+Date:   Thu,  6 Dec 2018 13:28:14 -0800
+Message-Id: <1544131696-2888-9-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1812060181
@@ -76,240 +76,445 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide struct sparsemask and functions to manipulate it.  A sparsemask is
-a sparse bitmap.  It reduces cache contention vs the usual bitmap when many
-threads concurrently set, clear, and visit elements, by reducing the number
-of significant bits per cacheline.  For each cacheline chunk of the mask,
-only the first K bits of the first word are used, and the remaining bits
-are ignored, where K is a creation time parameter.  Thus a sparsemask that
-can represent a set of N elements is approximately (N/K * CACHELINE) bytes
-in size.
+When a CPU has no more CFS tasks to run, and idle_balance() fails to find a
+task, then attempt to steal a task from an overloaded CPU in the same LLC,
+using the cfs_overload_cpus bitmap to efficiently identify candidates.  To
+minimize search time, steal the first migratable task that is found when
+the bitmap is traversed.  For fairness, search for migratable tasks on an
+overloaded CPU in order of next to run.
 
-This type is simpler and more efficient than the struct sbitmap used by
-block drivers.
+This simple stealing yields a higher CPU utilization than idle_balance()
+alone, because the search is cheap, so it may be called every time the CPU
+is about to go idle.  idle_balance() does more work because it searches
+widely for the busiest queue, so to limit its CPU consumption, it declines
+to search if the system is too busy.  Simple stealing does not offload the
+globally busiest queue, but it is much better than running nothing at all.
+
+Stealing is controlled by the sched feature SCHED_STEAL, which is enabled
+by default.
+
+Stealing imprroves utilization with only a modest CPU overhead in scheduler
+code.  In the following experiment, hackbench is run with varying numbers
+of groups (40 tasks per group), and the delta in /proc/schedstat is shown
+for each run, averaged per CPU, augmented with these non-standard stats:
+
+  %find - percent of time spent in old and new functions that search for
+    idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
+
+  steal - number of times a task is stolen from another CPU.
+
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+hackbench <grps> process 100000
+sched_wakeup_granularity_ns=15000000
+
+  baseline
+  grps  time  %busy  slice   sched   idle     wake %find  steal
+  1    8.084  75.02   0.10  105476  46291    59183  0.31      0
+  2   13.892  85.33   0.10  190225  70958   119264  0.45      0
+  3   19.668  89.04   0.10  263896  87047   176850  0.49      0
+  4   25.279  91.28   0.10  322171  94691   227474  0.51      0
+  8   47.832  94.86   0.09  630636 144141   486322  0.56      0
+
+  new
+  grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
+  1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
+  2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
+  3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
+  4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
+  8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
+
+Elapsed time improves by 8 to 36%, and CPU busy utilization is up
+by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
+The cost is at most 0.4% more find time.
+
+Additional performance results follow.  A negative "speedup" is a
+regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
+is set to 15 msec.  Otherwise, preemptions increase at higher loads and
+distort the comparison between baseline and new.
+
+------------------ 1 Socket Results ------------------
+
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   8.008    0.1   5.905    0.2      35.6
+       2  13.814    0.2  11.438    0.1      20.7
+       3  19.488    0.2  16.919    0.1      15.1
+       4  25.059    0.1  22.409    0.1      11.8
+       8  47.478    0.1  44.221    0.1       7.3
+
+X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   4.586    0.8   4.596    0.6      -0.3
+       2   7.693    0.2   5.775    1.3      33.2
+       3  10.442    0.3   8.288    0.3      25.9
+       4  13.087    0.2  11.057    0.1      18.3
+       8  24.145    0.2  22.076    0.3       9.3
+      16  43.779    0.1  41.741    0.2       4.8
+
+KVM 4-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+tbench, average of 11 runs
+
+  clients    %speedup
+        1        16.2
+        2        11.7
+        4         9.9
+        8        12.8
+       16        13.7
+
+KVM 2-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  Benchmark                     %speedup
+  specjbb2015_critical_jops          5.7
+  mysql_sysb1.0.14_mutex_2          40.6
+  mysql_sysb1.0.14_oltp_2            3.9
+
+------------------ 2 Socket Results ------------------
+
+X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   7.945    0.2   7.219    8.7      10.0
+       2   8.444    0.4   6.689    1.5      26.2
+       3  12.100    1.1   9.962    2.0      21.4
+       4  15.001    0.4  13.109    1.1      14.4
+       8  27.960    0.2  26.127    0.3       7.0
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   5.826    5.4   5.840    5.0      -0.3
+       2   5.041    5.3   6.171   23.4     -18.4
+       3   6.839    2.1   6.324    3.8       8.1
+       4   8.177    0.6   7.318    3.6      11.7
+       8  14.429    0.7  13.966    1.3       3.3
+      16  26.401    0.3  25.149    1.5       4.9
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Oracle database OLTP, logging disabled, NVRAM storage
+
+  Customers   Users   %speedup
+    1200000      40       -1.2
+    2400000      80        2.7
+    3600000     120        8.9
+    4800000     160        4.4
+    6000000     200        3.0
+
+X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
+Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Results from the Oracle "Performance PIT".
+
+  Benchmark                                           %speedup
+
+  mysql_sysb1.0.14_fileio_56_rndrd                        19.6
+  mysql_sysb1.0.14_fileio_56_seqrd                        12.1
+  mysql_sysb1.0.14_fileio_56_rndwr                         0.4
+  mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
+
+  pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
+  pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
+  pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
+  pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
+
+  opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
+  select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
+  select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
+  swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
+
+  lm3_memlat_L2                                            4.8
+  lm3_memlat_L1                                            0.0
+
+  ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
+  ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
+  ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
+  ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
+
+X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  NAS_OMP
+  bench class   ncpu    %improved(Mops)
+  dc    B       72      1.3
+  is    C       72      0.9
+  is    D       72      0.7
+
+  sysbench mysql, average of 24 runs
+          --- base ---     --- new ---
+  nthr   events  %stdev   events  %stdev %speedup
+     1    331.0    0.25    331.0    0.24     -0.1
+     2    661.3    0.22    661.8    0.22      0.0
+     4   1297.0    0.88   1300.5    0.82      0.2
+     8   2420.8    0.04   2420.5    0.04     -0.1
+    16   4826.3    0.07   4825.4    0.05     -0.1
+    32   8815.3    0.27   8830.2    0.18      0.1
+    64  12823.0    0.24  12823.6    0.26      0.0
+
+-------------------------------------------------------------
 
 Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- kernel/sched/sparsemask.h | 210 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 210 insertions(+)
- create mode 100644 kernel/sched/sparsemask.h
+ kernel/sched/fair.c     | 169 ++++++++++++++++++++++++++++++++++++++++++++++--
+ kernel/sched/features.h |   6 ++
+ 2 files changed, 170 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/sparsemask.h b/kernel/sched/sparsemask.h
-new file mode 100644
-index 0000000..1194862
---- /dev/null
-+++ b/kernel/sched/sparsemask.h
-@@ -0,0 +1,210 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * sparsemask.h - sparse bitmap operations
-+ *
-+ * Copyright (c) 2018 Oracle Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3804156..1476ae8 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3739,6 +3739,9 @@ static void overload_clear(struct rq *rq)
+ {
+ 	struct sparsemask *overload_cpus;
+ 
++	if (!sched_feat(STEAL))
++		return;
 +
-+#ifndef __LINUX_SPARSEMASK_H
-+#define __LINUX_SPARSEMASK_H
+ 	rcu_read_lock();
+ 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
+ 	if (overload_cpus)
+@@ -3750,6 +3753,9 @@ static void overload_set(struct rq *rq)
+ {
+ 	struct sparsemask *overload_cpus;
+ 
++	if (!sched_feat(STEAL))
++		return;
 +
-+#include <linux/kernel.h>
-+#include <linux/bitmap.h>
-+#include <linux/bug.h>
+ 	rcu_read_lock();
+ 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
+ 	if (overload_cpus)
+@@ -3757,6 +3763,8 @@ static void overload_set(struct rq *rq)
+ 	rcu_read_unlock();
+ }
+ 
++static int try_steal(struct rq *this_rq, struct rq_flags *rf);
 +
-+/*
-+ * A sparsemask is a sparse bitmap.  It reduces cache contention vs the usual
-+ * bitmap when many threads concurrently set, clear, and visit elements.  For
-+ * each cacheline chunk of the mask, only the first K bits of the first word are
-+ * used, and the remaining bits are ignored, where K is a creation time
-+ * parameter.  Thus a sparsemask that can represent a set of N elements is
-+ * approximately (N/K * CACHELINE) bytes in size.
-+ *
-+ * Clients pass and receive element numbers in the public API, and the
-+ * implementation translates them to bit numbers to perform the bitmap
-+ * operations.
-+ */
-+
-+struct sparsemask_chunk {
-+	unsigned long word;	/* the significant bits */
-+} ____cacheline_aligned_in_smp;
-+
-+struct sparsemask {
-+	short nelems;		/* current number of elements */
-+	short density;		/* store 2^density elements per chunk */
-+	struct sparsemask_chunk chunks[0];  /* embedded array of chunks */
-+};
-+
-+#define _SMASK_INDEX(density, elem)	((elem) >> (density))
-+#define _SMASK_BIT(density, elem)	((elem) & ((1U << (density)) - 1U))
-+#define SMASK_INDEX(mask, elem)		_SMASK_INDEX((mask)->density, elem)
-+#define SMASK_BIT(mask, elem)		_SMASK_BIT((mask)->density, elem)
-+#define SMASK_WORD(mask, elem)		\
-+	(&(mask)->chunks[SMASK_INDEX((mask), (elem))].word)
-+
-+/*
-+ * sparsemask_next() - Return the next one bit in a bitmap, starting at a
-+ * specified position and wrapping from the last bit to the first, up to but
-+ * not including a specified origin.  This is a helper, so do not call it
-+ * directly.
-+ *
-+ * @mask: Bitmap to search.
-+ * @origin: Origin.
-+ * @prev: Previous bit. Start search after this bit number.
-+ *	  If -1, start search at @origin.
-+ *
-+ * Return: the bit number, else mask->nelems if no bits are set in the range.
-+ */
-+static inline int
-+sparsemask_next(const struct sparsemask *mask, int origin, int prev)
+ #else /* CONFIG_SMP */
+ 
+ #define UPDATE_TG	0x0
+@@ -3793,6 +3801,11 @@ static inline void overload_set(struct rq *rq) {}
+ 		 bool task_sleep) {}
+ static inline void update_misfit_status(struct task_struct *p, struct rq *rq) {}
+ 
++static inline int try_steal(struct rq *this_rq, struct rq_flags *rf)
 +{
-+	int density = mask->density;
-+	int bits_per_word = 1U << density;
-+	const struct sparsemask_chunk *chunk;
-+	int nelems = mask->nelems;
-+	int next, bit, nbits;
-+	unsigned long word;
++	return 0;
++}
 +
-+	/* Calculate number of bits to be searched. */
-+	if (prev == -1) {
-+		nbits = nelems;
-+		next = origin;
-+	} else if (prev < origin) {
-+		nbits = origin - prev;
-+		next = prev + 1;
-+	} else {
-+		nbits = nelems - prev + origin - 1;
-+		next = prev + 1;
-+	}
+ #endif /* CONFIG_SMP */
+ 
+ static void check_spread(struct cfs_rq *cfs_rq, struct sched_entity *se)
+@@ -6778,20 +6791,22 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+ 	update_misfit_status(NULL, rq);
+ 
+ 	/*
+-	 * We must set idle_stamp _before_ calling idle_balance(), such that we
+-	 * measure the duration of idle_balance() as idle time.
++	 * We must set idle_stamp _before_ calling try_steal() or
++	 * idle_balance(), such that we measure the duration as idle time.
+ 	 */
+ 	rq_idle_stamp_update(rq);
+ 
+ 	new_tasks = idle_balance(rq, rf);
++	if (new_tasks == 0)
++		new_tasks = try_steal(rq, rf);
+ 
+ 	if (new_tasks)
+ 		rq_idle_stamp_clear(rq);
+ 
+ 	/*
+-	 * Because idle_balance() releases (and re-acquires) rq->lock, it is
+-	 * possible for any higher priority task to appear. In that case we
+-	 * must re-start the pick_next_entity() loop.
++	 * Because try_steal() and idle_balance() release (and re-acquire)
++	 * rq->lock, it is possible for any higher priority task to appear.
++	 * In that case we must re-start the pick_next_entity() loop.
+ 	 */
+ 	if (new_tasks < 0)
+ 		return RETRY_TASK;
+@@ -9797,6 +9812,150 @@ void trigger_load_balance(struct rq *rq)
+ 	nohz_balancer_kick(rq);
+ }
+ 
++/*
++ * Search the runnable tasks in @cfs_rq in order of next to run, and find
++ * the first one that can be migrated to @dst_rq.  @cfs_rq is locked on entry.
++ * On success, dequeue the task from @cfs_rq and return it, else return NULL.
++ */
++static struct task_struct *
++detach_next_task(struct cfs_rq *cfs_rq, struct rq *dst_rq)
++{
++	int dst_cpu = dst_rq->cpu;
++	struct task_struct *p;
++	struct rq *rq = rq_of(cfs_rq);
 +
-+	if (unlikely(next >= nelems))
-+		return nelems;
++	lockdep_assert_held(&rq_of(cfs_rq)->lock);
 +
-+	/*
-+	 * Fetch and adjust first word.  Clear word bits below @next, and round
-+	 * @next down to @bits_per_word boundary because later ffs will add
-+	 * those bits back.
-+	 */
-+	chunk = &mask->chunks[_SMASK_INDEX(density, next)];
-+	bit = _SMASK_BIT(density, next);
-+	word = chunk->word & (~0UL << bit);
-+	next -= bit;
-+	nbits += bit;
-+
-+	while (!word) {
-+		next += bits_per_word;
-+		nbits -= bits_per_word;
-+		if (nbits <= 0)
-+			return nelems;
-+
-+		if (next >= nelems) {
-+			chunk = mask->chunks;
-+			nbits -= (next - nelems);
-+			next = 0;
-+		} else {
-+			chunk++;
++	list_for_each_entry_reverse(p, &rq->cfs_tasks, se.group_node) {
++		if (can_migrate_task_llc(p, rq, dst_rq)) {
++			detach_task(p, rq, dst_cpu);
++			return p;
 +		}
-+		word = chunk->word;
++	}
++	return NULL;
++}
++
++/*
++ * Attempt to migrate a CFS task from @src_cpu to @dst_rq.  @locked indicates
++ * whether @dst_rq is already locked on entry.  This function may lock or
++ * unlock @dst_rq, and updates @locked to indicate the locked state on return.
++ * The locking protocol is based on idle_balance().
++ * Returns 1 on success and 0 on failure.
++ */
++static int steal_from(struct rq *dst_rq, struct rq_flags *dst_rf, bool *locked,
++		      int src_cpu)
++{
++	struct task_struct *p;
++	struct rq_flags rf;
++	int stolen = 0;
++	int dst_cpu = dst_rq->cpu;
++	struct rq *src_rq = cpu_rq(src_cpu);
++
++	if (dst_cpu == src_cpu || src_rq->cfs.h_nr_running < 2)
++		return 0;
++
++	if (*locked) {
++		rq_unpin_lock(dst_rq, dst_rf);
++		raw_spin_unlock(&dst_rq->lock);
++		*locked = false;
++	}
++	rq_lock_irqsave(src_rq, &rf);
++	update_rq_clock(src_rq);
++
++	if (src_rq->cfs.h_nr_running < 2 || !cpu_active(src_cpu))
++		p = NULL;
++	else
++		p = detach_next_task(&src_rq->cfs, dst_rq);
++
++	rq_unlock(src_rq, &rf);
++
++	if (p) {
++		raw_spin_lock(&dst_rq->lock);
++		rq_repin_lock(dst_rq, dst_rf);
++		*locked = true;
++		update_rq_clock(dst_rq);
++		attach_task(dst_rq, p);
++		stolen = 1;
++	}
++	local_irq_restore(rf.flags);
++
++	return stolen;
++}
++
++/*
++ * Conservative upper bound on the max cost of a steal, in nsecs (the typical
++ * cost is 1-2 microsec).  Do not steal if average idle time is less.
++ */
++#define SCHED_STEAL_COST 10000
++
++/*
++ * Try to steal a runnable CFS task from a CPU in the same LLC as @dst_rq,
++ * and migrate it to @dst_rq.  rq_lock is held on entry and return, but
++ * may be dropped in between.  Return 1 on success, 0 on failure, and -1
++ * if a task in a different scheduling class has become runnable on @dst_rq.
++ */
++static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
++{
++	int src_cpu;
++	int dst_cpu = dst_rq->cpu;
++	bool locked = true;
++	int stolen = 0;
++	struct sparsemask *overload_cpus;
++
++	if (!sched_feat(STEAL))
++		return 0;
++
++	if (!cpu_active(dst_cpu))
++		return 0;
++
++	if (dst_rq->avg_idle < SCHED_STEAL_COST)
++		return 0;
++
++	/* Get bitmap of overloaded CPUs in the same LLC as @dst_rq */
++
++	rcu_read_lock();
++	overload_cpus = rcu_dereference(dst_rq->cfs_overload_cpus);
++	if (!overload_cpus) {
++		rcu_read_unlock();
++		return 0;
 +	}
 +
-+	next += __ffs(word);
-+	if (next >= origin && prev != -1)
-+		return nelems;
-+	return next;
++#ifdef CONFIG_SCHED_SMT
++	/*
++	 * First try overloaded CPUs on the same core to preserve cache warmth.
++	 */
++	if (static_branch_likely(&sched_smt_present)) {
++		for_each_cpu(src_cpu, cpu_smt_mask(dst_cpu)) {
++			if (sparsemask_test_elem(overload_cpus, src_cpu) &&
++			    steal_from(dst_rq, dst_rf, &locked, src_cpu)) {
++				stolen = 1;
++				goto out;
++			}
++		}
++	}
++#endif	/* CONFIG_SCHED_SMT */
++
++	/* Accept any suitable task in the LLC */
++
++	sparsemask_for_each(overload_cpus, dst_cpu, src_cpu) {
++		if (steal_from(dst_rq, dst_rf, &locked, src_cpu)) {
++			stolen = 1;
++			goto out;
++		}
++	}
++
++out:
++	rcu_read_unlock();
++	if (!locked) {
++		raw_spin_lock(&dst_rq->lock);
++		rq_repin_lock(dst_rq, dst_rf);
++	}
++	stolen |= (dst_rq->cfs.h_nr_running > 0);
++	if (dst_rq->nr_running != dst_rq->cfs.h_nr_running)
++		stolen = -1;
++	return stolen;
 +}
 +
-+/****************** The public API ********************/
+ static void rq_online_fair(struct rq *rq)
+ {
+ 	update_sysctl();
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index 858589b..a665a9e 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -59,6 +59,12 @@
+ SCHED_FEAT(SIS_PROP, true)
+ 
+ /*
++ * Steal a CFS task from another CPU when going idle.
++ * Improves CPU utilization.
++ */
++SCHED_FEAT(STEAL, true)
 +
 +/*
-+ * Max value for the density parameter, limited by 64 bits in the chunk word.
-+ */
-+#define SMASK_DENSITY_MAX		6
-+
-+/*
-+ * Return bytes to allocate for a sparsemask, for custom allocators.
-+ */
-+static inline size_t sparsemask_size(int nelems, int density)
-+{
-+	int index = _SMASK_INDEX(density, nelems) + 1;
-+
-+	return offsetof(struct sparsemask, chunks[index]);
-+}
-+
-+/*
-+ * Initialize an allocated sparsemask, for custom allocators.
-+ */
-+static inline void
-+sparsemask_init(struct sparsemask *mask, int nelems, int density)
-+{
-+	WARN_ON(density < 0 || density > SMASK_DENSITY_MAX || nelems < 0);
-+	mask->nelems = nelems;
-+	mask->density = density;
-+}
-+
-+/*
-+ * sparsemask_alloc_node() - Allocate, initialize, and return a sparsemask.
-+ *
-+ * @nelems - maximum number of elements.
-+ * @density - store 2^density elements per cacheline chunk.
-+ *	      values from 0 to SMASK_DENSITY_MAX inclusive.
-+ * @flags - kmalloc allocation flags
-+ * @node - numa node
-+ */
-+static inline struct sparsemask *
-+sparsemask_alloc_node(int nelems, int density, gfp_t flags, int node)
-+{
-+	int nbytes = sparsemask_size(nelems, density);
-+	struct sparsemask *mask = kmalloc_node(nbytes, flags, node);
-+
-+	if (mask)
-+		sparsemask_init(mask, nelems, density);
-+	return mask;
-+}
-+
-+static inline void sparsemask_free(struct sparsemask *mask)
-+{
-+	kfree(mask);
-+}
-+
-+static inline void sparsemask_set_elem(struct sparsemask *dst, int elem)
-+{
-+	set_bit(SMASK_BIT(dst, elem), SMASK_WORD(dst, elem));
-+}
-+
-+static inline void sparsemask_clear_elem(struct sparsemask *dst, int elem)
-+{
-+	clear_bit(SMASK_BIT(dst, elem), SMASK_WORD(dst, elem));
-+}
-+
-+static inline int sparsemask_test_elem(const struct sparsemask *mask, int elem)
-+{
-+	return test_bit(SMASK_BIT(mask, elem), SMASK_WORD(mask, elem));
-+}
-+
-+/*
-+ * sparsemask_for_each() - iterate over each set bit in a bitmap, starting at a
-+ *   specified position, and wrapping from the last bit to the first.
-+ *
-+ * @mask: Bitmap to iterate over.
-+ * @origin: Bit number at which to start searching.
-+ * @elem: Iterator.  Can be signed or unsigned integer.
-+ *
-+ * The implementation does not assume any bit in @mask is set, including
-+ * @origin.  After the loop, @elem = @mask->nelems.
-+ */
-+#define sparsemask_for_each(mask, origin, elem)				\
-+	for ((elem) = -1;						\
-+	     (elem) = sparsemask_next((mask), (origin), (elem)),	\
-+		(elem) < (mask)->nelems;)
-+
-+#endif /* __LINUX_SPARSEMASK_H */
+  * Issue a WARN when we do multiple update_rq_clock() calls
+  * in a single rq->lock section. Default disabled because the
+  * annotations are not complete.
 -- 
 1.8.3.1
 
