@@ -2,103 +2,171 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6853214DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:02:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ceifFKY4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6853214DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 84BEA2151B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:04:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BEA2151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sedsystems.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbeLFQCF (ORCPT
+        id S1726028AbeLFQEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:02:05 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40104 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeLFQCF (ORCPT
+        Thu, 6 Dec 2018 11:04:06 -0500
+Received: from sed198n136.SEDSystems.ca ([198.169.180.136]:4682 "EHLO
+        sed198n136.sedsystems.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeLFQEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:02:05 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6FwYew076488;
-        Thu, 6 Dec 2018 16:01:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=hcOIepnvEy/olyRd0jHJfwjqlLsqT+6CFo+IXGedwe4=;
- b=ceifFKY4XXltXKxcIau5/srTM1IoPhINh5+GEqkoV7dzgu/og179M2nvFD72q7cAuNdD
- 20KEunWvDyqvmD/w+tCxO+dgbZVz8zIJYLyk7GV45XXJit4kMmkfKzd2Dd/PWtU+mwD+
- ZjJwOY1OJLdPNcDqRnah13rLTcVyClRuPcLMivWpp3CkKT2absgfOzRFVn1cGz/ekuFW
- sCnBgMQTg2XXRczuzokxhTEKEp7/B7gf2a1PMsaEd1l2OSwBFWq6qYouKNPu4VDqu8Hp
- ImSsuF87ethFm3KqeRSImojLwRwm0x9iEkqFRhZM5CbPKiA+e+cawa26RLJJ9+unYvVp Cw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2p3jxrs0ra-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 16:01:59 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6G1wix021844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 16:01:58 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6G1wkG007462;
-        Thu, 6 Dec 2018 16:01:58 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 08:01:57 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id B24C86A00D6; Thu,  6 Dec 2018 11:01:56 -0500 (EST)
-Date:   Thu, 6 Dec 2018 11:01:56 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     KarimAllah Ahmed <karahmed@amazon.de>
-Cc:     rkrcmar@redhat.com, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        jmattson@google.com
-Subject: Re: [PATCH v4 00/14] KVM/X86: Introduce a new guest mapping interface
-Message-ID: <20181206160156.GB25299@char.us.oracle.com>
-References: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
+        Thu, 6 Dec 2018 11:04:05 -0500
+X-Greylist: delayed 1096 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Dec 2018 11:04:05 EST
+Received: from barney.sedsystems.ca (barney [198.169.180.121])
+        by sed198n136.sedsystems.ca  with ESMTP id wB6FjmpS001603
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Dec 2018 09:45:48 -0600 (CST)
+Received: from eng1n65.eng.sedsystems.ca (eng1n65.eng.sedsystems.ca [172.21.1.65])
+        by barney.sedsystems.ca (8.14.7/8.14.4) with ESMTP id wB6FjluQ049453
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 6 Dec 2018 09:45:48 -0600
+Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
+To:     Baruch Siach <baruch@tkos.co.il>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pci@vger.kernel.org, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, bhelgaas@google.com,
+        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
+        l.stach@pengutronix.de, Trent Piepho <tpiepho@impinj.com>
+References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+ <87o99zjcsc.fsf@tkos.co.il>
+From:   Robert Hancock <hancock@sedsystems.ca>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hancock@sedsystems.ca; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SED Systems
+Message-ID: <5a3543f2-fe58-221d-694f-0f98a643edfc@sedsystems.ca>
+Date:   Thu, 6 Dec 2018 09:45:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543829467-18025-1-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=830
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060136
+In-Reply-To: <87o99zjcsc.fsf@tkos.co.il>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.64 on 198.169.180.136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 10:30:53AM +0100, KarimAllah Ahmed wrote:
-> Guest memory can either be directly managed by the kernel (i.e. have a "struct
-> page") or they can simply live outside kernel control (i.e. do not have a
-> "struct page"). KVM mostly support these two modes, except in a few places
-> where the code seems to assume that guest memory must have a "struct page".
+On 2018-12-06 2:10 a.m., Baruch Siach wrote:
+> Hi Andrey,
 > 
-> This patchset introduces a new mapping interface to map guest memory into host
-> kernel memory which also supports PFN-based memory (i.e. memory without 'struct
-> page'). It also converts all offending code to this interface or simply
-> read/write directly from guest memory.
+> Adding Robert Hancock who reported[1] on a PCIe MSI issue with i.MX6.
 > 
-> As far as I can see all offending code is now fixed except the APIC-access page
-> which I will handle in a seperate series along with dropping
-> kvm_vcpu_gfn_to_page and kvm_vcpu_gpa_to_page from the internal KVM API.
+> Andrey Smirnov writes:
 > 
-> The current implementation of the new API uses memremap to map memory that does
-> not have a "struct page". This proves to be very slow for high frequency
-> mappings. Since this does not affect the normal use-case where a "struct page"
-> is available, the performance of this API will be handled by a seperate patch
-> series.
+>> Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+>> produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+>> to pcieport driver. This, in turn, results in a PCIE bus that is
+>> capable of enumerating attached PCIE device, but lacks functional
+>> interrupt support.
+> 
+> Robert, does that fix your issue?
 
-How (if any) does it affect performance?
+Unfortunately, no.. in fact the situation on my setup is even worse with
+CONFIG_PCIEPORTBUS enabled: Not only does MSI still not function, but
+now INTx interrupts are somehow broken as well - no interrupts are
+received. The IRQ information shown in /proc/interrupts is correct, but
+the count remains stubbornly at 0.
 
-Thanks!
+So given that outcome, I don't think we should add this as a hard
+dependency until we can figure out what is going on, as it seems to
+regress working setups.
+
+> 
+>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>> ---
+>>
+>> Assuming this is a reasonable dependency, shold this be done to more
+>> than just i.MX6 driver?
+>>
+>>  drivers/pci/controller/dwc/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>> index 2b139acccf32..44ededbeab85 100644
+>> --- a/drivers/pci/controller/dwc/Kconfig
+>> +++ b/drivers/pci/controller/dwc/Kconfig
+>> @@ -92,6 +92,7 @@ config PCI_IMX6
+>>  	bool "Freescale i.MX6 PCIe controller"
+>>  	depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+>>  	depends on PCI_MSI_IRQ_DOMAIN
+>> +	depends on PCIEPORTBUS
+> 
+> This effectively disables PCIe in imx_v6_v7_defconfig, since
+> CONFIG_PCIEPORTBUS is not enabled there. Maybe do 'select' instead?
+> 
+>>  	Select PCIE_DW_HOST
+>>
+>>  config PCIE_SPEAR13XX
+> 
+> baruch
+> 
+> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/614800.html
+> 
+> --
+>      http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+> =}------------------------------------------------ooO--U--Ooo------------{=
+>    - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+> 
+
+-- 
+Robert Hancock
+Senior Software Developer
+SED Systems
+Email: hancock@sedsystems.ca
