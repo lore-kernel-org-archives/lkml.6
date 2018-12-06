@@ -2,380 +2,146 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366A6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AEEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB90208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB90208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id A5B4521479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:19:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544123993;
+	bh=lyVAKEyUgaA0R8m2RXj5eSGRNXKTao2ItAdsMCdAxdA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=RwaoR8v3gXXSFBAoMHOscuhSJ/zIoXh+quTwlvoqryoOr0V0e9bjpeQSFrVnAgSz0
+	 yIVyjvLcqfY4ZwxWzUx/ohtJCpaylTOCOQX2NIFqnrtMzT0T5MrST9+hItayuIi2Wf
+	 GKPdN24nSup+mDmAIwwqRudluhgX5zXGmKhYjBxQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B4521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbeLFTTT (ORCPT
+        id S1726158AbeLFTTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:19:19 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:39897 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLFTSl (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 6 Dec 2018 14:18:41 -0500
-Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 12:18:30 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     acme@kernel.org
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 2/7] perf machine: Use cached rbtrees
-Date:   Thu,  6 Dec 2018 11:18:14 -0800
-Message-Id: <20181206191819.30182-3-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181206191819.30182-1-dave@stgolabs.net>
-References: <20181206191819.30182-1-dave@stgolabs.net>
+        Thu, 6 Dec 2018 14:19:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbeLFTTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 14:19:52 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 488602154B
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 19:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544123990;
+        bh=lyVAKEyUgaA0R8m2RXj5eSGRNXKTao2ItAdsMCdAxdA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0Kdbq365s5oxK2Qaxv7gQQSFO2BWtmeeWJxYLy//3Dt5bCXRSksKOeHSBR+J9fyXK
+         R1D6eocxd4PefDad7udwbPaQIvuM2YUFRIWhK5XsIRC1lBcTD/moK9uvS493pxbnDz
+         vIWVvuIfou6S9qX9we1wePzONiBWJvuZmH0yr7dY=
+Received: by mail-wm1-f51.google.com with SMTP id z18so2102643wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 11:19:50 -0800 (PST)
+X-Gm-Message-State: AA+aEWZvdcLG3RYYtSsJKWe55E4xr+bTOT8UDBhC1Sd2uplNUShDWsNN
+        FgG44AW0PqyIx1vKyr+adDu8XgLXQ+w3WdTPa2JXfA==
+X-Google-Smtp-Source: AFSGD/Wp3A8BNUEt7cKl+ZPbshxN30LexpX3o08cUpv2xwsxJ5hbayUK3GsELLqlUXwPFKcYCgfuUqxkNz4FzdFOdlU=
+X-Received: by 2002:a1c:864f:: with SMTP id i76mr16724744wmd.83.1544123988638;
+ Thu, 06 Dec 2018 11:19:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+ <20181204160304.GB7195@arm.com> <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+ <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
+ <20181205114148.GA15160@arm.com> <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+ <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com>
+ <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com> <20181206190115.GC10086@cisco>
+In-Reply-To: <20181206190115.GC10086@cisco>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 6 Dec 2018 11:19:36 -0800
+X-Gmail-Original-Message-ID: <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
+Message-ID: <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jann Horn <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the cost of an extra pointer, we can avoid the O(logN) cost
-of finding the first element in the tree (smallest node), which
-is something required for nearly every operation dealing with
-machine->guests and threads->entries.
+On Thu, Dec 6, 2018 at 11:01 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On Thu, Dec 06, 2018 at 10:53:50AM -0800, Andy Lutomirski wrote:
+> > > If we are going to unmap the linear alias, why not do it at vmalloc()
+> > > time rather than vfree() time?
+> >
+> > That=E2=80=99s not totally nuts. Do we ever have code that expects __va=
+() to
+> > work on module data?  Perhaps crypto code trying to encrypt static
+> > data because our APIs don=E2=80=99t understand virtual addresses.  I gu=
+ess if
+> > highmem is ever used for modules, then we should be fine.
+> >
+> > RO instead of not present might be safer.  But I do like the idea of
+> > renaming Rick's flag to something like VM_XPFO or VM_NO_DIRECT_MAP and
+> > making it do all of this.
+>
+> Yeah, doing it for everything automatically seemed like it was/is
+> going to be a lot of work to debug all the corner cases where things
+> expect memory to be mapped but don't explicitly say it. And in
+> particular, the XPFO series only does it for user memory, whereas an
+> additional flag like this would work for extra paranoid allocations
+> of kernel memory too.
+>
 
-The conversion is straightforward, however, it's worth noticing
-that the rb_erase_init() calls have been replaced by rb_erase_cached()
-which has no _init() flavor, however, the node is explicitly
-cleared next anyway, which was redundant until now.
+I just read the code, and I looks like vmalloc() is already using
+highmem (__GFP_HIGH) if available, so, on big x86_32 systems, for
+example, we already don't have modules in the direct map.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- tools/perf/builtin-report.c |  3 ++-
- tools/perf/util/build-id.c  | 12 ++++++----
- tools/perf/util/machine.c   | 53 ++++++++++++++++++++++++++-------------------
- tools/perf/util/machine.h   | 12 +++++-----
- tools/perf/util/rb_resort.h |  6 ++---
- 5 files changed, 50 insertions(+), 36 deletions(-)
+So I say we go for it.  This should be quite simple to implement --
+the pageattr code already has almost all the needed logic on x86.  The
+only arch support we should need is a pair of functions to remove a
+vmalloc address range from the address map (if it was present in the
+first place) and a function to put it back.  On x86, this should only
+be a few lines of code.
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 257c9c18cb7e..b22fce3d9c95 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -752,7 +752,8 @@ static int tasks_print(struct report *rep, FILE *fp)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
- 
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			task = tasks + itask++;
- 
- 			task->thread = rb_entry(nd, struct thread, rb_node);
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 04b1d53e4bf9..a3796455898e 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -363,7 +363,8 @@ int perf_session__write_buildid_table(struct perf_session *session,
- 	if (err)
- 		return err;
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		err = machine__write_buildid_table(pos, fd);
- 		if (err)
-@@ -396,7 +397,8 @@ int dsos__hit_all(struct perf_session *session)
- 	if (err)
- 		return err;
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 
- 		err = machine__hit_all_dsos(pos);
-@@ -849,7 +851,8 @@ int perf_session__cache_build_ids(struct perf_session *session)
- 
- 	ret = machine__cache_build_ids(&session->machines.host);
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__cache_build_ids(pos);
- 	}
-@@ -866,7 +869,8 @@ bool perf_session__read_build_ids(struct perf_session *session, bool with_hits)
- 	struct rb_node *nd;
- 	bool ret = machine__read_build_ids(&session->machines.host, with_hits);
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__read_build_ids(pos, with_hits);
- 	}
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..1fbdc745a57e 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -41,7 +41,7 @@ static void machine__threads_init(struct machine *machine)
- 
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
--		threads->entries = RB_ROOT;
-+		threads->entries = RB_ROOT_CACHED;
- 		init_rwsem(&threads->lock);
- 		threads->nr = 0;
- 		INIT_LIST_HEAD(&threads->dead);
-@@ -179,7 +179,7 @@ void machine__delete_threads(struct machine *machine)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
- 		down_write(&threads->lock);
--		nd = rb_first(&threads->entries);
-+		nd = rb_first_cached(&threads->entries);
- 		while (nd) {
- 			struct thread *t = rb_entry(nd, struct thread, rb_node);
- 
-@@ -222,7 +222,7 @@ void machine__delete(struct machine *machine)
- void machines__init(struct machines *machines)
- {
- 	machine__init(&machines->host, "", HOST_KERNEL_ID);
--	machines->guests = RB_ROOT;
-+	machines->guests = RB_ROOT_CACHED;
- }
- 
- void machines__exit(struct machines *machines)
-@@ -234,9 +234,10 @@ void machines__exit(struct machines *machines)
- struct machine *machines__add(struct machines *machines, pid_t pid,
- 			      const char *root_dir)
- {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct machine *pos, *machine = malloc(sizeof(*machine));
-+	bool leftmost = true;
- 
- 	if (machine == NULL)
- 		return NULL;
-@@ -251,12 +252,14 @@ struct machine *machines__add(struct machines *machines, pid_t pid,
- 		pos = rb_entry(parent, struct machine, rb_node);
- 		if (pid < pos->pid)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 
- 	rb_link_node(&machine->rb_node, parent, p);
--	rb_insert_color(&machine->rb_node, &machines->guests);
-+	rb_insert_color_cached(&machine->rb_node, &machines->guests, leftmost);
- 
- 	return machine;
- }
-@@ -267,7 +270,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
- 
- 	machines->host.comm_exec = comm_exec;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
- 
- 		machine->comm_exec = comm_exec;
-@@ -276,7 +279,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
- 
- struct machine *machines__find(struct machines *machines, pid_t pid)
- {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct machine *machine;
- 	struct machine *default_machine = NULL;
-@@ -339,7 +342,7 @@ void machines__process_guests(struct machines *machines,
- {
- 	struct rb_node *nd;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		process(pos, data);
- 	}
-@@ -352,7 +355,8 @@ void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size)
- 
- 	machines->host.id_hdr_size = id_hdr_size;
- 
--	for (node = rb_first(&machines->guests); node; node = rb_next(node)) {
-+	for (node = rb_first_cached(&machines->guests); node;
-+	     node = rb_next(node)) {
- 		machine = rb_entry(node, struct machine, rb_node);
- 		machine->id_hdr_size = id_hdr_size;
- 	}
-@@ -465,9 +469,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 						  pid_t pid, pid_t tid,
- 						  bool create)
- {
--	struct rb_node **p = &threads->entries.rb_node;
-+	struct rb_node **p = &threads->entries.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct thread *th;
-+	bool leftmost = true;
- 
- 	th = threads__get_last_match(threads, machine, pid, tid);
- 	if (th)
-@@ -485,8 +490,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 
- 		if (tid < th->tid)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 
- 	if (!create)
-@@ -495,7 +502,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 	th = thread__new(pid, tid);
- 	if (th != NULL) {
- 		rb_link_node(&th->rb_node, parent, p);
--		rb_insert_color(&th->rb_node, &threads->entries);
-+		rb_insert_color_cached(&th->rb_node, &threads->entries, leftmost);
- 
- 		/*
- 		 * We have to initialize map_groups separately
-@@ -506,7 +513,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 		 * leader and that would screwed the rb tree.
- 		 */
- 		if (thread__init_map_groups(th, machine)) {
--			rb_erase_init(&th->rb_node, &threads->entries);
-+			rb_erase_cached(&th->rb_node, &threads->entries);
- 			RB_CLEAR_NODE(&th->rb_node);
- 			thread__put(th);
- 			return NULL;
-@@ -744,7 +751,7 @@ size_t machines__fprintf_dsos(struct machines *machines, FILE *fp)
- 	struct rb_node *nd;
- 	size_t ret = __dsos__fprintf(&machines->host.dsos.head, fp);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += __dsos__fprintf(&pos->dsos.head, fp);
- 	}
-@@ -764,7 +771,7 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
- 	struct rb_node *nd;
- 	size_t ret = machine__fprintf_dsos_buildid(&machines->host, fp, skip, parm);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += machine__fprintf_dsos_buildid(pos, fp, skip, parm);
- 	}
-@@ -804,7 +811,8 @@ size_t machine__fprintf(struct machine *machine, FILE *fp)
- 
- 		ret = fprintf(fp, "Threads: %u\n", threads->nr);
- 
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			struct thread *pos = rb_entry(nd, struct thread, rb_node);
- 
- 			ret += thread__fprintf(pos, fp);
-@@ -1107,7 +1115,7 @@ int machines__create_guest_kernel_maps(struct machines *machines)
- 
- void machines__destroy_kernel_maps(struct machines *machines)
- {
--	struct rb_node *next = rb_first(&machines->guests);
-+	struct rb_node *next = rb_first_cached(&machines->guests);
- 
- 	machine__destroy_kernel_maps(&machines->host);
- 
-@@ -1115,7 +1123,7 @@ void machines__destroy_kernel_maps(struct machines *machines)
- 		struct machine *pos = rb_entry(next, struct machine, rb_node);
- 
- 		next = rb_next(&pos->rb_node);
--		rb_erase(&pos->rb_node, &machines->guests);
-+		rb_erase_cached(&pos->rb_node, &machines->guests);
- 		machine__delete(pos);
- 	}
- }
-@@ -1680,7 +1688,7 @@ static void __machine__remove_thread(struct machine *machine, struct thread *th,
- 	BUG_ON(refcount_read(&th->refcnt) == 0);
- 	if (lock)
- 		down_write(&threads->lock);
--	rb_erase_init(&th->rb_node, &threads->entries);
-+	rb_erase_cached(&th->rb_node, &threads->entries);
- 	RB_CLEAR_NODE(&th->rb_node);
- 	--threads->nr;
- 	/*
-@@ -2453,7 +2461,8 @@ int machine__for_each_thread(struct machine *machine,
- 
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		threads = &machine->threads[i];
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			thread = rb_entry(nd, struct thread, rb_node);
- 			rc = fn(thread, priv);
- 			if (rc != 0)
-@@ -2480,7 +2489,7 @@ int machines__for_each_thread(struct machines *machines,
- 	if (rc != 0)
- 		return rc;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
- 
- 		rc = machine__for_each_thread(machine, fn, priv);
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index d856b85862e2..a4cc5a1cb1f8 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -29,11 +29,11 @@ struct vdso_info;
- #define THREADS__TABLE_SIZE	(1 << THREADS__TABLE_BITS)
- 
- struct threads {
--	struct rb_root	  entries;
--	struct rw_semaphore lock;
--	unsigned int	  nr;
--	struct list_head  dead;
--	struct thread	  *last_match;
-+	struct rb_root_cached  entries;
-+	struct rw_semaphore    lock;
-+	unsigned int	       nr;
-+	struct list_head       dead;
-+	struct thread	       *last_match;
- };
- 
- struct machine {
-@@ -134,7 +134,7 @@ typedef void (*machine__process_t)(struct machine *machine, void *data);
- 
- struct machines {
- 	struct machine host;
--	struct rb_root guests;
-+	struct rb_root_cached guests;
- };
- 
- void machines__init(struct machines *machines);
-diff --git a/tools/perf/util/rb_resort.h b/tools/perf/util/rb_resort.h
-index a920f702a74d..f272e181d3d6 100644
---- a/tools/perf/util/rb_resort.h
-+++ b/tools/perf/util/rb_resort.h
-@@ -144,8 +144,8 @@ struct __name##_sorted *__name = __name##_sorted__new
- 				  __ilist->rblist.nr_entries)
- 
- /* For 'struct machine->threads' */
--#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)	\
--	DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries,	\
--				  __machine->threads[hash_bucket].nr)
-+#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)    \
-+ DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries.rb_root, \
-+			   __machine->threads[hash_bucket].nr)
- 
- #endif /* _PERF_RESORT_RB_H_ */
--- 
-2.16.4
+What do you all think?  This should solve most of the problems we have.
 
+If we really wanted to optimize this, we'd make it so that
+module_alloc() allocates memory the normal way, then, later on, we
+call some function that, all at once, removes the memory from the
+direct map and applies the right permissions to the vmalloc alias (or
+just makes the vmalloc alias not-present so we can add permissions
+later without flushing), and flushes the TLB.  And we arrange for
+vunmap to zap the vmalloc range, then put the memory back into the
+direct map, then free the pages back to the page allocator, with the
+flush in the appropriate place.
+
+I don't see why the page allocator needs to know about any of this.
+It's already okay with the permissions being changed out from under it
+on x86, and it seems fine.  Rick, do you want to give some variant of
+this a try?
