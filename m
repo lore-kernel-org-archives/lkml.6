@@ -1,144 +1,311 @@
 Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0E9C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B660CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7400520850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7400520850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 5C32320878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:20:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VsFk4v+Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C32320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbeLFORk (ORCPT
+        id S1729180AbeLFOU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:17:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34664 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727704AbeLFORj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:17:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ECE78AE03;
-        Thu,  6 Dec 2018 14:17:36 +0000 (UTC)
-Subject: Re: [PATCH v4 2/5] scsi: hisi_sas: Relocate some code to reduce
- complexity
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>
-References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
- <1544103284-100497-3-git-send-email-john.garry@huawei.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBFTTwPEBEADOadCyru0ZmVLaBn620Lq6WhXUlVhtvZF5r1JrbYaBROp8ZpiaOc9YpkN3
- rXTgBx+UoDGtnz9DZnIa9fwxkcby63igMPFJEYpwt9adN6bA1DiKKBqbaV5ZbDXR1tRrSvCl
- 2V4IgvgVuO0ZJEt7gakOQlqjQaOvIzDnMIi/abKLSSzYAThsOUf6qBEn2G46r886Mk8MwkJN
- hilcQ7F5UsKfcVVGrTBoim6j69Ve6EztSXOXjFgsoBw4pEhWuBQCkDWPzxkkQof1WfkLAVJ2
- X9McVokrRXeuu3mmB+ltamYcZ/DtvBRy8K6ViAgGyNRWmLTNWdJj19Qgw9Ef+Q9O5rwfbPZy
- SHS2PVE9dEaciS+EJkFQ3/TBRMP1bGeNbZUgrMwWOvt37yguvrCOglbHW+a8/G+L7vz0hasm
- OpvD9+kyTOHjqkknVJL69BOJeCIVUtSjT9EXaAOkqw3EyNJzzhdaMXcOPwvTXNkd8rQZIHft
- SPg47zMp2SJtVdYrA6YgLv7OMMhXhNkUsvhU0HZWUhcXZnj+F9NmDnuccarez9FmLijRUNgL
- 6iU+oypB/jaBkO6XLLwo2tf7CYmBYMmvXpygyL8/wt+SIciNiM34Yc+WIx4xv5nDVzG1n09b
- +iXDTYoWH82Dq1xBSVm0gxlNQRUGMmsX1dCbCS2wmWbEJJDEeQARAQABzSdKb2hhbm5lcyBU
- aHVtc2hpcm4gPGp0aHVtc2hpcm5Ac3VzZS5kZT7CwYAEEwEIACoCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AFCQo9ta8FAlohZmoCGQEACgkQA5OWnS12CFATLQ//ajhNDVJLK9bjjiOH
- 53B0+hCrRBj5jQiT8I60+4w+hssvRHWkgsujF+V51jcmX3NOXeSyLC1Gk43A9vCz5gXnqyqG
- tOlYm26bihzG02eAoWr/glHBQyy7RYcd97SuRSv77WzuXT3mCnM15TKiqXYNzRCK7u5nx4eu
- szAU+AoXAC/y1gtuDMvANBEuHWE4LNQLkTwJshU1vwoNcTSl+JuQWe89GB8eeeMnHuY92T6A
- ActzHN14R1SRD/51N9sebAxGVZntXzSVKyMID6eGdNegWrz4q55H56ZrOMQ6IIaa7KSz3QSj
- 3E8VIY4FawfjCSOuA2joemnXH1a1cJtuqbDPZrO2TUZlNGrO2TRi9e2nIzouShc5EdwmL6qt
- WG5nbGajkm1wCNb6t4v9ueYMPkHsr6xJorFZHlu7PKqB6YY3hRC8dMcCDSLkOPWf+iZrqtpE
- odFBlnYNfmAXp+1ynhUvaeH6eSOqCN3jvQbITUo8mMQsdVgVeJwRdeAOFhP7fsxNugii721U
- acNVDPpEz4QyxfZtfu9QGI405j9MXF/CPrHlNLD5ZM5k9NxnmIdCM9i1ii4nmWvmz9JdVJ+8
- 6LkxauROr2apgTXxMnJ3Desp+IRWaFvTVhbwfxmwC5F3Kr0ouhr5Kt8jkQeD/vuqYuxOAyDI
- egjo3Y7OGqct+5nybmbOwU0EVNPA8QEQAN/79cFVNpC+8rmudnXGbob9sk0J99qnwM2tw33v
- uvQjEGAJTVCOHrewDbHmqZ5V1X1LI9cMlLUNMR3W0+L04+MH8s/JxshFST+hOaijGc81AN2P
- NrAQD7IKpA78Q2F3I6gpbMzyMy0DxmoKF73IAMQIknrhzn37DgM+x4jQgkvhFMqnnZ/xIQ9d
- QEBKDtfxH78QPosDqCzsN9HRArC75TiKTKOxC12ZRNFZfEPnmqJ260oImtmoD/L8QiBsdA4m
- Mdkmo6Pq6iAhbGQ5phmhUVuj+7O8rTpGRXySMLZ44BimM8yHWTaiLWxCehHgfUWRNLwFbrd+
- nYJYHoqyFGueZFBNxY4bS2rIEDg+nSKiAwJv3DUJDDd/QJpikB5HIjg/5kcSm7laqfbr1pmC
- ZbR2JCTp4FTABVLxt7pJP40SuLx5He63aA/VyxoInLcZPBNvVfq/3v3fkoILphi77ZfTvKrl
- RkDdH6PkFOFpnrctdTWbIFAYfU96VvySFAOOg5fsCeLv9/zD4dQEGsvva/qKZXkH/l2LeVp3
- xEXoFsUZtajPZgyRBxer0nVWRyeVwUQnLG8kjEOcZzX27GUpughi8w42p4oMD+96tr3BKTAr
- guRHJnU1M1xwRPbw5UsNXEOgYsFc8cdto0X7hQ2Ugc07CRSDvyH50IKXf2++znOTXFDhABEB
- AAHCwV8EGAECAAkFAlTTwPECGwwACgkQA5OWnS12CFAdRg//ZGV0voLRjjgX9ODzaz6LP+IP
- /ebGLXe3I+QXz8DaTkG45evOu6B2J53IM8t1xEug0OnfnTo1z0AFg5vU53L24LAdpi12CarV
- Da53WvHzG4BzCVGOGrAvJnMvUXf0/aEm0Sen2Mvf5kvOwsr9UTHJ8N/ucEKSXAXf+KZLYJbL
- NL4LbOFP+ywxtjV+SgLpDgRotM43yCRbONUXEML64SJ2ST+uNzvilhEQT/mlDP7cY259QDk7
- 1K6B+/ACE3Dn7X0/kp8a+ZoNjUJZkQQY4JyMOkITD6+CJ1YsxhX+/few9k5uVrwK/Cw+Vmae
- A85gYfFn+OlLFO/6RGjMAKOsdtPFMltNOZoT+YjgAcW6Q9qGgtVYKcVOxusL8C3v8PAYf7Ul
- Su7c+/Ayr3YV9Sp8PH4X4jK/zk3+DDY1/ASE94c95DW1lpOcyx3n1TwQbwp6TzPMRe1IkkYe
- 0lYj9ZgKaZ8hEmzuhg6FKXk9Dah+H73LdV57M4OFN8Xwb7v+oEG23vdsb2KBVG5K6Tv7Hb2N
- sfHWRdU3quYIistrNWWeGmfTlhVLgDhEmAsKZFH05QsAv3pQv7dH/JD+Tbn6sSnNAVrATff1
- AD3dXmt+5d3qYuUxam1UFGufGzV7jqG5QNStp0yvLP0xroB8y0CnnX2FY6bAVCU+CqKu+n1B
- LGlgwABHRtLCwe0EGAEIACAWIQTsOJyrwsTyXYYA0NADk5adLXYIUAUCWsTXAwIbAgCBCRAD
- k5adLXYIUHYgBBkWCAAdFiEEx1U9vxg1xAeUwus20p7yIq+KHe4FAlrE1wMACgkQ0p7yIq+K
- He6RfAEA+frSSvrHiuatNqvgYAJcraYhp1GQJrWSWMmi2eFcGskBAJyLp47etEn3xhJBLVVh
- 2y2K4Nobb6ZgxA4Svfnkf7AAdicQALiaOKDwKD3tgf90ypEoummYzAxv8MxyPXZ7ylRnkheA
- eQDxuoc/YwMA4qyxhzf6K4tD/aT12XJd95gk+YAL6flGkJD8rA3jsEucPmo5eko4Ms2rOEdG
- jKsZetkdPKGBd2qVxxyZgzUkgRXduvyux04b9erEpJmoIXs/lE0IRbL9A9rJ6ASjFPGpXYrb
- 73pb6Dtkdpvv+hoe4cKeae4dS0AnDc7LWSW3Ub0n61uk/rqpTmKuesmTZeB2GHzLN5GAXfNj
- ELHAeSVfFLPRFrjF5jjKJkpiyq98+oUnvTtDIPMTg05wSN2JtwKnoQ0TAIHWhiF6coGeEfY8
- ikdVLSZDEjW54Td5aIXWCRTBWa6Zqz/G6oESF+Lchu/lDv5+nuN04KZRAwCpXLS++/givJWo
- M9FMnQSvt4N95dVQE3kDsasl960ct8OzxaxuevW0OV/jQEd9gH50RaFif412DTrsuaPsBz6O
- l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
- W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
- yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <c7ec9e23-6da8-35e0-1996-02db3d640f4b@suse.de>
-Date:   Thu, 6 Dec 2018 15:17:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 09:20:29 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51170 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbeLFOU3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:20:29 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181206142026euoutp01ffaaa897b02a3e604d089d6d61c59e3a~txD-zJg9I2694926949euoutp01S
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 14:20:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181206142026euoutp01ffaaa897b02a3e604d089d6d61c59e3a~txD-zJg9I2694926949euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1544106026;
+        bh=fYX9Wq3QI344s10R5IU7ExE6mIPN7w/bPvHrQlEPF0s=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=VsFk4v+QLXU6eJJWQq3vbZb6wBEyeuc2HLGLEZe0TG2x8dE7sALMs7UXSQaZ2M230
+         0JArJ636Dw/ADd2zpUQf4kUmJu45cpyXgKC6Zzkl/zNxkqULmJeY5LBPWjnhWunQu1
+         TwjKknH9I5/Hgr67ypGzIgiazVpxvRFCSKLQOUVA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181206142025eucas1p2372a7306a4c26bdb057130717df4e133~txD_-8HJD1804918049eucas1p2Y;
+        Thu,  6 Dec 2018 14:20:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id A9.44.04441.820390C5; Thu,  6
+        Dec 2018 14:20:24 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181206142024eucas1p1cbec7a23ee03ac9340c0527cc96d64d8~txD_AZP0G2767827678eucas1p1B;
+        Thu,  6 Dec 2018 14:20:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181206142024eusmtrp2b5247d115ac040c59610877d2c995122~txD9xBOld1474714747eusmtrp2S;
+        Thu,  6 Dec 2018 14:20:24 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-4e-5c093028c222
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C9.6A.04128.720390C5; Thu,  6
+        Dec 2018 14:20:23 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181206142023eusmtip23d35ac895ce3940a0473993ad48200d3~txD9RJ4zX1336813368eusmtip2g;
+        Thu,  6 Dec 2018 14:20:23 +0000 (GMT)
+Subject: Re: [PATCH] usb: dwc2: Disable power down feature on Samsung SoCs
+To:     Artur Petrosyan <arthur.petrosyan@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <abb9bb4d-968a-6c78-14c2-5b56b769572b@samsung.com>
+Date:   Thu, 6 Dec 2018 15:20:23 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <1544103284-100497-3-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <3AD91E696667BF4BA728303C178E8A63532C68EA@am04wembxb.internal.synopsys.com>
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7oaBpwxBr+eWFv03jGx2DhjPavF
+        /JtJFs2L17NZnD+/gd3i8q45bBYzzu9jsli0rJXZ4t2U28wOnB6bVnWyecw7Geixf+4ado++
+        LasYPbbs/8zo8XmTXABbFJdNSmpOZllqkb5dAlfGzN1/mAsWeVTsm/eUpYHxp10XIyeHhICJ
+        xN2js1m6GLk4hARWMEp8/zyTCcL5wiixZfpiVgjnM1Bm0SpmmJaG1vNQVcsZJTY9XANV9Z5R
+        4tKBVlaQKmEBL4ntM5YygyREBH4xSux9/h2silngO6PEzEs32UCq2AQMJbredoHZvAJ2Ep/2
+        HGIBsVkEVCRm7D8KFOfgEBWIkdj1vAaiRFDi5MwnYCWcAhESs7u7wU5iFpCXaN46G8oWl7j1
+        ZD7YeRICh9gl3qz+zwZxt4vEud0L2CFsYYlXx7dA2TIS/3fCNDQzSrTPmMUO4fQwSmydswOq
+        21ri8PGLrCAXMQtoSqzfpQ9iSgg4SkydowNh8knceCsIcQOfxKRt05khwrwSHW1CEDPUJGYd
+        Xwe39eCFS8wTGJVmIflsFpJvZiH5ZhbC2gWMLKsYxVNLi3PTU4sN81LL9YoTc4tL89L1kvNz
+        NzEC09Ppf8c/7WD8einpEKMAB6MSD++LB+wxQqyJZcWVuYcYJTiYlUR4GfQ4YoR4UxIrq1KL
+        8uOLSnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwLjCdtGmO0W6flTGs/AW5
+        vNcTb0YcuRJ1tcVwprRHdeuR8ook+xtHGnycjnaEyb9Mv6TKvMJg4TKvBvb4Q7GFQemmZXUh
+        /Sbunbqpf27vFnCaMH9Cv1eXhHzd14zEpW0bIp62f33r0cf0I9rbvHl6Ht9/XQnx1Z2VN5a6
+        cy8UfCYT9n3y/VAlluKMREMt5qLiRADVlWe+SwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7rqBpwxBhev2Fj03jGx2DhjPavF
+        /JtJFs2L17NZnD+/gd3i8q45bBYzzu9jsli0rJXZ4t2U28wOnB6bVnWyecw7Geixf+4ado++
+        LasYPbbs/8zo8XmTXABblJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1N
+        SmpOZllqkb5dgl7GzN1/mAsWeVTsm/eUpYHxp10XIyeHhICJREPreaYuRi4OIYGljBLPpl5i
+        hUjISJyc1gBlC0v8udbFBlH0llHiz7cjYAlhAS+J7TOWMoMkRAR+MUpMvbGFHcRhFvjJKHG/
+        p5sdouU+o8SWaefZQFrYBAwlut52gdm8AnYSn/YcYgGxWQRUJGbsPwoWFxWIkZhy+TUrRI2g
+        xMmZT8BqOAUiJGZ3dzOD2MwC6hJ/5l2CsuUlmrfOhrLFJW49mc80gVFoFpL2WUhaZiFpmYWk
+        ZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAmNx27OeWHYxd74IPMQpwMCrx8L54wB4j
+        xJpYVlyZe4hRgoNZSYSXQY8jRog3JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgekiryTe0NTQ
+        3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QD4xQeq4VH4v/t+DRfLlzhE5fI
+        F84+x6IJM5plGaezx9xekHj9k5CCrVbYXPsfTVOeJXDvWv3Z+NqET1Wa/+5m3dBSCEzsY7rp
+        kWmfsPpkWkMDU9ImU4V0x0aL+/nxzGYBfwvFVjR93/KU72vbOlnOglqXE9/Pbf97c75luvZd
+        qd/TbG6o11T8UWIpzkg01GIuKk4EANmx8yjfAgAA
+X-CMS-MailID: 20181206142024eucas1p1cbec7a23ee03ac9340c0527cc96d64d8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181120153828eucas1p206d442b12c16588662c0e3f731ba58c3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181120153828eucas1p206d442b12c16588662c0e3f731ba58c3
+References: <CGME20181120153828eucas1p206d442b12c16588662c0e3f731ba58c3@eucas1p2.samsung.com>
+        <20181120153815.31897-1-m.szyprowski@samsung.com>
+        <3AD91E696667BF4BA728303C178E8A63532C68EA@am04wembxb.internal.synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 14:34, John Garry wrote:
-[...]
-> +static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
-> +			       struct sas_task *task, int n_elem,
-> +			       int n_elem_req, int n_elem_resp)
-> +{
-> +	struct device *dev = hisi_hba->dev;
-> +
-> +	if (!sas_protocol_ata(task->task_proto)) {
-> +		if (task->num_scatter) {
-> +			if (n_elem)
-> +				dma_unmap_sg(dev, task->scatter,
-> +					     task->num_scatter,
-> +					     task->data_dir);
-> +		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
-> +			if (n_elem_req)
-> +				dma_unmap_sg(dev, &task->smp_task.smp_req,
-> +					     1, DMA_TO_DEVICE);
-> +			if (n_elem_resp)
-> +				dma_unmap_sg(dev, &task->smp_task.smp_resp,
-> +					     1, DMA_FROM_DEVICE);
-> +		}
-> +	}
+Hi Artur,
 
-	if (sas_protocol_ata(task->task_proto))
-		return;
+On 2018-12-04 15:28, Artur Petrosyan wrote:
+> On 11/20/2018 19:38, Marek Szyprowski wrote:
+>> Power down feature of DWC2 module integrated in Samsung SoCs doesn't work
+>> properly or needs some additional handling in PHY or SoC glue layer, so
+>> disable it for now. Without disabling power down, DWC2 causes random memory
+>> trashes and fails enumeration if there is no USB link to host on driver
+>> probe.
+>>
+>> Fixes: 03ea6d6e9e1ff1 ("usb: dwc2: Enable power down")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/usb/dwc2/params.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+>> index 7c1b6938f212..266157ae179a 100644
+>> --- a/drivers/usb/dwc2/params.c
+>> +++ b/drivers/usb/dwc2/params.c
+>> @@ -71,6 +71,13 @@ static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)
+>>   	p->power_down = false;
+>>   }
+>>   
+>> +static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)
+>> +{
+>> +	struct dwc2_core_params *p = &hsotg->params;
+>> +
+>> +	p->power_down = 0;
+>> +}
+>> +
+>>   static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
+>>   {
+>>   	struct dwc2_core_params *p = &hsotg->params;
+>> @@ -151,7 +158,8 @@ const struct of_device_id dwc2_of_match_table[] = {
+>>   	{ .compatible = "lantiq,arx100-usb", .data = dwc2_set_ltq_params },
+>>   	{ .compatible = "lantiq,xrx200-usb", .data = dwc2_set_ltq_params },
+>>   	{ .compatible = "snps,dwc2" },
+>> -	{ .compatible = "samsung,s3c6400-hsotg" },
+>> +	{ .compatible = "samsung,s3c6400-hsotg",
+>> +	  .data = dwc2_set_s3c6400_params },
+>>   	{ .compatible = "amlogic,meson8-usb",
+>>   	  .data = dwc2_set_amlogic_params },
+>>   	{ .compatible = "amlogic,meson8b-usb",
+>>
+> Could you please provide dmesg logs with verbose Debug enabled 
+> configuration and the register dump.
+> So that we can see what the issue is related to.
 
-Would save you a level of indentation and make the above more readable.
+I'm not sure if this helps much. The problem happens if usb cable is not
+connected on boot. Then, when I connect and disconnect USB cable,
+strange memory trashes happens. From brief tests, the trashing doesn't
+happen when debug messages are enabled, so it is related to timings.
+IMHO the simplest fix for now is to disable powerdown on Samsung SoCs.
 
+Here is the initialization related part (booted without usb cable
+connected):
 
+# dmesg | grep dwc
+[    2.261821] dwc2 12480000.hsotg: Linked as a consumer to regulator.15
+[    2.266410] dwc2 12480000.hsotg: Linked as a consumer to regulator.12
+[    2.273996] dwc2 12480000.hsotg: dwc2_check_params: Invalid parameter
+besl=1
+[    2.279405] dwc2 12480000.hsotg: dwc2_check_params: Invalid parameter
+g_np_tx_fifo_size=1024
+[    2.287882] dwc2 12480000.hsotg: NonPeriodic TXFIFO size: 768
+[    2.287894] dwc2 12480000.hsotg: RXFIFO size: 2048
+[    2.288003] dwc2 12480000.hsotg: EPs: 16, dedicated fifos, 7808
+entries in SPRAM
+[    2.296631] dwc2 12480000.hsotg: DCFG=0x08200000, DCTL=0x00000000,
+DIEPMSK=00000000
+[    2.303044] dwc2 12480000.hsotg: GAHBCFG=0x00000000, GHWCFG1=0x00000000
+[    2.309437] dwc2 12480000.hsotg: GRXFSIZ=0x00001f00, GNPTXFSIZ=0x03001f00
+[    2.316258] dwc2 12480000.hsotg: DPTx[1] FSize=768, StAddr=0x00002200
+[    2.322630] dwc2 12480000.hsotg: DPTx[2] FSize=768, StAddr=0x00002500
+[    2.329099] dwc2 12480000.hsotg: DPTx[3] FSize=768, StAddr=0x00002800
+[    2.335521] dwc2 12480000.hsotg: DPTx[4] FSize=768, StAddr=0x00002b00
+[    2.341900] dwc2 12480000.hsotg: DPTx[5] FSize=768, StAddr=0x00002e00
+[    2.348366] dwc2 12480000.hsotg: DPTx[6] FSize=768, StAddr=0x00003100
+[    2.354802] dwc2 12480000.hsotg: DPTx[7] FSize=768, StAddr=0x00003400
+[    2.361169] dwc2 12480000.hsotg: DPTx[8] FSize=768, StAddr=0x00003700
+[    2.367637] dwc2 12480000.hsotg: DPTx[9] FSize=768, StAddr=0x00003a00
+[    2.374059] dwc2 12480000.hsotg: DPTx[10] FSize=768, StAddr=0x00003d00
+[    2.380526] dwc2 12480000.hsotg: DPTx[11] FSize=768, StAddr=0x00004000
+[    2.387079] dwc2 12480000.hsotg: DPTx[12] FSize=768, StAddr=0x00004300
+[    2.393589] dwc2 12480000.hsotg: DPTx[13] FSize=768, StAddr=0x00004600
+[    2.400055] dwc2 12480000.hsotg: DPTx[14] FSize=768, StAddr=0x00004900
+[    2.406611] dwc2 12480000.hsotg: DPTx[15] FSize=768, StAddr=0x00004c00
+[    2.413120] dwc2 12480000.hsotg: ep0-in: EPCTL=0x00008800,
+SIZ=0x00000000, DMA=0x0562c0d2
+[    2.421236] dwc2 12480000.hsotg: ep0-out: EPCTL=0x00008000,
+SIZ=0x00000000, DMA=0xba24bb0f
+[    2.429526] dwc2 12480000.hsotg: ep1-in: EPCTL=0x00001000,
+SIZ=0x00000000, DMA=0xe1e5d4d6
+[    2.437684] dwc2 12480000.hsotg: ep1-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x866fd8ec
+[    2.445930] dwc2 12480000.hsotg: ep2-in: EPCTL=0x00001800,
+SIZ=0x00000000, DMA=0xf04672ba
+[    2.454091] dwc2 12480000.hsotg: ep2-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x254f4cad
+[    2.462292] dwc2 12480000.hsotg: ep3-in: EPCTL=0x00002000,
+SIZ=0x00000000, DMA=0x0031e893
+[    2.470494] dwc2 12480000.hsotg: ep3-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0xa1fadc63
+[    2.478740] dwc2 12480000.hsotg: ep4-in: EPCTL=0x00002800,
+SIZ=0x00000000, DMA=0x070100d6
+[    2.486899] dwc2 12480000.hsotg: ep4-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x5b73f99f
+[    2.495147] dwc2 12480000.hsotg: ep5-in: EPCTL=0x00003000,
+SIZ=0x00000000, DMA=0x22862241
+[    2.503306] dwc2 12480000.hsotg: ep5-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x3e6dd3d7
+[    2.511508] dwc2 12480000.hsotg: ep6-in: EPCTL=0x00003800,
+SIZ=0x00000000, DMA=0x49d40c13
+[    2.519711] dwc2 12480000.hsotg: ep6-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x75ef350a
+[    2.527956] dwc2 12480000.hsotg: ep7-in: EPCTL=0x00004000,
+SIZ=0x00000000, DMA=0xea58422e
+[    2.536115] dwc2 12480000.hsotg: ep7-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0xf3ddcb57
+[    2.544362] dwc2 12480000.hsotg: ep8-in: EPCTL=0x00004800,
+SIZ=0x00000000, DMA=0xc643412d
+[    2.552477] dwc2 12480000.hsotg: ep8-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x4ff685bc
+[    2.560768] dwc2 12480000.hsotg: ep9-in: EPCTL=0x00005000,
+SIZ=0x00000000, DMA=0xbf80c044
+[    2.568926] dwc2 12480000.hsotg: ep9-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x7a4d7ff5
+[    2.577171] dwc2 12480000.hsotg: ep10-in: EPCTL=0x00005800,
+SIZ=0x00000000, DMA=0x095249a9
+[    2.585418] dwc2 12480000.hsotg: ep10-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x53d9dd5c
+[    2.593751] dwc2 12480000.hsotg: ep11-in: EPCTL=0x00006000,
+SIZ=0x00000000, DMA=0xb6367224
+[    2.601954] dwc2 12480000.hsotg: ep11-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x78fc77d9
+[    2.610331] dwc2 12480000.hsotg: ep12-in: EPCTL=0x00006800,
+SIZ=0x00000000, DMA=0x703a61f7
+[    2.618588] dwc2 12480000.hsotg: ep12-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x4b6fdce6
+[    2.626909] dwc2 12480000.hsotg: ep13-in: EPCTL=0x00007000,
+SIZ=0x00000000, DMA=0x9028b9a8
+[    2.635155] dwc2 12480000.hsotg: ep13-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x9ce3fc49
+[    2.643487] dwc2 12480000.hsotg: ep14-in: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x142fa3a6
+[    2.651690] dwc2 12480000.hsotg: ep14-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0x992fdfec
+[    2.660067] dwc2 12480000.hsotg: ep15-in: EPCTL=0x00000800,
+SIZ=0x00000000, DMA=0x455906b0
+[    2.668312] dwc2 12480000.hsotg: ep15-out: EPCTL=0x00000000,
+SIZ=0x00000000, DMA=0xd74dacd5
+[    2.676643] dwc2 12480000.hsotg: DVBUSDIS=0x000017d7, DVBUSPULSE=000005b8
+[    2.868931] dwc2 12480000.hsotg: bound driver g_ether
+[    2.873603] dwc2 12480000.hsotg: dwc2_hsotg_pullup: is_on: 1 op_state: 3
+[    2.873649] dwc2 12480000.hsotg: FIFOs reset, timeout at 100
+[    2.873685] dwc2 12480000.hsotg: EP0: DIEPCTL0=0x00008000,
+DOEPCTL0=0x00008000
+[    2.873696] dwc2 12480000.hsotg: gsintmsk now 0xd88c3cc4
+[    2.873719] dwc2 12480000.hsotg: DCTL=0x00000002
+[    2.873731] dwc2 12480000.hsotg: GLPMCFG=0x00001483
+[    2.876743] dwc2 12480000.hsotg: dwc2_hsotg_enqueue_setup: queueing
+setup request
+[    2.876756] dwc2 12480000.hsotg: ep0: req (ptrval): 8@(ptrval),
+noi=0, zero=0, snok=0
+[    2.876773] dwc2 12480000.hsotg: dwc2_hsotg_start_req:
+DxEPCTL=0x80008000, ep 0, dir out
+[    2.876783] dwc2 12480000.hsotg: ureq->length:8 ureq->actual:0
+[    2.876795] dwc2 12480000.hsotg: dwc2_hsotg_start_req: 1@8/8,
+0x00080008 => 0x00000b10
+[    2.876807] dwc2 12480000.hsotg: dwc2_hsotg_start_req: b7043000 pad
+=> 0x00000b14
+[    2.876816] dwc2 12480000.hsotg: ep0 state:0
+[    2.876825] dwc2 12480000.hsotg: dwc2_hsotg_start_req: DxEPCTL=0x80008000
+[    2.876836] dwc2 12480000.hsotg: dwc2_hsotg_start_req: DXEPCTL=0x80008000
+[    2.876847] dwc2 12480000.hsotg: EP0: DIEPCTL0=0x00008000,
+DOEPCTL0=0x80008000
+[    2.877402] dwc2 12480000.hsotg: dwc2_hsotg_irq: 04001020 00001000
+(d88c3cc4) retry 8
+[    2.877420] dwc2 12480000.hsotg: dwc2_hsotg_irq: USBRst
+[    2.877430] dwc2 12480000.hsotg: GNPTXSTS=00080300
+
+Best regards
 -- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
