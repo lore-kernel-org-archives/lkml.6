@@ -2,92 +2,129 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_RHS_DOB,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F46C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3124BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8554208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:13:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8554208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E49E921479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:17:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49E921479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbeLFTNe (ORCPT
+        id S1725981AbeLFTRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:13:34 -0500
-Received: from foss.arm.com ([217.140.101.70]:59026 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFTNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:13:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4791EA78;
-        Thu,  6 Dec 2018 11:13:33 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 16FC63F59C;
-        Thu,  6 Dec 2018 11:13:33 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 37A601AE0BAD; Thu,  6 Dec 2018 19:13:54 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 19:13:54 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] ARM: dts: sunxi: Fix PMU compatible strings
-Message-ID: <20181206191353.GA20680@arm.com>
-References: <20181206191142.14118-1-robh@kernel.org>
+        Thu, 6 Dec 2018 14:17:41 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:35563 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbeLFTRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 14:17:41 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUz9W-0004kz-5K; Thu, 06 Dec 2018 12:17:38 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUz9V-0002Jc-BY; Thu, 06 Dec 2018 12:17:37 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian@brauner.io>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org
+References: <20181206121858.12215-1-christian@brauner.io>
+        <87sgzahf7k.fsf@xmission.com>
+        <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
+Date:   Thu, 06 Dec 2018 13:17:24 -0600
+In-Reply-To: <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io> (Christian
+        Brauner's message of "Fri, 07 Dec 2018 06:14:34 +1300")
+Message-ID: <875zw6bh2z.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206191142.14118-1-robh@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-XM-SPF: eid=1gUz9V-0002Jc-BY;;;mid=<875zw6bh2z.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX188A9TKyzRFrtIa1MCJvlVKJVm3UcuiMcU=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:11:42PM -0600, Rob Herring wrote:
-> "arm,cortex-a15-pmu" is not a valid fallback compatible string for an
-> Cortex-A7 PMU, so drop it.
-> 
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  arch/arm/boot/dts/sun6i-a31.dtsi | 2 +-
->  arch/arm/boot/dts/sun7i-a20.dtsi | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-> index a960b8ef7822..9e7931d5e42a 100644
-> --- a/arch/arm/boot/dts/sun6i-a31.dtsi
-> +++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-> @@ -202,7 +202,7 @@
->  	};
->  
->  	pmu {
-> -		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
-> +		compatible = "arm,cortex-a7-pmu";
->  		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-> index 3c571dc599c3..5e413a5d9f6d 100644
-> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
-> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-> @@ -199,7 +199,7 @@
->  	};
->  
->  	pmu {
-> -		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
-> +		compatible = "arm,cortex-a7-pmu";
->  		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+Christian Brauner <christian@brauner.io> writes:
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+> On December 7, 2018 4:01:19 AM GMT+13:00, ebiederm@xmission.com wrote:
+>>Christian Brauner <christian@brauner.io> writes:
+>>
+>>> The kill() syscall operates on process identifiers (pid). After a
+>>process
+>>> has exited its pid can be reused by another process. If a caller
+>>sends a
+>>> signal to a reused pid it will end up signaling the wrong process.
+>>This
+>>> issue has often surfaced and there has been a push [1] to address
+>>this
+>>> problem.
+>>>
+>>> This patch uses file descriptors (fd) from proc/<pid> as stable
+>>handles on
+>>> struct pid. Even if a pid is recycled the handle will not change. The
+>>fd
+>>> can be used to send signals to the process it refers to.
+>>> Thus, the new syscall taskfd_send_signal() is introduced to solve
+>>this
+>>> problem. Instead of pids it operates on process fds (taskfd).
+>>
+>>I am not yet thrilled with the taskfd naming.
+>
+> Userspace cares about what does this thing operate on?
+> It operates on processes and threads.
+> The most common term people use is "task".
+> I literally "polled" ten non-kernel people for that purpose and asked:
+> "What term would you use to refer to a process and a thread?"
+> Turns out it is task. So if find this pretty apt.
+> Additionally, the proc manpage uses task in the exact same way (also see the commit message).
+> If you can get behind that name even if feeling it's not optimal it would be great.
 
-Will
+Once I understand why threads and not process groups.  I don't see that
+logic yet.
+
+>>Is there any plan to support sesssions and process groups?
+>
+> I don't see the necessity.
+> As I said in previous mails:
+> we can emulate all interesting signal syscalls with this one.
+
+I don't know what you mean by all of the interesting signal system
+calls.  I do know you can not replicate kill(2).
+
+Sending signals to a process group the "kill(-pgrp)" case with kill
+sends the signals to an atomic snapshot of processes.  If the signal
+is SIGKILL then it is guaranteed that then entire process group is
+killed with no survivors.
+
+> We succeeded in doing that.
+
+I am not certain you have.
+
+> No need to get more fancy.
+> There's currently no obvious need for more features.
+> Features should be implemented when someone actually needs them.
+
+That is fair.  I don't understand what you are doing with sending
+signals to a thread.  That seems like one of the least useful
+corner cases of sending signals.
+
+Eric
