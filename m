@@ -2,80 +2,91 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C35C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8B0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 479D520878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544101126;
-	bh=27/7qHG/+IjMquh7MizK4kDrJrvNbMniTgs4H1XSJ6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jMP2Ya2j/uI8NahWMJhB/QRzzfBYLB7J5WxeCF5wmUkrRkVVmU9IV451qLHWYTjBx
-	 B4XlwK5NSgQF3Mkd9Y9YCXJlmFO1wYqvAZo2AbxC+blhegV5JrNxTt45NSJan377vP
-	 yXZq8Oegpaa92iyekkG+YV6fYT36gdYoffOEf/50=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479D520878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0195020878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0195020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbeLFM6p (ORCPT
+        id S1729555AbeLFNC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:58:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42850 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 08:02:56 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:63606 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728648AbeLFM6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:58:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D28EB20878;
-        Thu,  6 Dec 2018 12:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544101124;
-        bh=27/7qHG/+IjMquh7MizK4kDrJrvNbMniTgs4H1XSJ6o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HBSz+GOf2g2HkM4ubvwhSDo4b8SqSywuK5r/2RHDoQnZSzGcG6PF2cKG3PpfG/MeP
-         klB038jmi0K6ukjI/iMF05Hlk8SNSztKcfl+5MsMm995EX3c8GarQsGXAS1Y/FO6QV
-         AtH+0TZ0R/8rfeOBxapL99qwv1r74aV2YJ+aTkcQ=
-Date:   Thu, 6 Dec 2018 13:58:42 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: Re: [PATCH v2] driver core: platform: Respect return code of
- platform_device_register_full()
-Message-ID: <20181206125842.GA1480@kroah.com>
-References: <20181203182141.29720-1-andriy.shevchenko@linux.intel.com>
+        id S1729367AbeLFNCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:02:55 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 024FCE376B459117948D;
+        Thu,  6 Dec 2018 21:02:53 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB6D2mEx080766;
+        Thu, 6 Dec 2018 21:02:48 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120621032063-15152368 ;
+          Thu, 6 Dec 2018 21:03:20 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Hannes Reinecke <hare@suse.com>, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] scsi: aic7xxx: Use kmemdup instead of duplicating its function
+Date:   Thu, 6 Dec 2018 21:02:18 +0800
+Message-Id: <20181206130218.19776-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181203182141.29720-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-06 21:03:20,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-06 21:02:36
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB6D2mEx080766
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 08:21:41PM +0200, Andy Shevchenko wrote:
-> The platform_device_register_full() might return an error pointer. If we
-> instantiate platform device which is optional we may simplify the routine at
-> removal stage by simply calling platform_device_unregister(). For now it
-> requires to check parameter for being an error pointer in each caller.
-> 
-> To make users' life easier, check for an error pointer inside driver core.
-> 
-> Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> - rebase on top of linux-next since the conflicting patch has been applied there
+kmemdup has implemented the function that kmalloc() + memcpy().
+We prefer to kmemdup rather than code opened implementation.
 
-What conflicting patch?  This now doesn't apply to my tree.
+This issue was detected with the help of coccinelle.
 
-Let me fix it up by hand...
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Hannes Reinecke <hare@suse.com>
+CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
+CC: "Martin K. Petersen" <martin.petersen@oracle.com>
+CC: linux-scsi@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/scsi/aic7xxx/aic79xx=5Fcore.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c b/drivers/scsi/aic7xxx/a=
+ic79xx=5Fcore.c
+index 9ee75c9a9aa1..3e72fac6d248 100644
+--- a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
++++ b/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
+@@ -9438,10 +9438,10 @@ ahd=5Floadseq(struct ahd=5Fsoftc *ahd)
+ 	if (cs=5Fcount !=3D 0) {
+=20
+ 		cs=5Fcount *=3D sizeof(struct cs);
+-		ahd->critical=5Fsections =3D kmalloc(cs=5Fcount, GFP=5FATOMIC);
++		ahd->critical=5Fsections =3D kmemdup(cs=5Ftable, cs=5Fcount,
++						GFP=5FATOMIC);
+ 		if (ahd->critical=5Fsections =3D=3D NULL)
+ 			panic("ahd=5Floadseq: Could not malloc");
+-		memcpy(ahd->critical=5Fsections, cs=5Ftable, cs=5Fcount);
+ 	}
+ 	ahd=5Foutb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
+=20
+--=20
+2.19.1
 
