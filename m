@@ -2,176 +2,232 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AFAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD302C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA8B2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:58:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FYfsDMQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA8B2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A42EE2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:59:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42EE2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbeLFU6A (ORCPT
+        id S1726010AbeLFU7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:58:00 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:41469 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeLFU57 (ORCPT
+        Thu, 6 Dec 2018 15:59:42 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55242 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeLFU7m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:57:59 -0500
-Received: by mail-yb1-f195.google.com with SMTP id n134so1420346ybf.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uKVZaCD9ZtZ0SJxFxgVDNC1lXzqQAhGwc41Mmvh5cwQ=;
-        b=FYfsDMQqy0Teb7YhaLy8vQ5hd8iM+SBZt7LcK0chS2e7o4sZd323pLhYF1BK+OH5Rh
-         mB3Xv1TMY2NpEJUNAL4CXO9ajl2spep7AnyMbUKFqIm0lNKklKU/cMVU7FttQzF0zxnI
-         AOjd2Dryd1Xvordm+7ysqJIa322ZSWULVmC0M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uKVZaCD9ZtZ0SJxFxgVDNC1lXzqQAhGwc41Mmvh5cwQ=;
-        b=YMDqN+D2lwXoDy+x1L9tGOGZ2ddhtc2yZQCV/L0hO1SvZkR32WiGfSzpsFwjqJh4Ms
-         Efwx5Qxx0Ue+rqva73gnq4dDS6KThs6s5Ejoi0jRTJ2IwWELDXPtwyhR0dQfrFhhTeIC
-         gTG5bNWSR4r4lGCRjXi9MJAQaTbma7FP51D8CpVFwpf1EsS/P1C2AgAyv07wzQZixqOz
-         vpTx8rFiWRfP7Q1eYUhATONPTaqDrB7qkJ4hzh+zR/2McuVeFH3rg1tqAEvQUnYqV1Ep
-         hneo0y8t+cl5Yotgdu3D2TWYJ7v/bJRFaEX5lAN7mm4jZkKBGm0rbLAPt/hDarOMlyrx
-         wmYg==
-X-Gm-Message-State: AA+aEWZ21mo510nvRE+45VJFURkN3J9wt/Njcb9HU3DfmlVebNAX5bhe
-        Y6LId0n4/cqb3l4PPIYM2WBubpp1MDs=
-X-Google-Smtp-Source: AFSGD/UdBsSTh8LpGlR5sG+2394aAAHu94LvhBdWdPOQJGiWWoFOOSMN8aGgNndcXhk581GYZ4yGhw==
-X-Received: by 2002:a25:5e43:: with SMTP id s64mr18773492ybb.242.1544129877333;
-        Thu, 06 Dec 2018 12:57:57 -0800 (PST)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id i13sm357479ywe.53.2018.12.06.12.57.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 12:57:55 -0800 (PST)
-Received: by mail-yw1-f48.google.com with SMTP id j6so164487ywj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:57:55 -0800 (PST)
-X-Received: by 2002:a81:28c7:: with SMTP id o190mr30827025ywo.288.1544129874790;
- Thu, 06 Dec 2018 12:57:54 -0800 (PST)
+        Thu, 6 Dec 2018 15:59:42 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 89527263ACA
+Received: by earth.universe (Postfix, from userid 1000)
+        id DE8043C08D6; Thu,  6 Dec 2018 21:59:36 +0100 (CET)
+Date:   Thu, 6 Dec 2018 21:59:36 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Claudiu.Beznea@microchip.com
+Cc:     Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] power: reset: at91-poweroff: move shdwc related data
+ to one structure
+Message-ID: <20181206205936.jqcirosf2s34gcje@earth.universe>
+References: <1544117357-24177-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-References: <1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn> <20181206085242.GG28501@garbanzo.do-not-panic.com>
-In-Reply-To: <20181206085242.GG28501@garbanzo.do-not-panic.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 6 Dec 2018 12:57:43 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLDT99hc67TQx0Hsrh9NMHt1mYN6BNgMvx9b43zfdU5oQ@mail.gmail.com>
-Message-ID: <CAGXu5jLDT99hc67TQx0Hsrh9NMHt1mYN6BNgMvx9b43zfdU5oQ@mail.gmail.com>
-Subject: Re: [PATCH] proc/sysctl: fix return error for proc_doulongvec_minmax
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc:     cheng.lin130@zte.com.cn, Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        zhong.weidong@zte.com.cn, wang.yi59@zte.com.cn,
-        Alexander.Levin@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="75fgkhawihvwaveb"
+Content-Disposition: inline
+In-Reply-To: <1544117357-24177-1-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 12:52 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Thu, Dec 06, 2018 at 03:36:15PM +0800, Cheng Lin wrote:
-> > If the number of input parameters is less than the total
-> > parameters, an EINVAL error will be returned.
-> >
-> > e.g.
-> > We use proc_doulongvec_minmax to pass up to two parameters
-> > with kern_table.
-> >
-> > {
-> >       .procname       = "monitor_signals",
-> >       .data           = &monitor_sigs,
-> >       .maxlen         = 2*sizeof(unsigned long),
-> >       .mode           = 0644,
-> >       .proc_handler   = proc_doulongvec_minmax,
-> > },
-> >
-> > Reproduce:
-> > When passing two parameters, it's work normal. But passing
-> > only one parameter, an error "Invalid argument"(EINVAL) is
-> > returned.
-> >
-> > [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-> > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> > 1       2
-> > [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-> > -bash: echo: write error: Invalid argument
-> > [root@cl150 ~]# echo $?
-> > 1
-> > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> > 3       2
-> > [root@cl150 ~]#
-> >
-> > The following is the result after apply this patch. No error
-> > is returned when the number of input parameters is less than
-> > the total parameters.
-> >
-> > [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-> > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> > 1       2
-> > [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-> > [root@cl150 ~]# echo $?
-> > 0
-> > [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> > 3       2
-> > [root@cl150 ~]#
-> >
-> > There are three processing functions dealing with digital parameters,
-> > __do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-> >
-> > This patch deals with __do_proc_doulongvec_minmax, just as
-> > __do_proc_dointvec does, adding a check for parameters 'left'. In
-> > __do_proc_douintvec, its code implementation explicitly does not
-> > support multiple inputs.
-> >
-> > static int __do_proc_douintvec(...){
-> >          ...
-> >          /*
-> >           * Arrays are not supported, keep this simple. *Do not* add
-> >           * support for them.
-> >           */
-> >          if (vleft != 1) {
-> >                  *lenp = 0;
-> >                  return -EINVAL;
-> >          }
-> >          ...
-> > }
-> >
-> > So, just __do_proc_doulongvec_minmax has the problem. And most use of
-> > proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-> > parameter.
-> >
-> > Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
->
-> Thanks for fixing up the commit log.
->
-> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+--75fgkhawihvwaveb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Kees
+Hi,
 
->
-> I think we can live with this outside of stable. So stable is not
-> needed. But I would not be surprised if autosel algorithm will end
-> up picking it up. And if so.. well, it cannot hurt.
->
->   Luis
+On Thu, Dec 06, 2018 at 05:29:46PM +0000, Claudiu.Beznea@microchip.com wrot=
+e:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+>=20
+> Move SHDWC realted data to only one structure to have them grouped.
+> Inspired from commit 9be74f0d39c1 ("power: reset: at91-poweroff: make
+> mpddrc_base part of struct shdwc").
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
 
+Thanks, queued.
 
+-- Sebastian
 
--- 
-Kees Cook
+>=20
+> Changes in v2:
+> - avoid allocate at91_shdwc and keep it static instead
+> - avoid registering at91_shdwc as platform data and use static variable
+>   instead
+>=20
+>  drivers/power/reset/at91-poweroff.c | 48 +++++++++++++++++++------------=
+------
+>  1 file changed, 25 insertions(+), 23 deletions(-)
+>=20
+> diff --git a/drivers/power/reset/at91-poweroff.c b/drivers/power/reset/at=
+91-poweroff.c
+> index d3d87af24e55..9e74e131c675 100644
+> --- a/drivers/power/reset/at91-poweroff.c
+> +++ b/drivers/power/reset/at91-poweroff.c
+> @@ -51,14 +51,16 @@ static const char *shdwc_wakeup_modes[] =3D {
+>  	[AT91_SHDW_WKMODE0_ANYLEVEL]	=3D "any",
+>  };
+> =20
+> -static void __iomem *at91_shdwc_base;
+> -static struct clk *sclk;
+> -static void __iomem *mpddrc_base;
+> +static struct shdwc {
+> +	struct clk *sclk;
+> +	void __iomem *shdwc_base;
+> +	void __iomem *mpddrc_base;
+> +} at91_shdwc;
+> =20
+>  static void __init at91_wakeup_status(struct platform_device *pdev)
+>  {
+>  	const char *reason;
+> -	u32 reg =3D readl(at91_shdwc_base + AT91_SHDW_SR);
+> +	u32 reg =3D readl(at91_shdwc.shdwc_base + AT91_SHDW_SR);
+> =20
+>  	/* Simple power-on, just bail out */
+>  	if (!reg)
+> @@ -92,9 +94,9 @@ static void at91_poweroff(void)
+> =20
+>  		"	b	.\n\t"
+>  		:
+> -		: "r" (mpddrc_base),
+> +		: "r" (at91_shdwc.mpddrc_base),
+>  		  "r" cpu_to_le32(AT91_DDRSDRC_LPDDR2_PWOFF),
+> -		  "r" (at91_shdwc_base),
+> +		  "r" (at91_shdwc.shdwc_base),
+>  		  "r" cpu_to_le32(AT91_SHDW_KEY | AT91_SHDW_SHDW)
+>  		: "r6");
+>  }
+> @@ -144,7 +146,7 @@ static void at91_poweroff_dt_set_wakeup_mode(struct p=
+latform_device *pdev)
+>  	if (of_property_read_bool(np, "atmel,wakeup-rtt-timer"))
+>  			mode |=3D AT91_SHDW_RTTWKEN;
+> =20
+> -	writel(wakeup_mode | mode, at91_shdwc_base + AT91_SHDW_MR);
+> +	writel(wakeup_mode | mode, at91_shdwc.shdwc_base + AT91_SHDW_MR);
+>  }
+> =20
+>  static int __init at91_poweroff_probe(struct platform_device *pdev)
+> @@ -155,15 +157,15 @@ static int __init at91_poweroff_probe(struct platfo=
+rm_device *pdev)
+>  	int ret;
+> =20
+>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	at91_shdwc_base =3D devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(at91_shdwc_base))
+> -		return PTR_ERR(at91_shdwc_base);
+> +	at91_shdwc.shdwc_base =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(at91_shdwc.shdwc_base))
+> +		return PTR_ERR(at91_shdwc.shdwc_base);
+> =20
+> -	sclk =3D devm_clk_get(&pdev->dev, NULL);
+> -	if (IS_ERR(sclk))
+> -		return PTR_ERR(sclk);
+> +	at91_shdwc.sclk =3D devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(at91_shdwc.sclk))
+> +		return PTR_ERR(at91_shdwc.sclk);
+> =20
+> -	ret =3D clk_prepare_enable(sclk);
+> +	ret =3D clk_prepare_enable(at91_shdwc.sclk);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Could not enable slow clock\n");
+>  		return ret;
+> @@ -176,20 +178,20 @@ static int __init at91_poweroff_probe(struct platfo=
+rm_device *pdev)
+> =20
+>  	np =3D of_find_compatible_node(NULL, NULL, "atmel,sama5d3-ddramc");
+>  	if (np) {
+> -		mpddrc_base =3D of_iomap(np, 0);
+> +		at91_shdwc.mpddrc_base =3D of_iomap(np, 0);
+>  		of_node_put(np);
+> =20
+> -		if (!mpddrc_base) {
+> +		if (!at91_shdwc.mpddrc_base) {
+>  			ret =3D -ENOMEM;
+>  			goto clk_disable;
+>  		}
+> =20
+> -		ddr_type =3D readl(mpddrc_base + AT91_DDRSDRC_MDR) &
+> +		ddr_type =3D readl(at91_shdwc.mpddrc_base + AT91_DDRSDRC_MDR) &
+>  				 AT91_DDRSDRC_MD;
+>  		if (ddr_type !=3D AT91_DDRSDRC_MD_LPDDR2 &&
+>  		    ddr_type !=3D AT91_DDRSDRC_MD_LPDDR3) {
+> -			iounmap(mpddrc_base);
+> -			mpddrc_base =3D NULL;
+> +			iounmap(at91_shdwc.mpddrc_base);
+> +			at91_shdwc.mpddrc_base =3D NULL;
+>  		}
+>  	}
+> =20
+> @@ -198,7 +200,7 @@ static int __init at91_poweroff_probe(struct platform=
+_device *pdev)
+>  	return 0;
+> =20
+>  clk_disable:
+> -	clk_disable_unprepare(sclk);
+> +	clk_disable_unprepare(at91_shdwc.sclk);
+>  	return ret;
+>  }
+> =20
+> @@ -207,10 +209,10 @@ static int __exit at91_poweroff_remove(struct platf=
+orm_device *pdev)
+>  	if (pm_power_off =3D=3D at91_poweroff)
+>  		pm_power_off =3D NULL;
+> =20
+> -	if (mpddrc_base)
+> -		iounmap(mpddrc_base);
+> +	if (at91_shdwc.mpddrc_base)
+> +		iounmap(at91_shdwc.mpddrc_base);
+> =20
+> -	clk_disable_unprepare(sclk);
+> +	clk_disable_unprepare(at91_shdwc.sclk);
+> =20
+>  	return 0;
+>  }
+> --=20
+> 2.7.4
+>=20
+
+--75fgkhawihvwaveb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwJjbgACgkQ2O7X88g7
++poYkxAAhnjIBKgbhI5/qt1oyGBlJqjq9vYY9ZN0boo3Xy+Hmyve/vFUIsCFVa8K
+pP7FpFXkLF9599Nobjte8i2ioGe51I1wKhby/K7dYd+0l4dPfLYnoO0JvZwl4HLZ
+BVVjKl+wcnyw54/54NzF+WST1PzI11pv/OuI3Y/q7G2fj+SPS6c2s8Lz1zNfyVrY
+p8Evmela9PI0mApoB2jjNw3ZoEGjFoRs9eo85aBK/p/QNs0hj9ZBdHRLX1Z1idQ9
+g5G0L9t6xmncPp6OK0W9tsjVy1ZyjBLmdhDlDuQgDdLTittLdVUGN4a0L/e4xBhq
+rWQhtQv2LDW1XNuueC8r8w8Y0tJIfN7Hc0PMsvWRgCQ6WgibOuIWd5QO03NmV+VL
+o0IBFwFzEOPcFbe0OBECAZDTX8l9w4i3LkFwcLGh0VPV2AxUzruAkaENkqVGqkum
+Y864FYyMuU9vA5fzB4zmPDhxzVEiOcitBnpWThZX9XqnY4nC5oIqXakS3n5rLcgB
+F1C9RymDqZLDku+sO13O0YO0OOPCitHA25OaD7ZlIIjiS+Gb8sIWw3MEdhsQR9pl
+UOX/+Tkp3iFkN4+x/3ROE5cxr/ZtbMDm8PcoIue8WopasedpERoYE5oqAUK2xJhY
+teWJOKZO+J1RY6wYBSeEdlt9ctThNHS2YpJxhn2MyvbrN/cnNfY=
+=DTwq
+-----END PGP SIGNATURE-----
+
+--75fgkhawihvwaveb--
