@@ -2,125 +2,85 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A58C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659FDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21D320700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:22:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21D320700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D45E214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D45E214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbeLFCWf (ORCPT
+        id S1728742AbeLFC0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 21:22:35 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:1772 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727762AbeLFCWf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 21:22:35 -0500
-X-IronPort-AV: E=Sophos;i="5.56,320,1539619200"; 
-   d="scan'208";a="49080905"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 06 Dec 2018 10:22:33 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id D43914B734CC;
-        Thu,  6 Dec 2018 10:22:31 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 6 Dec 2018 10:22:39 +0800
-Date:   Thu, 6 Dec 2018 10:22:17 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v12 1/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdline from KEXEC
-Message-ID: <20181206022217.GH30941@localhost.localdomain>
-References: <20181129081631.11139-1-fanc.fnst@cn.fujitsu.com>
- <20181129081631.11139-2-fanc.fnst@cn.fujitsu.com>
- <20181205145814.GJ29510@zn.tnic>
+        Wed, 5 Dec 2018 21:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbeLFC0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 21:26:54 -0500
+Received: from vmware.local.home (unknown [184.48.106.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A27B20700;
+        Thu,  6 Dec 2018 02:26:53 +0000 (UTC)
+Date:   Wed, 5 Dec 2018 21:26:51 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/3] stackleak: mark stackleak_track_stack() as notrace
+Message-ID: <20181205212651.488d9cd4@vmware.local.home>
+In-Reply-To: <CAGXu5j+-w1qh3Jg6u8jM0XxFS-X4qJpzOtf_HO3eEjohL1dj=w@mail.gmail.com>
+References: <20181130150859.27366-1-anders.roxell@linaro.org>
+        <CAGXu5j+-w1qh3Jg6u8jM0XxFS-X4qJpzOtf_HO3eEjohL1dj=w@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181205145814.GJ29510@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: D43914B734CC.AB74F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 03:58:14PM +0100, Borislav Petkov wrote:
->On Thu, Nov 29, 2018 at 04:16:27PM +0800, Chao Fan wrote:
->> To fix the conflict between KASLR and memory-hotremove, memory
->> information in SRAT table is necessary.
->> 
->> ACPI SRAT (System/Static Resource Affinity Table) can show the details
->> about memory ranges, including ranges of memory provided by hot-added
->> memory devices. SRAT table must be introduced by RSDP pointer (Root
->> System Description Pointer). So RSDP should be found firstly.
->> 
->> When booting form KEXEC/EFI/BIOS, the methods to find RSDP pointer
->> are different. When booting from KEXEC, 'acpi_rsdp' may have been
->> added to cmdline, so parse the cmdline and find the RSDP pointer.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpitb.c | 33 +++++++++++++++++++++++++++++++
->>  arch/x86/boot/compressed/misc.c   |  5 +++++
->>  arch/x86/boot/compressed/misc.h   |  4 ++++
->>  lib/kstrtox.c                     |  5 +++++
->>  4 files changed, 47 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpitb.c
->> 
->> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
->> new file mode 100644
->> index 000000000000..614c45655cff
->> --- /dev/null
->> +++ b/arch/x86/boot/compressed/acpitb.c
->
->Also, I guess calling that file simply "acpi.c" is good enough.
+On Wed, 5 Dec 2018 17:08:34 -0800
+Kees Cook <keescook@chromium.org> wrote:
 
-Fine, so change it next version.
+> > diff --git a/kernel/stackleak.c b/kernel/stackleak.c
+> > index e42892926244..5de3bf596dd7 100644
+> > --- a/kernel/stackleak.c
+> > +++ b/kernel/stackleak.c
+> > @@ -102,7 +102,7 @@ asmlinkage void stackleak_erase(void)
+> >         current->lowest_stack = current_top_of_stack() - THREAD_SIZE/64;
+> >  }
+> >
+> > -void __used stackleak_track_stack(void)
+> > +void __used notrace stackleak_track_stack(void)
+> >  {
+> >         /*
+> >          * N.B. stackleak_erase() fills the kernel stack with the poison value,
+> > --
+> > 2.19.2
+> >  
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
+> 
+> Steven, I assume this series going via your tree?
 
->
->> @@ -0,0 +1,33 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#define BOOT_CTYPE_H
->> +#include "misc.h"
->> +#include "error.h"
->> +
->> +#include <linux/efi.h>
->> +#include <asm/efi.h>
->
->asm/ headers come after linux/ header.
+??
 
-Will change the place of header.
+A notrace addition doesn't make it mine.
 
-Thanks,
-Chao Fan
+I added changes for the cond_resched in a different patch series that
+I'll pull in (they are independent from this). I'll Ack the Makefile
+change in the tracing directory, but the rest belongs to others.
 
->
->...
->
->Thx.
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
-
-
+-- Steve
