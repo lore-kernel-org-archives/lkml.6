@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA6AC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0174C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F2F20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F9F2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131689;
-	bh=wzpZPqJ6xpSRq5a3sBjuno+7x6HkcwxKFUNvDjhsTBg=;
+	s=default; t=1544131693;
+	bh=NIo/0FZPDW0fkj2/5xdLh6e9hZTw8AgvStn5zT1d5ZI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IFkrPhJPBGNOyNTmF6ZJTA067XZO3Ce1fMBZWZ8MP180npThMM3wgywyH9lFmuMne
-	 DpQMqpl18pUdxurlceX4jX/JZo38b2SFEmk0T39CSDvT+Pctp1pbpjglRW9jvd47Q7
-	 uBzVg2kUU2WXC9acqvNIwrjXnj44Q2Ayq5lny3f0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F2F20989
+	b=UBhu0UETbKrNsKCZ2Aaug5CnbTSQtn5bvfan3tkLd7xF92reFzledjo9myjwPa/9W
+	 gp0dXDY3MQM5rtn2CSTyI9aErEKVU7douEksvRD0VKXXNkRZVhkWqCG+5DtlLlvK7G
+	 t62ql+6nnoAtGoDv1PT6Zs+RJv/DC/1eIXoe7tAU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F9F2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeLFV2H (ORCPT
+        id S1726344AbeLFV2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:28:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46814 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:28:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbeLFV2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:28:02 -0500
+        id S1725958AbeLFV2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:28:10 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 323512082B;
-        Thu,  6 Dec 2018 21:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F2E52082B;
+        Thu,  6 Dec 2018 21:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131681;
-        bh=wzpZPqJ6xpSRq5a3sBjuno+7x6HkcwxKFUNvDjhsTBg=;
+        s=default; t=1544131689;
+        bh=NIo/0FZPDW0fkj2/5xdLh6e9hZTw8AgvStn5zT1d5ZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nT9SVqe7Id/HVdw06/hrLsMhGrKoVSScCoYQBfNNUH+dl+KNteUeaWux8pK9ROI0M
-         b6oUMUjkDAcDH1Ztif74X29NXsPFVWba12BHbs6rldGVOrnR5zvFG4fvFOr80xLvMA
-         HYkbzT5Qdm/6/OmSGGIjQeuXauGNbOC2VdPTKPdc=
+        b=dNKBfkjh29tA20ELLxw6UxIzIqvvSsHA2KwB6gpoI94T/iT3fRfP/O0WG+LJvB97v
+         H9qCZWnpchv4x903tgLJv5OyN1qryo5glSEoHOluoOXLgzo+7DHgIzX3pLE1NIWR1o
+         0kv/eM1Z2OXdHbmy0g7UqzZLDVL/BZEjSG0g7qOw=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 22/75] tools lib traceevent: Add sanity check to is_timestamp_in_us()
-Date:   Thu,  6 Dec 2018 18:25:09 -0300
-Message-Id: <20181206212602.20474-23-acme@kernel.org>
+Subject: [PATCH 24/75] perf annotate: Create a annotate2 flag in struct symbol
+Date:   Thu,  6 Dec 2018 18:25:11 -0300
+Message-Id: <20181206212602.20474-25-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -63,35 +65,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: Jin Yao <yao.jin@linux.intel.com>
 
-This patch adds a sanity check to is_timestamp_in_us() input parameter
-trace_clock. It avoids a potential segfault in this function for the
-case trace_clock is NULL.
+We often use the symbol__annotate2() to annotate a specified symbol.
+While annotating may take some time, so in order to avoid annotating the
+same symbol repeatedly, the patch creates a new flag to indicate the
+symbol has been annotated.
 
-Reported-by: Slavomir Kaslev <kaslevs@vmware.com>
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181128145552.68c4f87b@gandalf.local.home
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1543586097-27632-3-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/annotate.c | 1 +
+ tools/perf/util/symbol.h   | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index fbd6d6813fab..2b5cb33046ce 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -5409,7 +5409,7 @@ void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 4b2b1b09b8f1..f69d8e177fa3 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2798,6 +2798,7 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
+ 	notes->nr_events = nr_pcnt;
  
- static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
- {
--	if (!use_trace_clock)
-+	if (!trace_clock || !use_trace_clock)
- 		return true;
+ 	annotation__update_column_widths(notes);
++	sym->annotate2 = true;
  
- 	if (!strcmp(trace_clock, "local") || !strcmp(trace_clock, "global")
+ 	return 0;
+ 
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index d026d215bdc6..14d9d438e7e2 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -63,6 +63,7 @@ struct symbol {
+ 	u8		ignore:1;
+ 	u8		inlined:1;
+ 	u8		arch_sym;
++	bool		annotate2;
+ 	char		name[0];
+ };
+ 
 -- 
 2.19.2
 
