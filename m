@@ -2,108 +2,106 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8846C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDAEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9DCB20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DCB20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B0F3720868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eRlNRX68"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F3720868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbeLFXow (ORCPT
+        id S1726466AbeLFXov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:44:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:35938 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbeLFXog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:44:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AAB03168F;
-        Thu,  6 Dec 2018 15:44:35 -0800 (PST)
-Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2970A3F5AF;
-        Thu,  6 Dec 2018 15:44:35 -0800 (PST)
-From:   Jeremy Linton <jeremy.linton@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH 5/6] arm64: add sysfs vulnerability show for speculative store bypass
-Date:   Thu,  6 Dec 2018 17:44:07 -0600
-Message-Id: <20181206234408.1287689-6-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181206234408.1287689-1-jeremy.linton@arm.com>
-References: <20181206234408.1287689-1-jeremy.linton@arm.com>
+        Thu, 6 Dec 2018 18:44:51 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37975 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbeLFXot (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:44:49 -0500
+Received: by mail-vs1-f68.google.com with SMTP id x64so1427514vsa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:44:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B862xZ0dLxc7Y3HjJ577fyIVhBtb2+ARBITM++EIqCY=;
+        b=eRlNRX68Z0vnlQgECH8Unw5VK0T48FI+Rk9ZmkOEC+AIG/AttvYH+wlrqu0BzNbNPw
+         SQfKQ8uGVMr6VLCAt/wW/VgIEjSqRcsKxnyWzOYU4wzQ94gEdV7M8+a/Sfj0Ci4TSfjD
+         EywuN9SrYJOYyl6vQKrea1DfVel3NthA+6kTQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B862xZ0dLxc7Y3HjJ577fyIVhBtb2+ARBITM++EIqCY=;
+        b=U5XlaRYvgTzJDWpCgTkXUn5Zz/f5AVyVrFK/K4N8XqhVP4n1HTLlz3ZEQp6XyKoSxh
+         PVgIGrMpvwn29EF7ALJikS1BJ9eGZt/yu1p2Zsepx/a/dUt+WA14YBKoIcVybfqfwghB
+         aj2soy+k3ET1LTt4WZkC3kNpZAt+qjiXjiPInJatDZVLBmmGJ6XOQpTG9bHAzet9gnNV
+         xVYsp+hFVKbBvtu+zvUvH57ZPzadnAYGUbz7bbSYWX6ZfQTGhaPirjWXsoAoRjwSW+J7
+         oUEqlTrT5O+hAsVtU8h7ulHkVuNCFqV3xtZ0/tx45R6Lnqc6jDGZn4spAmIhbiy7OYYU
+         jaLw==
+X-Gm-Message-State: AA+aEWbb2Y4y9UmGxLRqfpKMugTmYpirR2Z9rX7YVX0aoE+HrdKbfp0R
+        r9stMroYFGqdKXzKcqi2h/lGgj76MtY=
+X-Google-Smtp-Source: AFSGD/U8UOjnU6XlBDUCRHLKkr6u7MnRXufsrvvaIkFeOyEx8bTsJvmlCon7t3V7MJbU/CATIIC9iw==
+X-Received: by 2002:a67:2dcf:: with SMTP id t198mr14058969vst.169.1544139888209;
+        Thu, 06 Dec 2018 15:44:48 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id 2sm519847vsd.13.2018.12.06.15.44.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 15:44:47 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id z3so1420787vsf.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:44:46 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr12075868vsv.20.1544139886370;
+ Thu, 06 Dec 2018 15:44:46 -0800 (PST)
+MIME-Version: 1.0
+References: <20181206184522.118062-1-evgreen@chromium.org> <20181206184522.118062-4-evgreen@chromium.org>
+In-Reply-To: <20181206184522.118062-4-evgreen@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 6 Dec 2018 15:44:33 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=W+-+YpPQESSN6GTy_O5UiPOZLvZ9g8fxXFA55g8h9S5g@mail.gmail.com>
+Message-ID: <CAD=FV=W+-+YpPQESSN6GTy_O5UiPOZLvZ9g8fxXFA55g8h9S5g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: sdm845: Add SD nodes for sdm845-mtp
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mian Yousaf Kaukab <ykaukab@suse.de>
+Hi,
 
-Return status based no ssbd_state and the arm64 SSBS feature.
-Return string "Unknown" in case CONFIG_ARM64_SSBD is
-disabled or arch workaround2 is not available
-in the firmware.
+On Thu, Dec 6, 2018 at 10:46 AM Evan Green <evgreen@chromium.org> wrote:
+>
+> Enable support for one of the micro SD slots on the MTP.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> ---
+>
+> Changes in v2:
+>  - Fixed alphabetization of node placement in sdm845-mtp.dtsi (Doug)
+>  - Fixed card detect name to match schematics (Doug).
+>  - Moved comment about drive strength next to the drive-strength entry
+>  (Doug)
+>  - Removed drive-strength from card detect input pin (Doug).
+>  - Consolidated tlmm nodes in MTP.
+>
+>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 58 ++++++++++++++++++++++++-
+>  1 file changed, 56 insertions(+), 2 deletions(-)
 
-Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
-[Added SSBS logic]
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/kernel/cpu_errata.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 6505c93d507e..8aeb5ca38db8 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -423,6 +423,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
- 		ssbd_state = ARM64_SSBD_UNKNOWN;
- 		return false;
- 
-+	/* machines with mixed mitigation requirements must not return this */
- 	case SMCCC_RET_NOT_REQUIRED:
- 		pr_info_once("%s mitigation not required\n", entry->desc);
- 		ssbd_state = ARM64_SSBD_MITIGATED;
-@@ -828,4 +829,31 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
- 	}
- }
- 
-+ssize_t cpu_show_spec_store_bypass(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	/*
-+	 *  Two assumptions: First, get_ssbd_state() reflects the worse case
-+	 *  for hetrogenous machines, and that if SSBS is supported its
-+	 *  supported by all cores.
-+	 */
-+	switch (arm64_get_ssbd_state()) {
-+	case ARM64_SSBD_MITIGATED:
-+		return sprintf(buf, "Not affected\n");
-+
-+	case ARM64_SSBD_KERNEL:
-+	case ARM64_SSBD_FORCE_ENABLE:
-+		if (cpus_have_cap(ARM64_SSBS))
-+			return sprintf(buf, "Not affected\n");
-+		return sprintf(buf,
-+			"Mitigation: Speculative Store Bypass disabled\n");
-+
-+	case ARM64_SSBD_FORCE_DISABLE:
-+		return sprintf(buf, "Vulnerable\n");
-+
-+	default: /* ARM64_SSBD_UNKNOWN*/
-+		return sprintf(buf, "Unknown\n");
-+	}
-+}
-+
- #endif
--- 
-2.17.2
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
