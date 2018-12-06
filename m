@@ -2,128 +2,68 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA872C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20382C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A750A21731
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:14:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A750A21731
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DCF4920989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:15:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF4920989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbeLFWOq (ORCPT
+        id S1726132AbeLFWPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:14:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43702 "EHLO mx1.redhat.com"
+        Thu, 6 Dec 2018 17:15:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbeLFWOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:14:46 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725948AbeLFWPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:15:25 -0500
+Received: from vmware.local.home (unknown [208.91.3.26])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E1D47BDC6;
-        Thu,  6 Dec 2018 22:14:45 +0000 (UTC)
-Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A121F100190E;
-        Thu,  6 Dec 2018 22:14:36 +0000 (UTC)
-Subject: Re: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <e8ed34e7-f82a-2314-9919-185d48510715@redhat.com>
- <20181206213752.GL3986@zn.tnic>
- <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <63756df6-6f0b-fdfa-932e-b53d173da5be@redhat.com>
-Date:   Thu, 6 Dec 2018 23:14:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 791EB20868;
+        Thu,  6 Dec 2018 22:15:24 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 17:15:21 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [GIT PULL] Uprobes: Fix kernel oops with
+ delayed_uprobe_remove()
+Message-ID: <20181206171521.6bcc3622@vmware.local.home>
+In-Reply-To: <20181206135457.d934354e6c1fb5ab4f5c81cc@linux-foundation.org>
+References: <20181206124719.1fa76d92@vmware.local.home>
+        <20181206135457.d934354e6c1fb5ab4f5c81cc@linux-foundation.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 06 Dec 2018 22:14:45 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/18 22:58, Boris Ostrovsky wrote:
-> On 12/6/18 4:37 PM, Borislav Petkov wrote:
->> On Thu, Dec 06, 2018 at 10:21:12PM +0100, Paolo Bonzini wrote:
->>> Thanks!  I should be able to post a Tested-by next Monday.  Boris, are
->>> you going to pick it up for 4.21?
->> Boris me or Boris O.?
->>
->> :-)
->>
+On Thu, 6 Dec 2018 13:54:57 -0800
+Andrew Morton <akpm@linux-foundation.org> wrote:
+
+	  
+> >     Acked-by: Oleg Nesterov <oleg@redhat.com>
+> >     Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> >     Reported-by: syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com
+> >     Fixes: 1cc33161a83d ("uprobes: Support SDT markers having reference count (semaphore)")
+> >     Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> >     Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> >   
 > 
-> O. ;-)
-> 
-> There are some minor changes in non-xen x86 code so it would be good to
-> get x86 maintainers' ack.
+> No cc:stable?
 
-It's not really code, only Kconfig (and I remarked on it just now), but
-it doesn't hurt of course.
+Fixes is still in this -rc release.
 
-> And as far as qemu/qboot changes, should we assume that the general
-> approach is acceptable? I understand that the patches will probably need
-> to go through some iterations but I want to make sure we have a path
-> forward there.
-
-Yes, the general approach is fine.  I have already reviewed the qboot
-parts, I guess we will also want an option ROM similar to
-linuxboot/multiboot for SeaBIOS support but that's simple matter of
-programming. :)
-
-Paolo
+-- Steve
