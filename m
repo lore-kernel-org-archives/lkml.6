@@ -2,143 +2,127 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD607C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635DAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7969020838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:08:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7969020838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 247B220838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ywF/gaOR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247B220838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbeLFLIR (ORCPT
+        id S1729556AbeLFLJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:08:17 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41833 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeLFLIQ (ORCPT
+        Thu, 6 Dec 2018 06:09:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38563 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFLJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:08:16 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wB6B6sBk1667773
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Dec 2018 03:06:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wB6B6qOw1667766;
-        Thu, 6 Dec 2018 03:06:52 -0800
-Date:   Thu, 6 Dec 2018 03:06:52 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-aa77bfb354c495fc4361199e63fc5765b9e1e783@git.kernel.org>
-Cc:     tglx@linutronix.de, ak@linux.intel.com, karahmed@amazon.de,
-        hpa@zytor.com, jkosina@suse.cz, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, longman@redhat.com, mingo@redhat.com,
-        x86@kernel.org, bp@suse.de, tim.c.chen@linux.intel.com,
-        konrad.wilk@oracle.com, peterz@infradead.org, jpoimboe@redhat.com,
-        dwmw@amazon.co.uk
-Reply-To: bp@suse.de, x86@kernel.org, mingo@redhat.com,
-          jpoimboe@redhat.com, peterz@infradead.org, dwmw@amazon.co.uk,
-          konrad.wilk@oracle.com, tim.c.chen@linux.intel.com,
-          hpa@zytor.com, karahmed@amazon.de, ak@linux.intel.com,
-          tglx@linutronix.de, longman@redhat.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, jkosina@suse.cz
-In-Reply-To: <1544039368-9009-1-git-send-email-longman@redhat.com>
-References: <1544039368-9009-1-git-send-email-longman@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Change misspelled STIPB to STIBP
-Git-Commit-ID: aa77bfb354c495fc4361199e63fc5765b9e1e783
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Dec 2018 06:09:02 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so62201wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:09:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vQbr0F5I1N19hJ3J2dfIpkjXW6EPS8xeKLa9XMbzeQs=;
+        b=ywF/gaOR6YqD3NDP4tk0RqvOMbvV6bwUNpqao3kbKZGZAXClhxIQ4qVFlEnXqK7iYQ
+         7sVT8IJqriEAKUtRtuBlkVBPXbzyqNYug7gJhFC+dpkSS8KvLETNCozJKJEqF5yDZq8/
+         axZRLW39q0tnmHV4DX5GmPpheI3dVU17KnES2ZKWV5qGhH7EDNaRSr95v5LJMpMoBwP7
+         AkOl1GK+enpYOqwWyorDsCbkncc354kqsu/q9bmA5H5xbHAQYhkC2fjZ3xoFAX/V5zsn
+         Gs5BltPxWucrr0RecZ8QIAuVJRWjTy/SqxzqG5HMMEXC2uUtjPF3XTjlEVTCkBU7IErw
+         lT+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vQbr0F5I1N19hJ3J2dfIpkjXW6EPS8xeKLa9XMbzeQs=;
+        b=siACopiyUS6m0VJfYaZJ2aAXeW2aB0GUUD98DGdqzNj0u1292uUGiR83NwVAAKmKGA
+         5TXSfS5V9T8fFeYsEzxeAY7MdbhtPJtte6FguzLzXFRyRTXepVHYV6sR2+nP0DDg5zLW
+         QUORRAlaG4dUFviMNhdHxX3OPoGjfjXth/1TzMXQpoWJi5C3dvtGNBdE38tZvhKRhBSy
+         pI6eQvuDU5hRQDM6NzI8wFsQGHgjr/Zh8DyZqfpJt4Me9MoA78mJ/jjF95ktjR4dlYs1
+         sQYSUp+amuvgGcEKSU73CCNi3zPXfCuwl3RVqpaN/ZPoIN+3SUzXOAxvn/3Wo0ee6h90
+         gUcg==
+X-Gm-Message-State: AA+aEWYTMWOn8C+P2uyK7RfX0vy/VbKXVVfHMnG22XGhs+humqT7JpPY
+        uGhm/YkbGXsAfspZDmlYIum8Zw==
+X-Google-Smtp-Source: AFSGD/Vm/Cr7rgcCOcIWbDOibQKduCPpmCx54NX0t/+TXCncnk8VjW5pOZPcU3yvPIg1gu3uXQ89CA==
+X-Received: by 2002:adf:9591:: with SMTP id p17mr25992599wrp.224.1544094540828;
+        Thu, 06 Dec 2018 03:09:00 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id w12sm75900wrr.23.2018.12.06.03.08.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 03:08:59 -0800 (PST)
+Date:   Thu, 6 Dec 2018 12:08:57 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        nhorman@tuxdriver.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] crypto: Implement a generic crypto statistics
+Message-ID: <20181206110857.GB12268@Red>
+References: <1537351855-16618-1-git-send-email-clabbe@baylibre.com>
+ <1537351855-16618-2-git-send-email-clabbe@baylibre.com>
+ <20181206000458.GA209772@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181206000458.GA209772@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  aa77bfb354c495fc4361199e63fc5765b9e1e783
-Gitweb:     https://git.kernel.org/tip/aa77bfb354c495fc4361199e63fc5765b9e1e783
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Wed, 5 Dec 2018 14:49:27 -0500
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 6 Dec 2018 11:49:15 +0100
+On Wed, Dec 05, 2018 at 04:04:59PM -0800, Eric Biggers wrote:
+> Hi Corentin,
+> 
+> On Wed, Sep 19, 2018 at 10:10:54AM +0000, Corentin Labbe wrote:
+> > +int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
+> > +{
+> > +	struct crypto_alg *alg;
+> > +	struct crypto_dump_info info;
+> > +	int err;
+> > +
+> > +	if (cb->args[0])
+> > +		goto out;
+> > +
+> > +	cb->args[0] = 1;
+> > +
+> > +	info.in_skb = cb->skb;
+> > +	info.out_skb = skb;
+> > +	info.nlmsg_seq = cb->nlh->nlmsg_seq;
+> > +	info.nlmsg_flags = NLM_F_MULTI;
+> > +
+> > +	list_for_each_entry(alg, &crypto_alg_list, cra_list) {
+> > +		err = crypto_reportstat_alg(alg, &info);
+> > +		if (err)
+> > +			goto out_err;
+> > +	}
+> > +
+> > +out:
+> > +	return skb->len;
+> > +out_err:
+> > +	return err;
+> > +}
+> > +
+> > +int crypto_dump_reportstat_done(struct netlink_callback *cb)
+> > +{
+> > +	return 0;
+> > +}
+> 
+> How did you test this part?  Hint: these functions are never executed.
+> 
 
-x86/speculation: Change misspelled STIPB to STIBP
+Right, it is not used, only crypto_reportstat is used by the getstat.c example tool.
+And for using it, I need to do changes in crypto_user_rcv_msg().
+But I am not sure if it is interesting to do so.
 
-STIBP stands for Single Thread Indirect Branch Predictors. The acronym,
-however, can be easily mis-spelled as STIPB. It is perhaps due to the
-presence of another related term - IBPB (Indirect Branch Predictor
-Barrier).
+So I will send a patch for removing it.
 
-Fix the mis-spelling in the code.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1544039368-9009-1-git-send-email-longman@redhat.com
----
- arch/x86/kernel/cpu/bugs.c | 6 +++---
- arch/x86/kernel/process.h  | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 500278f5308e..a68b32cb845a 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -54,7 +54,7 @@ static u64 __ro_after_init x86_spec_ctrl_mask = SPEC_CTRL_IBRS;
- u64 __ro_after_init x86_amd_ls_cfg_base;
- u64 __ro_after_init x86_amd_ls_cfg_ssbd_mask;
- 
--/* Control conditional STIPB in switch_to() */
-+/* Control conditional STIBP in switch_to() */
- DEFINE_STATIC_KEY_FALSE(switch_to_cond_stibp);
- /* Control conditional IBPB in switch_mm() */
- DEFINE_STATIC_KEY_FALSE(switch_mm_cond_ibpb);
-@@ -379,12 +379,12 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 			"always-on" : "conditional");
- 	}
- 
--	/* If enhanced IBRS is enabled no STIPB required */
-+	/* If enhanced IBRS is enabled no STIBP required */
- 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
- 		return;
- 
- 	/*
--	 * If SMT is not possible or STIBP is not available clear the STIPB
-+	 * If SMT is not possible or STIBP is not available clear the STIBP
- 	 * mode.
- 	 */
- 	if (!smt_possible || !boot_cpu_has(X86_FEATURE_STIBP))
-diff --git a/arch/x86/kernel/process.h b/arch/x86/kernel/process.h
-index 898e97cf6629..320ab978fb1f 100644
---- a/arch/x86/kernel/process.h
-+++ b/arch/x86/kernel/process.h
-@@ -19,7 +19,7 @@ static inline void switch_to_extra(struct task_struct *prev,
- 	if (IS_ENABLED(CONFIG_SMP)) {
- 		/*
- 		 * Avoid __switch_to_xtra() invocation when conditional
--		 * STIPB is disabled and the only different bit is
-+		 * STIBP is disabled and the only different bit is
- 		 * TIF_SPEC_IB. For CONFIG_SMP=n TIF_SPEC_IB is not
- 		 * in the TIF_WORK_CTXSW masks.
- 		 */
+Regards
