@@ -2,79 +2,91 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F1CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7554CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D89B20838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D89B20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 4321120838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4321120838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbeLFQ6F (ORCPT
+        id S1725995AbeLFQ63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:58:05 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33760 "EHLO ms.lwn.net"
+        Thu, 6 Dec 2018 11:58:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbeLFQ6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:58:04 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725898AbeLFQ63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:58:29 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id CC2D82B6;
-        Thu,  6 Dec 2018 16:58:00 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 09:57:55 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
- perf-security.rst file
-Message-ID: <20181206095755.2c2a0b6b@lwn.net>
-In-Reply-To: <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
-References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com>
-        <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
-        <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2B7EC30012FC;
+        Thu,  6 Dec 2018 16:58:29 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D431519C7D;
+        Thu,  6 Dec 2018 16:58:26 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: [PATCH 0/6] x86/kvm/hyper-v: Implement KVM_GET_SUPPORTED_HV_CPUID
+Date:   Thu,  6 Dec 2018 17:58:19 +0100
+Message-Id: <20181206165825.1832-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 06 Dec 2018 16:58:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Dec 2018 17:10:48 -0800
-Kees Cook <keescook@chromium.org> wrote:
+As suggested by Paolo, introduce new KVM_GET_SUPPORTED_HV_CPUID returning
+all Hyper-V CPUID feature leaves, this way we won't need to add a new
+KVM_CAP_HYPERV_* for every new Hyper-V enlightenment we implement in
+KVM.
 
-> On Tue, Nov 27, 2018 at 12:15 AM Alexey Budankov
-> <alexey.budankov@linux.intel.com> wrote:
-> >
-> >
-> > Implement initial version of perf-security.rst documentation file
-> > covering security concerns of perf_event_paranoid settings.
-> >
-> > Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> > Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>  
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+(Using the existing KVM_GET_SUPPORTED_CPUID doesn't seem to be possible:
+Hyper-V CPUID feature leaves intersect with KVM's (e.g. 0x40000000,
+0x40000001) and we would probably confuse userspace in case we decide to
+return these twice).
 
-OK, series applied, thanks.
+This patch series also does some housekeeping work in hyperv-tlfs.h, adds a
+simple selftest (that's how I actually checked that the newly added ioctl
+works) and removes recently added KVM_CAP_HYPERV_STIMER_DIRECT before it's
+too late.
 
-jon
+Vitaly Kuznetsov (6):
+  x86/hyper-v: Do some housekeeping in hyperv-tlfs.h
+  x86/hyper-v: Drop HV_X64_CONFIGURE_PROFILER definition
+  x86/kvm/hyper-v: Introduce nested_get_evmcs_version() helper
+  x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID
+  x86/kvm/hyper-v: Drop KVM_CAP_HYPERV_STIMER_DIRECT
+  KVM: selftests: Add hyperv_cpuid test
+
+ arch/x86/include/asm/hyperv-tlfs.h            | 185 +++++++++---------
+ arch/x86/include/asm/kvm_host.h               |   1 +
+ arch/x86/kvm/hyperv.c                         | 131 ++++++++++++-
+ arch/x86/kvm/hyperv.h                         |   2 +
+ arch/x86/kvm/svm.c                            |   7 +
+ arch/x86/kvm/vmx.c                            |  24 ++-
+ arch/x86/kvm/x86.c                            |  21 +-
+ include/uapi/linux/kvm.h                      |   5 +-
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/x86_64/hyperv_cpuid.c       | 142 ++++++++++++++
+ 10 files changed, 413 insertions(+), 106 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+
+-- 
+2.19.2
+
