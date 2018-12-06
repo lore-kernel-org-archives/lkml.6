@@ -2,126 +2,213 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CAAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1EBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF45620878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:01:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jk55sz2N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF45620878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 797B820892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544115706;
+	bh=U1prEW3Fny06M2gsVL/rgChzuuWTID7c5iMvuYSLTBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ytUtRmBiTrufAsqVNIACywJZpkBtyEmXq6yCtj28Q502iUAAkJ6Etuwwd9TNRSQSE
+	 QMyTI6ntMhWD96RI+B/IdRF5I8Eu+3wi2nwvOsQwnF7MM9SfkZni6fyHsiTyi4QE5g
+	 mWEakdV+qQbqMbxdmCLAUhimXKgzOi59ntdibePM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797B820892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbeLFRB3 (ORCPT
+        id S1726099AbeLFRBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:01:29 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42295 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeLFRB3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:01:29 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w12so719291qkb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 09:01:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sF9MKBPM0vlnGuDOOzMQt/B7M7nvsFxg6nHAGOGmT08=;
-        b=Jk55sz2NRzGlLs/+u+C6zlO+98ic8i8WYnzgLY+3wvMkJDfB0oGTxpdMwrv6RakjZr
-         tk1zrLskJdcitOBYwCROLh7TBkCaueiUf8sKLss2q4EmVQwq2uOYMCKpgHoqXSVRjeue
-         99VgW2+j9QhwiRB5eMRhvFMt0phrPrXU20BCA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sF9MKBPM0vlnGuDOOzMQt/B7M7nvsFxg6nHAGOGmT08=;
-        b=WyX57mI5biX0gpr39dgfsIPWgeFc3SCfJg1M7gyPrnSTKqUi+fMTg+hBULxIO5DYp6
-         W7NfBSQhKNaIr3j7HgFOfT8E8EYbSbYuiXDXqezCAIN1yXRyia321KefQyuV2+C5xNt6
-         sUMxtD7B3iJ9oJZVNGCqiwVooDweNcFbZjlp7PAav7vk0RC6IbQDhS2OuApTuu5kzE9v
-         EgCZvCISxmgW2ETOC9AmwGY35qq+hb2ASbMSxSQO9O9zcTb6ZCeBZ6JasF9jDOsJ3jZf
-         G1sTxKmOBHnDLTENcm3T/1RZ7MHCy25Z7Bw/6znzA6ySXkoBWfHN49CJNARHdEergnw9
-         w2Fg==
-X-Gm-Message-State: AA+aEWYju6d0R+/PIxfP0tV9++GL/W/mVzZ6EV6sJFAFyDz2SZrlb8QP
-        ffpNmXqyB5aHQ+um2he1bG5Bo4IWMwU=
-X-Google-Smtp-Source: AFSGD/UjpYFp/GZhU40sEnky7XxT9MudBu9ByF0kxxxo3C4KB7hLi6cUYw5wo3g3hWpw0myPqBIkfA==
-X-Received: by 2002:a37:8604:: with SMTP id i4mr26715904qkd.199.1544115687179;
-        Thu, 06 Dec 2018 09:01:27 -0800 (PST)
-Received: from puchatek.local (89-67-27-114.dynamic.chello.pl. [89.67.27.114])
-        by smtp.gmail.com with ESMTPSA id 64sm370391qke.39.2018.12.06.09.01.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 09:01:26 -0800 (PST)
-Subject: Re: [PATCH] asm-generic: unistd.h: fixup broken macro include.
-To:     Arnd Bergmann <arnd@arndb.de>, Guo Ren <ren_guo@c-sky.com>
-Cc:     Joseph Myers <joseph@codesourcery.com>,
-        Mao Han <han_mao@c-sky.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1544062060-26875-1-git-send-email-ren_guo@c-sky.com>
- <CAK8P3a1UbR3bosJgKAJZVMn-5aJLS1u0t_OAYSU-dzum4EyVMw@mail.gmail.com>
-From:   Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marcin.juszkiewicz@linaro.org; prefer-encrypt=mutual; keydata=
- xsBNBFpUjlUBCACcrMkSqYJk8B5O6vhcdvMM4yMBxil9hqLD6oKoLkgNCGpnb03xtf2dkdbq
- yZJKEpPteoiYof/qrS7VewUcqWpNfuq5Q3x/Aun89CUVU1GZ+mY+nHhiTddSTCswCNhYfY8S
- lu0eCYIeF5xr3xNcvRIQhxvO1y3aLAo7Te7CikfmtpcM/5IEbUX3EXejoUeMlvdXvX19NM6I
- 8uX1DO7v9g0CUN+1h+9YOvLIV+bOJ33jlsB2TNystteoBKotJYhIbfBhrLMWLMzBhOPUaTIe
- hlGO3+4CHi82MqowKYxablG29vFSCn6UFyJS25xLSbMflslCFJey8I4Wry33R1dmzT2jABEB
- AAHNMk1hcmNpbiBKdXN6a2lld2ljeiA8bWFyY2luLmp1c3praWV3aWN6QGxpbmFyby5vcmc+
- wsCOBBMBCAA4FiEE8CbDcZeweWDKBjDApkmLmwOs1qMFAlpUjlUCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AACgkQpkmLmwOs1qMVDQf/aIA4NIB03g6JqFoTvhrzvc+n5ALveUyRyChY
- QE71qYCRJi+2A8apTGxkJuk15I9bJ8ySnb6Z51MRg81pikfbPpumtUr9l5u0377JwZmKE/wE
- 9drdHfiB+0iamr0+XTvADjIwEnRwz+Vts9ydZQ39cyDv9+2CRTpv/2yY8eM037Ftkejr5HSd
- PzHAHYAQ1SZZNQPHOvYhX3DxOeiOAKz5PUtLgosQLGnaXJ0PRPoajTh/pV3OPiiLeY9UfVsK
- h0s6vo5fSFIdYBSpRW6rEvIrvCmh2Ovgwmy7J6UQk5qiP5T+vFfyZDR90Z3o5kAxShLfGpIZ
- sWxSxuxeMf9SU96d0c7ATQRaVI5VAQgAvzQOLdVY5IoLKIFYz99HtW3FD05UiBdaeVrO14mv
- rh7AGqtd1vmMW7kTpnNhCMi2S54oM18ZMDcD0m1bTIVhSKNcrWuaTOQtL5KyDjHb5j1Q+MRJ
- d4M0n4rs+oskGicsvAHqcRh8BVTFbgVetn+GgT58alufWzIWDGpLcW4W0SgkL5/tYxEXDQI0
- +UJqMmoyDxZbIHmNJUxCXIFbxvUm5X5pNfT7sirfH+OzAeUt5PmjiIDW2Z9h/fgn0ybeLdty
- ZHPKLVwVwSZ+R7PE2IknkYfcKBaomLhDCfCqOKM3uX+8UtXyJ9cKQdnDZr+g6/ICveJ5SbtG
- vVXDRBTvt14o3QARAQABwsB2BBgBCAAgFiEE8CbDcZeweWDKBjDApkmLmwOs1qMFAlpUjlUC
- GwwACgkQpkmLmwOs1qMggggAjQ+LfkLRinj6VwYuQrIHxuyOipZi81s5GTeg5S2cIVKzA5V2
- LTCrIREhzJcEfU/wtj0WXhov1cDWt+QJUkJo7PugiWGH74LqSUkjcJl5WLNbhRzdXiTEjCij
- uwNnZjiHMzOzrlOLDZNZ2qdDTthcBVXexKLWzyJtVkWXdbDPUV47zhGzCc+Q1fvWi8aCJGlv
- 8GxOIVR8OXEe1TV64dlUCbmcmjcFRQmvJyMwZE28AqhNtKsRlLkY0o5Yn02wkmgRtAbNA9jL
- 00ZX+4x0H+Qm8NQG5Ps9Ay7DePwZH21SsWBleOo43xNlbiw+NUOxC+cIK9BJqAqMmCYoUwtT
- j99pMA==
-Message-ID: <61957990-17be-f20f-27f1-ada7a820f3ba@linaro.org>
-Date:   Thu, 6 Dec 2018 18:01:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 12:01:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbeLFRBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:01:44 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 798EB20878;
+        Thu,  6 Dec 2018 17:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544115703;
+        bh=U1prEW3Fny06M2gsVL/rgChzuuWTID7c5iMvuYSLTBY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WK/Pn5Ym4k7cXVZH0eR/2oxVY0M8IRnu4mo+8Hopk6OFm7ehZj92zrOBuu6Dwra4W
+         GeY1AaMviHz90uvK2xDkLO7N0BN+W1vpb8UfI3jawtYGIBlXEygDGQiDQX9oZqBFwL
+         mCUJHYosF9tcZz+XeoJRA7MBmnobenZHxOvf1rHg=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0BDAD4042C; Thu,  6 Dec 2018 14:01:41 -0300 (-03)
+Date:   Thu, 6 Dec 2018 14:01:40 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Milian Wolff <milian.wolff@kdab.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf script: Fix LBR skid dump problems in brstackinsn
+Message-ID: <20181206170140.GJ19069@kernel.org>
+References: <20181120050617.4119-1-andi@firstfloor.org>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1UbR3bosJgKAJZVMn-5aJLS1u0t_OAYSU-dzum4EyVMw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120050617.4119-1-andi@firstfloor.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-W dniu 06.12.2018 o 17:14, Arnd Bergmann pisze:
-> On Thu, Dec 6, 2018 at 3:07 AM Guo Ren <ren_guo@c-sky.com> wrote:
->>
->> The broken macros make the glibc compile error. If there is no
->> __NR3264_fstat*, we should also removed related definitions.
->>
->> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
->> Signed-off-by: Mao Han <han_mao@c-sky.com>
->> Cc: Arnd Bergmann <arnd@arndb.de>
->> ---
+Em Mon, Nov 19, 2018 at 09:06:17PM -0800, Andi Kleen escreveu:
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> Thanks for the reminder!
-> 
-> Marcin had already sent me the same patch a while ago
-> and I forgot to apply it. I applied your version now, which
-> as a slightly better changelog, so it will be in linux-next
-> tomorrow, and I plan to send it after that shows no regressions.
+> This is a fix for another instance of the skid problem Milian
+> recently found [1]
 
-One patch less to keep locally ;D
+Milian, have you tested this?
+
+Adrian, can I have your Reviewed-by or Acked-by?
+
+Thanks,
+
+- Arnaldo
+ 
+> The LBRs don't freeze at the exact same time as the PMI is triggered.
+> The perf script brstackinsn code that dumps LBR assembler
+> assumes that the last branch in the LBR leads to the sample point.
+> But with skid it's possible that the CPU executes one or more branches
+> before the sample, but which do not appear in the LBR.
+> 
+> What happens then is either that the sample point is before
+> the last LBR branch. In this case the dumper sees a negative
+> length and ignores it. Or it the sample point is long after
+> the last branch. Then the dumper sees a very long block and dumps
+> it upto its block limit (16k bytes), which is noise in the output.
+> 
+> On typical sample session this can happen regularly.
+> 
+> This patch tries to detect and handle the situation. On the last
+> block that is dumped by the LBR dumper we always stop on the first
+> branch. If the block length is negative just scan forward to the
+> first branch. Otherwise scan until a branch is found.
+> 
+> The PT decoder already has a function that uses the instruction
+> decoder to detect branches, so we can just reuse it here.
+> 
+> Then when a terminating branch is found print an indication
+> and stop dumping. This might miss a few instructions, but at least
+> shows no runaway blocks.
+> 
+> Cc: milian.wolff@kdab.com
+> Cc: adrian.hunter@intel.com
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/builtin-script.c                    | 18 +++++++++++++++++-
+>  tools/perf/util/dump-insn.c                    |  8 ++++++++
+>  tools/perf/util/dump-insn.h                    |  2 ++
+>  .../intel-pt-decoder/intel-pt-insn-decoder.c   |  8 ++++++++
+>  4 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 4da5e32b9e03..11868bf39e66 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -1049,9 +1049,18 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  
+>  	/*
+>  	 * Print final block upto sample
+> +	 *
+> +	 * Due to pipeline delays the LBRs might be missing a branch
+> +	 * or two, which can result in very large or negative blocks
+> +	 * between final branch and sample. When this happens just
+> +	 * continue walking after the last TO until we hit a branch.
+>  	 */
+>  	start = br->entries[0].to;
+>  	end = sample->ip;
+> +	if (end < start) {
+> +		/* Missing jump. Scan 128 bytes for the next branch */
+> +		end = start + 128;
+> +	}
+>  	len = grab_bb(buffer, start, end, machine, thread, &x.is64bit, &x.cpumode, true);
+>  	printed += ip__fprintf_sym(start, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+>  	if (len <= 0) {
+> @@ -1060,7 +1069,6 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  			      machine, thread, &x.is64bit, &x.cpumode, false);
+>  		if (len <= 0)
+>  			goto out;
+> -
+>  		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", sample->ip,
+>  			dump_insn(&x, sample->ip, buffer, len, NULL));
+>  		goto out;
+> @@ -1070,6 +1078,14 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
+>  		if (ilen == 0)
+>  			break;
+> +		if (arch_is_branch(buffer + off, len - off, x.is64bit) &&
+> +			start + off != sample->ip) {
+> +			/*
+> +			 * Hit a missing branch. Just stop.
+> +			 */
+> +			printed += fprintf(fp, "\t... not reaching sample ...\n");
+> +			break;
+> +		}
+>  	}
+>  out:
+>  	return printed;
+> diff --git a/tools/perf/util/dump-insn.c b/tools/perf/util/dump-insn.c
+> index 10988d3de7ce..2bd8585db93c 100644
+> --- a/tools/perf/util/dump-insn.c
+> +++ b/tools/perf/util/dump-insn.c
+> @@ -13,3 +13,11 @@ const char *dump_insn(struct perf_insn *x __maybe_unused,
+>  		*lenp = 0;
+>  	return "?";
+>  }
+> +
+> +__weak
+> +int arch_is_branch(const unsigned char *buf __maybe_unused,
+> +		   size_t len __maybe_unused,
+> +		   int x86_64 __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> diff --git a/tools/perf/util/dump-insn.h b/tools/perf/util/dump-insn.h
+> index 0e06280a8860..650125061530 100644
+> --- a/tools/perf/util/dump-insn.h
+> +++ b/tools/perf/util/dump-insn.h
+> @@ -20,4 +20,6 @@ struct perf_insn {
+>  
+>  const char *dump_insn(struct perf_insn *x, u64 ip,
+>  		      u8 *inbuf, int inlen, int *lenp);
+> +int arch_is_branch(const unsigned char *buf, size_t len, int x86_64);
+> +
+>  #endif
+> diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> index 54818828023b..1c0e289f01e6 100644
+> --- a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> +++ b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+> @@ -180,6 +180,14 @@ int intel_pt_get_insn(const unsigned char *buf, size_t len, int x86_64,
+>  	return 0;
+>  }
+>  
+> +int arch_is_branch(const unsigned char *buf, size_t len, int x86_64)
+> +{
+> +	struct intel_pt_insn in;
+> +	if (intel_pt_get_insn(buf, len, x86_64, &in) < 0)
+> +		return -1;
+> +	return in.branch != INTEL_PT_BR_NO_BRANCH;
+> +}
+> +
+>  const char *dump_insn(struct perf_insn *x, uint64_t ip __maybe_unused,
+>  		      u8 *inbuf, int inlen, int *lenp)
+>  {
+> -- 
+> 2.17.2
+
+-- 
+
+- Arnaldo
