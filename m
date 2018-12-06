@@ -2,137 +2,134 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8E0C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E72C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 943782082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:14:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943782082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E1822082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544109411;
+	bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=fzeusZEui/547EldX3km8cEx421XiXFrnMBi6b9Lonx4RQOa/xIsiXc52dhe/ulmb
+	 XSywoWzqPh9riwqgtUdMTgwJh1Puqd+rXcruag/anlLyFuQl/0HKLy01/d3/Szz7w3
+	 thvJsFFxfZ4zR9P89l+NSvS0Fxf4rDtUEL/DSq78=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1822082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbeLFPOI (ORCPT
+        id S1725989AbeLFPQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:14:08 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58487 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725930AbeLFPOD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:14:03 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB6FCLCh010541;
-        Thu, 6 Dec 2018 16:13:37 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2p3wt6w3cp-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 06 Dec 2018 16:13:37 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E14983A;
-        Thu,  6 Dec 2018 15:13:36 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B6CD84E1B;
-        Thu,  6 Dec 2018 15:13:36 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Dec 2018
- 16:13:37 +0100
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Dec 2018
- 16:13:36 +0100
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <srinivas.kandagatla@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V3 1/2] mmc: mmci: add variant property to set command stop bit
-Date:   Thu, 6 Dec 2018 16:13:31 +0100
-Message-ID: <1544109212-12621-2-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544109212-12621-1-git-send-email-ludovic.Barre@st.com>
-References: <1544109212-12621-1-git-send-email-ludovic.Barre@st.com>
+        Thu, 6 Dec 2018 10:16:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbeLFPQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:16:49 -0500
+Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872FD20700;
+        Thu,  6 Dec 2018 15:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544109409;
+        bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DMP/h7L8uL4WvOCqpE4/aRQa7RZg4AVDhxt2RnBSCpAL1MYJVnT+qdmlmWnr79ISh
+         qIfg02QCh4In6MpefzmIVSfEaB49vvd9L4k8cpVDM4QdIAFKAzAMpmITmRdx6u/jVx
+         7EOvl1vm/++JAj9ar4vmb5iAHQuo1rLMAMaZnszU=
+Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+ <20181204193416.24661-1-sboyd@kernel.org>
+ <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
+ <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
+ <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
+Date:   Thu, 6 Dec 2018 09:16:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_05:,,
- signatures=0
+In-Reply-To: <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
 
-On cmd12 (STOP_TRANSMISSION), STM32 sdmmc variant needs to set
-cmdstop bit in command register. The CPSM ("Command Path State Machine")
-treats the command as a Stop Transmission command and signals
-abort to the DPSM ("Data Path State Machine").
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c | 6 ++++++
- drivers/mmc/host/mmci.h | 2 ++
- 2 files changed, 8 insertions(+)
+On 12/5/18 9:55 AM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2018-12-05 07:17:41)
+>> Hi Stephen,
+>>
+>> On 12/5/18 1:17 AM, Stephen Boyd wrote:
+>>> (Adding Dinh's korg email)
+>>>
+>>> I also wonder if this driver is even used anymore or maybe we can delete
+>>> it?
+>>>
+>>
+>> The armv7 SoCFPGA platforms are using this driver.
+>>
+> 
+> Ok and those platforms are booting in kernelci.org as
+> https://kernelci.org/boot/socfpga_cyclone5_de0_sockit/ perhaps?
+> 
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 13fa640..e352f5a 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -21,6 +21,7 @@
- #include <linux/err.h>
- #include <linux/highmem.h>
- #include <linux/log2.h>
-+#include <linux/mmc/mmc.h>
- #include <linux/mmc/pm.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/card.h>
-@@ -274,6 +275,7 @@ static struct variant_data variant_stm32_sdmmc = {
- 	.cmdreg_lrsp_crc	= MCI_CPSM_STM32_LRSP_CRC,
- 	.cmdreg_srsp_crc	= MCI_CPSM_STM32_SRSP_CRC,
- 	.cmdreg_srsp		= MCI_CPSM_STM32_SRSP,
-+	.cmdreg_stop		= MCI_CPSM_STM32_CMDSTOP,
- 	.data_cmd_enable	= MCI_CPSM_STM32_CMDTRANS,
- 	.irq_pio_mask		= MCI_IRQ_PIO_STM32_MASK,
- 	.datactrl_first		= true,
-@@ -1100,6 +1102,10 @@ mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c)
- 		mmci_reg_delay(host);
- 	}
- 
-+	if (host->variant->cmdreg_stop &&
-+	    cmd->opcode == MMC_STOP_TRANSMISSION)
-+		c |= host->variant->cmdreg_stop;
-+
- 	c |= cmd->opcode | host->variant->cmdreg_cpsm_enable;
- 	if (cmd->flags & MMC_RSP_PRESENT) {
- 		if (cmd->flags & MMC_RSP_136)
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 550dd39..2422909 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -264,6 +264,7 @@ struct mmci_host;
-  * @cmdreg_lrsp_crc: enable value for long response with crc
-  * @cmdreg_srsp_crc: enable value for short response with crc
-  * @cmdreg_srsp: enable value for short response without crc
-+ * @cmdreg_stop: enable value for stop and abort transmission
-  * @datalength_bits: number of bits in the MMCIDATALENGTH register
-  * @fifosize: number of bytes that can be written when MMCI_TXFIFOEMPTY
-  *	      is asserted (likewise for RX)
-@@ -316,6 +317,7 @@ struct variant_data {
- 	unsigned int		cmdreg_lrsp_crc;
- 	unsigned int		cmdreg_srsp_crc;
- 	unsigned int		cmdreg_srsp;
-+	unsigned int		cmdreg_stop;
- 	unsigned int		datalength_bits;
- 	unsigned int		fifosize;
- 	unsigned int		fifohalfsize;
--- 
-2.7.4
+Yes that's right.
 
+Dinh
