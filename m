@@ -7,57 +7,52 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB10C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB278C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DB8214DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F63221536
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107639;
-	bh=CLrj/deo3JVwPbu3+SJaODbAGj13X253vJY6pmx3Prg=;
+	s=default; t=1544107642;
+	bh=nq5UpJKFLJWsHvpZCq6DglZsCmGe8MAY6GMiJCtJP0o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TKK42DupKqk2rO4Gmdj6dBeM60T6KiW+yERPJHiYakqC9NZALKXd2XDEHLOa2tOWg
-	 F8G8AbHMoID786hKxOoiXEoaAtgkkJFLNghDeQ8wFYU15jE0jh6SAmacG2TCEbk2TF
-	 c4qERcxwcXcjsVAnDm+9x9QSdtM2RH3DCsZ49F6k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DB8214DE
+	b=LzhSrjztxF3sLc1o9ji6QATCDusazsJkLVpEpKOTVdZLAGESeZK+WU5102tn/0ykg
+	 YMI3wtarOgWRqbTBvi9Zm4wH/Ru3LVYSGavbUX1RqxUh782RaXENMBYkkmhQfVfiik
+	 U7gY0scgMbh6h5JmXRdg0sOn96poq0dn3FyVGfN8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F63221536
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbeLFOrR (ORCPT
+        id S1731401AbeLFOrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:47:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52048 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:47:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731380AbeLFOrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:47:12 -0500
+        id S1731395AbeLFOrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:47:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60EA720661;
-        Thu,  6 Dec 2018 14:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DB7D20892;
+        Thu,  6 Dec 2018 14:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107631;
-        bh=CLrj/deo3JVwPbu3+SJaODbAGj13X253vJY6pmx3Prg=;
+        s=default; t=1544107636;
+        bh=nq5UpJKFLJWsHvpZCq6DglZsCmGe8MAY6GMiJCtJP0o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMRGZm2oCC8Hi/FYGd86YI9WTKFtdzBwTcJ4LhC9K5d++Y3PQew6lGy7149EC0q9m
-         Vpk9Zqdiaa/LR8bZm+Kp7jxCaT3wAXI98HzKWWx3uJ4gj/HG2yYW68qq25DjRH0euU
-         Btq92rh0y4f8ajmgsCg6d/uvFY2k1mvyEQK/Ks/s=
+        b=ogFTkL6YUSt3vYlAiMRUr9d659N8nLd6b5LESB/owosroaiB4Wa/QVmyq8LR5BhCP
+         gQyaRvyta9Qcw1/z7byvuTp7te5Ks+KO3t+lHvZ9uZdD6RThgR0GV5jr2Lxs06BJCC
+         bNyBVaDPkbzLaPFiAde8BIQgyg8pddaVnxLeISys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 044/101] mm: cleancache: fix corruption on missed inode invalidation
-Date:   Thu,  6 Dec 2018 15:38:43 +0100
-Message-Id: <20181206143014.057240257@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@gmail.com>,
+        "Lakshmipathi.G" <lakshmipathi.g@gmail.com>,
+        Qu Wenruo <wqu@suse.com>, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 074/101] btrfs: tree-checker: Fix false panic for sanity test
+Date:   Thu,  6 Dec 2018 15:39:13 +0100
+Message-Id: <20181206143016.307219956@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -76,74 +71,162 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 6ff38bd40230af35e446239396e5fc8ebd6a5248 upstream.
+commit 69fc6cbbac542c349b3d350d10f6e394c253c81d upstream.
 
-If all pages are deleted from the mapping by memory reclaim and also
-moved to the cleancache:
+[BUG]
+If we run btrfs with CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y, it will
+instantly cause kernel panic like:
 
-__delete_from_page_cache
-  (no shadow case)
-  unaccount_page_cache_page
-    cleancache_put_page
-  page_cache_delete
-    mapping->nrpages -= nr
-    (nrpages becomes 0)
+------
+...
+assertion failed: 0, file: fs/btrfs/disk-io.c, line: 3853
+...
+Call Trace:
+ btrfs_mark_buffer_dirty+0x187/0x1f0 [btrfs]
+ setup_items_for_insert+0x385/0x650 [btrfs]
+ __btrfs_drop_extents+0x129a/0x1870 [btrfs]
+...
+-----
 
-We don't clean the cleancache for an inode after final file truncation
-(removal).
+[Cause]
+Btrfs will call btrfs_check_leaf() in btrfs_mark_buffer_dirty() to check
+if the leaf is valid with CONFIG_BTRFS_FS_RUN_SANITY_TESTS=y.
 
-truncate_inode_pages_final
-  check (nrpages || nrexceptional) is false
-    no truncate_inode_pages
-      no cleancache_invalidate_inode(mapping)
+However quite some btrfs_mark_buffer_dirty() callers(*) don't really
+initialize its item data but only initialize its item pointers, leaving
+item data uninitialized.
 
-These way when reading the new file created with same inode we may get
-these trash leftover pages from cleancache and see wrong data instead of
-the contents of the new file.
+This makes tree-checker catch uninitialized data as error, causing
+such panic.
 
-Fix it by always doing truncate_inode_pages which is already ready for
-nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
+*: These callers include but not limited to
+setup_items_for_insert()
+btrfs_split_item()
+btrfs_expand_item()
 
-[akpm@linux-foundation.org: add comment, per Jan]
-Link: http://lkml.kernel.org/r/20181112095734.17979-1-ptikhomirov@virtuozzo.com
-Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+[Fix]
+Add a new parameter @check_item_data to btrfs_check_leaf().
+With @check_item_data set to false, item data check will be skipped and
+fallback to old btrfs_check_leaf() behavior.
+
+So we can still get early warning if we screw up item pointers, and
+avoid false panic.
+
+Cc: Filipe Manana <fdmanana@gmail.com>
+Reported-by: Lakshmipathi.G <lakshmipathi.g@gmail.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 4.9: adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/truncate.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/disk-io.c      |   10 ++++++++--
+ fs/btrfs/tree-checker.c |   27 ++++++++++++++++++++++-----
+ fs/btrfs/tree-checker.h |   14 +++++++++++++-
+ 3 files changed, 43 insertions(+), 8 deletions(-)
 
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -443,9 +443,13 @@ void truncate_inode_pages_final(struct a
- 		 */
- 		spin_lock_irq(&mapping->tree_lock);
- 		spin_unlock_irq(&mapping->tree_lock);
--
--		truncate_inode_pages(mapping, 0);
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -604,7 +604,7 @@ static int btree_readpage_end_io_hook(st
+ 	 * that we don't try and read the other copies of this block, just
+ 	 * return -EIO.
+ 	 */
+-	if (found_level == 0 && btrfs_check_leaf(root, eb)) {
++	if (found_level == 0 && btrfs_check_leaf_full(root, eb)) {
+ 		set_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
+ 		ret = -EIO;
  	}
-+
+@@ -3940,7 +3940,13 @@ void btrfs_mark_buffer_dirty(struct exte
+ 				     buf->len,
+ 				     root->fs_info->dirty_metadata_batch);
+ #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
+-	if (btrfs_header_level(buf) == 0 && btrfs_check_leaf(root, buf)) {
 +	/*
-+	 * Cleancache needs notification even if there are no pages or shadow
-+	 * entries.
++	 * Since btrfs_mark_buffer_dirty() can be called with item pointer set
++	 * but item data not updated.
++	 * So here we should only check item pointers, not item data.
 +	 */
-+	truncate_inode_pages(mapping, 0);
++	if (btrfs_header_level(buf) == 0 &&
++	    btrfs_check_leaf_relaxed(root, buf)) {
+ 		btrfs_print_leaf(root, buf);
+ 		ASSERT(0);
+ 	}
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -195,7 +195,8 @@ static int check_leaf_item(struct btrfs_
+ 	return ret;
  }
- EXPORT_SYMBOL(truncate_inode_pages_final);
  
+-int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf)
++static int check_leaf(struct btrfs_root *root, struct extent_buffer *leaf,
++		      bool check_item_data)
+ {
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+ 	/* No valid key type is 0, so all key should be larger than this key */
+@@ -299,10 +300,15 @@ int btrfs_check_leaf(struct btrfs_root *
+ 			return -EUCLEAN;
+ 		}
+ 
+-		/* Check if the item size and content meet other criteria */
+-		ret = check_leaf_item(root, leaf, &key, slot);
+-		if (ret < 0)
+-			return ret;
++		if (check_item_data) {
++			/*
++			 * Check if the item size and content meet other
++			 * criteria
++			 */
++			ret = check_leaf_item(root, leaf, &key, slot);
++			if (ret < 0)
++				return ret;
++		}
+ 
+ 		prev_key.objectid = key.objectid;
+ 		prev_key.type = key.type;
+@@ -312,6 +318,17 @@ int btrfs_check_leaf(struct btrfs_root *
+ 	return 0;
+ }
+ 
++int btrfs_check_leaf_full(struct btrfs_root *root, struct extent_buffer *leaf)
++{
++	return check_leaf(root, leaf, true);
++}
++
++int btrfs_check_leaf_relaxed(struct btrfs_root *root,
++			     struct extent_buffer *leaf)
++{
++	return check_leaf(root, leaf, false);
++}
++
+ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node)
+ {
+ 	unsigned long nr = btrfs_header_nritems(node);
+--- a/fs/btrfs/tree-checker.h
++++ b/fs/btrfs/tree-checker.h
+@@ -20,7 +20,19 @@
+ #include "ctree.h"
+ #include "extent_io.h"
+ 
+-int btrfs_check_leaf(struct btrfs_root *root, struct extent_buffer *leaf);
++/*
++ * Comprehensive leaf checker.
++ * Will check not only the item pointers, but also every possible member
++ * in item data.
++ */
++int btrfs_check_leaf_full(struct btrfs_root *root, struct extent_buffer *leaf);
++
++/*
++ * Less strict leaf checker.
++ * Will only check item pointers, not reading item data.
++ */
++int btrfs_check_leaf_relaxed(struct btrfs_root *root,
++			     struct extent_buffer *leaf);
+ int btrfs_check_node(struct btrfs_root *root, struct extent_buffer *node);
+ 
+ #endif
 
 
