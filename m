@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15529C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D31C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01052082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E7DF2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107498;
-	bh=wFIyoeo1yQjY9hwlQVawILnGx4pvORLLHasgQ+/zi8I=;
+	s=default; t=1544107503;
+	bh=IkkIa/sGM/RivtydZKYehC3FabozOrIPbzK5Hmuggwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wDxdjoXtikTbYpC2kRL6z7m4KWMGqfidcG1JifjXAp7VOZBKdPCxgy+CoDVJ6ngWP
-	 3Pl6OgA1BffZadBGkN2YPsyWHq8uXFgDp8Jz4T6BW3B7C/Zd/clis+TKtVawsKKy97
-	 RkM2A9Z+p5WwR0AR5oVtwtoL0poRKN/qGXZlYBfI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01052082B
+	b=NXE3Hin4qsdiZdgjCnObmHEfLSBmNFVhlA/oezHJREwWamaTUI2KOI8w90Ag5LkDm
+	 FpawxBOKLludpLeoJoHtDB+zhgzHpKJeRoSmLr/2oBu8IU+A8mWJxMY6JzWbktunLi
+	 8nRatb5M2VCE2pvxILpEmzk3gAWEAYGqSHtxVsnk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7DF2082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeLFOo5 (ORCPT
+        id S1730979AbeLFOpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:44:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49584 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:45:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730949AbeLFOox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:53 -0500
+        id S1730936AbeLFOoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC2320661;
-        Thu,  6 Dec 2018 14:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6237B2146D;
+        Thu,  6 Dec 2018 14:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107492;
-        bh=wFIyoeo1yQjY9hwlQVawILnGx4pvORLLHasgQ+/zi8I=;
+        s=default; t=1544107494;
+        bh=IkkIa/sGM/RivtydZKYehC3FabozOrIPbzK5Hmuggwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iLoKTRk6gfTr4P2e9BJnwQkD4JzgSJysYLXZn/49Qwi5P2kY669aN4+wj3eVZOuDI
-         dyIayu3DZ02O2aa/qJLn3XiuMXrBeNVW0n5jiKr6Q3rXsj8tQqF8Da0gtAC7X2+0HY
-         czRo+ZBGm2f4EoF/5Td6PojvFZZ7qKUI9hhWyWp4=
+        b=G4KdiwM8KCcCipcm1NJozx6vuA84s/oXiD3g4uCVlshTS4fzRmL4xXkqPd8fFdAox
+         SgoLmQrSFw9TlFio08u4qs8d96ZHdHFLsN4no53x96Y7IjsPfDJQx0z9ULNj/rzrr6
+         ZWX9yWO0EoUjg/KpOYuw1uT+MLA33kljRlDQ0nmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Wang <wawei@amazon.de>,
-        Amadeusz Juskowiak <ajusk@amazon.de>,
-        Julian Stecklina <jsteckli@amazon.de>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 026/101] svm: Add mutex_lock to protect apic_access_page_done on AMD systems
-Date:   Thu,  6 Dec 2018 15:38:25 +0100
-Message-Id: <20181206143013.086132381@linuxfoundation.org>
+        stable@vger.kernel.org, Junzhi Zhao <junzhi.zhao@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        CK Hu <ck.hu@mediatek.com>, David Airlie <airlied@linux.ie>,
+        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.9 027/101] drm/mediatek: fix OF sibling-node lookup
+Date:   Thu,  6 Dec 2018 15:38:26 +0100
+Message-Id: <20181206143013.137783137@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -72,63 +70,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Wang <wawei@amazon.de>
+From: Johan Hovold <johan@kernel.org>
 
-commit 30510387a5e45bfcf8190e03ec7aa15b295828e2 upstream.
+commit ceff2f4dcd44abf35864d9a99f85ac619e89a01d upstream.
 
-There is a race condition when accessing kvm->arch.apic_access_page_done.
-Due to it, x86_set_memory_region will fail when creating the second vcpu
-for a svm guest.
+Use the new of_get_compatible_child() helper to lookup the sibling
+instead of using of_find_compatible_node(), which searches the entire
+tree from a given start node and thus can return an unrelated (i.e.
+non-sibling) node.
 
-Add a mutex_lock to serialize the accesses to apic_access_page_done.
-This lock is also used by vmx for the same purpose.
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the parent device node).
 
-Signed-off-by: Wei Wang <wawei@amazon.de>
-Signed-off-by: Amadeusz Juskowiak <ajusk@amazon.de>
-Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+While at it, also fix the related cec-node reference leak.
+
+Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
+Cc: stable <stable@vger.kernel.org>     # 4.8
+Cc: Junzhi Zhao <junzhi.zhao@mediatek.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: CK Hu <ck.hu@mediatek.com>
+Cc: David Airlie <airlied@linux.ie>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+[ johan: backport to 4.9 ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/svm.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1333,20 +1333,23 @@ static u64 *avic_get_physical_id_entry(s
- static int avic_init_access_page(struct kvm_vcpu *vcpu)
- {
- 	struct kvm *kvm = vcpu->kvm;
--	int ret;
-+	int ret = 0;
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1446,8 +1446,7 @@ static int mtk_hdmi_dt_parse_pdata(struc
+ 	}
  
-+	mutex_lock(&kvm->slots_lock);
- 	if (kvm->arch.apic_access_page_done)
--		return 0;
-+		goto out;
+ 	/* The CEC module handles HDMI hotplug detection */
+-	cec_np = of_find_compatible_node(np->parent, NULL,
+-					 "mediatek,mt8173-cec");
++	cec_np = of_get_compatible_child(np->parent, "mediatek,mt8173-cec");
+ 	if (!cec_np) {
+ 		dev_err(dev, "Failed to find CEC node\n");
+ 		return -EINVAL;
+@@ -1457,8 +1456,10 @@ static int mtk_hdmi_dt_parse_pdata(struc
+ 	if (!cec_pdev) {
+ 		dev_err(hdmi->dev, "Waiting for CEC device %s\n",
+ 			cec_np->full_name);
++		of_node_put(cec_np);
+ 		return -EPROBE_DEFER;
+ 	}
++	of_node_put(cec_np);
+ 	hdmi->cec_dev = &cec_pdev->dev;
  
--	ret = x86_set_memory_region(kvm,
--				    APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
--				    APIC_DEFAULT_PHYS_BASE,
--				    PAGE_SIZE);
-+	ret = __x86_set_memory_region(kvm,
-+				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
-+				      APIC_DEFAULT_PHYS_BASE,
-+				      PAGE_SIZE);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	kvm->arch.apic_access_page_done = true;
--	return 0;
-+out:
-+	mutex_unlock(&kvm->slots_lock);
-+	return ret;
- }
- 
- static int avic_init_backing_page(struct kvm_vcpu *vcpu)
+ 	/*
 
 
