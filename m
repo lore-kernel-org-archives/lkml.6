@@ -2,73 +2,245 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF27C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F19C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7694D20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:44:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7694D20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id DD3AF214F1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:44:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jPpg2hkA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3AF214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbeLFGoE (ORCPT
+        id S1729099AbeLFGoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 01:44:04 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:53456 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbeLFGoE (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 6 Dec 2018 01:44:04 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 07:44:01 +0100
-Received: from [192.168.43.122] (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 06:43:38 +0000
-Message-ID: <1544078602.3228.3.camel@suse.com>
-Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
- be offlined
-From:   osalvador <osalvador@suse.com>
-To:     Michal Hocko <mhocko@kernel.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Date:   Thu, 06 Dec 2018 07:43:22 +0100
-In-Reply-To: <20181205165716.GS1286@dhcp22.suse.cz>
-References: <20181203100309.14784-1-mhocko@kernel.org>
-         <20181205122918.GL1286@dhcp22.suse.cz>
-         <20181205165716.GS1286@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 01:44:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:34185 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728294AbeLFGoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 01:44:21 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 439R0K4r5wz9s7W;
+        Thu,  6 Dec 2018 17:44:17 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544078657;
+        bh=KA7wdu/XaKITc7uOXSgS2CDTxzM9KyNLWBBesTq2rmA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jPpg2hkAgjrzWiqHu7HWIN+recVRX9W16R3cjTWSitbUpaLWmtUZLyrg3tX2RjfCI
+         KxJ+ik7kEnyUznt2xg9sVw62MMtST+1UR6DDK5biM6ohwnjAMbyfXsqCJr4irSeGh2
+         6W3XsIcEA5IObZ+ChG2poTtOZCQuluLWd5GHzfjt8SVFjak3CzKp4iJy+31W3kvJyw
+         Wgl0vlQ7K7qH/0JfDPGIicU67eJAp53OiwR9HS0+wAjnnqaz0seZ2jClY5bZ/drPJs
+         wrDrFk5zxFKSj3irNqS4JD2KfFNjj65p0U9TRVxgWe4Fv/ktQEFbaXuu37lULseNN9
+         5+IbMSJC4bNhA==
+Date:   Thu, 6 Dec 2018 17:44:17 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: linux-next: manual merge of the akpm-current tree with the powerpc
+ tree
+Message-ID: <20181206174417.45fe3e7a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.zLNjQH4ObXZYR53yJAEYhH"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/.zLNjQH4ObXZYR53yJAEYhH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Btw. the way how we drop all the work on the first page that we
-> cannot
-> isolate is just goofy. Why don't we simply migrate all that we
-> already
-> have on the list and go on? Something for a followup cleanup though.
+Hi Andrew,
 
-Indeed, that is just wrong.
-I will try to send a followup cleanup to fix that.
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
+  arch/powerpc/include/asm/book3s/32/pgalloc.h
+  arch/powerpc/include/asm/nohash/32/pgalloc.h
+  arch/powerpc/mm/pgtable-book3s64.c
 
-> Debugged-by: Oscar Salvador <osalvador@suse.com>
-> Cc: stable
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+between commits:
 
-It has been a fun bug to chase down, thanks for the patch ;-)
+  a95d133c8643 ("powerpc/mm: Move pte_fragment_alloc() to a common location=
+")
+  32ea4c149990 ("powerpc/mm: Extend pte_fragment functionality to PPC32")
 
-Reviewed-by: Oscar Salvador <osalvador@suse.com>
-Tested-by: Oscar Salvador <osalvador@suse.com>
+from the powerpc tree and commit:
 
+  913c2d755b39 ("mm: treewide: remove unused address argument from pte_allo=
+c functions")
+
+from the akpm-current tree.
+
+I fixed it up (see below, plus the extra merge fix patch) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 6 Dec 2018 17:41:27 +1100
+Subject: [PATCH] fix up for "mm: treewide: remove unused address argument f=
+rom
+ pte_alloc functions"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/mm/pgtable-frag.c | 2 +-
+ arch/powerpc/mm/pgtable_32.c   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
+index af23a587f019..a7b05214760c 100644
+--- a/arch/powerpc/mm/pgtable-frag.c
++++ b/arch/powerpc/mm/pgtable-frag.c
+@@ -95,7 +95,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, =
+int kernel)
+ 	return (pte_t *)ret;
+ }
+=20
+-pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int =
+kernel)
++pte_t *pte_fragment_alloc(struct mm_struct *mm, int kernel)
+ {
+ 	pte_t *pte;
+=20
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index deda68e02338..5b1e1adeb4d2 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -48,12 +48,12 @@ __ref pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ 	if (!slab_is_available())
+ 		return memblock_alloc(PTE_FRAG_SIZE, PTE_FRAG_SIZE);
+=20
+-	return (pte_t *)pte_fragment_alloc(mm, address, 1);
++	return (pte_t *)pte_fragment_alloc(mm, 1);
+ }
+=20
+ pgtable_t pte_alloc_one(struct mm_struct *mm)
+ {
+-	return (pgtable_t)pte_fragment_alloc(mm, address, 0);
++	return (pgtable_t)pte_fragment_alloc(mm, 0);
+ }
+=20
+ void __iomem *
+--=20
+2.19.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/powerpc/include/asm/book3s/32/pgalloc.h
+index b5b955eb2fb7,af9e13555d95..000000000000
+--- a/arch/powerpc/include/asm/book3s/32/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/32/pgalloc.h
+@@@ -56,16 -61,29 +56,16 @@@ static inline void pmd_populate_kernel(
+  static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
+  				pgtable_t pte_page)
+  {
+ -	*pmdp =3D __pmd((page_to_pfn(pte_page) << PAGE_SHIFT) | _PMD_PRESENT);
+ -}
+ -
+ -#define pmd_pgtable(pmd) pmd_page(pmd)
+ -#else
+ -
+ -static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmdp,
+ -				       pte_t *pte)
+ -{
+ -	*pmdp =3D __pmd((unsigned long)pte | _PMD_PRESENT);
+ -}
+ -
+ -static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
+ -				pgtable_t pte_page)
+ -{
+ -	*pmdp =3D __pmd((unsigned long)lowmem_page_address(pte_page) | _PMD_PRES=
+ENT);
+ +	*pmdp =3D __pmd(__pa(pte_page) | _PMD_PRESENT);
+  }
+ =20
+ -#define pmd_pgtable(pmd) pmd_page(pmd)
+ -#endif
+ +#define pmd_pgtable(pmd) ((pgtable_t)pmd_page_vaddr(pmd))
+ =20
+- extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long ad=
+dr);
+- extern pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long addr);
++ extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm);
++ extern pgtable_t pte_alloc_one(struct mm_struct *mm);
+ +void pte_frag_destroy(void *pte_frag);
+- pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int=
+ kernel);
+++pte_t *pte_fragment_alloc(struct mm_struct *mm, int kernel);
+ +void pte_fragment_free(unsigned long *table, int kernel);
+ =20
+  static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+  {
+diff --cc arch/powerpc/include/asm/nohash/32/pgalloc.h
+index 17963951bdb0,16623f53f0d4..000000000000
+--- a/arch/powerpc/include/asm/nohash/32/pgalloc.h
++++ b/arch/powerpc/include/asm/nohash/32/pgalloc.h
+@@@ -73,17 -77,14 +73,17 @@@ static inline void pmd_populate_kernel(
+  static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmdp,
+  				pgtable_t pte_page)
+  {
+ -	*pmdp =3D __pmd((unsigned long)lowmem_page_address(pte_page) | _PMD_PRES=
+ENT);
+ +	*pmdp =3D __pmd((unsigned long)pte_page | _PMD_PRESENT);
+  }
+ =20
+ -#define pmd_pgtable(pmd) pmd_page(pmd)
+ +#define pmd_pgtable(pmd) ((pgtable_t)pmd_page_vaddr(pmd))
+  #endif
+ =20
+- extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm, unsigned long ad=
+dr);
+- extern pgtable_t pte_alloc_one(struct mm_struct *mm, unsigned long addr);
++ extern pte_t *pte_alloc_one_kernel(struct mm_struct *mm);
++ extern pgtable_t pte_alloc_one(struct mm_struct *mm);
+ +void pte_frag_destroy(void *pte_frag);
+- pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int=
+ kernel);
+++pte_t *pte_fragment_alloc(struct mm_struct *mm, int kernel);
+ +void pte_fragment_free(unsigned long *table, int kernel);
+ =20
+  static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+  {
+diff --cc arch/powerpc/mm/pgtable-book3s64.c
+index f3c31f5e1026,6f9d434b0a4c..000000000000
+--- a/arch/powerpc/mm/pgtable-book3s64.c
++++ b/arch/powerpc/mm/pgtable-book3s64.c
+
+--Sig_/.zLNjQH4ObXZYR53yJAEYhH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwIxUEACgkQAVBC80lX
+0GxUpAf/farV5+yCU8Lalv6I1lW9uxsa/pfQPJuU4b3PCIZNqPSawTtqgsrbaFJh
+WR0GWyPIHQDCFeXLZYvfKoBRnL2jiktDvciFSAGlsYAweko2f/DCXd+1lDcbKf7M
+gnaO3XM9uTI4JE1/LXy/CW48nIoAk2wUYTPAXt5cDZmLUUg3PAWA/I0zenj/EDET
+YAa9UO2MqW/9jOQMG1IETtLd5DdSXI5nRPShAwSgt68tQwSVhLWHJmJW2p1IiSNT
+kYAqEKG7kyyId+eSugQb2b0AoB+Tw1Sx000dOIIyVDy6aZ0dbQQywMRdfStHy3dC
+NOJB/4EE916seYmURAhI7k6yvCUMuA==
+=oT1P
+-----END PGP SIGNATURE-----
+
+--Sig_/.zLNjQH4ObXZYR53yJAEYhH--
