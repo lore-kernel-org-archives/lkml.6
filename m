@@ -2,103 +2,113 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA62C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730C3C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC8220672
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC8220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id 3852820672
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:09:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A2mlhkbX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3852820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbeLFKJr (ORCPT
+        id S1729440AbeLFKJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:09:47 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45937 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFKJq (ORCPT
+        Thu, 6 Dec 2018 05:09:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35536 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFKJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:09:46 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e5so25596109qtr.12;
-        Thu, 06 Dec 2018 02:09:46 -0800 (PST)
+        Thu, 6 Dec 2018 05:09:51 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p8so11569720plo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 02:09:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kAZFAsMe6hZyGv5RzFXOQY01K5owXwcpa6Gj4RdYfLU=;
+        b=A2mlhkbXkZpjgEqBQ4YZbuwMAkvlehsRCIJxTI4iYiC7c3WzDU7YIuPN1ycIh139sG
+         Qu0+cHE1dO3bTwd+nGj0d/2zo1pZbuo1B6Bkvi3mp9MSml+d3wgsbbGJyG9t0mqcyHpV
+         uae8CJ1VoR4cn2g8bJdsBtQzeobY0KSnxdww4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=uuAA08QKScYw3fsRf3URpZe6l85kQOqeOIxl0eNvqCM=;
-        b=BgIPcL0/6BSXL5mhsn8x9pbNa1JTH9deXYoen7Alk9LmRp8MCyHORvA7wGtCtZ3syp
-         MMUD4kfFts5Hzn2uCeUm93uAFFNdwDzWcl2F4u5V4gVkWsubzRZBtUKJeYcOUx7MyM4q
-         8zn/BGPl1KHt46vy+DQv67EdqeZSpj/Nz/1/vJWjf0hIM2yHnarcLPI+/T8FzG/lLtMz
-         sZOa4vUetlMkCE5lFlUQk6MewtFRNXwKgvVHEF1oJ47nx1jCo0Ps2PV6ADVIym635jrl
-         kAh2Qd7nIip3MkvYi8qJlEeDYj4BMYJUTPPaHC9Gdrb9boad0bY8mkOnJF+a6of+8gPd
-         wZ6w==
-X-Gm-Message-State: AA+aEWYMpdE6oGKC7sw88+97Vm5QKcIxfdF8d9vZxaSehK3jDv8I4FqJ
-        0yK/Z+SI9z6LWv/BSYGUQ+U=
-X-Google-Smtp-Source: AFSGD/Vy3eJG31zis4TFA88ZsW3HrTY1wKYcyWZdpxYxm+oJAp8CVDO3DBGRflPsLVQV1n4qYStglA==
-X-Received: by 2002:a0c:8936:: with SMTP id 51mr27184459qvp.220.1544090985833;
-        Thu, 06 Dec 2018 02:09:45 -0800 (PST)
-Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id p31sm18136118qkh.86.2018.12.06.02.09.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 02:09:45 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Thu, 06 Dec 2018 08:09:38 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v2 4/9] ARM: dts: imx7d-pico: Pass the USBOTG1_PWR pinctrl
-Date:   Thu,  6 Dec 2018 08:09:00 -0200
-Message-Id: <20181206100905.15053-5-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206100905.15053-1-otavio@ossystems.com.br>
-References: <20181206100905.15053-1-otavio@ossystems.com.br>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kAZFAsMe6hZyGv5RzFXOQY01K5owXwcpa6Gj4RdYfLU=;
+        b=gmrzifR1QOylFyw76Qg9aHnYRDyGgDVfOVrEx0k27Tr2WnhWowEjUuLt3Q2buYiwkZ
+         m1SJjMps8r5QMOshnjS0H8AUo4FRoaiGgOkoF0yrM9F5yeJ+hE9N+SrPFzUBVnMEW2iZ
+         ZmO5+RpOl7hdZhWi/gpV3kJ9UCZtV66FRNO/BOpi1xidgunI0dJtK7vXykSpOvggb8BU
+         slKcIK9PuYSusMwgq/SCKLp3vJ76+2qvNalOfPikUkMl1xiujKv/RY6k1fEZulFm1dxV
+         TDdzHx4woKpvR/dRzSBsJxqh5M3ih4KE9MlKoJi1LC36ouswphhQKYXmpVYPSnqoAhds
+         pizQ==
+X-Gm-Message-State: AA+aEWbrOoPcc7m/uvEeX8ymrC4oG0aHnjZ4oYJL2tnRoXPymshWrZBx
+        AsvsiudG3IdopfI1kASS6FCZOS3hzpL9UVYr9GH1BQ==
+X-Google-Smtp-Source: AFSGD/WZ4ET0u3SIXj0I70/iJWZ/4hF3pE8zGA7spHW4T7hjjyD/ZR7zhHTFbEFplrLbmhPL+KKze90vJfs9uCvUt+k=
+X-Received: by 2002:a17:902:b68d:: with SMTP id c13mr27666751pls.102.1544090990437;
+ Thu, 06 Dec 2018 02:09:50 -0800 (PST)
 MIME-Version: 1.0
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+References: <20181205054828.183476-1-drinkcat@chromium.org>
+ <20181205054828.183476-3-drinkcat@chromium.org> <5eddd264-5527-a98e-fc8b-31ea89f474db@suse.cz>
+ <CANMq1KAL7TcVa4xF8=NdK2cs0VakEq5i6MyCvfmYTGCmJ78-ag@mail.gmail.com> <09f56edb-2dab-c023-2164-dd7b5cef6afb@suse.cz>
+In-Reply-To: <09f56edb-2dab-c023-2164-dd7b5cef6afb@suse.cz>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 6 Dec 2018 18:09:39 +0800
+Message-ID: <CANMq1KAJ7YvbpUvRqP0zEWY1_pC-TvHMZYn4FUj4A9Bpmv_jxg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] mm: Add support for kmem caches in DMA32 zone
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com,
+        hch@infradead.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+On Thu, Dec 6, 2018 at 5:37 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 12/6/18 4:49 AM, Nicolas Boichat wrote:
+> >> So it would be fine even unchanged. The check would anyway need some
+> >> more love to catch the same with __GFP_DMA to be consistent and cover
+> >> all corner cases.
+> > Yes, the test is not complete. If we really wanted this to be
+> > accurate, we'd need to check that GFP_* exactly matches SLAB_CACHE_*.
+> >
+> > The only problem with dropping this is test that we should restore
+> > GFP_DMA32 warning/errors somewhere else (as Christopher pointed out
+> > here: https://lkml.org/lkml/2018/11/22/430), especially for kmalloc
+> > case.
+>
+> I meant just dropping that patch hunk, not the whole test. Then the test
+> stays as it is and will keep warning anyone calling kmalloc(GFP_DMA32).
+> It would also warn anyone calling kmem_cache_alloc(GFP_DMA32) on
+> SLAB_CACHE_DMA32 cache, but since the gfp can be just dropped, and you
+> as the only user of this so far will do that, it's fine?
 
-Pass the USBOTG1_PWR pinctrl description in the USBOTG GPIO
-controlled regulator.
+I missed your point, this would work fine indeed.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
----
+Thanks.
 
-Changes in v2: None
-
- arch/arm/boot/dts/imx7d-pico.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx7d-pico.dtsi b/arch/arm/boot/dts/imx7d-pico.dtsi
-index 7319e2ecec5c..cb30bded1e4a 100644
---- a/arch/arm/boot/dts/imx7d-pico.dtsi
-+++ b/arch/arm/boot/dts/imx7d-pico.dtsi
-@@ -41,6 +41,8 @@
- 	};
- 
- 	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_usbotg1_pwr>;
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb_otg1_vbus";
- 		regulator-min-microvolt = <5000000>;
--- 
-2.19.2
-
+> > Maybe this can be done in kmalloc_slab.
