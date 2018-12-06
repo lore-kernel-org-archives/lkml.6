@@ -2,206 +2,178 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8446C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 395F6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F4A2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544132057;
-	bh=uJoBqAk+dlTObkHCWs7pGV/uua2RfZ1Nkq5MzgLQWgw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HA9gdkQ+dEL1MI3sytFIBzI7oS3R8Vr0gt8AXRZNHVOAX0lfu8FN9lyU5RTTMDXGD
-	 qN6C8IG3Y9sc+iuW8DjuLMJpmWTgebOdAR3/ly2G1vDY54kTjqxbXUDn9mtKka9+mo
-	 SfI54TYbbtcpfHuWOibwC7CFJH/mMeWcjug4IeKI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F4A2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E9D3E2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:34:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KzM1jgVo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D3E2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbeLFV1u (ORCPT
+        id S1726105AbeLFVek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:27:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbeLFV1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:27:48 -0500
-Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B228621479;
-        Thu,  6 Dec 2018 21:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131666;
-        bh=uJoBqAk+dlTObkHCWs7pGV/uua2RfZ1Nkq5MzgLQWgw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UUut5Fi8M1Udo4n+Q4kgxvaSo/R3HEKNAdkym5DDquFSXQtfWr/cds916uWIrhGoy
-         1EO4zNidn806908nx2Y1wHte98jYQ1dTZ74iV5+uRlPod8H5dG8xQk4pYcWYgWLPqi
-         ZbNVwBllzhLG/NTJR4bI7xQ4JH5x4T65t5aPkX6I=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 18/75] perf mmap: Map data buffer for preserving collected data
-Date:   Thu,  6 Dec 2018 18:25:05 -0300
-Message-Id: <20181206212602.20474-19-acme@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
-References: <20181206212602.20474-1-acme@kernel.org>
+        Thu, 6 Dec 2018 16:34:40 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:34810 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeLFVeh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:34:37 -0500
+Received: by mail-yb1-f195.google.com with SMTP id n15so218203ybd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 13:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ganMFL1kWtWhNk4pHpEkt+vbRc+N2cb9u3uVW+UYyxs=;
+        b=KzM1jgVoj6Yqz5PKztiOvi0BinlQvrj0VzEI6sdTbtBGW2O+SjDv+Bb28I45Sd8+XI
+         nP5RT/vUbm0GX3Jp5tTOkSgT69DBr9s5MT3AyUxPIGHJv0aiZRDjVYu+saMU6j6uosiV
+         M2Ka1/Omg1KvO6OvF+TEK8mKSULeFC2PqMOP8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ganMFL1kWtWhNk4pHpEkt+vbRc+N2cb9u3uVW+UYyxs=;
+        b=cyw411OyE6PF9tIhwpjUHtXCWvf1Db18kbwLzikCdxt6YAbk0t5U3MHugm0ARnVgmy
+         hbOW75yZCkMDfeJTdLSEg7io20LQ3XeGnzcyZX6DZzv6mKOrEv0kkDjJwJRgr0DL6Or+
+         xzbxhi44VaEO8Kw6y0KxficOhq55I/8EnWr1BjehTUzGkxUeffGOeQE2Y58FPF1Ko0ed
+         PRy3yyWnkMSdeVRy/Me3Ce4EgRtBRuDacgODfVmYFUQLGAtcZKysO/a1pIGMxufeQaYh
+         0LOYjzpbh/uKpQLXSMm4gjs7+LOjZ/s+gT5IPuG7d1h/83h50rC04UKPGCqoWkovZZ3T
+         +Ltg==
+X-Gm-Message-State: AA+aEWYC+xJN7lP6dR2a1JJEEARc27WtUKTadJ4IG67T3+d36I1TUG7i
+        UYcYN6q3ZXpDfJL8MRyYCoBixPd7Z6s=
+X-Google-Smtp-Source: AFSGD/WebDQNT4e1Iq8o2D4NjS7OBS37Y39dvk6RePz9I2XFdcjg2ZLGn0TNugEoAAroWceAldlnLA==
+X-Received: by 2002:a5b:40a:: with SMTP id m10-v6mr29117240ybp.21.1544132075763;
+        Thu, 06 Dec 2018 13:34:35 -0800 (PST)
+Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
+        by smtp.gmail.com with ESMTPSA id w70sm434549yww.76.2018.12.06.13.34.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 13:34:34 -0800 (PST)
+Received: by mail-yw1-f42.google.com with SMTP id g75so206606ywb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 13:34:34 -0800 (PST)
+X-Received: by 2002:a81:98e:: with SMTP id 136mr29954226ywj.47.1544132073806;
+ Thu, 06 Dec 2018 13:34:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181112192443.GL3645@cisco> <20181127232126.GA23658@cisco>
+ <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
+ <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
+ <87zhtthkuy.fsf@xmission.com> <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
+ <87k1ktqoe5.fsf@xmission.com> <CAGXu5jJgFrWajK5m8ev72DV9ueznLnbGV2-UGECnz0iZ_EFDUg@mail.gmail.com>
+ <87r2euiuql.fsf@xmission.com> <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
+ <20181206192059.GD10086@cisco> <87lg528io7.fsf@xmission.com>
+In-Reply-To: <87lg528io7.fsf@xmission.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 6 Dec 2018 13:34:21 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
+Message-ID: <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
+Subject: Re: siginfo pid not populated from ptrace?
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+On Thu, Dec 6, 2018 at 1:11 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Tycho Andersen <tycho@tycho.ws> writes:
+>
+> > On Thu, Dec 06, 2018 at 10:48:39AM -0800, Linus Torvalds wrote:
+> >> On Thu, Dec 6, 2018 at 6:40 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> >
+> >> > We have in the past had ptrace users that weren't just about debugging
+> >> > so I don't know that it is fair to just dismiss it as debugging
+> >> > infrastructure.
+> >>
+> >> Absolutely.
+> >>
+> >> Some uses are more than just debug. People occasionally use ptrace
+> >> because it's the only way to do what they want, so you'll find people
+> >> who do it for sandboxing, for example. It's not necessarily designed
+> >> for that, or particularly fast or well-suited for it, but I've
+> >> definitely seen it used that way.
+> >>
+> >> So I don't think the behavioral test breakage like this is necessarily
+> >> a huge deal, and until some "real use" actually shows that it cares it
+> >> might be something we dismiss as "just test", but it very much has the
+> >> potential to hit real uses.
+> >>
+> >> The fact that a behavioral test broke is definitely interesting.
+> >>
+> >> And maybe some of the siginfo allocations could depend on whether the
+> >> signal is actually ever caught or not.
+> >>
+> >> For example, a terminal signal (or one that is ignored) might not need
+> >> siginfo. But if the process is ptraced, maybe that terminal signal
+> >> isn't actually terminal? So we might have situations where we want to
+> >> simply check "is the signal target being ptraced"..
+> >
+> > Yes, something like this, I suppose? It works for me.
+>
+> The challenge is that we could be delivering this to a zombie signal
+> group leader.  At which point we won't deliver it to the target task.
+>
+> Sigh it is probably time that I dig in and figure out how to avoid that
+> case which we need to fix anyway because we can get the permission
+> checks wrong for multi-threaded processes that call setuid and friends.
+>
+> Once that is sorted your small change will at least be safe.
+>
+> Eric
+>
+> > From 3bcaadd56ebb532ab4d481556fcc0826d65efc43 Mon Sep 17 00:00:00 2001
+> > From: Tycho Andersen <tycho@tycho.ws>
+> > Date: Thu, 6 Dec 2018 12:15:22 -0700
+> > Subject: [PATCH] signal: allocate siginfo when a traced task gets SIGSTOP
+> >
+> > Tracers can view SIGSTOP:
+> >
+> > https://lore.kernel.org/lkml/87zhtthkuy.fsf@xmission.com/T/#u
+> >
+> > so let's allocate a siginfo for SIGSTOP when a task is traced.
+> >
+> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > ---
+> >  kernel/signal.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 9a32bc2088c9..ab4ba00119f4 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1056,11 +1056,14 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+> >               goto ret;
+> >
+> >       result = TRACE_SIGNAL_DELIVERED;
+> > +
+> >       /*
+> > -      * Skip useless siginfo allocation for SIGKILL SIGSTOP,
+> > -      * and kernel threads.
+> > +      * Skip useless siginfo allocation for SIGKILL and kernel threads.
+> > +      * SIGSTOP is visible to tracers, so only skip allocation when the task
+> > +      * is not traced.
+> >        */
+> > -     if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
+> > +     if ((sig == SIGKILL) || (!task_is_traced(t) && sig == SIGSTOP) ||
+> > +         (t->flags & PF_KTHREAD))
+> >               goto out_set;
+> >
+> >       /*
 
-The map->data buffer is used to preserve map->base profiling data for
-writing to disk. AIO map->cblock is used to queue corresponding
-map->data buffer for asynchronous writing.
+What should we do for v4.20? I need to have the selftests actually passing. :)
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@redhat.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/5fcda10c-6c63-68df-383a-c6d9e5d1f918@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/evlist.c |  2 +-
- tools/perf/util/mmap.c   | 49 +++++++++++++++++++++++++++++++++++++++-
- tools/perf/util/mmap.h   | 11 ++++++++-
- 3 files changed, 59 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 36526d229315..6f010b9f0a81 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp;
-+	struct mmap_params mp = { .nr_cblocks = 0 };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index cdb95b3a1213..47cdc3ad6546 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -153,8 +153,55 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- {
- }
- 
-+#ifdef HAVE_AIO_SUPPORT
-+static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-+{
-+	int delta_max;
-+
-+	if (mp->nr_cblocks) {
-+		map->aio.data = malloc(perf_mmap__mmap_len(map));
-+		if (!map->aio.data) {
-+			pr_debug2("failed to allocate data buffer, error %m\n");
-+			return -1;
-+		}
-+		/*
-+		 * Use cblock.aio_fildes value different from -1
-+		 * to denote started aio write operation on the
-+		 * cblock so it requires explicit record__aio_sync()
-+		 * call prior the cblock may be reused again.
-+		 */
-+		map->aio.cblock.aio_fildes = -1;
-+		/*
-+		 * Allocate cblock with max priority delta to
-+		 * have faster aio write system calls.
-+		 */
-+		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-+		map->aio.cblock.aio_reqprio = delta_max;
-+	}
-+
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_munmap(struct perf_mmap *map)
-+{
-+	if (map->aio.data)
-+		zfree(&map->aio.data);
-+}
-+#else
-+static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
-+			       struct mmap_params *mp __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
-+{
-+}
-+#endif
-+
- void perf_mmap__munmap(struct perf_mmap *map)
- {
-+	perf_mmap__aio_munmap(map);
- 	if (map->base != NULL) {
- 		munmap(map->base, perf_mmap__mmap_len(map));
- 		map->base = NULL;
-@@ -197,7 +244,7 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
- 				&mp->auxtrace_mp, map->base, fd))
- 		return -1;
- 
--	return 0;
-+	return perf_mmap__aio_mmap(map, mp);
- }
- 
- static int overwrite_rb_find_range(void *buf, int mask, u64 *start, u64 *end)
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index cc5e2d6d17a9..3f10ad030c5e 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -6,6 +6,9 @@
- #include <linux/types.h>
- #include <linux/ring_buffer.h>
- #include <stdbool.h>
-+#ifdef HAVE_AIO_SUPPORT
-+#include <aio.h>
-+#endif
- #include "auxtrace.h"
- #include "event.h"
- 
-@@ -26,6 +29,12 @@ struct perf_mmap {
- 	bool		 overwrite;
- 	struct auxtrace_mmap auxtrace_mmap;
- 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
-+#ifdef HAVE_AIO_SUPPORT
-+	struct {
-+		void 		 *data;
-+		struct aiocb	 cblock;
-+	} aio;
-+#endif
- };
- 
- /*
-@@ -57,7 +66,7 @@ enum bkw_mmap_state {
- };
- 
- struct mmap_params {
--	int			    prot, mask;
-+	int			    prot, mask, nr_cblocks;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
- 
 -- 
-2.19.2
-
+Kees Cook
