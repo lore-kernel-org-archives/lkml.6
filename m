@@ -2,208 +2,120 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2592C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96D6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A532082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A532082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6621320892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:09:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="AuoL7glB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6621320892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbeLFAIP (ORCPT
+        id S1728917AbeLFAJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:08:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39388 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727762AbeLFAIP (ORCPT
+        Wed, 5 Dec 2018 19:09:02 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45342 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbeLFAJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:08:15 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB603g2n026026
-        for <linux-kernel@vger.kernel.org>; Wed, 5 Dec 2018 19:08:13 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p6r8w9kdk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 19:08:13 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 6 Dec 2018 00:08:13 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Dec 2018 00:08:10 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB6089eA17760472
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 00:08:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69E62B2064;
-        Thu,  6 Dec 2018 00:08:09 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39393B2065;
-        Thu,  6 Dec 2018 00:08:09 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Dec 2018 00:08:08 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id BA2E716C3169; Wed,  5 Dec 2018 16:08:09 -0800 (PST)
-Date:   Wed, 5 Dec 2018 16:08:09 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Josh Triplett <josh@joshtriplett.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:core/rcu] rcutorture: Make initrd/init execute in userspace
-Reply-To: paulmck@linux.ibm.com
-References: <tip-229ab0cb5be3bfbac5947df7240f6905470ca413@git.kernel.org>
- <20181204222412.GA6874@localhost>
- <20181204230423.GP4170@linux.ibm.com>
- <20181205222523.GA14609@localhost>
+        Wed, 5 Dec 2018 19:09:01 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 32so20386821ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 16:09:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RZbKQq33LQa1jXnV0z4okbGGEFzFL7NaKJ8F/xgnXnY=;
+        b=AuoL7glBjalIdxpecp2wOrOvVnYhhgeDcJb5KQD2doaYaFDGU6T57C4n+BXa0db66g
+         KF1kaRgmLjS+FJz5oSShNvvVjb7nouBZK8fBFkB0mncr5oB7bfWvxk1Af8bJ5i8S88wg
+         GaF/CZJBABR9tjEYv/TyB3GW8La++MmrnCgvRRk7QXWiRkl1p2IsahRgZWAYw4T1AyDm
+         aEjXlm6byj5DyiS70UHV5o2b7LAdMd8vBQWZGgYrbPDZKqqHkjUJaqATp4CCnh2qv0GH
+         SL93CgBbg+DlzAeElRJtr27omALFjx0R6p4z4rXKa1pSIDAExp3rWRNTW3H0vzoQp6mN
+         yGzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RZbKQq33LQa1jXnV0z4okbGGEFzFL7NaKJ8F/xgnXnY=;
+        b=VJ8O7c0Jt1KwIcPuJ03TLuVjfyQJeDCUwdjHl2o3rebGID4WkG/QBuZe+eWtVACvmm
+         YnzKozZdIsnlqChNbE6Rh72i+rAkJhmwxlBbE6NpHT5+oyODNpMaXI2gHALfamJmFZt0
+         ZM82T7gRTPg3JylPgbXvrPXm+joxUK2woIgjxUelOeUtcMRcxpy+5P/rS44zxOf7bk7/
+         VE9IbNRB3bsrtlzZVnlN3LbnFE6NhskZzQRgz5ZW/xrn6pASnNjoCPliv2dNUbffujuo
+         06bTVQuh6I7znHS8vsKzctVVxNJc700M3sQbV28cGtxsHzKQqkw4U1ek8p4xdydxE3Z9
+         SBRA==
+X-Gm-Message-State: AA+aEWbunatKfqfbRgTUvCDIhLOJ4SUCx/aFo0iQCSYZh/olvALQbNck
+        rWNla1IZTRCyPmXfjL/UdOk8wqGwfhyy2uz9OuZWWA==
+X-Google-Smtp-Source: AFSGD/WIlTfPZZBj9FTrAJxWPgP5XNsZZ9cFO24imeH01opqP7xOGfk9pfuWsUfZLZc2jnc5MzckCCd073ct7d9burs=
+X-Received: by 2002:a9d:a78:: with SMTP id 111mr16415958otg.229.1544054940922;
+ Wed, 05 Dec 2018 16:09:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205222523.GA14609@localhost>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120600-0072-0000-0000-000003D4DD93
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010178; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127552; UDB=6.00582089; IPR=6.00907686;
- MB=3.00024466; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 00:08:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120600-0073-0000-0000-00004A586C7A
-Message-Id: <20181206000809.GX4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-05_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812050211
+References: <20181205180756.GI3536@redhat.com> <e5c740fd-0256-8b70-cd06-6d6fee19806d@deltatee.com>
+ <20181205183314.GJ3536@redhat.com> <0ddb2620-ecbd-4b7b-aeb7-3f4ae7746e83@deltatee.com>
+ <20181205185550.GK3536@redhat.com> <7ab26ea6-d16d-8d71-78ca-4266a864f8d3@deltatee.com>
+ <20181205225828.GL3536@redhat.com> <a0240f08-68ab-5167-c2c7-2f930aa0a54b@deltatee.com>
+ <20181205232028.GO3536@redhat.com> <af781c8a-1990-c091-0471-5b2d873ee526@deltatee.com>
+ <20181205232710.GP3536@redhat.com>
+In-Reply-To: <20181205232710.GP3536@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 5 Dec 2018 16:08:49 -0800
+Message-ID: <CAPcyv4g2bb=GPErigvjWDdVn2vfLDawnr7-Q49TaJsD-6c-zMw@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/14] mm/hms: heterogenenous memory system (HMS) documentation
+To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Andi Kleen <ak@linux.intel.com>, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>, balbirs@au1.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Kuehling, Felix" <felix.kuehling@amd.com>, Philip.Yang@amd.com,
+        "Koenig, Christian" <christian.koenig@amd.com>,
+        "Blinzer, Paul" <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>, rcampbell@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 02:25:24PM -0800, Josh Triplett wrote:
-> On Tue, Dec 04, 2018 at 03:04:23PM -0800, Paul E. McKenney wrote:
-> > On Tue, Dec 04, 2018 at 02:24:13PM -0800, Josh Triplett wrote:
-> > > On Tue, Dec 04, 2018 at 02:09:42PM -0800, tip-bot for Paul E. McKenney wrote:
-> > > > --- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-> > > > +++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-> > > > @@ -39,9 +39,22 @@ mkdir $T
-> > > >  
-> > > >  cat > $T/init << '__EOF___'
-> > > >  #!/bin/sh
-> > > > +# Run in userspace a few milliseconds every second.  This helps to
-> > > > +# exercise the NO_HZ_FULL portions of RCU.
-> > > >  while :
-> > > >  do
-> > > > -	sleep 1000000
-> > > > +	q=
-> > > > +	for i in \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-> > > > +		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
-> > > 
-> > > Ow. If there's no better way to do this, please do at least comment how many 'a's
-> > > this is. (And why 186, exactly?)
-> > 
-> > Yeah, that is admittedly a bit strange.  The reason for 186 occurrences of
-> > "a" to one-time calibration, measuring a few millisecond's worth of delay.
-> > 
-> > > Please also consider calibrating the delay loop as you do in the C code.
-> > 
-> > Good point.  And a quick web search finds me "date '+%s%N'", which gives
-> > me nanoseconds since the epoch.  I probably don't want to do a 2038 to
-> > myself (after all, I might still be alive then), so I should probably try
-> > to make something work with "date '+%N'".  Or use something like this:
-> > 
-> > 	$ date '+%4N'; date '+%4N';date '+%4N'; date '+%4N'
-> > 	6660
-> > 	6685
-> > 	6697
-> > 	6710
-> > 
-> > Ah, but that means I need to add the "date" command to my initrd, doesn't
-> > it?  And calculation requires either bash or the "test" command.  And it
-> > would be quite good to restrict this to what can be done with Bourne shell
-> > built-in commands, since a big point of this is to maintain a small-sized
-> > initrd.  :-/
-> 
-> Sure, and I'm not suggesting adding commands to the initrd, hence my
-> mention of "If there's no better way".
-> 
-> > So how about the following patch, which attempts to explain the situation?
-> 
-> That would help, but please also consider consolidating with something
-> like a10="a a a a a a a a a a" to make it more readable (and perhaps
-> rounding up to 200 for simplicity).
+On Wed, Dec 5, 2018 at 3:27 PM Jerome Glisse <jglisse@redhat.com> wrote:
+>
+> On Wed, Dec 05, 2018 at 04:23:42PM -0700, Logan Gunthorpe wrote:
+> >
+> >
+> > On 2018-12-05 4:20 p.m., Jerome Glisse wrote:
+> > > And my proposal is under /sys/bus and have symlink to all existing
+> > > device it agregate in there.
+> >
+> > That's so not the point. Use the existing buses don't invent some
+> > virtual tree. I don't know how many times I have to say this or in how
+> > many ways. I'm not responding anymore.
+>
+> And how do i express interaction with different buses because i just
+> do not see how to do that in the existing scheme. It would be like
+> teaching to each bus about all the other bus versus having each bus
+> register itself under a common framework and have all the interaction
+> between bus mediated through that common framework avoiding code
+> duplication accross buses.
+>
+> >
+> > > So you agree with my proposal ? A sysfs directory in which all the
+> > > bus and how they are connected to each other and what is connected
+> > > to each of them (device, CPU, memory).
+> >
+> > I'm fine with the motivation. What I'm arguing against is the
+> > implementation and the fact you have to create a whole grand new
+> > userspace API and hierarchy to accomplish it.
 
-How about powers of four and one factor of three for 192, as shown below?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 4f8f751961b536f77c8f82394963e8e2d26efd84
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Tue Dec 4 14:59:12 2018 -0800
-
-    torture: Explain and simplify odd "for" loop in mkinitrd.sh
-    
-    Why a Bourne-shell "for" loop?  And why 192 instances of "a"?  This commit
-    adds a shell comment to present the answer to these mysteries.  It also
-    uses a series of factor-of-four Bourne-shell assignments to make it
-    easy to see how many instances there are, replacing the earlier wall of
-    'a' characters.
-    
-    Reported-by: Josh Triplett <josh@joshtriplett.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-
-diff --git a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-index da298394daa2..ff69190604ea 100755
---- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-+++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-@@ -40,17 +40,24 @@ mkdir $T
- cat > $T/init << '__EOF___'
- #!/bin/sh
- # Run in userspace a few milliseconds every second.  This helps to
--# exercise the NO_HZ_FULL portions of RCU.
-+# exercise the NO_HZ_FULL portions of RCU.  The 192 instances of "a" was
-+# empirically shown to give a nice multi-millisecond burst of user-mode
-+# execution on a 2GHz CPU, as desired.  Modern CPUs will vary from a
-+# couple of milliseconds up to perhaps 100 milliseconds, which is an
-+# acceptable range.
-+#
-+# Why not calibrate an exact delay?  Because within this initrd, we
-+# are restricted to Bourne-shell builtins, which as far as I know do not
-+# provide any means of obtaining a fine-grained timestamp.
-+
-+a4="a a a a"
-+a16="$a4 $a4 $a4 $a4"
-+a64="$a8 $a8 $a8 $a8"
-+a192="$a64 $a64 $a64"
- while :
- do
- 	q=
--	for i in \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
--		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
-+	for i in $a192
- 	do
- 		q="$q $i"
- 	done
-
+Right, GPUs show up in /sys today. Don't register a whole new
+hierarchy as an alias to what already exists, add a new attribute
+scheme to the existing hierarchy. This is what the HMAT enabling is
+doing, this is what p2pdma is doing.
