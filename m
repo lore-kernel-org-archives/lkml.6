@@ -2,134 +2,87 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE14C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A0BC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA29D208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:15:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="OJO043c0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA29D208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	by mail.kernel.org (Postfix) with ESMTP id A70A620700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544062911;
+	bh=XGYqxKhIAn4Ydw+ilNgQAMK8PTyjozTe/Ce2LjWztg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tYRi2N65XigelOuDoIbc/69Rf4AQil0V3zTVhc86J5Ip0Lus0EIuDvXgXOP4gBXV2
+	 /4sDDYIxeRP+TkyQ8Nr493XkmNh9PAqmsuHg2i9NVdHQ5AeuwStzG1OFlLuh/TiE/X
+	 pVSZeloX37NjDSZPmFcJldHjwSzEOmhA7HY3m13g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70A620700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbeLFCPm (ORCPT
+        id S1728834AbeLFCVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 21:15:42 -0500
-Received: from plaes.org ([188.166.43.21]:35368 "EHLO plaes.org"
+        Wed, 5 Dec 2018 21:21:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727712AbeLFCPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 21:15:41 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id D9C8440588;
-        Thu,  6 Dec 2018 02:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544062538; bh=9714Czk1Qqpg4HbknhpRUPDNUe7v/H2WZQf5+YJ+ii0=;
+        id S1728219AbeLFCVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 21:21:50 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CD3A214C1;
+        Thu,  6 Dec 2018 02:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544062909;
+        bh=XGYqxKhIAn4Ydw+ilNgQAMK8PTyjozTe/Ce2LjWztg8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OJO043c0GChxb041Ey3YiZJsCNW5H+GcpSiM+QW9AsBnLNTzD3mcKbO/AKxR4wxKE
-         iS0weBKIyhd1TPpcvFaxRsOHRnukfjadV6y0MRHq8n3+hM3BTYj7ptho4ZGeMP9x27
-         hPu0o1Ap8kM5KwmZPF1vcFNunp+EMoUWS8WgIx9TUVpDItrl58glEwzdOBtgzHnW+q
-         NKHIn2a74ELU2KxFA6HN06Nbr521SyTGEThyK5kbp1HiS9j7e5+RmI9U+lVT6bIckw
-         GFh/tJQ5/V71SYFAElHt3/zqzykaXjcohMQuRLLxW8V9lUEfLjpRnVUrcES/dEXObG
-         qtyMayG0B50/w==
-Date:   Thu, 6 Dec 2018 02:15:37 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: Kconfig: Add configuration entry for
- MEDIA_MEM2MEM_SUPPORT
-Message-ID: <20181206021537.24jz4x4bpn5xojwg@plaes.org>
-References: <20181126163844.18729-1-plaes@plaes.org>
- <20181205174703.5d2a8529@coco.lan>
+        b=hI6dPT30M9laF4oLHiHBI8LkL1mNNFglfiHBOpv9XBEfzwYKnmd0D/juyw081YYZa
+         Bc7TPP8cANq8/isjPm0x5q1ZumNQgoXS2Qx5gP9TwkSaRdkTppfq22VwsFf9X3FgVS
+         lwF80Ay5pUPwLm5PEyLgNWxCuK0T2NSW96MWhb4Y=
+Date:   Thu, 6 Dec 2018 10:21:09 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH RESEND V2 0/4] ARM: dts: imx: Add flexcan stop mode wake
+Message-ID: <20181206022108.GY3987@dragon>
+References: <20181203051753.1532-1-qiangqing.zhang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205174703.5d2a8529@coco.lan>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181203051753.1532-1-qiangqing.zhang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:47:03PM -0200, Mauro Carvalho Chehab wrote:
-> Em Mon, 26 Nov 2018 18:38:44 +0200
-> Priit Laes <plaes@plaes.org> escreveu:
+On Mon, Dec 03, 2018 at 05:20:16AM +0000, Joakim Zhang wrote:
+> This patchset intends to add flexcan stop mode wakeup support on IMX6/7 platforms.
 > 
-> > Currently there is no easy way to enable mem2mem based video
-> > processor drivers (cedrus for example). Simplify this by adding
-> > separate category to media support.
-> > 
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >  drivers/media/Kconfig | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
-> > index 8add62a18293..f2a773896dcf 100644
-> > --- a/drivers/media/Kconfig
-> > +++ b/drivers/media/Kconfig
-> > @@ -56,6 +56,14 @@ config MEDIA_DIGITAL_TV_SUPPORT
-> >  	  Say Y when you have a board with digital support or a board with
-> >  	  hybrid digital TV and analog TV.
-> >  
-> > +config MEDIA_MEM2MEM_SUPPORT
-> > +    bool "Mem2mem devices (stateless media decoders/encoders support)"
-> > +    ---help---
-> > +	  Enable support for mem2mem / stateless media decoders/encoders.
-> > +
-> > +	  Say Y when you have a system with stateless media encoder/decoder
-> > +	  support.
-> > +
-> >  config MEDIA_RADIO_SUPPORT
-> >  	bool "AM/FM radio receivers/transmitters support"
-> >  	---help---
-> > @@ -95,7 +103,7 @@ source "drivers/media/cec/Kconfig"
-> >  
-> >  config MEDIA_CONTROLLER
-> >  	bool "Media Controller API"
-> > -	depends on MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_DIGITAL_TV_SUPPORT
-> > +	depends on MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_DIGITAL_TV_SUPPORT || MEDIA_MEM2MEM_SUPPORT
-> >  	---help---
-> >  	  Enable the media controller API used to query media devices internal
-> >  	  topology and configure it dynamically.
-> > @@ -118,7 +126,7 @@ config MEDIA_CONTROLLER_DVB
-> >  config VIDEO_DEV
-> >  	tristate
-> >  	depends on MEDIA_SUPPORT
-> > -	depends on MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_RADIO_SUPPORT || MEDIA_SDR_SUPPORT
-> > +	depends on MEDIA_CAMERA_SUPPORT || MEDIA_ANALOG_TV_SUPPORT || MEDIA_RADIO_SUPPORT || MEDIA_SDR_SUPPORT || MEDIA_MEM2MEM_SUPPORT
-> >  	default y
-> >  
-> >  config VIDEO_V4L2_SUBDEV_API
+> ChangeLog:
+> V1->V2:
+> 	*update stop mode property(stop-mode -> fsl,stop-mode).
 > 
-> Hmm... this patch looks incomplete. I mean, the main goal of those
-> MEDIA_*_SUPPORT is to make simpler for the users to select a
-> subset of the drivers. Those options actually make visible
-> the corresponding entries for pci/usb/... drivers. So,
-> for example, drivers/media/usb/Kconfig contains:
+> Hi Shawn,
+>    This property has been merged both flexcan bindings doc and kernel
+>    driver.
 > 
-> 	if MEDIA_CAMERA_SUPPORT
-> 		comment "Webcam devices"
-> 	source "drivers/media/usb/uvc/Kconfig"
-> 	source "drivers/media/usb/gspca/Kconfig"
-> 	source "drivers/media/usb/pwc/Kconfig"
-> 	source "drivers/media/usb/cpia2/Kconfig"
-> 	source "drivers/media/usb/zr364xx/Kconfig"
-> 	source "drivers/media/usb/stkwebcam/Kconfig"
-> 	source "drivers/media/usb/s2255/Kconfig"
-> 	source "drivers/media/usb/usbtv/Kconfig"
-> 	endif
+> Best Regards,
+> Joakim Zhang
 > 
-> If we'll be adding it, I would expect a corresponding change at
-> drivers/media/platform/Kconfig.
+> Aisheng Dong (4):
+>   ARM: dts: imx6sx: Add flexcan stop mode wakeup support
+>   ARM: dts: imx6qdl: Add flexcan stop mode wakeup support
+>   ARM: dts: imx6ul: Add flexcan stop mode wakeup support
+>   ARM: dts: imx7s: Add flexcan stop mode wakeup support
 
-Thanks, I will look into it. The current approach at least made it
-somewhat easier to enable sunxi-cedrus via menuconfig.
-> 
-> Thanks,
-> Mauro
+Applied all, thanks.
