@@ -2,378 +2,210 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91D0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D83C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B46520850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="p6MqxNJF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B46520850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id AFBE220700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544108174;
+	bh=cam+E+F7uqsaNknv2th6KtRUGoXkJ0sj0/ywuuWU0PM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yp/R559r0IBqvvP50eaiktVfH9NsdqTEZTc90sIT4xuxtL3vQy/c1Gza+MJmXWO9M
+	 zk4q0bI2hQsHd6NzdZ7MB+ytwyQvMGKeflqSkix1fc5PcebSk1KQMt2rX0bAX+q9dA
+	 /70y2gLNM0mwc+I150gTJAf+CMBDZkg81830sL8g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBE220700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeLFO4H (ORCPT
+        id S1726360AbeLFO4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:56:07 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:9033 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730721AbeLFOnm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:56:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730712AbeLFOnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 09:43:42 -0500
-X-IronPort-AV: E=Sophos;i="5.56,322,1539673200"; 
-   d="scan'208";a="21202706"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 06 Dec 2018 07:43:42 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 6 Dec 2018 07:43:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XU5i8+QZeZsZ3X/XUIxtGBZQF9a3YLeQ+llcqM0ec2Q=;
- b=p6MqxNJFRvvAFHNIhS/XfRMDebSSMROaVRtTV93+D7ccP4on4H9LLzEPDMPNGFtevqCI3qY1w3CiFX8pxW/sh9rXbkFe7wtfSiyX2x1ktCaf/uMVq+QsjJelnRTnIEgo6sigpl4ot5y7NhOOenoW6W+L3L4Lnui2lWAlWVtSEA8=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1892.namprd11.prod.outlook.com (10.175.100.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.21; Thu, 6 Dec 2018 14:43:39 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1404.021; Thu, 6 Dec 2018
- 14:43:39 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>, <Cyrille.Pitchen@microchip.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v2] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
-Thread-Topic: [PATCH v2] mtd: spi-nor: parse SFDP 4-byte Address Instruction
- Table
-Thread-Index: AQHUjXIThgwl+nYp10Owli2y3HUtkA==
-Date:   Thu, 6 Dec 2018 14:43:39 +0000
-Message-ID: <20181206144330.30860-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0802CA0027.eurprd08.prod.outlook.com
- (2603:10a6:800:a9::13) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1892;6:eUsefDzwfv692daJwkO+R0q4SNxd3FPzG/np4rTJ+61+My9IHq5azZ+cW5ZegWOiogr51MaQgOWZ3PjoZUfiHdcNwlYvm6N7htcDoFpT79pLWsAtAHdNaa7KJs/ubQlKTqQs2uYJeL4a9hjAcJLFRbu2EhUUEVUwEmwacYFxPyJAYlmQfqVVprsPcAggKI3+T+CIO3eQtUz+JFeIOdHb3mAiI6EHlZZ1/ry8MSOAVRSJa2FR26nNqNf78NNrSxFGp6jGlMoHE1r6T49rsRHVaRiG9+UqFaaVuIipo29J8SIOigEe58N0WUkPSWnJsiqPbV6G5YOPNxHiKfTjqGboawaYu6RarD6Tb2XpkbMNAPaI0ZFc6MQh/NboPnpqO4qiR/It6pEeJrecr0xXyNBRLHj3vGjMi0ylH9tAglP1hLUoGwszBFWHF/MEQW3RohQ/kZJ4fPBSadp0KCr3iNj5tA==;5:dUxklB7ZaUwmmKRMlMmUdCE3KzG8nvMeaJptDxu2W9OFQ5rSJPlxGAR9PGmdVJg58W5VWDsQGFNr9xOBUQ3vyOosGvfJOh0YUYaHZKeZlHk+7DKInTObU59gdqD2gMUnlT8rZxhFmf6SfQ9LREEeQTLGVh0jjtiE5s1610jGR88=;7:FhJTEy4sH++BkPilIVAWPs119U8OaLBl5KVpKpWDeCGxh6CRjm/WJL0OpdVhUzJyOHBzmKDf1cMumEHInXiktfyh//Kbj7NU5hz2gAUmV04zoPWQEyt87QeopqTiTQbAb9MGzUaeFzbtmQ3fGhKycQ==
-x-ms-office365-filtering-correlation-id: aac5ecd7-c3d8-4197-21af-08d65b89358a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1892;
-x-ms-traffictypediagnostic: BN6PR11MB1892:
-x-microsoft-antispam-prvs: <BN6PR11MB1892E2EDC7530734BB3FB75BF0A90@BN6PR11MB1892.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1892;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1892;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(346002)(136003)(189003)(199004)(4326008)(53936002)(6636002)(105586002)(106356001)(39060400002)(107886003)(36756003)(14454004)(66066001)(68736007)(6512007)(26005)(1076002)(186003)(3846002)(6116002)(386003)(6506007)(102836004)(99286004)(52116002)(14444005)(256004)(71200400001)(71190400001)(54906003)(316002)(110136005)(486006)(81166006)(81156014)(305945005)(7736002)(25786009)(97736004)(2616005)(476003)(8676002)(478600001)(2201001)(2906002)(6436002)(6486002)(8936002)(5660300001)(86362001)(575784001)(2501003)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1892;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: KOkrs5ZXDBRiAeZ+Mab9SfkL7iwf7YWuCz0jKeqBD5vYUz+QthENUTb2EMT56W1uqKVVHovBlbjI6aH011cjLQXKrWvietW6YyEUuskBWACxKDcL1TsH5p9fxLW4gi01ILPpdjW0cn+j46KfHH18ulhqTzyjHYRcEt/WlaCDVS1dBrqnyqIryU58wXoRISd2R85Gv24Z+W+jt5CZCJGCOeX1jP+y44KuoZZ7gwJmc12M0/yAVmm4Co7SY9aXwh8+0oEHX4uSSLsX0NcUPV6X75oUabgFscBmpldWMYg9kQllomUQM/LD+WGCESlKq4tJMmy8e+C63sp+yOrlMMQLanbNFA1Xe76EiVXenkmQUCo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2F562082B;
+        Thu,  6 Dec 2018 14:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544107421;
+        bh=cam+E+F7uqsaNknv2th6KtRUGoXkJ0sj0/ywuuWU0PM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uGawKfyYfk7LUl9d0b+AOv76lRdKqo6wwx2fQ4NiMTkaAoB0dfu8z0bJyOP0bRg0/
+         /CticpwDYlzwqqCLRB0B9J55PWtRXuF4HBJp6D1C9rpHzvNAMLf3hgQKfMzqyyFViQ
+         Cvs7eNPwKLS/q6qiE6lAqr1QGKZZe5nphTaPHR/o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.14 21/55] drm/meson: Fix OOB memory accesses in meson_viu_set_osd_lut()
+Date:   Thu,  6 Dec 2018 15:38:55 +0100
+Message-Id: <20181206143002.881189154@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
+References: <20181206143001.749982936@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: aac5ecd7-c3d8-4197-21af-08d65b89358a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 14:43:39.1110
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1892
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Add support for SFDP (JESD216B) 4-byte Address Instruction Table. This
-table is optional but when available, we parse it to get the 4-byte
-address op codes supported by the memory.
-Using these op codes is stateless as opposed to entering the 4-byte
-address mode or setting the Base Address Register (BAR).
+------------------
 
-Flashes that have the 4BAIT table declared can now support
-SPINOR_OP_PP_1_1_4_4B and SPINOR_OP_PP_1_4_4_4B opcodes.
+From: Lyude Paul <lyude@redhat.com>
 
-Tested on MX25L25673G.
+commit 97b2a3180a559a33852ac0cd77904166069484fd upstream.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
-[tudor.ambarus@microchip.com:
-- rework erase and page program logic,
-- pass DMA-able buffer to spi_nor_read_sfdp(),
-- introduce SPI_NOR_HAS_4BAIT
-- various minor updates.]
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Currently on driver bringup with KASAN enabled, meson triggers an OOB
+memory access as shown below:
+
+[  117.904528] ==================================================================
+[  117.904560] BUG: KASAN: global-out-of-bounds in meson_viu_set_osd_lut+0x7a0/0x890
+[  117.904588] Read of size 4 at addr ffff20000a63ce24 by task systemd-udevd/498
+[  117.904601]
+[  118.083372] CPU: 4 PID: 498 Comm: systemd-udevd Not tainted 4.20.0-rc3Lyude-Test+ #20
+[  118.091143] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
+[  118.099768] Call trace:
+[  118.102181]  dump_backtrace+0x0/0x3e8
+[  118.105796]  show_stack+0x14/0x20
+[  118.109083]  dump_stack+0x130/0x1c4
+[  118.112539]  print_address_description+0x60/0x25c
+[  118.117214]  kasan_report+0x1b4/0x368
+[  118.120851]  __asan_report_load4_noabort+0x18/0x20
+[  118.125566]  meson_viu_set_osd_lut+0x7a0/0x890
+[  118.129953]  meson_viu_init+0x10c/0x290
+[  118.133741]  meson_drv_bind_master+0x474/0x748
+[  118.138141]  meson_drv_bind+0x10/0x18
+[  118.141760]  try_to_bring_up_master+0x3d8/0x768
+[  118.146249]  component_add+0x214/0x570
+[  118.149978]  meson_dw_hdmi_probe+0x18/0x20 [meson_dw_hdmi]
+[  118.155404]  platform_drv_probe+0x98/0x138
+[  118.159455]  really_probe+0x2a0/0xa70
+[  118.163070]  driver_probe_device+0x1b4/0x2d8
+[  118.167299]  __driver_attach+0x200/0x280
+[  118.171189]  bus_for_each_dev+0x10c/0x1a8
+[  118.175144]  driver_attach+0x38/0x50
+[  118.178681]  bus_add_driver+0x330/0x608
+[  118.182471]  driver_register+0x140/0x388
+[  118.186361]  __platform_driver_register+0xc8/0x108
+[  118.191117]  meson_dw_hdmi_platform_driver_init+0x1c/0x1000 [meson_dw_hdmi]
+[  118.198022]  do_one_initcall+0x12c/0x3bc
+[  118.201883]  do_init_module+0x1fc/0x638
+[  118.205673]  load_module+0x4b4c/0x6808
+[  118.209387]  __se_sys_init_module+0x2e8/0x3c0
+[  118.213699]  __arm64_sys_init_module+0x68/0x98
+[  118.218100]  el0_svc_common+0x104/0x210
+[  118.221893]  el0_svc_handler+0x48/0xb8
+[  118.225594]  el0_svc+0x8/0xc
+[  118.228429]
+[  118.229887] The buggy address belongs to the variable:
+[  118.235007]  eotf_33_linear_mapping+0x84/0xc0
+[  118.239301]
+[  118.240752] Memory state around the buggy address:
+[  118.245522]  ffff20000a63cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  118.252695]  ffff20000a63cd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  118.259850] >ffff20000a63ce00: 00 00 00 00 04 fa fa fa fa fa fa fa 00 00 00 00
+[  118.267000]                                ^
+[  118.271222]  ffff20000a63ce80: 00 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+[  118.278393]  ffff20000a63cf00: 00 00 00 00 00 00 00 00 00 00 00 00 04 fa fa fa
+[  118.285542] ==================================================================
+[  118.292699] Disabling lock debugging due to kernel taint
+
+It seems that when looping through the OSD EOTF LUT maps, we use the
+same max iterator for OETF: 20. This is wrong though, since 20*2 is 40,
+which means that we'll stop out of bounds on the EOTF maps.
+
+But, this whole thing is already confusing enough to read through as-is,
+so let's just replace all of the hardcoded sizes with
+OSD_(OETF/EOTF)_LUT_SIZE / 2.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: <stable@vger.kernel.org> # v4.10+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181125012117.31915-1-lyude@redhat.com
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-v2:
-- introduce SPI_NOR_HAS_4BAIT
-- use SNOR_F_4B_OPCODES
+ drivers/gpu/drm/meson/meson_viu.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-This patch depends on:
-- "mtd: spi-nor: fix selection of uniform erase type in flexible conf"
-  which was already applied as a fix
-- "mtd: spi-nor: Add the SNOR_F_4B_OPCODES flag" which will be present
-  in spi-nor/next
+--- a/drivers/gpu/drm/meson/meson_viu.c
++++ b/drivers/gpu/drm/meson/meson_viu.c
+@@ -184,18 +184,18 @@ void meson_viu_set_osd_lut(struct meson_
+ 	if (lut_sel == VIU_LUT_OSD_OETF) {
+ 		writel(0, priv->io_base + _REG(addr_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+ 		writel(r_map[OSD_OETF_LUT_SIZE - 1] | (g_map[0] << 16),
+ 			priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+@@ -211,18 +211,18 @@ void meson_viu_set_osd_lut(struct meson_
+ 	} else if (lut_sel == VIU_LUT_OSD_EOTF) {
+ 		writel(0, priv->io_base + _REG(addr_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+ 		writel(r_map[OSD_EOTF_LUT_SIZE - 1] | (g_map[0] << 16),
+ 			priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
 
- drivers/mtd/spi-nor/spi-nor.c | 193 ++++++++++++++++++++++++++++++++++++++=
-+++-
- include/linux/mtd/spi-nor.h   |   1 +
- 2 files changed, 193 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index a9508db58d7f..e77efc153736 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -121,6 +121,7 @@ struct sfdp_parameter_header {
-=20
- #define SFDP_BFPT_ID		0xff00	/* Basic Flash Parameter Table */
- #define SFDP_SECTOR_MAP_ID	0xff81	/* Sector Map Table */
-+#define SFDP_4BAIT_ID		0xff84  /* 4-byte Address Instruction Table */
-=20
- #define SFDP_SIGNATURE		0x50444653U
- #define SFDP_JESD216_MAJOR	1
-@@ -3179,6 +3180,191 @@ static int spi_nor_parse_smpt(struct spi_nor *nor,
- 	return ret;
- }
-=20
-+#define SFDP_4BAIT_DWORD_MAX	2
-+
-+struct sfdp_4bait {
-+	/* The hardware capability. */
-+	u32		hwcaps;
-+
-+	/*
-+	 * The <supported_bit> bit in DWORD1 of the 4BAIT tells us whether
-+	 * the associated 4-byte address op code is supported.
-+	 */
-+	u32		supported_bit;
-+};
-+
-+/**
-+ * spi_nor_parse_4bait() - parse the 4-Byte Address Instruction Table
-+ * @nor:		pointer to a 'struct spi_nor'.
-+ * @param_header:	pointer to the 'struct sfdp_parameter_header' describing
-+ *			the 4-Byte Address Instruction Table length and version.
-+ * @params:		pointer to the 'struct spi_nor_flash_parameter' to be.
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int spi_nor_parse_4bait(struct spi_nor *nor,
-+			       const struct sfdp_parameter_header *param_header,
-+			       struct spi_nor_flash_parameter *params)
-+{
-+	static const struct sfdp_4bait reads[] =3D {
-+		{ SNOR_HWCAPS_READ,		BIT(0) },
-+		{ SNOR_HWCAPS_READ_FAST,	BIT(1) },
-+		{ SNOR_HWCAPS_READ_1_1_2,	BIT(2) },
-+		{ SNOR_HWCAPS_READ_1_2_2,	BIT(3) },
-+		{ SNOR_HWCAPS_READ_1_1_4,	BIT(4) },
-+		{ SNOR_HWCAPS_READ_1_4_4,	BIT(5) },
-+		{ SNOR_HWCAPS_READ_1_1_1_DTR,	BIT(13) },
-+		{ SNOR_HWCAPS_READ_1_2_2_DTR,	BIT(14) },
-+		{ SNOR_HWCAPS_READ_1_4_4_DTR,	BIT(15) },
-+	};
-+	static const struct sfdp_4bait programs[] =3D {
-+		{ SNOR_HWCAPS_PP,		BIT(6) },
-+		{ SNOR_HWCAPS_PP_1_1_4,		BIT(7) },
-+		{ SNOR_HWCAPS_PP_1_4_4,		BIT(8) },
-+	};
-+	static const struct sfdp_4bait erases[SNOR_ERASE_TYPE_MAX] =3D {
-+		{ 0u /* not used */,		BIT(9) },
-+		{ 0u /* not used */,		BIT(10) },
-+		{ 0u /* not used */,		BIT(11) },
-+		{ 0u /* not used */,		BIT(12) },
-+	};
-+	struct spi_nor_pp_command *params_pp =3D params->page_programs;
-+	struct spi_nor_erase_map *map =3D &nor->erase_map;
-+	struct spi_nor_erase_type *erase_type =3D map->erase_type;
-+	u32 *dwords;
-+	size_t len;
-+	u32 addr, discard_hwcaps, read_hwcaps, pp_hwcaps, erase_mask;
-+	int i, ret;
-+
-+	if (param_header->major !=3D SFDP_JESD216_MAJOR ||
-+	    param_header->length < SFDP_4BAIT_DWORD_MAX)
-+		return -EINVAL;
-+
-+	/* Read the 4-byte Address Instruction Table. */
-+	len =3D sizeof(*dwords) * SFDP_4BAIT_DWORD_MAX;
-+
-+	/* Use a kmalloc'ed bounce buffer to guarantee it is DMA-able. */
-+	dwords =3D kmalloc(len, GFP_KERNEL);
-+	if (!dwords)
-+		return -ENOMEM;
-+
-+	addr =3D SFDP_PARAM_HEADER_PTP(param_header);
-+	ret =3D spi_nor_read_sfdp(nor, addr, len, dwords);
-+	if (ret)
-+		return ret;
-+
-+	/* Fix endianness of the 4BAIT DWORDs. */
-+	for (i =3D 0; i < SFDP_4BAIT_DWORD_MAX; i++)
-+		dwords[i] =3D le32_to_cpu(dwords[i]);
-+
-+	/*
-+	 * Compute the subset of (Fast) Read commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	discard_hwcaps =3D 0;
-+	read_hwcaps =3D 0;
-+	for (i =3D 0; i < ARRAY_SIZE(reads); i++) {
-+		const struct sfdp_4bait *read =3D &reads[i];
-+
-+		discard_hwcaps |=3D read->hwcaps;
-+		if ((params->hwcaps.mask & read->hwcaps) &&
-+		    (dwords[0] & read->supported_bit))
-+			read_hwcaps |=3D read->hwcaps;
-+	}
-+
-+	/*
-+	 * Compute the subset of Page Program commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	pp_hwcaps =3D 0;
-+	for (i =3D 0; i < ARRAY_SIZE(programs); i++) {
-+		const struct sfdp_4bait *program =3D &programs[i];
-+
-+		/*
-+		 * The 4 Byte Address Instruction (Optional) Table is the only
-+		 * SFDP table that indicates support for Page Program Commands.
-+		 * Bypass the params->hwcaps.mask and consider 4BAIT the biggest
-+		 * authority for specifying Page Program support.
-+		 */
-+		discard_hwcaps |=3D program->hwcaps;
-+		if (dwords[0] & program->supported_bit)
-+			pp_hwcaps |=3D program->hwcaps;
-+	}
-+
-+	/*
-+	 * Compute the subset of Sector Erase commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	erase_mask =3D 0;
-+	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		const struct sfdp_4bait *erase =3D &erases[i];
-+
-+		if (dwords[0] & erase->supported_bit)
-+			erase_mask |=3D BIT(i);
-+	}
-+
-+	/* Replicate the sort done for the map's erase types in BFPT. */
-+	erase_mask =3D spi_nor_sort_erase_mask(map, erase_mask);
-+
-+	/*
-+	 * We need at least one 4-byte op code per read, program and erase
-+	 * operation; the .read(), .write() and .erase() hooks share the
-+	 * nor->addr_width value.
-+	 */
-+	if (!read_hwcaps || !pp_hwcaps || !erase_mask)
-+		goto out;
-+
-+	/*
-+	 * Discard all operations from the 4-byte instruction set which are
-+	 * not supported by this memory.
-+	 */
-+	params->hwcaps.mask &=3D ~discard_hwcaps;
-+	params->hwcaps.mask |=3D (read_hwcaps | pp_hwcaps);
-+
-+	/* Use the 4-byte address instruction set. */
-+	for (i =3D 0; i < SNOR_CMD_READ_MAX; i++) {
-+		struct spi_nor_read_command *read_cmd =3D &params->reads[i];
-+
-+		read_cmd->opcode =3D spi_nor_convert_3to4_read(read_cmd->opcode);
-+	}
-+
-+	/* 4BAIT is the only SFDP table that indicates page program support. */
-+	if (pp_hwcaps & SNOR_HWCAPS_PP)
-+		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP],
-+					SPINOR_OP_PP_4B, SNOR_PROTO_1_1_1);
-+	if (pp_hwcaps & SNOR_HWCAPS_PP_1_1_4)
-+		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP_1_1_4],
-+					SPINOR_OP_PP_1_1_4_4B,
-+					SNOR_PROTO_1_1_4);
-+	if (pp_hwcaps & SNOR_HWCAPS_PP_1_4_4)
-+		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP_1_4_4],
-+					SPINOR_OP_PP_1_4_4_4B,
-+					SNOR_PROTO_1_4_4);
-+
-+	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		if (erase_mask & BIT(i))
-+			erase_type[i].opcode =3D (dwords[1] >>
-+						erase_type[i].idx * 8) & 0xFF;
-+		else
-+			spi_nor_set_erase_type(&erase_type[i], 0u, 0xFF);
-+	}
-+
-+	/*
-+	 * We set SNOR_F_HAS_4BAIT in order to skip spi_nor_set_4byte_opcodes()
-+	 * later because we already did the conversion to 4byte opcodes. Also,
-+	 * this latest function implements a legacy quirk for the erase size of
-+	 * Spansion memory. However this quirk is no longer needed with new
-+	 * SFDP compliant memories.
-+	 */
-+	nor->addr_width =3D 4;
-+	nor->flags |=3D SNOR_F_4B_OPCODES | SNOR_F_HAS_4BAIT;
-+
-+	/* fall through */
-+out:
-+	kfree(dwords);
-+	return ret;
-+}
-+
- /**
-  * spi_nor_parse_sfdp() - parse the Serial Flash Discoverable Parameters.
-  * @nor:		pointer to a 'struct spi_nor'
-@@ -3276,6 +3462,10 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
- 			err =3D spi_nor_parse_smpt(nor, param_header);
- 			break;
-=20
-+		case SFDP_4BAIT_ID:
-+			err =3D spi_nor_parse_4bait(nor, param_header, params);
-+			break;
-+
- 		default:
- 			break;
- 		}
-@@ -3857,7 +4047,8 @@ int spi_nor_scan(struct spi_nor *nor, const char *nam=
-e,
- 	    (JEDEC_MFR(info) =3D=3D SNOR_MFR_SPANSION && mtd->size > SZ_16M))
- 		nor->flags |=3D SNOR_F_4B_OPCODES;
-=20
--	if (nor->addr_width =3D=3D 4 && nor->flags & SNOR_F_4B_OPCODES)
-+	if (nor->addr_width =3D=3D 4 && nor->flags & SNOR_F_4B_OPCODES &&
-+	    !(nor->flags & SNOR_F_HAS_4BAIT))
- 		spi_nor_set_4byte_opcodes(nor);
-=20
- 	if (nor->addr_width > SPI_NOR_MAX_ADDR_WIDTH) {
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 5f177aa39f68..fa2d89e38e40 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -234,6 +234,7 @@ enum spi_nor_option_flags {
- 	SNOR_F_USE_CLSR		=3D BIT(5),
- 	SNOR_F_BROKEN_RESET	=3D BIT(6),
- 	SNOR_F_4B_OPCODES	=3D BIT(7),
-+	SNOR_F_HAS_4BAIT	=3D BIT(8),
- };
-=20
- /**
---=20
-2.9.4
 
