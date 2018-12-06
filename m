@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9BFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929BCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B618F2082D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8DD2082D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:56:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="k1ewxlKK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B618F2082D
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kPHi2dOE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8DD2082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeLFD4r (ORCPT
+        id S1729103AbeLFD4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 22:56:47 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:59102 "EHLO
+        Wed, 5 Dec 2018 22:56:52 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:59213 "EHLO
         conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbeLFD4p (ORCPT
+        with ESMTP id S1729058AbeLFD4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 22:56:45 -0500
+        Wed, 5 Dec 2018 22:56:50 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id wB63trS9007398;
-        Thu, 6 Dec 2018 12:55:56 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wB63trS9007398
+        by conuserg-09.nifty.com with ESMTP id wB63trS6007398;
+        Thu, 6 Dec 2018 12:55:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wB63trS6007398
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544068556;
-        bh=vq9iTJECSWUXoTz65/XclZ3Mf1gaCLqGMYaa34hNQzo=;
+        s=dec2015msa; t=1544068555;
+        bh=2y2cw2qzebvkA+Mtv/XDf/lXFAsgLnN70QsGjRHK68c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1ewxlKKR/XsG0V3d2Akt8g4TCv+aHm8a3OUtlC8uoyfqlPwXE86mMbvpBNYHAlGk
-         BFw+pLk33zxTefChgiYmvRz76SlVxWnBLj35a8HUEWMpcUJvqzCTkbzMoN2pUZkxVO
-         Aqgk9SixT51vdYPldt7PYFF3ed0DzNmduOj+Q644GKI6qusqPACK6k1PxU+L4pmCMi
-         qJHrijhwNA+bowo36nqA7rR6QrV4MySgNH/FvcX0nvGW4lGgfRtR/KRfMYth4XZPhf
-         VIM1lNbkIJWyYvU3QofXTnynRpj/7Xjn0nbU2rsVxvBhaxfCe/4mWpILRNuQCp570B
-         x4fQeA+ztAolA==
+        b=kPHi2dOEi3qWH6h8XKwY274U9vnp6zKg7l3nNiKvf+kib3GV6+hakUNhgUnJJv/NF
+         QHc/hlsIotcEtGB5VC2dt/W9jOMZqqbgx8hd5vZ3ylxiudEBtz8JnBgUwak7qri5rt
+         Zpt+7C4FpNFZjl8l8IW8KZNAfoQ1ZMIV8KPl+Aiiilu2M+0j9fYu5OskyJ4UINipp7
+         kdkbPwV862Vny5wy2cJZ1alQv9PL7LDEz2AIMbYuPxYGX7ZvElrn9bsnDorMCu/2CW
+         oWeUxwZPvHto49Ojo8gn5cZ4aIXQT+MsT1D4wDwCF9w4GI/LiHEO9CTKWOrP9c6CJ/
+         1zoDG2ayu67Zw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] i2c: uniphier-f: fix violation of tLOW requirement for Fast-mode
-Date:   Thu,  6 Dec 2018 12:55:28 +0900
-Message-Id: <1544068528-27657-5-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 1/4] i2c: uniphier-f: fix timeout error after reading 8 bytes
+Date:   Thu,  6 Dec 2018 12:55:25 +0900
+Message-Id: <1544068528-27657-2-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544068528-27657-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544068528-27657-1-git-send-email-yamada.masahiro@socionext.com>
@@ -56,51 +56,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
+I was totally screwed up in commit eaba68785c2d ("i2c: uniphier-f:
+fix race condition when IRQ is cleared"). Since that commit, if the
+number of read bytes is multiple of the FIFO size (8, 16, 24... bytes),
+the STOP condition could be issued twice, depending on the timing.
+If this happens, the controller will go wrong, resulting in the timeout
+error.
 
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
+It was more than 3 years ago when I wrote this driver, so my memory
+about this hardware was vague. Please let me correct the description
+in the commit log of eaba68785c2d.
 
+Clearing the IRQ status on exiting the IRQ handler is absolutely
+fine. This controller makes a pause while any IRQ status is asserted.
+If the IRQ status is cleared first, the hardware may start the next
+transaction before the IRQ handler finishes what it supposed to do.
+
+This partially reverts the bad commit with clear comments so that I
+will never repeat this mistake.
+
+I also investigated what is happening at the last moment of the read
+mode. The UNIPHIER_FI2C_INT_RF interrupt is asserted a bit earlier
+(by half a period of the clock cycle) than UNIPHIER_FI2C_INT_RB.
+
+I consulted a hardware engineer, and I got the following information:
+
+UNIPHIER_FI2C_INT_RF
+    asserted at the falling edge of SCL at the 8th bit.
+
+UNIPHIER_FI2C_INT_RB
+    asserted at the rising edge of SCL at the 9th (ACK) bit.
+
+In order to avoid calling uniphier_fi2c_stop() twice, check the latter
+interrupt. I also commented this because it is obscure hardware internal.
+
+Fixes: eaba68785c2d ("i2c: uniphier-f: fix race condition when IRQ is cleared")
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- drivers/i2c/busses/i2c-uniphier-f.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-uniphier-f.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index d8a5db14..03da4a5 100644
+index dd38474..fad2b00 100644
 --- a/drivers/i2c/busses/i2c-uniphier-f.c
 +++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -518,9 +518,26 @@ static void uniphier_fi2c_hw_init(struct uniphier_fi2c_priv *priv)
+@@ -173,8 +173,6 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
+ 		"interrupt: enabled_irqs=%04x, irq_status=%04x\n",
+ 		priv->enabled_irqs, irq_status);
  
- 	uniphier_fi2c_reset(priv);
+-	uniphier_fi2c_clear_irqs(priv, irq_status);
+-
+ 	if (irq_status & UNIPHIER_FI2C_INT_STOP)
+ 		goto complete;
  
-+	/*
-+	 *  Standard-mode: tLOW + tHIGH = 10 us
-+	 *  Fast-mode:     tLOW + tHIGH = 2.5 us
-+	 */
- 	writel(cyc, priv->membase + UNIPHIER_FI2C_CYC);
--	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us, tBUF = 4.7 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us, tBUF = 1.3 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel(cyc * 5 / 9, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tHD;STA = 4.0 us, tSU;STA = 4.7 us, tSU;STO = 4.0 us
-+	 *  Fast-mode:     tHD;STA = 0.6 us, tSU;STA = 0.6 us, tSU;STO = 0.6 us
-+	 */
- 	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_SSUT);
-+	/*
-+	 *  Standard-mode: tSU;DAT = 250 ns
-+	 *  Fast-mode:     tSU;DAT = 100 ns
-+	 */
- 	writel(cyc / 16, priv->membase + UNIPHIER_FI2C_DSUT);
+@@ -214,7 +212,13 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
  
- 	uniphier_fi2c_prepare_operation(priv);
+ 	if (irq_status & (UNIPHIER_FI2C_INT_RF | UNIPHIER_FI2C_INT_RB)) {
+ 		uniphier_fi2c_drain_rxfifo(priv);
+-		if (!priv->len)
++		/*
++		 * If the number of bytes to read is multiple of the FIFO size
++		 * (msg->len == 8, 16, 24, ...), the INT_RF bit is set a little
++		 * earlier than INT_RB. We wait for INT_RB to confirm the
++		 * completion of the current message.
++		 */
++		if (!priv->len && (irq_status & UNIPHIER_FI2C_INT_RB))
+ 			goto data_done;
+ 
+ 		if (unlikely(priv->flags & UNIPHIER_FI2C_MANUAL_NACK)) {
+@@ -253,6 +257,13 @@ static irqreturn_t uniphier_fi2c_interrupt(int irq, void *dev_id)
+ 	}
+ 
+ handled:
++	/*
++	 * This controller makes a pause while any bit of the IRQ status is
++	 * asserted. Clear the asserted bit to kick the controller just before
++	 * exiting the handler.
++	 */
++	uniphier_fi2c_clear_irqs(priv, irq_status);
++
+ 	spin_unlock(&priv->lock);
+ 
+ 	return IRQ_HANDLED;
 -- 
 2.7.4
 
