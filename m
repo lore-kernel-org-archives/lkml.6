@@ -2,94 +2,380 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95518C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD93C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5315D20659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06F2F20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:24:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544113424;
-	bh=P2fIXxw8SA4TP0x0ycc2DiUzDEMtrWNJsRfrocsylcg=;
+	s=default; t=1544113442;
+	bh=rq84GMB7rE5fu98WHJ7UGD8axLewuZfIE7zGeasj6l8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=J5HuTXfQ9LxbBP3Zq5++pZ0G4dDEqHedyHfWJuC3sAVtco/1R9xTE86tAm7oJHNhH
-	 4F3QGYnyVSr0fx23ABKp9uAuX5ked+h1+1XR2kYU6IzyymdxpW3ZJxttyE8jsozbc4
-	 hFeIa4sCYTX19p95oVncvUbrsDFSEmIxd++I/Yh4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5315D20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	b=Mz1E2zFdmdzO23HGikuyXoYg9bfk3iPEiZfgLpiAIMqctbc+eQFYoICVjARZ+f+9d
+	 mTqaha83f1550zDN37ALOZpLoWC08AwlD7ixHjDz5vmSnyNQYkJGu65BZq6sgJC5wP
+	 XENZnwDDmbUT0AaCpq9h/q3NcPXnZtc365E8AVDk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F2F20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeLFQXn (ORCPT
+        id S1726220AbeLFQYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:23:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFQXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:23:42 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB0C920659;
-        Thu,  6 Dec 2018 16:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544113422;
-        bh=P2fIXxw8SA4TP0x0ycc2DiUzDEMtrWNJsRfrocsylcg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D3Mz1FpiGsCWCoaJjr19rPGGTxuhlIImizYfNBhiwW7RBPEShyGQ03n1gewzHCvWW
-         U92V7TO+/NNPl8NepbjoLwxiONKhqtWAzZ11WbM35XeCJwufGjRYi8umoG1l8MHRmH
-         AjAtFmj7wM1DHS+0lcIZxz5zUaEIQ7b6aY9al60M=
-Date:   Thu, 6 Dec 2018 17:23:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Cc:     Sicilia Cristian <sicilia.cristian@gmail.com>,
-        devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>,
-        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
-        greybus-dev@lists.linaro.org
-Subject: Re: [PATCH 2/2] staging: greybus: Added space between string
- concatenated
-Message-ID: <20181206162340.GA12032@kroah.com>
-References: <cover.1543956271.git.sicilia.cristian@gmail.com>
- <5b215b50d4da9a7730450a83fb5e3a167b65e03a.1543956271.git.sicilia.cristian@gmail.com>
- <42632636-9b08-bd75-b789-88ef82f52c2c@nexus-software.ie>
- <20181205210034.GA24054@peano>
- <e7902148-4f80-2d9c-7f51-d6bd21bf9eff@nexus-software.ie>
- <20181206150516.GA1774@kroah.com>
- <131a4c41-2c5f-a660-5190-52ce5d59e532@nexus-software.ie>
+        Thu, 6 Dec 2018 11:24:00 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38062 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbeLFQX7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:23:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so1085410wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:23:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VWAAkCawjwQLxdAls8KtL7gJfoLNQB5klFgyJ1pyUkY=;
+        b=Byds0QY4m5ogBT0O7P0bfolIhN+JQloJHaMEZ5MNi4jqjrNTsdcG/1PNpun76E7NXF
+         0xdmZmMALtYolCtSyAVrArOGqofypvgnA1DxD8CJtxNAAvxWuZcjEK8P3/MyYTdcXHQE
+         ew5URbwR8SN833SpKRGFO//bZ0JNvRLO0Fje2i0KVviQjn9YEcMFQNXqIUPCY1+z7ydq
+         NH4JO0Vyf4ROFoXr3sqUOEhkzP/EsaomLRzpTvWwVubBu+K5ZQKokrGRwHYJI4P5mxqI
+         BE7ZmNFM5GuazpeBYEj8sSFLbrwqBicqJc9KlwjYXAZOUxM+hI7tIkK69wVrK/iEeAyy
+         7pDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VWAAkCawjwQLxdAls8KtL7gJfoLNQB5klFgyJ1pyUkY=;
+        b=OqmdKd/l4PRvVzIVnfYABk2skUlENgY9SsFS0HGH2S299w6odqhih+/0kcRv6DBaCT
+         jvXnSkctIQxzQytuJHcCRl6lxKe4FsuGKAy33cDwDaGkNBzDB0XYlCZTwz1mgOXSQm69
+         nZ2HVcMYAUvF/O7UzaPg7n8JG5HgL6urn8AFLcDoUK2G1PuINrpQU3aik4dCv/tfrB9u
+         YaK9j1vdH9y/8mCOo0+flN6xsRniFsBKy/+Up+8jqgdswH04jemiP5GDIKlJzOKOg2dr
+         sHlQ7whP2LdqB2A2vPDh9cxNyfWHPttuiRkmLzM9KvDXzc3vFRKACVPrPR+lOMQ78WA2
+         7KTA==
+X-Gm-Message-State: AA+aEWbQBmiCcYFV26My998L1z3hbZIBozo4y4CWy2N873AKWc90RT8y
+        X6p7sUcL6KVV1vx5riIf+Js=
+X-Google-Smtp-Source: AFSGD/U7DI8jIZNQN3VQXmUdpVBtj9FsAbXqNe9wTCl0L8dCcm6fgRdfuL+g1vxysFoQThhVxIXcjw==
+X-Received: by 2002:a5d:6710:: with SMTP id o16mr26444446wru.152.1544113436720;
+        Thu, 06 Dec 2018 08:23:56 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z9sm1250760wrs.63.2018.12.06.08.23.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 08:23:56 -0800 (PST)
+Date:   Thu, 6 Dec 2018 17:23:53 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [PATCH] x86/mm/fault: Streamline the fault error_code decoder
+ some more
+Message-ID: <20181206162353.GA119052@gmail.com>
+References: <20181205163624.1842-1-sean.j.christopherson@intel.com>
+ <20181206073409.GA64887@gmail.com>
+ <20181206155336.GC31263@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <131a4c41-2c5f-a660-5190-52ce5d59e532@nexus-software.ie>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181206155336.GC31263@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:14:53PM +0000, Bryan O'Donoghue wrote:
-> On 06/12/2018 15:05, Greg Kroah-Hartman wrote:
-> > On Thu, Dec 06, 2018 at 09:43:46AM +0000, Bryan O'Donoghue wrote:
-> > > On 05/12/2018 21:00, Sicilia Cristian wrote:
-> > > > It doesn't change the result string
-> > > 
-> > > So why do it then ?
+
+* Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+
+> On Thu, Dec 06, 2018 at 08:34:09AM +0100, Ingo Molnar wrote:
+> > I like your '!' idea, but with a further simplification: how about using 
+> > '-/+' differentiation and a single character and a fixed-length message.
 > > 
-> > Because it is easier to read this way and odds are checkpatch is
-> > happier.
+> > The new output will be lines of:
+> > 
+> >   #PF error code: -P -W -U -S -I -K (0x00)
+> >   ...
+> >   #PF error code: -P -W +U +S -I -K (0x0c)
+> >   ...
+> >   #PF error code: +P +W +U +S +I +K (0x3f)
+> > 
+> > The symbol abbreviations are pretty self-explanatory:
+> > 
+> >   P = protection fault   (X86_PF_PROT)
+> >   W = write access       (X86_PF_WRITE)
+> >   U = user-mode access   (X86_PF_USER)
+> >   S = supervisor mode    (X86_PF_RSVD)
+> >   I = instruction fault  (X86_PF_INSTR)
+> >   K = keys fault         (X86_PF_PK)
+> > 
+> > Misc notes:
+> > 
+> > - In principle the new text is now short enough to include it in one of 
+> >   the existing output lines, further shortening the oops output - but I
+> >   havent done that in this patch.
+> > 
+> > - Another question is the ordering of the bits: the symbolic display is 
+> >   actually big endian, while the numeric hexa printout is little endian.
+> > 
+> >   I kind of still like it that way, not just because the decoding loop is 
+> >   more natural, but because the bits are actually ordered by importance: 
+> >   the PROT bits is more important than the INSTR or the PK bits - and the 
+> >   more important bits are displayed first.
 > 
-> Fine.
+> Hmm, my eyes tend to be drawn to the end of the line, e.g. having PROT
+> be the last thing makes it stand out more than being buried in the middle
+> of the line.  Inverting the ordering between raw and decoded also makes
+> it very difficult to correlate the raw value with each bit.
 > 
-> Sicilia could you please amend your commit.
+> > - Only build-tested the patch and looked at the generated assembly, but 
+> >   it all looks sane enough so will obviously work just fine! ;-)
 > 
-> 'This patch fixes the checkpatch error "CHECK: Concatenated strings should
-> use spaces between elements"'
+> ...
 > 
-> and then feel free to add my
+> >  /*
+> > - * This helper function transforms the #PF error_code bits into
+> > - * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
+> > + * This maps the somewhat obscure error_code number to symbolic text:
+> > + *
+> > + * P = protection fault   (X86_PF_PROT)
+> > + * W = write access       (X86_PF_WRITE)
+> > + * U = user-mode access   (X86_PF_USER)
+> > + * S = supervisor mode    (X86_PF_RSVD)
+> > + * I = instruction fault  (X86_PF_INSTR)
+> > + * K = keys fault         (X86_PF_PK)
+> >   */
+> > -static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
+> > +static const char error_code_chars[] = "PWUSIK";
+> > +
+> > +/*
+> > + * This helper function transforms the #PF error_code bits into " +P -W +U -R -I -K"
+> > + * type of descriptive, almost human-readable error strings:
+> > + */
+> > +static void show_error_code(struct pt_regs *regs, unsigned long error_code)
 > 
-> Acked-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+> No need for @regs.
+> 
+> >  {
+> > -     if (error_code & mask) {
+> > -             if (buf[0])
+> > -                     strcat(buf, " ");
+> > -             strcat(buf, txt);
+> > +     unsigned int bit, mask;
+> > +     char err_txt[6*3+1]; /* Fixed length of 6 bits decoded plus zero at the end */
+> 
+> Assuming the error code bits are contiguous breaks if/when SGX gets added,
+> which uses bit 15.  Oopsing on an SGX fault should be nigh impossible, but
+> it might be nice to be able to reuse show_error_code in other places.
+> 
+> Hardcoding "6" is also a bit painful.
+> 
+> > +
+> > +     /* We go from the X86_PF_PROT bit to the X86_PF_PK bit: */
+> > +
+> > +     for (bit = 0; bit < 6; bit++) {
+> > +             unsigned int offset = bit*3;
+> > +
+> > +             err_txt[offset+0] = ' ';
+> > +
+> > +             mask = 1 << bit;
+> > +             if (error_code & mask)
+> > +                     err_txt[offset+1] = '+';
+> > +             else
+> > +                     err_txt[offset+1] = '-';
+> 
+> To me, using '!' contrasts better when side-by-side with '+'.
+> 
+> > +
+> > +             err_txt[offset+2] = error_code_chars[bit];
+> >       }
+> > +
+> > +     /* Close the string: */
+> > +     err_txt[sizeof(err_txt)-1] = 0;
+> > +
+> > +     pr_alert("#PF error code: %s (%02lx)\n", err_txt, error_code);
+> 
+> The changelog example has a leading "0x" on the error code.  That being
+> said, I actually like it without the "0x".
+> 
+> How about printing the raw value before the colon?  Having it at the end
+> makes it look like extra noise.  And for me, seeing the raw code first
+> (reading left to right) cue's my brain that it's about to decode some
+> bits.
+> 
+> SGX will also break the two digit printing.  And for whatever reason four
+> digits makes me think "this is an error code!".  IIRC the vectoring ucode
+> makes a lot of assumptions about the error code being at most 16 bits, so
+> in theory four digits is all we'll ever need.
+> 
+> E.g.
+> 
+> [    0.144247] #PF error code:  +P -W -U -S -I -K (01)
+> [    0.144411] #PF error code:  +P +W -U -S -I -K (03)
+> [    0.144826] #PF error code:  +P +W +U -S -I -K (07)
+> [    0.145252] #PF error code:  +P -W +U -S -I +K (25)
+> [    0.145706] #PF error code:  -P +W -U -S -I -K (02)
+> [    0.146111] #PF error code:  -P -W +U -S -I -K (04)
+> [    0.146521] #PF error code:  -P +W +U -S -I -K (06)
+> [    0.146934] #PF error code:  -P -W +U -S +I -K (14)
+> [    0.147348] #PF error code:  +P -W -U -S +I -K (11)
+> [    0.147767] #PF error code:  -P -W -U -S -I -K (00)
+> 
+> vs. (with SGX added as 'G' for testing purposes)
+> 
+> [    0.158849] #PF error code(0001):  +P !W !U !S !I !K !G
+> [    0.159292] #PF error code(0003):  +P +W !U !S !I !K !G
+> [    0.159742] #PF error code(0007):  +P +W +U !S !I !K !G
+> [    0.160190] #PF error code(0025):  +P !W +U !S !I +K !G
+> [    0.160638] #PF error code(0002):  !P +W !U !S !I !K !G
+> [    0.161087] #PF error code(0004):  !P !W +U !S !I !K !G
+> [    0.161538] #PF error code(0006):  !P +W +U !S !I !K !G
+> [    0.161992] #PF error code(0014):  !P !W +U !S +I !K !G
+> [    0.162450] #PF error code(0011):  +P !W !U !S +I !K !G
+> [    0.162667] #PF error code(8001):  +P !W !U !S !I !K +G
+> [    0.162667] #PF error code(8003):  +P +W !U !S !I !K +G
+> [    0.162667] #PF error code(8007):  +P +W +U !S !I !K +G
+> [    0.162667] #PF error code(8025):  +P !W +U !S !I +K +G
+> [    0.162667] #PF error code(8002):  !P +W !U !S !I !K +G
+> [    0.162667] #PF error code(8004):  !P !W +U !S !I !K +G
+> [    0.162667] #PF error code(8006):  !P +W +U !S !I !K +G
+> [    0.162667] #PF error code(8014):  !P !W +U !S +I !K +G
+> [    0.162667] #PF error code(8011):  +P !W !U !S +I !K +G
+> [    0.162667] #PF error code(0000):  !P !W !U !S !I !K !G
+> 
+> vs. (with consistent ordering between raw and decoded)
+> 
+> [    0.153004] #PF error code(0001):  !K !I !S !U !W +P
+> [    0.153004] #PF error code(0003):  !K !I !S !U +W +P
+> [    0.153004] #PF error code(0007):  !K !I !S +U +W +P
+> [    0.153004] #PF error code(0025):  +K !I !S +U !W +P
+> [    0.153004] #PF error code(0002):  !K !I !S !U +W !P
+> [    0.153004] #PF error code(0004):  !K !I !S +U !W !P
+> [    0.153004] #PF error code(0006):  !K !I !S +U +W !P
+> [    0.153362] #PF error code(0014):  !K +I !S +U !W !P
+> [    0.153788] #PF error code(0011):  !K +I !S !U !W +P
+> [    0.154104] #PF error code(0000):  !K !I !S !U !W !P
 
-It's already in my tree, no need to ammend it, sorry :)
+Ok, looks nice enough to me, with one request: please make it 0x prefixed 
+as is common with hexa code: "0010" could be binary, octal or decimal as 
+well. Since this is a separate line we don't lack the space.
 
-greg k-h
+Also some nits:
+
+> A patch with the kitchen sink...
+> ================================>
+> 
+> From 22e6d40e52b4341a424f065a138be54bc79d4db4 Mon Sep 17 00:00:00 2001
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> Date: Thu, 6 Dec 2018 07:25:13 -0800
+> Subject: [PATCH] x86/fault: Make show_error_code() more extensible and tweak
+>  its formatting
+> 
+>   - Initialize each bit individually in the error_code_chars array.  This
+>     allows for non-contiguous bits and is self-documenting.  Define a
+>     macro to make the initialization code somewhatmore readable.
+> 
+>   - Reverse the decode order so it's consistent with the raw display.
+> 
+>   - Use ARRAY_SIZE instead of hardcoding '6' in multiple locations.
+> 
+>   - Use '!' for the negative case to better contrast against '+'.
+> 
+>   - Display four digits (was two) when printing the raw error code.
+> 
+>   - Remove @regs from show_error_code().
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/mm/fault.c | 47 ++++++++++++++++++++++++---------------------
+>  1 file changed, 25 insertions(+), 22 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 23dc7163f6ac..cd28d058ed39 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -605,45 +605,48 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
+>  
+>  /*
+>   * This maps the somewhat obscure error_code number to symbolic text:
+> - *
+> - * P = protection fault   (X86_PF_PROT)
+> - * W = write access       (X86_PF_WRITE)
+> - * U = user-mode access   (X86_PF_USER)
+> - * S = supervisor mode    (X86_PF_RSVD)
+> - * I = instruction fault  (X86_PF_INSTR)
+> - * K = keys fault         (X86_PF_PK)
+>   */
+> -static const char error_code_chars[] = "PWUSIK";
+> +#define EC(x) ilog2(X86_PF_##x)
+> +static const char error_code_chars[] = {
+> +	[EC(PROT)]	= 'P',
+> +	[EC(WRITE)]	= 'W',
+> +	[EC(USER)]	= 'U',
+> +	[EC(RSVD)]	= 'S',
+> +	[EC(INSTR)]	= 'I',
+> +	[EC(PK)]	= 'K',
+> +};
+
+Please use an extra newline between the #define and the variable 
+definition.
+
+>  
+>  /*
+> - * This helper function transforms the #PF error_code bits into " +P -W +U -R -I -K"
+> + * This helper function transforms the #PF error_code bits into " +P !W +U !R !I !K"
+>   * type of descriptive, almost human-readable error strings:
+>   */
+> -static void show_error_code(struct pt_regs *regs, unsigned long error_code)
+> +static void show_error_code(unsigned long error_code)
+>  {
+> -	unsigned int bit, mask;
+> -	char err_txt[6*3+1]; /* Fixed length of 6 bits decoded plus zero at the end */
+> +	char err_txt[ARRAY_SIZE(error_code_chars)*3+1]; /* 3 chars per bit plus zero at the end */
+> +	unsigned offset = 0;
+> +	unsigned long mask;
+> +	int i;
+>  
+> -	/* We go from the X86_PF_PROT bit to the X86_PF_PK bit: */
+> -
+> -	for (bit = 0; bit < 6; bit++) {
+> -		unsigned int offset = bit*3;
+> +	for (i = ARRAY_SIZE(error_code_chars) - 1; i >= 0; i--) {
+> +		if (!error_code_chars[i])
+> +			continue;
+>  
+>  		err_txt[offset+0] = ' ';
+>  
+> -		mask = 1 << bit;
+> +		mask = 1 << i;
+>  		if (error_code & mask)
+>  			err_txt[offset+1] = '+';
+>  		else
+> -			err_txt[offset+1] = '-';
+> +			err_txt[offset+1] = '!';
+>  
+> -		err_txt[offset+2] = error_code_chars[bit];
+> +		err_txt[offset+2] = error_code_chars[i];
+> +		offset += 3;
+>  	}
+>  
+>  	/* Close the string: */
+> -	err_txt[sizeof(err_txt)-1] = 0;
+> +	err_txt[offset] = 0;
+>  
+> -	pr_alert("#PF error code: %s (%02lx)\n", err_txt, error_code);
+> +	pr_alert("#PF error code(%04lx): %s\n", error_code, err_txt);
+
+0x%04lx here, but other than that looks good to me!
+
+Thanks,
+
+	Ingo
