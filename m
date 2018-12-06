@@ -2,108 +2,103 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77500C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 825DEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C3C20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:24:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C3C20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B38D214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:24:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwbUeeVZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B38D214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeLFNYF (ORCPT
+        id S1729656AbeLFNYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:24:05 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11803 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727943AbeLFNYE (ORCPT
+        Thu, 6 Dec 2018 08:24:42 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42346 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeLFNYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:24:04 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB6DLioP003599;
-        Thu, 6 Dec 2018 14:23:34 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2p3w2s46ab-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 06 Dec 2018 14:23:33 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3F75841;
-        Thu,  6 Dec 2018 13:23:33 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E4BC92AAF;
-        Thu,  6 Dec 2018 13:23:32 +0000 (GMT)
-Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 6 Dec
- 2018 14:23:32 +0100
-Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
- SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
- 15.00.1347.000; Thu, 6 Dec 2018 14:23:32 +0100
-From:   David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] thermal: stm32: read factory settings inside
- stm_thermal_prepare
-Thread-Topic: [PATCH] thermal: stm32: read factory settings inside
- stm_thermal_prepare
-Thread-Index: AQHUjWbi+FUfeo4eoUu6YgNgwgJR0g==
-Date:   Thu, 6 Dec 2018 13:23:32 +0000
-Message-ID: <1544102603-14899-2-git-send-email-david.hernandezsanchez@st.com>
-References: <1544102603-14899-1-git-send-email-david.hernandezsanchez@st.com>
-In-Reply-To: <1544102603-14899-1-git-send-email-david.hernandezsanchez@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8A51B9C2EFA6614BAFFAA4D04E97DAB8@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 08:24:42 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d19so440463qtq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 05:24:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HzBj3lLeAxxUqLRc9cwUrqSdxH8xzPnO+69yZGS6HTs=;
+        b=ZwbUeeVZegdUcSTjVVkFepVxOS2Tn7xCLjeF76h6iQeV6nLcga7WRZHthTTb9C94ht
+         dPpuv0fXr0VTXT/xeFSrxW6xvg6Hs1J6pJ4h+4BH89KQXWCkxSyfV8/ultFCoEzv+yvu
+         pgta+xtWk46TlFI1h29AK+Uasf6Yc1m5MiZDBbBtlKnFpJDThzjqqms42+uC7YJBy1mz
+         YxqCSFJ+2ySznJEkUH5nMlxEQu4ynHjiOUddPqEvV3uXsptfK32w0ftYY7Y01GZJ5Qju
+         5LIvXwGqYKGytbNoZL2iU/IobGn9tCCCL+BZzr/VjqCZFVDc0ODoTkANBgGCm1uJN6Bj
+         oPdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HzBj3lLeAxxUqLRc9cwUrqSdxH8xzPnO+69yZGS6HTs=;
+        b=T/r0VmMGOhwRhjY5VUmp2D9MdAwtPGxV/AfVxtVF25aXKrs6kJ3VDqQMLy3Piob9gZ
+         WB1+4nQxNLmSLEip3QH3m/bwFHjxhVl4qH7iWbQJRY58v1nsU7mWovczd24yL5ZwMYRJ
+         VJfRUw4Scx2eZ9E5xWEV/TxM5uIeT6wWCvfuETPxgeRL9vv0sgVMjR9qoCbzp7/QWT23
+         HXQn0mvZSwjO0Fa4sxxlt++aFTDFqzHSdC82r2OAyEC/rS5LI9A7n1bKFYWPOdQ945dB
+         rDGUGHfwGI2ENxVmPWBPaXtw6nXfV1IYayPgVdEpacZ+Y5cqyUuBc8alhDPog/Lj5qE+
+         ReSg==
+X-Gm-Message-State: AA+aEWagLbWZvvfxq4UHp4UrpBNZRnV2W8y2YDfw+VhelUHjhJAImMFe
+        CeCBG5cP5p91p75oME01YWzDfWK1PcKaHssPElS+4OpkWLQ=
+X-Google-Smtp-Source: AFSGD/XCj8C/zeOdmgISp62yj3AZt8IDs9qkkVYWChKq6m6Y8CTmRWtGR2e2ce4YJDZVeSr3gb/8LZEZfuM2ISaY1w0=
+X-Received: by 2002:ac8:1909:: with SMTP id t9mr26329686qtj.327.1544102681314;
+ Thu, 06 Dec 2018 05:24:41 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_04:,,
- signatures=0
+References: <20181203182141.29720-1-andriy.shevchenko@linux.intel.com> <20181206125842.GA1480@kroah.com>
+In-Reply-To: <20181206125842.GA1480@kroah.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 6 Dec 2018 15:24:29 +0200
+Message-ID: <CAHp75VfgNv1hGB9zwXXkwuaVAqLhj0jo7qwh=0G-VuF1S2gSBQ@mail.gmail.com>
+Subject: Re: [PATCH v2] driver core: platform: Respect return code of platform_device_register_full()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Q2FsbGluZyBzdG1fdGhlcm1hbF9yZWFkX2ZhY3Rvcnlfc2V0dGluZ3MgYmVmb3JlIGNsb2NraW5n
-DQppbnRlcm5hbCBwZXJpcGhlcmFsIGNhdXNlcyBiYWQgcmVnaXN0ZXIgdmFsdWVzIGFuZCBtYWtl
-cw0KdGVtcGVyYXR1cmUgY29tcHV0YXRpb24gd3JvbmcuDQoNCkNhbGxpbmcgc3RtX3RoZXJtYWxf
-cmVhZF9mYWN0b3J5X3NldHRpbmdzIGluc2lkZQ0Kc3RtX3RoZXJtYWxfcHJlcGFyZSBmaXhlcyB0
-aGlzIHByb2JsZW0gYXMgaW50ZXJuYWwNCnBlcmlwaGVyYWwgaXMgd2VsbCBjbG9ja2VkIGF0IHRo
-aXMgc3RhZ2UuDQoNClNpZ25lZC1vZmYtYnk6IERhdmlkIEhlcm5hbmRleiBTYW5jaGV6IDxkYXZp
-ZC5oZXJuYW5kZXpzYW5jaGV6QHN0LmNvbT4NCkZpeGVzOiAxZDY5MzE1NSAoInRoZXJtYWw6IGFk
-ZCBzdG0zMiB0aGVybWFsIGRyaXZlciIpDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3RoZXJtYWwv
-c3Qvc3RtX3RoZXJtYWwuYyBiL2RyaXZlcnMvdGhlcm1hbC9zdC9zdG1fdGhlcm1hbC5jDQppbmRl
-eCA0NzYyM2RhLi5kYWExMjU3IDEwMDY0NA0KLS0tIGEvZHJpdmVycy90aGVybWFsL3N0L3N0bV90
-aGVybWFsLmMNCisrKyBiL2RyaXZlcnMvdGhlcm1hbC9zdC9zdG1fdGhlcm1hbC5jDQpAQCAtNTMy
-LDYgKzUzMiwxMCBAQCBzdGF0aWMgaW50IHN0bV90aGVybWFsX3ByZXBhcmUoc3RydWN0IHN0bV90
-aGVybWFsX3NlbnNvciAqc2Vuc29yKQ0KIAlpZiAocmV0KQ0KIAkJcmV0dXJuIHJldDsNCiANCisJ
-cmV0ID0gc3RtX3RoZXJtYWxfcmVhZF9mYWN0b3J5X3NldHRpbmdzKHNlbnNvcik7DQorCWlmIChy
-ZXQpDQorCQlnb3RvIHRoZXJtYWxfdW5wcmVwYXJlOw0KKw0KIAlyZXQgPSBzdG1fdGhlcm1hbF9j
-YWxpYnJhdGlvbihzZW5zb3IpOw0KIAlpZiAocmV0KQ0KIAkJZ290byB0aGVybWFsX3VucHJlcGFy
-ZTsNCkBAIC02MzYsMTAgKzY0MCw2IEBAIHN0YXRpYyBpbnQgc3RtX3RoZXJtYWxfcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCiAJLyogUG9wdWxhdGUgc2Vuc29yICovDQogCXNl
-bnNvci0+YmFzZSA9IGJhc2U7DQogDQotCXJldCA9IHN0bV90aGVybWFsX3JlYWRfZmFjdG9yeV9z
-ZXR0aW5ncyhzZW5zb3IpOw0KLQlpZiAocmV0KQ0KLQkJcmV0dXJuIHJldDsNCi0NCiAJc2Vuc29y
-LT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgInBjbGsiKTsNCiAJaWYgKElTX0VSUihz
-ZW5zb3ItPmNsaykpIHsNCiAJCWRldl9lcnIoJnBkZXYtPmRldiwgIiVzOiBmYWlsZWQgdG8gZmV0
-Y2ggUENMSyBjbG9ja1xuIiwNCi0tIA0KMi43LjQNCg==
+On Thu, Dec 6, 2018 at 2:59 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Dec 03, 2018 at 08:21:41PM +0200, Andy Shevchenko wrote:
+> > The platform_device_register_full() might return an error pointer. If we
+> > instantiate platform device which is optional we may simplify the routine at
+> > removal stage by simply calling platform_device_unregister(). For now it
+> > requires to check parameter for being an error pointer in each caller.
+> >
+> > To make users' life easier, check for an error pointer inside driver core.
+> >
+> > Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> > - rebase on top of linux-next since the conflicting patch has been applied there
+>
+> What conflicting patch?  This now doesn't apply to my tree.
+
+One patch from Heikki had been applied earlier, I rebased and sent v2
+at the same day as this one.
+
+>
+> Let me fix it up by hand...
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
