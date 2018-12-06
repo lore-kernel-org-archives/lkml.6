@@ -2,116 +2,94 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0847C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95518C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C39020659
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:22:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C39020659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 5315D20659
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544113424;
+	bh=P2fIXxw8SA4TP0x0ycc2DiUzDEMtrWNJsRfrocsylcg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J5HuTXfQ9LxbBP3Zq5++pZ0G4dDEqHedyHfWJuC3sAVtco/1R9xTE86tAm7oJHNhH
+	 4F3QGYnyVSr0fx23ABKp9uAuX5ked+h1+1XR2kYU6IzyymdxpW3ZJxttyE8jsozbc4
+	 hFeIa4sCYTX19p95oVncvUbrsDFSEmIxd++I/Yh4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5315D20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbeLFQWv (ORCPT
+        id S1726180AbeLFQXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:22:51 -0500
-Received: from smtprelay0217.hostedemail.com ([216.40.44.217]:38714 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725849AbeLFQWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:22:50 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 76675100E86DA;
-        Thu,  6 Dec 2018 16:22:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: toe67_357d55e604208
-X-Filterd-Recvd-Size: 3377
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  6 Dec 2018 16:22:47 +0000 (UTC)
-Message-ID: <733672ada4f532f02137067b14d285728cdd120c.camel@perches.com>
-Subject: Re: [PATCH 1/2] drm: Only #define DEBUG if CONFIG_DYNAMIC_DEBUG is
- disabled
-From:   Joe Perches <joe@perches.com>
-To:     Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Date:   Thu, 06 Dec 2018 08:22:46 -0800
-In-Reply-To: <747d6c1b-8c0a-8168-bd1e-e969839ff5be@daenzer.net>
-References: <20181205165621.5805-1-michel@daenzer.net>
-         <10fca21a-5d7c-fe9e-07f0-6200e9de538e@amd.com>
-         <1586a49594d30b4bf4d88eba0d258e21efd26da2.camel@perches.com>
-         <276fbf7f-d33f-83a5-cb88-bd4051dc03ba@daenzer.net>
-         <e7859ce4b8417b094604d9ab4740d338730e38bf.camel@perches.com>
-         <d2a1f009-b2c7-240d-7e1c-e48a08d8ac7d@daenzer.net>
-         <61385d4cb6c9d990427349849d0af28faa3b67af.camel@perches.com>
-         <747d6c1b-8c0a-8168-bd1e-e969839ff5be@daenzer.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 6 Dec 2018 11:23:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbeLFQXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:23:42 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB0C920659;
+        Thu,  6 Dec 2018 16:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544113422;
+        bh=P2fIXxw8SA4TP0x0ycc2DiUzDEMtrWNJsRfrocsylcg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D3Mz1FpiGsCWCoaJjr19rPGGTxuhlIImizYfNBhiwW7RBPEShyGQ03n1gewzHCvWW
+         U92V7TO+/NNPl8NepbjoLwxiONKhqtWAzZ11WbM35XeCJwufGjRYi8umoG1l8MHRmH
+         AjAtFmj7wM1DHS+0lcIZxz5zUaEIQ7b6aY9al60M=
+Date:   Thu, 6 Dec 2018 17:23:40 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Cc:     Sicilia Cristian <sicilia.cristian@gmail.com>,
+        devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org
+Subject: Re: [PATCH 2/2] staging: greybus: Added space between string
+ concatenated
+Message-ID: <20181206162340.GA12032@kroah.com>
+References: <cover.1543956271.git.sicilia.cristian@gmail.com>
+ <5b215b50d4da9a7730450a83fb5e3a167b65e03a.1543956271.git.sicilia.cristian@gmail.com>
+ <42632636-9b08-bd75-b789-88ef82f52c2c@nexus-software.ie>
+ <20181205210034.GA24054@peano>
+ <e7902148-4f80-2d9c-7f51-d6bd21bf9eff@nexus-software.ie>
+ <20181206150516.GA1774@kroah.com>
+ <131a4c41-2c5f-a660-5190-52ce5d59e532@nexus-software.ie>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <131a4c41-2c5f-a660-5190-52ce5d59e532@nexus-software.ie>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 15:41 +0100, Michel Dänzer wrote:
-> On 2018-12-06 1:23 p.m., Joe Perches wrote:
-> > On Thu, 2018-12-06 at 12:52 +0100, Michel Dänzer wrote:
-> > > In contrast to the 2b case, the pr_debug output isn't visible by default
-> > > with 1b, so the latter doesn't fit "always produce output" either.
+On Thu, Dec 06, 2018 at 04:14:53PM +0000, Bryan O'Donoghue wrote:
+> On 06/12/2018 15:05, Greg Kroah-Hartman wrote:
+> > On Thu, Dec 06, 2018 at 09:43:46AM +0000, Bryan O'Donoghue wrote:
+> > > On 05/12/2018 21:00, Sicilia Cristian wrote:
+> > > > It doesn't change the result string
+> > > 
+> > > So why do it then ?
 > > 
-> > I think you are mistaken here.
+> > Because it is easier to read this way and odds are checkpatch is
+> > happier.
 > 
-> Still puzzled as to what you're hoping to achieve with that kind of
-> language. None of the confusion about this patch has been on my part. :)
-
-Doubtful.
-
-> > Adding #define DEBUG as Chris did enables pr_debug output
-> > and is your 1b.
-> > 
-> > Perhaps your default console logging level is set to a
-> > non-default value.
+> Fine.
 > 
-> I have CONFIG_DYNAMIC_DEBUG enabled in my kernels. The problem addressed
-> by this patch is that messages from drm_debug_printer are visible by
-> default (case 2b), whereas they shouldn't be (case 2a, like 1b).
+> Sicilia could you please amend your commit.
+> 
+> 'This patch fixes the checkpatch error "CHECK: Concatenated strings should
+> use spaces between elements"'
+> 
+> and then feel free to add my
+> 
+> Acked-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
-The default for config_dynamic_debug when DEBUG is defined is
-to output the message equivalent to when DEBUG is defined and
-config_dynamic_debug is not.
+It's already in my tree, no need to ammend it, sorry :)
 
-That's a good thing and has been the general default since 2011.
-
-You want to override that, I suppose that's OK but it's
-definitely not a _fix_ as you have written.
-
-It's just a change in behavior.
-
-You added a "Fixes:" line.  I believe that wrong.
-
-A long time ago, at my suggestion:
-
-commit b558c96ffa53f4b3dd52b774e4fb7a52982ab52b
-Author: Jim Cromie <jim.cromie@gmail.com>
-Date:   Mon Dec 19 17:11:18 2011 -0500
-
-    dynamic_debug: make dynamic-debug supersede DEBUG ccflag
-    
-    If CONFIG_DYNAMIC_DEBUG is defined, honor it over DEBUG, so that
-    pr_debug()s are controllable, instead of always-on.  When DEBUG is
-    also defined, change _DPRINTK_FLAGS_DEFAULT to enable printing by
-    default.
-
-cheers, Joe
-
+greg k-h
