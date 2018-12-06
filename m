@@ -2,131 +2,118 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374CEC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1EAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB664214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19DFD2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:37:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MXYDuis3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB664214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfglaQEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19DFD2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbeLFCgv (ORCPT
+        id S1728870AbeLFChc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 21:36:51 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40912 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeLFCgv (ORCPT
+        Wed, 5 Dec 2018 21:37:32 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35374 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727514AbeLFChc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 21:36:51 -0500
-Received: by mail-vs1-f68.google.com with SMTP id z3so13410252vsf.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 18:36:50 -0800 (PST)
+        Wed, 5 Dec 2018 21:37:32 -0500
+Received: by mail-qt1-f195.google.com with SMTP id v11so24783189qtc.2;
+        Wed, 05 Dec 2018 18:37:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Yt+5wGPg5pnA4xdSqZYuiZxmxoADg/ITVvP9+CplKfM=;
-        b=MXYDuis3PI7fZgTBG51R/S+ep0VNOJZVPrb9Ax68ja+OwxKH2ls2NL/AotgpEepMsm
-         Njr2r7tZPm60u9+WpbY3bQ6H023jvgLllwCF0gGTeVV4o9dHpaCL9rktzvNQ2EzoSUgl
-         0CDZyVT3W97X7tf9a5fuEVyuv6OWKpKQWN8Yw=
+         :cc;
+        bh=zoHr8lruXoTODdZ/3ftu6AEKExytx/3sK8QukZl/o1I=;
+        b=RfglaQEL60bCcv5habg3c83fjaN8jUnXk0m5XpnTRPXOmitifjFUtmS9hqEb+weF8m
+         52RtqPVVbUKgpicS8dRaeQXBY2Eu4DMUKRi5kUNgQ7pn7TtiULw+MKJhbqymBw24oBjs
+         jZ4UxoxGXoek2Z/DPIWsxg8VuU5ioHUziaPD4CAiXRsxSuOvlVWVnxTtYezVQxtK2/q5
+         TuwSVM2ktWR9shZoVofXtADu0n+dagh72qg8K/AN1U94Wf9kryw7WU1nCOIxBuIkzGVy
+         AqVjYPyq243Z6pWtYVohijkrblPoQzvGVr8G8AoEmfmS2HQ7tIFSyvvGGGueyZo65hEy
+         uAxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Yt+5wGPg5pnA4xdSqZYuiZxmxoADg/ITVvP9+CplKfM=;
-        b=qRpRAnbEL2Srz5PrXQuLgYji7vsxpgGZq39m3wacDDCkyEQNbXUEhzqhJpz2DRlM02
-         pg3WLp8biLoyqg/K782acWoN+10fOvm6xh5DlnPUv1iNkZxbose+jdhkTca0TDSKnjod
-         Hcm0XHhRVEphzg9s7GOqC2vJval0xVyde7CNOBW+kdUDor/IW7UbUYY+SEelRe+4whtg
-         EjYpm4BL2Vyk9qmU10rLiGZMl3rGHFJcQAyES5ONC1+ojwkm/wk+LMrGp09LgkUC17Z3
-         qmxwabHFM2KEliCkEjy57pHTiXqFQV3oX/VduBSTKvP9LvMBts+X96VS8SulmRxHMAQ2
-         MtRQ==
-X-Gm-Message-State: AA+aEWbC4uaqFNzWPzYkKZu1u7TwkHXmZb++cpr4iq+uLgbZR+2JJzwD
-        5ZqVo4cjfVdCSLSoM1fDPnr4wXOsVZAJoNCAZPkEpg==
-X-Google-Smtp-Source: AFSGD/W568uNfQzAj2gIT4aONCg4zahYuiS5Xyl3eHCZTm6ttOjT1SC+LzuNTrvp2olV16nCtPGxu0wiBtBgk65BiEE=
-X-Received: by 2002:a67:d20d:: with SMTP id y13mr11775485vsi.163.1544063809463;
- Wed, 05 Dec 2018 18:36:49 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=zoHr8lruXoTODdZ/3ftu6AEKExytx/3sK8QukZl/o1I=;
+        b=bf6GsYHS31EDTMgsiF6uu1JQyD+57PQY9TyDnq2gu1RiQ+Z15Iv06zHrE9zxnyCxYT
+         2/V3ySi8L2feo1WGRvwVUNSyjAM9LlSnnPx87V1dE+6r2GfcnobP8IL68vPWjhbPXS9D
+         O/nGWXyKQKuYmqVmIrzvYQvRggzXknaqFn8bZ3HAjUH9CmYJGoFv6xQPhwDcmzCM1cCr
+         8rtEiwzu/A0Qwe2W7Bk+/LUC7PP5EqaCwqlJrq3GiIQEEYUAyVweuYGN/J/CFnw+xbdh
+         Z8gONM1fQqsxBI0JZNqOP+LkwnPoCI4upeQ1zKkn7xLOYRKC9kKYzZSlSaeu4/BCt6jY
+         5iig==
+X-Gm-Message-State: AA+aEWalu3fBtNK6BKUdxT6815KLgvYCUs5umHnNrRGOiCmHzN/5Tt0P
+        rgOanRBYV3HyX9EDBLlPP6ftj5sJ+29e+ABojT5dV5SY/ws=
+X-Google-Smtp-Source: AFSGD/XFTzxkLtS0QsruB925aVlFegp6A+wxn71NCFDzuUCQN7qKSL60ZDD3iswtZcNme9E2fJCBEuMY1yYmly7ao5o=
+X-Received: by 2002:aed:2d26:: with SMTP id h35mr26176501qtd.373.1544063851054;
+ Wed, 05 Dec 2018 18:37:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20181127120041.90759-1-cychiang@chromium.org> <20181128093411.GC4272@dell>
- <20181203111919.GL26661@dell> <CAFv8NwLEQ7EUSTRfAf42w2BY0aEPi_pjcMkPzzCNb=17pfzQXw@mail.gmail.com>
- <CAFv8NwLZc7YmCbFi-4nCOG5GUwrRbc+JdXLBKv2JA8d6eC3SDg@mail.gmail.com>
- <20181205113045.GD26661@dell> <20181205113406.GE26661@dell>
-In-Reply-To: <20181205113406.GE26661@dell>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Thu, 6 Dec 2018 10:36:22 +0800
-Message-ID: <CAFv8NwKgspykPHWfdjapzY-wCAp8MmduKq_yhrvWct2r7yFCzA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mfd: cros_ec: Add commands to control codec
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
-        tzungbi@chromium.org, rohitkr@codeaurora.org
+References: <20181206010914.21964-1-wen.yang99@zte.com.cn>
+In-Reply-To: <20181206010914.21964-1-wen.yang99@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 6 Dec 2018 04:37:18 +0200
+Message-ID: <CAHp75Ve-nZsyvHJcVJxb7wfk=0NDw7mwGdoZwh+VD6nnJpuNJg@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: intel_ips: Remove unnecessary NULL check
+ before debugfs_remove_recursive
+To:     wen.yang99@zte.com.cn
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zhong.weidong@zte.com.cn
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 7:34 PM Lee Jones <lee.jones@linaro.org> wrote:
+On Thu, Dec 6, 2018 at 3:09 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
 >
-> On Wed, 05 Dec 2018, Lee Jones wrote:
+> debugfs_remove_recursive() accepts a NULL parameter and returns
+> immediately, there's no need for a NULL check in the caller.
 >
-> > On Wed, 05 Dec 2018, Cheng-yi Chiang wrote:
-> >
-> > > Hi Lee,
-> > >
-> > > I tried to apply this patch based on
-> > > for-mfd-next branch of mfd tree (
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git )
-> > > Then, I tried to compile all modules by
-> > >
-> > >  ARCH=3Dx86_64 make allyesconfig
-> > >  ARCH=3Dx86_64 make -j64
-> > >
-> > > There was no error.
-> > > Could you please let me know what was the error when you failed to
-> > > apply this patch ?
-> >
-> > Doesn't work for me.
-> >
-> > lee@host:~/projects/kernel [for-mfd-next]$ formfdnext
-> > Applying: mfd: cros_ec: Add commands to control codec
-> > error: sha1 information is lacking or useless (include/linux/mfd/cros_e=
-c_commands.h).
-> > error: could not build fake ancestor
-> > Patch failed at 0001 mfd: cros_ec: Add commands to control codec
-> > Use 'git am --show-current-patch' to see the failed patch
-> > When you have resolved this problem, run "git am --continue".
-> > If you prefer to skip this patch, run "git am --skip" instead.
-> > To restore the original branch and stop patching, run "git am --abort".
+> This issue was detected with the help of Coccinelle.
 >
-> Not that the following lines (as seen in your patch) are not present
-> in the Mainline kernel.
->
-> > @@ -4077,6 +4077,100 @@ struct __ec_align1 ec_response_i2c_passthru_pro=
-tect {
-> >       uint8_t status;         /* Status flags (0: unlocked, 1: locked) =
-*/
-> >  };
->
-> Do you have other patches applied to your tree?
 
-Hi Lee,
-Sorry, I see the problem.
-I was using git am -3 which solves the conflict by itself.
-I will resend a patch based on your for-mfd-next branch so we can keep
-the patch clean.
-Thanks for your time.
+Thank you, similar patch is already in my queue.
 
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> CC: Darren Hart <dvhart@infradead.org>
+> CC: Andy Shevchenko <andy@infradead.org>
+> CC: platform-driver-x86@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  drivers/platform/x86/intel_ips.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
+> diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
+> index 225638a1b09e..f8175b972537 100644
+> --- a/drivers/platform/x86/intel_ips.c
+> +++ b/drivers/platform/x86/intel_ips.c
+> @@ -1300,9 +1300,7 @@ static const struct file_operations ips_debugfs_ops = {
+>
+>  static void ips_debugfs_cleanup(struct ips_driver *ips)
+>  {
+> -       if (ips->debug_root)
+> -               debugfs_remove_recursive(ips->debug_root);
+> -       return;
+> +       debugfs_remove_recursive(ips->debug_root);
+>  }
+>
+>  static void ips_debugfs_init(struct ips_driver *ips)
 > --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+> 2.19.1
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
