@@ -2,92 +2,169 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588DBC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B43DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD94214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD94214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F55620989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:21:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQHaEzE7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F55620989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbeLFNUc convert rfc822-to-8bit (ORCPT
+        id S1729369AbeLFNV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:20:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728953AbeLFNUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:20:32 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7050190C78;
-        Thu,  6 Dec 2018 13:20:31 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9D101001F54;
-        Thu,  6 Dec 2018 13:20:23 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     =?utf-8?Q?J=C3=BCrg?= Billeter <j@bitron.ch>
-Cc:     Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, ebiederm@xmission.com,
-        serge@hallyn.com, jannh@google.com, akpm@linux-foundation.org,
-        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, dancol@google.com,
-        timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-References: <20181206121858.12215-1-christian@brauner.io>
-        <87h8fq7s84.fsf@oldenburg2.str.redhat.com>
-        <b0e946bcac12358841c9a99017da819b00794d9c.camel@bitron.ch>
-        <87pnue6bp2.fsf@oldenburg2.str.redhat.com>
-        <89a6b3a24412d385a816d7d981c60cb1e1bbc0ca.camel@bitron.ch>
-Date:   Thu, 06 Dec 2018 14:20:21 +0100
-In-Reply-To: <89a6b3a24412d385a816d7d981c60cb1e1bbc0ca.camel@bitron.ch>
- (=?utf-8?Q?=22J=C3=BCrg?=
-        Billeter"'s message of "Thu, 06 Dec 2018 14:18:36 +0100")
-Message-ID: <87efau6bca.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 06 Dec 2018 13:20:32 +0000 (UTC)
+        Thu, 6 Dec 2018 08:21:28 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33369 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbeLFNV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:21:27 -0500
+Received: by mail-pl1-f195.google.com with SMTP id z23so179494plo.0;
+        Thu, 06 Dec 2018 05:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=niHnVH2bfGHteoJGPZcpd1954RrmGez0+UHvE3wDR1U=;
+        b=bQHaEzE7xVWcXYhMkBMmCPeQvYaCLlbO7XkXrNDXT+KZXuOEhoh+ZCcRuya+zAgYOJ
+         pCTaP8hKNu40klUJfUHcWqvhvUrI2sM/uv2QXtewqqCyEcz/wB84yaxa6gv7ZnT0eNmh
+         2UrDAmuTjKTKB+PwoBX5yw5b4AUUZsP6AZRj9GrYuQSXycGEgzMMyatjpNmaaU9z7kId
+         sNqGbwChDvzxrmlUhwGeu3nksj0tct6wC8LTiis/Y0uiLo9rTDg+G9HbGjPocV7HKMyk
+         W+p+fYYtTloNNkqFW7pfFFKmibftFLW+O2HAvkqN3aM9q4/EyQLCsmX4bHFBYv0ABvaA
+         XWbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=niHnVH2bfGHteoJGPZcpd1954RrmGez0+UHvE3wDR1U=;
+        b=A9XJ4fM/ZO5XbvCswFWGNu2mLJosZ1j2tFJ2ADPSi3IZcu/8PZ3RsGwuQtuNm0VJMU
+         Y49DvtbzGhNpI5dpehrP1/69hd7oItIW6KVgELMk6c81LuTaRiHXWHKZI2LGhyh4CXCQ
+         oYlmFNeRzfYdpJgfJjBUCxfzQqWcNlH8XfHD7n9wgu/j6rVg2lL7m3IZcFlRPu3SfwW6
+         XXIFGKkgdh9nDHS7khmIHHZ/B/yzH2R/dDtIo+E8JXSt51/0STL4ADdF28sqDz0slfpL
+         jw1J9TM2SMcxs7c/Znmw2Ai1uJDRyJ7ZIpWDEpX0mgev5ljOmeSAshhJtaCZbJJqG2C2
+         FpvA==
+X-Gm-Message-State: AA+aEWZK83S6a5yIMtW6bJi76IemV8QbwYG3hvjP57qd/824veaE4D0h
+        zT9uFrbprUPSp0h5k8rk5z0=
+X-Google-Smtp-Source: AFSGD/WT/IwJmq80cl7+03kkOJcqb7s/m9QX6aQZnkjlikrIr0RV7MthFe3JQPbwLBa67Q2CT+Zlbg==
+X-Received: by 2002:a17:902:bf44:: with SMTP id u4mr28448247pls.5.1544102486538;
+        Thu, 06 Dec 2018 05:21:26 -0800 (PST)
+Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
+        by smtp.googlemail.com with ESMTPSA id y5sm2409246pge.49.2018.12.06.05.21.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 05:21:25 -0800 (PST)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
+        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
+        paulus@ozlabs.org, pbonzini@redhat.com, ralf@linux-mips.org,
+        rkrcmar@redhat.com, sthemmin@microsoft.com, tglx@linutronix.de,
+        will.deacon@arm.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+Subject: [Resend PATCH V5 0/10] x86/KVM/Hyper-v: Add HV ept tlb range flush hypercall support in KVM
+Date:   Thu,  6 Dec 2018 21:21:03 +0800
+Message-Id: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Jürg Billeter:
+From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-> On Thu, 2018-12-06 at 14:12 +0100, Florian Weimer wrote:
->> * Jürg Billeter:
->> 
->> > On Thu, 2018-12-06 at 13:30 +0100, Florian Weimer wrote:
->> > > * Christian Brauner:
->> > > 
->> > > > /* zombies */
->> > > > Zombies can be signaled just as any other process. No special error will be
->> > > > reported since a zombie state is an unreliable state (cf. [3]).
->> > > 
->> > > I still disagree with this analysis.  If I know that the target process
->> > > is still alive, and it is not, this is a persistent error condition
->> > > which can be reliably reported.  Given that someone might send SIGKILL
->> > > to the process behind my back, detecting this error condition could be
->> > > useful.
->> > 
->> > As I understand it, kill() behaves the same way. I think it's good that
->> > this new syscall keeps the behavior as close as possible to kill().
->> 
->> No, kill does not behave in this way because the PID can be reused.
->> The error condition is not stable there.
->
-> The PID can't be reused as long as it's a zombie. It can only be reused
-> when it has been wait()ed for. Or am I misunderstanding something?
+For nested memory virtualization, Hyper-v doesn't set write-protect
+L1 hypervisor EPT page directory and page table node to track changes 
+while it relies on guest to tell it changes via HvFlushGuestAddressLlist
+hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
+EPT page table with ranges which are specified by L1 hypervisor.
 
-Hmm, that's a fair point.  So the original interface is just broken.
+If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
+flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
+and sync L1's EPT table when next EPT page fault is triggered.
+HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
+page fault and synchronization of shadow page table.
 
-Florian
+This patchset is based on the Patch "KVM/VMX: Check ept_pointer before
+flushing ept tlb"(https://marc.info/?l=kvm&m=154408169705686&w=2).
+
+Change since v4:
+       1) Split flush address and flush list patches. This patchset only contains
+       flush address patches. Will post flush list patches later.
+       2) Expose function hyperv_fill_flush_guest_mapping_list()
+       out of hyperv file
+       3) Adjust parameter of hyperv_flush_guest_mapping_range()
+       4) Reorder patchset and move Hyper-V and VMX changes ahead.
+
+Change since v3:
+        1) Remove code of updating "tlbs_dirty" in kvm_flush_remote_tlbs_with_range()
+        2) Remove directly tlb flush in the kvm_handle_hva_range()
+        3) Move tlb flush in kvm_set_pte_rmapp() to kvm_mmu_notifier_change_pte()
+        4) Combine Vitaly's "don't pass EPT configuration info to
+vmx_hv_remote_flush_tlb()" fix
+
+Change since v2:
+       1) Fix comment in the kvm_flush_remote_tlbs_with_range()
+       2) Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+        hyperv-tlfs.h.
+       3) Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+       4) Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+        struct hv_guest_mapping_flush_list.
+
+Change since v1:
+       1) Convert "end_gfn" of struct kvm_tlb_range to "pages" in order
+          to avoid confusion as to whether "end_gfn" is inclusive or exlusive.
+       2) Add hyperv tlb range struct and replace kvm tlb range struct
+          with new struct in order to avoid using kvm struct in the hyperv
+          code directly.
+
+
+
+Lan Tianyu (10):
+  KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
+  x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+  x86/Hyper-v: Add trace in the
+    hyperv_nested_flush_guest_mapping_range()
+  KVM/VMX: Add hv tlb range flush support
+  KVM/MMU: Add tlb flush with range helper function
+  KVM: Replace old tlb flush function with new one to flush a specified
+    range.
+  KVM: Make kvm_set_spte_hva() return int
+  KVM/MMU: Move tlb flush in kvm_set_pte_rmapp() to
+    kvm_mmu_notifier_change_pte()
+  KVM/MMU: Flush tlb directly in the kvm_set_pte_rmapp()
+  KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+
+ arch/arm/include/asm/kvm_host.h     |  2 +-
+ arch/arm64/include/asm/kvm_host.h   |  2 +-
+ arch/mips/include/asm/kvm_host.h    |  2 +-
+ arch/mips/kvm/mmu.c                 |  3 +-
+ arch/powerpc/include/asm/kvm_host.h |  2 +-
+ arch/powerpc/kvm/book3s.c           |  3 +-
+ arch/powerpc/kvm/e500_mmu_host.c    |  3 +-
+ arch/x86/hyperv/nested.c            | 80 +++++++++++++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h  | 32 +++++++++++++
+ arch/x86/include/asm/kvm_host.h     |  9 +++-
+ arch/x86/include/asm/mshyperv.h     | 15 ++++++
+ arch/x86/include/asm/trace/hyperv.h | 14 ++++++
+ arch/x86/kvm/mmu.c                  | 96 +++++++++++++++++++++++++++++--------
+ arch/x86/kvm/paging_tmpl.h          |  3 +-
+ arch/x86/kvm/vmx.c                  | 63 +++++++++++++++++-------
+ virt/kvm/arm/mmu.c                  |  6 ++-
+ virt/kvm/kvm_main.c                 |  5 +-
+ 17 files changed, 292 insertions(+), 48 deletions(-)
+
+-- 
+2.14.4
+
