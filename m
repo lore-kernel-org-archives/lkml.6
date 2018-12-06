@@ -6,70 +6,70 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9FDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E32C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F189A20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C6D214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="MuPYaquT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F189A20850
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="Rp/0kVVj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C6D214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbeLFUMi (ORCPT
+        id S1726058AbeLFUMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:12:38 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37916 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLFUMi (ORCPT
+        Thu, 6 Dec 2018 15:12:40 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38498 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeLFUMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 15:12:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so2365826wml.3
+Received: by mail-wr1-f67.google.com with SMTP id v13so1737630wrw.5
         for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:12:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
          :references:subject:to:from:cc;
-        bh=T0pLC4iMCNPCig/8AcMJIz9QI262AjSzHsrEpOfECk8=;
-        b=MuPYaquTjkanNAV1yWOBJ5/4uxv0pBlHAS8aEEIGJb67u1Cm6w8l+nsGqx1dSyraCT
-         EmvBLwbZ8lAu+x/vYopOQje7dHuLN7OFlnWgpqDE0rtD5gtYTpHiOFi0d42NMaR+TWzd
-         wi2iQo8hR4IUTMqVkY818VKpuiicYTcciw9peS8+xI1nhaS4tYK8Yb8D9nqIm61fNbhS
-         GNK+XdZ6x8Vi9yZTZQ/5d0+AqiaxPPqCOIdJFCUGm8y5DKbKwPcVwlTNywKMTI5Q5Z81
-         /7nzZB70eKCswWiGt3yZNH+Ccve+STrlGC7GJUTM2HmDXYq5N4ETvilBTxB9rkesdKPQ
-         1U2A==
+        bh=Qmd2/VWTe4Dp+JB90tj4OUBKgS5JVJ5WwrcylTsjQiY=;
+        b=Rp/0kVVj2aeWNbfcto+sG0+n8t6UvoLvnIwMpcO0jTNfhVqMRFsDmbFB/L09auIoMD
+         P7ABJfB8ZqxJk3Cy9SWe4W7kBg1/OEe5t855/QfXkEg4e8L+jhsQEewh6VSQMRfRD8IE
+         rn9Dd1svrrFCglFBI5HWZc+/Y/AHVbb/TtNfurA4Odpm9aAVSLVMqNurYwAmf4QSQ3wJ
+         JLq2R7tinN12khUxQCS8tGBRZj1GJiF0rjrmOxtylMHGH5rMGv2KQw3K+znyEYquli8g
+         gvcXcn52tf81Fa1V6DH0eVGabtJvq/Nq8YloG7Y37AG/vn4Bhkc09oaQ8drWl2MbtIAT
+         j2PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=T0pLC4iMCNPCig/8AcMJIz9QI262AjSzHsrEpOfECk8=;
-        b=Fi23f/pt/oQjOg6JM2MTSLEWH6pvOdObfbEvfQa1uCZX0HR7WMefw2ADkoi0NoeoFf
-         pZFRTq1R1pKBQbKtwEBTavUyGSvSAQagekaNZz8MsCAPzeNHf91g+C/2omAWSGNcp6mi
-         Rz/FqJsryrTvk8U91zSOyCnXPKsFAjefm2AygSa5lqeUHBrXRgpvy6L7g2tNxIfphyUS
-         CYW6ntiNX8UP/VlFUn4MnLY548UWaVo29qtY2BZIMqtubckZTFN5ulEDzPmEM0OW49ow
-         qKEO1FEWDrj+/jGtGdAI7lQTo+Cb5NoWmZFybgz29c1UAPxuxZn9eSlyC+mJAXKTYJWr
-         p6+w==
-X-Gm-Message-State: AA+aEWYztftcPhyqbakY6OODnBQlWBOnZr6T8PqqmH+mVkBKTWK9MVYl
-        lEjlOnQnVDS08Ofcr5HPA6LBvlPi1sCYlA==
-X-Google-Smtp-Source: AFSGD/VZm27RQyH1eaENkwVaXm4WO1ErQu0PH0HaAKQk4+IxV7OkDTVdd/RtmL9jCOhRvwywIDuvHg==
-X-Received: by 2002:a1c:11c1:: with SMTP id 184mr16251784wmr.59.1544127156388;
+        bh=Qmd2/VWTe4Dp+JB90tj4OUBKgS5JVJ5WwrcylTsjQiY=;
+        b=izfIhhVnLsUIj2fzXpJ57QudimYPlDBa9FKLYxGXEi1oTII49TzLVBrEUYVyvrAxSd
+         np9nplCxUrqCndyLy1t2tAc3b/sCzsubo4mv5n5+rabVDCO1rer/f8CmsVSETMbWLsH7
+         kYhF1EdAxLsJeVJqHpactZdkNDBS0uZ29GUJIeYjueSR6fRKkfKNz4kLtSeEuzKiaa4B
+         pUzFYg0eK4YKaBmZBswVNyvZ+9/sKegRl1qsSva/Z5USbxoyVlKDlC9OH/8A9ONYA63q
+         PK2rVnljT9Imswm3YJ6a9S0jImiKBTm94Mhn71HW/wiz1IsjA+vHmc2Zcl1c57xuftBU
+         l7ww==
+X-Gm-Message-State: AA+aEWbxC0r1pDCBuMrerZZNvjh3U5jCevMFVrap59+XZNsFrkO2qSJ0
+        tu+3GxVdwsVIfeUHiZBiN/TJ+g==
+X-Google-Smtp-Source: AFSGD/UwNMyACvgy3IoblOwMND9nXVCYxNLAsggzo58p3+GvLgo83h69y61A1fs5il2QOIfUUrtEAA==
+X-Received: by 2002:adf:eec9:: with SMTP id a9mr25890865wrp.242.1544127156800;
         Thu, 06 Dec 2018 12:12:36 -0800 (PST)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id e16sm1893885wrn.72.2018.12.06.12.12.35
+        by smtp.gmail.com with ESMTPSA id v1sm1474975wrw.90.2018.12.06.12.12.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 06 Dec 2018 12:12:35 -0800 (PST)
-Message-ID: <5c0982b3.1c69fb81.a088c.c15a@mx.google.com>
+Message-ID: <5c0982b3.1c69fb81.d0d1.9a81@mx.google.com>
 Date:   Thu, 06 Dec 2018 12:12:35 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Branch: linux-4.14.y
 X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.143-102-gcf137e4b4373
-In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
-References: <20181206143011.174892052@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+X-Kernelci-Kernel: v4.14.86-56-g555f40d53cca
+In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
+References: <20181206143001.749982936@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/55] 4.14.87-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -83,21 +83,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 105 boots: 0 failed, 104 passed with 1 offline =
-(v4.9.143-102-gcf137e4b4373)
+stable-rc/linux-4.14.y boot: 117 boots: 1 failed, 114 passed with 1 offline=
+, 1 untried/unknown (v4.14.86-56-g555f40d53cca)
 
 Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.143-102-gcf137e4b4373/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.143-102-gcf137e4b4373/
+-4.14.y/kernel/v4.14.86-56-g555f40d53cca/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.86-56-g555f40d53cca/
 
 Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.143-102-gcf137e4b4373
-Git Commit: cf137e4b43737b5c238350d3e22f031c616dd9f9
+Branch: linux-4.14.y
+Git Describe: v4.14.86-56-g555f40d53cca
+Git Commit: 555f40d53ccac2c84734383d6d86dba512b5e033
 Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
 -rc.git
-Tested: 47 unique boards, 20 SoC families, 15 builds out of 193
+Tested: 57 unique boards, 22 SoC families, 14 builds out of 197
+
+Boot Regressions Detected:
+
+arm:
+
+    tegra_defconfig:
+        tegra124-nyan-big:
+            lab-collabora: new failure (last pass: v4.14.86)
+
+Boot Failure Detected:
+
+arm:
+
+    tegra_defconfig
+        tegra124-nyan-big: 1 failed lab
 
 Offline Platforms:
 
