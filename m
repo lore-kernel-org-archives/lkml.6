@@ -5,89 +5,175 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29460C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFE6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9C120850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:20:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9C120850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id EEE2220850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:24:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE2220850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725952AbeLFRUr (ORCPT
+        id S1725992AbeLFRYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:20:47 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:62174 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeLFRUr (ORCPT
+        Thu, 6 Dec 2018 12:24:46 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:38027 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeLFRYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:20:47 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gUxKL-0000pL-SU from joseph_myers@mentor.com ; Thu, 06 Dec 2018 09:20:41 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 6 Dec 2018 17:20:38 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gUxKI-0006nE-0H; Thu, 06 Dec 2018 17:20:38 +0000
-Date:   Thu, 6 Dec 2018 17:20:37 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     "Maciej W. Rozycki" <macro@linux-mips.org>
-CC:     Paul Burton <paul.burton@mips.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+        Thu, 6 Dec 2018 12:24:46 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUxOF-0008HB-Cg; Thu, 06 Dec 2018 10:24:43 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gUxOB-0007e2-6K; Thu, 06 Dec 2018 10:24:43 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        <libc-alpha@sourceware.org>
-Subject: Re: [PATCH v3 0/6] mips: system call table generation support
-In-Reply-To: <alpine.LFD.2.21.1812061659210.4294@eddie.linux-mips.org>
-Message-ID: <alpine.DEB.2.21.1812061719180.12167@digraph.polyomino.org.uk>
-References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org> <CALxhOnjSEp++W5T3Sf0eX+8hPt08ER22M817M-Vhd24_96a_EQ@mail.gmail.com> <20181205063436.kzxgnvgexcgq572k@pburton-laptop> <alpine.LFD.2.21.1812061209220.7193@eddie.linux-mips.org>
- <alpine.DEB.2.21.1812061618110.12167@digraph.polyomino.org.uk> <alpine.LFD.2.21.1812061659210.4294@eddie.linux-mips.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>, tglx@linutronix.de,
+        x86@kernel.org
+References: <20181206121858.12215-1-christian@brauner.io>
+        <87sgzahf7k.fsf@xmission.com>
+        <CAKOZuet4ayDu-54u2tO9tRDCgxa9JQ4avAiYS8xEtReN4MMhAA@mail.gmail.com>
+Date:   Thu, 06 Dec 2018 11:24:28 -0600
+In-Reply-To: <CAKOZuet4ayDu-54u2tO9tRDCgxa9JQ4avAiYS8xEtReN4MMhAA@mail.gmail.com>
+        (Daniel Colascione's message of "Thu, 6 Dec 2018 08:17:18 -0800")
+Message-ID: <878t12efg3.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-07.mgc.mentorg.com (139.181.222.7) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain
+X-XM-SPF: eid=1gUxOB-0007e2-6K;;;mid=<878t12efg3.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX183fo99KdM7s83XVknY4FOfpoZT6zBIXDY=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018, Maciej W. Rozycki wrote:
+Daniel Colascione <dancol@google.com> writes:
 
-> On Thu, 6 Dec 2018, Joseph Myers wrote:
-> 
-> > >  I believe this file is used by the glibc build process to retrieve 
-> > > syscall numbers for glibc's own use as well for <sys/syscall.h>.  Has the 
-> > > change been verified not to break this process?
-> > > 
-> > >  Cc-ing <libc-alpha@sourceware.org> for information and possible further 
-> > > input.
-> > 
-> > I'm not sure what "this file" is.  The glibc build uses the installed 
-> > <asm/unistd.h> (the results of #including it, not any other kind of 
-> > processing the file).
-> 
->  So how are `SYS_<name>' macros generated that land in <bits/syscall.h>?
+> On Thu, Dec 6, 2018 at 7:02 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> Christian Brauner <christian@brauner.io> writes:
+>>
+>> > The kill() syscall operates on process identifiers (pid). After a process
+>> > has exited its pid can be reused by another process. If a caller sends a
+>> > signal to a reused pid it will end up signaling the wrong process. This
+>> > issue has often surfaced and there has been a push [1] to address this
+>> > problem.
+>> >
+>> > This patch uses file descriptors (fd) from proc/<pid> as stable handles on
+>> > struct pid. Even if a pid is recycled the handle will not change. The fd
+>> > can be used to send signals to the process it refers to.
+>> > Thus, the new syscall taskfd_send_signal() is introduced to solve this
+>> > problem. Instead of pids it operates on process fds (taskfd).
+>>
+>> I am not yet thrilled with the taskfd naming.
+>
+> Both the old and new names were fine. Do you want to suggest a name at
+> this point? You can't just say "I don't like this. Guess again"
+> forever.
 
-By gen-syscall-h.awk, which generates #ifdef conditionals for each 
-possible __NR_* name (as listed in syscall-names.list in glibc).
+Both names suck, as neither name actually describes what the function is
+designed to do.
 
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+Most issues happen at the interface between abstractions.  A name that
+confuses your users will just make that confusion more likely.  So it is
+important that we do the very best with the name that we can do.
+
+We are already having questions about what happens when you perform the
+non-sense operation of sending a signal to a zombie.  It comes up
+because there are races when a process may die and you are not expecting
+it.  That is an issue with the existing signal sending API, that has
+caused confusion.   That isn't half as confusing as the naming issue.
+
+A task in linux is a single thread.  A process is all of the threads.
+If we are going to support both cases it doesn't make sense to hard code
+a single case in the name.
+
+I would be inclined to simplify things and call the syscall something
+like "fdkill(int fd, struct siginfo *info, int flags)".  Or perhaps
+just "fd_send_signal(int fd, struct siginfo *info, int flags)".
+
+Then we are not overspecifying what the system call does in the name.
+Plus it makes it clear that the fd specifies where the signal goes.
+Something I see that by your reply below that you were confused about.
+
+>> Is there any plan to support sesssions and process groups?
+>
+> Such a thing could be added with flags in the future. Why complicate
+> this patch?
+
+Actually that isn't the way this is designed.  You would have to have
+another kind of file descriptor.  I am asking because it goes to the
+question of naming and what we are trying to do here.
+
+We don't need to implement that but we have already looked into this
+kind of extensibility.  If we want the extensibility we should make
+room for it, or just close the door.  Having the door half open and a
+confusing interface is a problem for users.
+
+>> I am concerned about using kill_pid_info.  It does this:
+>>
+>>
+>>         rcu_read_lock();
+>>         p = pid_task(pid, PIDTYPE_PID);
+>>         if (p)
+>>                 error = group_send_sig_info(sig, info, p, PIDTYPE_TGID);
+>>         rcu_read_unlock();
+>>
+>> That pid_task(PIDTYPE_PID) is fine for existing callers that need bug
+>> compatibility.  For new interfaces I would strongly prefer pid_task(PIDTYPE_TGID).
+>
+> What is the bug that PIDTYPE_PID preserves?
+
+I am not 100% certain all of the bits for this to matter have been
+merged yet but we are close enough that it would not be hard to make it
+matter.
+
+There are two strange behaviours of ordinary kill on the linux kernel
+that I am aware of.
+
+1) kill(thread_id,...) where the thread_id is not the id of the first
+   thread and the thread_id thus the pid of the process sends the signal
+   to the entire process.  Something that arguably should not happen.
+
+2) kill(pid,...) where the original thread has exited performs the
+   permission checks against the dead signal group leader.  Which means
+   that the permission checks for sending a signal are very likely wrong
+   for a multi-threaded processes that calls a function like setuid.
+
+To fix the second case we are going to have to perform the permission
+checks on a non-zombie thread.  That is something that is straight
+forward to make work with PIDTYPE_TGID.  It is not so easy to make work
+with PIDTYPE_PID.
+
+I looked and it doesn't look like I have merged the logic of having
+PIDTYPE_TGID point to a living thread when the signal group leader
+exits and becomes a zombie.  It isn't hard but it does require some very
+delicate surgery on the code, so that we don't break some of the
+historic confusion of threads and process groups.
+
+Eric
