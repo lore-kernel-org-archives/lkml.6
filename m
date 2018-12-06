@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BF9C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7326BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59AE2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3644420989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131852;
-	bh=nSMIHbPu+M+vfBkwnsPY2ZVT3ZEFd/a7+ACGD59g+Bk=;
+	s=default; t=1544131859;
+	bh=OR8OUkpLDnz5x/iRblWvwWlgCbGNk0KqFA/+YVTDWSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bO7j+XuWCswClVNwSvrJMemY7teZ0DnL0ps+mkBDCHX/BZjSgKblC4GSBc0KZHQIU
-	 RETrSdVqW0ZTkFZtmRb8Yv9AtEz6/ya1QQGe3v6/S0EssIG4jBwpjEk/2jfq45YlX4
-	 CBJdt21jfK+PAbNvwsJRnIERr9lZSPAyuPwTclnQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59AE2082B
+	b=Fv3NQYqiutyb7p2noBNXQhfFv3yq86zrkg20VSJrSGzt3uxJbIDsDsi6r/Y8MXPOa
+	 5rpNlZ86xhsmYvDp7N45caPGQ1SNi+hDjpv20pvIYYD0Sj/lE2TuBlEvV+VbzUJKnD
+	 jKQmsSY9MgiEqIWdNt6wAX+P0ZoUl0pgIToz1OP8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3644420989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726435AbeLFVav (ORCPT
+        id S1726321AbeLFVa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:30:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49278 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:30:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbeLFVas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:30:48 -0500
+        id S1726233AbeLFVaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:30:52 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E067B208E7;
-        Thu,  6 Dec 2018 21:30:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FCD020989;
+        Thu,  6 Dec 2018 21:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131848;
-        bh=nSMIHbPu+M+vfBkwnsPY2ZVT3ZEFd/a7+ACGD59g+Bk=;
+        s=default; t=1544131852;
+        bh=OR8OUkpLDnz5x/iRblWvwWlgCbGNk0KqFA/+YVTDWSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EtogpI+kschts4YhjfBByFSIW227cS1OkScV8siWJ/gKKru0diPBRBAkfahElY1kW
-         SLZwK5kVY5HW03kjcYp5QoWMd2946eqW6/1aWtMzS5prddjammmQBDnByl4rSmRQQd
-         GygL0oaVfpzm+behEbBl4q3y39l09BcDnb1LBGKo=
+        b=fM/yjYl89XWjeZRQEjgJusTkiQtIXXAVxvPqmAVszAUl976q276HoG2ejPXEo7EPT
+         NVwPXCBLVyEhYnTpAULqFukt1ajbGAFBj8MLu2fhj5H8pTfcvTZlXu1rv7MCSEYCOa
+         NE0sQOoQdkxa5070kiVmkuRfLEkLZUo9y3vOs30o=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,11 +49,10 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
         Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 66/75] perf probe: Fix unchecked usage of strncpy()
-Date:   Thu,  6 Dec 2018 18:25:53 -0300
-Message-Id: <20181206212602.20474-67-acme@kernel.org>
+Subject: [PATCH 67/75] perf parse-events: Fix unchecked usage of strncpy()
+Date:   Thu,  6 Dec 2018 18:25:54 -0300
+Message-Id: <20181206212602.20474-68-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -70,44 +69,47 @@ The strncpy() function may leave the destination string buffer
 unterminated, better use strlcpy() that we have a __weak fallback
 implementation for systems without it.
 
-In this case the 'target' buffer is coming from a list of build-ids that
-are expected to have a len of at most (SBUILD_ID_SIZE - 1) chars, so
-probably we're safe, but since we're using strncpy() here, use strlcpy()
-instead to provide the intended safety checking without the using the
-problematic strncpy() function.
-
 This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-  util/probe-file.c: In function 'probe_cache__open.isra.5':
-  util/probe-file.c:427:3: error: 'strncpy' specified bound 41 equals destination size [-Werror=stringop-truncation]
-     strncpy(sbuildid, target, SBUILD_ID_SIZE);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/parse-events.c: In function 'print_symbol_events':
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2508:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2511:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   cc1: all warnings being treated as errors
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 1f3736c9c833 ("perf probe: Show all cached probes")
-Link: https://lkml.kernel.org/n/tip-l7n8ggc9kl38qtdlouke5yp5@git.kernel.org
+Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
+Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/probe-file.c | 2 +-
+ tools/perf/util/parse-events.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
-index aac7817d9e14..0b1195cad0e5 100644
---- a/tools/perf/util/probe-file.c
-+++ b/tools/perf/util/probe-file.c
-@@ -424,7 +424,7 @@ static int probe_cache__open(struct probe_cache *pcache, const char *target,
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 59be3466d64d..920e1e6551dd 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2462,7 +2462,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
+ 		if (!name_only && strlen(syms->alias))
+ 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
+ 		else
+-			strncpy(name, syms->symbol, MAX_NAME_LEN);
++			strlcpy(name, syms->symbol, MAX_NAME_LEN);
  
- 	if (target && build_id_cache__cached(target)) {
- 		/* This is a cached buildid */
--		strncpy(sbuildid, target, SBUILD_ID_SIZE);
-+		strlcpy(sbuildid, target, SBUILD_ID_SIZE);
- 		dir_name = build_id_cache__linkname(sbuildid, NULL, 0);
- 		goto found;
- 	}
+ 		evt_list[evt_i] = strdup(name);
+ 		if (evt_list[evt_i] == NULL)
 -- 
 2.19.2
 
