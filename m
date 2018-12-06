@@ -2,422 +2,158 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BB2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5286AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35CBD2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lBV+p2H8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35CBD2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 15A472082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544107372;
+	bh=X0xUI6YM7GaCiXX6c4aj1ezWkiG32TEF8rn7oHV/o8I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=I2dzVuSVaEjlltyafAXMfT8xKv9ly/0jV7UuMLz1rwTB8CEbFGqvY780EF0O+v34Y
+	 Qsnrp8ovOr5pZBElQz8r0BdmyTrTJbeozKk75PVpdl1SSzmnvIZLuN9oGuvurM4S3C
+	 0BqQmqqK1ho35W1dcmduV+XDlk4dO1ySCct+o/EE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A472082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbeLFOmn (ORCPT
+        id S1730560AbeLFOmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:42:43 -0500
-Received: from mail.efficios.com ([167.114.142.138]:38438 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730513AbeLFOml (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:42:41 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 37FF39FF7C;
-        Thu,  6 Dec 2018 09:42:39 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id pbqHcvwxHoTA; Thu,  6 Dec 2018 09:42:35 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0E2319FF79;
-        Thu,  6 Dec 2018 09:42:35 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0E2319FF79
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1544107355;
-        bh=1l0MfmDGGDU9STLmAhMWUW5Ln69/QEsxjX11MFqlXww=;
-        h=From:To:Date:Message-Id;
-        b=lBV+p2H8PYeuxbGm6+LeZcnQqma6bNpt7XTPqnZwTRmnG1a7A02E5A45cLX1AoBwE
-         olsvNmqQRPRMFA5eEi2QhfxB184Toyv6pZIJm9vNrT8f0INRql9cHatMo/e9y4ar9C
-         zqHeqFnaVX/HlNm0HgA256BFKlnqj8SuFD/eXQbgQHK5hgwOVadphGDFWsY2JX9jGW
-         QXxO2SwZU0pkRKqZc+hPSWqvXwzRG/zofhtNcVaUU1cPCxABD6lFMeuA7nbrEHpoYG
-         vOnt/zB+qICo13LNe9WEYkJfk4P6UoGIgguCwF9PCkC2vqA1SRP5n+IAZqIcDi7ALX
-         tdXtLsqzp6FOQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id nG3jT03cxgqr; Thu,  6 Dec 2018 09:42:34 -0500 (EST)
-Received: from thinkos.polymtl.ca (Sansfil-Securise-Etudiants-Lassonde-245-12.polymtl.ca [132.207.245.12])
-        by mail.efficios.com (Postfix) with ESMTPSA id AAEED9FF74;
-        Thu,  6 Dec 2018 09:42:34 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH man-pages] Add rseq manpage
-Date:   Thu,  6 Dec 2018 09:42:28 -0500
-Message-Id: <20181206144228.9656-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 6 Dec 2018 09:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729882AbeLFOmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:42:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7E6D2082B;
+        Thu,  6 Dec 2018 14:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544107366;
+        bh=X0xUI6YM7GaCiXX6c4aj1ezWkiG32TEF8rn7oHV/o8I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=guTCjVyPdSU4V3nlY/UK9DedwzRIG1kqAqFumKArC7a8QUX4rSF8ysRXkM+8mPff2
+         WPNJnA2jR/3xt884+LRADiXSPWw12lhMni35m/pAQTNsL7+ZgaOpFSFW24dFI5TGw9
+         Wmjfq4dQftb85wYCV3CF9Ls63CbKhfYCuKqaV56Q=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Christian Hoff <christian_hoff@gmx.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 35/55] Input: matrix_keypad - check for errors from of_get_named_gpio()
+Date:   Thu,  6 Dec 2018 15:39:09 +0100
+Message-Id: <20181206143003.610308891@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
+References: <20181206143001.749982936@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Michael, rseq(2) was merged into 4.18. Can you have a look at this
-  patch which adds rseq documentation to the man-pages project ? ]
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
+------------------
+
+From: Christian Hoff <christian_hoff@gmx.net>
+
+commit d55bda1b3e7c5a87f10da54fdda866a9a9cef30b upstream.
+
+"of_get_named_gpio()" returns a negative error value if it fails
+and drivers should check for this. This missing check was now
+added to the matrix_keypad driver.
+
+In my case "of_get_named_gpio()" returned -EPROBE_DEFER because
+the referenced GPIOs belong to an I/O expander, which was not yet
+probed at the point in time when the matrix_keypad driver was
+loading. Because the driver did not check for errors from the
+"of_get_named_gpio()" routine, it was assuming that "-EPROBE_DEFER"
+is actually a GPIO number and continued as usual, which led to further
+errors like this later on:
+
+WARNING: CPU: 3 PID: 167 at drivers/gpio/gpiolib.c:114
+gpio_to_desc+0xc8/0xd0
+invalid GPIO -517
+
+Note that the "GPIO number" -517 in the error message above is
+actually "-EPROBE_DEFER".
+
+As part of the patch a misleading error message "no platform data defined"
+was also removed. This does not lead to information loss because the other
+error paths in matrix_keypad_parse_dt() already print an error.
+
+Signed-off-by: Christian Hoff <christian_hoff@gmx.net>
+Suggested-by: Sebastian Reichel <sre@kernel.org>
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- man2/rseq.2 | 299 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 299 insertions(+)
- create mode 100644 man2/rseq.2
+ drivers/input/keyboard/matrix_keypad.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/man2/rseq.2 b/man2/rseq.2
-new file mode 100644
-index 000000000..005c1cee4
---- /dev/null
-+++ b/man2/rseq.2
-@@ -0,0 +1,299 @@
-+.\" Copyright 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH RSEQ 2 2018-09-19 "Linux" "Linux Programmer's Manual"
-+.SH NAME
-+rseq \- Restartable sequences and cpu number cache
-+.SH SYNOPSIS
-+.nf
-+.B #include <linux/rseq.h>
-+.sp
-+.BI "int rseq(struct rseq * " rseq ", uint32_t " rseq_len ", int " flags ", uint32_t " sig ");
-+.sp
-+.SH DESCRIPTION
-+The
-+.BR rseq ()
-+ABI accelerates user-space operations on per-cpu data by defining a
-+shared data structure ABI between each user-space thread and the kernel.
-+
-+It allows user-space to perform update operations on per-cpu data
-+without requiring heavy-weight atomic operations.
-+
-+The term CPU used in this documentation refers to a hardware execution
-+context.
-+
-+Restartable sequences are atomic with respect to preemption (making it
-+atomic with respect to other threads running on the same CPU), as well
-+as signal delivery (user-space execution contexts nested over the same
-+thread). They either complete atomically with respect to preemption on
-+the current CPU and signal delivery, or they are aborted.
-+
-+It is suited for update operations on per-cpu data.
-+
-+It can be used on data structures shared between threads within a
-+process, and on data structures shared between threads across different
-+processes.
-+
-+.PP
-+Some examples of operations that can be accelerated or improved
-+by this ABI:
-+.IP \[bu] 2
-+Memory allocator per-cpu free-lists,
-+.IP \[bu] 2
-+Querying the current CPU number,
-+.IP \[bu] 2
-+Incrementing per-CPU counters,
-+.IP \[bu] 2
-+Modifying data protected by per-CPU spinlocks,
-+.IP \[bu] 2
-+Inserting/removing elements in per-CPU linked-lists,
-+.IP \[bu] 2
-+Writing/reading per-CPU ring buffers content.
-+.IP \[bu] 2
-+Accurately reading performance monitoring unit counters
-+with respect to thread migration.
-+
-+.PP
-+Restartable sequences must not perform system calls. Doing so may result
-+in termination of the process by a segmentation fault.
-+
-+.PP
-+The
-+.I rseq
-+argument is a pointer to the thread-local rseq structure to be shared
-+between kernel and user-space.
-+
-+.PP
-+The layout of
-+.B struct rseq
-+is as follows:
-+.TP
-+.B Structure alignment
-+This structure is aligned on 32-byte boundary.
-+.TP
-+.B Structure size
-+This structure is extensible. Its size is passed as parameter to the
-+rseq system call.
-+.TP
-+.B Fields
-+
-+.TP
-+.in +4n
-+.I cpu_id_start
-+Optimistic cache of the CPU number on which the current thread is
-+running. Its value is guaranteed to always be a possible CPU number,
-+even when rseq is not initialized. The value it contains should always
-+be confirmed by reading the cpu_id field.
-+
-+This field is an optimistic cache in the sense that it is always
-+guaranteed to hold a valid CPU number in the range [ 0 ..
-+nr_possible_cpus - 1 ]. It can therefore be loaded by user-space and
-+used as an offset in per-cpu data structures without having to
-+check whether its value is within the valid bounds compared to the
-+number of possible CPUs in the system.
-+
-+For user-space applications executed on a kernel without rseq support,
-+the cpu_id_start field stays initialized at 0, which is indeed a valid
-+CPU number. It is therefore valid to use it as an offset in per-cpu data
-+structures, and only validate whether it's actually the current CPU
-+number by comparing it with the cpu_id field within the rseq critical
-+section. If the kernel does not provide rseq support, that cpu_id field
-+stays initialized at -1, so the comparison always fails, as intended.
-+
-+It is then up to user-space to use a fall-back mechanism, considering
-+that rseq is not available.
-+
-+.in
-+.TP
-+.in +4n
-+.I cpu_id
-+Cache of the CPU number on which the current thread is running.
-+-1 if uninitialized.
-+.in
-+.TP
-+.in +4n
-+.I rseq_cs
-+The rseq_cs field is a pointer to a struct rseq_cs. Is is NULL when no
-+rseq assembly block critical section is active for the current thread.
-+Setting it to point to a critical section descriptor (struct rseq_cs)
-+marks the beginning of the critical section.
-+.in
-+.TP
-+.in +4n
-+.I flags
-+Flags indicating the restart behavior for the current thread. This is
-+mainly used for debugging purposes. Can be either:
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
-+.in
-+
-+.PP
-+The layout of
-+.B struct rseq_cs
-+version 0 is as follows:
-+.TP
-+.B Structure alignment
-+This structure is aligned on 32-byte boundary.
-+.TP
-+.B Structure size
-+This structure has a fixed size of 32 bytes.
-+.TP
-+.B Fields
-+
-+.TP
-+.in +4n
-+.I version
-+Version of this structure.
-+.in
-+.TP
-+.in +4n
-+.I flags
-+Flags indicating the restart behavior of this structure. Can be
-+a combination of:
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
-+.TP
-+.in +4n
-+.I start_ip
-+Instruction pointer address of the first instruction of the sequence of
-+consecutive assembly instructions.
-+.in
-+.TP
-+.in +4n
-+.I post_commit_offset
-+Offset (from start_ip address) of the address after the last instruction
-+of the sequence of consecutive assembly instructions.
-+.in
-+.TP
-+.in +4n
-+.I abort_ip
-+Instruction pointer address where to move the execution flow in case of
-+abort of the sequence of consecutive assembly instructions.
-+.in
-+
-+.PP
-+The
-+.I rseq_len
-+argument is the size of the
-+.I struct rseq
-+to register.
-+
-+.PP
-+The
-+.I flags
-+argument is 0 for registration, and
-+.IR RSEQ_FLAG_UNREGISTER
-+for unregistration.
-+
-+.PP
-+The
-+.I sig
-+argument is the 32-bit signature to be expected before the abort
-+handler code.
-+
-+.PP
-+A single library per process should keep the rseq structure in a
-+thread-local storage variable.
-+The
-+.I cpu_id
-+field should be initialized to -1, and the
-+.I cpu_id_start
-+field should be initialized to a possible CPU value (typically 0).
-+
-+.PP
-+Each thread is responsible for registering and unregistering its rseq
-+structure. No more than one rseq structure address can be registered
-+per thread at a given time.
-+
-+.PP
-+Memory of a registered rseq object must not be freed before the thread
-+exits. Reclaim of rseq object's memory must only be done after either an
-+explicit rseq unregistration is performed or after the thread exits. Keep
-+in mind that the implementation of the Thread-Local Storage (C language
-+__thread) lifetime does not guarantee existence of the TLS area up until
-+the thread exits.
-+
-+.PP
-+In a typical usage scenario, the thread registering the rseq
-+structure will be performing loads and stores from/to that structure. It
-+is however also allowed to read that structure from other threads.
-+The rseq field updates performed by the kernel provide relaxed atomicity
-+semantics, which guarantee that other threads performing relaxed atomic
-+reads of the cpu number cache will always observe a consistent value.
-+
-+.SH RETURN VALUE
-+A return value of 0 indicates success. On error, \-1 is returned, and
-+.I errno
-+is set appropriately.
-+
-+.SH ERRORS
-+.TP
-+.B EINVAL
-+Either
-+.I flags
-+contains an invalid value, or
-+.I rseq
-+contains an address which is not appropriately aligned, or
-+.I rseq_len
-+contains a size that does not match the size received on registration.
-+.TP
-+.B ENOSYS
-+The
-+.BR rseq ()
-+system call is not implemented by this kernel.
-+.TP
-+.B EFAULT
-+.I rseq
-+is an invalid address.
-+.TP
-+.B EBUSY
-+Restartable sequence is already registered for this thread.
-+.TP
-+.B EPERM
-+The
-+.I sig
-+argument on unregistration does not match the signature received
-+on registration.
-+
-+.SH VERSIONS
-+The
-+.BR rseq ()
-+system call was added in Linux 4.18.
-+
-+.SH CONFORMING TO
-+.BR rseq ()
-+is Linux-specific.
-+
-+.in
-+.SH SEE ALSO
-+.BR sched_getcpu (3) ,
-+.BR membarrier (2)
--- 
-2.11.0
+--- a/drivers/input/keyboard/matrix_keypad.c
++++ b/drivers/input/keyboard/matrix_keypad.c
+@@ -407,7 +407,7 @@ matrix_keypad_parse_dt(struct device *de
+ 	struct matrix_keypad_platform_data *pdata;
+ 	struct device_node *np = dev->of_node;
+ 	unsigned int *gpios;
+-	int i, nrow, ncol;
++	int ret, i, nrow, ncol;
+ 
+ 	if (!np) {
+ 		dev_err(dev, "device lacks DT data\n");
+@@ -452,12 +452,19 @@ matrix_keypad_parse_dt(struct device *de
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	for (i = 0; i < pdata->num_row_gpios; i++)
+-		gpios[i] = of_get_named_gpio(np, "row-gpios", i);
++	for (i = 0; i < nrow; i++) {
++		ret = of_get_named_gpio(np, "row-gpios", i);
++		if (ret < 0)
++			return ERR_PTR(ret);
++		gpios[i] = ret;
++	}
+ 
+-	for (i = 0; i < pdata->num_col_gpios; i++)
+-		gpios[pdata->num_row_gpios + i] =
+-			of_get_named_gpio(np, "col-gpios", i);
++	for (i = 0; i < ncol; i++) {
++		ret = of_get_named_gpio(np, "col-gpios", i);
++		if (ret < 0)
++			return ERR_PTR(ret);
++		gpios[nrow + i] = ret;
++	}
+ 
+ 	pdata->row_gpios = gpios;
+ 	pdata->col_gpios = &gpios[pdata->num_row_gpios];
+@@ -484,10 +491,8 @@ static int matrix_keypad_probe(struct pl
+ 	pdata = dev_get_platdata(&pdev->dev);
+ 	if (!pdata) {
+ 		pdata = matrix_keypad_parse_dt(&pdev->dev);
+-		if (IS_ERR(pdata)) {
+-			dev_err(&pdev->dev, "no platform data defined\n");
++		if (IS_ERR(pdata))
+ 			return PTR_ERR(pdata);
+-		}
+ 	} else if (!pdata->keymap_data) {
+ 		dev_err(&pdev->dev, "no keymap data defined\n");
+ 		return -EINVAL;
+
 
