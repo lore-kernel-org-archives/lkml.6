@@ -6,49 +6,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245E6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D74D820700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8A820850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108225;
-	bh=MzA5iKNYccFloCOq7qddigWTtPNYL/7nsoJRAD+Fn+c=;
+	s=default; t=1544108243;
+	bh=zOT8TJ0004G71497yRmGTanAeEP4uGlKgcAmn3SChto=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lH6NTQN29xLjLl0Fe1d6Vrp7/HSvF5dAu8mSOmZ2/4eG/JJw3tNI0gAtiiFNzAv9W
-	 0J1SRH4Vvd4W9Gkw3QfETbnZaXmOXPwf+z24RfIW3KomWVRTmdaQgfW+mpqKkqEysr
-	 AIbHHwYEU9LTyEC77/odB2sXdv/EeGTxXnxScjFs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74D820700
+	b=EOSZMza+1HxLrvozi6yN6c42XXOxdcXPiLGC28l0kEFwPtlQnfTLIcvFfwi2va2pg
+	 k/WZF5gpbJF9ud3u1XRUWsttLIBij9jxC/WrIvKhUw4AzZVzj3vndSBv4qulXUnPWX
+	 f9UbrlZqUleWWzgRcjxkPlS4ag/flOccbI1QPEXM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8A820850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeLFO5D (ORCPT
+        id S1726419AbeLFO5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:57:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:57:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729726AbeLFOnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:02 -0500
+        id S1729901AbeLFOmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:42:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50ECF2082B;
-        Thu,  6 Dec 2018 14:43:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66D912146D;
+        Thu,  6 Dec 2018 14:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107381;
-        bh=MzA5iKNYccFloCOq7qddigWTtPNYL/7nsoJRAD+Fn+c=;
+        s=default; t=1544107368;
+        bh=zOT8TJ0004G71497yRmGTanAeEP4uGlKgcAmn3SChto=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=In+yPXFGhoxGg32uC+dTUyJ7XJP1bSaV9mTJhQmlGjapQ/euCfwJVgzm0P0stucbD
-         dXOeRCyJxvhVWyasPeH108l3qZWhyELDWo+1ItycybNSnXY+OUKt7gtPH6plrHlo2i
-         0TWhpkyxC5cuB8RlnMudTjyrcyJ9h4+A6EXJKCBI=
+        b=2e5VPj2q7IYks3TTZ9CdcAQ9k22fliaAxmNyYv3+IXBFdNSFa7miLDLG4xKIRrPAc
+         CZdN6r1eVxlR/bmtO5fvUWjmavvXGZKCRQJ58DhM7bdYy9KDhAqpxJ+Bjeh5ywBOWj
+         /i3TezGvM0A77o3CO+WR/cXr7TCFuDKLIrpJ4tjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Yugui <wangyugui@e16-tech.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 40/55] btrfs: tree-checker: Dont check max block group size as current max chunk size limit is unreliable
-Date:   Thu,  6 Dec 2018 15:39:14 +0100
-Message-Id: <20181206143003.870816990@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 36/55] Input: cros_ec_keyb - fix button/switch capability reports
+Date:   Thu,  6 Dec 2018 15:39:10 +0100
+Message-Id: <20181206143003.649092938@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -67,73 +68,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit 10950929e994c5ecee149ff0873388d3c98f12b5 upstream.
+commit ac5722c1643a2fb75224c79b578214956d34f989 upstream.
 
-[BUG]
-A completely valid btrfs will refuse to mount, with error message like:
-  BTRFS critical (device sdb2): corrupt leaf: root=2 block=239681536 slot=172 \
-    bg_start=12018974720 bg_len=10888413184, invalid block group size, \
-    have 10888413184 expect (0, 10737418240]
+The cros_ec_keyb_bs array lists buttons and switches together, expecting
+that its users will match the appropriate type and bit fields. But
+cros_ec_keyb_register_bs() only checks the 'bit' field, which causes
+misreported input capabilities in some cases. For example, tablets
+(e.g., Scarlet -- a.k.a. Acer Chromebook Tab 10) were reporting a SW_LID
+capability, because EC_MKBP_POWER_BUTTON and EC_MKBP_LID_OPEN happen to
+share the same bit.
 
-This has been reported several times as the 4.19 kernel is now being
-used. The filesystem refuses to mount, but is otherwise ok and booting
-4.18 is a workaround.
+(This has comedic effect on a tablet, in which a power-management daemon
+then thinks this "lid" is closed, and so puts the system to sleep as
+soon as it boots!)
 
-Btrfs check returns no error, and all kernels used on this fs is later
-than 2011, which should all have the 10G size limit commit.
+To fix this, check both the 'ev_type' and 'bit' fields before reporting
+the capability.
 
-[CAUSE]
-For a 12 devices btrfs, we could allocate a chunk larger than 10G due to
-stripe stripe bump up.
+Tested with a lid (Kevin / Samsung Chromebook Plus) and without a lid
+(Scarlet / Acer Chromebook Tab 10).
 
-__btrfs_alloc_chunk()
-|- max_stripe_size = 1G
-|- max_chunk_size = 10G
-|- data_stripe = 11
-|- if (1G * 11 > 10G) {
-       stripe_size = 976128930;
-       stripe_size = round_up(976128930, SZ_16M) = 989855744
+This error got introduced when porting the feature from the downstream
+Chromium OS kernel to be upstreamed.
 
-However the final stripe_size (989855744) * 11 = 10888413184, which is
-still larger than 10G.
-
-[FIX]
-For the comprehensive check, we need to do the full check at chunk read
-time, and rely on bg <-> chunk mapping to do the check.
-
-We could just skip the length check for now.
-
-Fixes: fce466eab7ac ("btrfs: tree-checker: Verify block_group_item")
-Cc: stable@vger.kernel.org # v4.19+
-Reported-by: Wang Yugui <wangyugui@e16-tech.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: cdd7950e7aa4 ("input: cros_ec_keyb: Add non-matrix buttons and switches")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-checker.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/input/keyboard/cros_ec_keyb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -348,13 +348,11 @@ static int check_block_group_item(struct
+--- a/drivers/input/keyboard/cros_ec_keyb.c
++++ b/drivers/input/keyboard/cros_ec_keyb.c
+@@ -506,7 +506,8 @@ static int cros_ec_keyb_register_bs(stru
+ 	for (i = 0; i < ARRAY_SIZE(cros_ec_keyb_bs); i++) {
+ 		const struct cros_ec_bs_map *map = &cros_ec_keyb_bs[i];
  
- 	/*
- 	 * Here we don't really care about alignment since extent allocator can
--	 * handle it.  We care more about the size, as if one block group is
--	 * larger than maximum size, it's must be some obvious corruption.
-+	 * handle it.  We care more about the size.
- 	 */
--	if (key->offset > BTRFS_MAX_DATA_CHUNK_SIZE || key->offset == 0) {
-+	if (key->offset == 0) {
- 		block_group_err(fs_info, leaf, slot,
--			"invalid block group size, have %llu expect (0, %llu]",
--				key->offset, BTRFS_MAX_DATA_CHUNK_SIZE);
-+				"invalid block group size 0");
- 		return -EUCLEAN;
+-		if (buttons & BIT(map->bit))
++		if ((map->ev_type == EV_KEY && (buttons & BIT(map->bit))) ||
++		    (map->ev_type == EV_SW && (switches & BIT(map->bit))))
+ 			input_set_capability(idev, map->ev_type, map->code);
  	}
  
 
