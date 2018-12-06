@@ -4,226 +4,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B511FC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C38C07E85
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714AD214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57088214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iOFoDPQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714AD214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SHdrCm3L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57088214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbeLFBLF (ORCPT
+        id S1728880AbeLFBLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:11:05 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38607 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFBLE (ORCPT
+        Wed, 5 Dec 2018 20:11:32 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:46994 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFBLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:11:04 -0500
-Received: by mail-yb1-f196.google.com with SMTP id d187so1498681ybb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:11:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YMsFPOwp+HYuQfKFu9COzZPdWHtGKQJMtECRPLEDAaA=;
-        b=iOFoDPQesDyogJo9GYnMT/IyfMDQgqUjVHWcy41ovY8oNDgtNmemTGH69m+iRtz4/G
-         n4m/kY9MPmq3/J9ow86qmMllfTIvd3Ko8NrJnfyajL6nMtRw4q5ss1qqJmVFDouhKAIJ
-         pdAStRLIaEwQwBhmXubejRWGccZwkQfgwOXEY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YMsFPOwp+HYuQfKFu9COzZPdWHtGKQJMtECRPLEDAaA=;
-        b=aUpCZ1KtjX3R8bK4DXPo5nbuXtkBd1NyB0DEjIGVL4NshbLbc62VSaN1Taiawc3i5v
-         YfZdMZy9nGZjPIUdUfAYhBvM0LVCZoNpgPZR0cXZ51M7BkcXyk5hkuVARscK0OvhXue0
-         OFJLmros46TrYJvIAmcm0fCySZh6EKUlmYoveI9yxQIcW4W1KLMHJImtypg27oX2Ha/A
-         MiQXXeNR4YGKkRXwHf2vErEGdsmp2NcCmQ1AqgUNv+JpSzMzESG6AdI2x1ArOyQfo0H8
-         XOrvKtaBBA9wotEP9WulOQvm4ny9UfLPurIDy3g8gQEtkSYNDOk+1Sdis/r75v2xzR19
-         O66A==
-X-Gm-Message-State: AA+aEWY9jlQov9EKw0EuhX2Gq6Kbr5qgg6FdivqrVykLYwciPDXuMT5J
-        O8iIMs5tFBPxB0Gbo8XMJq56QUjKmuc=
-X-Google-Smtp-Source: AFSGD/VCrAu7aCv2POqMV6T8fyteAlx62LoY9rhjbbb5/gAjPbHfshsNIRzbVyBfUPrNvFhsgxuOOQ==
-X-Received: by 2002:a5b:192:: with SMTP id r18mr7570972ybl.404.1544058662235;
-        Wed, 05 Dec 2018 17:11:02 -0800 (PST)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id x4sm23978619ywj.80.2018.12.05.17.11.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 17:11:01 -0800 (PST)
-Received: by mail-yb1-f173.google.com with SMTP id w203so5988915ybg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:11:00 -0800 (PST)
-X-Received: by 2002:a81:98e:: with SMTP id 136mr26259370ywj.47.1544058660007;
- Wed, 05 Dec 2018 17:11:00 -0800 (PST)
+        Wed, 5 Dec 2018 20:11:31 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB619idc001560;
+        Thu, 6 Dec 2018 01:11:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=BpHNERcP+usiB6ijW7Vv6qJrTws/14F5ApTXtGpapeo=;
+ b=SHdrCm3LZgYtqOOjHSBm/0pPxuV6jwPuifnTPMd9n1rN+qJRt3b9EqL8d72tgcbVrXmF
+ 3z9YvRQcIYlqEACOmHH8edFXPqmf2cpamCiQu6gIgWE4r1glSpbn/8SORz0g9cE++v4j
+ LvTzAXJyJ7sBC1ICp/jfaxfRICejKjBIXT3aQr6Qz1aQi7iQArOA7MjO/W0+QogtMjVH
+ jjKbGi/PV6rK3AofgdZi6tuS3nyWaLo01b0K6B6kVBYU5Co+2AHQhOEt6/mGV00PyDxh
+ fhPYYoS9sFzwhw6DjQfrLcbt8o1wpJNUdQpn1yQ6JjHJv1vKK4Gzbpyv3GDETg9/3Njn hg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2p3ftf9keb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Dec 2018 01:11:27 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB61BLB9006459
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Dec 2018 01:11:21 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB61BL70011296;
+        Thu, 6 Dec 2018 01:11:21 GMT
+Received: from [10.182.71.8] (/10.182.71.8)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Dec 2018 01:11:21 +0000
+Subject: Re: [PATCH V9 1/4] blk-mq: insert to hctx dispatch list when
+ bypass_insert is true
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1543995842-20704-2-git-send-email-jianchao.w.wang@oracle.com>
+ <54c7377f-e8e6-92cf-eced-6c76297afd52@kernel.dk>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <99339021-4d05-8dff-bee4-a6af2eaf3e21@oracle.com>
+Date:   Thu, 6 Dec 2018 09:12:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com> <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
-In-Reply-To: <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 5 Dec 2018 17:10:48 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
-Message-ID: <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
- perf-security.rst file
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <54c7377f-e8e6-92cf-eced-6c76297afd52@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812060007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 12:15 AM Alexey Budankov
-<alexey.budankov@linux.intel.com> wrote:
->
->
-> Implement initial version of perf-security.rst documentation file
-> covering security concerns of perf_event_paranoid settings.
->
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
-> Changes in v4:
-> - added docs for perf_event related capabilities
-> Changes in v3:
-> - toning down of the markup for "scope, access and resource"
-> - adding definite article for "Linux implementation"
-> Changes in v2:
-> - reverted patches order in the set to avoid CI issue
-> - replaced old PCL referencing by PE (Perf Events)
-> - skipped >=3 setting documentation at the moment
-> ---
->  Documentation/admin-guide/perf-security.rst | 97 +++++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/admin-guide/perf-security.rst
->
-> diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-> new file mode 100644
-> index 000000000000..f73ebfe9bfe2
-> --- /dev/null
-> +++ b/Documentation/admin-guide/perf-security.rst
-> @@ -0,0 +1,97 @@
-> +.. _perf_security:
-> +
-> +Perf Events and tool security
-> +=============================
-> +
-> +Overview
-> +--------
-> +
-> +Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
-> +impose a considerable risk of leaking sensitive data accessed by monitored
-> +processes. The data leakage is possible both in scenarios of direct usage of
-> +perf_events system call API [2]_ and over data files generated by Perf tool user
-> +mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
-> +perf_events performance monitoring units (PMU) [2]_ collect and expose for
-> +performance analysis. Having that said perf_events/Perf performance monitoring
-> +is the subject for security access control management [5]_ .
-> +
-> +perf_events/Perf access control
-> +-------------------------------
-> +
-> +To perform security checks, the Linux implementation splits processes into two
-> +categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
-> +to as superuser or root), and b) unprivileged processes (whose effective UID is
-> +nonzero). Privileged processes bypass all kernel security permission checks so
-> +perf_events performance monitoring is fully available to privileged processes
-> +without access, scope and resource restrictions.
-> +
-> +Unprivileged processes are subject to a full security permission check based on
-> +the process's credentials [5]_ (usually: effective UID, effective GID, and
-> +supplementary group list).
-> +
-> +Linux divides the privileges traditionally associated with superuser into
-> +distinct units, known as capabilities [6]_ , which can be independently enabled
-> +and disabled on per-thread basis for processes and files of unprivileged users.
-> +
-> +Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
-> +privileged processes with respect to perf_events performance monitoring and
-> +bypass *scope* permissions checks in the kernel.
-> +
-> +Unprivileged processes using perf_events system call API is also subject for
-> +PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
-> +determines whether monitoring is permitted. So unprivileged processes provided
-> +with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
-> +
-> +Other capabilities being granted to unprivileged processes can effectively
-> +enable capturing of additional data required for later performance analysis of
-> +monitored processes or a system. For example, CAP_SYSLOG capability permits
-> +reading kernel space memory addresses from /proc/kallsyms file.
-> +
-> +perf_events/Perf unprivileged users
-> +-----------------------------------
-> +
-> +perf_events/Perf *scope* and *access* control for unprivileged processes is
-> +governed by perf_event_paranoid [2]_ setting:
-> +
-> +-1:
-> +     Impose no *scope* and *access* restrictions on using perf_events performance
-> +     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
-> +     ignored when allocating memory buffers for storing performance data.
-> +     This is the least secure mode since allowed monitored *scope* is
-> +     maximized and no perf_events specific limits are imposed on *resources*
-> +     allocated for performance monitoring.
-> +
-> +>=0:
-> +     *scope* includes per-process and system wide performance monitoring
-> +     but excludes raw tracepoints and ftrace function tracepoints monitoring.
-> +     CPU and system events happened when executing either in user or
-> +     in kernel space can be monitored and captured for later analysis.
-> +     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
-> +     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-> +
-> +>=1:
-> +     *scope* includes per-process performance monitoring only and excludes
-> +     system wide performance monitoring. CPU and system events happened when
-> +     executing either in user or in kernel space can be monitored and
-> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-> +     locking limit is imposed but ignored for unprivileged processes with
-> +     CAP_IPC_LOCK capability.
-> +
-> +>=2:
-> +     *scope* includes per-process performance monitoring only. CPU and system
-> +     events happened when executing in user space only can be monitored and
-> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-> +     locking limit is imposed but ignored for unprivileged processes with
-> +     CAP_IPC_LOCK capability.
-> +
-> +Bibliography
-> +------------
-> +
-> +.. [1] `<https://lwn.net/Articles/337493/>`_
-> +.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
-> +.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
-> +.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
-> +.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
-> +.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
-> +.. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
-> +
 
 
+On 12/6/18 12:25 AM, Jens Axboe wrote:
+> On 12/5/18 12:43 AM, Jianchao Wang wrote:
+>> We don't allow direct dispatch of anything but regular reads/writes
+>> and insert all of non-read-write requests. However, this is not
+>> correct for 'bypass_insert == true' case where inserting is ignored
+>> and BLK_STS_RESOURCE is returned. The caller will fail forever.
+>>
+>> Fix it with inserting the non-read-write request to hctx dispatch
+>> list to avoid to involve merge and io scheduler when bypass_insert
+>> is true.
+>>
+>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+>> ---
+>>  block/blk-mq.c | 19 +++++++++++++++++--
+>>  1 file changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index 9005505..153af90 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -1822,6 +1822,7 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+>>  {
+>>  	struct request_queue *q = rq->q;
+>>  	bool run_queue = true;
+>> +	bool force = false;
+>>  
+>>  	/*
+>>  	 * RCU or SRCU read lock is needed before checking quiesced flag.
+>> @@ -1836,9 +1837,19 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+>>  		goto insert;
+>>  	}
+>>  
+>> -	if (!blk_rq_can_direct_dispatch(rq) || (q->elevator && !bypass_insert))
+>> +	if (q->elevator && !bypass_insert)
+>>  		goto insert;
+>>  
+>> +	if (!blk_rq_can_direct_dispatch(rq)) {
+>> +		/*
+>> +		 * For 'bypass_insert == true' case, insert request into hctx
+>> +		 * dispatch list.
+>> +		 */
+>> +		if (bypass_insert)
+>> +			force = true;
+>> +		goto insert;
+>> +	}
+> 
+> Just do force = bypass_insert, no need for the if.
+> 
 
--- 
-Kees Cook
+Yes, I will do it.
+
+Thanks
+Jianchao
