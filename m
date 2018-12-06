@@ -2,103 +2,119 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDD0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830A6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70B5820989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D84B20878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:35:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U56Xs3AL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B5820989
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vD/qvUd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D84B20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbeLFHez (ORCPT
+        id S1729160AbeLFHfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:34:55 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45382 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728964AbeLFHex (ORCPT
+        Thu, 6 Dec 2018 02:35:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33747 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728758AbeLFHfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:34:53 -0500
-Received: by mail-pf1-f196.google.com with SMTP id g62so11346742pfd.12;
-        Wed, 05 Dec 2018 23:34:53 -0800 (PST)
+        Thu, 6 Dec 2018 02:35:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so10270515pgu.0;
+        Wed, 05 Dec 2018 23:35:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KeUI7p8v5yfWvHehp5ot1Y8paMaTzOKHfaUhlRjkC70=;
-        b=U56Xs3ALHhn4bCRVPvKCuzjcxf31hqcBfPz4bxbopmrW6x8BYj+r7bPr70zAqNPTmA
-         2/YQX7tyzVcR7ZCDZDFxxeo7L8KDjseyCd9WlzFhedImjTzK86KTBJDkiSukIxoute5B
-         XjfDcIsZAPzK8v9bGzmyN4RJSlOkMueInslNM5b5J/cQD3D4Vy23sRAOa8FkaA/160lX
-         4irb6h49XeT+6A6AWFyPdT9FBiZlwAg1laT2UF/CjSgBhneET9ODgdKy9Nx6zkAkTTLO
-         gT2q1VBLPewiKIOx2coO1bRj+XpTI2YywedtUhZtW/Ap4RsT6Vgbk4woLJMwl3G84kEu
-         vuZw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s2ZsWQVz6K7IMqGD7I8xBIJdRSxJKWbe6GSMqRClhDU=;
+        b=vD/qvUd5WEtJaYTUSEU5qCoQHtssNX69nO2w8+O42oBcdbGTkAPVbKyq6G/cy6kiH3
+         JnyNb2AcVWvSq5ioFEjIm11oOF80Wqrn7G/8eD6mBtxSZf0ku3CoE7f04LWdsMt2HIA6
+         Gj9W8EqZ/uL2oyl65+a/aORxikIUtBJ2J7mIm4DyxXncxXOUg2jLC0V7Bi/kE2GzWr6B
+         e2W1xDJ3ZkSi6jl9RXp8syFdKsyQk2pBlB8BMm2SpVarM6pPZUWfzyfpFYdQMRWwNluv
+         iC9HFaGXSYX9kxYBTIkCxRCqM6TzCwZDcMwzeOUu52abq+6DRE2cIQ0N2/2H0Amnc1aT
+         L6tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KeUI7p8v5yfWvHehp5ot1Y8paMaTzOKHfaUhlRjkC70=;
-        b=ssft8NiBxhKbTvu+OD5/q1VpYim+LeZ7OCYEUEQNKscJVNM4+GY9mMcTs//ygS/lTb
-         bn9YCX/Hpnufbmmr+wglPaVhM7pnt+0hE5J3p247pqxTCTLHROHkmBvOA/kNnb4TljRQ
-         0dPrdPlQ/o1AniZpNYuydRvh8npyWKsVDunFuz7PlogQag5bvNFCReOrkRLjX9uhitMP
-         8Myg7Fk+kgIPQjnOqwZ6MG5Z5UpiaIXYnauqog84x3Gf8hCGjC4vaQYZiHepD7gVHIbR
-         wKbyAqqqK0yYAN3IQ1ds7f6CqIwj5ooIxnzFtBIA8oCW94e8Fe7/b3wMPnXBt3e1azdh
-         nGMA==
-X-Gm-Message-State: AA+aEWaa/bF5d0feX1WeloSRxbSdPv9PMDA69eYjeZ2dTtEbxJnu7LpX
-        cjglLpoGSOBNqhJvOsWzoh4=
-X-Google-Smtp-Source: AFSGD/X8t/jRZiBv7nwKWrYJVBYTDH54PvA2J7PC3wVyFpS84Pbk6wYwQR+HyGB/4nF3HetqA1lzIQ==
-X-Received: by 2002:a62:c683:: with SMTP id x3mr26936107pfk.10.1544081693306;
-        Wed, 05 Dec 2018 23:34:53 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id x3sm70418768pgt.45.2018.12.05.23.34.49
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s2ZsWQVz6K7IMqGD7I8xBIJdRSxJKWbe6GSMqRClhDU=;
+        b=Tkkw9oaAmPUmGJj+5wxd1Wn7nmrVcSwJGzRW79Zd/MThQc2Tso0stCCT8F9AdkSStV
+         d2+9ib2eQeSApOryXknEEVLw/EpEPd7cyQikrc+wPoUUjhBUWwRJovn9nAo/xmUoHeGi
+         arsNW9MA4zl0uxXZMqffkQyM9V66hoSIJZkM80bSv7/wIpLN2g2m4wrFGs/R62wHGBOK
+         PB6RLSQWCq9meI4stUAJ5E7pqlYPjLVX832OcJqa8v8o6e54oiRNuHgzzfJqYdBnaLyN
+         d4I353/4US53QWFLrHvNAOlUItX+bpPGtNbXrxCK2Tto+fWlqvkvSmwcJ2nHVPNA8mvg
+         qwaQ==
+X-Gm-Message-State: AA+aEWYSZEEYS3fOmHD1DSeM328L2MIaUULSyPWIvOAbL/XwfahFiTRX
+        TJhQNrXdXTGDqoW1TAoYNgnDx9S0
+X-Google-Smtp-Source: AFSGD/X96cga7L2HEXEND/HglZJZWnpJQvLeHPfyFWieLW8Y+GWIparzOiEDUQihnwlxtLrFGBTl3g==
+X-Received: by 2002:a63:64c:: with SMTP id 73mr23027435pgg.373.1544081753354;
+        Wed, 05 Dec 2018 23:35:53 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id v15sm33035894pfn.94.2018.12.05.23.35.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 23:34:52 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH V2 2/2] KVM/VMX: Fix max line length problem in the vmx_hv_remote_flush_tlb()
-Date:   Thu,  6 Dec 2018 15:34:37 +0800
-Message-Id: <20181206073437.1995-2-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
-References: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 05 Dec 2018 23:35:52 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pci@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>, bhelgaas@google.com,
+        Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
+        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v2 0/3] PCIE support for i.MX8MQ
+Date:   Wed,  5 Dec 2018 23:35:42 -0800
+Message-Id: <20181206073545.10967-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Everyone:
 
-Fix max line length problem.
+This series contains changes I made in order to enable support of PCIE
+IP block on i.MX8MQ SoCs (full tree can be found at [github-v2]).
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/vmx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+NOTE: The last patch have a Kconfig symbol depenency on [imx8mq-kconfig].
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 6577ec8cbb0f..2356118ea440 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1596,7 +1596,7 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
- 		}
- 	} else {
- 		ret = hyperv_flush_guest_mapping(
--				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
-+			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
- 	}
- 
- 	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+Changes since [v1]:
+
+ - Driver changed to use single "fsl,controller-id" property to
+   distinguish between two intances of PCIE IP block
+
+ - All code pertaining to L1SS was dropped to simplify the patch
+
+ - Documented additions to DT bindings
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+[v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
+[github-v2] https://github.com/ndreys/linux/commits/imx8mq-pcie-v2
+[imx8mq-kconfig] https://lore.kernel.org/linux-arm-kernel/20181114175242.12468-1-l.stach@pengutronix.de/
+
+Andrey Smirnov (3):
+  PCI: imx: No-op imx6_setup_phy_mpll() on i.MX7D
+  PCI: imx: No-op imx6_pcie_reset_phy() on i.MX7D
+  PCI: imx: Add support for i.MX8MQ
+
+ .../bindings/pci/fsl,imx6q-pcie.txt           |  6 +-
+ drivers/pci/controller/dwc/Kconfig            |  2 +-
+ drivers/pci/controller/dwc/pci-imx6.c         | 87 ++++++++++++++++++-
+ 3 files changed, 90 insertions(+), 5 deletions(-)
+
 -- 
-2.14.4
+2.19.1
 
