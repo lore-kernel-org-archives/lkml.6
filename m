@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74D6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8846C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966FA20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966FA20868
+	by mail.kernel.org (Postfix) with ESMTP id A9DCB20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DCB20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbeLFXog (ORCPT
+        id S1726478AbeLFXow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:44:36 -0500
-Received: from foss.arm.com ([217.140.101.70]:35918 "EHLO foss.arm.com"
+        Thu, 6 Dec 2018 18:44:52 -0500
+Received: from foss.arm.com ([217.140.101.70]:35938 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbeLFXod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:44:33 -0500
+        id S1726236AbeLFXog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:44:36 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49CD71650;
-        Thu,  6 Dec 2018 15:44:32 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AAB03168F;
+        Thu,  6 Dec 2018 15:44:35 -0800 (PST)
 Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B453C3F5AF;
-        Thu,  6 Dec 2018 15:44:31 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2970A3F5AF;
+        Thu,  6 Dec 2018 15:44:35 -0800 (PST)
 From:   Jeremy Linton <jeremy.linton@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
         shankerd@codeaurora.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, ykaukab@suse.de,
         Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH 3/6] arm64: add sysfs vulnerability show for spectre v1
-Date:   Thu,  6 Dec 2018 17:44:05 -0600
-Message-Id: <20181206234408.1287689-4-jeremy.linton@arm.com>
+Subject: [PATCH 5/6] arm64: add sysfs vulnerability show for speculative store bypass
+Date:   Thu,  6 Dec 2018 17:44:07 -0600
+Message-Id: <20181206234408.1287689-6-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181206234408.1287689-1-jeremy.linton@arm.com>
 References: <20181206234408.1287689-1-jeremy.linton@arm.com>
@@ -48,33 +48,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mian Yousaf Kaukab <ykaukab@suse.de>
 
-spectre v1, has been mitigated, and the mitigation is
-always active.
+Return status based no ssbd_state and the arm64 SSBS feature.
+Return string "Unknown" in case CONFIG_ARM64_SSBD is
+disabled or arch workaround2 is not available
+in the firmware.
 
 Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+[Added SSBS logic]
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- arch/arm64/kernel/cpu_errata.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/kernel/cpu_errata.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 6ad715d67df8..559ecdee6fd2 100644
+index 6505c93d507e..8aeb5ca38db8 100644
 --- a/arch/arm64/kernel/cpu_errata.c
 +++ b/arch/arm64/kernel/cpu_errata.c
-@@ -757,3 +757,13 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	{
+@@ -423,6 +423,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+ 		ssbd_state = ARM64_SSBD_UNKNOWN;
+ 		return false;
+ 
++	/* machines with mixed mitigation requirements must not return this */
+ 	case SMCCC_RET_NOT_REQUIRED:
+ 		pr_info_once("%s mitigation not required\n", entry->desc);
+ 		ssbd_state = ARM64_SSBD_MITIGATED;
+@@ -828,4 +829,31 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
  	}
- };
-+
-+#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
-+
-+ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr,
-+		char *buf)
+ }
+ 
++ssize_t cpu_show_spec_store_bypass(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++	/*
++	 *  Two assumptions: First, get_ssbd_state() reflects the worse case
++	 *  for hetrogenous machines, and that if SSBS is supported its
++	 *  supported by all cores.
++	 */
++	switch (arm64_get_ssbd_state()) {
++	case ARM64_SSBD_MITIGATED:
++		return sprintf(buf, "Not affected\n");
++
++	case ARM64_SSBD_KERNEL:
++	case ARM64_SSBD_FORCE_ENABLE:
++		if (cpus_have_cap(ARM64_SSBS))
++			return sprintf(buf, "Not affected\n");
++		return sprintf(buf,
++			"Mitigation: Speculative Store Bypass disabled\n");
++
++	case ARM64_SSBD_FORCE_DISABLE:
++		return sprintf(buf, "Vulnerable\n");
++
++	default: /* ARM64_SSBD_UNKNOWN*/
++		return sprintf(buf, "Unknown\n");
++	}
 +}
 +
-+#endif
+ #endif
 -- 
 2.17.2
 
