@@ -2,95 +2,90 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1424C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8572AC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A8A20838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:28:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kZw96mDU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A8A20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 5445020838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:29:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5445020838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbeLFK2x (ORCPT
+        id S1729487AbeLFK3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:28:53 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39752 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFK2x (ORCPT
+        Thu, 6 Dec 2018 05:29:04 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:32989 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeLFK3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:28:53 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB6ASLlV078975;
-        Thu, 6 Dec 2018 04:28:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544092101;
-        bh=3RuPsr2GYaMLLosEJlyM5wBK/Hke82cY66un55CwNtY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kZw96mDU8LJfBGXPUw23P+mEdO1Iwf2JACk3qCI+5QEQqK1zPfrh/21l01rtyxSzj
-         lNz1TgFHfKQUboOm01vOi7R19vCYSQ6UZ5jjQLUmTADBluNs4EWYShzJ7F6yEB2Q13
-         YgLm0/9V7nzCD6h1Q1PVBjSeG0b4ObdCIgCoN12o=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB6ASLpb096767
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 04:28:21 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 6
- Dec 2018 04:28:21 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 6 Dec 2018 04:28:21 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB6ASHeE014638;
-        Thu, 6 Dec 2018 04:28:18 -0600
-Subject: Re: [PATCH v2 17/34] dt-bindings: arm: Convert TI davinci board/soc
- bindings to json-schema
-To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, <arm@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-18-robh@kernel.org>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <bcad4b00-910c-fd54-cbec-295b86922560@ti.com>
-Date:   Thu, 6 Dec 2018 15:58:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181203213223.16986-18-robh@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 6 Dec 2018 05:29:03 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gUqtt-0007HQ-Hf; Thu, 06 Dec 2018 11:28:57 +0100
+Message-ID: <1544092136.3709.57.camel@pengutronix.de>
+Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on
+ PCIEPORTBUS
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-pci@vger.kernel.org
+Cc:     bhelgaas@google.com, cphealy@gmail.com,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 06 Dec 2018 11:28:56 +0100
+In-Reply-To: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/18 3:02 AM, Rob Herring wrote:
-> Convert TI Davinci SoC bindings to DT schema format using json-schema.
+Am Mittwoch, den 05.12.2018, 23:45 -0800 schrieb Andrey Smirnov:
+> Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+> produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+> to pcieport driver. This, in turn, results in a PCIE bus that is
+> capable of enumerating attached PCIE device, but lacks functional
+> interrupt support.
+
+This is odd. AFAIK PCI port services are a totally optional thing and
+them being absent should not lead to a non-functional PCI bus. So I
+would really like to see some deeper analysis what is going on here.
+
+Regards,
+Lucas
+
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
 > 
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Kevin Hilman <khilman@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+> Assuming this is a reasonable dependency, shold this be done to more
+> than just i.MX6 driver?
+> 
+>  drivers/pci/controller/dwc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 2b139acccf32..44ededbeab85 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -92,6 +92,7 @@ config PCI_IMX6
+> >  	bool "Freescale i.MX6 PCIe controller"
+> >  	depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+> >  	depends on PCI_MSI_IRQ_DOMAIN
+> > +	depends on PCIEPORTBUS
+> >  	select PCIE_DW_HOST
+>  
+>  config PCIE_SPEAR13XX
