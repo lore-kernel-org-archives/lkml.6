@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFF9C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65500C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 464CA20700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12228208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rx29F5om"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464CA20700
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X+vSM8pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12228208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbeLFViv (ORCPT
+        id S1726196AbeLFVjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:38:51 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:33740 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbeLFVip (ORCPT
+        Thu, 6 Dec 2018 16:39:11 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33072 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbeLFVit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:38:45 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYiJh159474;
-        Thu, 6 Dec 2018 21:38:18 GMT
+        Thu, 6 Dec 2018 16:38:49 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYvSN192520;
+        Thu, 6 Dec 2018 21:38:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=Q92XsM559slBxkunNq5q8saE7LteeOstRPtlDtl+k4g=;
- b=rx29F5om0uUK7q2Fpinp6be8Han7DhVVPpd1N1ffmy3VScO/Vmi8Br4xN+jU+Xzc/Dcv
- gGlUQyvRrGnm+M6rmUazysbD9xVddAm6V7exZQ8rBljGehEYJTELVs1EIUwwNiv+t9d/
- kxfek3kYfzLYOVoZ83/bW8Pa1A7mvH3GY6F9BXbLtZu7s2pCWlmS0K0CaCE4CPeaR/iX
- lzCe53jmCrOyB/3WW+4y/dX/9DWi/ukZMZRuIXaxCLnKfcYm7aa+jEFKFGpN1BiE2uT3
- ORWKWWHSu0BpWM4XKrc5aqg6Xcf15+b37gCrADjA9l0pcmr+UfQJh787CuFr1gZJmqdI yw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2p3ftfenfw-1
+ bh=JArIvczr9LdBB1czXYVsoZTFYGTMuDnBa7wq27tn6lw=;
+ b=X+vSM8pqsBYsZd3Pl3yX+sbLwX+SNRdcEVJDhEovvsu6446PFM3BUdE8/weZxUOyyRNS
+ y1SwWfDuLRq+sveLFGVx3phWaFZ8ZJeniuI4g9+p560dk8kGxQfuYHqPtOMsYX8Xi4nt
+ 2GhkCkttCutxt6rc81Xm5Jybe/34Wb1153T9yfCLLB3z6CFSZ4f38IWWcpN6maeS6+0Y
+ GLG6HEuC7565it3P7H4wDaVyP9mLikzJURSaVQBM/p4KLEvzbg00UmeZGo9cq85/k+BZ
+ 38oJvy4LE+sXl0syl/X42KOONMCi6PJ4V2mWAGFOFCqfEXIRUB84xlNYzPWiAxJwlLnr 5Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2p3hquar66-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:38:18 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcI2d007204
+        Thu, 06 Dec 2018 21:38:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcMTG017547
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:38:18 GMT
+        Thu, 6 Dec 2018 21:38:22 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcHEj001035;
-        Thu, 6 Dec 2018 21:38:17 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcMOo022877;
+        Thu, 6 Dec 2018 21:38:22 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 21:38:17 +0000
+        with ESMTP ; Thu, 06 Dec 2018 21:38:21 +0000
 From:   Steve Sistare <steven.sistare@oracle.com>
 To:     mingo@redhat.com, peterz@infradead.org
 Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
@@ -60,15 +60,15 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         valentin.schneider@arm.com, vincent.guittot@linaro.org,
         quentin.perret@arm.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/10] sched/topology: Provide cfs_overload_cpus bitmap
-Date:   Thu,  6 Dec 2018 13:28:09 -0800
-Message-Id: <1544131696-2888-4-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH v4 09/10] sched/fair: disable stealing if too many NUMA nodes
+Date:   Thu,  6 Dec 2018 13:28:15 -0800
+Message-Id: <1544131696-2888-10-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=988
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1812060181
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,118 +76,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Sistare <steve.sistare@oracle.com>
+The STEAL feature causes regressions on hackbench on larger NUMA systems,
+so disable it on systems with more than sched_steal_node_limit nodes
+(default 2).  Note that the feature remains enabled as seen in features.h
+and /sys/kernel/debug/sched_features, but stealing is only performed if
+nodes <= sched_steal_node_limit.  This arrangement allows users to activate
+stealing on reboot by setting the kernel parameter sched_steal_node_limit
+on kernels built without CONFIG_SCHED_DEBUG.  The parameter is temporary
+and will be deleted when the regression is fixed.
 
-Define and initialize a sparse bitmap of overloaded CPUs, per
-last-level-cache scheduling domain, for use by the CFS scheduling class.
-Save a pointer to cfs_overload_cpus in the rq for efficient access.
+Details of the regression follow.  With the STEAL feature set, hackbench
+is slower on many-node systems:
+
+X5-8: 8 sockets * 18 cores * 2 hyperthreads = 288 CPUs
+Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz
+Average of 10 runs of: hackbench <groups> processes 50000
+
+          --- base --    --- new ---
+groups    time %stdev    time %stdev  %speedup
+     1   3.627   15.8   3.876    7.3      -6.5
+     2   4.545   24.7   5.583   16.7     -18.6
+     3   5.716   25.0   7.367   14.2     -22.5
+     4   6.901   32.9   7.718   14.5     -10.6
+     8   8.604   38.5   9.111   16.0      -5.6
+    16   7.734    6.8  11.007    8.2     -29.8
+
+Total CPU time increases.  Profiling shows that CPU time increases
+uniformly across all functions, suggesting a systemic increase in cache
+or memory latency.  This may be due to NUMA migrations, as they cause
+loss of LLC cache footprint and remote memory latencies.
+
+The domains for this system and their flags are:
+
+  domain0 (SMT) : 1 core
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING SD_SHARE_CPUCAPACITY
+    SD_WAKE_AFFINE
+
+  domain1 (MC) : 1 socket
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING
+    SD_WAKE_AFFINE
+
+  domain2 (NUMA) : 4 sockets
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SERIALIZE SD_OVERLAP SD_NUMA
+    SD_WAKE_AFFINE
+
+  domain3 (NUMA) : 8 sockets
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE
+    SD_SERIALIZE SD_OVERLAP SD_NUMA
+
+Schedstats point to the root cause of the regression.  hackbench is run
+10 times per group and the average schedstat accumulation per-run and
+per-cpu is shown below.  Note that domain3 moves are zero because
+SD_WAKE_AFFINE is not set there.
+
+NO_STEAL
+                                         --- domain2 ---   --- domain3 ---
+grp time %busy sched  idle   wake steal remote  move pull remote  move pull
+ 1 20.3 10.3  28710  14346  14366     0    490  3378    0   4039     0    0
+ 2 26.4 18.8  56721  28258  28469     0    792  7026   12   9229     0    7
+ 3 29.9 28.3  90191  44933  45272     0   5380  7204   19  16481     0    3
+ 4 30.2 35.8 121324  60409  60933     0   7012  9372   27  21438     0    5
+ 8 27.7 64.2 229174 111917 117272     0  11991  1837  168  44006     0   32
+16 32.6 74.0 334615 146784 188043     0   3404  1468   49  61405     0    8
+
+STEAL
+                                         --- domain2 ---   --- domain3 ---
+grp time %busy sched  idle   wake steal remote  move pull remote  move pull
+ 1 20.6 10.2  28490  14232  14261    18      3  3525    0   4254     0    0
+ 2 27.9 18.8  56757  28203  28562   303   1675  7839    5   9690     0    2
+ 3 35.3 27.7  87337  43274  44085   698    741 12785   14  15689     0    3
+ 4 36.8 36.0 118630  58437  60216  1579   2973 14101   28  18732     0    7
+ 8 48.1 73.8 289374 133681 155600 18646  35340 10179  171  65889     0   34
+16 41.4 82.5 268925  91908 177172 47498  17206  6940  176  71776     0   20
+
+Cross-numa-node migrations are caused by load balancing pulls and
+wake_affine moves.  Pulls are small and similar for no_steal and steal.
+However, moves are significantly higher for steal, and rows above with the
+highest moves have the worst regressions for time; see for example grp=8.
+
+Moves increase for steal due to the following logic in wake_affine_idle()
+for synchronous wakeup:
+
+    if (sync && cpu_rq(this_cpu)->nr_running == 1)
+        return this_cpu;        // move the task
+
+The steal feature does a better job of smoothing the load between idle
+and busy CPUs, so nr_running is 1 more often, and moves are performed
+more often.  For hackbench, cross-node affine moves early in the run are
+good because they colocate wakers and wakees from the same group on the
+same node, but continued moves later in the run are bad, because the wakee
+is moved away from peers on its previous node.  Note that even no_steal
+is far from optimal; binding an instance of "hackbench 2" to each of the
+8 NUMA nodes runs much faster than running "hackbench 16" with no binding.
+
+Clearing SD_WAKE_AFFINE for domain2 eliminates the affine cross-node
+migrations and eliminates the difference between no_steal and steal
+performance.  However, overall performance is lower than WA_IDLE because
+some migrations are helpful as explained above.
+
+I have tried many heuristics in a attempt to optimize the number of
+cross-node moves in all conditions, with limited success.  The fundamental
+problem is that the scheduler does not track which groups of tasks talk to
+each other.  Parts of several groups become entrenched on the same node,
+filling it to capacity, leaving no room for either group to pull its peers
+over, and there is neither data nor mechanism for the scheduler to evict
+one group to make room for the other.
+
+For now, disable STEAL on such systems until we can do better, or it is
+shown that hackbench is atypical and most workloads benefit from stealing.
 
 Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- include/linux/sched/topology.h |  1 +
- kernel/sched/sched.h           |  2 ++
- kernel/sched/topology.c        | 25 +++++++++++++++++++++++--
- 3 files changed, 26 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c     | 16 +++++++++++++---
+ kernel/sched/sched.h    |  2 +-
+ kernel/sched/topology.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 6b99761..b173a77 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -72,6 +72,7 @@ struct sched_domain_shared {
- 	atomic_t	ref;
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
-+	struct sparsemask *cfs_overload_cpus;
- };
- 
- struct sched_domain {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 618577f..eacf5db 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -81,6 +81,7 @@
- 
- struct rq;
- struct cpuidle_state;
-+struct sparsemask;
- 
- /* task_struct::on_rq states: */
- #define TASK_ON_RQ_QUEUED	1
-@@ -812,6 +813,7 @@ struct rq {
- 	struct cfs_rq		cfs;
- 	struct rt_rq		rt;
- 	struct dl_rq		dl;
-+	struct sparsemask	*cfs_overload_cpus;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/* list of leaf cfs_rq on this CPU: */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 3e72ce0..89a78ce 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -3,6 +3,7 @@
-  * Scheduler topology setup/handling methods
-  */
- #include "sched.h"
-+#include "sparsemask.h"
- 
- DEFINE_MUTEX(sched_domains_mutex);
- 
-@@ -410,7 +411,9 @@ static void destroy_sched_domains(struct sched_domain *sd)
- 
- static void update_top_cache_domain(int cpu)
- {
-+	struct sparsemask *cfs_overload_cpus = NULL;
- 	struct sched_domain_shared *sds = NULL;
-+	struct rq *rq = cpu_rq(cpu);
- 	struct sched_domain *sd;
- 	int id = cpu;
- 	int size = 1;
-@@ -420,8 +423,10 @@ static void update_top_cache_domain(int cpu)
- 		id = cpumask_first(sched_domain_span(sd));
- 		size = cpumask_weight(sched_domain_span(sd));
- 		sds = sd->shared;
-+		cfs_overload_cpus = sds->cfs_overload_cpus;
- 	}
- 
-+	rcu_assign_pointer(rq->cfs_overload_cpus, cfs_overload_cpus);
- 	rcu_assign_pointer(per_cpu(sd_llc, cpu), sd);
- 	per_cpu(sd_llc_size, cpu) = size;
- 	per_cpu(sd_llc_id, cpu) = id;
-@@ -1621,7 +1626,22 @@ static void __sdt_free(const struct cpumask *cpu_map)
- 
- static int sd_llc_alloc(struct sched_domain *sd)
- {
--	/* Allocate sd->shared data here. Empty for now. */
-+	struct sched_domain_shared *sds = sd->shared;
-+	struct cpumask *span = sched_domain_span(sd);
-+	int nid = cpu_to_node(cpumask_first(span));
-+	int flags = __GFP_ZERO | GFP_KERNEL;
-+	struct sparsemask *mask;
-+
-+	/*
-+	 * Allocate the bitmap if not already allocated.  This is called for
-+	 * every CPU in the LLC but only allocates once per sd_llc_shared.
-+	 */
-+	if (!sds->cfs_overload_cpus) {
-+		mask = sparsemask_alloc_node(nr_cpu_ids, 3, flags, nid);
-+		if (!mask)
-+			return 1;
-+		sds->cfs_overload_cpus = mask;
-+	}
- 
- 	return 0;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1476ae8..1efd9c4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3735,11 +3735,21 @@ static inline void rq_idle_stamp_clear(struct rq *rq)
+ 	rq->idle_stamp = 0;
  }
-@@ -1633,7 +1653,8 @@ static void sd_llc_free(struct sched_domain *sd)
- 	if (!sds)
+ 
++static inline bool steal_enabled(void)
++{
++#ifdef CONFIG_NUMA
++	bool allow = static_branch_likely(&sched_steal_allow);
++#else
++	bool allow = true;
++#endif
++	return sched_feat(STEAL) && allow;
++}
++
+ static void overload_clear(struct rq *rq)
+ {
+ 	struct sparsemask *overload_cpus;
+ 
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
  		return;
  
--	/* Free data here. Empty for now. */
-+	sparsemask_free(sds->cfs_overload_cpus);
-+	sds->cfs_overload_cpus = NULL;
+ 	rcu_read_lock();
+@@ -3753,7 +3763,7 @@ static void overload_set(struct rq *rq)
+ {
+ 	struct sparsemask *overload_cpus;
+ 
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
+ 		return;
+ 
+ 	rcu_read_lock();
+@@ -9902,7 +9912,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
+ 	int stolen = 0;
+ 	struct sparsemask *overload_cpus;
+ 
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
+ 		return 0;
+ 
+ 	if (!cpu_active(dst_cpu))
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index eacf5db..2a28340 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -936,7 +936,6 @@ static inline int cpu_of(struct rq *rq)
+ #endif
  }
  
- static int sd_llc_alloc_all(const struct cpumask *cpu_map, struct s_data *d)
+-
+ #ifdef CONFIG_SCHED_SMT
+ 
+ extern struct static_key_false sched_smt_present;
+@@ -1185,6 +1184,7 @@ enum numa_topology_type {
+ #endif
+ 
+ #ifdef CONFIG_NUMA
++extern struct static_key_true sched_steal_allow;
+ extern void sched_init_numa(void);
+ extern void sched_domains_numa_masks_set(unsigned int cpu);
+ extern void sched_domains_numa_masks_clear(unsigned int cpu);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 89a78ce..259d659 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1344,6 +1344,30 @@ static void init_numa_topology_type(void)
+ 	}
+ }
+ 
++DEFINE_STATIC_KEY_TRUE(sched_steal_allow);
++static int sched_steal_node_limit;
++#define SCHED_STEAL_NODE_LIMIT_DEFAULT 2
++
++static int __init steal_node_limit_setup(char *buf)
++{
++	get_option(&buf, &sched_steal_node_limit);
++	return 0;
++}
++
++early_param("sched_steal_node_limit", steal_node_limit_setup);
++
++static void check_node_limit(void)
++{
++	int n = num_possible_nodes();
++
++	if (sched_steal_node_limit == 0)
++		sched_steal_node_limit = SCHED_STEAL_NODE_LIMIT_DEFAULT;
++	if (n > sched_steal_node_limit) {
++		static_branch_disable(&sched_steal_allow);
++		pr_debug("Suppressing sched STEAL. To enable, reboot with sched_steal_node_limit=%d", n);
++	}
++}
++
+ void sched_init_numa(void)
+ {
+ 	int next_distance, curr_distance = node_distance(0, 0);
+@@ -1492,6 +1516,7 @@ void sched_init_numa(void)
+ 	sched_max_numa_distance = sched_domains_numa_distance[level - 1];
+ 
+ 	init_numa_topology_type();
++	check_node_limit();
+ }
+ 
+ void sched_domains_numa_masks_set(unsigned int cpu)
 -- 
 1.8.3.1
 
