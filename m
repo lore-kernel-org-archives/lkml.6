@@ -2,127 +2,150 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9184CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5675AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6036120838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6036120838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 1EB7C20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB7C20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sedsystems.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726257AbeLFQIw (ORCPT
+        id S1726217AbeLFQKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:08:52 -0500
-Received: from mout.gmx.net ([212.227.17.22]:41093 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbeLFQIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:08:51 -0500
-Received: from ovpn-121-90.rdu2.redhat.com ([71.184.117.43]) by mail.gmx.com
- (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0Lcjdr-1hEUEm0PY7-00k6aq; Thu, 06 Dec 2018 17:08:43 +0100
-From:   Qian Cai <cai@gmx.us>
-To:     akpm@linux-foundation.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@gmx.us>
-Subject: [RESEND PATCH] drivers/base: kmemleak ignore a known leak
-Date:   Thu,  6 Dec 2018 11:07:51 -0500
-Message-Id: <20181206160751.36211-1-cai@gmx.us>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <1543504357-4873-1-git-send-email-cai@gmx.us>
-References: <1543504357-4873-1-git-send-email-cai@gmx.us>
-X-Provags-ID: V03:K1:2EXpTXHwwZh5LYDTxekmW+j5xG/MoDyaeMsUhUqGZPzBjQkCXaB
- 12rlhJjVelwtFauJMp6qUAJcKE9msPxtetLiU1cxdX8g5WCH6XHvQX7tTw0+y40e6T1HwDm
- LlP9YygpwlNKOyvPlwc1JuijnnBtT1F6kdR2c3MOUfhySeb7Ojk16Bho1SlU2cWjJEt4H3V
- tjQbwupuwBa2CUufUrJ9Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:LA9n3qnkU+M=:QSLCRlygYqZZJb46asFhPO
- zRwwOOeMTqSAU2sT/CKgKr3RkKluQTRcqYufixa6tn/UKLxSlFzMHGFDVHVk9c1sLHib2VLFw
- 7YaZM1zLa9ahTypNM9NK1eacg1lvbD1L4nm0hFM1zKaIBYc4K0TWWQiG6friSWtcuZnq+HZ9I
- IP3AM+FXjvAXfpodmgXs4MWpZJvnTky4ovLIx2tlwUL67p2vzkN3KCyqr9R2RDVzOutxw7Rwn
- dELICb6CRgLWOawSDzZyjAkGNWXTZzCgXHbpqK7O3/0nS5t9knvKssOTsSiMsw7FhNAqSG6YD
- 0rihm5AGuLrY5gic7qAb3RrsPbfcfiyKjW7ZNmJNUrMMExr9RhVnZ4mj4xGx6Z+1LnoOW1xgi
- OldkXh4hL4MDspMk08AUZ31ciyacTgHZMoQwffKldQTtZQp/LfnAv/eTDD64J3v2Ysk7jNa/f
- ZQimrwIZ/7Wcnige7qDaxT6onyKMzVsIGvnOBjvftDSYBQgjWXlaN1FiktcY/VbeSvKTKuf6z
- YHlpmNZYQStwKFdiN0b9sf69uSK5YjdzA40RnB/8wRYpTAIYjD45g96DJ7k4TGssv84rq7mLx
- Skoep3Eo2EVnTntcdRsgiQXXxnwH98OoVAcnNimQnLXlfko6L4AdWlvXEIa0ib/ueaPd+tnwu
- ANHU0n9gl/Yr0w9Yz3s7EwxHuMsew8PqWYuWndU4i29+kaJhSjlN3D8mljoIoO0siPHTDuwuk
- KsB0WxKeIml38reflSX7fvaEqNHm5DGI3nLrv+XEo7dvTurAOFmpCnPIwqJ9MOQpHE9z/Aw2J
- X8a23eZy2Hy7kPK2+IyKWtpw1+6h/5o0XKaUKrV0M/Q/jvdMMtx1Z1Pw3l8JnF2ZooYqEYOU4
- NVV03iJ3YQw5cBJKFOYpLauEOCF9vyAbJC+aIsYb0=
+        Thu, 6 Dec 2018 11:10:02 -0500
+Received: from sed198n136.SEDSystems.ca ([198.169.180.136]:9345 "EHLO
+        sed198n136.sedsystems.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeLFQKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:10:02 -0500
+Received: from barney.sedsystems.ca (barney [198.169.180.121])
+        by sed198n136.sedsystems.ca  with ESMTP id wB6GA1Ts001404
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Dec 2018 10:10:01 -0600 (CST)
+Received: from eng1n65.eng.sedsystems.ca (eng1n65.eng.sedsystems.ca [172.21.1.65])
+        by barney.sedsystems.ca (8.14.7/8.14.4) with ESMTP id wB6GA0bY022948
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 6 Dec 2018 10:10:00 -0600
+Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pci@vger.kernel.org, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, bhelgaas@google.com,
+        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
+        Trent Piepho <tpiepho@impinj.com>
+References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+ <87o99zjcsc.fsf@tkos.co.il>
+ <5a3543f2-fe58-221d-694f-0f98a643edfc@sedsystems.ca>
+ <1544111431.3709.70.camel@pengutronix.de>
+From:   Robert Hancock <hancock@sedsystems.ca>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hancock@sedsystems.ca; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SED Systems
+Message-ID: <ff33ed91-431d-9620-da75-216298a58667@sedsystems.ca>
+Date:   Thu, 6 Dec 2018 10:10:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <1544111431.3709.70.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.64 on 198.169.180.136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-unreferenced object 0xffff808ec6dc5a80 (size 128):
-  comm "swapper/0", pid 1, jiffies 4294938063 (age 2560.530s)
-  hex dump (first 32 bytes):
-    ff ff ff ff 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
-    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-  backtrace:
-    [<00000000476dcf8c>] kmem_cache_alloc_trace+0x430/0x500
-    [<000000004f708d37>] platform_device_register_full+0xbc/0x1e8
-    [<000000006c2a7ec7>] acpi_create_platform_device+0x370/0x450
-    [<00000000ef135642>] acpi_default_enumeration+0x34/0x78
-    [<000000003bd9a052>] acpi_bus_attach+0x2dc/0x3e0
-    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
-    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
-    [<000000002968643e>] acpi_bus_scan+0xb0/0x110
-    [<0000000010dd0bd7>] acpi_scan_init+0x1a8/0x410
-    [<00000000965b3c5a>] acpi_init+0x408/0x49c
-    [<00000000ed4b9fe2>] do_one_initcall+0x178/0x7f4
-    [<00000000a5ac5a74>] kernel_init_freeable+0x9d4/0xa9c
-    [<0000000070ea6c15>] kernel_init+0x18/0x138
-    [<00000000fb8fff06>] ret_from_fork+0x10/0x1c
-    [<0000000041273a0d>] 0xffffffffffffffff
+On 2018-12-06 9:50 a.m., Lucas Stach wrote:
+> Am Donnerstag, den 06.12.2018, 09:45 -0600 schrieb Robert Hancock:
+>> On 2018-12-06 2:10 a.m., Baruch Siach wrote:
+>>> Hi Andrey,
+>>>
+>>> Adding Robert Hancock who reported[1] on a PCIe MSI issue with i.MX6.
+>>>
+>>> Andrey Smirnov writes:
+>>>
+>>>> Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+>>>> produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+>>>> to pcieport driver. This, in turn, results in a PCIE bus that is
+>>>> capable of enumerating attached PCIE device, but lacks functional
+>>>> interrupt support.
+>>>
+>>> Robert, does that fix your issue?
+>>
+>> Unfortunately, no.. in fact the situation on my setup is even worse with
+>> CONFIG_PCIEPORTBUS enabled: Not only does MSI still not function, but
+>> now INTx interrupts are somehow broken as well - no interrupts are
+>> received. The IRQ information shown in /proc/interrupts is correct, but
+>> the count remains stubbornly at 0.
+> 
+> That's expected. The port services will use an MSI IRQ when available
+> and due to a design issue with the DWC PCIe it will not forward any
+> legacy IRQs if any MSI is in use. If any of the PCIe devices in your
+> system are unable to work with MSI IRQs, you must boot with "nomsi" on
+> the kernel command line set.
 
-Then, faddr2line pointed out this line,
+That seems like an unfortunate design choice on their part.. well that
+would probably argue against adding this as a hard dependency then, if
+non-MSI-supporting PCIe devices can't work with default boot options
+with that set.
 
-/*
- * This memory isn't freed when the device is put,
- * I don't have a nice idea for that though.  Conceptually
- * dma_mask in struct device should not be a pointer.
- * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
- */
-pdev->dev.dma_mask =
-	kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+I'm looking into testing with an NXP Smart Devices board and some PCIe
+cards to see if I can verify whether MSI works on those or not, since we
+currently don't have a way to independently verify that the MSI
+implementation in our FPGA is working or whether another PCIe device
+works with MSI (the FPGA is integrated on the system board).
 
-Since this leak has been existed for more than 8-year now and it does not
-reference other part of the memory, let kmemleak ignore it, so users don't
-need to waste time reporting this in the future.
-
-Signed-off-by: Qian Cai <cai@gmx.us>
----
- drivers/base/platform.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 41b91af95afb..3e1587d8320a 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -26,6 +26,7 @@
- #include <linux/clk/clk-conf.h>
- #include <linux/limits.h>
- #include <linux/property.h>
-+#include <linux/kmemleak.h>
- 
- #include "base.h"
- #include "power/power.h"
-@@ -525,6 +526,8 @@ struct platform_device *platform_device_register_full(
- 		if (!pdev->dev.dma_mask)
- 			goto err;
- 
-+		kmemleak_ignore(pdev->dev.dma_mask);
-+
- 		*pdev->dev.dma_mask = pdevinfo->dma_mask;
- 		pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
- 	}
 -- 
-2.17.2 (Apple Git-113)
-
+Robert Hancock
+Senior Software Developer
+SED Systems
+Email: hancock@sedsystems.ca
