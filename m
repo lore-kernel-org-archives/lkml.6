@@ -2,147 +2,121 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F62C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC668C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B63120700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:16:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B63120700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B822D20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B822D20700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbeLFQQb (ORCPT
+        id S1726140AbeLFQRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:16:31 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35351 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeLFQQa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:16:30 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gUwK8-0007Hh-Bm; Thu, 06 Dec 2018 17:16:24 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gUwK6-0005sL-Qc; Thu, 06 Dec 2018 17:16:22 +0100
-Date:   Thu, 6 Dec 2018 17:16:22 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181206161622.okpfiecfphar77jk@pengutronix.de>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181206135902.un2nbreqfmi6mpd6@pengutronix.de>
- <01aaa6ff-fb3e-37a7-0e72-099ad013ee2a@ysoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <01aaa6ff-fb3e-37a7-0e72-099ad013ee2a@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 6 Dec 2018 11:17:08 -0500
+Received: from mout.gmx.net ([212.227.17.21]:45001 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbeLFQRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:17:07 -0500
+Received: from ovpn-121-90.rdu2.redhat.com ([71.184.117.43]) by mail.gmx.com
+ (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0MYwQh-1gzzcp0sJ1-00VkjW; Thu, 06 Dec 2018 17:17:04 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     akpm@linux-foundation.org
+Cc:     ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
+        marc.zyngier@arm.com, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
+Subject: [RESEND PATCH] efi: let kmemleak ignore false positives
+Date:   Thu,  6 Dec 2018 11:16:33 -0500
+Message-Id: <20181206161633.36292-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <1543517152-23969-1-git-send-email-cai@gmx.us>
+References: <1543517152-23969-1-git-send-email-cai@gmx.us>
+X-Provags-ID: V03:K1:icbn2ncgSA/eyt4FK5BOmU4VDzgHBtftAqpyuoLh5teXXvk536x
+ 2t709JpAxe2/xDN2O4IVF5HhhBeerxC47N/KpMjck7w8Uo+J1KSI9RV/ZqEbFnyL1nwbxeL
+ S20PnMOh1OGKLECzBvK0VpdDQYd4E/3wOtNgzUeFkWl/2LmQAQ3FZ4xexdOm07awrUgaLjE
+ xMK2eab3eJy25vy+l4RrQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:X2WpldfLbSE=:ikURFGkXBPM9NLXj8dtWXA
+ 6qk/nxXTLYtxEmxyVGweyQms8qcyJOH/6NBTV0iSTBQtrob8Er9J8lAGvCtZbkNFKULLysLLS
+ SmCjJmtbj40Kjcj8nFrmCy9eg/0i87f3fKyqbAtkZSrmLN3TB9tzsTtZEMLUmFNUkMjhb6wNj
+ ZcM1DzSkf0xk3dYHGS0JjVKo096MrcegFXNa8WH2KZpZqpbI53g8oSzcgZOMGE2Qm3WGsABgB
+ DAXndQy9zzOCIybCnyE96D0Tm+gb7M5INXWlQpCcf+6hwY1Af8muyC3K5rKOPMT/n3Lgg+aeT
+ VzC05Byg79FvzdJP9e8Qc+vrMyL53F7VNGHZ8BBFUkGvw+t7A6OLuW5jDehS5Mbr2MsOgCzhk
+ dDEwOK7I4ik29vm+rhoETSZ+o2UpQTIc9nfG7/Ho89eiM+d+D0Ud86pfR026PMeaxFWAbeuhU
+ iO3O1ZDpwU02RDzXgYxpVIaST7U8WbZ789s+9NVUfqfzxMjnDqfmKbdLuQGhguxR0ReLw86cx
+ +SHSWvOZ8YF6ZkKo3qmKr9f7XzFkFZGaqX9KVw8ykHQTvN+jEHY3XWUPHSFrel3b7vQwbdSR7
+ 1H0CpAvaDbkGiAg1LcjlSKWspS9vvoI4mhxiLbkN8yFWUEGBLXc1c/IYmJX90FVIuAbgBrQEB
+ vdz+xWpzoIPQom9ZkoHM4OlVudy2YmX67fAJ/1rz9RrFFnhWJYyo5ekt2xxkMroMQ1+2QTeuo
+ mFE+aG6GeOUy4Q+6fA8FLzYHhaBj2ri7vN990owVLyg92o+4+7q5Zt2LiD2oSziDtTkQ7f1w2
+ cxH/+0t+xLa8KWRYFTdxHcF9dkx2g39BhlurKAogU6YmW3FesbSLiRiegamZfzU3xPFe7uOI9
+ xsGEVCk2gNCWUJ57/miPZsrQj2V8u0hyoq4DoMf0E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:37:55PM +0000, Vokáč Michal wrote:
-> On 6.12.2018 14:59, Uwe Kleine-König wrote:
-> > On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
-> >> +{
-> >> +	imx_chip->pinctrl = devm_pinctrl_get(&pdev->dev);
-> >> +	if (IS_ERR(imx_chip->pinctrl)) {
-> >> +		dev_dbg(&pdev->dev, "can not get pinctrl\n");
-> >> +		return PTR_ERR(imx_chip->pinctrl);
-> >> +	}
-> >> +
-> >> +	imx_chip->pinctrl_pins_pwm = pinctrl_lookup_state(imx_chip->pinctrl,
-> >> +							  "pwm");
-> >> +	imx_chip->pinctrl_pins_gpio = pinctrl_lookup_state(imx_chip->pinctrl,
-> >> +							   "gpio");
-> >> +	imx_chip->pwm_gpiod = devm_gpiod_get_optional(&pdev->dev, "pwm",
-> >> +						      GPIOD_IN);
-> >> +
-> >> +	if (PTR_ERR(imx_chip->pwm_gpiod) == -EPROBE_DEFER) {
-> >> +		return -EPROBE_DEFER;
-> >> +	} else if (IS_ERR(imx_chip->pwm_gpiod) ||
-> >> +		   IS_ERR(imx_chip->pinctrl_pins_pwm) ||
-> >> +		   IS_ERR(imx_chip->pinctrl_pins_gpio)) {
-> >> +		dev_dbg(&pdev->dev, "PWM pinctrl information incomplete\n");
-> >> +		devm_pinctrl_put(imx_chip->pinctrl);
-> >> +		imx_chip->pinctrl = NULL;
-> > 
-> > Can it happen, that pinctrl_pins_pwm is PTR_ERR(-EPROBE_DEFER)?
-> 
-> No. The pinctrl_lookup_state either returns pointer to the pinctrl state
-> or ERR_PTR(-ENODEV). But I do not explicitly test the pinctrl_pins_pwm
-> for PTR_ERR(-EPROBE_DEFER), or do I?
+unreferenced object 0xffff8096c1acf580 (size 128):
+  comm "swapper/63", pid 0, jiffies 4294937418 (age 1201.230s)
+  hex dump (first 32 bytes):
+    80 87 b5 c1 96 00 00 00 00 00 cc c2 16 00 00 00  ................
+    00 00 01 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
+  backtrace:
+    [<000000001d2549ba>] kmem_cache_alloc_trace+0x430/0x500
+    [<0000000093a6dfab>] efi_mem_reserve_persistent+0x50/0xf8
+    [<000000000a730828>] its_cpu_init_lpis+0x394/0x4b8
+    [<00000000edf04e07>] its_cpu_init+0x104/0x150
+    [<000000004d0342c5>] gic_starting_cpu+0x34/0x40
+    [<000000005d9da772>] cpuhp_invoke_callback+0x228/0x1d68
+    [<0000000061eace9b>] notify_cpu_starting+0xc0/0x118
+    [<0000000048bc2dc5>] secondary_start_kernel+0x23c/0x3b0
+    [<0000000015137d6a>] 0xffffffffffffffff
 
-You don't, I just wondered if this could happen and the function should
-return -EPROBE_DEFER in this case, too.
+efi_mem_reserve_persistent+0x50/0xf8:
+kmalloc at include/linux/slab.h:546
+(inlined by) efi_mem_reserve_persistent at drivers/firmware/efi/efi.c:979
 
-> > Maybe you only want to ignore PTR_ERR(-ENODEV) and for example propagate
-> > -EIO? I think you want to put the gpio if the failure is because there
-> > is a pinctrl related error.
-> 
-> I think that is what I am doing. In case the GPIO is not ready the probe
-> is deferred. In case of any other error with the GPIO or pinctrl failure
-> I put the pinctrl. Or maybe I do not really understand what you mean.
+This line,
 
-Yes, you put the pinctrl, but not the GPIO. I.e. you're not undoing
-devm_gpiod_get_optional(). Maybe only do this if the pinctrl stuff
-succeeded to not touch the GPIO if it won't be used?
+rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
 
-> > ISTR that there was a patch that implements get_state for imx. Is there
-> > a dependency on that one? Otherwise the state returned by
-> > pwm_get_state() might not be what is actually configured.
-> 
-> No, it should be independent. One can go without the other. I tested all
-> three combinations (mainline with .get_state, mainline with this series,
-> mainline with .get_state AND this series) and got the expected results.
-> Without the .get_state() patch the core always returns the default which
-> is disabled state so the gpio pinctrl state is selected in probe.
+Kmemleak has a known limitation that can only track pointers in the kernel
+virtual space. Hence, it will report false positives due to "rsv" will only
+reference to other physical addresses,
 
-Without .get_state it won't be possible to smoothly take over a running
-PWM. It doesn't hurt if the PWM isn't running though. Still I'd like to
-see the .get_state patch to go in first to not get this (admittedly
-small) regression.
+rsv->next = efi_memreserve_root->next;
+efi_memreserve_root->next = __pa(rsv);
 
-> > Do you know if this is required for the old i.MX pwm, e.g. on i.MX21?
-> > I ask because of https://patchwork.ozlabs.org/patch/1000071/
-> 
-> Yep, I am aware of that patch. IMHO this is not needed for the v1 on
-> older i.MX SoCs but I do not have a hands-on experience with those.
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ drivers/firmware/efi/efi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-OK. If you agree with my split and as you have to rework your patch
-anyhow: Would you mind to rebase on top of my patch series? (Unless
-Thierry disagrees with my patches, but unfortunately he didn't comment
-yet.)
-
-Best regards
-Uwe
-
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 415849bab233..7fcfe8a7ae98 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -31,6 +31,7 @@
+ #include <linux/acpi.h>
+ #include <linux/ucs2_string.h>
+ #include <linux/memblock.h>
++#include <linux/kmemleak.h>
+ 
+ #include <asm/early_ioremap.h>
+ 
+@@ -1000,6 +1001,8 @@ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ 	if (!rsv)
+ 		return -ENOMEM;
+ 
++	kmemleak_ignore(rsv);
++
+ 	rsv->base = addr;
+ 	rsv->size = size;
+ 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.2 (Apple Git-113)
+
