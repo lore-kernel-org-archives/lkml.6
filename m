@@ -2,122 +2,91 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90148C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3360C67838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B51820700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:13:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B51820700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E6220700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E6220700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbeLFPNW (ORCPT
+        id S1726051AbeLFPN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:13:22 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33171 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeLFPNW (ORCPT
+        Thu, 6 Dec 2018 10:13:59 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9522 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725930AbeLFPN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:13:22 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i26so644867lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:13:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=Fe3/yqBpf9nSMtaMboYSUItlGt6aYnnhkmOZpRL34kY=;
-        b=jW8ZimDElUEiWG8gRN+Yl+XJYAshAiN1lGsSAI7yx5ibPzezdfGQwwawQGx4P5lbjt
-         fC62mweCPuIRijal6W+iHjBEtgncyfLkTmgREUlx51lOZQ6LC+/u6LC9JjQU+t5czqlf
-         Ve26ubsKtSRCkKE3/arlweRhQMvbEQ/bJxDuTMQaHrV7o727qIDdhwwZs+h8EX/UwXXo
-         RQNRM3nrTEftwskbdBZokJzWNF524fLel2YUyLv0/WQzo2Ei2uAz+dZdlNFNjTpfjgKu
-         q5pOmYfTxPCN4ZFL8GlQSvEdCaiLjUbhZJYsynuM4DQgXCj20UhLvqksNt9fFjPfZEny
-         xA4Q==
-X-Gm-Message-State: AA+aEWarxuSd3LTitJeb5guqaiW472WqModbfgphJuxNdE/mpR7CaPig
-        ohwBHU8dsQwuZpnt4gbdshA=
-X-Google-Smtp-Source: AFSGD/UKqwvqngJ4zSOCF6af7JvT8zoH8dIIShluX5oZq/1xPpdDhagFHSIvHngV7rawyO9gEl2mTQ==
-X-Received: by 2002:a19:945b:: with SMTP id w88mr16333003lfd.15.1544109200176;
-        Thu, 06 Dec 2018 07:13:20 -0800 (PST)
-Received: from localhost.localdomain ([213.87.131.37])
-        by smtp.gmail.com with ESMTPSA id h3sm115222lfb.49.2018.12.06.07.13.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Dec 2018 07:13:19 -0800 (PST)
-From:   Alexander Popov <alex.popov@linux.com>
-To:     kernel-hardening@lists.openwall.com,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Richard Sandiford <richard.sandiford@arm.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Alexander Monakov <amonakov@ispras.ru>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Emese Revfy <re.emese@gmail.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        H Peter Anvin <hpa@zytor.com>,
-        David S Miller <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org, gcc@gcc.gnu.org,
-        alex.popov@linux.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] stackleak: Register the 'stackleak_cleanup' pass before the '*free_cfg' pass
-Date:   Thu,  6 Dec 2018 18:13:07 +0300
-Message-Id: <1544109187-13805-1-git-send-email-alex.popov@linux.com>
+        Thu, 6 Dec 2018 10:13:59 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB6FD71L023947;
+        Thu, 6 Dec 2018 16:13:36 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2p3uhn560k-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 06 Dec 2018 16:13:36 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B372834;
+        Thu,  6 Dec 2018 15:13:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1EB6A4E1D;
+        Thu,  6 Dec 2018 15:13:35 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Dec 2018
+ 16:13:35 +0100
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 6 Dec 2018
+ 16:13:35 +0100
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V3 0/2] mmc: mmci: add stop command
+Date:   Thu, 6 Dec 2018 16:13:30 +0100
+Message-ID: <1544109212-12621-1-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the 'stackleak_cleanup' pass deleting a CALL insn is executed
-after the 'reload' pass. That allows gcc to do some weird optimization in
-function prologues and epilogues, which are generated later [1].
+From: Ludovic Barre <ludovic.barre@st.com>
 
-Let's avoid that by registering the 'stackleak_cleanup' pass before
-the '*free_cfg' pass. It's the moment when the stack frame size is
-already final, function prologues and epilogues are generated, and the
-machine-dependent code transformations are not done.
+This patch series adds variant property to:
+-Set cmdstop bit on STOP_TRANSMISSION command.
+-On command or data error, send a stop command.
+to clear DPSM if it's yet activated.
 
-[1] https://www.openwall.com/lists/kernel-hardening/2018/11/23/2
+change v3:
+-Move the cmdstop bit in separate patch.
+-Use Ulf re-wording for patch 2/2.
+-Move specific part in a separate function.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
----
- scripts/gcc-plugins/stackleak_plugin.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Ludovic Barre (2):
+  mmc: mmci: add variant property to set command stop bit
+  mmc: mmci: send stop command to clear the dpsm
 
-diff --git a/scripts/gcc-plugins/stackleak_plugin.c b/scripts/gcc-plugins/stackleak_plugin.c
-index 2f48da9..dbd3746 100644
---- a/scripts/gcc-plugins/stackleak_plugin.c
-+++ b/scripts/gcc-plugins/stackleak_plugin.c
-@@ -363,10 +363,12 @@ __visible int plugin_init(struct plugin_name_args *plugin_info,
- 						PASS_POS_INSERT_BEFORE);
- 
- 	/*
--	 * The stackleak_cleanup pass should be executed after the
--	 * "reload" pass, when the stack frame size is final.
-+	 * The stackleak_cleanup pass should be executed before the "*free_cfg"
-+	 * pass. It's the moment when the stack frame size is already final,
-+	 * function prologues and epilogues are generated, and the
-+	 * machine-dependent code transformations are not done.
- 	 */
--	PASS_INFO(stackleak_cleanup, "reload", 1, PASS_POS_INSERT_AFTER);
-+	PASS_INFO(stackleak_cleanup, "*free_cfg", 1, PASS_POS_INSERT_BEFORE);
- 
- 	if (!plugin_default_version_check(version, &gcc_version)) {
- 		error(G_("incompatible gcc/plugin versions"));
+ drivers/mmc/host/mmci.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/mmc/host/mmci.h |  4 ++++
+ 2 files changed, 47 insertions(+)
+
 -- 
 2.7.4
 
