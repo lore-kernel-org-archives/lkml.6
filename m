@@ -2,143 +2,207 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BDDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEE1C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9AC42146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 657A120868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544127995;
-	bh=a0FY/3v6J/YU/R0Q91G6v2ce9lVSfw5ETPkZKRqOpg4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=aVXbneF90MJeiGz/Gzx8O/7UGYy+KEwC3vo187sXjF1z/C5mDe+uXtwHgVvjkUFYY
-	 9jM9A4YUHSNELfl/AsqXEMQkm7Ko/X/qfb/+CKfoN1pU0EX5Ybj2ObG6gzHemoki4q
-	 mgANKcpXwJWqKb+TP0s6k6Td+1Hstj0qlbHDhJWI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9AC42146F
+	s=default; t=1544127997;
+	bh=ftZqrkDtY1yIjK9q0+a+7/Ca68Gk1u2vdzOlhWt+tVU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=mJ8577wONR9JSHEIGEEVf5pFSv9acS8MA3l7tFGnwI8N0MVQMwCVuvOQcB/eiepg4
+	 G0Lqx65juaLpVdfQ5hgKRn8xaZA6/v3VqCc3x3JgavZv4W+Jpr0SsZQXOkG5j09wCK
+	 mL49nlqQip1VuWHW/XgsIN/IIYqZ2roN/RFtdq8E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657A120868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbeLFU0e (ORCPT
+        id S1726180AbeLFU0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 6 Dec 2018 15:26:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726154AbeLFU0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 15:26:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37538 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLFU03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:26:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DLRlTiuMZBjUlVcIoi5M3mznlf7ZF6F+8wxYhmvyBVA=; b=iwN8kmXP9W+a
-        1ESY3eWzU9A3GEZakxutiq1xESVCw0vI1l+jHFpzxEIeieJsRBNlrrVqeMAkP7dZmW/ithpe59Cpj
-        XEga1+BgpMlcFoi2Z8WjS7hve1XsqXp+9z0/9OO0p88PTSWOQFqF4TiI/qvNuDci/i89jjoo/bGt8
-        AP1Jc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gV0E3-0001iK-J7; Thu, 06 Dec 2018 20:26:23 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 45BB811252F7; Thu,  6 Dec 2018 20:26:23 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, yuenn@google.com,
-        venture@google.com, brendanhiggins@google.com,
-        avifishman70@gmail.com, joel@jms.id.au, linux-spi@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: npcm: Modify pspi send function" to the spi tree
-In-Reply-To:  <20181204134035.124079-1-tmaimon77@gmail.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20181206202623.45BB811252F7@debutante.sirena.org.uk>
-Date:   Thu,  6 Dec 2018 20:26:23 +0000 (GMT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C46E2174D
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 20:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544127992;
+        bh=ftZqrkDtY1yIjK9q0+a+7/Ca68Gk1u2vdzOlhWt+tVU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qdbb+FHPOhuZdHdyj8JEG0MeZDcHxK7wu/Fg4YxhKExI7gYrCOTes9CGACm/eyXvs
+         dqWYP/99B6QhEvY5aDxeuXGg/0Lgh2ZOmnYtoIrLQczNq4tSyYgC61a1N+YvY43iD3
+         XBh9Xrs1vct5+62nuoAxKvdOznUTCfG/Fu5QF5io=
+Received: by mail-wm1-f44.google.com with SMTP id y139so2249289wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:26:32 -0800 (PST)
+X-Gm-Message-State: AA+aEWY3Nv0UZFLrM4Z0d/OiSC+odDoH7AuQCswCy1IC86IG3rUMCSHL
+        5pnDd1fwH3iOnZ1zoDoN7aS9FU8bIJ0GSAotsPuJLw==
+X-Google-Smtp-Source: AFSGD/UzVBzPdltDb5Gkw8KO8Lm4MVZ5KOQXcpvsRStxcUIti1RoNzIs1UKsNKl/BPevre/IdZZvkRI2vi+A9rwdEZ8=
+X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr10023931wme.108.1544127990637;
+ Thu, 06 Dec 2018 12:26:30 -0800 (PST)
+MIME-Version: 1.0
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+ <20181204160304.GB7195@arm.com> <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+ <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
+ <20181205114148.GA15160@arm.com> <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+ <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com>
+ <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
+ <20181206190115.GC10086@cisco> <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
+ <f6096b80bdab59d2d21ece4ff31fcfd36bf6b809.camel@intel.com>
+In-Reply-To: <f6096b80bdab59d2d21ece4ff31fcfd36bf6b809.camel@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 6 Dec 2018 12:26:18 -0800
+X-Gmail-Original-Message-ID: <CALCETrUzHzQWTW8ZAz0jL6BA2KmnBPBod8a3oYuwiEhbL98WtQ@mail.gmail.com>
+Message-ID: <CALCETrUzHzQWTW8ZAz0jL6BA2KmnBPBod8a3oYuwiEhbL98WtQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jessica Yu <jeyu@kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Jann Horn <jannh@google.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Dec 6, 2018 at 12:20 PM Edgecombe, Rick P
+<rick.p.edgecombe@intel.com> wrote:
+>
+> On Thu, 2018-12-06 at 11:19 -0800, Andy Lutomirski wrote:
+> > On Thu, Dec 6, 2018 at 11:01 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> > >
+> > > On Thu, Dec 06, 2018 at 10:53:50AM -0800, Andy Lutomirski wrote:
+> > > > > If we are going to unmap the linear alias, why not do it at vmall=
+oc()
+> > > > > time rather than vfree() time?
+> > > >
+> > > > That=E2=80=99s not totally nuts. Do we ever have code that expects =
+__va() to
+> > > > work on module data?  Perhaps crypto code trying to encrypt static
+> > > > data because our APIs don=E2=80=99t understand virtual addresses.  =
+I guess if
+> > > > highmem is ever used for modules, then we should be fine.
+> > > >
+> > > > RO instead of not present might be safer.  But I do like the idea o=
+f
+> > > > renaming Rick's flag to something like VM_XPFO or VM_NO_DIRECT_MAP =
+and
+> > > > making it do all of this.
+> > >
+> > > Yeah, doing it for everything automatically seemed like it was/is
+> > > going to be a lot of work to debug all the corner cases where things
+> > > expect memory to be mapped but don't explicitly say it. And in
+> > > particular, the XPFO series only does it for user memory, whereas an
+> > > additional flag like this would work for extra paranoid allocations
+> > > of kernel memory too.
+> > >
+> >
+> > I just read the code, and I looks like vmalloc() is already using
+> > highmem (__GFP_HIGH) if available, so, on big x86_32 systems, for
+> > example, we already don't have modules in the direct map.
+> >
+> > So I say we go for it.  This should be quite simple to implement --
+> > the pageattr code already has almost all the needed logic on x86.  The
+> > only arch support we should need is a pair of functions to remove a
+> > vmalloc address range from the address map (if it was present in the
+> > first place) and a function to put it back.  On x86, this should only
+> > be a few lines of code.
+> >
+> > What do you all think?  This should solve most of the problems we have.
+> >
+> > If we really wanted to optimize this, we'd make it so that
+> > module_alloc() allocates memory the normal way, then, later on, we
+> > call some function that, all at once, removes the memory from the
+> > direct map and applies the right permissions to the vmalloc alias (or
+> > just makes the vmalloc alias not-present so we can add permissions
+> > later without flushing), and flushes the TLB.  And we arrange for
+> > vunmap to zap the vmalloc range, then put the memory back into the
+> > direct map, then free the pages back to the page allocator, with the
+> > flush in the appropriate place.
+> >
+> > I don't see why the page allocator needs to know about any of this.
+> > It's already okay with the permissions being changed out from under it
+> > on x86, and it seems fine.  Rick, do you want to give some variant of
+> > this a try?
+> Hi,
+>
+> Sorry, I've been having email troubles today.
+>
+> I found some cases where vmap with PAGE_KERNEL_RO happens, which would no=
+t set
+> NP/RO in the directmap, so it would be sort of inconsistent whether the
+> directmap of vmalloc range allocations were readable or not. I couldn't s=
+ee any
+> places where it would cause problems today though.
+>
+> I was ready to assume that all TLBs don't cache NP, because I don't know =
+how
+> usages where a page fault is used to load something could work without lo=
+ts of
+> flushes.
 
-   spi: npcm: Modify pspi send function
+Or the architecture just fixes up the spurious faults, I suppose.  I'm
+only well-educated on the x86 mmu.
 
-has been applied to the spi tree at
+> If that's the case, then all archs with directmap permissions could
+> share a single vmalloc special permission flush implementation that works=
+ like
+> Andy described originally. It could be controlled with an
+> ARCH_HAS_DIRECT_MAP_PERMS. We would just need something like set_pages_np=
+ and
+> set_pages_rw on any archs with directmap permissions. So seems simpler to=
+ me
+> (and what I have been doing) unless I'm missing the problem.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Hmm.  The only reason I've proposed anything fancier was because I was
+thinking of minimizing flushes, but I think I'm being silly.  This
+sequence ought to work optimally:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+- vmalloc(..., VM_HAS_DIRECT_MAP_PERMS);  /* no flushes */
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+- Write some data, via vmalloc's return address.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+- Use some set_memory_whatever() functions to update permissions,
+which will flush, hopefully just once.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+- Run the module code!
 
-Thanks,
-Mark
+- vunmap -- this will do a single flush that will fix everything.
 
-From 1fa33be36cfc8908be951ed56113906f422add50 Mon Sep 17 00:00:00 2001
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 4 Dec 2018 15:40:35 +0200
-Subject: [PATCH] spi: npcm: Modify pspi send function
+This does require that set_pages_np() or set_memory_np() or whatever
+exists and that it's safe to do that, then flush, and then
+set_pages_rw().  So maybe you want set_pages_np_noflush() and
+set_pages_rw_noflush() to make it totally clear what's supposed to
+happen.
 
-Align pspi send function code with the recieve function
-code, Also simplify the code a bit with early return.
-
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-npcm-pspi.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index dda91c19af93..e1dca79b9090 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -199,14 +199,22 @@ static void npcm_pspi_send(struct npcm_pspi *priv)
- 	wsize = min(bytes_per_word(priv->bits_per_word), priv->tx_bytes);
- 	priv->tx_bytes -= wsize;
- 
--	if (priv->tx_buf) {
--		if (wsize == 1)
--			iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
--		if (wsize == 2)
--			iowrite16(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-+	if (!priv->tx_buf)
-+		return;
- 
--		priv->tx_buf += wsize;
-+	switch (wsize) {
-+	case 1:
-+		iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-+		break;
-+	case 2:
-+		iowrite16(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-+		break;
-+	default:
-+		WARN_ON_ONCE(1);
-+		return;
- 	}
-+
-+	priv->tx_buf += wsize;
- }
- 
- static void npcm_pspi_recv(struct npcm_pspi *priv)
--- 
-2.19.0.rc2
-
+--Andy
