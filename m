@@ -2,173 +2,228 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3155BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B511FC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB81520892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714AD214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PS3GR5TQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB81520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iOFoDPQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714AD214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeLFBKs (ORCPT
+        id S1728832AbeLFBLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:10:48 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41264 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFBKr (ORCPT
+        Wed, 5 Dec 2018 20:11:05 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:38607 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFBLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:10:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB619T31034130;
-        Thu, 6 Dec 2018 01:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=vkfPimCXJ60akZSzATpjseD0xbz2X0hZ5XHuYLhIpdA=;
- b=PS3GR5TQdRzepDNb3wCL14cqjAAlPfVEyjNIc8iTQvV6yCiovIjWJvW/pskA7lzAvSkf
- mj3DW+IMf7hyTkVP6SuHiwNZTVmhHVsta88akECO0LZD6/DjDPhPjPk2WEZRcYE4axhF
- D77uJ8j91SFvHtzTDi3Z+PyQkm/zowI2PcGRbr5Vv35w6uuQ8/Kf/9NomrVXL1EyHdGm
- AFnLutoYgZ7vJlO3p1asZg98wyy1LwFF0+I2i7OtpPxcvtP+c/ymfpUKHEKw7YcDKaW7
- SclorHL4AvHFmMf78tUDmK4SAVWzMpdXNl3iFwkNs9KHXAe5YBRoMq2zP6krhGR3eOpF fA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2p3hqu5pbm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 01:10:43 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB61AfRW002107
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 01:10:42 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB61Afnl020735;
-        Thu, 6 Dec 2018 01:10:41 GMT
-Received: from [10.182.71.8] (/10.182.71.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 17:10:41 -0800
-Subject: Re: [PATCH V9 3/4] blk-mq: issue directly with bypass 'false' in
- blk_mq_sched_insert_requests
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
- <1543995842-20704-4-git-send-email-jianchao.w.wang@oracle.com>
- <6cb12913-3575-d3aa-ff08-f89bcb38b3d6@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <b57bbedf-bc7e-7b8d-2217-3e8628ab657c@oracle.com>
-Date:   Thu, 6 Dec 2018 09:11:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 20:11:04 -0500
+Received: by mail-yb1-f196.google.com with SMTP id d187so1498681ybb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:11:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YMsFPOwp+HYuQfKFu9COzZPdWHtGKQJMtECRPLEDAaA=;
+        b=iOFoDPQesDyogJo9GYnMT/IyfMDQgqUjVHWcy41ovY8oNDgtNmemTGH69m+iRtz4/G
+         n4m/kY9MPmq3/J9ow86qmMllfTIvd3Ko8NrJnfyajL6nMtRw4q5ss1qqJmVFDouhKAIJ
+         pdAStRLIaEwQwBhmXubejRWGccZwkQfgwOXEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YMsFPOwp+HYuQfKFu9COzZPdWHtGKQJMtECRPLEDAaA=;
+        b=aUpCZ1KtjX3R8bK4DXPo5nbuXtkBd1NyB0DEjIGVL4NshbLbc62VSaN1Taiawc3i5v
+         YfZdMZy9nGZjPIUdUfAYhBvM0LVCZoNpgPZR0cXZ51M7BkcXyk5hkuVARscK0OvhXue0
+         OFJLmros46TrYJvIAmcm0fCySZh6EKUlmYoveI9yxQIcW4W1KLMHJImtypg27oX2Ha/A
+         MiQXXeNR4YGKkRXwHf2vErEGdsmp2NcCmQ1AqgUNv+JpSzMzESG6AdI2x1ArOyQfo0H8
+         XOrvKtaBBA9wotEP9WulOQvm4ny9UfLPurIDy3g8gQEtkSYNDOk+1Sdis/r75v2xzR19
+         O66A==
+X-Gm-Message-State: AA+aEWY9jlQov9EKw0EuhX2Gq6Kbr5qgg6FdivqrVykLYwciPDXuMT5J
+        O8iIMs5tFBPxB0Gbo8XMJq56QUjKmuc=
+X-Google-Smtp-Source: AFSGD/VCrAu7aCv2POqMV6T8fyteAlx62LoY9rhjbbb5/gAjPbHfshsNIRzbVyBfUPrNvFhsgxuOOQ==
+X-Received: by 2002:a5b:192:: with SMTP id r18mr7570972ybl.404.1544058662235;
+        Wed, 05 Dec 2018 17:11:02 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id x4sm23978619ywj.80.2018.12.05.17.11.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 17:11:01 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id w203so5988915ybg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:11:00 -0800 (PST)
+X-Received: by 2002:a81:98e:: with SMTP id 136mr26259370ywj.47.1544058660007;
+ Wed, 05 Dec 2018 17:11:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6cb12913-3575-d3aa-ff08-f89bcb38b3d6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060007
+References: <feac7efa-df6f-cca1-e321-28d220bf0411@linux.intel.com> <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
+In-Reply-To: <b1a4fa08-482d-0fcc-c798-efb9a9894a47@linux.intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 5 Dec 2018 17:10:48 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
+Message-ID: <CAGXu5jJ_CyE5A2VUSyyi-uj4webfZM9ZOACp523p5xFhv1KCAQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] Documentation/admin-guide: introduce
+ perf-security.rst file
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens
+On Tue, Nov 27, 2018 at 12:15 AM Alexey Budankov
+<alexey.budankov@linux.intel.com> wrote:
+>
+>
+> Implement initial version of perf-security.rst documentation file
+> covering security concerns of perf_event_paranoid settings.
+>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 
-On 12/6/18 12:30 AM, Jens Axboe wrote:
-> On 12/5/18 12:44 AM, Jianchao Wang wrote:
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index fe92e52..0dfa269 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1899,32 +1899,23 @@ blk_status_t blk_mq_request_issue_directly(struct request *rq, bool last)
->>  void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
->>  		struct list_head *list)
->>  {
->> +	blk_qc_t cookie = BLK_QC_T_INVALID;
->> +
-> 
-> I'm fine with adding this, but I think we need some sort of check for
-> that not being a valid cookie. That isn't new, we really should have
-> already.
-> 
->>  	while (!list_empty(list)) {
->> -		blk_status_t ret;
->>  		struct request *rq = list_first_entry(list, struct request,
->>  				queuelist);
->>  
->> -		if (!blk_rq_can_direct_dispatch(rq))
->> -			break;
->> -
->>  		list_del_init(&rq->queuelist);
->> -		ret = blk_mq_request_issue_directly(rq, list_empty(list));
->> -		if (ret != BLK_STS_OK) {
->> -			if (ret == BLK_STS_RESOURCE ||
->> -					ret == BLK_STS_DEV_RESOURCE) {
->> -				list_add(&rq->queuelist, list);
->> -				break;
->> -			}
->> -			blk_mq_end_request(rq, ret);
->> -		}
->> +		blk_mq_try_issue_directly(hctx, rq, &cookie, false,
->> +				list_empty(list));
-> 
-> Indent the list_empty() one more tab, should be after the ( if possible.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Yes, I will do it
+-Kees
 
-> 
->> -	 * If we didn't flush the entire list, we could have told
->> -	 * the driver there was more coming, but that turned out to
->> -	 * be a lie.
->> +	 * cookie is set to a valid value only when reqeust is issued successfully.
->> +	 * We only need to care about the last request's result, if it is inserted,
->> +	 * kick the hardware with commit_rqs hook.
-> 
-> reqeust -> request
-> 
-> Also lines are too long, limit to 80 chars please.
+> ---
+> Changes in v4:
+> - added docs for perf_event related capabilities
+> Changes in v3:
+> - toning down of the markup for "scope, access and resource"
+> - adding definite article for "Linux implementation"
+> Changes in v2:
+> - reverted patches order in the set to avoid CI issue
+> - replaced old PCL referencing by PE (Perf Events)
+> - skipped >=3 setting documentation at the moment
+> ---
+>  Documentation/admin-guide/perf-security.rst | 97 +++++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+>  create mode 100644 Documentation/admin-guide/perf-security.rst
+>
+> diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
+> new file mode 100644
+> index 000000000000..f73ebfe9bfe2
+> --- /dev/null
+> +++ b/Documentation/admin-guide/perf-security.rst
+> @@ -0,0 +1,97 @@
+> +.. _perf_security:
+> +
+> +Perf Events and tool security
+> +=============================
+> +
+> +Overview
+> +--------
+> +
+> +Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
+> +impose a considerable risk of leaking sensitive data accessed by monitored
+> +processes. The data leakage is possible both in scenarios of direct usage of
+> +perf_events system call API [2]_ and over data files generated by Perf tool user
+> +mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
+> +perf_events performance monitoring units (PMU) [2]_ collect and expose for
+> +performance analysis. Having that said perf_events/Perf performance monitoring
+> +is the subject for security access control management [5]_ .
+> +
+> +perf_events/Perf access control
+> +-------------------------------
+> +
+> +To perform security checks, the Linux implementation splits processes into two
+> +categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
+> +to as superuser or root), and b) unprivileged processes (whose effective UID is
+> +nonzero). Privileged processes bypass all kernel security permission checks so
+> +perf_events performance monitoring is fully available to privileged processes
+> +without access, scope and resource restrictions.
+> +
+> +Unprivileged processes are subject to a full security permission check based on
+> +the process's credentials [5]_ (usually: effective UID, effective GID, and
+> +supplementary group list).
+> +
+> +Linux divides the privileges traditionally associated with superuser into
+> +distinct units, known as capabilities [6]_ , which can be independently enabled
+> +and disabled on per-thread basis for processes and files of unprivileged users.
+> +
+> +Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
+> +privileged processes with respect to perf_events performance monitoring and
+> +bypass *scope* permissions checks in the kernel.
+> +
+> +Unprivileged processes using perf_events system call API is also subject for
+> +PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
+> +determines whether monitoring is permitted. So unprivileged processes provided
+> +with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
+> +
+> +Other capabilities being granted to unprivileged processes can effectively
+> +enable capturing of additional data required for later performance analysis of
+> +monitored processes or a system. For example, CAP_SYSLOG capability permits
+> +reading kernel space memory addresses from /proc/kallsyms file.
+> +
+> +perf_events/Perf unprivileged users
+> +-----------------------------------
+> +
+> +perf_events/Perf *scope* and *access* control for unprivileged processes is
+> +governed by perf_event_paranoid [2]_ setting:
+> +
+> +-1:
+> +     Impose no *scope* and *access* restrictions on using perf_events performance
+> +     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
+> +     ignored when allocating memory buffers for storing performance data.
+> +     This is the least secure mode since allowed monitored *scope* is
+> +     maximized and no perf_events specific limits are imposed on *resources*
+> +     allocated for performance monitoring.
+> +
+> +>=0:
+> +     *scope* includes per-process and system wide performance monitoring
+> +     but excludes raw tracepoints and ftrace function tracepoints monitoring.
+> +     CPU and system events happened when executing either in user or
+> +     in kernel space can be monitored and captured for later analysis.
+> +     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
+> +     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
+> +
+> +>=1:
+> +     *scope* includes per-process performance monitoring only and excludes
+> +     system wide performance monitoring. CPU and system events happened when
+> +     executing either in user or in kernel space can be monitored and
+> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
+> +     locking limit is imposed but ignored for unprivileged processes with
+> +     CAP_IPC_LOCK capability.
+> +
+> +>=2:
+> +     *scope* includes per-process performance monitoring only. CPU and system
+> +     events happened when executing in user space only can be monitored and
+> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
+> +     locking limit is imposed but ignored for unprivileged processes with
+> +     CAP_IPC_LOCK capability.
+> +
+> +Bibliography
+> +------------
+> +
+> +.. [1] `<https://lwn.net/Articles/337493/>`_
+> +.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
+> +.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
+> +.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
+> +.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
+> +.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
+> +.. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
+> +
 
-Yes, I will do it.
 
-> 
-> And why aren't we just using the list_empty() check like before, and not
-> having to add the inval cookie value?
 
-Because we use 'bypass == false' here, so blk_mq_try_issue_directly will take
-over the request totally, so the request will always be removed from the list
-and finally, the list must be empty.
-
-There is another way to identify the result of blk_mq_try_issue_directly.
-Currently,
-for the 'bypass == true' case,
-    it always return BLK_STS_OK,
-for the 'bypass == false' case,
-    it return the actual result, except for 'force == true' case
-    where the request has to be inserted into hctx dispatch list
-    and return a BLK_STS_OK.
-
-We could let the 'bypass == true' case also return the actual result to
-show what has been done in the blk_mq_try_issue_directly and thus we could
-get the actual result of the last request.
-
-Would you mind we handle it like this ?
-
->> -	if (!list_empty(list) && hctx->queue->mq_ops->commit_rqs)
->> +	if ((cookie == BLK_QC_T_INVALID) && hctx->queue->mq_ops->commit_rqs)
->>  		hctx->queue->mq_ops->commit_rqs(hctx);
-> 
-> Redundant parens around the cookie check.
-> 
-
-Yes.
-
-Thanks
-Jianchao
+-- 
+Kees Cook
