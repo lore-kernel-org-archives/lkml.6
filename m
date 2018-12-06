@@ -2,128 +2,243 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E0AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 406C1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24BFC20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1FE120868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:04:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="TY/HOGlJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BFC20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N+hAakUg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FE120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725958AbeLFTDz (ORCPT
+        id S1726021AbeLFTEZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:03:55 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34752 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeLFTDy (ORCPT
+        Thu, 6 Dec 2018 14:04:25 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35997 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLFTEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:03:54 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 17so560312pgg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 11:03:53 -0800 (PST)
+        Thu, 6 Dec 2018 14:04:23 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so3226168itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 11:04:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=QPlOkQh0m6/G5PL4R7Z69cysn/I3zGjF8duaHorvK4o=;
-        b=TY/HOGlJmZiO2Y0kl/F48LbJgrvoNgEJPJ4SW7Ua0uzcannPm5u8kdVbJ4wn3EiGmr
-         9cKWJY+egw3nWvVNQqD1W5/xQrY8/hhoBmYEt7ibNdp7NvQcOTvAzxcJRskPFMxMTnEi
-         cjaM0/DBLIoDb+jj3ekwfj0WpaS7uxh5AZLZ3Bzu92B0KQ6fwEYa+DQyKCweGRq7TelV
-         m34xN06hn387AwRCYpB22IwuR6ih5Yy7TRZrU9YPv29b4FVLSDZbw2RG2fn21wKNftFN
-         RU4oLcbGjaBZ9yT/bz+Dx50Cex1aEAWDCaXGWshW+AIEfZKoXU/pmQ+o3KMqS7+O9ZKf
-         NUwA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zx7YR9jOJ2YEsfpWpnWI9aF0M85Tj/3S/gHkH/Z2x2k=;
+        b=N+hAakUgTOXIh6XRNJvouRnqnCEf/Yq1WUaHuWAy/xAk5JyssZNP10K6+wEvTV4dtC
+         QJOg4460KC8m64BnXP3VQYEAhc8HYgJfEu0jsUTassu2K9wABi34+cQGLDiagcQaNSt5
+         3m3Ew6dkRjhhqQw/8OV767ZMCDy7niiAZeqX8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=QPlOkQh0m6/G5PL4R7Z69cysn/I3zGjF8duaHorvK4o=;
-        b=iYG4StA3+qC0Be4z0+hdUICsQJxnmDpTgjxv4LNU3pa75T3Zqnqn93pb4tO3EYTbl0
-         h6eJW8tE4qsDjl901hTvmtx3H19Qy0Y0kUitfu3c5sa0sddTrX5BI/6EnIMak51QUD5U
-         35jOkFzGfym/oHjYIH/NaOdpJb/OdVlc/Y/RvssGAFQPvmMGUvSdToLztCRTJvgYJ/Am
-         7kcursLiQEPyUKmKz7hWSb9LBM5N4h9oareT7sgG+ZR85MWoq9AaArSRJnY4yAvzotON
-         LhOaU22k3buSDHixeJzBUb47aO8pdkTcXaraia6so/eWUBBlye/aMEl7oQcppMtpK2CL
-         YkVQ==
-X-Gm-Message-State: AA+aEWaS2mcb2H4dSALkMiZM+jDTADaFpgNziFuh1dZ6ncWokx5Js/to
-        nkX9gQnFm37zu5TrybclZgQKTQ==
-X-Google-Smtp-Source: AFSGD/VFl46cZ3Ffj3wxcHO+oFzzFpdx0rTM80sog3Hc1ikKYyppyuZOq4QSDB86s9p9slF0FEZwnA==
-X-Received: by 2002:a63:de46:: with SMTP id y6mr25121081pgi.198.1544123033462;
-        Thu, 06 Dec 2018 11:03:53 -0800 (PST)
-Received: from ?IPv6:2404:4404:133a:4500:138:8204:e16a:7a26? ([2404:4404:133a:4500:138:8204:e16a:7a26])
-        by smtp.gmail.com with ESMTPSA id v190sm1341964pfv.26.2018.12.06.11.03.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 11:03:52 -0800 (PST)
-Date:   Fri, 07 Dec 2018 08:03:45 +1300
-User-Agent: K-9 Mail for Android
-In-Reply-To: <87y392h4b7.fsf@oldenburg2.str.redhat.com>
-References: <20181120105124.14733-1-christian@brauner.io> <87in0g5aqo.fsf@oldenburg.str.redhat.com> <746B7C49-CC7B-4040-A7EF-82491796D360@brauner.io> <20181202100304.labt63mzrlr5utdl@brauner.io> <8736rebl9s.fsf@oldenburg.str.redhat.com> <20181203180224.fkvw4kajtbvru2ku@brauner.io> <874lbtjvtd.fsf@oldenburg2.str.redhat.com> <CALCETrViXJ0gD34yVd8QpB-CSeKZzzncvkPHReycTiQin4r4WQ@mail.gmail.com> <87y392h4b7.fsf@oldenburg2.str.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zx7YR9jOJ2YEsfpWpnWI9aF0M85Tj/3S/gHkH/Z2x2k=;
+        b=Jmy7JVfvCwHTn9oVbWdGRtaGKI/PuW7LSxiK6jleLwxZRHPDy0CU508cfTyfYIXo/8
+         Jr1GE/ZYT2YJ3wXxx3uHSLebgS0ZlY/dj/Q2AFyOVu9/BlbcPV5miqN39mO5fMIre+Gs
+         JvmJNVfJx/xalQwUnT0l/ZMpi+lGP1erMd3EeEgd+C75SEzzy0B52CwqMPx09h8E9u+0
+         FkmVmIHB8NJzsAHyDjfaAPyMWCZ9oD/llPF5NyjRgj8OtIrh+rqQ2aFSu3oXTHddUvqD
+         fQHMKmMh5Ov7IhrQGuOcQIfMUmdnn/bJVT274p7SCp9XamprLPmGGMIfvimr7ha7PZSh
+         jVTg==
+X-Gm-Message-State: AA+aEWbUjyWuRPFFLYxIqxytSRRZbQbvXTLl3wsc4Zwvki5LKfOHRuge
+        LfEZxMrkvyulIGKYJBd1Bw4cJqCbCaYxV8P53pquQQ==
+X-Google-Smtp-Source: AFSGD/W6v1EdOPJ1LVA16wtibXgvC0aZ8ypPYKmtrzFcbBxHHH0cgvaREOyDnqeCuBf6w1hjiUk/8ldd4FCcYh6chiE=
+X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr20687165itk.71.1544123061053;
+ Thu, 06 Dec 2018 11:04:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] signal: add procfd_signal() syscall
-To:     Florian Weimer <fweimer@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
+ <20181128000754.18056-2-rick.p.edgecombe@intel.com> <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
+ <20181204160304.GB7195@arm.com> <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
+ <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
+ <20181205114148.GA15160@arm.com> <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
+ <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com> <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
+In-Reply-To: <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 6 Dec 2018 20:04:09 +0100
+Message-ID: <CAKv+Gu_Fo3qG1DaA2T1MZZau_7e6rzZQY7eJ49FQDQe0QnOgHg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jann Horn <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, kristen@linux.intel.com,
         Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <C5E71146-DE79-4145-B54B-E161E7372D95@brauner.io>
+        Ingo Molnar <mingo@redhat.com>, anil.s.keshavamurthy@intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        "David S. Miller" <davem@davemloft.net>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On December 7, 2018 7:56:44 AM GMT+13:00, Florian Weimer <fweimer@redhat=2E=
-com> wrote:
->* Andy Lutomirski:
+On Thu, 6 Dec 2018 at 19:54, Andy Lutomirski <luto@kernel.org> wrote:
 >
->>> I suppose that's fine=2E  Or alternatively, when thread group support
->is
->>> added, introduce a flag that applications have to use to enable it,
->so
->>> that they can probe for support by checking support for the flag=2E
->>>
->>> I wouldn't be opposed to a new system call like this either:
->>>
->>>  int procfd_open (pid_t thread_group, pid_t thread_id, unsigned
->flags);
->>>
->>> But I think this is frowned upon on the kernel side=2E
->>
->> I have no problem with it, except that I think it shouldn=E2=80=99t ret=
-urn an
->> fd that can be used for proc filesystem access=2E
+> > On Dec 5, 2018, at 11:29 PM, Ard Biesheuvel <ard.biesheuvel@linaro.org>=
+ wrote:
+> >
+> >> On Thu, 6 Dec 2018 at 00:16, Andy Lutomirski <luto@kernel.org> wrote:
+> >>
+> >>> On Wed, Dec 5, 2018 at 3:41 AM Will Deacon <will.deacon@arm.com> wrot=
+e:
+> >>>
+> >>>> On Tue, Dec 04, 2018 at 12:09:49PM -0800, Andy Lutomirski wrote:
+> >>>> On Tue, Dec 4, 2018 at 12:02 PM Edgecombe, Rick P
+> >>>> <rick.p.edgecombe@intel.com> wrote:
+> >>>>>
+> >>>>>> On Tue, 2018-12-04 at 16:03 +0000, Will Deacon wrote:
+> >>>>>> On Mon, Dec 03, 2018 at 05:43:11PM -0800, Nadav Amit wrote:
+> >>>>>>>> On Nov 27, 2018, at 4:07 PM, Rick Edgecombe <rick.p.edgecombe@in=
+tel.com>
+> >>>>>>>> wrote:
+> >>>>>>>>
+> >>>>>>>> Since vfree will lazily flush the TLB, but not lazily free the u=
+nderlying
+> >>>>>>>> pages,
+> >>>>>>>> it often leaves stale TLB entries to freed pages that could get =
+re-used.
+> >>>>>>>> This is
+> >>>>>>>> undesirable for cases where the memory being freed has special p=
+ermissions
+> >>>>>>>> such
+> >>>>>>>> as executable.
+> >>>>>>>
+> >>>>>>> So I am trying to finish my patch-set for preventing transient W+=
+X mappings
+> >>>>>>> from taking space, by handling kprobes & ftrace that I missed (th=
+anks again
+> >>>>>>> for
+> >>>>>>> pointing it out).
+> >>>>>>>
+> >>>>>>> But all of the sudden, I don=E2=80=99t understand why we have the=
+ problem that this
+> >>>>>>> (your) patch-set deals with at all. We already change the mapping=
+s to make
+> >>>>>>> the memory wrAcked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > itable before freeing the memory, so why can=E2=80=99t we make it
+> >>>>>>> non-executable at the same time? Actually, why do we make the mod=
+ule memory,
+> >>>>>>> including its data executable before freeing it???
+> >>>>>>
+> >>>>>> Yeah, this is really confusing, but I have a suspicion it's a comb=
+ination
+> >>>>>> of the various different configurations and hysterical raisins. We=
+ can't
+> >>>>>> rely on module_alloc() allocating from the vmalloc area (see nios2=
+) nor
+> >>>>>> can we rely on disable_ro_nx() being available at build time.
+> >>>>>>
+> >>>>>> If we *could* rely on module allocations always using vmalloc(), t=
+hen
+> >>>>>> we could pass in Rick's new flag and drop disable_ro_nx() altogeth=
+er
+> >>>>>> afaict -- who cares about the memory attributes of a mapping that'=
+s about
+> >>>>>> to disappear anyway?
+> >>>>>>
+> >>>>>> Is it just nios2 that does something different?
+> >>>>>>
+> >>>>> Yea it is really intertwined. I think for x86, set_memory_nx everyw=
+here would
+> >>>>> solve it as well, in fact that was what I first thought the solutio=
+n should be
+> >>>>> until this was suggested. It's interesting that from the other thre=
+ad Masami
+> >>>>> Hiramatsu referenced, set_memory_nx was suggested last year and wou=
+ld have
+> >>>>> inadvertently blocked this on x86. But, on the other architectures =
+I have since
+> >>>>> learned it is a bit different.
+> >>>>>
+> >>>>> It looks like actually most arch's don't re-define set_memory_*, an=
+d so all of
+> >>>>> the frob_* functions are actually just noops. In which case allocat=
+ing RWX is
+> >>>>> needed to make it work at all, because that is what the allocation =
+is going to
+> >>>>> stay at. So in these archs, set_memory_nx won't solve it because it=
+ will do
+> >>>>> nothing.
+> >>>>>
+> >>>>> On x86 I think you cannot get rid of disable_ro_nx fully because th=
+ere is the
+> >>>>> changing of the permissions on the directmap as well. You don't wan=
+t some other
+> >>>>> caller getting a page that was left RO when freed and then trying t=
+o write to
+> >>>>> it, if I understand this.
+> >>>>>
+> >>>>
+> >>>> Exactly.
+> >>>
+> >>> Of course, I forgot about the linear mapping. On arm64, we've just qu=
+eued
+> >>> support for reflecting changes to read-only permissions in the linear=
+ map
+> >>> [1]. So, whilst the linear map is always non-executable, we will need=
+ to
+> >>> make parts of it writable again when freeing the module.
+> >>>
+> >>>> After slightly more thought, I suggest renaming VM_IMMEDIATE_UNMAP t=
+o
+> >>>> VM_MAY_ADJUST_PERMS or similar.  It would have the semantics you wan=
+t,
+> >>>> but it would also call some arch hooks to put back the direct map
+> >>>> permissions before the flush.  Does that seem reasonable?  It would
+> >>>> need to be hooked up that implement set_memory_ro(), but that should
+> >>>> be quite easy.  If nothing else, it could fall back to set_memory_ro=
+()
+> >>>> in the absence of a better implementation.
+> >>>
+> >>> You mean set_memory_rw() here, right? Although, eliding the TLB inval=
+idation
+> >>> would open up a window where the vmap mapping is executable and the l=
+inear
+> >>> mapping is writable, which is a bit rubbish.
+> >>>
+> >>
+> >> Right, and Rick pointed out the same issue.  Instead, we should set
+> >> the direct map not-present or its ARM equivalent, then do the flush,
+> >> then make it RW.  I assume this also works on arm and arm64, although
+> >> I don't know for sure.  On x86, the CPU won't cache not-present PTEs.
+> >
+> > If we are going to unmap the linear alias, why not do it at vmalloc()
+> > time rather than vfree() time?
 >
->Oh no, my intention was that it would just be used with  *_send_signal
->and related functions=2E
-
-Let's postpone that discussion a little=2E
-I think we don't need a syscall to base this off of pids=2E
-As I said I rather send my revived version of CLONE_NEWFD that would serve=
- the same task=2E
-The same way we could also just add a new open() flag that blocks fs acces=
-s completely=2E
-I just pitched that idea to Serge a few days back: O_NOCHDIR or similar=2E
-That could even be part of Aleksa's path resolution patchset=2E
-
+> That=E2=80=99s not totally nuts. Do we ever have code that expects __va()=
+ to
+> work on module data?  Perhaps crypto code trying to encrypt static
+> data because our APIs don=E2=80=99t understand virtual addresses.  I gues=
+s if
+> highmem is ever used for modules, then we should be fine.
 >
->Thanks,
->Florian
 
+The crypto code shouldn't care, but I think it will probably break hibernat=
+e :-(
+
+> RO instead of not present might be safer.  But I do like the idea of
+> renaming Rick's flag to something like VM_XPFO or VM_NO_DIRECT_MAP and
+> making it do all of this.
+>
+> (It seems like some people call it the linear map and some people call
+> it the direct map.  Is there any preference?)
+
+Either is fine with me.
