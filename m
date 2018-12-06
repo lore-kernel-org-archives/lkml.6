@@ -2,71 +2,73 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C925C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239A3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C8020878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD39120868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:26:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgYR5qqH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C8020878
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVg1RZDu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD39120868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbeLFP0q (ORCPT
+        id S1725884AbeLFP0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:26:46 -0500
-Received: from mail-wm1-f52.google.com ([209.85.128.52]:36568 "EHLO
-        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeLFP0q (ORCPT
+        Thu, 6 Dec 2018 10:26:50 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39644 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeLFP0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:26:46 -0500
-Received: by mail-wm1-f52.google.com with SMTP id a18so1492740wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:26:45 -0800 (PST)
+        Thu, 6 Dec 2018 10:26:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f81so1446680wmd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Df89ShnVMJ3g32KsmL3/WIJp0fqIMhGz/JOKXa1E7N0=;
-        b=HgYR5qqHYJ88Jw0lrpdCJLyOSbdv9FO4vXWCM8pGwOJUcIajn2CVUH2xH8ILXDlcce
-         ZsNpfMKcbpMzlgFdRDfY3kaNuzvCeeSVc6mShCLHyjbfTfMg3tXOFGKViuGLhP1ce5S1
-         KE+liupyaMvB2llW58kMia7wN77xeC9B6ma7C0JYFKUZN/eZarIEOzj93DKDutZgKck1
-         oKqzq67NCLPItwgTse48gWirDiqjKtC1cukDR/e+JUt+uE4MBDCvwxPuE5VketHWaFRe
-         UYy7IL+qte/VmfvxSUW3LtB/jpLnvRIKbDA00CyRTeJMwb4Q5fYkcv+GfHBbw8fAMOgi
-         fUBA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=UMyQ0l8+47IG6BmvT/+HBiVzvTDCovW0W1P3gCfHncc=;
+        b=hVg1RZDurGz7XeOvzS137o1lccXwXH7Q8+VSheaXlUkJT1DFHTAq9KOI+HM5yZ5V21
+         EJfX0EN3j7Hf+Q7vOBbOmBZCWd9/oL4jl5tGPbuymSFUK2OTchG0umHOC8/jPgXzk0t6
+         BmP5RQiIfFf8qxxr8hJmE/x3KfWnEw4m9f7CPb40UTeFRzGsjLQK5DEw+uMnla1P5jut
+         5SGXqVIEl9JajuNKqoIkdB9K7kF1GPIgokIrrDbkcFkB2AZ92COLNAgFr9JyDuJtu7Zy
+         IALaiQKedPwuG89HuJUn5zULHxn3vlFW4nfZrxaNi+fyp+at7P1S3BSM7TRvretBsEFW
+         bDrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Df89ShnVMJ3g32KsmL3/WIJp0fqIMhGz/JOKXa1E7N0=;
-        b=S9LOYaupJfqV7FFJ/8Po8ZugG/Y50WgRyKXXImXj6koJhhUZ9+DhaNoOSOPc0BITkA
-         b83BAzuw8M7PAQQWHXr3RU8xxoyAyK5wInqMnjrbEr0kyWrlu2DqJV+yh1103I44JW08
-         iKz09TRYhb1jsSbsmApl2yqcj4LGj8mZZ7goUrwZHc7gx5WkFEljxUCsvPGAs4cwgzNL
-         figZmeXSoMDT5Q+fez4+hJFhARiQHu5HfjV95ZXNb2cuxduARc9K2CTCcyncHbbBNYh+
-         PWY80HgBgaJRha0dJnJxrxm8UC4qfG52L25YEEGk9jvxB3iHDPoo2Kpz2cHJukBLSfjw
-         A33Q==
-X-Gm-Message-State: AA+aEWYpibhrnSmjc5QueCZApYQpPp8JR5Ma7mt8zs24E8QkxXgT8GZh
-        aRiG9N2QEGLjw9+pWm2NiJQ=
-X-Google-Smtp-Source: AFSGD/UOAUAGUC4dUY3JpbXxrLhfh0pDjbKlj/Ler+5blQfm/vgD33jlVslq/Htqh+UfOdMg4qhpDg==
-X-Received: by 2002:a1c:868a:: with SMTP id i132mr16024907wmd.49.1544110004282;
-        Thu, 06 Dec 2018 07:26:44 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=UMyQ0l8+47IG6BmvT/+HBiVzvTDCovW0W1P3gCfHncc=;
+        b=KQ6612bFCTGX3uSwBEKnKoM/E2cZcJYMBOcmTrBNf08vzOJKW6uIbbs84mcU6UkuPH
+         RwMe56rSTtAG6J61UFBFE3RyEYSD5JWeQBN+3RUQ+a96atR6eTtL3m6nJqORkFef9jed
+         x/ELDKr+0+OiEoXC8HFqKnma7X5IMP4EOvjuhZBINF/ew4h8r58u7xHazAioMChKS99J
+         GcF9rPE5N5kuDsGxXv6mstbw7RuXxGFGtT8cXb/wwaDufkSNi2Hunv0s4OGaNfaH3x16
+         aRkLJYMCLMdyRLnehJO4eL1T9xh+fy0kTldxImcYNGviAiBQjF30eZLa3xBD5eyJY27B
+         lyiQ==
+X-Gm-Message-State: AA+aEWaqETAdm17HYC1uS14syzbJYYLnEztxqLSX4gjHvNYSYnN6VDSJ
+        g7L3+ndTFohxSQutCJKMaVg=
+X-Google-Smtp-Source: AFSGD/W9W6wYjJuqQqRRih6JBEIdEae18Xjv/h0/qgKCz1CNQwzm2KLnHJYOhjElTRzGJFQTEtp0IA==
+X-Received: by 2002:a1c:3a8d:: with SMTP id h135-v6mr19942350wma.92.1544110006437;
+        Thu, 06 Dec 2018 07:26:46 -0800 (PST)
 Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
-        by smtp.gmail.com with ESMTPSA id w6sm529728wme.46.2018.12.06.07.26.42
+        by smtp.gmail.com with ESMTPSA id w6sm529728wme.46.2018.12.06.07.26.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 07:26:43 -0800 (PST)
+        Thu, 06 Dec 2018 07:26:45 -0800 (PST)
 From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
 To:     palmer@sifive.com, aou@eecs.berkeley.edu,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
 Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-Subject: [PATCH 0/2] riscv: enable syscalls tracepoints
-Date:   Thu,  6 Dec 2018 16:26:33 +0100
-Message-Id: <20181206152635.1869-1-david.abdurachmanov@gmail.com>
+Subject: [PATCH 1/2] riscv: fix trace_sys_exit hook
+Date:   Thu,  6 Dec 2018 16:26:34 +0100
+Message-Id: <20181206152635.1869-2-david.abdurachmanov@gmail.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181206152635.1869-1-david.abdurachmanov@gmail.com>
+References: <20181206152635.1869-1-david.abdurachmanov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,22 +76,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depends on audit patch:
-http://lists.infradead.org/pipermail/linux-riscv/2018-October/001931.html
+Fix compilation error.
 
-audit patch is already merged into linux-next.
-
-This simply fixes compilation error in do_syscall_trace_exit() and
-enables syscalls tracepoints.
-
-David Abdurachmanov (2):
-  riscv: fix trace_sys_exit hook
-  riscv: add HAVE_SYSCALL_TRACEPOINTS to Kconfig
-
- arch/riscv/Kconfig         | 1 +
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+---
  arch/riscv/kernel/ptrace.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index c1b51539c3e2..2fd9ec48106b 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -177,6 +177,6 @@ void do_syscall_trace_exit(struct pt_regs *regs)
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
+-		trace_sys_exit(regs, regs->regs[0]);
++		trace_sys_exit(regs, regs_return_value(regs));
+ #endif
+ }
 -- 
 2.19.2
 
