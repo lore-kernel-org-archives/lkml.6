@@ -2,208 +2,127 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8C6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9184CC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C4C20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="v8VO8Wwd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C4C20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6036120838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6036120838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbeLFQIi (ORCPT
+        id S1726257AbeLFQIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:08:38 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:59576 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeLFQIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:08:37 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6FwmKS081510;
-        Thu, 6 Dec 2018 16:07:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=t39lbf8Y46YASlVsWVXQd3bHo+V+4WZx7XaFV0/P2RE=;
- b=v8VO8WwdStBL1y/fP28C3HaDPEEfV7HaaqcISZipHPo+uI6dELqgXvPqExDHST23ml9u
- pRfbL7A9PUUpcvMpWBmEoODJfSPieORG9mDqhzMprmUP0sq8IFzsDkESM1mFOONnVPKm
- gxjUCvNM1d41H5QDDN7YdlONFnnvFpsZu93wGNWp9GTREFg9v/FQJD61sfZjXPUHeFx6
- gqswy+seebWvfrD9AUw2oeL1keLAnP5gvokpEteuPAndkhKVn887tQwovKvYgceAsw8i
- WY8Ri/pLzgyLSC1kecUFqSNIYMykIhRWuXkl9y/Q4w/GYxEAkN77D4TJ8bNIpw2W5wVt Hg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftfd3ff-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 16:07:58 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6G7ukM005259
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 16:07:56 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6G7tHL011113;
-        Thu, 6 Dec 2018 16:07:55 GMT
-Received: from [10.39.209.220] (/10.39.209.220)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 08:07:55 -0800
-Subject: Re: [PATCH v3 01/10] sched: Provide sparsemask, a reduced contention
- bitmap
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     mingo@redhat.com, peterz@infradead.org, subhra.mazumdar@oracle.com,
-        dhaval.giani@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@fb.com>
-References: <1541767840-93588-1-git-send-email-steven.sistare@oracle.com>
- <1541767840-93588-2-git-send-email-steven.sistare@oracle.com>
- <7a3e87ac-db63-27c5-8490-2330637e59b1@oracle.com>
- <20181128011904.GR846@vader>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <10d4b797-bb35-c93a-0514-1aaf738162a9@oracle.com>
-Date:   Thu, 6 Dec 2018 11:07:46 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181128011904.GR846@vader>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060136
+        Thu, 6 Dec 2018 11:08:52 -0500
+Received: from mout.gmx.net ([212.227.17.22]:41093 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbeLFQIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:08:51 -0500
+Received: from ovpn-121-90.rdu2.redhat.com ([71.184.117.43]) by mail.gmx.com
+ (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0Lcjdr-1hEUEm0PY7-00k6aq; Thu, 06 Dec 2018 17:08:43 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     akpm@linux-foundation.org
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@gmx.us>
+Subject: [RESEND PATCH] drivers/base: kmemleak ignore a known leak
+Date:   Thu,  6 Dec 2018 11:07:51 -0500
+Message-Id: <20181206160751.36211-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <1543504357-4873-1-git-send-email-cai@gmx.us>
+References: <1543504357-4873-1-git-send-email-cai@gmx.us>
+X-Provags-ID: V03:K1:2EXpTXHwwZh5LYDTxekmW+j5xG/MoDyaeMsUhUqGZPzBjQkCXaB
+ 12rlhJjVelwtFauJMp6qUAJcKE9msPxtetLiU1cxdX8g5WCH6XHvQX7tTw0+y40e6T1HwDm
+ LlP9YygpwlNKOyvPlwc1JuijnnBtT1F6kdR2c3MOUfhySeb7Ojk16Bho1SlU2cWjJEt4H3V
+ tjQbwupuwBa2CUufUrJ9Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LA9n3qnkU+M=:QSLCRlygYqZZJb46asFhPO
+ zRwwOOeMTqSAU2sT/CKgKr3RkKluQTRcqYufixa6tn/UKLxSlFzMHGFDVHVk9c1sLHib2VLFw
+ 7YaZM1zLa9ahTypNM9NK1eacg1lvbD1L4nm0hFM1zKaIBYc4K0TWWQiG6friSWtcuZnq+HZ9I
+ IP3AM+FXjvAXfpodmgXs4MWpZJvnTky4ovLIx2tlwUL67p2vzkN3KCyqr9R2RDVzOutxw7Rwn
+ dELICb6CRgLWOawSDzZyjAkGNWXTZzCgXHbpqK7O3/0nS5t9knvKssOTsSiMsw7FhNAqSG6YD
+ 0rihm5AGuLrY5gic7qAb3RrsPbfcfiyKjW7ZNmJNUrMMExr9RhVnZ4mj4xGx6Z+1LnoOW1xgi
+ OldkXh4hL4MDspMk08AUZ31ciyacTgHZMoQwffKldQTtZQp/LfnAv/eTDD64J3v2Ysk7jNa/f
+ ZQimrwIZ/7Wcnige7qDaxT6onyKMzVsIGvnOBjvftDSYBQgjWXlaN1FiktcY/VbeSvKTKuf6z
+ YHlpmNZYQStwKFdiN0b9sf69uSK5YjdzA40RnB/8wRYpTAIYjD45g96DJ7k4TGssv84rq7mLx
+ Skoep3Eo2EVnTntcdRsgiQXXxnwH98OoVAcnNimQnLXlfko6L4AdWlvXEIa0ib/ueaPd+tnwu
+ ANHU0n9gl/Yr0w9Yz3s7EwxHuMsew8PqWYuWndU4i29+kaJhSjlN3D8mljoIoO0siPHTDuwuk
+ KsB0WxKeIml38reflSX7fvaEqNHm5DGI3nLrv+XEo7dvTurAOFmpCnPIwqJ9MOQpHE9z/Aw2J
+ X8a23eZy2Hy7kPK2+IyKWtpw1+6h/5o0XKaUKrV0M/Q/jvdMMtx1Z1Pw3l8JnF2ZooYqEYOU4
+ NVV03iJ3YQw5cBJKFOYpLauEOCF9vyAbJC+aIsYb0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/27/2018 8:19 PM, Omar Sandoval wrote:
-> On Tue, Nov 27, 2018 at 10:16:56AM -0500, Steven Sistare wrote:
->> On 11/9/2018 7:50 AM, Steve Sistare wrote:
->>> From: Steve Sistare <steve.sistare@oracle.com>
->>>
->>> Provide struct sparsemask and functions to manipulate it.  A sparsemask is
->>> a sparse bitmap.  It reduces cache contention vs the usual bitmap when many
->>> threads concurrently set, clear, and visit elements, by reducing the number
->>> of significant bits per cacheline.  For each 64 byte chunk of the mask,
->>> only the first K bits of the first word are used, and the remaining bits
->>> are ignored, where K is a creation time parameter.  Thus a sparsemask that
->>> can represent a set of N elements is approximately (N/K * 64) bytes in
->>> size.
->>>
->>> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
->>> ---
->>>  include/linux/sparsemask.h | 260 +++++++++++++++++++++++++++++++++++++++++++++
->>>  lib/Makefile               |   2 +-
->>>  lib/sparsemask.c           | 142 +++++++++++++++++++++++++
->>>  3 files changed, 403 insertions(+), 1 deletion(-)
->>>  create mode 100644 include/linux/sparsemask.h
->>>  create mode 100644 lib/sparsemask.c
->>
->> Hi Peter and Ingo,
->>   I need your opinion: would you prefer that I keep the new sparsemask type, 
->> or fold it into the existing sbitmap type?  There is some overlap between the 
->> two, but mostly in trivial one line functions. The main differences are:
-> 
-> Adding Jens and myself.
-> 
->>   * sparsemask defines iterators that allow an inline loop body, like cpumask,
->>   whereas the sbitmap iterator forces us to define a callback function for
->>   the body, which is awkward.
->>
->>   * sparsemask is slightly more efficient.  The struct and variable length
->>   bitmap are allocated contiguously,
-> 
-> That just means you have the pointer indirection elsewhere :) The users
-> of sbitmap embed it in whatever structure they have.
+unreferenced object 0xffff808ec6dc5a80 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294938063 (age 2560.530s)
+  hex dump (first 32 bytes):
+    ff ff ff ff 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
+    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
+  backtrace:
+    [<00000000476dcf8c>] kmem_cache_alloc_trace+0x430/0x500
+    [<000000004f708d37>] platform_device_register_full+0xbc/0x1e8
+    [<000000006c2a7ec7>] acpi_create_platform_device+0x370/0x450
+    [<00000000ef135642>] acpi_default_enumeration+0x34/0x78
+    [<000000003bd9a052>] acpi_bus_attach+0x2dc/0x3e0
+    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
+    [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
+    [<000000002968643e>] acpi_bus_scan+0xb0/0x110
+    [<0000000010dd0bd7>] acpi_scan_init+0x1a8/0x410
+    [<00000000965b3c5a>] acpi_init+0x408/0x49c
+    [<00000000ed4b9fe2>] do_one_initcall+0x178/0x7f4
+    [<00000000a5ac5a74>] kernel_init_freeable+0x9d4/0xa9c
+    [<0000000070ea6c15>] kernel_init+0x18/0x138
+    [<00000000fb8fff06>] ret_from_fork+0x10/0x1c
+    [<0000000041273a0d>] 0xffffffffffffffff
+
+Then, faddr2line pointed out this line,
+
+/*
+ * This memory isn't freed when the device is put,
+ * I don't have a nice idea for that though.  Conceptually
+ * dma_mask in struct device should not be a pointer.
+ * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+ */
+pdev->dev.dma_mask =
+	kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+
+Since this leak has been existed for more than 8-year now and it does not
+reference other part of the memory, let kmemleak ignore it, so users don't
+need to waste time reporting this in the future.
+
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ drivers/base/platform.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 41b91af95afb..3e1587d8320a 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -26,6 +26,7 @@
+ #include <linux/clk/clk-conf.h>
+ #include <linux/limits.h>
+ #include <linux/property.h>
++#include <linux/kmemleak.h>
  
-Yes, the sparsemask can be embedded in one place, but in my use case I also cache
-pointers to the mask from elsewhere, and those sites incur the cost of 2 indirections
-to perform bitmap operations.
+ #include "base.h"
+ #include "power/power.h"
+@@ -525,6 +526,8 @@ struct platform_device *platform_device_register_full(
+ 		if (!pdev->dev.dma_mask)
+ 			goto err;
+ 
++		kmemleak_ignore(pdev->dev.dma_mask);
++
+ 		*pdev->dev.dma_mask = pdevinfo->dma_mask;
+ 		pdev->dev.coherent_dma_mask = pdevinfo->dma_mask;
+ 	}
+-- 
+2.17.2 (Apple Git-113)
 
->>   and sbitmap uses an extra field "depth"
->>   per bitmap cacheline.
-> 
-> The depth field is memory which would otherwise be unused, and it's only
-> used for sbitmap_get(), so it doesn't have any cost if you're using it
-> like a cpumask.
-> 
->>   * The order of arguments is different for the sparsemask accessors and
->>   sbitmap accessors.  sparsemask mimics cpumask which is used extensively
->>   in the sched code.
->>
->>   * Much of the sbitmap code supports queueing, sleeping, and waking on bit
->>   allocation, which is N/A for scheduler load load balancing.  However, we
->>   can call the basic functions which do not use queueing.
->>
->> I could add the sparsemask iterators to sbitmap (90 lines), and define
->> a thin layer to change the argument order to mimic cpumask, but that
->> essentially recreates sparsemask.
-> 
-> We only use sbitmap_for_each_set() in a few places. Maybe a for_each()
-> style macro would be cleaner for those users, too, in which case I
-> wouldn't be opposed to changing it. The cpumask argument order thing is
-> a annoying, though.
-> 
->> Also, pushing sparsemask into sbitmap would limit our freedom to evolve the
->> type to meet the future needs of sched, as sbitmap has its own maintainer,
->> and is used by drivers, so changes to its API and ABI will be frowned upon.
-> 
-> It's a generic data structure, so of course Jens and I have no problem
-> with changing it to meet more needs :) Personally, I'd prefer to only
-> have one datastructure for this, but I suppose it depends on whether
-> Peter and Ingo think the argument order is important enough.
-
-The argument order is a minor thing, not a blocker to adoption, but efficiency 
-is important in the core scheduler code.  I actually did the work to write a
-for_each macro with inline body to sbitmap, and converted my patches to use sbitmap.
-But then I noticed your very recent patch adding the cleared word to each cacheline, 
-which must be loaded and ANDed with each bitset word in the for_each traversal,
-adding more overhead which we don't need for the scheduler use case, on top of the
-extra indirection noted above. You might add more such things in the future (a
-"deferred set" word?) to support the needs of the block drivers who are the 
-intended clients of sbitmap.
-
-Your sbitmap is more than a simple bitmap abstraction, and for the scheduler we
-just need simple.  Therefore, I propose to trim sparsemask to the bare minimum,
-and move it to kernel/sched for use 
-by sched only.
-  It was 400 lines, but will
-be 200, and 80 of those are comments.
-
-If anyone objects, please speak now.
-
-- Steve
-
->> FWIW, here is the amount of code involved:
->>
->> include/linux/sbitmap.h
->>   250 lines basic operations
->>   284 lines for queueing
->>   ---
->>   534 lines total
->>
->> lib/sbitmap.c
->>   201 lines basic operations
->>   380 lines for queueing
->>   ---
->>   581 lines total
->>
->> include/linux/sparsemask.h
->>   260 lines total
->>   https://lkml.org/lkml/2018/11/9/1176
->>
->> lib/sparsemask.c
->>   142 lines total
->>   https://lkml.org/lkml/2018/11/9/1176
->>
->> - Steve
