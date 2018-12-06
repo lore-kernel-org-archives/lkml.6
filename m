@@ -6,55 +6,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA643C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ADEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6511E2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCDB420661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107435;
-	bh=BEmkMT0w9N+dBpMRtZwXKO0oE/5ZRVEwqcVCXA4IYpA=;
+	s=default; t=1544107437;
+	bh=Xm9oyUH/QP09u9bwidpFqjfbiwAbBi8O//Snh22h8oc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xX0XyxtvCqj8u0VKvdfIyFMPwyricygsaQ/lzjLvUS+cE7goNoO/mrD69vT9gaXql
-	 0XsVlKd1WrGOXAaqsV0lgp4OA6ZnTto04oo4YIEPsjX3FWvw5GG5jNOvwkgFeAs1zK
-	 zYxZzfQ7avquu4Ma9OgrLbjGJKcSXMZ2qa/gnsws=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6511E2146D
+	b=z0qPrQnQ09FPrN4yd90HMMO6jtyK3M51Wfl0CV1/8UO9qSeyi4BTEG5AjyHgHJeuc
+	 V17KQCjlpJvrtBJDU/fTZTKAS7jNQn5Ci6cfKTs8A+56QaQI0ekDjLhyyup8IhJvcN
+	 +kd2OSFUL8Keu7K9XRMoIFUb3Z7WAIPjv2Rdufik=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDB420661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbeLFOny (ORCPT
+        id S1730782AbeLFOn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:43:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:43:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730743AbeLFOnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:50 -0500
+        id S1730231AbeLFOny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:43:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C3EC21479;
-        Thu,  6 Dec 2018 14:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7804B20892;
+        Thu,  6 Dec 2018 14:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107429;
-        bh=BEmkMT0w9N+dBpMRtZwXKO0oE/5ZRVEwqcVCXA4IYpA=;
+        s=default; t=1544107433;
+        bh=Xm9oyUH/QP09u9bwidpFqjfbiwAbBi8O//Snh22h8oc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yyTR8TrDP1vM27NXGQeJS7Pbka40VvKeHYQRqSewhdSVvf4uVehg6810gzwmOfigw
-         e0UsSyNfiKDUgrwiCMLRly0DarHHXXdZvgi73I29nXNtBiOILfm8ETiVKBv5jp2Yek
-         ozaXf3h2IcrY/Jqpxgm/BnUT28STSWjZi9+lXvsQ=
+        b=12MNSZisfiGJQ6qGzlOniNyNjldWijXslfeoNzpBw1tPZyE6bAJvjFoLs7mbWKYPP
+         TQnNyhRHeY9d02jNSt8dRKxRfSzPnnIQXX34aJkCCm6AYTL0+pmr3/I6P9O1jf+oTN
+         3QMi9oyVG6AGW3FbjUyT1LPhzebKdXt1Lg49hz8w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 24/55] userfaultfd: shmem: add i_size checks
-Date:   Thu,  6 Dec 2018 15:38:58 +0100
-Message-Id: <20181206143003.056725404@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Wilck <mwilck@suse.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 26/55] scsi: scsi_devinfo: cleanly zero-pad devinfo strings
+Date:   Thu,  6 Dec 2018 15:39:00 +0100
+Message-Id: <20181206143003.153455326@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -73,149 +68,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Martin Wilck <mwilck@suse.com>
 
-commit e2a50c1f64145a04959df2442305d57307e5395a upstream.
+commit 81df022b688d43d2a3667518b2f755d384397910 upstream.
 
-With MAP_SHARED: recheck the i_size after taking the PT lock, to
-serialize against truncate with the PT lock.  Delete the page from the
-pagecache if the i_size_read check fails.
+Cleanly fill memory for "vendor" and "model" with 0-bytes for the
+"compatible" case rather than adding only a single 0 byte.  This
+simplifies the devinfo code a a bit, and avoids mistakes in other places
+of the code (not in current upstream, but we had one such mistake in the
+SUSE kernel).
 
-With MAP_PRIVATE: check the i_size after the PT lock before mapping
-anonymous memory or zeropages into the MAP_PRIVATE shmem mapping.
+[mkp: applied by hand and added braces]
 
-A mostly irrelevant cleanup: like we do the delete_from_page_cache()
-pagecache removal after dropping the PT lock, the PT lock is a spinlock
-so drop it before the sleepable page lock.
-
-Link: http://lkml.kernel.org/r/20181126173452.26955-5-aarcange@redhat.com
-Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Hugh Dickins <hughd@google.com>
-Reported-by: Jann Horn <jannh@google.com>
-Cc: <stable@vger.kernel.org>
-Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/shmem.c       |   18 ++++++++++++++++--
- mm/userfaultfd.c |   26 ++++++++++++++++++++++++--
- 2 files changed, 40 insertions(+), 4 deletions(-)
+ drivers/scsi/scsi_devinfo.c |   22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2244,6 +2244,7 @@ static int shmem_mfill_atomic_pte(struct
- 	struct page *page;
- 	pte_t _dst_pte, *dst_pte;
- 	int ret;
-+	pgoff_t offset, max_off;
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -34,7 +34,6 @@ struct scsi_dev_info_list_table {
+ };
  
- 	ret = -ENOMEM;
- 	if (!shmem_inode_acct_block(inode, 1))
-@@ -2281,6 +2282,12 @@ static int shmem_mfill_atomic_pte(struct
- 	__SetPageSwapBacked(page);
- 	__SetPageUptodate(page);
  
-+	ret = -EFAULT;
-+	offset = linear_page_index(dst_vma, dst_addr);
-+	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+	if (unlikely(offset >= max_off))
-+		goto out_release;
-+
- 	ret = mem_cgroup_try_charge(page, dst_mm, gfp, &memcg, false);
- 	if (ret)
- 		goto out_release;
-@@ -2299,8 +2306,14 @@ static int shmem_mfill_atomic_pte(struct
- 	if (dst_vma->vm_flags & VM_WRITE)
- 		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+-static const char spaces[] = "                "; /* 16 of them */
+ static unsigned scsi_default_dev_flags;
+ static LIST_HEAD(scsi_dev_info_list);
+ static char scsi_dev_flags[256];
+@@ -296,20 +295,13 @@ static void scsi_strcpy_devinfo(char *na
+ 	size_t from_length;
  
--	ret = -EEXIST;
- 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+
-+	ret = -EFAULT;
-+	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+	if (unlikely(offset >= max_off))
-+		goto out_release_uncharge_unlock;
-+
-+	ret = -EEXIST;
- 	if (!pte_none(*dst_pte))
- 		goto out_release_uncharge_unlock;
- 
-@@ -2318,13 +2331,14 @@ static int shmem_mfill_atomic_pte(struct
- 
- 	/* No need to invalidate - it was non-present before */
- 	update_mmu_cache(dst_vma, dst_addr, dst_pte);
--	unlock_page(page);
- 	pte_unmap_unlock(dst_pte, ptl);
-+	unlock_page(page);
- 	ret = 0;
- out:
- 	return ret;
- out_release_uncharge_unlock:
- 	pte_unmap_unlock(dst_pte, ptl);
-+	delete_from_page_cache(page);
- out_release_uncharge:
- 	mem_cgroup_cancel_charge(page, memcg, false);
- out_release:
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -34,6 +34,8 @@ static int mcopy_atomic_pte(struct mm_st
- 	void *page_kaddr;
- 	int ret;
- 	struct page *page;
-+	pgoff_t offset, max_off;
-+	struct inode *inode;
- 
- 	if (!*pagep) {
- 		ret = -ENOMEM;
-@@ -74,8 +76,17 @@ static int mcopy_atomic_pte(struct mm_st
- 	if (dst_vma->vm_flags & VM_WRITE)
- 		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
- 
--	ret = -EEXIST;
- 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+	if (dst_vma->vm_file) {
-+		/* the shmem MAP_PRIVATE case requires checking the i_size */
-+		inode = dst_vma->vm_file->f_inode;
-+		offset = linear_page_index(dst_vma, dst_addr);
-+		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+		ret = -EFAULT;
-+		if (unlikely(offset >= max_off))
-+			goto out_release_uncharge_unlock;
-+	}
-+	ret = -EEXIST;
- 	if (!pte_none(*dst_pte))
- 		goto out_release_uncharge_unlock;
- 
-@@ -109,11 +120,22 @@ static int mfill_zeropage_pte(struct mm_
- 	pte_t _dst_pte, *dst_pte;
- 	spinlock_t *ptl;
- 	int ret;
-+	pgoff_t offset, max_off;
-+	struct inode *inode;
- 
- 	_dst_pte = pte_mkspecial(pfn_pte(my_zero_pfn(dst_addr),
- 					 dst_vma->vm_page_prot));
--	ret = -EEXIST;
- 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
-+	if (dst_vma->vm_file) {
-+		/* the shmem MAP_PRIVATE case requires checking the i_size */
-+		inode = dst_vma->vm_file->f_inode;
-+		offset = linear_page_index(dst_vma, dst_addr);
-+		max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-+		ret = -EFAULT;
-+		if (unlikely(offset >= max_off))
-+			goto out_unlock;
-+	}
-+	ret = -EEXIST;
- 	if (!pte_none(*dst_pte))
- 		goto out_unlock;
- 	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
+ 	from_length = strlen(from);
+-	strncpy(to, from, min(to_length, from_length));
+-	if (from_length < to_length) {
+-		if (compatible) {
+-			/*
+-			 * NUL terminate the string if it is short.
+-			 */
+-			to[from_length] = '\0';
+-		} else {
+-			/* 
+-			 * space pad the string if it is short. 
+-			 */
+-			strncpy(&to[from_length], spaces,
+-				to_length - from_length);
+-		}
++	/* this zero-pads the destination */
++	strncpy(to, from, to_length);
++	if (from_length < to_length && !compatible) {
++		/*
++		 * space pad the string if it is short.
++		 */
++		memset(&to[from_length], ' ', to_length - from_length);
+ 	}
+ 	if (from_length > to_length)
+ 		 printk(KERN_WARNING "%s: %s string '%s' is too long\n",
 
 
