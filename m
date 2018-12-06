@@ -2,502 +2,518 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6C6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930DA21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BFC5214DB
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107537;
-	bh=cZgAlzu8m0AIEgPHjlVaY4QZS3dwN2AmSrdeUWPi0KQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=tWJr8wHEqEf7gYCys4bIyJVnp+7Cb9IDbRDFCt0o79TCAnAHsgJovUlidEVHWMOAG
-	 swxbnru/TrRe2StE2bxSNLr/kMRtUc82giumSdi8FmRvFLc8n+FzXZp29g8i7dV0RX
-	 2+Oq6WlDv+hveBydbqr393FZ08a3vDSa8smtBs+U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930DA21479
+	s=default; t=1544107540;
+	bh=xoh8HvsxgxmO3coQN0WU47kvaeFnONMvBm4boSWAfXM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vgCjBjmwmZ+t5nocceBGfrFIfJHf44mj/KU7CzRNhl2xQAIGzjw6PFl7LJDIX/+iz
+	 Y+X2UWjTxBmhLKDl75OBqUqZZydR1YKlmn9bWv1Xixwh+FdH9aU6K+bOuYKoY1MODT
+	 ORSU+D+FB3nY0R42JlY753BtJfJAkU1KTx10A0PA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFC5214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbeLFOpg (ORCPT
+        id S1731104AbeLFOpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:45:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:45:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbeLFOpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:45:35 -0500
+        id S1729714AbeLFOpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:45:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5462C20892;
-        Thu,  6 Dec 2018 14:45:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA3EF21479;
+        Thu,  6 Dec 2018 14:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107533;
-        bh=cZgAlzu8m0AIEgPHjlVaY4QZS3dwN2AmSrdeUWPi0KQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hiIRD0vKla7MBgAsin1+0Hep7dL+T58+AHN7bkf1zX7kTHSE1gg0WFcw40X8g6na4
-         CXwkDMu+MOlc3KyEkI5q1RsaybL8U6IuY7M59CDNkleQcJJLDzB3NC92nwvkhDeSu/
-         I2X5RcMKu1SYZA3yipLwKNTtTioLX9KlwpwHr7ns=
+        s=default; t=1544107531;
+        bh=xoh8HvsxgxmO3coQN0WU47kvaeFnONMvBm4boSWAfXM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RZ6FAfFAxII7qeLmvDD72+9OteCIVeN4A96oGVULN0nWEKRNnZFfgVo/8Nm8v+FrG
+         fGjAErJKDv7L0DRDELfLGs9AoYAwbKRbNd4vGJt+eNc2mX1oY2KsmWg4NGzeILBrtW
+         /feVjFrnPp+aS70WPBJwFSJMDDMTgpUnXvKHR57Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 000/101] 4.9.144-stable review
-Date:   Thu,  6 Dec 2018 15:37:59 +0100
-Message-Id: <20181206143011.174892052@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 009/101] scsi: bfa: convert to strlcpy/strlcat
+Date:   Thu,  6 Dec 2018 15:38:08 +0100
+Message-Id: <20181206143012.122805645@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
+References: <20181206143011.174892052@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.144-rc1
-X-KernelTest-Deadline: 2018-12-08T14:30+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.144 release.
-There are 101 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.144-rc1
-
-Darrick J. Wong <darrick.wong@oracle.com>
-    xfs: don't fail when converting shortform attr to long form during ATTR_REPLACE
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    f2fs: fix to do sanity check with cp_pack_start_sum
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: free meta pages if sanity check for ckpt is failed
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix to do sanity check with block address in main area v2
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: fix missing up_read
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix to do sanity check with block address in main area
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix to do sanity check with node footer and iblocks
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    f2fs: Add sanity_check_inode() function
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix to do sanity check with user_block_count
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix to do sanity check with secs_per_zone
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: introduce and spread verify_blkaddr
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: clean up with is_valid_blkaddr()
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: enhance sanity_check_raw_super() to avoid potential overflow
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: sanity check on sit entry
-
-Yunlei He <heyunlei@huawei.com>
-    f2fs: check blkaddr more accuratly before issue a bio
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: return error during fill_super
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: detect wrong layout
-
-Chao Yu <yuchao0@huawei.com>
-    f2fs: fix race condition in between free nid allocator/initializer
-
-Yunlei He <heyunlei@huawei.com>
-    f2fs: fix a panic caused by NULL flush_cmd_control
-
-Shaokun Zhang <zhangshaokun@hisilicon.com>
-    btrfs: tree-checker: Fix misleading group system information
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Check level for leaves and nodes
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: Check that each block group has corresponding chunk at mount time
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Detect invalid and empty essential trees
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Verify block_group_item
-
-David Sterba <dsterba@suse.com>
-    btrfs: tree-check: reduce stack consumption in check_dir_item
-
-Arnd Bergmann <arnd@arndb.de>
-    btrfs: tree-checker: use %zu format string for size_t
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Add checker for dir item
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Fix false panic for sanity test
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: tree-checker: Enhance btrfs_check_node output
-
-Jeff Mahoney <jeffm@suse.com>
-    btrfs: struct-funcs, constify readers
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Move leaf and node validation checker to tree-checker.c
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Add checker for EXTENT_CSUM
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Add sanity check for EXTENT_DATA when reading out leaf
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Check if item pointer overlaps with the item itself
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Refactor check_leaf function for later expansion
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: Verify that every chunk has corresponding block group at mount time
-
-Gu Jinxiang <gujx@cn.fujitsu.com>
-    btrfs: validate type when reading a chunk
-
-Mike Kravetz <mike.kravetz@oracle.com>
-    hugetlbfs: check for pgoff value overflow
-
-Mike Kravetz <mike.kravetz@oracle.com>
-    hugetlbfs: fix offset overflow in hugetlbfs mmap
-
-Mike Kravetz <mike.kravetz@oracle.com>
-    mm/hugetlb.c: don't call region_abort if region_chg fails
-
-Lior David <qca_liord@qca.qualcomm.com>
-    wil6210: missing length check in wmi_set_ie
-
-Alexei Starovoitov <ast@kernel.org>
-    bpf: Prevent memory disambiguation attack
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    bpf/verifier: Pass instruction index to check_mem_access() and check_xadd()
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    bpf/verifier: Add spi variable to check_stack_write()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: check authorizer reply/challenge length before reading
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: weaken sizeof check in ceph_x_verify_authorizer_reply()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: implement CEPHX_V2 calculation mode
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: add authorizer challenge
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: factor out encrypt_authorizer()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: factor out __ceph_x_decrypt()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: factor out __prepare_write_connect()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: store ceph_auth_handshake pointer in ceph_connection
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: no need to drop con->mutex for ->get_authorizer()
-
-Ilya Dryomov <idryomov@gmail.com>
-    libceph: drop len argument of *verify_authorizer_reply()
-
-Guoqing Jiang <gqjiang@suse.com>
-    tipc: use destination length for copy string
-
-Arnd Bergmann <arnd@arndb.de>
-    net: qed: use correct strncpy() size
-
-Arnd Bergmann <arnd@arndb.de>
-    usb: gadget: dummy: fix nonsensical comparisons
-
-Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-    mm: cleancache: fix corruption on missed inode invalidation
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    reset: remove remaining WARN_ON() in <linux/reset.h>
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    reset: make device_reset_optional() really optional
-
-Philipp Zabel <p.zabel@pengutronix.de>
-    reset: add exported __reset_control_get, return NULL if optional
-
-Philipp Zabel <p.zabel@pengutronix.de>
-    reset: fix optional reset_control_get stubs to return NULL
-
-Heiner Kallweit <hkallweit1@gmail.com>
-    reset: core: fix reset_control_put
-
-Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
-    reset: make optional functions really optional
-
-Jan Kara <jack@suse.cz>
-    udf: Allow mounting volumes with incorrect identification strings
-
-Alexey Brodkin <abrodkin@synopsys.com>
-    arc: [devboards] Add support of NFSv3 ACL
-
-Kevin Hilman <khilman@baylibre.com>
-    ARC: change defconfig defaults to ARCv2
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix use-after-free when dumping free space
-
-Nikolay Borisov <nborisov@suse.com>
-    btrfs: Always try all copies when reading extent buffers
-
-Adam Wong <adam@adamwong.me>
-    Input: elan_i2c - add support for ELAN0621 touchpad
-
-Noah Westervelt <nwestervelt@outlook.com>
-    Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15ARR
-
-Patrick Gaskin <patrick@pgaskin.net>
-    Input: elan_i2c - add ELAN0620 to the ACPI table
-
-Christian Hoff <christian_hoff@gmx.net>
-    Input: matrix_keypad - check for errors from of_get_named_gpio()
-
-Cameron Gutman <aicommander@gmail.com>
-    Input: xpad - quirk all PDP Xbox One gamepads
-
-Johan Hovold <johan@kernel.org>
-    drm/mediatek: fix OF sibling-node lookup
-
-Wei Wang <wawei@amazon.de>
-    svm: Add mutex_lock to protect apic_access_page_done on AMD systems
-
-Todd Kjos <tkjos@android.com>
-    binder: fix proc->files use-after-free
-
-Laura Abbott <labbott@redhat.com>
-    kgdboc: Fix warning with module build
-
-Laura Abbott <labbott@redhat.com>
-    kgdboc: Fix restrict error
-
-Kees Cook <keescook@chromium.org>
-    scsi: csiostor: Avoid content leaks and casts
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: trident: Suppress gcc string warning
-
-Martin Wilck <mwilck@suse.com>
-    scsi: scsi_devinfo: cleanly zero-pad devinfo strings
-
-Sergio Correia <sergio@correia.cc>
-    drm: set is_master to 0 upon drm_new_set_master() failure
-
-Sam Bobroff <sbobroff@linux.ibm.com>
-    drm/ast: Fix incorrect free on ioregs
-
-Michael Guralnik <michaelgur@mellanox.com>
-    IB/mlx5: Avoid load failure due to unknown link width
-
-Dmitry V. Levin <ldv@altlinux.org>
-    mips: fix mips_get_syscall_arg o32 check
-
-Mathias Kresin <dev@kresin.me>
-    MIPS: ralink: Fix mt7620 nd_sd pinmux
-
-Andrea Parri <andrea.parri@amarulasolutions.com>
-    uprobes: Fix handle_swbp() vs. unregister() + register() race once more
-
-Sagi Grimberg <sagi@grimberg.me>
-    iser: set sector for ambiguous mr status errors
-
-Kees Cook <keescook@chromium.org>
-    x86/power/64: Use char arrays for asm function names
-
-Arnd Bergmann <arnd@arndb.de>
-    kdb: use memmove instead of overlapping memcpy
-
-Arnd Bergmann <arnd@arndb.de>
-    staging: rts5208: fix gcc-8 logic error warning
-
-Arnd Bergmann <arnd@arndb.de>
-    scsi: bfa: convert to strlcpy/strlcat
-
-Arnd Bergmann <arnd@arndb.de>
-    drm: gma500: fix logic error
-
-Sultan Alsawaf <sultanxda@gmail.com>
-    ip_tunnel: Fix name string concatenate in __ip_tunnel_create()
-
-Guenter Roeck <linux@roeck-us.net>
-    kernfs: Replace strncpy with memcpy
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    unifdef: use memcpy instead of strncpy
-
-Guenter Roeck <linux@roeck-us.net>
-    kobject: Replace strncpy with memcpy
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    test_hexdump: use memcpy instead of strncpy
-
-Stephen Rothwell <sfr@canb.auug.org.au>
-    disable stringop truncation warnings for now
-
-Xiongfeng Wang <xiongfeng.wang@linaro.org>
-    Kbuild: suppress packed-not-aligned warning for default setting only
-
-
--------------
-
-Diffstat:
-
- Makefile                                     |   7 +-
- arch/arc/Kconfig                             |   2 +-
- arch/arc/Makefile                            |   2 +-
- arch/arc/configs/axs101_defconfig            |   2 +
- arch/arc/configs/axs103_defconfig            |   1 +
- arch/arc/configs/axs103_smp_defconfig        |   1 +
- arch/arc/configs/nps_defconfig               |   2 +
- arch/arc/configs/nsim_700_defconfig          |   1 +
- arch/arc/configs/nsimosci_defconfig          |   2 +
- arch/arc/configs/nsimosci_hs_defconfig       |   1 +
- arch/arc/configs/nsimosci_hs_smp_defconfig   |   1 +
- arch/arc/configs/tb10x_defconfig             |   1 +
- arch/arc/configs/vdk_hs38_defconfig          |   1 +
- arch/arc/configs/vdk_hs38_smp_defconfig      |   1 +
- arch/mips/include/asm/syscall.h              |   2 +-
- arch/mips/ralink/mt7620.c                    |   2 +-
- arch/x86/include/asm/suspend_64.h            |   5 +-
- arch/x86/kvm/svm.c                           |  19 +-
- arch/x86/power/hibernate_64.c                |   6 +-
- drivers/android/binder.c                     |  41 +-
- drivers/gpu/drm/ast/ast_main.c               |   3 +-
- drivers/gpu/drm/drm_auth.c                   |   2 +
- drivers/gpu/drm/gma500/mdfld_intel_display.c |   2 +-
- drivers/gpu/drm/mediatek/mtk_hdmi.c          |   5 +-
- drivers/infiniband/hw/mlx5/main.c            |  29 +-
- drivers/infiniband/ulp/iser/iser_verbs.c     |   7 +-
- drivers/input/joystick/xpad.c                |  16 +-
- drivers/input/keyboard/matrix_keypad.c       |  23 +-
- drivers/input/mouse/elan_i2c_core.c          |   3 +
- drivers/net/ethernet/qlogic/qed/qed_debug.c  |   8 +-
- drivers/net/wireless/ath/wil6210/wmi.c       |   8 +-
- drivers/reset/core.c                         |  79 +++-
- drivers/scsi/bfa/bfa_fcbuild.c               |   8 +-
- drivers/scsi/bfa/bfa_fcs.c                   |  78 ++--
- drivers/scsi/bfa/bfa_fcs_lport.c             |  62 +--
- drivers/scsi/bfa/bfa_ioc.c                   |   2 +-
- drivers/scsi/bfa/bfa_svc.c                   |   4 +-
- drivers/scsi/bfa/bfad.c                      |  20 +-
- drivers/scsi/bfa/bfad_attr.c                 |   2 +-
- drivers/scsi/bfa/bfad_bsg.c                  |   6 +-
- drivers/scsi/csiostor/csio_lnode.c           |  43 +-
- drivers/scsi/scsi_devinfo.c                  |  22 +-
- drivers/staging/rts5208/sd.c                 |   6 -
- drivers/tty/serial/kgdboc.c                  |  43 +-
- drivers/usb/gadget/udc/dummy_hcd.c           |   9 +-
- fs/btrfs/Makefile                            |   2 +-
- fs/btrfs/ctree.h                             | 128 +++---
- fs/btrfs/disk-io.c                           | 162 +------
- fs/btrfs/extent-tree.c                       |  86 +++-
- fs/btrfs/extent_io.c                         |  24 +-
- fs/btrfs/extent_io.h                         |  19 +-
- fs/btrfs/free-space-cache.c                  |   2 +
- fs/btrfs/struct-funcs.c                      |   9 +-
- fs/btrfs/tree-checker.c                      | 649 +++++++++++++++++++++++++++
- fs/btrfs/tree-checker.h                      |  38 ++
- fs/btrfs/volumes.c                           |  30 +-
- fs/btrfs/volumes.h                           |   2 +
- fs/ceph/mds_client.c                         |  15 +-
- fs/f2fs/checkpoint.c                         |  46 +-
- fs/f2fs/data.c                               |  33 +-
- fs/f2fs/f2fs.h                               |  41 +-
- fs/f2fs/file.c                               |  21 +-
- fs/f2fs/inode.c                              |  68 ++-
- fs/f2fs/node.c                               |  73 ++-
- fs/f2fs/recovery.c                           |   6 +-
- fs/f2fs/segment.c                            |  34 +-
- fs/f2fs/segment.h                            |  48 +-
- fs/f2fs/super.c                              | 107 ++++-
- fs/hugetlbfs/inode.c                         |  26 +-
- fs/kernfs/symlink.c                          |   2 +-
- fs/udf/super.c                               |  16 +-
- fs/udf/unicode.c                             |  14 +-
- fs/xfs/libxfs/xfs_attr.c                     |   9 +-
- include/linux/bpf_verifier.h                 |   1 +
- include/linux/ceph/auth.h                    |  13 +-
- include/linux/ceph/ceph_features.h           |   4 +-
- include/linux/ceph/messenger.h               |   8 +-
- include/linux/ceph/msgr.h                    |   2 +-
- include/linux/reset.h                        |  92 ++--
- include/uapi/linux/btrfs_tree.h              |   1 +
- kernel/bpf/verifier.c                        |  90 +++-
- kernel/debug/kdb/kdb_support.c               |   4 +-
- kernel/events/uprobes.c                      |  12 +-
- lib/kobject.c                                |   2 +-
- lib/test_hexdump.c                           |   2 +-
- mm/hugetlb.c                                 |  10 +-
- mm/truncate.c                                |   8 +-
- net/ceph/auth.c                              |  20 +-
- net/ceph/auth_x.c                            | 225 ++++++++--
- net/ceph/auth_x_protocol.h                   |   7 +
- net/ceph/messenger.c                         | 101 +++--
- net/ceph/osd_client.c                        |  15 +-
- net/ipv4/ip_tunnel.c                         |   4 +-
- net/tipc/subscr.c                            |   2 +-
- scripts/Makefile.extrawarn                   |   3 +
- scripts/unifdef.c                            |   4 +-
- sound/pci/trident/trident.c                  |   2 +-
- 97 files changed, 2154 insertions(+), 778 deletions(-)
+4.9-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Arnd Bergmann <arnd@arndb.de>
+
+commit 8c5a50e8e7ad812a62f7ccf28d9a5e74fddf3000 upstream.
+
+The bfa driver has a number of real issues with string termination
+that gcc-8 now points out:
+
+drivers/scsi/bfa/bfad_bsg.c: In function 'bfad_iocmd_port_get_attr':
+drivers/scsi/bfa/bfad_bsg.c:320:9: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_psymb_init':
+drivers/scsi/bfa/bfa_fcs.c:775:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:781:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:788:9: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:801:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:808:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_nsymb_init':
+drivers/scsi/bfa/bfa_fcs.c:837:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:844:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c:852:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_psymb_init':
+drivers/scsi/bfa/bfa_fcs.c:778:2: error: 'strncat' output may be truncated copying 10 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:784:2: error: 'strncat' output may be truncated copying 30 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:803:3: error: 'strncat' output may be truncated copying 44 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:811:3: error: 'strncat' output may be truncated copying 16 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c: In function 'bfa_fcs_fabric_nsymb_init':
+drivers/scsi/bfa/bfa_fcs.c:840:2: error: 'strncat' output may be truncated copying 10 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs.c:847:2: error: 'strncat' output may be truncated copying 30 bytes from a string of length 63 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_fdmi_get_hbaattr':
+drivers/scsi/bfa/bfa_fcs_lport.c:2657:10: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs_lport.c:2659:11: error: argument to 'sizeof' in 'strncat' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ms_gmal_response':
+drivers/scsi/bfa/bfa_fcs_lport.c:3232:5: error: 'strncpy' output may be truncated copying 16 bytes from a string of length 247 [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ns_send_rspn_id':
+drivers/scsi/bfa/bfa_fcs_lport.c:4670:3: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c:4682:3: error: 'strncat' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_lport_ns_util_send_rspn_id':
+drivers/scsi/bfa/bfa_fcs_lport.c:5206:3: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c:5215:3: error: 'strncat' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcs_lport.c: In function 'bfa_fcs_fdmi_get_portattr':
+drivers/scsi/bfa/bfa_fcs_lport.c:2751:2: error: 'strncpy' specified bound 128 equals destination size [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcbuild.c: In function 'fc_rspnid_build':
+drivers/scsi/bfa/bfa_fcbuild.c:1254:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+drivers/scsi/bfa/bfa_fcbuild.c:1253:25: note: length computed here
+drivers/scsi/bfa/bfa_fcbuild.c: In function 'fc_rsnn_nn_build':
+drivers/scsi/bfa/bfa_fcbuild.c:1275:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+
+In most cases, this can be addressed by correctly calling strlcpy and
+strlcat instead of strncpy/strncat, with the size of the destination
+buffer as the last argument.
+
+For consistency, I'm changing the other callers of strncpy() in this
+driver the same way.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Acked-by: Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/scsi/bfa/bfa_fcbuild.c   |    8 ++--
+ drivers/scsi/bfa/bfa_fcs.c       |   78 +++++++++++++++++++--------------------
+ drivers/scsi/bfa/bfa_fcs_lport.c |   62 ++++++++++++-------------------
+ drivers/scsi/bfa/bfa_ioc.c       |    2 -
+ drivers/scsi/bfa/bfa_svc.c       |    4 +-
+ drivers/scsi/bfa/bfad.c          |   20 +++++-----
+ drivers/scsi/bfa/bfad_attr.c     |    2 -
+ drivers/scsi/bfa/bfad_bsg.c      |    6 +--
+ 8 files changed, 84 insertions(+), 98 deletions(-)
+
+--- a/drivers/scsi/bfa/bfa_fcbuild.c
++++ b/drivers/scsi/bfa/bfa_fcbuild.c
+@@ -1250,8 +1250,8 @@ fc_rspnid_build(struct fchs_s *fchs, voi
+ 	memset(rspnid, 0, sizeof(struct fcgs_rspnid_req_s));
+ 
+ 	rspnid->dap = s_id;
+-	rspnid->spn_len = (u8) strlen((char *)name);
+-	strncpy((char *)rspnid->spn, (char *)name, rspnid->spn_len);
++	strlcpy(rspnid->spn, name, sizeof(rspnid->spn));
++	rspnid->spn_len = (u8) strlen(rspnid->spn);
+ 
+ 	return sizeof(struct fcgs_rspnid_req_s) + sizeof(struct ct_hdr_s);
+ }
+@@ -1271,8 +1271,8 @@ fc_rsnn_nn_build(struct fchs_s *fchs, vo
+ 	memset(rsnn_nn, 0, sizeof(struct fcgs_rsnn_nn_req_s));
+ 
+ 	rsnn_nn->node_name = node_name;
+-	rsnn_nn->snn_len = (u8) strlen((char *)name);
+-	strncpy((char *)rsnn_nn->snn, (char *)name, rsnn_nn->snn_len);
++	strlcpy(rsnn_nn->snn, name, sizeof(rsnn_nn->snn));
++	rsnn_nn->snn_len = (u8) strlen(rsnn_nn->snn);
+ 
+ 	return sizeof(struct fcgs_rsnn_nn_req_s) + sizeof(struct ct_hdr_s);
+ }
+--- a/drivers/scsi/bfa/bfa_fcs.c
++++ b/drivers/scsi/bfa/bfa_fcs.c
+@@ -832,23 +832,23 @@ bfa_fcs_fabric_psymb_init(struct bfa_fcs
+ 	bfa_ioc_get_adapter_model(&fabric->fcs->bfa->ioc, model);
+ 
+ 	/* Model name/number */
+-	strncpy((char *)&port_cfg->sym_name, model,
+-		BFA_FCS_PORT_SYMBNAME_MODEL_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcpy(port_cfg->sym_name.symname, model,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Driver Version */
+-	strncat((char *)&port_cfg->sym_name, (char *)driver_info->version,
+-		BFA_FCS_PORT_SYMBNAME_VERSION_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcat(port_cfg->sym_name.symname, driver_info->version,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Host machine name */
+-	strncat((char *)&port_cfg->sym_name,
+-		(char *)driver_info->host_machine_name,
+-		BFA_FCS_PORT_SYMBNAME_MACHINENAME_SZ);
+-	strncat((char *)&port_cfg->sym_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-		sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++	strlcat(port_cfg->sym_name.symname,
++		driver_info->host_machine_name,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->sym_name.symname, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++		BFA_SYMNAME_MAXLEN);
+ 
+ 	/*
+ 	 * Host OS Info :
+@@ -856,24 +856,24 @@ bfa_fcs_fabric_psymb_init(struct bfa_fcs
+ 	 * OS name string and instead copy the entire OS info string (64 bytes).
+ 	 */
+ 	if (driver_info->host_os_patch[0] == '\0') {
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_name,
+-			BFA_FCS_OS_STR_LEN);
+-		strncat((char *)&port_cfg->sym_name,
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_name,
++			BFA_SYMNAME_MAXLEN);
++		strlcat(port_cfg->sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 	} else {
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_name,
+-			BFA_FCS_PORT_SYMBNAME_OSINFO_SZ);
+-		strncat((char *)&port_cfg->sym_name,
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_name,
++			BFA_SYMNAME_MAXLEN);
++		strlcat(port_cfg->sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 		/* Append host OS Patch Info */
+-		strncat((char *)&port_cfg->sym_name,
+-			(char *)driver_info->host_os_patch,
+-			BFA_FCS_PORT_SYMBNAME_OSPATCH_SZ);
++		strlcat(port_cfg->sym_name.symname,
++			driver_info->host_os_patch,
++			BFA_SYMNAME_MAXLEN);
+ 	}
+ 
+ 	/* null terminate */
+@@ -893,26 +893,26 @@ bfa_fcs_fabric_nsymb_init(struct bfa_fcs
+ 	bfa_ioc_get_adapter_model(&fabric->fcs->bfa->ioc, model);
+ 
+ 	/* Model name/number */
+-	strncpy((char *)&port_cfg->node_sym_name, model,
+-		BFA_FCS_PORT_SYMBNAME_MODEL_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcpy(port_cfg->node_sym_name.symname, model,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Driver Version */
+-	strncat((char *)&port_cfg->node_sym_name, (char *)driver_info->version,
+-		BFA_FCS_PORT_SYMBNAME_VERSION_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcat(port_cfg->node_sym_name.symname, (char *)driver_info->version,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* Host machine name */
+-	strncat((char *)&port_cfg->node_sym_name,
+-		(char *)driver_info->host_machine_name,
+-		BFA_FCS_PORT_SYMBNAME_MACHINENAME_SZ);
+-	strncat((char *)&port_cfg->node_sym_name,
++	strlcat(port_cfg->node_sym_name.symname,
++		driver_info->host_machine_name,
++		BFA_SYMNAME_MAXLEN);
++	strlcat(port_cfg->node_sym_name.symname,
+ 			BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
++			BFA_SYMNAME_MAXLEN);
+ 
+ 	/* null terminate */
+ 	port_cfg->node_sym_name.symname[BFA_SYMNAME_MAXLEN - 1] = 0;
+--- a/drivers/scsi/bfa/bfa_fcs_lport.c
++++ b/drivers/scsi/bfa/bfa_fcs_lport.c
+@@ -2631,10 +2631,10 @@ bfa_fcs_fdmi_get_hbaattr(struct bfa_fcs_
+ 	bfa_ioc_get_adapter_fw_ver(&port->fcs->bfa->ioc,
+ 					hba_attr->fw_version);
+ 
+-	strncpy(hba_attr->driver_version, (char *)driver_info->version,
++	strlcpy(hba_attr->driver_version, (char *)driver_info->version,
+ 		sizeof(hba_attr->driver_version));
+ 
+-	strncpy(hba_attr->os_name, driver_info->host_os_name,
++	strlcpy(hba_attr->os_name, driver_info->host_os_name,
+ 		sizeof(hba_attr->os_name));
+ 
+ 	/*
+@@ -2642,23 +2642,23 @@ bfa_fcs_fdmi_get_hbaattr(struct bfa_fcs_
+ 	 * to the os name along with a separator
+ 	 */
+ 	if (driver_info->host_os_patch[0] != '\0') {
+-		strncat(hba_attr->os_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
+-			sizeof(BFA_FCS_PORT_SYMBNAME_SEPARATOR));
+-		strncat(hba_attr->os_name, driver_info->host_os_patch,
+-				sizeof(driver_info->host_os_patch));
++		strlcat(hba_attr->os_name, BFA_FCS_PORT_SYMBNAME_SEPARATOR,
++			sizeof(hba_attr->os_name));
++		strlcat(hba_attr->os_name, driver_info->host_os_patch,
++				sizeof(hba_attr->os_name));
+ 	}
+ 
+ 	/* Retrieve the max frame size from the port attr */
+ 	bfa_fcs_fdmi_get_portattr(fdmi, &fcs_port_attr);
+ 	hba_attr->max_ct_pyld = fcs_port_attr.max_frm_size;
+ 
+-	strncpy(hba_attr->node_sym_name.symname,
++	strlcpy(hba_attr->node_sym_name.symname,
+ 		port->port_cfg.node_sym_name.symname, BFA_SYMNAME_MAXLEN);
+ 	strcpy(hba_attr->vendor_info, "QLogic");
+ 	hba_attr->num_ports =
+ 		cpu_to_be32(bfa_ioc_get_nports(&port->fcs->bfa->ioc));
+ 	hba_attr->fabric_name = port->fabric->lps->pr_nwwn;
+-	strncpy(hba_attr->bios_ver, hba_attr->option_rom_ver, BFA_VERSION_LEN);
++	strlcpy(hba_attr->bios_ver, hba_attr->option_rom_ver, BFA_VERSION_LEN);
+ 
+ }
+ 
+@@ -2725,20 +2725,20 @@ bfa_fcs_fdmi_get_portattr(struct bfa_fcs
+ 	/*
+ 	 * OS device Name
+ 	 */
+-	strncpy(port_attr->os_device_name, (char *)driver_info->os_device_name,
++	strlcpy(port_attr->os_device_name, driver_info->os_device_name,
+ 		sizeof(port_attr->os_device_name));
+ 
+ 	/*
+ 	 * Host name
+ 	 */
+-	strncpy(port_attr->host_name, (char *)driver_info->host_machine_name,
++	strlcpy(port_attr->host_name, driver_info->host_machine_name,
+ 		sizeof(port_attr->host_name));
+ 
+ 	port_attr->node_name = bfa_fcs_lport_get_nwwn(port);
+ 	port_attr->port_name = bfa_fcs_lport_get_pwwn(port);
+ 
+-	strncpy(port_attr->port_sym_name.symname,
+-		(char *)&bfa_fcs_lport_get_psym_name(port), BFA_SYMNAME_MAXLEN);
++	strlcpy(port_attr->port_sym_name.symname,
++		bfa_fcs_lport_get_psym_name(port).symname, BFA_SYMNAME_MAXLEN);
+ 	bfa_fcs_lport_get_attr(port, &lport_attr);
+ 	port_attr->port_type = cpu_to_be32(lport_attr.port_type);
+ 	port_attr->scos = pport_attr.cos_supported;
+@@ -3218,7 +3218,7 @@ bfa_fcs_lport_ms_gmal_response(void *fcs
+ 					rsp_str[gmal_entry->len-1] = 0;
+ 
+ 				/* copy IP Address to fabric */
+-				strncpy(bfa_fcs_lport_get_fabric_ipaddr(port),
++				strlcpy(bfa_fcs_lport_get_fabric_ipaddr(port),
+ 					gmal_entry->ip_addr,
+ 					BFA_FCS_FABRIC_IPADDR_SZ);
+ 				break;
+@@ -4656,21 +4656,13 @@ bfa_fcs_lport_ns_send_rspn_id(void *ns_c
+ 		 * to that of the base port.
+ 		 */
+ 
+-		strncpy((char *)psymbl,
+-			(char *) &
+-			(bfa_fcs_lport_get_psym_name
++		strlcpy(symbl,
++			(char *)&(bfa_fcs_lport_get_psym_name
+ 			 (bfa_fcs_get_base_port(port->fcs))),
+-			strlen((char *) &
+-			       bfa_fcs_lport_get_psym_name(bfa_fcs_get_base_port
+-							  (port->fcs))));
+-
+-		/* Ensure we have a null terminating string. */
+-		((char *)psymbl)[strlen((char *) &
+-			bfa_fcs_lport_get_psym_name(bfa_fcs_get_base_port
+-						(port->fcs)))] = 0;
+-		strncat((char *)psymbl,
+-			(char *) &(bfa_fcs_lport_get_psym_name(port)),
+-		strlen((char *) &bfa_fcs_lport_get_psym_name(port)));
++			sizeof(symbl));
++
++		strlcat(symbl, (char *)&(bfa_fcs_lport_get_psym_name(port)),
++			sizeof(symbl));
+ 	} else {
+ 		psymbl = (u8 *) &(bfa_fcs_lport_get_psym_name(port));
+ 	}
+@@ -5162,7 +5154,6 @@ bfa_fcs_lport_ns_util_send_rspn_id(void
+ 	struct fchs_s fchs;
+ 	struct bfa_fcxp_s *fcxp;
+ 	u8 symbl[256];
+-	u8 *psymbl = &symbl[0];
+ 	int len;
+ 
+ 	/* Avoid sending RSPN in the following states. */
+@@ -5192,22 +5183,17 @@ bfa_fcs_lport_ns_util_send_rspn_id(void
+ 		 * For Vports, we append the vport's port symbolic name
+ 		 * to that of the base port.
+ 		 */
+-		strncpy((char *)psymbl, (char *)&(bfa_fcs_lport_get_psym_name
++		strlcpy(symbl, (char *)&(bfa_fcs_lport_get_psym_name
+ 			(bfa_fcs_get_base_port(port->fcs))),
+-			strlen((char *)&bfa_fcs_lport_get_psym_name(
+-			bfa_fcs_get_base_port(port->fcs))));
+-
+-		/* Ensure we have a null terminating string. */
+-		((char *)psymbl)[strlen((char *)&bfa_fcs_lport_get_psym_name(
+-		 bfa_fcs_get_base_port(port->fcs)))] = 0;
++			sizeof(symbl));
+ 
+-		strncat((char *)psymbl,
++		strlcat(symbl,
+ 			(char *)&(bfa_fcs_lport_get_psym_name(port)),
+-			strlen((char *)&bfa_fcs_lport_get_psym_name(port)));
++			sizeof(symbl));
+ 	}
+ 
+ 	len = fc_rspnid_build(&fchs, bfa_fcxp_get_reqbuf(fcxp),
+-			      bfa_fcs_lport_get_fcid(port), 0, psymbl);
++			      bfa_fcs_lport_get_fcid(port), 0, symbl);
+ 
+ 	bfa_fcxp_send(fcxp, NULL, port->fabric->vf_id, port->lp_tag, BFA_FALSE,
+ 		      FC_CLASS_3, len, &fchs, NULL, NULL, FC_MAX_PDUSZ, 0);
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -2803,7 +2803,7 @@ void
+ bfa_ioc_get_adapter_manufacturer(struct bfa_ioc_s *ioc, char *manufacturer)
+ {
+ 	memset((void *)manufacturer, 0, BFA_ADAPTER_MFG_NAME_LEN);
+-	strncpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
++	strlcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ }
+ 
+ void
+--- a/drivers/scsi/bfa/bfa_svc.c
++++ b/drivers/scsi/bfa/bfa_svc.c
+@@ -366,8 +366,8 @@ bfa_plog_str(struct bfa_plog_s *plog, en
+ 		lp.eid = event;
+ 		lp.log_type = BFA_PL_LOG_TYPE_STRING;
+ 		lp.misc = misc;
+-		strncpy(lp.log_entry.string_log, log_str,
+-			BFA_PL_STRING_LOG_SZ - 1);
++		strlcpy(lp.log_entry.string_log, log_str,
++			BFA_PL_STRING_LOG_SZ);
+ 		lp.log_entry.string_log[BFA_PL_STRING_LOG_SZ - 1] = '\0';
+ 		bfa_plog_add(plog, &lp);
+ 	}
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -983,20 +983,20 @@ bfad_start_ops(struct bfad_s *bfad) {
+ 
+ 	/* Fill the driver_info info to fcs*/
+ 	memset(&driver_info, 0, sizeof(driver_info));
+-	strncpy(driver_info.version, BFAD_DRIVER_VERSION,
+-		sizeof(driver_info.version) - 1);
++	strlcpy(driver_info.version, BFAD_DRIVER_VERSION,
++		sizeof(driver_info.version));
+ 	if (host_name)
+-		strncpy(driver_info.host_machine_name, host_name,
+-			sizeof(driver_info.host_machine_name) - 1);
++		strlcpy(driver_info.host_machine_name, host_name,
++			sizeof(driver_info.host_machine_name));
+ 	if (os_name)
+-		strncpy(driver_info.host_os_name, os_name,
+-			sizeof(driver_info.host_os_name) - 1);
++		strlcpy(driver_info.host_os_name, os_name,
++			sizeof(driver_info.host_os_name));
+ 	if (os_patch)
+-		strncpy(driver_info.host_os_patch, os_patch,
+-			sizeof(driver_info.host_os_patch) - 1);
++		strlcpy(driver_info.host_os_patch, os_patch,
++			sizeof(driver_info.host_os_patch));
+ 
+-	strncpy(driver_info.os_device_name, bfad->pci_name,
+-		sizeof(driver_info.os_device_name) - 1);
++	strlcpy(driver_info.os_device_name, bfad->pci_name,
++		sizeof(driver_info.os_device_name));
+ 
+ 	/* FCS driver info init */
+ 	spin_lock_irqsave(&bfad->bfad_lock, flags);
+--- a/drivers/scsi/bfa/bfad_attr.c
++++ b/drivers/scsi/bfa/bfad_attr.c
+@@ -843,7 +843,7 @@ bfad_im_symbolic_name_show(struct device
+ 	char symname[BFA_SYMNAME_MAXLEN];
+ 
+ 	bfa_fcs_lport_get_attr(&bfad->bfa_fcs.fabric.bport, &port_attr);
+-	strncpy(symname, port_attr.port_cfg.sym_name.symname,
++	strlcpy(symname, port_attr.port_cfg.sym_name.symname,
+ 			BFA_SYMNAME_MAXLEN);
+ 	return snprintf(buf, PAGE_SIZE, "%s\n", symname);
+ }
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -127,7 +127,7 @@ bfad_iocmd_ioc_get_attr(struct bfad_s *b
+ 
+ 	/* fill in driver attr info */
+ 	strcpy(iocmd->ioc_attr.driver_attr.driver, BFAD_DRIVER_NAME);
+-	strncpy(iocmd->ioc_attr.driver_attr.driver_ver,
++	strlcpy(iocmd->ioc_attr.driver_attr.driver_ver,
+ 		BFAD_DRIVER_VERSION, BFA_VERSION_LEN);
+ 	strcpy(iocmd->ioc_attr.driver_attr.fw_ver,
+ 		iocmd->ioc_attr.adapter_attr.fw_ver);
+@@ -315,9 +315,9 @@ bfad_iocmd_port_get_attr(struct bfad_s *
+ 	iocmd->attr.port_type = port_attr.port_type;
+ 	iocmd->attr.loopback = port_attr.loopback;
+ 	iocmd->attr.authfail = port_attr.authfail;
+-	strncpy(iocmd->attr.port_symname.symname,
++	strlcpy(iocmd->attr.port_symname.symname,
+ 		port_attr.port_cfg.sym_name.symname,
+-		sizeof(port_attr.port_cfg.sym_name.symname));
++		sizeof(iocmd->attr.port_symname.symname));
+ 
+ 	iocmd->status = BFA_STATUS_OK;
+ 	return 0;
 
 
