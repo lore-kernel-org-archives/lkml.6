@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89392C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C53AFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7742082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC302082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107716;
-	bh=fRu4WCy68cY01Wtz4220ySWBY3Bj3Tua/DX/RA+AxqM=;
+	s=default; t=1544107728;
+	bh=XqP8WbEGMPpnUH4zSCBs4g1vX2Mpi6CNxFH2t54ZT1w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WDM3qMqJGwZrkQSBLg4PRIv7y/iVoXip4wFmOVtsIN1IO7Q4jJ8xtUALuaOxTE7rp
-	 TCr/kgk0XFLO4Bq24ISTwCDPCFVs79pAUhuWv77AFvDj35+/L8R/9kN/lFCuy0I4fq
-	 V/7MzTjvJL6E8W9OJRq3qucVomBQKrNfQgWSGS7c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7742082B
+	b=mZojOx2cx85Et1LKBCEOY7zY/fDBXg79HijOe/g+NHnesvXmzCWUwF3djZMxDPw/D
+	 P1vmtPNfFkNWm8pCLqK3hkpeQrwbtavpu51KoRl2nBpaT4OOr/AJgf4+1AjxPRIv+V
+	 wPqzhaeJ6KIt3w2hEAbv8B9qbwkwbPfIOPOgD91E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC302082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbeLFOsf (ORCPT
+        id S1731003AbeLFOsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:48:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53752 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:48:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730868AbeLFOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:48:33 -0500
+        id S1730729AbeLFOsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:48:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E83E20661;
-        Thu,  6 Dec 2018 14:48:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF1812146D;
+        Thu,  6 Dec 2018 14:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107712;
-        bh=fRu4WCy68cY01Wtz4220ySWBY3Bj3Tua/DX/RA+AxqM=;
+        s=default; t=1544107709;
+        bh=XqP8WbEGMPpnUH4zSCBs4g1vX2Mpi6CNxFH2t54ZT1w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FLaSpIb7JQ6llieanXrOYM5IWe7jk63aE3Yb2RTbM2P6WQzsiGZh0zh4mc+ZBCOmv
-         MJRLVfmaCGFdEfZLEBm/pE0yG71FFybJQ0iEDbV/5wFmo+vupG5BR0dCE2rDmu/g/+
-         VTGOCBMoQmj9KHfsf+6ThBh2v8WYKMQphHXoboeU=
+        b=nHjgdWkV11RB4UupoVqa1CSlQnD/xoQz2oibh06ElcJFyipKGjivBSCn5uZj5tB9F
+         RMcLKLDtgV64adFDpuZAabZh52hczjRnuFGzv9vgqUyIId8nyEuBU1XCuBI8qovR0U
+         I5jaZA8OOQeLT64JtiGvg1xxKdXMzK/v4osVvi6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Qu Wenruo <wqu@suse.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 073/101] btrfs: tree-checker: Enhance btrfs_check_node output
-Date:   Thu,  6 Dec 2018 15:39:12 +0100
-Message-Id: <20181206143016.245720372@linuxfoundation.org>
+Subject: [PATCH 4.9 082/101] btrfs: tree-checker: Fix misleading group system information
+Date:   Thu,  6 Dec 2018 15:39:21 +0100
+Message-Id: <20181206143017.284001263@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,130 +71,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+From: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-commit bba4f29896c986c4cec17bc0f19f2ce644fceae1 upstream.
+commit 761333f2f50ccc887aa9957ae829300262c0d15b upstream.
 
-Use inline function to replace macro since we don't need
-stringification.
-(Macro still exists until all callers get updated)
+block_group_err shows the group system as a decimal value with a '0x'
+prefix, which is somewhat misleading.
 
-And add more info about the error, and replace EIO with EUCLEAN.
+Fix it to print hexadecimal, as was intended.
 
-For nr_items error, report if it's too large or too small, and output
-the valid value range.
-
-For node block pointer, added a new alignment checker.
-
-For key order, also output the next key to make the problem more
-obvious.
-
-Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-[ wording adjustments, unindented long strings ]
+Fixes: fce466eab7ac6 ("btrfs: tree-checker: Verify block_group_item")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 4.9:
- - Use root->sectorsize instead of root->fs_info->sectorsize
- - BTRFS_NODEPTRS_PER_BLOCK() takes a root instead of an fs_info]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/tree-checker.c |   68 +++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 61 insertions(+), 7 deletions(-)
+ fs/btrfs/tree-checker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/btrfs/tree-checker.c
 +++ b/fs/btrfs/tree-checker.c
-@@ -37,6 +37,46 @@
- 		   btrfs_header_level(eb) == 0 ? "leaf" : "node",	\
- 		   reason, btrfs_header_bytenr(eb), root->objectid, slot)
- 
-+/*
-+ * Error message should follow the following format:
-+ * corrupt <type>: <identifier>, <reason>[, <bad_value>]
-+ *
-+ * @type:	leaf or node
-+ * @identifier:	the necessary info to locate the leaf/node.
-+ * 		It's recommened to decode key.objecitd/offset if it's
-+ * 		meaningful.
-+ * @reason:	describe the error
-+ * @bad_value:	optional, it's recommened to output bad value and its
-+ *		expected value (range).
-+ *
-+ * Since comma is used to separate the components, only space is allowed
-+ * inside each component.
-+ */
-+
-+/*
-+ * Append generic "corrupt leaf/node root=%llu block=%llu slot=%d: " to @fmt.
-+ * Allows callers to customize the output.
-+ */
-+__printf(4, 5)
-+static void generic_err(const struct btrfs_root *root,
-+			const struct extent_buffer *eb, int slot,
-+			const char *fmt, ...)
-+{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+
-+	btrfs_crit(root->fs_info,
-+		"corrupt %s: root=%llu block=%llu slot=%d, %pV",
-+		btrfs_header_level(eb) == 0 ? "leaf" : "node",
-+		root->objectid, btrfs_header_bytenr(eb), slot, &vaf);
-+	va_end(args);
-+}
-+
- static int check_extent_data_item(struct btrfs_root *root,
- 				  struct extent_buffer *leaf,
- 				  struct btrfs_key *key, int slot)
-@@ -282,9 +322,11 @@ int btrfs_check_node(struct btrfs_root *
- 
- 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root)) {
- 		btrfs_crit(root->fs_info,
--			   "corrupt node: block %llu root %llu nritems %lu",
--			   node->start, root->objectid, nr);
--		return -EIO;
-+"corrupt node: root=%llu block=%llu, nritems too %s, have %lu expect range [1,%u]",
-+			   root->objectid, node->start,
-+			   nr == 0 ? "small" : "large", nr,
-+			   BTRFS_NODEPTRS_PER_BLOCK(root));
-+		return -EUCLEAN;
- 	}
- 
- 	for (slot = 0; slot < nr - 1; slot++) {
-@@ -293,14 +335,26 @@ int btrfs_check_node(struct btrfs_root *
- 		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
- 
- 		if (!bytenr) {
--			CORRUPT("invalid item slot", node, root, slot);
--			ret = -EIO;
-+			generic_err(root, node, slot,
-+				"invalid NULL node pointer");
-+			ret = -EUCLEAN;
-+			goto out;
-+		}
-+		if (!IS_ALIGNED(bytenr, root->sectorsize)) {
-+			generic_err(root, node, slot,
-+			"unaligned pointer, have %llu should be aligned to %u",
-+				bytenr, root->sectorsize);
-+			ret = -EUCLEAN;
- 			goto out;
- 		}
- 
- 		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
--			CORRUPT("bad key order", node, root, slot);
--			ret = -EIO;
-+			generic_err(root, node, slot,
-+	"bad key order, current (%llu %u %llu) next (%llu %u %llu)",
-+				key.objectid, key.type, key.offset,
-+				next_key.objectid, next_key.type,
-+				next_key.offset);
-+			ret = -EUCLEAN;
- 			goto out;
- 		}
- 	}
+@@ -399,7 +399,7 @@ static int check_block_group_item(struct
+ 	    type != (BTRFS_BLOCK_GROUP_METADATA |
+ 			   BTRFS_BLOCK_GROUP_DATA)) {
+ 		block_group_err(fs_info, leaf, slot,
+-"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llu or 0x%llx",
++"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llx or 0x%llx",
+ 			type, hweight64(type),
+ 			BTRFS_BLOCK_GROUP_DATA, BTRFS_BLOCK_GROUP_METADATA,
+ 			BTRFS_BLOCK_GROUP_SYSTEM,
 
 
