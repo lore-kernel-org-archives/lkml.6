@@ -2,123 +2,112 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DCAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66385C07E85
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EEDF2054F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA6B208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 02:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="xKkKzYaI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEDF2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="bHUph2Px"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA6B208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbeLFCFr (ORCPT
+        id S1728800AbeLFCNH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 21:05:47 -0500
-Received: from vern.gendns.com ([98.142.107.122]:50740 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728219AbeLFCFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 21:05:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=BOdMFKZ72p4czGdSY/bO1kNcd/5iu5zf0jWWy7i5MA0=; b=xKkKzYaIuHXfDJFhN7myhlbKv2
-        KzZa9yYWZlLwHm9f35wZHQg3f53Sc9Sfg/BRO1suKB5r+6+M/b4wwSZKhWUPk4w0X/9hX/Fhm5KAS
-        UY41GZI1g/DLjyRRkmKs0w7ucEvNZfYLIuwJGTBsYJl3wH0gt0lUjAwTNpbTlVupiA3XrQMNlgwpX
-        8HyZ1AHuZ/fH3KXnCkRK01En2siu7ihSfTf2ugQI97+/RdQkIlH6ylvxtjGMP0SzF4GS2ojxJvUWg
-        DFRgzqxskI8+np3fkTU4xvNhdOGlQVJMc7+88CUck2TjGwqGYFjNieMoxfcXkLcmUNbTep1tEE4UQ
-        y63cQYig==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:39624 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gUj1b-00058p-QB; Wed, 05 Dec 2018 21:04:23 -0500
-Subject: Re: [PATCH v5 0/6] Add Fieldbus subsystem + support HMS Profinet card
-To:     Sven Van Asbroeck <thesven73@gmail.com>, svendev@arcx.com,
-        robh+dt@kernel.org, linus.walleij@linaro.org
-Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
-        treding@nvidia.com, noralf@tronnes.org, johan@kernel.org,
-        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20181204220224.27324-1-TheSven73@googlemail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <3b0b4c5c-23a6-428c-6060-3e5c314bd9e7@lechnology.com>
-Date:   Wed, 5 Dec 2018 20:05:33 -0600
+        Wed, 5 Dec 2018 21:13:07 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36096 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727712AbeLFCNH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 21:13:07 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so11006259plo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 18:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IlX4COLuXhS84PiplK1JgQzzPPPlMO8iinbwMD+UQSM=;
+        b=bHUph2PxeN+0WfzB8t37tP/Sr6/m7Sgjp6rH71yrydqSnnMgfDms2VGf4etoOW2dhV
+         0V2SKr7lrsLaX94GfOOLBvVOk8O4I1ppvm1NWjlkUDLnvP1GqEcvHpBcEZtxNxJL69ma
+         SyrcEF746M9xf0tP6qPc5L7g4h8Azj5n3hcW2OcHN/NixVAWI6GWosUJ8EqeWw3HuViv
+         EHi+0AC3P2e/fO4AvwHJkt7LNvwlC9c+R1v7vbx9kHB35S/QXS0IJYaFLCaTkgDmUPLQ
+         Su00bMbpwlBAygKT4ulqtcF1ztBa1ibz9G2zFeoAqeSTEHp0+SV9rC0mg2RwaPjurYZG
+         Jqwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IlX4COLuXhS84PiplK1JgQzzPPPlMO8iinbwMD+UQSM=;
+        b=ZYeeSz5l0HMj27KJFApuxQL3rKVX0nhUHi/Eya0udjoUxsaMs9uL5rKXsDF/qgYaOU
+         nNtp2DjJVZm2YwPjdjFohOhhZwCi1xc5H6gOdPJukMmtOyfRmrH5p+A3RvqB4V7lBlsZ
+         JsbPFM+YJ20Tz8mcMLsFP78eaEb14UZC8NaJSmnBeHPehS0AnNVseTCV+E5xEkTfEko6
+         XyWuQT/wlOLfxPm1bWvkl6K7pIRGW749fjhHEl9c+NvWP5TjyKYxXfagqcmFMfR9NWkA
+         m0x/TJdfA0ZdHY3HvqPy0GqssI/sfR+19qe83ai116u+XywNbIyBqhmJ1qZD+0hLCKY2
+         vRDg==
+X-Gm-Message-State: AA+aEWa2UA3+MsEmhkG4kNQmM2KB7whH1hOvB9L8Y7z1YfkyLuYxUnrx
+        37Y6l9l7s0zCbJuS0ssKL7QDRS4PEFI=
+X-Google-Smtp-Source: AFSGD/UaLa/fO+0XZcgFS9Pe37TPN+HixJ/8c81G4is6DEPNfzh+Q8m4NtPuswpQeZRRmZgZ2+MRIQ==
+X-Received: by 2002:a17:902:2468:: with SMTP id m37mr7651319plg.314.1544062386223;
+        Wed, 05 Dec 2018 18:13:06 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id b202sm30793449pfb.88.2018.12.05.18.13.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 18:13:04 -0800 (PST)
+Subject: Re: [PATCH V9 3/4] blk-mq: issue directly with bypass 'false' in
+ blk_mq_sched_insert_requests
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1543995842-20704-4-git-send-email-jianchao.w.wang@oracle.com>
+ <6cb12913-3575-d3aa-ff08-f89bcb38b3d6@kernel.dk>
+ <b57bbedf-bc7e-7b8d-2217-3e8628ab657c@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e25a0ba3-356a-35d9-e22b-63ba124f555a@kernel.dk>
+Date:   Wed, 5 Dec 2018 19:13:03 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181204220224.27324-1-TheSven73@googlemail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <b57bbedf-bc7e-7b8d-2217-3e8628ab657c@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/18 4:02 PM, Sven Van Asbroeck wrote:
-> This patch:
->    1. adds a Fieldbus subsystem
->    2. adds support for the HMS Industrial Networks AB Profinet card.
+On 12/5/18 6:11 PM, jianchao.wang wrote:
+>> And why aren't we just using the list_empty() check like before, and not
+>> having to add the inval cookie value?
+> 
+> Because we use 'bypass == false' here, so blk_mq_try_issue_directly
+> will take over the request totally, so the request will always be
+> removed from the list and finally, the list must be empty.
+> 
+> There is another way to identify the result of blk_mq_try_issue_directly.
+> Currently,
+> for the 'bypass == true' case,
+>     it always return BLK_STS_OK,
+> for the 'bypass == false' case,
+>     it return the actual result, except for 'force == true' case
+>     where the request has to be inserted into hctx dispatch list
+>     and return a BLK_STS_OK.
+> 
+> We could let the 'bypass == true' case also return the actual result to
+> show what has been done in the blk_mq_try_issue_directly and thus we could
+> get the actual result of the last request.
+> 
+> Would you mind we handle it like this ?
 
-Does this actually need a new fieldbus subsystem or could it just be
-implemented as a new network protocol?
+I like that, sounds better than adding a new qc type.
 
-> 
-> 1. Fieldbus subsystem
-> ---------------------
-> 
-> Fieldbus device (client) adapters allow data exchange with a PLC aka.
-> "Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
-> They are typically used when a Linux device wants to expose itself
-> as an actuator, motor, console light, switch, etc. over the fieldbus.
-> The framework is designed to provide a generic interface to Fieldbus
-> Devices from both the Linux Kernel and the userspace.
+-- 
+Jens Axboe
 
-Then this generic interface to a fieldbus device could just be a socket.
-
-> 
-> 2. Add support for HMS Profinet Card
-> ------------------------------------
-> 
-> Profinet is an industry technical standard for data communication over
-> Industrial Ethernet, designed for collecting data from, and controlling,
-> equipment in industrial systems, with a particular strength in delivering data
-> under tight time constraints (on the order of 1ms or less).
-> 
-> The profinet card itself is connected to the system via an industrial bus
-> called 'anybus'.
-> 
-> I have followed the bus driver/client driver pattern, and created an anybus
-> bus driver, plus a client driver for the profinet card.
-> 
-> In case this patch set gets (eventually) accepted, drivers for other anybus
-> client cards may follow: flnet, cc-link, ...
-> 
-> The anybus slot on the host is located on an 'anybus controller', which is
-> custom h/w designed by arcx. It exposes a dual anybus host implementation,
-> plus a power readout unrelated to the anybus.
-> 
