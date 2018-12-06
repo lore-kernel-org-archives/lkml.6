@@ -2,150 +2,124 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF968C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1198C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA6820878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA6820878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 59C1320661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:41:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C1320661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729466AbeLFLhF (ORCPT
+        id S1729127AbeLFLl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:37:05 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34375 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727908AbeLFLhF (ORCPT
+        Thu, 6 Dec 2018 06:41:56 -0500
+Received: from smtprelay0152.hostedemail.com ([216.40.44.152]:41939 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727832AbeLFLl4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:37:05 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gUrxg-0006GY-Ld; Thu, 06 Dec 2018 12:36:56 +0100
-Message-ID: <1544096216.3709.63.camel@pengutronix.de>
-Subject: Re: [PATCH 5/5] irqchip/irq-imx-gpcv2: Add support for i.MX8MQ
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, cphealy@gmail.com,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Dec 2018 12:36:56 +0100
-In-Reply-To: <20181206073125.7255-6-andrew.smirnov@gmail.com>
-References: <20181206073125.7255-1-andrew.smirnov@gmail.com>
-         <20181206073125.7255-6-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
+        Thu, 6 Dec 2018 06:41:56 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 7723318047610;
+        Thu,  6 Dec 2018 11:41:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: town23_4a9b2de08394f
+X-Filterd-Recvd-Size: 3790
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Thu,  6 Dec 2018 11:41:52 +0000 (UTC)
+Message-ID: <e7859ce4b8417b094604d9ab4740d338730e38bf.camel@perches.com>
+Subject: Re: [PATCH 1/2] drm: Only #define DEBUG if CONFIG_DYNAMIC_DEBUG is
+ disabled
+From:   Joe Perches <joe@perches.com>
+To:     Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date:   Thu, 06 Dec 2018 03:41:51 -0800
+In-Reply-To: <276fbf7f-d33f-83a5-cb88-bd4051dc03ba@daenzer.net>
+References: <20181205165621.5805-1-michel@daenzer.net>
+         <10fca21a-5d7c-fe9e-07f0-6200e9de538e@amd.com>
+         <1586a49594d30b4bf4d88eba0d258e21efd26da2.camel@perches.com>
+         <276fbf7f-d33f-83a5-cb88-bd4051dc03ba@daenzer.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 05.12.2018, 23:31 -0800 schrieb Andrey Smirnov:
-> Add code needed to support i.MX8MQ.
+On Thu, 2018-12-06 at 10:23 +0100, Michel D�nzer wrote:
+> On 2018-12-06 3:51 a.m., Joe Perches wrote:
+> > On Thu, 2018-12-06 at 10:40 +0800, Zhang, Jerry(Junwei) wrote:
+> > > On 12/6/18 12:56 AM, Michel D�nzer wrote:
+> > > > From: Michel D�nzer <michel.daenzer@amd.com>
+> > > > 
+> > > > The following cases are possible for pr_debug():
+> > > > 
+> > > > 1. CONFIG_DYNAMIC_DEBUG disabled
+> > > >     a) DEBUG not defined: pr_debug() translates to no_printk(...), i.e.
+> > > >        it never generates any output.
+> > > >     b) DEBUG defined: pr_debug() translates to printk(KERN_DEBUG ...),
+> > > >        i.e. it generates output which doesn't appear in dmesg by default,
+> > > >        can be enabled dynamically.
+> > > > 
+> > > > 2. CONFIG_DYNAMIC_DEBUG enabled: pr_debug() translates to
+> > > >     dynamic_pr_debug()
+> > > >     a) DEBUG not defined: dynamic_pr_debug() generates no output by
+> > > >        default, can be enabled dynamically.
+> > > >     b) DEBUG defined: dynamic_pr_debug() generates output by default,
+> > > >        can be disabled dynamically.
+> > > > 
+> > > > The intention for drm_debug_printer() is to generate output which
+> > > > doesn't appear in dmesg by default, but can be enabled dynamically, i.e.
+> > > > cases 1b) and 2a). However, defining DEBUG unconditionally gave us 2b)
+> > > > instead of 2a) with CONFIG_DYNAMIC_DEBUG enabled.
+> > > > 
+> > > > Fixes: 79a5ad2fdb3c ("drm: Enable pr_debug() for drm_printer")
+> > 
+> > I very much doubt this is a fix.
+> > 
+> > Did you read the commit log for this commit?
+> > 
+> > It says "make sure it will always produce output"
 > 
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Jason Cooper <jason@lakedaemon.net>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: cphealy@gmail.com
-> Cc: l.stach@pengutronix.de
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  drivers/irqchip/irq-imx-gpcv2.c | 31 +++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
+> I thought the commit log covered this, suggestions for improvement welcome.
 > 
-> diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-> index c2b2b3128ddd..17a2dad2d4c2 100644
-> --- a/drivers/irqchip/irq-imx-gpcv2.c
-> +++ b/drivers/irqchip/irq-imx-gpcv2.c
-> @@ -17,6 +17,9 @@
->  
-> >  #define GPC_IMR1_CORE0		0x30
-> >  #define GPC_IMR1_CORE1		0x40
-> > +#define GPC_IMR1_CORE2		0x1c0
-> > +#define GPC_IMR1_CORE3		0x1d0
-> +
->  
->  struct gpcv2_irqchip_data {
-> > >  	struct raw_spinlock	rlock;
-> @@ -192,11 +195,19 @@ static const struct irq_domain_ops gpcv2_irqchip_data_domain_ops = {
-> > >  	.free		= irq_domain_free_irqs_common,
->  };
->  
-> +static const struct of_device_id gpcv2_of_match[] = {
-> > +	{ .compatible = "fsl,imx7d-gpc",  .data = (const void *) 2 },
-> > +	{ .compatible = "fsl,imx8mq-gpc", .data = (const void *) 4 },
-> > +	{ /* END */ }
-> +};
-> +
->  static int __init imx_gpcv2_irqchip_init(struct device_node *node,
-> >  			       struct device_node *parent)
->  {
-> >  	struct irq_domain *parent_domain, *domain;
-> >  	struct gpcv2_irqchip_data *cd;
-> > +	const struct of_device_id *id;
-> > +	unsigned long core_num;
-> >  	int i;
->  
-> >  	if (!parent) {
-> @@ -204,6 +215,14 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
-> >  		return -ENODEV;
-> >  	}
->  
-> > +	id = of_match_node(gpcv2_of_match, node);
-> > +	if (!id) {
-> > +		pr_err("%pOF: unknown compatibility string\n", node);
-> > +		return -ENODEV;
-> > +	}
-> +
-> > +	core_num = (unsigned long)id->data;
-> +
-> >  	parent_domain = irq_find_host(parent);
-> >  	if (!parent_domain) {
-> >  		pr_err("%pOF: unable to get parent domain\n", node);
-> @@ -236,8 +255,16 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
->  
-> >  	/* Initially mask all interrupts */
-> >  	for (i = 0; i < IMR_NUM; i++) {
-> > -		writel_relaxed(~0, cd->gpc_base + GPC_IMR1_CORE0 + i * 4);
-> > -		writel_relaxed(~0, cd->gpc_base + GPC_IMR1_CORE1 + i * 4);
-> > +		void __iomem *reg = cd->gpc_base + i * 4;
-> +
-> > +		switch (core_num) {
-> > +		case 4:
-> > +			writel_relaxed(~0, reg + GPC_IMR1_CORE2);
-> > +			writel_relaxed(~0, reg + GPC_IMR1_CORE3);
-> > > +		case 2:	      /* FALLTHROUGH */
-> > +			writel_relaxed(~0, reg + GPC_IMR1_CORE0);
-> > +			writel_relaxed(~0, reg + GPC_IMR1_CORE1);
-> +		}
+> Chris' change addressed case 1a), but also took us from 2a) to 2b). But
+> we want 2a)
 
-The writes being not being in linear descending core order does trigger
-something in me, but obviously this doesn't has any effect on the code,
-so:
+> I suspect Chris missed that pr_debug()'s output is visible by default if
+> CONFIG_DYNAMIC_DEBUG and DEBUG are both defined.
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+I believe you and Chris have different goals and that your
+point of 2b is
+misguided.
 
->  		cd->wakeup_sources[i] = ~0;
-> >  	}
->  
+I think the language used in the Chris' commit log is
+plain ans obvious.  'always produce output'.
+
+> > And why didn't you cc Chris Wilson, the author of that patch?k
+> 
+> I used the get_maintainer.pl script. Thanks for adding Chris.
+> P.S. FYI, your e-mail had a very aggressive tone to me, not sure what for.
+
+No worries.
+
+I think the language I used is also plain and obvious
+and you are overreading.
+
+cheers, Joe
+
