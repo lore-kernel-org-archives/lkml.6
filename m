@@ -7,49 +7,53 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91325C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950A2C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 591EB20700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 597CD20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108428;
-	bh=PQ6GjO7wAKla4anQLBpStt7ns6jj/wLVMh1EyxFrsz0=;
+	s=default; t=1544108436;
+	bh=Usn6+gWx9siWjGYgZUBUUBUv5gnmelCjthMbcaoS14k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jlOvPYtdgyLOxSZfYbh4Eqiwn6HvOOpUJaR4Js6MTC0XU6FspKOLRKEW0egG1BsCI
-	 9TnCwo9RZ27hPTpaXJsLplAx0O3RhbCmjDyz7KQlKy6Db/xQQ5yrIwBSL7zrmvXgNB
-	 cb7ylWPe/FkZuR2LVl3YDf9/gmW+Ht4U8/zhuw9g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591EB20700
+	b=l9MIvX2N+VAPZX5CDJZn9K2SaGNg1VUT+IvUQRGZdQPGZQ0zmDcUj2hXcnjFwFeAj
+	 qLXqqzLtA3oNOuyG7mmQxx088g+0KpnUXv6xMAPMi27xs6+BDPVG/fhkeUXxjT0uF0
+	 wTGx8EsbvkDWdNwxNnPJCW8eOok1/9rtgQw6DBs8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597CD20700
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbeLFPA1 (ORCPT
+        id S1726041AbeLFPAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44942 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 10:00:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728648AbeLFOkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:47 -0500
+        id S1730005AbeLFOkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 525B120661;
-        Thu,  6 Dec 2018 14:40:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9526720672;
+        Thu,  6 Dec 2018 14:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107246;
-        bh=PQ6GjO7wAKla4anQLBpStt7ns6jj/wLVMh1EyxFrsz0=;
+        s=default; t=1544107238;
+        bh=Usn6+gWx9siWjGYgZUBUUBUv5gnmelCjthMbcaoS14k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D7E/sbCtci1WrGKy0II4OV0y0WVxlweyYXz5oBA+XaYda5cXay3ygQsPQ6R3WCoyZ
-         bbiVu+1qoJpLtRZZxFTE8bc8tR8yxi0v2Ky1nTzx7smA7L6G6KvfAxeIWYFoAFLLMD
-         Pv9XgLeLTHKFYWmMN7e4rUmaDauiVRl1Uvcdb2Cw=
+        b=0cA5pMRuoPMfYMK15gHOjIbDtTe8nb9nVH/bGioBNK1l/xMoJKl4kr7SR34F+SUIE
+         XXhG2q9ZfAvxybZapp6lbpBqCIPACTsKJQmJgU/7oCR9MD+Pw35Upz2xrqFsW1EuaI
+         t+4Pntk3RycfGiwJKlSokTwsfWPqkzygRYcuGWaQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 03/41] unifdef: use memcpy instead of strncpy
-Date:   Thu,  6 Dec 2018 15:38:43 +0100
-Message-Id: <20181206142950.018078943@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Wang <wawei@amazon.de>,
+        Amadeusz Juskowiak <ajusk@amazon.de>,
+        Julian Stecklina <jsteckli@amazon.de>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 27/41] svm: Add mutex_lock to protect apic_access_page_done on AMD systems
+Date:   Thu,  6 Dec 2018 15:39:07 +0100
+Message-Id: <20181206142952.093345563@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -68,46 +72,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Wei Wang <wawei@amazon.de>
 
-commit 38c7b224ce22c25fed04007839edf974bd13439d upstream.
+commit 30510387a5e45bfcf8190e03ec7aa15b295828e2 upstream.
 
-New versions of gcc reasonably warn about the odd pattern of
+There is a race condition when accessing kvm->arch.apic_access_page_done.
+Due to it, x86_set_memory_region will fail when creating the second vcpu
+for a svm guest.
 
-	strncpy(p, q, strlen(q));
+Add a mutex_lock to serialize the accesses to apic_access_page_done.
+This lock is also used by vmx for the same purpose.
 
-which really doesn't make sense: the strncpy() ends up being just a slow
-and odd way to write memcpy() in this case.
-
-There was a comment about _why_ the code used strncpy - to avoid the
-terminating NUL byte, but memcpy does the same and avoids the warning.
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Wei Wang <wawei@amazon.de>
+Signed-off-by: Amadeusz Juskowiak <ajusk@amazon.de>
+Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/unifdef.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/svm.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/scripts/unifdef.c
-+++ b/scripts/unifdef.c
-@@ -395,7 +395,7 @@ usage(void)
-  * When we have processed a group that starts off with a known-false
-  * #if/#elif sequence (which has therefore been deleted) followed by a
-  * #elif that we don't understand and therefore must keep, we edit the
-- * latter into a #if to keep the nesting correct. We use strncpy() to
-+ * latter into a #if to keep the nesting correct. We use memcpy() to
-  * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
-  *
-  * When we find a true #elif in a group, the following block will
-@@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ign
- static void Itrue (void) { Ftrue();  ignoreon(); }
- static void Ifalse(void) { Ffalse(); ignoreon(); }
- /* modify this line */
--static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
-+static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
- static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
- static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
- static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1663,20 +1663,23 @@ static u64 *avic_get_physical_id_entry(s
+ static int avic_init_access_page(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+-	int ret;
++	int ret = 0;
+ 
++	mutex_lock(&kvm->slots_lock);
+ 	if (kvm->arch.apic_access_page_done)
+-		return 0;
++		goto out;
+ 
+-	ret = x86_set_memory_region(kvm,
+-				    APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+-				    APIC_DEFAULT_PHYS_BASE,
+-				    PAGE_SIZE);
++	ret = __x86_set_memory_region(kvm,
++				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
++				      APIC_DEFAULT_PHYS_BASE,
++				      PAGE_SIZE);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 
+ 	kvm->arch.apic_access_page_done = true;
+-	return 0;
++out:
++	mutex_unlock(&kvm->slots_lock);
++	return ret;
+ }
+ 
+ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
 
 
