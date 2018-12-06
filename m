@@ -2,79 +2,159 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F93BC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A812AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77F3208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DFF6208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V2UEIS5Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77F3208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqYhKdzF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFF6208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbeLFKDn (ORCPT
+        id S1729330AbeLFKEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:03:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51198 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFKDn (ORCPT
+        Thu, 6 Dec 2018 05:04:08 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42588 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFKEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:03:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HlaGWWi8LkZfqvCi2OdFYWS0HdAJJvaQ0rex+PNIDyo=; b=V2UEIS5YF021vFI58ictaGnxp
-        g5HPOaY9rAtn8EMcbq4NWDAomLwowHYsDcgR+Z7w2zySR87q7bKO4IRiCGiL7f69kXd6xDRq9UyUp
-        Mg/+chWT2r5dzN13N8WfVY6/5pgv+GqJJeYR2kegSYGUGYVJlV77iQumfCeQrn77Ry1AduIfFeFPs
-        s5+7CPj4d386BrDajQ8cquyLMdemoP+4uprDFqhPIwBatkyntaAk77JIw0MtabfCEWeI75ChVO3so
-        KhPKq2Ix1wsGZ205AAw1V/LohZYt5fdxaxZofnQhL5FT3jH+WJ2DK7QYhb9qA/N9L6LipNCVMUtQJ
-        ZrLaoruzg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUqVO-0007bk-Pl; Thu, 06 Dec 2018 10:03:38 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4D26C200FBC3D; Thu,  6 Dec 2018 11:03:37 +0100 (CET)
-Date:   Thu, 6 Dec 2018 11:03:37 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
-Message-ID: <20181206100337.GF13538@hirez.programming.kicks-ass.net>
-References: <20181205013408.47725-1-namit@vmware.com>
+        Thu, 6 Dec 2018 05:04:07 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j6so243245edp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 02:04:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FmslBRqsYlWJhsiCvsBQOFzYvBn8zFzaCsASqLn/a8E=;
+        b=cqYhKdzFEGjeyougx7dV6pe0LBdjFNb5glrs21mqBRVUaCra7fp9Y8muFrEB8vmvSU
+         wBDeHDQcEvny1SmHaM9ZODEb5CvAONC3OtoU3FRyg70zMdYB3Fs4j7VqAA+cBumgAni0
+         mIASSqvIoUEPxzHtyMcF9hd88yau9XEUAMept0jZsJ1Z1N1ilg1XrdhpCxew6s0E6+xm
+         mJTficlLkhgEER8d7YgnZiaIZ5KQMywm1Z4toPVhv6v4rKE5aJyXYGEHvIm4Qg7v+ijJ
+         j6lqytpKkyhpiWRuUeOZP8lnu7kOsyhmCIU6F/I/l7r+CnUutXTZYrKFaznJcToWMMly
+         QvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FmslBRqsYlWJhsiCvsBQOFzYvBn8zFzaCsASqLn/a8E=;
+        b=fWuxPrSjQNXGYEB05UZxXdv1TA1KpSRGG5Qp1W508gNJ6COq5mhqW/iP7cVdgdwpJ6
+         62cu0ltK6hB/RKgdDEku6GguVFtdjT7qbls/L7OWCvILeCRiNIJpZKFsffFH5S4v2B2d
+         iA8QWzcQt0Z/iYxFc1bMU92K/knKXqrzOykyKqZIQzL7HCYEUzj7kEsZs02MTh5e5O5q
+         fRBMRaZVFCEzpcUkvmD9GIiG2BIUNBwBEo5Nkzllw4qaQGUEyHN3lurgaFJKbFcRROli
+         RGDBwi7TaEyRHU2Joyz0V61/4JoHLnw/ZLRN5JrQ6SREaR435bi8ZLV6Niqiz/ovWHqZ
+         7H2g==
+X-Gm-Message-State: AA+aEWZIzvuK3QMNa+pf7959zmMkNfHX2OMQI3qDRoK8UT2ZVAPZNanP
+        llAQ8Ls6gob906R1G/RkgVCuy3cqERK/70vauw==
+X-Google-Smtp-Source: AFSGD/WggysC5RxlxhYnHxtZNhLuCakJXkxDRtqYHEx+W9Fm+bmBD8PW7sXqjJT0B0YFnOo0rizE7N/snpxZ3Q0oSEQ=
+X-Received: by 2002:a17:906:d054:: with SMTP id bo20-v6mr1368741ejb.239.1544090645721;
+ Thu, 06 Dec 2018 02:04:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1543892757-4323-1-git-send-email-kernelfans@gmail.com>
+ <20181204072251.GT31738@dhcp22.suse.cz> <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
+ <20181204085601.GC1286@dhcp22.suse.cz> <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
+ <20181205092148.GA1286@dhcp22.suse.cz> <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
+ <186b1804-3b1e-340e-f73b-f3c7e69649f5@suse.cz> <CAFgQCTv5-jeqwRVkJuDHvv0vq6uCzfdV2ZmVAU3eUzn2w2ReEQ@mail.gmail.com>
+ <20181206082806.GB1286@dhcp22.suse.cz>
+In-Reply-To: <20181206082806.GB1286@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Thu, 6 Dec 2018 18:03:53 +0800
+Message-ID: <CAFgQCTsMdQSRFruZRGBuo30TjfiQ=sbrf9kUJAGgwN6uw+LsBw@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     mhocko@kernel.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 05:33:54PM -0800, Nadav Amit wrote:
-> Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
-> there are open security issues in the kernel when it comes to W^X.  But
-> some people would want to use Andy's temporary mm-struct for other uses.
-> So additional security hardening may be left for future patches.
+[...]
+> THanks for pointing this out. It made my life easier. So It think the
+> bug is that we call init_memory_less_node from this path. I suspect
+> numa_register_memblks is the right place to do this. So I admit I
+> am not 100% sure but could you give this a try please?
+>
+Sure.
 
-Yes, at the very least we should get the first 7 patches merged, since
-they work and clean up the text poking irrespective of all that W^X
-munging.
+> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> index 1308f5408bf7..4575ae4d5449 100644
+> --- a/arch/x86/mm/numa.c
+> +++ b/arch/x86/mm/numa.c
+> @@ -527,6 +527,19 @@ static void __init numa_clear_kernel_node_hotplug(void)
+>         }
+>  }
+>
+> +static void __init init_memory_less_node(int nid)
+> +{
+> +       unsigned long zones_size[MAX_NR_ZONES] = {0};
+> +       unsigned long zholes_size[MAX_NR_ZONES] = {0};
+> +
+> +       free_area_init_node(nid, zones_size, 0, zholes_size);
+> +
+> +       /*
+> +        * All zonelists will be built later in start_kernel() after per cpu
+> +        * areas are initialized.
+> +        */
+> +}
+> +
+>  static int __init numa_register_memblks(struct numa_meminfo *mi)
+>  {
+>         unsigned long uninitialized_var(pfn_align);
+> @@ -592,6 +605,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                         continue;
+>
+>                 alloc_node_data(nid);
+> +               if (!end)
+> +                       init_memory_less_node(nid);
+>         }
+>
+>         /* Dump memblock with node info and return. */
+> @@ -721,21 +736,6 @@ void __init x86_numa_init(void)
+>         numa_init(dummy_numa_init);
+>  }
+>
+> -static void __init init_memory_less_node(int nid)
+> -{
+> -       unsigned long zones_size[MAX_NR_ZONES] = {0};
+> -       unsigned long zholes_size[MAX_NR_ZONES] = {0};
+> -
+> -       /* Allocate and initialize node data. Memory-less node is now online.*/
+> -       alloc_node_data(nid);
+> -       free_area_init_node(nid, zones_size, 0, zholes_size);
+> -
+> -       /*
+> -        * All zonelists will be built later in start_kernel() after per cpu
+> -        * areas are initialized.
+> -        */
+> -}
+> -
+>  /*
+>   * Setup early cpu_to_node.
+>   *
+> @@ -763,9 +763,6 @@ void __init init_cpu_to_node(void)
+>                 if (node == NUMA_NO_NODE)
+>                         continue;
+>
+> -               if (!node_online(node))
+> -                       init_memory_less_node(node);
+> -
+>                 numa_set_node(cpu, node);
+>         }
+>  }
+> --
+Which commit is this patch applied on? I can not apply it on latest linux tree.
 
-(also, I think you lost my ACK)
+Thanks,
+Pingfan
