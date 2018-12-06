@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03C0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7619EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80BFF21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C08214DB
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107568;
-	bh=zIO1IHoTkfKIHBVu3iJBCqVU6FTyegkIGG4lHaUsizo=;
+	s=default; t=1544107573;
+	bh=MyTu3xdYBiblvFe/6zO3NB+JeaiCinEE7VctIRGKf5U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZCrT8xYfQSFF97TvAi1Ozl2YMaiKWATwrpWKlmYq2Q1xbpfvcbUQiEn4ZtuJONGLe
-	 clgwqMcQq8LeOl9Q4Bkub08Yi+KL2MnOSxJQvQsAgIiGmBgzLlNcP5ROuO52AVphSl
-	 QPTG5+grXnRxAl4aJwlU7TjFpTSnhZAgcHPoQEzM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BFF21479
+	b=if7csMP8cNmzTjyBMEh7huwORoHTh3254Efw7WJOSTe9kbex1fT5KqMWMaYWmrnZ3
+	 UN5SEM1JSgK8XT66B/4RtFjyraVPIh/0rWADMWgfMNvRPSdgSvTDjqMx9LJlWqWb+9
+	 spYxetl+pOIN1SQ5QfKkJk8Z9RWG+/X9k0rf7KhQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C08214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeLFOqG (ORCPT
+        id S1731211AbeLFOqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50786 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731189AbeLFOqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:04 -0500
+        id S1731193AbeLFOqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D206B2146D;
-        Thu,  6 Dec 2018 14:46:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D11820661;
+        Thu,  6 Dec 2018 14:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107563;
-        bh=zIO1IHoTkfKIHBVu3iJBCqVU6FTyegkIGG4lHaUsizo=;
+        s=default; t=1544107565;
+        bh=MyTu3xdYBiblvFe/6zO3NB+JeaiCinEE7VctIRGKf5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EpFrDZ/4GlbxvO7hbx9ZdWaezeB3eWQZkDGvLUJONSWNxYsH14iNWsjTWWjZVKwMQ
-         iYAhOyytKjQu0PrkMmuQ/AdsiTRWWYEukLxW+fX4LzkqxNQc7T0tw81ggI9AYoOYdk
-         59i5cIJ+mj+0eXsJrkhmyQq8mrpyrUYXX5zf+J+8=
+        b=pgS55CWgPoR5NfMo4E8YOvPlBVg5esxj8K4i3qhyagJMc8okOcLfNYTAtHvk0rslc
+         M15Vzxh6ildyLhGduVlzzpUYj+q73UqwtONAjh95USsoUF/xUH1ldEmkDykB+3T4kb
+         LW8wxqVGUrgGJiWbmuNyCZYcSZOn8O0YGl9fvnEI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 054/101] libceph: add authorizer challenge
-Date:   Thu,  6 Dec 2018 15:38:53 +0100
-Message-Id: <20181206143014.665403185@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.9 037/101] udf: Allow mounting volumes with incorrect identification strings
+Date:   Thu,  6 Dec 2018 15:38:36 +0100
+Message-Id: <20181206143013.675701706@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,330 +68,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 6daca13d2e72bedaaacfc08f873114c9307d5aea upstream.
+commit b54e41f5efcb4316b2f30b30c2535cc194270373 upstream.
 
-When a client authenticates with a service, an authorizer is sent with
-a nonce to the service (ceph_x_authorize_[ab]) and the service responds
-with a mutation of that nonce (ceph_x_authorize_reply).  This lets the
-client verify the service is who it says it is but it doesn't protect
-against a replay: someone can trivially capture the exchange and reuse
-the same authorizer to authenticate themselves.
+Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+started to be more strict when checking whether converted strings are
+properly formatted. Sudip reports that there are DVDs where the volume
+identification string is actually too long - UDF reports:
 
-Allow the service to reject an initial authorizer with a random
-challenge (ceph_x_authorize_challenge).  The client then has to respond
-with an updated authorizer proving they are able to decrypt the
-service's challenge and that the new authorizer was produced for this
-specific connection instance.
+[  632.309320] UDF-fs: incorrect dstring lengths (32/32)
 
-The accepting side requires this challenge and response unconditionally
-if the client side advertises they have CEPHX_V2 feature bit.
+during mount and fails the mount. This is mostly harmless failure as we
+don't need volume identification (and even less volume set
+identification) for anything. So just truncate the volume identification
+string if it is too long and replace it with 'Invalid' if we just cannot
+convert it for other reasons. This keeps slightly incorrect media still
+mountable.
 
-This addresses CVE-2018-1128.
-
-Link: http://tracker.ceph.com/issues/24836
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Sage Weil <sage@redhat.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+CC: stable@vger.kernel.org
+Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+Reported-and-tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ceph/mds_client.c           |   11 ++++++
- include/linux/ceph/auth.h      |    8 ++++
- include/linux/ceph/messenger.h |    3 +
- include/linux/ceph/msgr.h      |    2 -
- net/ceph/auth.c                |   16 +++++++++
- net/ceph/auth_x.c              |   72 ++++++++++++++++++++++++++++++++++++++---
- net/ceph/auth_x_protocol.h     |    7 +++
- net/ceph/messenger.c           |   17 +++++++++
- net/ceph/osd_client.c          |   11 ++++++
- 9 files changed, 140 insertions(+), 7 deletions(-)
 
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -3983,6 +3983,16 @@ static struct ceph_auth_handshake *get_a
- 	return auth;
- }
+---
+ fs/udf/super.c   |   16 ++++++++++------
+ fs/udf/unicode.c |   14 +++++++++++---
+ 2 files changed, 21 insertions(+), 9 deletions(-)
+
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -929,16 +929,20 @@ static int udf_load_pvoldesc(struct supe
+ 	}
  
-+static int add_authorizer_challenge(struct ceph_connection *con,
-+				    void *challenge_buf, int challenge_buf_len)
-+{
-+	struct ceph_mds_session *s = con->private;
-+	struct ceph_mds_client *mdsc = s->s_mdsc;
-+	struct ceph_auth_client *ac = mdsc->fsc->client->monc.auth;
-+
-+	return ceph_auth_add_authorizer_challenge(ac, s->s_auth.authorizer,
-+					    challenge_buf, challenge_buf_len);
-+}
- 
- static int verify_authorizer_reply(struct ceph_connection *con)
- {
-@@ -4046,6 +4056,7 @@ static const struct ceph_connection_oper
- 	.put = con_put,
- 	.dispatch = dispatch,
- 	.get_authorizer = get_authorizer,
-+	.add_authorizer_challenge = add_authorizer_challenge,
- 	.verify_authorizer_reply = verify_authorizer_reply,
- 	.invalidate_authorizer = invalidate_authorizer,
- 	.peer_reset = peer_reset,
---- a/include/linux/ceph/auth.h
-+++ b/include/linux/ceph/auth.h
-@@ -63,6 +63,10 @@ struct ceph_auth_client_ops {
- 	/* ensure that an existing authorizer is up to date */
- 	int (*update_authorizer)(struct ceph_auth_client *ac, int peer_type,
- 				 struct ceph_auth_handshake *auth);
-+	int (*add_authorizer_challenge)(struct ceph_auth_client *ac,
-+					struct ceph_authorizer *a,
-+					void *challenge_buf,
-+					int challenge_buf_len);
- 	int (*verify_authorizer_reply)(struct ceph_auth_client *ac,
- 				       struct ceph_authorizer *a);
- 	void (*invalidate_authorizer)(struct ceph_auth_client *ac,
-@@ -117,6 +121,10 @@ void ceph_auth_destroy_authorizer(struct
- extern int ceph_auth_update_authorizer(struct ceph_auth_client *ac,
- 				       int peer_type,
- 				       struct ceph_auth_handshake *a);
-+int ceph_auth_add_authorizer_challenge(struct ceph_auth_client *ac,
-+				       struct ceph_authorizer *a,
-+				       void *challenge_buf,
-+				       int challenge_buf_len);
- extern int ceph_auth_verify_authorizer_reply(struct ceph_auth_client *ac,
- 					     struct ceph_authorizer *a);
- extern void ceph_auth_invalidate_authorizer(struct ceph_auth_client *ac,
---- a/include/linux/ceph/messenger.h
-+++ b/include/linux/ceph/messenger.h
-@@ -30,6 +30,9 @@ struct ceph_connection_operations {
- 	struct ceph_auth_handshake *(*get_authorizer) (
- 				struct ceph_connection *con,
- 			       int *proto, int force_new);
-+	int (*add_authorizer_challenge)(struct ceph_connection *con,
-+					void *challenge_buf,
-+					int challenge_buf_len);
- 	int (*verify_authorizer_reply) (struct ceph_connection *con);
- 	int (*invalidate_authorizer)(struct ceph_connection *con);
- 
---- a/include/linux/ceph/msgr.h
-+++ b/include/linux/ceph/msgr.h
-@@ -90,7 +90,7 @@ struct ceph_entity_inst {
- #define CEPH_MSGR_TAG_SEQ           13 /* 64-bit int follows with seen seq number */
- #define CEPH_MSGR_TAG_KEEPALIVE2    14 /* keepalive2 byte + ceph_timespec */
- #define CEPH_MSGR_TAG_KEEPALIVE2_ACK 15 /* keepalive2 reply */
+ 	ret = udf_dstrCS0toUTF8(outstr, 31, pvoldesc->volIdent, 32);
+-	if (ret < 0)
+-		goto out_bh;
 -
-+#define CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER 16  /* cephx v2 doing server challenge */
- 
- /*
-  * connection negotiation
---- a/net/ceph/auth.c
-+++ b/net/ceph/auth.c
-@@ -314,6 +314,22 @@ int ceph_auth_update_authorizer(struct c
- }
- EXPORT_SYMBOL(ceph_auth_update_authorizer);
- 
-+int ceph_auth_add_authorizer_challenge(struct ceph_auth_client *ac,
-+				       struct ceph_authorizer *a,
-+				       void *challenge_buf,
-+				       int challenge_buf_len)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&ac->mutex);
-+	if (ac->ops && ac->ops->add_authorizer_challenge)
-+		ret = ac->ops->add_authorizer_challenge(ac, a, challenge_buf,
-+							challenge_buf_len);
-+	mutex_unlock(&ac->mutex);
-+	return ret;
-+}
-+EXPORT_SYMBOL(ceph_auth_add_authorizer_challenge);
-+
- int ceph_auth_verify_authorizer_reply(struct ceph_auth_client *ac,
- 				      struct ceph_authorizer *a)
- {
---- a/net/ceph/auth_x.c
-+++ b/net/ceph/auth_x.c
-@@ -291,7 +291,8 @@ bad:
-  * authorizer.  The first part (ceph_x_authorize_a) should already be
-  * encoded.
-  */
--static int encrypt_authorizer(struct ceph_x_authorizer *au)
-+static int encrypt_authorizer(struct ceph_x_authorizer *au,
-+			      u64 *server_challenge)
- {
- 	struct ceph_x_authorize_a *msg_a;
- 	struct ceph_x_authorize_b *msg_b;
-@@ -304,16 +305,28 @@ static int encrypt_authorizer(struct cep
- 	end = au->buf->vec.iov_base + au->buf->vec.iov_len;
- 
- 	msg_b = p + ceph_x_encrypt_offset();
--	msg_b->struct_v = 1;
-+	msg_b->struct_v = 2;
- 	msg_b->nonce = cpu_to_le64(au->nonce);
-+	if (server_challenge) {
-+		msg_b->have_challenge = 1;
-+		msg_b->server_challenge_plus_one =
-+		    cpu_to_le64(*server_challenge + 1);
+-	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
++	if (ret < 0) {
++		strcpy(UDF_SB(sb)->s_volume_ident, "InvalidName");
++		pr_warn("incorrect volume identification, setting to "
++			"'InvalidName'\n");
 +	} else {
-+		msg_b->have_challenge = 0;
-+		msg_b->server_challenge_plus_one = 0;
++		strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
 +	}
+ 	udf_debug("volIdent[] = '%s'\n", UDF_SB(sb)->s_volume_ident);
  
- 	ret = ceph_x_encrypt(&au->session_key, p, end - p, sizeof(*msg_b));
- 	if (ret < 0)
- 		return ret;
- 
- 	p += ret;
--	WARN_ON(p > end);
--	au->buf->vec.iov_len = p - au->buf->vec.iov_base;
-+	if (server_challenge) {
-+		WARN_ON(p != end);
-+	} else {
-+		WARN_ON(p > end);
-+		au->buf->vec.iov_len = p - au->buf->vec.iov_base;
+ 	ret = udf_dstrCS0toUTF8(outstr, 127, pvoldesc->volSetIdent, 128);
+-	if (ret < 0)
++	if (ret < 0) {
++		ret = 0;
+ 		goto out_bh;
+-
 +	}
+ 	outstr[ret] = 0;
+ 	udf_debug("volSetIdent[] = '%s'\n", outstr);
  
- 	return 0;
- }
-@@ -378,7 +391,7 @@ static int ceph_x_build_authorizer(struc
- 	     le64_to_cpu(msg_a->ticket_blob.secret_id));
- 
- 	get_random_bytes(&au->nonce, sizeof(au->nonce));
--	ret = encrypt_authorizer(au);
-+	ret = encrypt_authorizer(au, NULL);
- 	if (ret) {
- 		pr_err("failed to encrypt authorizer: %d", ret);
- 		goto out_au;
-@@ -660,6 +673,54 @@ static int ceph_x_update_authorizer(
- 	return 0;
+--- a/fs/udf/unicode.c
++++ b/fs/udf/unicode.c
+@@ -341,6 +341,11 @@ try_again:
+ 	return u_len;
  }
  
-+static int decrypt_authorize_challenge(struct ceph_x_authorizer *au,
-+				       void *challenge_buf,
-+				       int challenge_buf_len,
-+				       u64 *server_challenge)
-+{
-+	struct ceph_x_authorize_challenge *ch =
-+	    challenge_buf + sizeof(struct ceph_x_encrypt_header);
-+	int ret;
-+
-+	/* no leading len */
-+	ret = __ceph_x_decrypt(&au->session_key, challenge_buf,
-+			       challenge_buf_len);
-+	if (ret < 0)
-+		return ret;
-+	if (ret < sizeof(*ch)) {
-+		pr_err("bad size %d for ceph_x_authorize_challenge\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	*server_challenge = le64_to_cpu(ch->server_challenge);
-+	return 0;
-+}
-+
-+static int ceph_x_add_authorizer_challenge(struct ceph_auth_client *ac,
-+					   struct ceph_authorizer *a,
-+					   void *challenge_buf,
-+					   int challenge_buf_len)
-+{
-+	struct ceph_x_authorizer *au = (void *)a;
-+	u64 server_challenge;
-+	int ret;
-+
-+	ret = decrypt_authorize_challenge(au, challenge_buf, challenge_buf_len,
-+					  &server_challenge);
-+	if (ret) {
-+		pr_err("failed to decrypt authorize challenge: %d", ret);
-+		return ret;
-+	}
-+
-+	ret = encrypt_authorizer(au, &server_challenge);
-+	if (ret) {
-+		pr_err("failed to encrypt authorizer w/ challenge: %d", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int ceph_x_verify_authorizer_reply(struct ceph_auth_client *ac,
- 					  struct ceph_authorizer *a)
++/*
++ * Convert CS0 dstring to output charset. Warning: This function may truncate
++ * input string if it is too long as it is used for informational strings only
++ * and it is better to truncate the string than to refuse mounting a media.
++ */
+ int udf_dstrCS0toUTF8(uint8_t *utf_o, int o_len,
+ 		      const uint8_t *ocu_i, int i_len)
  {
-@@ -812,6 +873,7 @@ static const struct ceph_auth_client_ops
- 	.handle_reply = ceph_x_handle_reply,
- 	.create_authorizer = ceph_x_create_authorizer,
- 	.update_authorizer = ceph_x_update_authorizer,
-+	.add_authorizer_challenge = ceph_x_add_authorizer_challenge,
- 	.verify_authorizer_reply = ceph_x_verify_authorizer_reply,
- 	.invalidate_authorizer = ceph_x_invalidate_authorizer,
- 	.reset =  ceph_x_reset,
---- a/net/ceph/auth_x_protocol.h
-+++ b/net/ceph/auth_x_protocol.h
-@@ -69,6 +69,13 @@ struct ceph_x_authorize_a {
- struct ceph_x_authorize_b {
- 	__u8 struct_v;
- 	__le64 nonce;
-+	__u8 have_challenge;
-+	__le64 server_challenge_plus_one;
-+} __attribute__ ((packed));
-+
-+struct ceph_x_authorize_challenge {
-+	__u8 struct_v;
-+	__le64 server_challenge;
- } __attribute__ ((packed));
+@@ -349,9 +354,12 @@ int udf_dstrCS0toUTF8(uint8_t *utf_o, in
+ 	if (i_len > 0) {
+ 		s_len = ocu_i[i_len - 1];
+ 		if (s_len >= i_len) {
+-			pr_err("incorrect dstring lengths (%d/%d)\n",
+-			       s_len, i_len);
+-			return -EINVAL;
++			pr_warn("incorrect dstring lengths (%d/%d),"
++				" truncating\n", s_len, i_len);
++			s_len = i_len - 1;
++			/* 2-byte encoding? Need to round properly... */
++			if (ocu_i[0] == 16)
++				s_len -= (s_len - 1) & 2;
+ 		}
+ 	}
  
- struct ceph_x_authorize_reply {
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2037,9 +2037,24 @@ static int process_connect(struct ceph_c
- 	if (con->auth) {
- 		/*
- 		 * Any connection that defines ->get_authorizer()
--		 * should also define ->verify_authorizer_reply().
-+		 * should also define ->add_authorizer_challenge() and
-+		 * ->verify_authorizer_reply().
-+		 *
- 		 * See get_connect_authorizer().
- 		 */
-+		if (con->in_reply.tag == CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER) {
-+			ret = con->ops->add_authorizer_challenge(
-+				    con, con->auth->authorizer_reply_buf,
-+				    le32_to_cpu(con->in_reply.authorizer_len));
-+			if (ret < 0)
-+				return ret;
-+
-+			con_out_kvec_reset(con);
-+			__prepare_write_connect(con);
-+			prepare_read_connect(con);
-+			return 0;
-+		}
-+
- 		ret = con->ops->verify_authorizer_reply(con);
- 		if (ret < 0) {
- 			con->error_msg = "bad authorize reply";
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -4478,6 +4478,16 @@ static struct ceph_auth_handshake *get_a
- 	return auth;
- }
- 
-+static int add_authorizer_challenge(struct ceph_connection *con,
-+				    void *challenge_buf, int challenge_buf_len)
-+{
-+	struct ceph_osd *o = con->private;
-+	struct ceph_osd_client *osdc = o->o_osdc;
-+	struct ceph_auth_client *ac = osdc->client->monc.auth;
-+
-+	return ceph_auth_add_authorizer_challenge(ac, o->o_auth.authorizer,
-+					    challenge_buf, challenge_buf_len);
-+}
- 
- static int verify_authorizer_reply(struct ceph_connection *con)
- {
-@@ -4519,6 +4529,7 @@ static const struct ceph_connection_oper
- 	.put = put_osd_con,
- 	.dispatch = dispatch,
- 	.get_authorizer = get_authorizer,
-+	.add_authorizer_challenge = add_authorizer_challenge,
- 	.verify_authorizer_reply = verify_authorizer_reply,
- 	.invalidate_authorizer = invalidate_authorizer,
- 	.alloc_msg = alloc_msg,
 
 
