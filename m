@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42121C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37058C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B6320850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCFA620850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107900;
-	bh=YKp3jwXFsI6miLoa7chgiyQV9YDVwT9jwd/jlZT5bac=;
+	s=default; t=1544107908;
+	bh=Uge0lcBER6o9//sTkmx563DUw09NMBN0olt9ePWvv6s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=empC4YNOLa0iDkyJ0x2vMSTU/hDBzSud+MLWReCeE1/W6bYD2GPDmFVHtaGeh2BAk
-	 efzRB8fm9zkECUx8X14IWEd86iaZX17Abzf2NCaYD2Wk4YcDqmOzKDyosibUieHKCz
-	 Hp8rwBzYj21JG+uNx0UnAecrzskkILUPkZXlPH0s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B6320850
+	b=RUCIYktexBG4GP0cWs3T5tfN6gQr0bZ04h8O3wSusHX8plmcOQM6EKKAero5Cr7ZZ
+	 Nek9Woi1BjToKBwsAW6aGBKrIC5SqQntRVOMw9YF4j8auMFzvKSoBM3mG3qFNBslS0
+	 7SE8ZAtciWbLKHRrbHXtqtEk9wBuo0CRRpvXvueA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCFA620850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbeLFOvi (ORCPT
+        id S1731285AbeLFOql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:51:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731297AbeLFOqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:43 -0500
+        id S1731276AbeLFOqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E7C721479;
-        Thu,  6 Dec 2018 14:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFDE2082B;
+        Thu,  6 Dec 2018 14:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107602;
-        bh=YKp3jwXFsI6miLoa7chgiyQV9YDVwT9jwd/jlZT5bac=;
+        s=default; t=1544107594;
+        bh=Uge0lcBER6o9//sTkmx563DUw09NMBN0olt9ePWvv6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2t6IyX4NkCkqzmzHezAbDS7G7ydJPwBHTmSv9YqnMYorUSTnti0ren4uU/dgz3LnZ
-         4LoNAtszkTWWLsP8miHNyVQ5gL3+GG3Pwxu9jXo55m0ZC1+ENPg6Zr6a4p0kCktAJj
-         XdMsxhcF1rbaJNUluOopD+U4NAu0UuQZDc78zh5o=
+        b=0YYpZrA+sA4VQ5WJcR8YI1r4x+CbKSDQXR2krq5F6iD9EO+iu56BPxNwUdLCFKQRG
+         H3BMuo9hlPYm5KAw+Epdw1uMClq5b2D8EpWHcJ3Z5TGQQZq0YGl6I3G1DfJQtYDLl4
+         oq+A2ikOXjLAl3jY/zOKfij6ryb27tDUjUY5PXQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 067/101] btrfs: Refactor check_leaf function for later expansion
-Date:   Thu,  6 Dec 2018 15:39:06 +0100
-Message-Id: <20181206143015.611313000@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH 4.9 038/101] reset: make optional functions really optional
+Date:   Thu,  6 Dec 2018 15:38:37 +0100
+Message-Id: <20181206143013.724534909@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -70,137 +69,310 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+From: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
 
-commit c3267bbaa9cae09b62960eafe33ad19196803285 upstream.
+commit bb475230b8e59a547ab66ac3b02572df21a580e9 upstream.
 
-Current check_leaf() function does a good job checking key order and
-item offset/size.
+The *_get_optional_* functions weren't really optional so this patch
+makes them really optional.
 
-However it only checks from slot 0 to the last but one slot, this is
-good but makes later expansion hard.
+These *_get_optional_* functions will now return NULL instead of an error
+if no matching reset phandle is found in the DT, and all the
+reset_control_* functions now accept NULL rstc pointers.
 
-So this refactoring iterates from slot 0 to the last slot.
-For key comparison, it uses a key with all 0 as initial key, so all
-valid keys should be larger than that.
-
-And for item size/offset checks, it compares current item end with
-previous item offset.
-For slot 0, use leaf end as a special case.
-
-This makes later item/key offset checks and item size checks easier to
-be implemented.
-
-Also, makes check_leaf() to return -EUCLEAN other than -EIO to indicate
-error.
-
-Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 4.9:
- - BTRFS_LEAF_DATA_SIZE() takes a root rather than an fs_info
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/disk-io.c |   50 +++++++++++++++++++++++++++-----------------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -547,8 +547,9 @@ static int check_tree_block_fsid(struct
- static noinline int check_leaf(struct btrfs_root *root,
- 			       struct extent_buffer *leaf)
+
+---
+ drivers/reset/core.c  |   48 +++++++++++++++++++++++++++++++++++++-----------
+ include/linux/reset.h |   45 ++++++++++++++++++++++++++-------------------
+ 2 files changed, 63 insertions(+), 30 deletions(-)
+
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -135,11 +135,16 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_
+  * @rstc: reset controller
+  *
+  * Calling this on a shared reset controller is an error.
++ *
++ * If rstc is NULL it is an optional reset and the function will just
++ * return 0.
+  */
+ int reset_control_reset(struct reset_control *rstc)
  {
-+	/* No valid key type is 0, so all key should be larger than this key */
-+	struct btrfs_key prev_key = {0, 0, 0};
- 	struct btrfs_key key;
--	struct btrfs_key leaf_key;
- 	u32 nritems = btrfs_header_nritems(leaf);
- 	int slot;
- 
-@@ -581,7 +582,7 @@ static noinline int check_leaf(struct bt
- 				CORRUPT("non-root leaf's nritems is 0",
- 					leaf, check_root, 0);
- 				free_extent_buffer(eb);
--				return -EIO;
-+				return -EUCLEAN;
- 			}
- 			free_extent_buffer(eb);
- 		}
-@@ -591,28 +592,23 @@ static noinline int check_leaf(struct bt
- 	if (nritems == 0)
- 		return 0;
- 
--	/* Check the 0 item */
--	if (btrfs_item_offset_nr(leaf, 0) + btrfs_item_size_nr(leaf, 0) !=
--	    BTRFS_LEAF_DATA_SIZE(root)) {
--		CORRUPT("invalid item offset size pair", leaf, root, 0);
--		return -EIO;
--	}
--
- 	/*
--	 * Check to make sure each items keys are in the correct order and their
--	 * offsets make sense.  We only have to loop through nritems-1 because
--	 * we check the current slot against the next slot, which verifies the
--	 * next slot's offset+size makes sense and that the current's slot
--	 * offset is correct.
-+	 * Check the following things to make sure this is a good leaf, and
-+	 * leaf users won't need to bother with similar sanity checks:
-+	 *
-+	 * 1) key order
-+	 * 2) item offset and size
-+	 *    No overlap, no hole, all inside the leaf.
- 	 */
--	for (slot = 0; slot < nritems - 1; slot++) {
--		btrfs_item_key_to_cpu(leaf, &leaf_key, slot);
--		btrfs_item_key_to_cpu(leaf, &key, slot + 1);
-+	for (slot = 0; slot < nritems; slot++) {
-+		u32 item_end_expected;
+-	if (WARN_ON(IS_ERR_OR_NULL(rstc)) ||
+-	    WARN_ON(rstc->shared))
++	if (!rstc)
++		return 0;
 +
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
++	if (WARN_ON(IS_ERR(rstc)))
+ 		return -EINVAL;
  
- 		/* Make sure the keys are in the right order */
--		if (btrfs_comp_cpu_keys(&leaf_key, &key) >= 0) {
-+		if (btrfs_comp_cpu_keys(&prev_key, &key) >= 0) {
- 			CORRUPT("bad key order", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
- 
- 		/*
-@@ -620,10 +616,14 @@ static noinline int check_leaf(struct bt
- 		 * item data starts at the end of the leaf and grows towards the
- 		 * front.
- 		 */
--		if (btrfs_item_offset_nr(leaf, slot) !=
--			btrfs_item_end_nr(leaf, slot + 1)) {
-+		if (slot == 0)
-+			item_end_expected = BTRFS_LEAF_DATA_SIZE(root);
-+		else
-+			item_end_expected = btrfs_item_offset_nr(leaf,
-+								 slot - 1);
-+		if (btrfs_item_end_nr(leaf, slot) != item_end_expected) {
- 			CORRUPT("slot offset bad", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
- 
- 		/*
-@@ -634,8 +634,12 @@ static noinline int check_leaf(struct bt
- 		if (btrfs_item_end_nr(leaf, slot) >
- 		    BTRFS_LEAF_DATA_SIZE(root)) {
- 			CORRUPT("slot end outside of leaf", leaf, root, slot);
--			return -EIO;
-+			return -EUCLEAN;
- 		}
+ 	if (rstc->rcdev->ops->reset)
+@@ -159,10 +164,16 @@ EXPORT_SYMBOL_GPL(reset_control_reset);
+  *
+  * For shared reset controls a driver cannot expect the hw's registers and
+  * internal state to be reset, but must be prepared for this to happen.
++ *
++ * If rstc is NULL it is an optional reset and the function will just
++ * return 0.
+  */
+ int reset_control_assert(struct reset_control *rstc)
+ {
+-	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
++	if (!rstc)
++		return 0;
 +
-+		prev_key.objectid = key.objectid;
-+		prev_key.type = key.type;
-+		prev_key.offset = key.offset;
++	if (WARN_ON(IS_ERR(rstc)))
+ 		return -EINVAL;
+ 
+ 	if (!rstc->rcdev->ops->assert)
+@@ -185,10 +196,16 @@ EXPORT_SYMBOL_GPL(reset_control_assert);
+  * @rstc: reset controller
+  *
+  * After calling this function, the reset is guaranteed to be deasserted.
++ *
++ * If rstc is NULL it is an optional reset and the function will just
++ * return 0.
+  */
+ int reset_control_deassert(struct reset_control *rstc)
+ {
+-	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
++	if (!rstc)
++		return 0;
++
++	if (WARN_ON(IS_ERR(rstc)))
+ 		return -EINVAL;
+ 
+ 	if (!rstc->rcdev->ops->deassert)
+@@ -206,12 +223,15 @@ EXPORT_SYMBOL_GPL(reset_control_deassert
+ /**
+  * reset_control_status - returns a negative errno if not supported, a
+  * positive value if the reset line is asserted, or zero if the reset
+- * line is not asserted.
++ * line is not asserted or if the desc is NULL (optional reset).
+  * @rstc: reset controller
+  */
+ int reset_control_status(struct reset_control *rstc)
+ {
+-	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
++	if (!rstc)
++		return 0;
++
++	if (WARN_ON(IS_ERR(rstc)))
+ 		return -EINVAL;
+ 
+ 	if (rstc->rcdev->ops->status)
+@@ -268,7 +288,8 @@ static void __reset_control_put(struct r
+ }
+ 
+ struct reset_control *__of_reset_control_get(struct device_node *node,
+-				     const char *id, int index, int shared)
++				     const char *id, int index, bool shared,
++				     bool optional)
+ {
+ 	struct reset_control *rstc;
+ 	struct reset_controller_dev *r, *rcdev;
+@@ -282,14 +303,18 @@ struct reset_control *__of_reset_control
+ 	if (id) {
+ 		index = of_property_match_string(node,
+ 						 "reset-names", id);
++		if (index == -EILSEQ)
++			return ERR_PTR(index);
+ 		if (index < 0)
+-			return ERR_PTR(-ENOENT);
++			return optional ? NULL : ERR_PTR(-ENOENT);
  	}
  
- 	return 0;
+ 	ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
+ 					 index, &args);
+-	if (ret)
++	if (ret == -EINVAL)
+ 		return ERR_PTR(ret);
++	if (ret)
++		return optional ? NULL : ERR_PTR(ret);
+ 
+ 	mutex_lock(&reset_list_mutex);
+ 	rcdev = NULL;
+@@ -348,7 +373,8 @@ static void devm_reset_control_release(s
+ }
+ 
+ struct reset_control *__devm_reset_control_get(struct device *dev,
+-				     const char *id, int index, int shared)
++				     const char *id, int index, bool shared,
++				     bool optional)
+ {
+ 	struct reset_control **ptr, *rstc;
+ 
+@@ -358,7 +384,7 @@ struct reset_control *__devm_reset_contr
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	rstc = __of_reset_control_get(dev ? dev->of_node : NULL,
+-				      id, index, shared);
++				      id, index, shared, optional);
+ 	if (!IS_ERR(rstc)) {
+ 		*ptr = rstc;
+ 		devres_add(dev, ptr);
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -13,10 +13,12 @@ int reset_control_deassert(struct reset_
+ int reset_control_status(struct reset_control *rstc);
+ 
+ struct reset_control *__of_reset_control_get(struct device_node *node,
+-				     const char *id, int index, int shared);
++				     const char *id, int index, bool shared,
++				     bool optional);
+ void reset_control_put(struct reset_control *rstc);
+ struct reset_control *__devm_reset_control_get(struct device *dev,
+-				     const char *id, int index, int shared);
++				     const char *id, int index, bool shared,
++				     bool optional);
+ 
+ int __must_check device_reset(struct device *dev);
+ 
+@@ -69,14 +71,15 @@ static inline int device_reset_optional(
+ 
+ static inline struct reset_control *__of_reset_control_get(
+ 					struct device_node *node,
+-					const char *id, int index, int shared)
++					const char *id, int index, bool shared,
++					bool optional)
+ {
+ 	return ERR_PTR(-ENOTSUPP);
+ }
+ 
+ static inline struct reset_control *__devm_reset_control_get(
+-					struct device *dev,
+-					const char *id, int index, int shared)
++					struct device *dev, const char *id,
++					int index, bool shared, bool optional)
+ {
+ 	return ERR_PTR(-ENOTSUPP);
+ }
+@@ -104,7 +107,8 @@ __must_check reset_control_get_exclusive
+ #ifndef CONFIG_RESET_CONTROLLER
+ 	WARN_ON(1);
+ #endif
+-	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 0);
++	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, false,
++									false);
+ }
+ 
+ /**
+@@ -132,19 +136,22 @@ __must_check reset_control_get_exclusive
+ static inline struct reset_control *reset_control_get_shared(
+ 					struct device *dev, const char *id)
+ {
+-	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 1);
++	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, true,
++									false);
+ }
+ 
+ static inline struct reset_control *reset_control_get_optional_exclusive(
+ 					struct device *dev, const char *id)
+ {
+-	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 0);
++	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, false,
++									true);
+ }
+ 
+ static inline struct reset_control *reset_control_get_optional_shared(
+ 					struct device *dev, const char *id)
+ {
+-	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 1);
++	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, true,
++									true);
+ }
+ 
+ /**
+@@ -160,7 +167,7 @@ static inline struct reset_control *rese
+ static inline struct reset_control *of_reset_control_get_exclusive(
+ 				struct device_node *node, const char *id)
+ {
+-	return __of_reset_control_get(node, id, 0, 0);
++	return __of_reset_control_get(node, id, 0, false, false);
+ }
+ 
+ /**
+@@ -185,7 +192,7 @@ static inline struct reset_control *of_r
+ static inline struct reset_control *of_reset_control_get_shared(
+ 				struct device_node *node, const char *id)
+ {
+-	return __of_reset_control_get(node, id, 0, 1);
++	return __of_reset_control_get(node, id, 0, true, false);
+ }
+ 
+ /**
+@@ -202,7 +209,7 @@ static inline struct reset_control *of_r
+ static inline struct reset_control *of_reset_control_get_exclusive_by_index(
+ 					struct device_node *node, int index)
+ {
+-	return __of_reset_control_get(node, NULL, index, 0);
++	return __of_reset_control_get(node, NULL, index, false, false);
+ }
+ 
+ /**
+@@ -230,7 +237,7 @@ static inline struct reset_control *of_r
+ static inline struct reset_control *of_reset_control_get_shared_by_index(
+ 					struct device_node *node, int index)
+ {
+-	return __of_reset_control_get(node, NULL, index, 1);
++	return __of_reset_control_get(node, NULL, index, true, false);
+ }
+ 
+ /**
+@@ -252,7 +259,7 @@ __must_check devm_reset_control_get_excl
+ #ifndef CONFIG_RESET_CONTROLLER
+ 	WARN_ON(1);
+ #endif
+-	return __devm_reset_control_get(dev, id, 0, 0);
++	return __devm_reset_control_get(dev, id, 0, false, false);
+ }
+ 
+ /**
+@@ -267,19 +274,19 @@ __must_check devm_reset_control_get_excl
+ static inline struct reset_control *devm_reset_control_get_shared(
+ 					struct device *dev, const char *id)
+ {
+-	return __devm_reset_control_get(dev, id, 0, 1);
++	return __devm_reset_control_get(dev, id, 0, true, false);
+ }
+ 
+ static inline struct reset_control *devm_reset_control_get_optional_exclusive(
+ 					struct device *dev, const char *id)
+ {
+-	return __devm_reset_control_get(dev, id, 0, 0);
++	return __devm_reset_control_get(dev, id, 0, false, true);
+ }
+ 
+ static inline struct reset_control *devm_reset_control_get_optional_shared(
+ 					struct device *dev, const char *id)
+ {
+-	return __devm_reset_control_get(dev, id, 0, 1);
++	return __devm_reset_control_get(dev, id, 0, true, true);
+ }
+ 
+ /**
+@@ -297,7 +304,7 @@ static inline struct reset_control *devm
+ static inline struct reset_control *
+ devm_reset_control_get_exclusive_by_index(struct device *dev, int index)
+ {
+-	return __devm_reset_control_get(dev, NULL, index, 0);
++	return __devm_reset_control_get(dev, NULL, index, false, false);
+ }
+ 
+ /**
+@@ -313,7 +320,7 @@ devm_reset_control_get_exclusive_by_inde
+ static inline struct reset_control *
+ devm_reset_control_get_shared_by_index(struct device *dev, int index)
+ {
+-	return __devm_reset_control_get(dev, NULL, index, 1);
++	return __devm_reset_control_get(dev, NULL, index, true, false);
+ }
+ 
+ /*
 
 
