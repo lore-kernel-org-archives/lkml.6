@@ -2,71 +2,130 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDF3C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16958C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E7D20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:51:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="KXYY0U2y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E7D20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id D9BD520989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9BD520989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725998AbeLFUvv (ORCPT
+        id S1725963AbeLFUwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:51:51 -0500
-Received: from one.firstfloor.org ([193.170.194.197]:41910 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeLFUvu (ORCPT
+        Thu, 6 Dec 2018 15:52:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55204 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeLFUwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:51:50 -0500
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id 776D1868D9; Thu,  6 Dec 2018 21:51:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1544129508;
-        bh=QFmw1gurW4bI8zCF93EL1eld1hObV8GLNIf5qD6OanM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KXYY0U2y5lh1YSJOF/fCBd5RRTooR9a3xQnHnouhBRIgQ3hnxWh7T+Dra/ei8tb3W
-         K9be8KCR+eUtVJSR0oQr9z0FkN6uowwF+HOJVFkulIUXYXKmpAY376OjFcd+klJXjq
-         L/0+PMu5EuMObb9Hu6Wso5ID3oC/ysJOXpkCVys4=
-Date:   Thu, 6 Dec 2018 12:51:48 -0800
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Milian Wolff <milian.wolff@kdab.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf script: Fix LBR skid dump problems in brstackinsn
-Message-ID: <20181206205146.hsiehbf6fyee2uec@two.firstfloor.org>
-References: <20181120050617.4119-1-andi@firstfloor.org>
- <20181206170140.GJ19069@kernel.org>
+        Thu, 6 Dec 2018 15:52:00 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 0F4D0263ACA
+Received: by earth.universe (Postfix, from userid 1000)
+        id 3A5B93C08D6; Thu,  6 Dec 2018 21:51:55 +0100 (CET)
+Date:   Thu, 6 Dec 2018 21:51:55 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     tony@atomide.com, lee.jones@linaro.org, t-kristo@ti.com,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: tps65218: Use devm_regmap_add_irq_chip and clean up
+ error path in probe
+Message-ID: <20181206205155.eucqfsq2xnk7kks5@earth.universe>
+References: <1544117864-28276-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fx7rjpucokn4j6ls"
 Content-Disposition: inline
-In-Reply-To: <20181206170140.GJ19069@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1544117864-28276-1-git-send-email-j-keerthy@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 02:01:40PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Nov 19, 2018 at 09:06:17PM -0800, Andi Kleen escreveu:
-> > From: Andi Kleen <ak@linux.intel.com>
-> > 
-> > This is a fix for another instance of the skid problem Milian
-> > recently found [1]
-> 
-> Milian, have you tested this?
 
-It won't fix Milians problem, which were with call graphs.
+--fx7rjpucokn4j6ls
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For Milian's issue you would need Milian's patches,
-which AFAIK haven't been reviewed by anyone.
+Hi,
 
--Andi
+On Thu, Dec 06, 2018 at 11:07:44PM +0530, Keerthy wrote:
+> Use devm_regmap_add_irq_chip and clean up error path in probe.
+>=20
+> Reported-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>=20
+> Boot tested on am437x-gp-evm.
+
+This is missing cleanup of remove path?
+
+-- Sebastian
+
+>  drivers/mfd/tps65218.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
+> index 910f569..2383621 100644
+> --- a/drivers/mfd/tps65218.c
+> +++ b/drivers/mfd/tps65218.c
+> @@ -235,9 +235,9 @@ static int tps65218_probe(struct i2c_client *client,
+> =20
+>  	mutex_init(&tps->tps_lock);
+> =20
+> -	ret =3D regmap_add_irq_chip(tps->regmap, tps->irq,
+> -			IRQF_ONESHOT, 0, &tps65218_irq_chip,
+> -			&tps->irq_data);
+> +	ret =3D devm_regmap_add_irq_chip(&client->dev, tps->regmap, tps->irq,
+> +				       IRQF_ONESHOT, 0, &tps65218_irq_chip,
+> +				       &tps->irq_data);
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> @@ -253,14 +253,6 @@ static int tps65218_probe(struct i2c_client *client,
+>  			      ARRAY_SIZE(tps65218_cells), NULL, 0,
+>  			      regmap_irq_get_domain(tps->irq_data));
+> =20
+> -	if (ret < 0)
+> -		goto err_irq;
+> -
+> -	return 0;
+> -
+> -err_irq:
+> -	regmap_del_irq_chip(tps->irq, tps->irq_data);
+> -
+>  	return ret;
+>  }
+> =20
+> --=20
+> 1.9.1
+>=20
+
+--fx7rjpucokn4j6ls
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwJi+cACgkQ2O7X88g7
++prk9g//STkhr5bWr4W9OLoALcNiIMfV3qqy40RM7dpeHfqlH7XAeFuQ6Fil5gTI
+bCZNjbil/u9TI44thve3tnryeCYIxCJyYbRVrd6b36H6LeZtSzIMn56MWNgZZMbB
+qDNBxTO7p5ypX6UNxFI7aLRXBc9RG8fp2QGEZXwhUZOhzyR21RgRbuPlwBqjPmn5
+5wkxalY42KTAGlcTr+obrdIRnzwUgx9K7/KNH9QS3Io5dqbhVVFLr7UdVCIjsejZ
+T2YN5lgSTNNPrio2BkOJrKtMLapFo/KkXzEXf42SYJ44Tf7yWjsXCsECvNqvuJTq
+NlIAEl5aRSAwGWZyhELhW13zNJkvWxlDBl3hBEhgkBxj4mh97fwYChYyUy7OoYLj
+113pBA7r8Zk5LDZ3vHv1lhPUjZOYd+gN8dn/eQrc19HiIIWZ6q2tcShocWfQrnLp
+JO9YbsGr/1L4aUaLiJd27w69WPPbQu4ygiPV0+P2vK4zMuiZKzZnjYteABpaoi8r
+O6yaR8ravzeZW8QR/1rTdMac1NsJ5u5QBjJ40hEGchAl4l4RaxAYJDJV9jnysoQn
+g93ohH/AcjAyAztSBtBwZjKsIiVKich4URky/LT7K+VSgoWz7XwqXB7pOqgIwhXV
+2hbH5rWJw+IcZrMjFQpJtB+LXgEXGdgLSAkyJHXRtl7suanHzrY=
+=9QrH
+-----END PGP SIGNATURE-----
+
+--fx7rjpucokn4j6ls--
