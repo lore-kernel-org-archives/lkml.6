@@ -2,154 +2,98 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF0EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30674C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9D120892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544126193;
-	bh=mcvyoth+pT5ZtMtloHOGI12SE+L78Rp4o5EVE0dfgd8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=A5yOW2pacHCtX5vr4/xTaOKcxYfdbmN7clF6SAb+tFDE/sLNULdibynAAkA5qtE6C
-	 o6EOIcKFiZ4+Ib1Fur2Jj9c3yMHgWiODTyJyAq2D9Tr1nJkPq9LAH8E9n9FWyshvUD
-	 LSeqfWsi2f6deMBq+/5Q505zhGMaYTIomUqMEvDw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9D120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D34C820892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34C820892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbeLFT4c (ORCPT
+        id S1726015AbeLFT4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:56:32 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43394 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbeLFT4b (ORCPT
+        Thu, 6 Dec 2018 14:56:38 -0500
+Received: from 6.mo177.mail-out.ovh.net ([46.105.51.249]:46777 "EHLO
+        6.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLFT4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:56:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fRNdLXsZ8ImvjXxjKSq7ZQGm2Ix2MfpDK3d0ZBRFAC8=; b=vUyKWCFIkE8ngQryXB3bAyLtj
-        0+bYW9ZzfBuuavvQRYgNJ/l6HR6fABtNuYU95485SvhUDBPSze5N0gi4tv3nfd9OTXpI9gZBXGmyq
-        O8bsC7WU8R1eTIzj8plMu3DG12XgHEtKMQPY+CVs2zSYuU2pTNJEHPjQifZnW50hq8OrU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gUzky-0001bP-3J; Thu, 06 Dec 2018 19:56:20 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 73B6D11252F7; Thu,  6 Dec 2018 19:56:19 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 19:56:19 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Kurtz <djkurtz@chromium.org>
-Cc:     Adam.Thomson.Opensource@diasemi.com,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        Alexander.Deucher@amd.com, Support.Opensource@diasemi.com,
-        Liam Girdwood <lgirdwood@gmail.com>, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ASoC: DA7219: Implement error check on reg read and
- write
-Message-ID: <20181206195619.GA3084@sirena.org.uk>
-References: <1543948103-20752-1-git-send-email-akshu.agrawal@amd.com>
- <1543948103-20752-2-git-send-email-akshu.agrawal@amd.com>
- <AM5PR1001MB099412DDC3B33069BCFDC38B80AF0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <50cffd9e-74f4-b0af-5eed-3dad5f32d8f9@amd.com>
- <AM5PR1001MB0994CDEC9FB92DBCEB83892280A80@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20181205112832.GA6205@sirena.org.uk>
- <CAGS+omCSrt_Fe5=qQc28Dc4GZB-jUH-7kVQ3-Cq6E15tTarxZQ@mail.gmail.com>
+        Thu, 6 Dec 2018 14:56:38 -0500
+X-Greylist: delayed 10801 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Dec 2018 14:56:37 EST
+Received: from player711.ha.ovh.net (unknown [10.109.160.40])
+        by mo177.mail-out.ovh.net (Postfix) with ESMTP id 1887FD5B24
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 17:21:09 +0100 (CET)
+Received: from kaod.org (deibp9eh1--blueice1n4.emea.ibm.com [195.212.29.166])
+        (Authenticated sender: groug@kaod.org)
+        by player711.ha.ovh.net (Postfix) with ESMTPSA id 6C556871EA5;
+        Thu,  6 Dec 2018 16:21:03 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 17:21:02 +0100
+From:   Greg Kurz <groug@kaod.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Subject: Re: [PATCH] radix tree: Don't return internal entries on lookup
+Message-ID: <20181206172102.0538b2a9@bahia.lab.toulouse-stg.fr.ibm.com>
+In-Reply-To: <20181206133620.GC24603@bombadil.infradead.org>
+References: <154408284374.405977.5950625525821388567.stgit@bahia.lan>
+        <20181206133620.GC24603@bombadil.infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Content-Disposition: inline
-In-Reply-To: <CAGS+omCSrt_Fe5=qQc28Dc4GZB-jUH-7kVQ3-Cq6E15tTarxZQ@mail.gmail.com>
-X-Cookie: You will be successful in love.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 5509309719638677829
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtkedrudefjedgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 6 Dec 2018 05:36:20 -0800
+Matthew Wilcox <willy@infradead.org> wrote:
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Thu, Dec 06, 2018 at 08:54:03AM +0100, Greg Kurz wrote:
+> > Commit 66ee620f06f9 ("idr: Permit any valid kernel pointer to
+> > be stored") changed the radix tree lookup so that it stops when
+> > reaching the bottom of the tree. But radix_tree_descend() may have
+> > changed the node variable to point to an internal entry which then
+> > gets returned to the caller and bad things may happen.  
+> 
+> > pe_data is equal to R3 which is the return value of radix_tree_lookup(),
+> > ie, 0x406 == RADIX_TREE_RETRY.  
+> 
+> Thank you for the report and the debugging!  I've decided to fix the
+> problem slightly differently, and I've also added a test to the test-suite
 
-On Wed, Dec 05, 2018 at 10:50:29AM -0700, Daniel Kurtz wrote:
+Heh this is the fix I came up with initially, but then I wasn't sure
+if other kind of internal entries could possibly be returned by
+radix_tree_descend() so I tried to be smarter... I should have sticked
+to my initial intuition :)
 
-> I agree, there is no guarantee here once things have gone wrong, and
-> the concerns above are reasonable.  However, in the real world, I2C
-> transactions do sometimes fail for various reasons.  The I2C (and
+> that reproduces the problem in only a few iterations (the largest I've
+> seen is a few hundred; and often it'll reproduce in under twenty).
+> 
+> You can see it here:
+> http://git.infradead.org/users/willy/linux-dax.git/commitdiff/eff3860bbfedbac6edac57fb0d7f3a60e860c1c3
+> 
 
-It's *vanishingly* rare and like I say we don't have any constructive
-recovery plans - I've never seen a practical system that had any better
-idea than hoping the user noticed a problem and reboots.  Probably the
-best we can really do is try to reset the device, or at least resync the
-register map.  That would probably do something useful in the
-vanishingly rare case where it were a singular glitch, at the cost of
-obvious and painful user visible issues (which would probably be
-happening anyway).  The nearest I've seen to that is one of the CODEC
-drivers which has watchdog code to monitor the device in case it
-spontaneously reboots and will resync the register cache if that happened.
+You can add:
 
-I'm gathering that there are Chromebooks that do have I/O problems here?
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Tested-by: Greg Kurz <groug@kaod.org>
 
-> other bus) APIs have ways of reporting up their errors so callers can
-> take appropriate action.  This codec driver can run on all kinds of
-> hardware that can experience transient I2C errors, thus it sounds like
-> a reasonable idea to have the driver do some error checking on the
-> APIs it calls and take whatever action it can.  Just ignoring the
-> errors and proceeding like nothing is wrong is one option, but we can
-> probably do a little better by at least checking for errors, abort the
-> current operation, and pass up errors to higher layers when an i2c
-> transaction failure is detected.  If nothing else, this would enable
-> higher policy layers to take appropriate corrective action - for
-> example, if there is an i2c error when configuring a codec, it seems
-> advisable to report this up so that a machine driver would know to
-> abort and not turn on downstream amplifiers [I am assuming here that
-> something like this would happen, I don't know if the sound stack
-> really works this way].
+> I'll give the build bots a couple of days to chew on it and then ask
+> Linus to pull it.
 
-Yeah, so this is partly why I'm not super thrilled here - none of the
-layers currently have any especially bright ideas about how to handle
-things and giving up part way through an operation and returning an
-error without any attempt to unwind or recover feels like it's just
-trying to give a false sense of security. =20
+Great !
 
-> Once the default "check, abort and report" error checking is in place,
-> we could perhaps think about actions that the driver could take to
-> recover from various failures, such as resetting the device or
-> unwinding previous transactions before aborting, or retrying....  but
-> those are all policy, and this patch is more mechanism that enables
-> policy.
+Cheers,
 
-But is this going to be a useful way of handling such policy and is any
-work on that from whoever has these unreliable systems likely to be
-forthcoming?  We're going to end up with partially done reconfigurations
-in the register cache which is a potential issue for recovery strategies
-based around resyncing that, it's not so bad on things like starting a
-stream but bias level reconfigurations could be fun.
-
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwJfuIACgkQJNaLcl1U
-h9ByIAf9Fs4MIvnokH1GaamyWnCsns/7ZZsboXYWmErv7jwTVyMkFazNGGj5WvHo
-PIfTXXHAXmnRgSwrr0NG/fZmSuT5ipEyuVvK5a/6jQChCfa1eqctnzy0ufWyvprh
-t/IxAsfywfJvLXEH789+khJkA6OMz2A9F6bhEQPW5bNEgQJxTN3RX6h069dHtbRt
-tbKhTEzQfe/LSmD6oyP70yJvunrguFNDOMQ/RjOR2h0oo0YatvvwUY4dNcCPAixd
-JqxFlMnC9mYk8J1lR4JWIKsMcQ/R+Q2ecdMNqZfLvtjSVFq23lzCtchI+okeNVOI
-QoNmX7cXNuqY5PgijXoh0XO16wuiqQ==
-=oW7T
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
+--
+Greg
