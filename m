@@ -2,116 +2,132 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CED2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD48C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C0F20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:46:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="MrwJZ4fc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C0F20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 72E0321479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544089656;
+	bh=d6frsl1WUEG3b4bsDXOrEnCpDqn8IdVqqQ7NLJDphb0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=LKmFsPvWosYJb7RDTkpuqJr8/nZ1FXw1OdPbpoc431GottKsxlOdjUfXavmype8nq
+	 Z4m80gvyv8ynsAfSU8Shp5IKJ02una5T5dMA3fPZK/YrWI9/6jCysIHTt3bUQAMvpB
+	 u/TZZqnLSoYbOhuALvhevL9k3UnR2oq6/4oQe5O8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E0321479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbeLFJp6 (ORCPT
+        id S1729255AbeLFJrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:45:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51115 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFJp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:45:56 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n190so309479wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:45:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7J3xZHVOI+hzAANlNNiS0Za6N/YwngUnZ25+nCJd4ms=;
-        b=MrwJZ4fcSnjluNbHaWOvnJrOPyjczzg16oZWoVzqaLgNIR03bzYsQOCJnSDrAPfDLz
-         oSpd3D1A/W0T4tdu8jNR5F1p5FRjet4IIHLkCuEpNVnUynsQnwjP0QxgpgFfT8T71C5X
-         q0tcotQrDu4NsKERMAjpMOSy3DfpWiPjILYoRxJ7Mg8HYLYfQYNfqfq+uqFa0z5MXOCO
-         C3+3vXWHYkgCAXUWF4Gd9tCHagFQeC6kpzHF/lqC6ZOHo45G5d+s4O7xLJDi96nKGLHD
-         n4fzg8+CbCjzWwv3VyPV4VmJcyupyHOZDS4XYeQwh1m69Mpz0HQf+cwYHccz0JbykgQA
-         uEzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7J3xZHVOI+hzAANlNNiS0Za6N/YwngUnZ25+nCJd4ms=;
-        b=RBb9wd0rWTM1sjpNB5QaECdJx0Wbxq/asKyMHVrAy+JZj4WqVj8VkvoyQauu5hXHPy
-         62LuxwGRWzWzHinodYeyOJ19vtQWjE+nqYenW0FwOK8MIITPfvXrl6WwM+hT4dWMPZH6
-         5giCPaTHmnVwOMZf4g4DHwqXYa9eitEwRr6RfP0wpqN7u//Kko5na4HNYOtFNkA1iCYm
-         +m3FyK3Nfm4ZlwxpMX2NYOmW5axqxloOpyPG6nNN2XTpe4Fn7h0QVIBRNpKPG5eSKMyB
-         wPntzu84v/uDNfHsCvb7vgJmX3mYukLOQHoFvrEgiDB/h8Y+/3c5K9GV43nXE4j7idE4
-         I8DA==
-X-Gm-Message-State: AA+aEWZ3gkbQoLJwDOnslcdJHuaGFyQwZKTH1REwj0ZB2pDoLwAuHx7m
-        riTYg91yFo7eRQRGqlWKNjfFQg==
-X-Google-Smtp-Source: AFSGD/XPSWWDSWUa6X5Byb0K+d+Bjq0g7kosqbLv1xonkTPLdMwVpFn2Hx+liX773kt8BujBASMXGw==
-X-Received: by 2002:a7b:cb96:: with SMTP id m22mr19654412wmi.39.1544089553821;
-        Thu, 06 Dec 2018 01:45:53 -0800 (PST)
-Received: from debian-brgl.baylibre.local (astlambert-681-1-11-11.w90-86.abo.wanadoo.fr. [90.86.132.11])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm333735wma.1.2018.12.06.01.45.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 01:45:53 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] dt-bindings: i2c: use correct vendor prefix for atmel's at24 EEPROMs
-Date:   Thu,  6 Dec 2018 10:45:50 +0100
-Message-Id: <20181206094550.18082-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 6 Dec 2018 04:47:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727806AbeLFJre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 04:47:34 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF04F21479;
+        Thu,  6 Dec 2018 09:47:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544089654;
+        bh=d6frsl1WUEG3b4bsDXOrEnCpDqn8IdVqqQ7NLJDphb0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Qa4PEAcYpmw8y+LTx1L/osU7RUyi5t/1EsCIFlB3E71ztWolvZtkKEjJC9NAapg1l
+         PTIyUhucCIZIqF6foQs+AzeiQuM3gLuxhmweoR7ygdjjQUj3SOu8/Ei5C/2ytaNLwQ
+         mPgkgqXSr1TEK3g538sFQx2GLPChKvLt6QYiRJBg=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     stable@vger.kernel.org
+Cc:     Milo Kim <milo.kim@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jacek Anaszewski <j.anaszewski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH stable v4.4+ 2/3] leds: turn off the LED and wait for completion on unregistering LED class device
+Date:   Thu,  6 Dec 2018 10:47:01 +0100
+Message-Id: <1544089622-23982-2-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1544089622-23982-1-git-send-email-krzk@kernel.org>
+References: <1544089622-23982-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow-up to Thierry's patch which missed a few occurences.
+From: Milo Kim <milo.kim@ti.com>
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+commit d1aa577f5e191d77d3ad62da93729b5af9532bb4 upstream.
+
+Workqueue, 'set_brightness_work' is used for scheduling brightness control.
+This workqueue is canceled when the LED class device is unregistered.
+Currently, LED subsystem handles like below.
+
+  cancel_work_sync(&led_cdev->set_brightness_work)
+  led_set_brightness(led_cdev, LED_OFF)
+
+However, this could be a problem.
+Workqueue is going to be canceled but LED device needs to be off.
+The worst case is null pointer access due to scheduling a workqueue.
+
+LED module is loaded.
+  LED driver private data is allocated by using devm_zalloc().
+
+LED module is unloaded.
+  led_classdev_unregister() is called.
+    cancel_work_sync()
+      led_set_brightness(led_cdev, LED_OFF)
+        schedule_work() if LED driver uses brightness_set_blocking()
+        In the meantime, driver private data will be freed.
+
+        ..scheduling..
+
+        brightness_set_blocking() callback is invoked.
+          For the brightness control, LED driver tries to access private
+          data but resource is removed!
+
+To avoid this problem, LED subsystem should turn off the brightness first
+and wait for completion.
+
+  led_set_brightness(led_cdev, LED_OFF)
+  flush_work(&led_cdev->set_brightness_work)
+
+It guarantees that LED driver turns off the brightness prior to
+resource management.
+
+Cc: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Milo Kim <milo.kim@ti.com>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/i2c/i2c-at91.txt        | 2 +-
- Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/leds/led-class.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-at91.txt b/Documentation/devicetree/bindings/i2c/i2c-at91.txt
-index ef973a0343c7..b7cec17c3daf 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-at91.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-at91.txt
-@@ -33,7 +33,7 @@ i2c0: i2c@fff84000 {
- 	clock-frequency = <400000>;
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 7385f98dd54b..51a5b51ec467 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -247,12 +247,13 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
+ 	up_write(&led_cdev->trigger_lock);
+ #endif
  
- 	24c512@50 {
--		compatible = "24c512";
-+		compatible = "atmel,24c512";
- 		reg = <0x50>;
- 		pagesize = <128>;
- 	}
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-index c661b9083ec6..8b1e49cdce3f 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-@@ -54,7 +54,7 @@ Example:
- 			reg = <1>;
+-	cancel_work_sync(&led_cdev->set_brightness_work);
+-
+ 	/* Stop blinking */
+ 	led_stop_software_blink(led_cdev);
++
+ 	led_set_brightness(led_cdev, LED_OFF);
  
- 			eeprom@50 {
--				compatible = "at,24c02";
-+				compatible = "atmel,24c02";
- 				reg = <0x50>;
- 			};
- 		};
++	flush_work(&led_cdev->set_brightness_work);
++
+ 	device_unregister(led_cdev->dev);
+ 
+ 	down_write(&leds_list_lock);
 -- 
-2.19.1
+2.7.4
 
