@@ -2,280 +2,121 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317ACC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D553C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F1A2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:23:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AZei+II2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F1A2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DD3C02082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:24:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3C02082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbeLFWXx (ORCPT
+        id S1726073AbeLFWYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:23:53 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:40064 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbeLFWXw (ORCPT
+        Thu, 6 Dec 2018 17:24:46 -0500
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:5840 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725935AbeLFWYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:23:52 -0500
-Received: by mail-qk1-f201.google.com with SMTP id y83so1733883qka.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:23:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=50o4MvtjLTdhL3u0ZwwFnXOeAd7cA9fIDGEIiqzQvao=;
-        b=AZei+II2V6jWx0me6vDCCyk0FIhbhE8opLZeexdh9DmxcCLX4hvVdEAcN6E2zWa10q
-         LY1sTCif6FTGn5I2rusoGg9XR4JvaFvA4MchJgB0PDvnFjd7ebXnfNwA4rNSxWTwqxs1
-         yZ+jwLi3PHmtQQ9uoXI+cNNH8wF8Di5e/3DbqSmKKAJXsRyLfXG2PfEpU7cZogBuA56Z
-         dNJs7a60Jx4PXNJBdFuJstSu4PSm64KzgIHhjGvXESKL9IGUyDv7o03Z7ms/oWIwTa8O
-         N7M/wVy158EGCqDp8Gk27Acn3ggJjwXaVut8zeh4z+Uk+GztEPFvMqLTKG4e+4z+1n2V
-         8+qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=50o4MvtjLTdhL3u0ZwwFnXOeAd7cA9fIDGEIiqzQvao=;
-        b=jBzKDF4JQs5QwdHqrmC5C5gyhoynPgB8k8MLrCdGDNjLeR3fIk0DUKP0ORZ6uVE88n
-         CxWk01wuXmTHyXnRUzE2VT/98OxnprJxZqN/ZDQGz8xvRxJE4HVbQmDOWcVTe5zMRFEy
-         UfRhdKthHUNkwuj3bL5PcGbQbY5GFGA45eaemGnwR1ESdoF3dwZ5wPAsn0CocFm+PbVz
-         lxAUxXORBsVf7MFWCSCHXzYhN/blLgx7i9B/52jnh1nViV4iXIi1JQuEy05s6JSUYBZg
-         h36r70sPpgr1OscDK/Z3VoAef8oHJxOBdVjMaJoeHPzmD/LKi7wqqtvOtZE9M0G1aQdA
-         9GgA==
-X-Gm-Message-State: AA+aEWZCYx7dFnsoLNsmlY7edK5mU6fRKtpwaEZ2iPes+tNKh63128Yv
-        BWL33WJ+vdXd5gcKxgz2nwa3o95RYITMlw==
-X-Google-Smtp-Source: AFSGD/UXXY8g2CPTbqMvLEz+PJH0Ny3gcdb4PNzFYEuKY1tJVUhKl/ujqNQzpAG4utta+JOJE4qA8XBUiOqAiA==
-X-Received: by 2002:a0c:879a:: with SMTP id 26mr22484767qvj.62.1544135031575;
- Thu, 06 Dec 2018 14:23:51 -0800 (PST)
-Date:   Thu,  6 Dec 2018 14:23:18 -0800
-Message-Id: <20181206222318.218157-1-tmroeder@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
-Subject: [PATCH] scripts: add a tool to produce a compile_commands.json file
-From:   Tom Roeder <tmroeder@google.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Roeder <tmroeder@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Dec 2018 17:24:46 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 07 Dec 2018 08:54:42 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gV24W-0000aQ-NX; Fri, 07 Dec 2018 09:24:40 +1100
+Date:   Fri, 7 Dec 2018 09:24:40 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, riel@redhat.com,
+        jack@suse.cz
+Subject: Re: [PATCH 0/4][V4] drop the mmap_sem when doing IO in the fault path
+Message-ID: <20181206222440.GA19305@dastard>
+References: <20181130195812.19536-1-josef@toxicpanda.com>
+ <20181204144931.03566f7e21615e3c2c1b18e8@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204144931.03566f7e21615e3c2c1b18e8@linux-foundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LLVM/Clang project provides many tools for analyzing C source code.
-Many of these tools are based on LibTooling
-(https://clang.llvm.org/docs/LibTooling.html), which depends on a
-database of compiler flags. The standard container for this database is
-compile_commands.json, which consists of a list of JSON objects, each
-with "directory", "file", and "command" fields.
+On Tue, Dec 04, 2018 at 02:49:31PM -0800, Andrew Morton wrote:
+> On Fri, 30 Nov 2018 14:58:08 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
+> 
+> > Now that we have proper isolation in place with cgroups2 we have started going
+> > through and fixing the various priority inversions.  Most are all gone now, but
+> > this one is sort of weird since it's not necessarily a priority inversion that
+> > happens within the kernel, but rather because of something userspace does.
+> > 
+> > We have giant applications that we want to protect, and parts of these giant
+> > applications do things like watch the system state to determine how healthy the
+> > box is for load balancing and such.  This involves running 'ps' or other such
+> > utilities.  These utilities will often walk /proc/<pid>/whatever, and these
+> > files can sometimes need to down_read(&task->mmap_sem).  Not usually a big deal,
+> > but we noticed when we are stress testing that sometimes our protected
+> > application has latency spikes trying to get the mmap_sem for tasks that are in
+> > lower priority cgroups.
+> > 
+> > This is because any down_write() on a semaphore essentially turns it into a
+> > mutex, so even if we currently have it held for reading, any new readers will
+> > not be allowed on to keep from starving the writer.  This is fine, except a
+> > lower priority task could be stuck doing IO because it has been throttled to the
+> > point that its IO is taking much longer than normal.  But because a higher
+> > priority group depends on this completing it is now stuck behind lower priority
+> > work.
+> > 
+> > In order to avoid this particular priority inversion we want to use the existing
+> > retry mechanism to stop from holding the mmap_sem at all if we are going to do
+> > IO.  This already exists in the read case sort of, but needed to be extended for
+> > more than just grabbing the page lock.  With io.latency we throttle at
+> > submit_bio() time, so the readahead stuff can block and even page_cache_read can
+> > block, so all these paths need to have the mmap_sem dropped.
+> > 
+> > The other big thing is ->page_mkwrite.  btrfs is particularly shitty here
+> > because we have to reserve space for the dirty page, which can be a very
+> > expensive operation.  We use the same retry method as the read path, and simply
+> > cache the page and verify the page is still setup properly the next pass through
+> > ->page_mkwrite().
+> 
+> Seems reasonable.  I have a few minorish changeloggish comments.
+> 
+> We're at v4 and no acks have been gathered?
 
-Some build systems, like cmake or bazel, produce this compilation
-information directly. Naturally, Makefiles don't. However, the kernel
-makefiles already create .<target>.o.cmd files that contain all the
-information needed to build a compile_commands.json file.
+I looked at previous versions and had a bunch of questions and
+change requests. I haven't had time to look at this version yet,
+but seeing as the page_mkwrite() stuff has been dropped from this
+version it isn't useful anymore for solving the problem I had in
+mind when reviewing it originally...
 
-So, this commit adds scripts/gen_compile_commands.py, which recursively
-searches through a directory for .<target>.o.cmd files and extracts
-appropriate compile commands from them. It writes a
-compile_commands.json file that LibTooling-based tools can use.
+What I really want is unconditionally retriable page faults so the
+filesystem can cause the page fault to be restarted from scratch. We
+have a requirement for DAX and shared data extents (reflink) to
+work, and that requires changing the faulted page location during
+page_mkwrite. i.e. we get a fault on a read mapped shared page, then
+we have to do a copy-on-write operation to break physical data
+sharing and so the page with the file data in it physically changes
+during ->page_mkwrite (because DAX). Hence we need to restart the
+page fault to map the new page correctly because the file no longer
+points at the page that was originally faulted.
 
-By default, gen_compile_commands.py starts its search in its working
-directory and (over)writes compile_commands.json in the working
-directory. However, it also supports --output and --directory flags for
-out-of-tree use.
+With this stashed-page-and-retry mechanism implemented for
+->page_mkwrite, we could stash the new page in the vmf and tell the
+fault to retry, and everything would just work. Without
+->page_mkwrite support, it's just not that interesting and I have
+higher priority things to deal with right now....
 
-Note that while gen_compile_commands.py enables the use of clang-based
-tools, it does not require the kernel to be compiled with clang. E.g.,
-the following sequence of commands produces a compile_commands.json file
-that works correctly with LibTooling.
+Cheers,
 
-make defconfig
-make
-scripts/gen_compile_commands.py
-
-Also note that this script is written to work correctly in both Python 2
-and Python 3, so it does not specify the Python version in its first
-line.
-
-For an example of the utility of this script: after running
-gen_compile_commands.json on the latest kernel version, I was able to
-use Vim + the YouCompleteMe pluging + clangd to automatically jump to
-definitions and declarations. Obviously, cscope and ctags provide some
-of this functionality; the advantage of supporting LibTooling is that it
-opens the door to many other clang-based tools that understand the code
-directly and do not rely on regular expressions and heuristics.
-
-Tested: Built several recent kernel versions and ran the script against
-them, testing tools like clangd (for editor/LSP support) and clang-check
-(for static analysis). Also extracted some test .cmd files from a kernel
-build and wrote a test script to check that the script behaved correctly
-with all permutations of the --output and --directory flags.
-
-Signed-off-by: Tom Roeder <tmroeder@google.com>
----
- scripts/gen_compile_commands.py | 146 ++++++++++++++++++++++++++++++++
- 1 file changed, 146 insertions(+)
- create mode 100755 scripts/gen_compile_commands.py
-
-diff --git a/scripts/gen_compile_commands.py b/scripts/gen_compile_commands.py
-new file mode 100755
-index 000000000000..d6c4d7281976
---- /dev/null
-+++ b/scripts/gen_compile_commands.py
-@@ -0,0 +1,146 @@
-+#!/usr/bin/env python
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) Google LLC, 2018
-+#
-+# Author: Tom Roeder <tmroeder@google.com>
-+#
-+"""A tool for generating compile_commands.json in the Linux kernel."""
-+
-+import argparse
-+import json
-+import logging
-+import os
-+import re
-+
-+_DEFAULT_OUTPUT = 'compile_commands.json'
-+_DEFAULT_LOG_LEVEL = 'WARNING'
-+
-+_FILENAME_PATTERN = r'^\..*\.cmd$'
-+_LINE_PATTERN = r'^cmd_[^ ]*\.o := (.* )([^ ]*\.c)$'
-+_VALID_LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
-+
-+# A kernel build generally has over 2000 entries in its compile_commands.json
-+# database. If this code finds 500 or fewer, then warn the user that they might
-+# not have all the .cmd files, and they might need to compile the kernel.
-+_LOW_COUNT_THRESHOLD = 500
-+
-+
-+def parse_arguments():
-+    """Sets up and parses command-line arguments.
-+
-+    Returns:
-+        log_level: A logging level to filter log output.
-+        directory: The directory to search for .cmd files.
-+        output: Where to write the compile-commands JSON file.
-+    """
-+    usage = 'Creates a compile_commands.json database from kernel .cmd files'
-+    parser = argparse.ArgumentParser(description=usage)
-+
-+    directory_help = ('Path to the kernel source directory to search '
-+                      '(defaults to the working directory)')
-+    parser.add_argument('-d', '--directory', type=str, help=directory_help)
-+
-+    output_help = ('The location to write compile_commands.json (defaults to '
-+                   'compile_commands.json in the search directory)')
-+    parser.add_argument('-o', '--output', type=str, help=output_help)
-+
-+    log_level_help = ('The level of log messages to produce (one of ' +
-+                      ', '.join(_VALID_LOG_LEVELS) + '; defaults to ' +
-+                      _DEFAULT_LOG_LEVEL + ')')
-+    parser.add_argument(
-+        '--log_level', type=str, default=_DEFAULT_LOG_LEVEL,
-+        help=log_level_help)
-+
-+    args = parser.parse_args()
-+
-+    log_level = args.log_level
-+    if log_level not in _VALID_LOG_LEVELS:
-+        raise ValueError('%s is not a valid log level' % log_level)
-+
-+    directory = args.directory or os.getcwd()
-+    output = args.output or os.path.join(directory, _DEFAULT_OUTPUT)
-+    directory = os.path.abspath(directory)
-+
-+    return log_level, directory, output
-+
-+
-+def process_line(root_directory, file_directory, command_prefix, relative_path):
-+    """Extracts information from a .cmd line and creates an entry from it.
-+
-+    Args:
-+        root_directory: The directory that was searched for .cmd files. Usually
-+            used directly in the "directory" entry in compile_commands.json.
-+        file_directory: The path to the directory the .cmd file was found in.
-+        command_prefix: The extracted command line, up to the last element.
-+        relative_path: The .c file from the end of the extracted command.
-+            Usually relative to root_directory, but sometimes relative to
-+            file_directory and sometimes neither.
-+
-+    Returns:
-+        An entry to append to compile_commands.
-+
-+    Raises:
-+        ValueError: Could not find the extracted file based on relative_path and
-+            root_directory or file_directory.
-+    """
-+
-+    cur_dir = root_directory
-+    expected_path = os.path.join(cur_dir, relative_path)
-+    if not os.path.exists(expected_path):
-+        # Try using file_directory instead. Some of the tools have a different
-+        # style of .cmd file than the kernel.
-+        cur_dir = file_directory
-+        expected_path = os.path.join(cur_dir, relative_path)
-+        if not os.path.exists(expected_path):
-+            raise ValueError('File %s not in %s or %s' %
-+                             (relative_path, root_directory, file_directory))
-+    return {
-+        'directory': cur_dir,
-+        'file': relative_path,
-+        'command': command_prefix + relative_path,
-+    }
-+
-+
-+def main():
-+    """Walks through the directory and finds and parses .cmd files."""
-+    log_level, directory, output = parse_arguments()
-+
-+    level = getattr(logging, log_level)
-+    logging.basicConfig(format='%(levelname)s: %(message)s', level=level)
-+
-+    filename_matcher = re.compile(_FILENAME_PATTERN)
-+    line_matcher = re.compile(_LINE_PATTERN)
-+
-+    compile_commands = []
-+    for dirpath, _, filenames in os.walk(directory):
-+        for filename in filenames:
-+            if not filename_matcher.match(filename):
-+                continue
-+            filepath = os.path.join(dirpath, filename)
-+
-+            with open(filepath, 'rt') as f:
-+                for line in f:
-+                    result = line_matcher.match(line)
-+                    if not result:
-+                        continue
-+
-+                    try:
-+                        entry = process_line(directory, dirpath,
-+                                             result.group(1), result.group(2))
-+                        compile_commands.append(entry)
-+                    except ValueError as err:
-+                        logging.info('Could not add line from %s: %s',
-+                                     filepath, err)
-+
-+    with open(output, 'wt') as f:
-+        json.dump(compile_commands, f, indent=2, sort_keys=True)
-+
-+    count = len(compile_commands)
-+    if count < _LOW_COUNT_THRESHOLD:
-+        logging.warning(
-+            'Found %s entries. Have you compiled the kernel?', count)
-+
-+
-+if __name__ == '__main__':
-+    main()
+Dave.
 -- 
-2.20.0.rc2.403.gdbc3b29805-goog
-
+Dave Chinner
+david@fromorbit.com
