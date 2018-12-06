@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76996C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4ABDC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3374520838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD08520838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a0Vwo7+R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3374520838
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ujk3SHMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD08520838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbeLFMZO (ORCPT
+        id S1729923AbeLFM0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:25:14 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38778 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729703AbeLFMZN (ORCPT
+        Thu, 6 Dec 2018 07:26:33 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34677 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeLFMZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:25:13 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so299303wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:12 -0800 (PST)
+        Thu, 6 Dec 2018 07:25:14 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so326676wrw.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AkvfG/IDbgZMxYwPX5lSFsN5elmH6vlYt7vVIn43a0U=;
-        b=a0Vwo7+R9UWJKWhJ5tdXON+TcRVk8bAd3GrGkAupa9U7c521S0OEfq/71bnrAZ7YI9
-         qO3e/k1mYl3KHhZ9c+3uOMl2aTRoIRr9SlDaXPW4D8lhbk32Md5fm2bGf9/zOG/6Meus
-         zm9A28pu+SVWQtklpcqHi8Gz496+QwhVd5wIpCU6J9hBR5i/FXMe9o6PAjf92B1EtKkE
-         wUnBhqf9UhEVYjxuBsO+8OlgbhSabAPKLFgHzoSxcvnZIIVzwQ57/4kGb0byLGwVIbuw
-         xb9Pb7kljtzchG8AcB3Q6RRRggT61OjCQ6QMRyg3/B9mgLgiuUws4cV863SNS0HtMxy3
-         ebpQ==
+        bh=fxqgizsGn0AaIQnRQ33dQkRGCaY8UuAWu0B6VsH5hUQ=;
+        b=Ujk3SHMZqV7n0tte5Uw8nokkp/oH0FlKFLsFxzElZe9Z0slbPJEAJExlirmXwEUB/j
+         qeFI1DE4ncGLA0+FkTusmS35oYv/U8UXI/jfcSKa3QRtSlDZ5L5lHaiWfjgmPd4nFF/+
+         vGwiweNbXNO50gJDPLGhzJri8t+wJQe4o/ND+9KUuI2L26oBYQ8hULSaxQMaAnF/iqDX
+         Hpv9wpz9cBx90ytQ87K72yusvxoLQs9ZuSGL0uO4fMjRQ9fR2bvdzrwnlroIA0fQeMGW
+         0wXe8PTBJ4EYtsNFcnsc8WZUW2aYYzJizcPd8EFhPQh0QD0nyqeteBzhl8XYpy7aMdWS
+         egGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AkvfG/IDbgZMxYwPX5lSFsN5elmH6vlYt7vVIn43a0U=;
-        b=VAsMS4gePG153599UbrvfZD7K6HghA5Im9Q1DloUyIR6/oQ1eWvK92S5ccUlCDonpv
-         iW1Y3ZFL/R+5RQKDjmgJtkNeVJ/JOkMF6xY6q/ycy13hw8sr85BpHePAARKU2JpUAvEU
-         RFyl8C16RCdbwkA/mW2jMv8p27mpHmtUKyAoLMeoJKMlixV30eOLTfVRx7pMuqPxtYpf
-         lfpJ0DamJrlm0rz5Egfkg8JxVP4gmWBhMOwI2GtMxMpwSiOFFGByg7RM2coO1jiFSkem
-         H25YohHTC5ujOtvx9KjFx9dsVSHIOrDNsuR9nnj8gYKeFynYqCzC8NX5grG7atcyzlqA
-         nR/w==
-X-Gm-Message-State: AA+aEWZCr979aauzDP2Vo+mb17GCejzyINlFCdKbnn/PbUcYnx+9TSpr
-        ORUBVuspQR06ApLoJpREh6D7Pg==
-X-Google-Smtp-Source: AFSGD/W4zA6BXuDW4nuwEjrxAwEtRH7jwb51mwQJbpOgSMlyeciRxEfja88tx3NW2n/I+jUstCLcCg==
-X-Received: by 2002:adf:b243:: with SMTP id y3mr10683692wra.184.1544099111278;
-        Thu, 06 Dec 2018 04:25:11 -0800 (PST)
+        bh=fxqgizsGn0AaIQnRQ33dQkRGCaY8UuAWu0B6VsH5hUQ=;
+        b=tuvm05xoja2S/Ukmx3ktwjwUcdO9w+jIJuR/gZrb9aZkFDzaKdwxbCNvdUiiF1FEpb
+         F4re3iJe9QwAJkw/IM8ZBTigM2V/17juf/NV6XLa6F0TJRg8d6Iq3ddejakyzHkzzMLd
+         OXwBFh3tUdvqSzSf9vcEKOWDb34Fs89w0TRjdyCk1o6mviV04rXniJ3PZ11MVnG9Yv5F
+         fxxnmgij/UcW1gxDiNAkuGfTdvTC43yZBE4Ilbi/KTunkkj44WOG+G1jzckGwNuJtCS1
+         4dYqfxOT8S7IsBMNUKvhITZXCAyee0/ZzlZyqdvXiol7tSgoZEt+Yc8VMt6NopF4+M21
+         VkFw==
+X-Gm-Message-State: AA+aEWas6mo6SSXirN8/vLX9YxCZocn5XBayb2Uvmv1d2JcMcyXECPOj
+        ICkGih4cbbjS/k3x1ncWj6pODQ==
+X-Google-Smtp-Source: AFSGD/X/KL+bObt1e53j+RE7+vhNT1qCIPw5uSMB1tFkwSYT/Sx24y8tmABr3/CaYm5nM5Ne2TIj5Q==
+X-Received: by 2002:adf:b783:: with SMTP id s3mr26257791wre.274.1544099113048;
+        Thu, 06 Dec 2018 04:25:13 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.09
+        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 04:25:10 -0800 (PST)
+        Thu, 06 Dec 2018 04:25:12 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v13 14/25] kasan, arm64: enable top byte ignore for the kernel
-Date:   Thu,  6 Dec 2018 13:24:32 +0100
-Message-Id: <f51eca084c8cdb2f3a55195fe342dc8953b7aead.1544099024.git.andreyknvl@google.com>
+Subject: [PATCH v13 15/25] kasan, mm: perform untagged pointers comparison in krealloc
+Date:   Thu,  6 Dec 2018 13:24:33 +0100
+Message-Id: <14f6190d7846186a3506cd66d82446646fe65090.1544099024.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <cover.1544099024.git.andreyknvl@google.com>
 References: <cover.1544099024.git.andreyknvl@google.com>
@@ -109,57 +109,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tag-based KASAN uses the Top Byte Ignore feature of arm64 CPUs to store a
-pointer tag in the top byte of each pointer. This commit enables the
-TCR_TBI1 bit, which enables Top Byte Ignore for the kernel, when tag-based
-KASAN is used.
+The krealloc function checks where the same buffer was reused or a new one
+allocated by comparing kernel pointers. Tag-based KASAN changes memory tag
+on the krealloc'ed chunk of memory and therefore also changes the pointer
+tag of the returned pointer. Therefore we need to perform comparison on
+untagged (with tags reset) pointers to check whether it's the same memory
+region or not.
 
 Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/pgtable-hwdef.h | 1 +
- arch/arm64/mm/proc.S                   | 8 +++++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index 1d7d8da2ef9b..d43b870c39b3 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -291,6 +291,7 @@
- #define TCR_A1			(UL(1) << 22)
- #define TCR_ASID16		(UL(1) << 36)
- #define TCR_TBI0		(UL(1) << 37)
-+#define TCR_TBI1		(UL(1) << 38)
- #define TCR_HA			(UL(1) << 39)
- #define TCR_HD			(UL(1) << 40)
- #define TCR_NFD1		(UL(1) << 54)
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 2c75b0b903ae..d861f208eeb1 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -47,6 +47,12 @@
- /* PTWs cacheable, inner/outer WBWA */
- #define TCR_CACHE_FLAGS	TCR_IRGN_WBWA | TCR_ORGN_WBWA
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 5f3504e26d4c..5aabcbd32d82 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1534,7 +1534,7 @@ void *krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	}
  
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define TCR_KASAN_FLAGS TCR_TBI1
-+#else
-+#define TCR_KASAN_FLAGS 0
-+#endif
-+
- #define MAIR(attr, mt)	((attr) << ((mt) * 8))
+ 	ret = __do_krealloc(p, new_size, flags);
+-	if (ret && p != ret)
++	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
  
- /*
-@@ -445,7 +451,7 @@ ENTRY(__cpu_setup)
- 	 */
- 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
- 			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
--			TCR_TBI0 | TCR_A1
-+			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
- 	tcr_set_idmap_t0sz	x10, x9
- 
- 	/*
+ 	return ret;
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
