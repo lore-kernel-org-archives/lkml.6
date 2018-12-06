@@ -6,51 +6,58 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37058C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE61C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFA620850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8096B20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107908;
-	bh=Uge0lcBER6o9//sTkmx563DUw09NMBN0olt9ePWvv6s=;
+	s=default; t=1544107914;
+	bh=QWoFiP/RLOsDMaadl0975nB55fX4r6E2+SPtINFCxs0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RUCIYktexBG4GP0cWs3T5tfN6gQr0bZ04h8O3wSusHX8plmcOQM6EKKAero5Cr7ZZ
-	 Nek9Woi1BjToKBwsAW6aGBKrIC5SqQntRVOMw9YF4j8auMFzvKSoBM3mG3qFNBslS0
-	 7SE8ZAtciWbLKHRrbHXtqtEk9wBuo0CRRpvXvueA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCFA620850
+	b=QKsIBXtG6uQYVTM/kkpCB/6RSKZ6Tg1+9mMLSzbyjNg3JCA0bapF84NYEsdv0q1cg
+	 Aoo06oiAyuRtFhrHHcz6gZl3d3KXSxkT3lOHMpnq4XivLgiZ/dtP9tKYIKxhQOUA6H
+	 t33beRP5ZB/u1zRIb4PBx0bsitIooGXsDHMwoCDc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8096B20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731285AbeLFOql (ORCPT
+        id S1731268AbeLFOqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:46:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51344 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731276AbeLFOqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:36 -0500
+        id S1729944AbeLFOqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FFDE2082B;
-        Thu,  6 Dec 2018 14:46:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56722214DE;
+        Thu,  6 Dec 2018 14:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107594;
-        bh=Uge0lcBER6o9//sTkmx563DUw09NMBN0olt9ePWvv6s=;
+        s=default; t=1544107589;
+        bh=QWoFiP/RLOsDMaadl0975nB55fX4r6E2+SPtINFCxs0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0YYpZrA+sA4VQ5WJcR8YI1r4x+CbKSDQXR2krq5F6iD9EO+iu56BPxNwUdLCFKQRG
-         H3BMuo9hlPYm5KAw+Epdw1uMClq5b2D8EpWHcJ3Z5TGQQZq0YGl6I3G1DfJQtYDLl4
-         oq+A2ikOXjLAl3jY/zOKfij6ryb27tDUjUY5PXQY=
+        b=UXxKAsA/7q8SmcvZ2vL/quL7p0RiN5a+ZmV76tq13pfuF8qTtmkZnjWNFlax+83Jl
+         jWb5zpgelABLoHfbHFZoVMFtuTXCRlWaEwPyVRTmmz5LJuXgbGmEuvbAIp7GanBRT4
+         DJJ6lcT5ygIvl7a8Kc2nyVkEfsKriPfJsfKKNzQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 4.9 038/101] reset: make optional functions really optional
-Date:   Thu,  6 Dec 2018 15:38:37 +0100
-Message-Id: <20181206143013.724534909@linuxfoundation.org>
+        stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 063/101] hugetlbfs: fix offset overflow in hugetlbfs mmap
+Date:   Thu,  6 Dec 2018 15:39:02 +0100
+Message-Id: <20181206143015.275040390@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,310 +76,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit bb475230b8e59a547ab66ac3b02572df21a580e9 upstream.
+commit 045c7a3f53d9403b62d396b6d051c4be5044cdb4 upstream.
 
-The *_get_optional_* functions weren't really optional so this patch
-makes them really optional.
+If mmap() maps a file, it can be passed an offset into the file at which
+the mapping is to start.  Offset could be a negative value when
+represented as a loff_t.  The offset plus length will be used to update
+the file size (i_size) which is also a loff_t.
 
-These *_get_optional_* functions will now return NULL instead of an error
-if no matching reset phandle is found in the DT, and all the
-reset_control_* functions now accept NULL rstc pointers.
+Validate the value of offset and offset + length to make sure they do
+not overflow and appear as negative.
 
-Signed-off-by: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
+Found by syzcaller with commit ff8c0c53c475 ("mm/hugetlb.c: don't call
+region_abort if region_chg fails") applied.  Prior to this commit, the
+overflow would still occur but we would luckily return ENOMEM.
+
+To reproduce:
+
+   mmap(0, 0x2000, 0, 0x40021, 0xffffffffffffffffULL, 0x8000000000000000ULL);
+
+Resulted in,
+
+  kernel BUG at mm/hugetlb.c:742!
+  Call Trace:
+   hugetlbfs_evict_inode+0x80/0xa0
+   evict+0x24a/0x620
+   iput+0x48f/0x8c0
+   dentry_unlink_inode+0x31f/0x4d0
+   __dentry_kill+0x292/0x5e0
+   dput+0x730/0x830
+   __fput+0x438/0x720
+   ____fput+0x1a/0x20
+   task_work_run+0xfe/0x180
+   exit_to_usermode_loop+0x133/0x150
+   syscall_return_slowpath+0x184/0x1c0
+   entry_SYSCALL_64_fastpath+0xab/0xad
+
+Fixes: ff8c0c53c475 ("mm/hugetlb.c: don't call region_abort if region_chg fails")
+Link: http://lkml.kernel.org/r/1491951118-30678-1-git-send-email-mike.kravetz@oracle.com
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/reset/core.c  |   48 +++++++++++++++++++++++++++++++++++++-----------
- include/linux/reset.h |   45 ++++++++++++++++++++++++++-------------------
- 2 files changed, 63 insertions(+), 30 deletions(-)
+ fs/hugetlbfs/inode.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -135,11 +135,16 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_
-  * @rstc: reset controller
-  *
-  * Calling this on a shared reset controller is an error.
-+ *
-+ * If rstc is NULL it is an optional reset and the function will just
-+ * return 0.
-  */
- int reset_control_reset(struct reset_control *rstc)
- {
--	if (WARN_ON(IS_ERR_OR_NULL(rstc)) ||
--	    WARN_ON(rstc->shared))
-+	if (!rstc)
-+		return 0;
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -136,17 +136,26 @@ static int hugetlbfs_file_mmap(struct fi
+ 	vma->vm_flags |= VM_HUGETLB | VM_DONTEXPAND;
+ 	vma->vm_ops = &hugetlb_vm_ops;
+ 
++	/*
++	 * Offset passed to mmap (before page shift) could have been
++	 * negative when represented as a (l)off_t.
++	 */
++	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++		return -EINVAL;
 +
-+	if (WARN_ON(IS_ERR(rstc)))
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
  		return -EINVAL;
  
- 	if (rstc->rcdev->ops->reset)
-@@ -159,10 +164,16 @@ EXPORT_SYMBOL_GPL(reset_control_reset);
-  *
-  * For shared reset controls a driver cannot expect the hw's registers and
-  * internal state to be reset, but must be prepared for this to happen.
-+ *
-+ * If rstc is NULL it is an optional reset and the function will just
-+ * return 0.
-  */
- int reset_control_assert(struct reset_control *rstc)
- {
--	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
-+	if (!rstc)
-+		return 0;
-+
-+	if (WARN_ON(IS_ERR(rstc)))
- 		return -EINVAL;
+ 	vma_len = (loff_t)(vma->vm_end - vma->vm_start);
++	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
++	/* check for overflow */
++	if (len < vma_len)
++		return -EINVAL;
  
- 	if (!rstc->rcdev->ops->assert)
-@@ -185,10 +196,16 @@ EXPORT_SYMBOL_GPL(reset_control_assert);
-  * @rstc: reset controller
-  *
-  * After calling this function, the reset is guaranteed to be deasserted.
-+ *
-+ * If rstc is NULL it is an optional reset and the function will just
-+ * return 0.
-  */
- int reset_control_deassert(struct reset_control *rstc)
- {
--	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
-+	if (!rstc)
-+		return 0;
-+
-+	if (WARN_ON(IS_ERR(rstc)))
- 		return -EINVAL;
+ 	inode_lock(inode);
+ 	file_accessed(file);
  
- 	if (!rstc->rcdev->ops->deassert)
-@@ -206,12 +223,15 @@ EXPORT_SYMBOL_GPL(reset_control_deassert
- /**
-  * reset_control_status - returns a negative errno if not supported, a
-  * positive value if the reset line is asserted, or zero if the reset
-- * line is not asserted.
-+ * line is not asserted or if the desc is NULL (optional reset).
-  * @rstc: reset controller
-  */
- int reset_control_status(struct reset_control *rstc)
- {
--	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
-+	if (!rstc)
-+		return 0;
-+
-+	if (WARN_ON(IS_ERR(rstc)))
- 		return -EINVAL;
+ 	ret = -ENOMEM;
+-	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+-
+ 	if (hugetlb_reserve_pages(inode,
+ 				vma->vm_pgoff >> huge_page_order(h),
+ 				len >> huge_page_shift(h), vma,
+@@ -155,7 +164,7 @@ static int hugetlbfs_file_mmap(struct fi
  
- 	if (rstc->rcdev->ops->status)
-@@ -268,7 +288,8 @@ static void __reset_control_put(struct r
- }
+ 	ret = 0;
+ 	if (vma->vm_flags & VM_WRITE && inode->i_size < len)
+-		inode->i_size = len;
++		i_size_write(inode, len);
+ out:
+ 	inode_unlock(inode);
  
- struct reset_control *__of_reset_control_get(struct device_node *node,
--				     const char *id, int index, int shared)
-+				     const char *id, int index, bool shared,
-+				     bool optional)
- {
- 	struct reset_control *rstc;
- 	struct reset_controller_dev *r, *rcdev;
-@@ -282,14 +303,18 @@ struct reset_control *__of_reset_control
- 	if (id) {
- 		index = of_property_match_string(node,
- 						 "reset-names", id);
-+		if (index == -EILSEQ)
-+			return ERR_PTR(index);
- 		if (index < 0)
--			return ERR_PTR(-ENOENT);
-+			return optional ? NULL : ERR_PTR(-ENOENT);
- 	}
- 
- 	ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
- 					 index, &args);
--	if (ret)
-+	if (ret == -EINVAL)
- 		return ERR_PTR(ret);
-+	if (ret)
-+		return optional ? NULL : ERR_PTR(ret);
- 
- 	mutex_lock(&reset_list_mutex);
- 	rcdev = NULL;
-@@ -348,7 +373,8 @@ static void devm_reset_control_release(s
- }
- 
- struct reset_control *__devm_reset_control_get(struct device *dev,
--				     const char *id, int index, int shared)
-+				     const char *id, int index, bool shared,
-+				     bool optional)
- {
- 	struct reset_control **ptr, *rstc;
- 
-@@ -358,7 +384,7 @@ struct reset_control *__devm_reset_contr
- 		return ERR_PTR(-ENOMEM);
- 
- 	rstc = __of_reset_control_get(dev ? dev->of_node : NULL,
--				      id, index, shared);
-+				      id, index, shared, optional);
- 	if (!IS_ERR(rstc)) {
- 		*ptr = rstc;
- 		devres_add(dev, ptr);
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -13,10 +13,12 @@ int reset_control_deassert(struct reset_
- int reset_control_status(struct reset_control *rstc);
- 
- struct reset_control *__of_reset_control_get(struct device_node *node,
--				     const char *id, int index, int shared);
-+				     const char *id, int index, bool shared,
-+				     bool optional);
- void reset_control_put(struct reset_control *rstc);
- struct reset_control *__devm_reset_control_get(struct device *dev,
--				     const char *id, int index, int shared);
-+				     const char *id, int index, bool shared,
-+				     bool optional);
- 
- int __must_check device_reset(struct device *dev);
- 
-@@ -69,14 +71,15 @@ static inline int device_reset_optional(
- 
- static inline struct reset_control *__of_reset_control_get(
- 					struct device_node *node,
--					const char *id, int index, int shared)
-+					const char *id, int index, bool shared,
-+					bool optional)
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
- 
- static inline struct reset_control *__devm_reset_control_get(
--					struct device *dev,
--					const char *id, int index, int shared)
-+					struct device *dev, const char *id,
-+					int index, bool shared, bool optional)
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
-@@ -104,7 +107,8 @@ __must_check reset_control_get_exclusive
- #ifndef CONFIG_RESET_CONTROLLER
- 	WARN_ON(1);
- #endif
--	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 0);
-+	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, false,
-+									false);
- }
- 
- /**
-@@ -132,19 +136,22 @@ __must_check reset_control_get_exclusive
- static inline struct reset_control *reset_control_get_shared(
- 					struct device *dev, const char *id)
- {
--	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 1);
-+	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, true,
-+									false);
- }
- 
- static inline struct reset_control *reset_control_get_optional_exclusive(
- 					struct device *dev, const char *id)
- {
--	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 0);
-+	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, false,
-+									true);
- }
- 
- static inline struct reset_control *reset_control_get_optional_shared(
- 					struct device *dev, const char *id)
- {
--	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, 1);
-+	return __of_reset_control_get(dev ? dev->of_node : NULL, id, 0, true,
-+									true);
- }
- 
- /**
-@@ -160,7 +167,7 @@ static inline struct reset_control *rese
- static inline struct reset_control *of_reset_control_get_exclusive(
- 				struct device_node *node, const char *id)
- {
--	return __of_reset_control_get(node, id, 0, 0);
-+	return __of_reset_control_get(node, id, 0, false, false);
- }
- 
- /**
-@@ -185,7 +192,7 @@ static inline struct reset_control *of_r
- static inline struct reset_control *of_reset_control_get_shared(
- 				struct device_node *node, const char *id)
- {
--	return __of_reset_control_get(node, id, 0, 1);
-+	return __of_reset_control_get(node, id, 0, true, false);
- }
- 
- /**
-@@ -202,7 +209,7 @@ static inline struct reset_control *of_r
- static inline struct reset_control *of_reset_control_get_exclusive_by_index(
- 					struct device_node *node, int index)
- {
--	return __of_reset_control_get(node, NULL, index, 0);
-+	return __of_reset_control_get(node, NULL, index, false, false);
- }
- 
- /**
-@@ -230,7 +237,7 @@ static inline struct reset_control *of_r
- static inline struct reset_control *of_reset_control_get_shared_by_index(
- 					struct device_node *node, int index)
- {
--	return __of_reset_control_get(node, NULL, index, 1);
-+	return __of_reset_control_get(node, NULL, index, true, false);
- }
- 
- /**
-@@ -252,7 +259,7 @@ __must_check devm_reset_control_get_excl
- #ifndef CONFIG_RESET_CONTROLLER
- 	WARN_ON(1);
- #endif
--	return __devm_reset_control_get(dev, id, 0, 0);
-+	return __devm_reset_control_get(dev, id, 0, false, false);
- }
- 
- /**
-@@ -267,19 +274,19 @@ __must_check devm_reset_control_get_excl
- static inline struct reset_control *devm_reset_control_get_shared(
- 					struct device *dev, const char *id)
- {
--	return __devm_reset_control_get(dev, id, 0, 1);
-+	return __devm_reset_control_get(dev, id, 0, true, false);
- }
- 
- static inline struct reset_control *devm_reset_control_get_optional_exclusive(
- 					struct device *dev, const char *id)
- {
--	return __devm_reset_control_get(dev, id, 0, 0);
-+	return __devm_reset_control_get(dev, id, 0, false, true);
- }
- 
- static inline struct reset_control *devm_reset_control_get_optional_shared(
- 					struct device *dev, const char *id)
- {
--	return __devm_reset_control_get(dev, id, 0, 1);
-+	return __devm_reset_control_get(dev, id, 0, true, true);
- }
- 
- /**
-@@ -297,7 +304,7 @@ static inline struct reset_control *devm
- static inline struct reset_control *
- devm_reset_control_get_exclusive_by_index(struct device *dev, int index)
- {
--	return __devm_reset_control_get(dev, NULL, index, 0);
-+	return __devm_reset_control_get(dev, NULL, index, false, false);
- }
- 
- /**
-@@ -313,7 +320,7 @@ devm_reset_control_get_exclusive_by_inde
- static inline struct reset_control *
- devm_reset_control_get_shared_by_index(struct device *dev, int index)
- {
--	return __devm_reset_control_get(dev, NULL, index, 1);
-+	return __devm_reset_control_get(dev, NULL, index, true, false);
- }
- 
- /*
 
 
