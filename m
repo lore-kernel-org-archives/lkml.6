@@ -2,201 +2,106 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B35C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6700C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B08AE214E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:18:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oG0dU0m9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08AE214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 914032082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 914032082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726051AbeLFWSv (ORCPT
+        id S1726118AbeLFWT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:18:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:42333 "EHLO ozlabs.org"
+        Thu, 6 Dec 2018 17:19:29 -0500
+Received: from mga06.intel.com ([134.134.136.31]:39981 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLFWSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:18:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439qkc1Gngz9s47;
-        Fri,  7 Dec 2018 09:18:47 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544134728;
-        bh=OVBMP3tfEP1iObbqu6H6WrB2qSeC7XDR7l59pi5e5kg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oG0dU0m9/9sBBfgdkobX6zcyWrSzGbs58EZ2U1/gVqFJlvqp8zerNd2eoXgUHkrsN
-         W21cJH+xKwj6diECL8D9fusTQSvq3qoA5VBTLd+dt3c8amFoh7ng2oOIXjFS+LFSMM
-         qTdcICWF3X1Gwgh8jzyEPr+vLLuakoSrnSWYfzSwfJi6aS0Db3D5eQ87X+yZs/0MRi
-         Hhswh+LseBwxCurea0MZ520BrIEwXs63OuY7JfgtV3gbqjnLdnqhJVU6Ar5Oafqap1
-         DWPuRxuzayNlpkvVuQL3/onN4xagrtEU+Stpcw/M4/rV1SXHMx7IMelpUf8eu1reCo
-         L0ux3Ib9IxETw==
-Date:   Fri, 7 Dec 2018 09:18:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Message-ID: <20181207091847.1db6a48e@canb.auug.org.au>
+        id S1725939AbeLFWT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:19:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 14:19:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="99313296"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 06 Dec 2018 14:19:28 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Subject: [RFC PATCH v2 0/4] x86: Add vDSO exception fixup for SGX
+Date:   Thu,  6 Dec 2018 14:19:18 -0800
+Message-Id: <20181206221922.31012-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1lBJtn.ZJVoQ.Wz5=7LV8BC"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1lBJtn.ZJVoQ.Wz5=7LV8BC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This version is almost entirely about the vDSO function itself,
+i.e. patch 4/4.  Feel free to ignore patches 2/4 and 3/4, I need
+to do (a lot) more legwork to address feedback and improve their
+changelogs.  I'm expecting that to take a fair amount of time and
+wanted to get the alternative exit handler idea out there ASAP.
 
-Hi all,
+The new vDSO function builds but is otherwise completely untested.
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+v2:
+  - For all intents and purposes, rewrite the SGX vDSO function.
+    This version is quite a bit different than anything discussed in
+    the past.  Rather than provide separate a separate function or an
+    explicit parameter to request ERESUME, e.g. to recover after a
+    fault, take an optional "exit handler" that provides the caller
+    the opportunity to specify if and how the enclave should be
+    resumed.  More details in the changelog.
 
-  arch/arm64/kernel/cpu_errata.c
+  - Rename it to __vdso_sgx_enter_enclave() to abstract the details
+    of EENTER and ERESUME to some degree.
 
-between commit:
+  - Give the enclave RDI, RSI and RDX to pass data out of the enclave.
 
-  ce8c80c536da ("arm64: Add workaround for Cortex-A76 erratum 1286807")
+  - Call fixup_vdso_exception() in do_int3().
 
-from Linus' tree and commit:
 
-  c9460dcb06ee ("arm64: capabilities: Merge entries for ARM64_WORKAROUND_CL=
-EAN_CACHE")
+v1: https://lkml.kernel.org/r/20181205232012.28920-1-sean.j.christopherson@intel.com
 
-from the arm64 tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Sean Christopherson (4):
+  x86/vdso: Add support for exception fixup in vDSO functions
+  x86/fault: Attempt to fixup unhandled #PF in vDSO before signaling
+  x86/traps: Attempt to fixup exceptions in vDSO before signaling
+  x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave
+    transitions
 
---=20
-Cheers,
-Stephen Rothwell
+ arch/x86/entry/vdso/Makefile             |   5 +-
+ arch/x86/entry/vdso/extable.c            |  37 +++++++
+ arch/x86/entry/vdso/extable.h            |  17 ++++
+ arch/x86/entry/vdso/vdso-layout.lds.S    |   9 +-
+ arch/x86/entry/vdso/vdso.lds.S           |   1 +
+ arch/x86/entry/vdso/vdso2c.h             |  58 +++++++++--
+ arch/x86/entry/vdso/vsgx_enter_enclave.c | 119 +++++++++++++++++++++++
+ arch/x86/include/asm/vdso.h              |   5 +
+ arch/x86/kernel/traps.c                  |  15 +++
+ arch/x86/mm/fault.c                      |   7 ++
+ 10 files changed, 262 insertions(+), 11 deletions(-)
+ create mode 100644 arch/x86/entry/vdso/extable.c
+ create mode 100644 arch/x86/entry/vdso/extable.h
+ create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.c
 
-diff --cc arch/arm64/kernel/cpu_errata.c
-index 6ad715d67df8,bb44635026f8..000000000000
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@@ -570,21 -570,43 +570,57 @@@ static const struct midr_range arm64_ha
- =20
-  #endif
- =20
- +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
- +
- +static const struct midr_range arm64_repeat_tlbi_cpus[] =3D {
- +#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
- +	MIDR_RANGE(MIDR_QCOM_FALKOR_V1, 0, 0, 0, 0),
- +#endif
- +#ifdef CONFIG_ARM64_ERRATUM_1286807
- +	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 3, 0),
- +#endif
- +	{},
- +};
- +
- +#endif
- +
-- const struct arm64_cpu_capabilities arm64_errata[] =3D {
-+ #ifdef CONFIG_CAVIUM_ERRATUM_27456
-+ static const struct midr_range cavium_erratum_27456_cpus[] =3D {
-+ 	/* Cavium ThunderX, T88 pass 1.x - 2.1 */
-+ 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 1),
-+ 	/* Cavium ThunderX, T81 pass 1.0 */
-+ 	MIDR_REV(MIDR_THUNDERX_81XX, 0, 0),
-+ 	{},
-+ };
-+ #endif
-+=20
-+ #ifdef CONFIG_CAVIUM_ERRATUM_30115
-+ static const struct midr_range cavium_erratum_30115_cpus[] =3D {
-+ 	/* Cavium ThunderX, T88 pass 1.x - 2.2 */
-+ 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 2),
-+ 	/* Cavium ThunderX, T81 pass 1.0 - 1.2 */
-+ 	MIDR_REV_RANGE(MIDR_THUNDERX_81XX, 0, 0, 2),
-+ 	/* Cavium ThunderX, T83 pass 1.0 */
-+ 	MIDR_REV(MIDR_THUNDERX_83XX, 0, 0),
-+ 	{},
-+ };
-+ #endif
-+=20
-+ #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
-+ static const struct arm64_cpu_capabilities qcom_erratum_1003_list[] =3D {
-+ 	{
-+ 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
-+ 	},
-+ 	{
-+ 		.midr_range.model =3D MIDR_QCOM_KRYO,
-+ 		.matches =3D is_kryo_midr,
-+ 	},
-+ 	{},
-+ };
-+ #endif
-+=20
-+ #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
-+ static const struct midr_range workaround_clean_cache[] =3D {
-  #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
-  	defined(CONFIG_ARM64_ERRATUM_827319) || \
-  	defined(CONFIG_ARM64_ERRATUM_824069)
-@@@ -697,23 -698,17 +712,17 @@@ const struct arm64_cpu_capabilities arm
-  	},
-  #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
-  	{
-- 		.desc =3D "Qualcomm Technologies Falkor erratum 1003",
-+ 		.desc =3D "Qualcomm Technologies Falkor/Kryo erratum 1003",
-  		.capability =3D ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-- 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
-- 	},
-- 	{
-- 		.desc =3D "Qualcomm Technologies Kryo erratum 1003",
-- 		.capability =3D ARM64_WORKAROUND_QCOM_FALKOR_E1003,
-- 		.type =3D ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
-- 		.midr_range.model =3D MIDR_QCOM_KRYO,
-- 		.matches =3D is_kryo_midr,
-+ 		.matches =3D multi_entry_cap_matches,
-+ 		.match_list =3D qcom_erratum_1003_list,
-  	},
-  #endif
- -#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
- +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
-  	{
- -		.desc =3D "Qualcomm Technologies Falkor erratum 1009",
- +		.desc =3D "Qualcomm erratum 1009, ARM erratum 1286807",
-  		.capability =3D ARM64_WORKAROUND_REPEAT_TLBI,
- -		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
- +		ERRATA_MIDR_RANGE_LIST(arm64_repeat_tlbi_cpus),
-  	},
-  #endif
-  #ifdef CONFIG_ARM64_ERRATUM_858921
+-- 
+2.19.2
 
---Sig_/1lBJtn.ZJVoQ.Wz5=7LV8BC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJoEcACgkQAVBC80lX
-0Gztcwf/Vzza/0RNAhQMMZZRfUG6e/sQewQtRXLmvSc9yKLs0w0FAmO/Igw1RrT3
-kyNySbFF9gH+m0XCwti+/kDI/H0XWF9vYZXE3KwzBodxBpl0bgZLCNiBY5ZKUMyz
-0hms2p8uuUE7npBwD/Dk510lR9woPnyQFz5sPstkuWcayyo0ermg6YLJdZ87KzLB
-i3Pp0TN5M30e7/zbLO5sfgzVpO1kRhOIN2E58TgPnqwYOwRqgLhfWY8qTw5LRLCx
-cwMfA7zJUZJXJizHmoQlGeIKMvfQ4hWqW3xWa/FZTw0A2ng0gMWzNXhINKObN05Q
-neHtW2Gggb3QGgK9QmCXTlewxRVGXA==
-=C381
------END PGP SIGNATURE-----
-
---Sig_/1lBJtn.ZJVoQ.Wz5=7LV8BC--
