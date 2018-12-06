@@ -2,115 +2,95 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9BCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF516C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2625520850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:12:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2625520850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9A02D20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544094813;
+	bh=cqj4QkOqEE8x08Mu2Xw78WNjssnBkJOWAeqdmmW2exM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vQpf6IBpkFS/AYEJq/pv9uDgegwCgA40wP3RDdlQlN7dL31y71BVjYTO2aJNIx08M
+	 ggRNxRNH5WHIPD2O7NfMcLDftk1/nEpvKPIv3D8gaRCghiN2zG0U8Ohk8mPQ75dIzo
+	 3sBK1/NQc9SUciU0x5+rhifrc1ddd1AjwP8+Yk6Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A02D20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbeLFLMP (ORCPT
+        id S1729601AbeLFLNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:12:15 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:53345 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFLMP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:12:15 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gUrZd-0003iR-4q; Thu, 06 Dec 2018 12:12:05 +0100
-Message-ID: <1544094724.3709.60.camel@pengutronix.de>
-Subject: Re: [PATCH 3/5] irqchip/irq-imx-gpcv2: Make use of BIT() macro
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, cphealy@gmail.com,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Dec 2018 12:12:04 +0100
-In-Reply-To: <20181206073125.7255-4-andrew.smirnov@gmail.com>
-References: <20181206073125.7255-1-andrew.smirnov@gmail.com>
-         <20181206073125.7255-4-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 6 Dec 2018 06:13:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729200AbeLFLNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 06:13:31 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C053420850;
+        Thu,  6 Dec 2018 11:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544094811;
+        bh=cqj4QkOqEE8x08Mu2Xw78WNjssnBkJOWAeqdmmW2exM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rbDMmfK4v2/GxJkyUrCiBPHjYnD3mPngRRMaIrP2v4azCX1x+WD6NQATU+kQrVZTZ
+         AOx6tpunTDGZfd3lElU3W90WLJVAPWXSJ4BQLQ79W9vLv3ZSgM9FL1PS6J6vsuJab0
+         tLz3mK6PGLnIJBdGqpapjvzp2HBeMuCE9QZPS9AA=
+Date:   Thu, 6 Dec 2018 12:13:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Roman Gushchin <guro@fb.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: hide incomplete nr_indirectly_reclaimable in
+ /proc/zoneinfo
+Message-ID: <20181206111328.GP19891@kroah.com>
+References: <20181030174649.16778-1-guro@fb.com>
+ <20181129125228.GN3149@kroah.com>
+ <a4495506-2dcf-922a-1b77-e915214dd041@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4495506-2dcf-922a-1b77-e915214dd041@suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 05.12.2018, 23:31 -0800 schrieb Andrey Smirnov:
-> Convert all instances of 1 << x to BIT(x) for consistency with other
-> kernel code.
+On Thu, Nov 29, 2018 at 03:54:10PM +0100, Vlastimil Babka wrote:
+> On 11/29/18 1:52 PM, Greg KH wrote:
+> > On Tue, Oct 30, 2018 at 05:48:25PM +0000, Roman Gushchin wrote:
+> >> BTW, in 4.19+ the counter has been renamed and exported by
+> >> the commit b29940c1abd7 ("mm: rename and change semantics of
+> >> nr_indirectly_reclaimable_bytes"), so there is no such a problem
+> >> anymore.
+> >>
+> >> Cc: <stable@vger.kernel.org> # 4.14.x-4.18.x
+> >> Fixes: 7aaf77272358 ("mm: don't show nr_indirectly_reclaimable in /proc/vmstat")
 > 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: cphealy@gmail.com
-> Cc: l.stach@pengutronix.de
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-
-> ---
->  drivers/irqchip/irq-imx-gpcv2.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> ...
 > 
-> diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-
-> imx-gpcv2.c
-> index b262ba8b2652..077d56b3183a 100644
-> --- a/drivers/irqchip/irq-imx-gpcv2.c
-> +++ b/drivers/irqchip/irq-imx-gpcv2.c
-> @@ -78,7 +78,7 @@ static int imx_gpcv2_irq_set_wake(struct irq_data
-> *d, unsigned int on)
->  	u32 mask, val;
->  
->  	raw_spin_lock_irqsave(&cd->rlock, flags);
-> -	mask = 1 << d->hwirq % 32;
-> +	mask = BIT(d->hwirq % 32);
->  	val = cd->wakeup_sources[idx];
->  
->  	cd->wakeup_sources[idx] = on ? (val & ~mask) : (val | mask);
-> @@ -101,7 +101,7 @@ static void imx_gpcv2_irq_unmask(struct irq_data
-> *d)
->  	raw_spin_lock(&cd->rlock);
->  	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
->  	val = readl_relaxed(reg);
-> -	val &= ~(1 << d->hwirq % 32);
-> +	val &= ~BIT(d->hwirq % 32);
->  	writel_relaxed(val, reg);
->  	raw_spin_unlock(&cd->rlock);
->  
-> @@ -117,7 +117,7 @@ static void imx_gpcv2_irq_mask(struct irq_data
-> *d)
->  	raw_spin_lock(&cd->rlock);
->  	reg = gpcv2_idx_to_reg(cd, d->hwirq / 32);
->  	val = readl_relaxed(reg);
-> -	val |= 1 << (d->hwirq % 32);
-> +	val |= BIT(d->hwirq % 32);
->  	writel_relaxed(val, reg);
->  	raw_spin_unlock(&cd->rlock);
->  
+> > I do not see this patch in Linus's tree, do you?
+> > 
+> > If not, what am I supposed to do with this?
+> 
+> Yeah it wasn't probably clear enough, but this is stable-only patch, as
+> upstream avoided the (then-unknown) problem in 4.19 as part of a far
+> more intrusive series. As I've said in my previous reply to this thread,
+> I don't think we can backport that series to stable (e.g. it introduces
+> a set of new kmalloc caches that will suddenly appear in /proc/slabinfo)
+> so I think this is a case for exception from the stable rules.
+
+Ok, now queued up, thanks.
+
+greg k-h
