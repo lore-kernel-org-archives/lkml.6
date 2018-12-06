@@ -2,76 +2,72 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F06FC65BB3
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98792C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639BF2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639BF2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 565CD214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544058604;
+	bh=BF+8MI51s76ZiLOzg1A3JgSDu3mjJ5lr+Q/VCLDz+oQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=jsc2Cda/w9Nu27n8WgG6YJRUX8EksNUj1MJtSrfXS9gOSPNg1wwfAXFTIPwFxFMki
+	 KgsflxqagNIJM2MFUHlDuvDVChHm72sBC18xe4hPevHyTWhAzQaVeYPe7QnmzQ8bg5
+	 H5UGCTlOBVblGBxMSM9C8IihaAHlrlIIZFj8qIr0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565CD214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728889AbeLFBJg (ORCPT
+        id S1728949AbeLFBKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:09:36 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:26859 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728823AbeLFBJe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:09:34 -0500
-X-UUID: d6e4c802dcf040748714df57c4112ed2-20181206
-X-UUID: d6e4c802dcf040748714df57c4112ed2-20181206
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <jianjun.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1218673436; Thu, 06 Dec 2018 09:09:19 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 6 Dec 2018 09:09:17 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 6 Dec 2018 09:09:16 +0800
-From:   Jianjun Wang <jianjun.wang@mediatek.com>
-To:     <ryder.lee@mediatek.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <lorenzo.pieralisi@arm.com>,
-        <matthias.bgg@gmail.com>, <linux-pci@vger.kernel.org>
-CC:     <mark.rutland@arm.com>, <linux-mediatek@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>,
-        Jianjun Wang <jianjun.wang@mediatek.com>
-Subject: [PATCH 0/2] PCI: mediatek: Add support for MT7629
-Date:   Thu, 6 Dec 2018 09:09:11 +0800
-Message-ID: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 03E617F56C26719AEA8BAD6583948FE1D4910ECDA128FC7A0B304A2845C2D2D02000:8
-X-MTK:  N
+        Wed, 5 Dec 2018 20:10:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728757AbeLFBKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 20:10:02 -0500
+Subject: Re: [GIT PULL] SCSI fixes for 4.20-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544058602;
+        bh=BF+8MI51s76ZiLOzg1A3JgSDu3mjJ5lr+Q/VCLDz+oQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=GeKGB5JBrajdF5o2RgJ3aFioytfyhTK0XDxgZQm+okkABR0Kp0HANT1x8FJCorMv5
+         uAgnVILboQ/KRlO5rBqEsYH85ZLRXHDQqLZTmFpPXG/BffE/vGsLDVJstAax2l5Lx/
+         TrGLLrIAIKRTDITAvrFtggwipn/0r0KVfODEFce0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1544056700.3414.6.camel@HansenPartnership.com>
+References: <1544056700.3414.6.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1544056700.3414.6.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: c967590457cae5ba4f018704c341641bdcecfdcf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cf76c364a1e1e5224af80edf70a1e3023e1fcf8c
+Message-Id: <20181206011002.3849.4627.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 06 Dec 2018 01:10:02 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These series patches modify pcie-mediatek.c and dt-bindings compatible
-string to support MT7629 PCIe host.
+The pull request you sent on Thu, 06 Dec 2018 09:38:20 +0900:
 
-There was something wrong with the mail server's permission setting, sorry
-for sent these mails repeatedly.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Jianjun Wang (2):
-  dt-bindings: PCI: Add support for MT7629
-  PCI: mediatek: Add controller support for MT7629
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cf76c364a1e1e5224af80edf70a1e3023e1fcf8c
 
- .../devicetree/bindings/pci/mediatek-pcie.txt |  1 +
- drivers/pci/controller/pcie-mediatek.c        | 26 +++++++++++++++++++
- include/linux/pci_ids.h                       |  1 +
- 3 files changed, 28 insertions(+)
+Thank you!
 
 -- 
-2.19.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
