@@ -2,198 +2,268 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C47C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A82C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3147421479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aV8VZGLv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A0sN6HL+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3147421479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D5002082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544134104;
+	bh=ExD9TSSNAfv7uoKuEqR4Nc7idb8HztWEiCRbDzmkgeY=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=RB27G+KA8AN3MoPeJMZGZr1uTZD5lsiLs4H0KuWXa8Z2GukXX5EfytNIjumcBWcPR
+	 8dALPLfPGWG7CIkxHzAyG8RIvMrp+fFDoTdTNkwS2R1q4bprIjgUSRf1B7Ug5Qs6EQ
+	 L8C+k0hpY823WO3Ra9PstGgRFsja5VqNGDCLllCc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5002082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbeLFWIK (ORCPT
+        id S1726182AbeLFWIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:08:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57292 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeLFWIJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:08:09 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 62D17616D6; Thu,  6 Dec 2018 22:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544134088;
-        bh=oxUE6oTeSELGXzu6IsKLsX14JbJ6dn8xZAFYCWdFlJw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aV8VZGLvGxz6aGKP4Ri7Y4Qhv0Tnw1Xa8eaoeWZlX1FhDuFLjOkabJKdnfe4YWcpb
-         01eIIrWOvMPsHOPiN2BSyEkCxtHHAmC9Rw8eNT1XR2D4fdEfWbW1k8OUFrssG2qmup
-         rk9/as2Y9LdV56z2t9h5eMjtdtOGCUDbw93Rz2Xs=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 6 Dec 2018 17:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbeLFWIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:08:23 -0500
+Received: from localhost (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A5A9616A0;
-        Thu,  6 Dec 2018 22:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544134087;
-        bh=oxUE6oTeSELGXzu6IsKLsX14JbJ6dn8xZAFYCWdFlJw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=A0sN6HL+9HRNOglpSz3gzOGMfzlWW0Y5hBOxLetRenk/GWUXrDLST8QZfVJqHCMmB
-         mBV/YVwGRCNV4SnLkth8YcL16a/KHEPnjIP0Ao4r1bxDK/ABbwXVNgDtc0e93JHtC8
-         0/9rOmGzcghRJ6YToe3as3p4GbWEC5zKEC+VfK1o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A5A9616A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
-To:     Stephen Boyd <sboyd@kernel.org>, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
- <154413331679.88331.15909045605070653326@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <05485272-a117-b8e5-e7c5-d0dd8cc8fef4@codeaurora.org>
-Date:   Thu, 6 Dec 2018 15:08:05 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CF9C2082B;
+        Thu,  6 Dec 2018 22:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544134101;
+        bh=ExD9TSSNAfv7uoKuEqR4Nc7idb8HztWEiCRbDzmkgeY=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=IRKWy8u3d/rNg6Xiusm+8Wqe9FKdvIsHhuBn4Aip918882I2c20N4TDtqgGfWV+rB
+         YtbKuX73SE+FvWDn4qD8cglIr9N9zUred5CV4oHq3BuDvTc+m3lo/22LgqFM1mPzH2
+         vY9PgV1ig6JAtiYxeUieQ/3SSlGyOeXJYpi9I7p8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <154413331679.88331.15909045605070653326@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+ <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+ <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com>
+ <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com>
+ <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com>
+Message-ID: <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent clocks"
+Date:   Thu, 06 Dec 2018 14:08:20 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/6/2018 2:55 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2018-12-06 13:11:06)
->> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
->> for clients to vote on.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
->>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
->>   3 files changed, 69 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> index 87b4949..16c4293 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
->> @@ -17,6 +17,7 @@ Required properties :
->>                          "qcom,rpmcc-apq8064", "qcom,rpmcc"
->>                          "qcom,rpmcc-msm8996", "qcom,rpmcc"
->>                          "qcom,rpmcc-qcs404", "qcom,rpmcc"
->> +                       "qcom,rpmcc-msm8998", "qcom,rpmcc"
-> 
-> Can you keep this sorted on the first compatible?
+Sorry this email is long.
 
-No problem, that's a quick fix.  Same with the ordering nit below.
+TL;DR is that I don't think we need to revert the patch as you suggest.
+Instead, we should fix the driver to indicate NULL as the parent name of
+the index it tells the framework about.
 
-> 
->>   
->>   - #clock-cells : shall contain 1
->>   
-> 
-> Rob may prefer this file is split from the driver part into a different
-> patch.
-> 
->> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->> index d3aadae..269304e 100644
->> --- a/drivers/clk/qcom/clk-smd-rpm.c
->> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->> @@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
->>          .num_clks = ARRAY_SIZE(qcs404_clks),
->>   };
->>   
->> +/* msm8998 */
->> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
->> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
->> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
->> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
->> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
->> +                  QCOM_SMD_RPM_MMAXI_CLK, 0);
->> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
->> +                  QCOM_SMD_RPM_AGGR_CLK, 1);
->> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
->> +                  QCOM_SMD_RPM_AGGR_CLK, 2);
->> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
->> +                       QCOM_SMD_RPM_MISC_CLK, 1);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
->> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
->> +static struct clk_smd_rpm *msm8998_clks[] = {
->> +       [RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
->> +       [RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
->> +       [RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
->> +       [RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
->> +       [RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
->> +       [RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
->> +       [RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
->> +       [RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
->> +       [RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
->> +       [RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
->> +       [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
->> +       [RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
->> +       [RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
->> +       [RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
->> +       [RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
->> +       [RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
->> +       [RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
->> +       [RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
->> +       [RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
->> +       [RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
->> +       [RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
->> +       [RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
->> +       [RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
->> +       [RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
->> +       [RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
->> +       [RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
->> +       [RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
->> +       [RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
->> +       [RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
->> +       [RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
->> +       [RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
->> +       [RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
->> +};
->> +
->> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
->> +       .clks = msm8998_clks,
->> +       .num_clks = ARRAY_SIZE(msm8998_clks),
->> +};
->> +
->>   static const struct of_device_id rpm_smd_clk_match_table[] = {
->>          { .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
->>          { .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
->>          { .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
->>          { .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
->> +       { .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
-> 
-> And this sorted too.
-> 
->>          { }
->>   };
->>   MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+Quoting Jerome Brunet (2018-12-05 09:20:09)
+> On Tue, 2018-12-04 at 23:54 -0800, Stephen Boyd wrote:
+> > =
+
+> > Ok. Thanks for the explanation. What do you do to fix this problem in
+> > the 'ao_cts_cec' clk implementation?
+> =
+
+> IMO, there is nothing to fix, the implementation is correct. =
+
+> =
+
+> >  Sounds like you just rely on
+> > clk_set_rate() to fix this all up for you when the consumer changes the
+> > rate?
+> =
+
+> To setup the rate as the customer expect, yes.
+
+Ok.
+
+> =
+
+> > =
+
+> > If we have something that is default parented to something we're not
+> > telling the framework about for some reason then one solution would be
+> > to have some init code reparent the clk in hardware before registering
+> > it with the framework. Basically "fix up" the clk tree in hardware to be
+> > consistent with what software can reason about. =
+
+> =
+
+> Should we really ? Something the framework does not know about is not
+> necessarily something wrong.
+> =
+
+> It would best if we could model the tree completly, but most of the time,=
+ we
+> just approximate it the best we can.
+> =
+
+> The framework just knows how to setup rates, it has no idea what rate nee=
+ds to
+> be set or when - And I think it is best if does not make any assumption a=
+bout
+> that.
+> =
+
+> Pushing it a bit, this unknown parent might important to the boot sequenc=
+e.
+> How would you know when it is safe to change the setting ?
+> What would change it to ? It Seems obvious when there is only one known
+> parent, but what if there two ? which one do you pick ? Is it really the =
+role
+> of CCF to make this kind of choice ? =
 
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Agreed. We can't mandate this requirement because of what you say. There
+are pitfalls such as not always knowing if it's safe to change the clk
+tree before clks are registered.
+
+> =
+
+> > =
+
+> > This also reminds me of some audio clks I've seen before where the
+> > default parent is some external pin and it can be reparented to an
+> > internal clk with clk_set_rate/parent. In that case, I think we forced
+> > the parent over to the internal clk before registering so that it would
+> > always get parented properly in the framework. Right now, this is going
+> > to cause problems for plans to probe defer clk_get() on orphan clks.
+> =
+
+> clk_get() on orphaned clock should probably return an error if it is not =
+the
+> case already ? or 0 maybe ?
+
+I'd prefer that it return EPROBE_DEFER if the clk is an orphan, except
+that it causes problems for this case where muxes move away from
+something unknown to something known.
+
+> =
+
+> > =
+
+> > Maybe this could work better if we allowed
+> > 'assigned-clock-parents/rates' to reparent clks regardless of orphan
+> > status and/or had some flag that could be set on clks to indicate that
+> > we're OK if clk_get() is called on it when it's an orphan because this
+> > isn't a problem?
+> =
+
+> Not sure I understand your point here.
+
+There is a problem with assigned-clock DT properties and orphan clks and
+making orphan clks defer driver probes.
+
+> =
+
+> > =
+
+> > Or we can make the defer on orphan code only defer if the clk has a
+> > single parent and it's an orphan and return the clk if there is at least
+> > one parent of the clk that has been registered and isn't marked as an
+> > orphan. That would need to be recursively applied, so I guess we would
+> > update our orphan marking code to indicate that clk_get() on the clk
+> > should probe defer or not instead of indicating the clk's orphan status.
+> > Doing this would also side-step the problem Rockchip was having where
+> > certain parents never appeared but the clk was parented to it in
+> > hardware, essentially blocking the clk from ever being touched by
+> > consumers.
+> =
+
+> ... and now you lost me completly :)
+
+Hmm alright.
+
+> =
+
+> > =
+
+> > On the other hand, not having the clk there causes us to do a global
+> > search of the clk name space each time we look for parents by the
+> > "unknown" index, which in the Rockchip case was quite often because the
+> > clk was changing between two other parents with a third one that never
+> > got registered. So it may be better to just register an "unknown" clk as
+> > a root clk with a rate of 0 that you can then hook everything up to that
+> > is hardware reset to this unknown input. That way nothing is orphaned
+> > and everyone is happy. We could do this for the audio case I talked
+> > about earlier too so when the external pin is left unconnected we could
+> > register some 'unconnected' clk and parent the audio clk to it.
+> =
+
+> We have sometimes a few orphans in the amlogic clock tree, it does not se=
+ems
+> to a problem.
+
+I suppose drivers aren't calling clk_set_rate() on the orphaned clks and
+experiencing problems? There are problems around clk rates that could
+happen if there aren't any proper parents of a mux.
+
+> =
+
+> I don't really understand the benefit of having a fake clock that would a=
+dopt
+> all the orphan ? You guess there is problem I'm not aware of ...
+
+I see three cases that can go wrong if we make orphan clks probe defer
+clk_get():
+
+  1) NULL as the parent name for some parent index that the hardware
+     indicates is the current parent of the clk when the clk is registered.
+
+In this case, we need to make clk_get() succeed and not return
+-EPROBE_DEFER, so I think we need to make a special "unknown" clk in the
+framework so that clks aren't orphaned when the hardware is indicating
+the parent is something we don't (and won't) know anything about.
+
+  2) get_parent/set_parent on a clk with num_parents =3D=3D 1
+
+This seems to be how ao_cts_cec is implemented. This hides the fact that
+get_parent may return some number above the number of parents and then
+has that quietly make the parent of the clk NULL during registration so
+that it's orphaned. Then we rely on set_rate() or set_parent() being
+called to fix the parent chain at a later time.
+
+That is complicated and non-obvious. I'd rather that we specify NULL as
+a parent in the parent_names array if we're going to return that index
+to the framework and then have the framework go to case #1. This makes
+it easier for the framework to assume that [0, num_parents) is the valid
+range of indices returned from the get_parent() op and a number outside
+that range is an error, clearing the way for errors to be returned from
+get_parent() if it somehow fails.
+
+  3) A string as the parent name for some parent index that the hardware
+     indicates is the current parent of the clk when the clk is registered,
+     but that parent clk may never be registered with the framework.
+
+I imagine this can happen with an external gpio clk that feeds some SoC
+internal clk. That gpio could be supplied by some clk signal that the
+board designer decides to send there, and it could also just "magically
+appear" by applying some DT overlay. Due to our use of global strings
+for parent linking, we don't have a good way to figure out that nothing
+is connected to some clock input signal, making this quite a nightmare
+to figure out a runtime!
+
+One solution is to replace the parent name with NULL and ignore the
+runtime update case. This will work and bring us back to case #1. The
+problem is that if it is connected to something like a GPIO and it
+defaults to that pin instead of some internal clk we're stuck with an
+"orphan" clk that we can't clk_get(). I suppose the driver could read DT
+and see if this pin is not connected and then mark this input parent
+name as NULL. We can punt on solving the DT overlay problem until later,
+because we would need some way to dynamically resolve a new parent of a
+clk and update the tree when the DT node is modified to use a new GPIO.
+
