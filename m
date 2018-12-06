@@ -2,101 +2,118 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B18EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00D7620989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1EE2146F
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544128198;
-	bh=LmAGwVz/4T2dpRord1Ge3gGKRUVfaOMYzQq4GUGfvmE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Lks/3i8PfT7gqy4yANUEqgrPBxiZSoZKR+/LEVlvhC/D79eWG5fAW/q53KI6I5YOs
-	 Er1yT8Xv0Qicb1mQ22VrfdsGRtqIHkVe+1uAj0fYr9NxKxeamJqBAcf9T4hANUDI62
-	 Pv6SBcM9Se7l6K0yveL3mik+UtsgPpo8RI3otcns=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D7620989
+	s=default; t=1544128213;
+	bh=rUZJ2vK8aAMnT+hvSY2coPeITsasyRxkM+He3XY+Ly4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LGo4xdMmmUGirYiHcrnGm0eDbd66ApzpWgEUVhnm28ZnQtZmUgxNI/pT9fKX6LlU+
+	 EgG2wNqBvAQdqujhktCVLAWe1ctXlFQIqwTwuFSRWGwwu4Cl1tEYwySoC9jq53JErv
+	 ez4oyI4FjYjiFD2yemJA0KTnBQT5LEOdVoS7Ifms=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1EE2146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbeLFU34 (ORCPT
+        id S1726096AbeLFUaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:29:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeLFU34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:29:56 -0500
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89930214E0
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 20:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544128195;
-        bh=LmAGwVz/4T2dpRord1Ge3gGKRUVfaOMYzQq4GUGfvmE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0WOic+7z9IJhcPcERxD8Yt0Mckw4OxxkNnUiwAFtN84fCfrjIcmPRdpWEGh+yPea+
-         LniNgbxQxJirElQck1h6eu14gn+71QGMBClYTJ6tgxmhQcrbqrVSgTMUYiGyJbMApc
-         /3vyg9CEVBxtkhGH11K+Ngifu5W2eoebdwy/5v0A=
-Received: by mail-wm1-f42.google.com with SMTP id y1so2263877wmi.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:29:55 -0800 (PST)
-X-Gm-Message-State: AA+aEWbdN7tXEuRSMbmjPrTOZEmPiKwbEWJ8O1+MbNGa8qpnwHjUyayC
-        /IumfA7FteKYmHi8m22w+ITk2tengG1u0b+vb1oC3g==
-X-Google-Smtp-Source: AFSGD/UamjY5m+tsJA+o7VaZACazliGAEZ/3cuAn4z4uSAvMYPDo6vWjbGl0hQKSHc6Qr+HdjLGEOaiuYXVxOehaUfg=
-X-Received: by 2002:a1c:864f:: with SMTP id i76mr16873672wmd.83.1544128194007;
- Thu, 06 Dec 2018 12:29:54 -0800 (PST)
+        Thu, 6 Dec 2018 15:30:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43816 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeLFUaM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:30:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uu0YAyYEY643TdPRgWmAazr8rnR98z/B40PCWyaIBew=; b=Xp+np2u7RM6rG0Qw2EL4rocPb
+        bI7CqIr31ebzaMMymu5Gve8N7vpum7popVYA9MlS7E/ilKo0uinzlfY0tOzA3sZHKTAaz7sUH8LeW
+        s/Hf4ZbuQ1OwTjKPw5wF9BXd9lGPG1AdHhD7PEQ4DcYztcZUkJlwwa2QVYtWv4UEZvKVk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gV0HU-0001jG-Fd; Thu, 06 Dec 2018 20:29:56 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 0FAEE11252F7; Thu,  6 Dec 2018 20:29:56 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 20:29:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Vignesh R <vigneshr@ti.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
+Message-ID: <20181206202956.GG3084@sirena.org.uk>
+References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <20181203101937.7b01a0ad@bbrezillon>
+ <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
+ <20181205134618.56223758@bbrezillon>
+ <VI1PR04MB572646B71C6CB7BAAB4A1E1999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <20181206074554.0ec0aecb@bbrezillon>
+ <VI1PR04MB572620BB57CB01A352904BB999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20181206191231.192355-1-ndesaulniers@google.com>
-In-Reply-To: <20181206191231.192355-1-ndesaulniers@google.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Dec 2018 12:29:42 -0800
-X-Gmail-Original-Message-ID: <CALCETrUu5TuNQ9rxtpRng3=r4eaJQMs4PTNR6s=VFPKfW7eNBQ@mail.gmail.com>
-Message-ID: <CALCETrUu5TuNQ9rxtpRng3=r4eaJQMs4PTNR6s=VFPKfW7eNBQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/vdso: drop implicit common-page-size linker flag
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>, maskray@google.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>, dima@golovin.in,
-        morbo@google.com, ruiu@google.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Wtrm9ATX0sn6fFKv"
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB572620BB57CB01A352904BB999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+X-Cookie: You will be successful in love.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 11:12 AM <ndesaulniers@google.com> wrote:
->
-> These are implied by the target architecture and for x86_64 match the
-> max-page-size. The default for non-NaCl x86_64 is 0x1000 (4096).
->
-> In bfd the common page size is defined as 0x1000 (4096) for non-NaCl
-> x86_64 targets:
->
-> bfd/elf64-x86-64.c:
-> 4998:#define ELF_COMMONPAGESIZE             0x1000
->
-> For gold, the common page size is defined as 0x1000 (4096) for non-NaCl
-> x86_64 targets:
->
-> gold/x86_64.cc:
-> 1413:  0x1000, // common_pagesize (overridable by -z common-page-size)
-> 1442:  0x1000, // common_pagesize (overridable by -z common-page-size)
->
-> (ELF_COMMONPAGESIZE also defaults to ELF_MAXPAGESIZE when not set
-> explicitly for a target architecture in bfd/elfxx-target.h, but that's
-> not relevant for x86_64).
->
-> Because it's implied by the target architecture, it's of questionable
-> use to implement in LLD.  This patch resolves one of the issues towards
-> using LLD to link an x86_64 kernel.
 
-Sure.
+--Wtrm9ATX0sn6fFKv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Andy Lutomirski <luto@kernel.org>
+On Thu, Dec 06, 2018 at 06:49:08AM +0000, Yogesh Narayan Gaur wrote:
+
+> Sorry for ignorance. Did patches needs to be applied by Mark Brown, should I resend the patch series again?
+> Also can you please review the series [1] and add your Reviewed-by tag.
+
+As I said in my reply earlier today in the same thread:
+
+| I don't have this any more, it looked like this was stuck behind the
+| otehr MTD changes which seemed to have problems.  If someone could
+| resend?
+
+so please resend.
+
+--Wtrm9ATX0sn6fFKv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwJhsMACgkQJNaLcl1U
+h9BxUwf/VXXXtAILeX5fLDCHtNVLqX9fo3DPdIf/7DKJkI4KipztYRdwnXr1gyWL
+PR//PfTDevtSYPomTWiO4oFiJ6dq8AKfE9HZl4SYBvNVO5W5DQwfa070uPVc/jGh
+Il9aC3h1wwb1de9+Y2x+Nfy1YJ485Em7sboYr6Zqra4viyht3EqXRcNup9JKsSUN
+IU3/wVOq00MFhxhqdevBClFHBQ8O/YfDQeRRU/yUcrTnr3L+x1OGoGMtkQKb+1M5
+jhTQd97LgT0Unlh69N67ofameyu+nVtp1HkgU2JbgF9eKZUqDq3ANGpK7XFRzmpU
+hBp/WucrDVjytmprJvexzb4Fz8BDbw==
+=rcQD
+-----END PGP SIGNATURE-----
+
+--Wtrm9ATX0sn6fFKv--
