@@ -2,165 +2,134 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807EEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1ABC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D9B20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:16:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QCX96gWO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D9B20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 28BB520892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:17:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28BB520892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbeLFJQB (ORCPT
+        id S1729263AbeLFJRQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:16:01 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33037 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeLFJQA (ORCPT
+        Thu, 6 Dec 2018 04:17:16 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:48296 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbeLFJRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:16:00 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so13875739vsc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:15:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oplyraUjlzT1MdYD0jbSQna4BlEOoZ+ROrl7JO6ZcX4=;
-        b=QCX96gWOCi1IvweM1uDEYuimkCOcRF7+ITWdMJ1/cX/tm7go7g7PjiOOT2DThXg68X
-         oUJoeiHaC9AjOqB99Lc717nDsBjT9MAWCi/KsdCqStANCdXYNgUzqlm9kjXrE9vUwWg0
-         dnBjBvLFgr43VIcrmgXIskRRE41DcczVCmHhs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oplyraUjlzT1MdYD0jbSQna4BlEOoZ+ROrl7JO6ZcX4=;
-        b=l2gvzWFsOICPh8v5wcHxh57Qo2hMajoFdUQKwrLxbRJRW7ydxdrSES6k2Jmao87uD6
-         w93BzG7fTN7cZXn5oCzoAlOnNkpPEw3Dw2kRAth8Ntrn3jyx335GNJLheJekfVycze2b
-         jYN9+3ANz5WY8P6DhwlcFR7gOi5gI5Dxf3fPYDwzaw6nl80ZtkdOLJLaqH1f2AxG5Pj5
-         CLFavJ37vwyI0/woWmzwfPshTski77yGnyOIdoBfusLAfNWH1WjYx77Yuh6jmJXLQE4S
-         dv+UanTMD55i4hkbLlsb+9bwNS0umgmPDOgsRJmYs1QhcdV2o3hodDRdXqZcnCbvNnLO
-         fHWg==
-X-Gm-Message-State: AA+aEWZ0lEuZ0RazlQQHwN0asOKU2fKhmamHwOljztBlbkIbrQiBCwmQ
-        6h6fzDgaxYN5p28Dxe2qvenrPsJvkf/PHLE8X0tLsQ==
-X-Google-Smtp-Source: AFSGD/UsZHvpC5TvTgT03vNBBhf3FX4VZq9uUDDdv07eTOp+J7Lffk6T8QhJKmOgHmIFPIqHa1bqWbsUwoPyi827vs0=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr12360073vsh.200.1544087759184;
- Thu, 06 Dec 2018 01:15:59 -0800 (PST)
+        Thu, 6 Dec 2018 04:17:15 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wB69GxmL001873
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 6 Dec 2018 18:16:59 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB69Gx45029879;
+        Thu, 6 Dec 2018 18:16:59 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB69GxI7006096;
+        Thu, 6 Dec 2018 18:16:59 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-411300; Thu, 6 Dec 2018 18:15:54 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Thu, 6
+ Dec 2018 18:15:54 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Oscar Salvador <OSalvador@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@gmail.com>,
+        "Pavel Tatashin" <pasha.tatashin@soleen.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
+ be offlined
+Thread-Topic: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages
+ to be offlined
+Thread-Index: AQHUiu9tY5+24nB+PkGyMm7atS1YiqVvf4kAgABK3wCAAM/4gIAANTgAgAAMOwA=
+Date:   Thu, 6 Dec 2018 09:15:53 +0000
+Message-ID: <20181206091552.GB26516@hori1.linux.bs1.fc.nec.co.jp>
+References: <20181203100309.14784-1-mhocko@kernel.org>
+ <20181205122918.GL1286@dhcp22.suse.cz>
+ <20181205165716.GS1286@dhcp22.suse.cz>
+ <20181206052137.GA28595@hori1.linux.bs1.fc.nec.co.jp>
+ <20181206083206.GC1286@dhcp22.suse.cz>
+In-Reply-To: <20181206083206.GC1286@dhcp22.suse.cz>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <CD9A479AF56DBD4EA4EB6EB94A401617@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-22-ulf.hansson@linaro.org> <20181204184553.GO18262@codeaurora.org>
-In-Reply-To: <20181204184553.GO18262@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 6 Dec 2018 10:15:23 +0100
-Message-ID: <CAPDyKFqv+1R-hbSmgfrn8jtBXEB3S1-=bg+ArBkR4m-cxd2oQQ@mail.gmail.com>
-Subject: Re: [PATCH v10 21/27] drivers: firmware: psci: Add a helper to attach
- a CPU to its PM domain
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018 at 19:45, Lina Iyer <ilina@codeaurora.org> wrote:
->
-> On Thu, Nov 29 2018 at 10:50 -0700, Ulf Hansson wrote:
-> >Introduce a new PSCI DT helper function, psci_dt_attach_cpu(), which takes
-> >a CPU number as an in-parameter and attaches the CPU's struct device to its
-> >corresponding PM domain. Additionally, the helper prepares the CPU to be
-> >power managed via runtime PM, which is the last step needed to enable the
-> >interaction with the PM domain through the runtime PM callbacks.
-> >
-> >Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >---
-> >
-> >Changes in v10:
-> >       - New patch: Replaces "PM / Domains: Add helper functions to
-> >         attach/detach CPUs to/from genpd".
-> >
-> >---
-> > drivers/firmware/psci/psci.h           |  1 +
-> > drivers/firmware/psci/psci_pm_domain.c | 19 +++++++++++++++++++
-> > 2 files changed, 20 insertions(+)
-> >
-> >diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
-> >index 05af462cc96e..fbc9980dee69 100644
-> >--- a/drivers/firmware/psci/psci.h
-> >+++ b/drivers/firmware/psci/psci.h
-> >@@ -15,6 +15,7 @@ int psci_dt_parse_state_node(struct device_node *np, u32 *state);
-> > int psci_dt_init_pm_domains(struct device_node *np);
-> > int psci_dt_pm_domains_parse_states(struct cpuidle_driver *drv,
-> >                       struct device_node *cpu_node, u32 *psci_states);
-> >+int psci_dt_attach_cpu(int cpu);
-> > #else
-> > static inline int psci_dt_init_pm_domains(struct device_node *np) { return 0; }
-> > #endif
-> >diff --git a/drivers/firmware/psci/psci_pm_domain.c b/drivers/firmware/psci/psci_pm_domain.c
-> >index 6c9d6a644c7f..b0fa7da8a0ce 100644
-> >--- a/drivers/firmware/psci/psci_pm_domain.c
-> >+++ b/drivers/firmware/psci/psci_pm_domain.c
-> >@@ -12,8 +12,10 @@
-> > #include <linux/device.h>
-> > #include <linux/kernel.h>
-> > #include <linux/pm_domain.h>
-> >+#include <linux/pm_runtime.h>
-> > #include <linux/slab.h>
-> > #include <linux/string.h>
-> >+#include <linux/cpu.h>
-> > #include <linux/cpuidle.h>
-> > #include <linux/cpu_pm.h>
-> >
-> >@@ -367,4 +369,21 @@ int psci_dt_pm_domains_parse_states(struct cpuidle_driver *drv,
-> >
-> >       return 0;
-> > }
-> >+
-> >+int psci_dt_attach_cpu(int cpu)
-> >+{
-> >+      struct device *dev = get_cpu_device(cpu);
-> >+      int ret;
-> >+
-> >+      ret = dev_pm_domain_attach(dev, true);
-> >+      if (ret)
-> >+              return ret;
-> >+
-> >+      pm_runtime_irq_safe(dev);
-> >+      pm_runtime_get_noresume(dev);
-> >+      pm_runtime_set_active(dev);
-> You would want to set this only if the CPU is online. Otherwise we will
-> not power down the domain, if the CPU was never brought online.
+On Thu, Dec 06, 2018 at 09:32:06AM +0100, Michal Hocko wrote:
+> On Thu 06-12-18 05:21:38, Naoya Horiguchi wrote:
+> > On Wed, Dec 05, 2018 at 05:57:16PM +0100, Michal Hocko wrote:
+> > > On Wed 05-12-18 13:29:18, Michal Hocko wrote:
+> > > [...]
+> > > > After some more thinking I am not really sure the above reasoning is
+> > > > still true with the current upstream kernel. Maybe I just managed to
+> > > > confuse myself so please hold off on this patch for now. Testing by
+> > > > Oscar has shown this patch is helping but the changelog might need to be
+> > > > updated.
+> > > 
+> > > OK, so Oscar has nailed it down and it seems that 4.4 kernel we have
+> > > been debugging on behaves slightly different. The underlying problem is
+> > > the same though. So I have reworded the changelog and added "just in
+> > > case" PageLRU handling. Naoya, maybe you have an argument that would
+> > > make this void for current upstream kernels.
+> > 
+> > The following commit (not in 4.4.x stable tree) might explain the
+> > difference you experienced:
+> > 
+> >   commit 286c469a988fbaf68e3a97ddf1e6c245c1446968                          
+> >   Author: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>                      
+> >   Date:   Wed May 3 14:56:22 2017 -0700                                    
+> >                                                                            
+> >       mm: hwpoison: call shake_page() after try_to_unmap() for mlocked page
+> > 
+> > This commit adds shake_page() for mlocked pages to make sure that the target
+> > page is flushed out from LRU cache. Without this shake_page(), subsequent
+> > delete_from_lru_cache() (from me_pagecache_clean()) fails to isolate it and
+> > the page will finally return back to LRU list.  So this scenario leads to
+> > "hwpoisoned by still linked to LRU list" page.
+> 
+> OK, I see. So does that mean that the LRU handling is no longer needed
+> and there is a guanratee that all kernels with the above commit cannot
+> ever get an LRU page?
 
-Nice catch!
+Theoretically no such gurantee, because try_to_unmap() doesn't have a
+guarantee of success and then memory_failure() returns immediately
+when hwpoison_user_mappings fails.
+Or the following code (comes after hwpoison_user_mappings block) also implies
+that the target page can still have PageLRU flag.
 
-The platforms I tested this series on brings all their CPUs online
-during boot, hence I haven't observed the problem.
+        /*
+         * Torn down by someone else?
+         */
+        if (PageLRU(p) && !PageSwapCache(p) && p->mapping == NULL) {
+                action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+                res = -EBUSY;
+                goto out;
+        }
 
-I will post a new version soon to address the problem. Again, thanks
-for your review!
+So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+current version of your patch.
 
-[...]
+Feel free to add my ack.
 
-Kind regards
-Uffe
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+
+Thanks,
+Naoya Horiguchi
