@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_RHS_DOB,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADD6C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C192C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A91520878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A91520878
+	by mail.kernel.org (Postfix) with ESMTP id 2EE0C208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE0C208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbeLFRQN (ORCPT
+        id S1726192AbeLFRQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:16:13 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51729 "EHLO mail.bootlin.com"
+        Thu, 6 Dec 2018 12:16:11 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51720 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbeLFRQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:16:05 -0500
+        id S1725908AbeLFRQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:16:06 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id ADB5E20C18; Thu,  6 Dec 2018 18:16:03 +0100 (CET)
+        id 69E8820A63; Thu,  6 Dec 2018 18:16:03 +0100 (CET)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 85224206FF;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3FAD1206FF;
         Thu,  6 Dec 2018 18:16:03 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@codeaurora.org>,
@@ -41,9 +41,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v2 4/5] arm64: marvell: enable the  Armada 7K/8K CPU clk driver
-Date:   Thu,  6 Dec 2018 18:15:15 +0100
-Message-Id: <20181206171516.15891-5-gregory.clement@bootlin.com>
+Subject: [PATCH v2 3/5] clk: mvebu: ap806: Fix clock name for the cluster
+Date:   Thu,  6 Dec 2018 18:15:14 +0100
+Message-Id: <20181206171516.15891-4-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206171516.15891-1-gregory.clement@bootlin.com>
 References: <20181206171516.15891-1-gregory.clement@bootlin.com>
@@ -54,26 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit makes sure the driver for the Armada 7K/8K CPU clock is
-enabled.
+Actually, the clocks exposed for the cluster are not the CPU clocks, but
+the PLL clock used as entry clock for the CPU clocks. The CPU clock will
+be managed by a driver submitting in the following patches.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mvebu/ap806-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479334a4..8a05870b1ba8 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -121,6 +121,7 @@ config ARCH_MESON
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 0a58824ff053..73ba8fd7860f 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -97,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	cpuclk_freq *= 1000 * 1000;
  
- config ARCH_MVEBU
- 	bool "Marvell EBU SoC Family"
-+	select ARMADA_AP_CPU_CLK
- 	select ARMADA_AP806_SYSCON
- 	select ARMADA_CP110_SYSCON
- 	select ARMADA_37XX_CLK
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -105,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 		goto fail0;
+ 	}
+ 
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
 -- 
 2.19.2
 
