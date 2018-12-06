@@ -2,178 +2,365 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFE6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0F0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE2220850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:24:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE2220850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id E3C01208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C01208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbeLFRYq (ORCPT
+        id S1725942AbeLFR2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:24:46 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:38027 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbeLFRYq (ORCPT
+        Thu, 6 Dec 2018 12:28:33 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbeLFR2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:24:46 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gUxOF-0008HB-Cg; Thu, 06 Dec 2018 10:24:43 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gUxOB-0007e2-6K; Thu, 06 Dec 2018 10:24:43 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Florian Weimer <fweimer@redhat.com>, tglx@linutronix.de,
-        x86@kernel.org
-References: <20181206121858.12215-1-christian@brauner.io>
-        <87sgzahf7k.fsf@xmission.com>
-        <CAKOZuet4ayDu-54u2tO9tRDCgxa9JQ4avAiYS8xEtReN4MMhAA@mail.gmail.com>
-Date:   Thu, 06 Dec 2018 11:24:28 -0600
-In-Reply-To: <CAKOZuet4ayDu-54u2tO9tRDCgxa9JQ4avAiYS8xEtReN4MMhAA@mail.gmail.com>
-        (Daniel Colascione's message of "Thu, 6 Dec 2018 08:17:18 -0800")
-Message-ID: <878t12efg3.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 6 Dec 2018 12:28:33 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB6HOBJK080697
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Dec 2018 12:28:32 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p76wg4q6v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:28:31 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Thu, 6 Dec 2018 17:28:30 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 17:28:26 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB6HSPWw28639384
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 17:28:25 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8F1AEBE054;
+        Thu,  6 Dec 2018 17:28:25 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0804BBE051;
+        Thu,  6 Dec 2018 17:28:22 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.137.244])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Thu,  6 Dec 2018 17:28:22 +0000 (GMT)
+References: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
+User-agent: mu4e 1.0; emacs 26.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pseries/hotplug: Add more delay in pseries_cpu_die while waiting for rtas-stop
+In-reply-to: <1544095908-2414-1-git-send-email-ego@linux.vnet.ibm.com>
+Date:   Thu, 06 Dec 2018 15:28:17 -0200
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1gUxOB-0007e2-6K;;;mid=<878t12efg3.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX183fo99KdM7s83XVknY4FOfpoZT6zBIXDY=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-TM-AS-GCONF: 00
+x-cbid: 18120617-0004-0000-0000-000014BE463A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010182; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01127899; UDB=6.00585885; IPR=6.00908030;
+ MB=3.00024502; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 17:28:28
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120617-0005-0000-0000-000089C2E0BD
+Message-Id: <87a7li5zv2.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Colascione <dancol@google.com> writes:
 
-> On Thu, Dec 6, 2018 at 7:02 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Christian Brauner <christian@brauner.io> writes:
->>
->> > The kill() syscall operates on process identifiers (pid). After a process
->> > has exited its pid can be reused by another process. If a caller sends a
->> > signal to a reused pid it will end up signaling the wrong process. This
->> > issue has often surfaced and there has been a push [1] to address this
->> > problem.
->> >
->> > This patch uses file descriptors (fd) from proc/<pid> as stable handles on
->> > struct pid. Even if a pid is recycled the handle will not change. The fd
->> > can be used to send signals to the process it refers to.
->> > Thus, the new syscall taskfd_send_signal() is introduced to solve this
->> > problem. Instead of pids it operates on process fds (taskfd).
->>
->> I am not yet thrilled with the taskfd naming.
+Hello Gautham,
+
+Gautham R. Shenoy <ego@linux.vnet.ibm.com> writes:
+
+> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 >
-> Both the old and new names were fine. Do you want to suggest a name at
-> this point? You can't just say "I don't like this. Guess again"
-> forever.
-
-Both names suck, as neither name actually describes what the function is
-designed to do.
-
-Most issues happen at the interface between abstractions.  A name that
-confuses your users will just make that confusion more likely.  So it is
-important that we do the very best with the name that we can do.
-
-We are already having questions about what happens when you perform the
-non-sense operation of sending a signal to a zombie.  It comes up
-because there are races when a process may die and you are not expecting
-it.  That is an issue with the existing signal sending API, that has
-caused confusion.   That isn't half as confusing as the naming issue.
-
-A task in linux is a single thread.  A process is all of the threads.
-If we are going to support both cases it doesn't make sense to hard code
-a single case in the name.
-
-I would be inclined to simplify things and call the syscall something
-like "fdkill(int fd, struct siginfo *info, int flags)".  Or perhaps
-just "fd_send_signal(int fd, struct siginfo *info, int flags)".
-
-Then we are not overspecifying what the system call does in the name.
-Plus it makes it clear that the fd specifies where the signal goes.
-Something I see that by your reply below that you were confused about.
-
->> Is there any plan to support sesssions and process groups?
+> Currently running DLPAR offline/online operations in a loop on a
+> POWER9 system with SMT=off results in the following crash:
 >
-> Such a thing could be added with flags in the future. Why complicate
-> this patch?
-
-Actually that isn't the way this is designed.  You would have to have
-another kind of file descriptor.  I am asking because it goes to the
-question of naming and what we are trying to do here.
-
-We don't need to implement that but we have already looked into this
-kind of extensibility.  If we want the extensibility we should make
-room for it, or just close the door.  Having the door half open and a
-confusing interface is a problem for users.
-
->> I am concerned about using kill_pid_info.  It does this:
->>
->>
->>         rcu_read_lock();
->>         p = pid_task(pid, PIDTYPE_PID);
->>         if (p)
->>                 error = group_send_sig_info(sig, info, p, PIDTYPE_TGID);
->>         rcu_read_unlock();
->>
->> That pid_task(PIDTYPE_PID) is fine for existing callers that need bug
->> compatibility.  For new interfaces I would strongly prefer pid_task(PIDTYPE_TGID).
+> [  223.321032] cpu 112 (hwid 112) Ready to die...
+> [  223.355963] Querying DEAD? cpu 113 (113) shows 2
+> [  223.356233] cpu 114 (hwid 114) Ready to die...
+> [  223.356236] cpu 113 (hwid 113) Ready to die...
+> [  223.356241] Bad kernel stack pointer 1faf6ca0 at 1faf6d50
+> [  223.356243] Oops: Bad kernel stack pointer, sig: 6 [#1]
+> [  223.356244] LE SMP NR_CPUS=2048 NUMA pSeries
+> [  223.356247] Modules linked in:
+> [  223.356255] CPU: 114 PID: 0 Comm: swapper/114 Not tainted 4.20.0-rc3 #39
+> [  223.356258] NIP:  000000001faf6d50 LR: 000000001faf6d50 CTR: 000000001ec6d06c
+> [  223.356259] REGS: c00000001e5cbd30 TRAP: 0700   Not tainted  (4.20.0-rc3)
+> [  223.356260] MSR:  8000000000081000 <SF,ME>  CR: 28000004  XER: 00000020
+> [  223.356263] CFAR: 000000001ec98590 IRQMASK: 8000000000009033
+>                GPR00: 000000001faf6d50 000000001faf6ca0 000000001ed1c448 00000267e6a273c3
+>                GPR04: 0000000000000000 00000000000000e0 000000000000dfe8 000000001faf6d30
+>                GPR08: 000000001faf6d28 00000267e6a273c3 000000001ec1b108 0000000000000000
+>                GPR12: 0000000001b6d998 c00000001eb55080 c0000003a1b8bf90 000000001eea3f40
+>                GPR16: 0000000000000000 c0000006fda85100 c00000000004c8b0 c0000000013d5300
+>                GPR20: c0000006fda85300 0000000000000008 c0000000019d2cf8 c0000000013d6888
+>                GPR24: 0000000000000072 c0000000013d688c 0000000000000002 c0000000013d688c
+>                GPR28: c0000000019cecf0 0000000000000390 0000000000000000 000000001faf6ca0
+> [  223.356281] NIP [000000001faf6d50] 0x1faf6d50
+> [  223.356281] LR [000000001faf6d50] 0x1faf6d50
+> [  223.356282] Call Trace:
+> [  223.356283] Instruction dump:
+> [  223.356285] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+> [  223.356286] XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+> [  223.356290] ---[ end trace f46a4e046b564d1f ]---
 >
-> What is the bug that PIDTYPE_PID preserves?
+> This is due to multiple offlined CPUs (CPU 113 and CPU 114 above)
+> concurrently (within 3us) trying to make the rtas-call with the
+> "stop-self" token, something that is prohibited by the PAPR.
+>
+> The concurrent calls can happen as follows.
+>
+>   o In dlpar_offline_cpu() we prod an offline CPU X (offline due to
+>     SMT=off) and loop for 25 tries in pseries_cpu_die() querying if
+>     the target CPU X has been stopped in RTAS. After 25 tries, we
+>     prints the message "Querying DEAD? cpu X (X) shows 2" and return
+>     to dlpar_offline_cpu(). Note that at this point CPU X has not yet
+>     called rtas with the "stop-self" token, but can do so anytime now.
+>
+>   o Back in dlpar_offline_cpu(), we prod the next offline CPU Y. CPU Y
+>     promptly wakes up and calls RTAS with the "stop-self" token.
+>
+>   o Before RTAS can stop CPU Y, CPU X also calls RTAS with the
+>     "stop-self" token.
+>
+> The problem occurs due to the short number of tries (25) in
+> pseries_cpu_die() which covers 90% of the cases. For the remaining 10%
+> of the cases, it was observed that we would need to loop for a few
+> hundred iterations before the target CPU calls rtas with "stop-self"
+> token.Experiments show that each try takes roughly ~25us.
+>
+> In this patch we fix the problem by increasing the number of tries
+> from 25 to 4000 (which roughly corresponds to 100ms) before bailing
+> out and declaring that we have failed to observe the target CPU call
+> rtas-stop-self. This provides sufficient serialization to ensure that
+> there no concurrent rtas calls with "stop-self" token.
+>
+>
+>
+> Reported-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/platforms/pseries/hotplug-cpu.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+> index 2f8e621..c913c44 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+> @@ -214,14 +214,25 @@ static void pseries_cpu_die(unsigned int cpu)
+>  			msleep(1);
+>  		}
+>  	} else if (get_preferred_offline_state(cpu) == CPU_STATE_OFFLINE) {
+> +		int max_tries = 4000; /* Roughly corresponds to 100ms */
+> +		u64 tb_before = mftb();
+>
+> -		for (tries = 0; tries < 25; tries++) {
+> +		for (tries = 0; tries < max_tries; tries++) {
+>  			cpu_status = smp_query_cpu_stopped(pcpu);
+>  			if (cpu_status == QCSS_STOPPED ||
+>  			    cpu_status == QCSS_HARDWARE_ERROR)
+>  				break;
+>  			cpu_relax();
+>  		}
+> +
+> +		if (tries == max_tries) {
+> +			u64 time_elapsed_us = div_u64(mftb() - tb_before,
+> +						      tb_ticks_per_usec);
+> +
+> +			pr_warn("Offlined CPU %d isn't stopped by RTAS after %llu us\n",
+> +				cpu, time_elapsed_us);
+> +			WARN_ON(1);
+> +		}
+>  	}
+>
+>  	if (cpu_status != 0) {
 
-I am not 100% certain all of the bits for this to matter have been
-merged yet but we are close enough that it would not be hard to make it
-matter.
+I posted a similar patch last year, but I wasn't able to arrive at a
+root cause analysis like you did:
 
-There are two strange behaviours of ordinary kill on the linux kernel
-that I am aware of.
+https://lists.ozlabs.org/pipermail/linuxppc-dev/2017-February/153734.html
 
-1) kill(thread_id,...) where the thread_id is not the id of the first
-   thread and the thread_id thus the pid of the process sends the signal
-   to the entire process.  Something that arguably should not happen.
+One thing I realized after I posted the patch was that in my case, the
+CPU was crashing inside RTAS. From the NIP and LR in the trace above it
+looks like it's crashing in RTAS in your case as well.
 
-2) kill(pid,...) where the original thread has exited performs the
-   permission checks against the dead signal group leader.  Which means
-   that the permission checks for sending a signal are very likely wrong
-   for a multi-threaded processes that calls a function like setuid.
+Michael Ellerman had two comments on my patch:
 
-To fix the second case we are going to have to perform the permission
-checks on a non-zombie thread.  That is something that is straight
-forward to make work with PIDTYPE_TGID.  It is not so easy to make work
-with PIDTYPE_PID.
+1. Regardless of the underlying bug, the kernel shouldn't crash so we
+need a patch making it more resilient to this failure.
 
-I looked and it doesn't look like I have merged the logic of having
-PIDTYPE_TGID point to a living thread when the signal group leader
-exits and becomes a zombie.  It isn't hard but it does require some very
-delicate surgery on the code, so that we don't break some of the
-historic confusion of threads and process groups.
+2. The wait loop should use udelay() so that the loop will actually take
+a set amount of wall time, rather than just cycles.
 
-Eric
+Regarding 1. if the problem is that the kernel is causing RTAS to crash
+because it calls it in a way that's unsupported, then I don't see how we
+can make the kernel more resilient. We have to make the kernel respect
+RTAS' restrictions (or alternatively, poke RTAS devs to make RTAS fail
+gracefuly in these conditions).
+
+Regarding 2. I implemented a new version of my patch (posted below) but
+I was never able to test it because I couldn't access a system where the
+problem was reproducible anymore.
+
+There's also a race between the CPU driving the unplug and the CPU being
+unplugged which I think is not easy for the CPU being unplugged to win,
+which makes the busy loop in pseries_cpu_die() a bit fragile. I describe
+the race in the patch description.
+
+My solution to make the race less tight is to make the CPU driving the
+unplug to only start the busy loop only after the CPU being unplugged is
+in the CPU_STATE_OFFLINE state. At that point, we know that it either is
+about to call RTAS or it already has.
+
+Do you think this makes sense? If you do, would you mind testing my
+patch? You can change the timeouts and delays if you want. To be honest
+they're just guesses on my part...
+
+
+
+From 4174cd0939fadeda93e49ed2e94ba84131c922d0 Mon Sep 17 00:00:00 2001
+From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Date: Thu, 6 Dec 2018 15:16:34 -0200
+Subject: [PATCH] powerpc/pseries: Only wait for dying CPU after call to
+ rtas_stop_self()
+
+When testing DLPAR CPU add/remove on a system under stress,
+pseries_cpu_die() doesn't wait long enough for a CPU to die and the kernel
+ends up crashing:
+
+[  446.143648] cpu 152 (hwid 152) Ready to die...
+[  446.464057] cpu 153 (hwid 153) Ready to die...
+[  446.473525] cpu 154 (hwid 154) Ready to die...
+[  446.474077] cpu 155 (hwid 155) Ready to die...
+[  446.483529] cpu 156 (hwid 156) Ready to die...
+[  446.493532] cpu 157 (hwid 157) Ready to die...
+[  446.494078] cpu 158 (hwid 158) Ready to die...
+[  446.503527] cpu 159 (hwid 159) Ready to die...
+[  446.664534] cpu 144 (hwid 144) Ready to die...
+[  446.964113] cpu 145 (hwid 145) Ready to die...
+[  446.973525] cpu 146 (hwid 146) Ready to die...
+[  446.974094] cpu 147 (hwid 147) Ready to die...
+[  446.983944] cpu 148 (hwid 148) Ready to die...
+[  446.984062] cpu 149 (hwid 149) Ready to die...
+[  446.993518] cpu 150 (hwid 150) Ready to die...
+[  446.993543] Querying DEAD? cpu 150 (150) shows 2
+[  446.994098] cpu 151 (hwid 151) Ready to die...
+[  447.133726] cpu 136 (hwid 136) Ready to die...
+[  447.403532] cpu 137 (hwid 137) Ready to die...
+[  447.403772] cpu 138 (hwid 138) Ready to die...
+[  447.403839] cpu 139 (hwid 139) Ready to die...
+[  447.403887] cpu 140 (hwid 140) Ready to die...
+[  447.403937] cpu 141 (hwid 141) Ready to die...
+[  447.403979] cpu 142 (hwid 142) Ready to die...
+[  447.404038] cpu 143 (hwid 143) Ready to die...
+[  447.513546] cpu 128 (hwid 128) Ready to die...
+[  447.693533] cpu 129 (hwid 129) Ready to die...
+[  447.693999] cpu 130 (hwid 130) Ready to die...
+[  447.703530] cpu 131 (hwid 131) Ready to die...
+[  447.704087] Querying DEAD? cpu 132 (132) shows 2
+[  447.704102] cpu 132 (hwid 132) Ready to die...
+[  447.713534] cpu 133 (hwid 133) Ready to die...
+[  447.714064] Querying DEAD? cpu 134 (134) shows 2
+cpu 0x86: Vector: 300 (Data Access) at [c000000007b0fd40]
+    pc: 000000001ec3072c
+    lr: 000000001ec2fee0
+    sp: 1faf6bd0
+   msr: 8000000102801000
+   dar: 212d6c1a2a20c
+ dsisr: 42000000
+  current = 0xc000000474c6d600
+  paca    = 0xc000000007b6b600   softe: 0        irq_happened: 0x01
+    pid   = 0, comm = swapper/134
+Linux version 4.8.0-34-generic (buildd@bos01-ppc64el-026) (gcc version 5.4.0 20160609 (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.4) ) #36~16.04.1-Ubuntu SMP Wed Dec 21 18:53:20 UTC 2016 (Ubuntu 4.8.0-34.36~16.04.1-generic 4.8.11)
+WARNING: exception is not recoverable, can't continue
+
+This was reproduced in v4.12-rc3 as well, but I don't have a crash log
+handy for that version right now. Sorry.
+
+This is a race between one CPU stopping and another one calling
+pseries_cpu_die() to wait for it to stop. That function does a short busy
+loop calling RTAS query-cpu-stopped-state on the stopping CPU to verify
+that it is stopped.
+
+As can be seen in the dmesg right before or after the "Querying DEAD?"
+messages, if pseries_cpu_die() waited a little longer it would have seen
+the CPU in the stopped state.
+
+I see two cases that can be causing this race:
+
+1. It's possible that CPU 134 was inactive at the time it was unplugged. In
+   that case, dlpar_offline_cpu() calls H_PROD on the CPU and immediately
+   calls pseries_cpu_die(). Meanwhile, the prodded CPU activates and start
+   the process of stopping itself. It's possible that the busy loop is not
+   long enough to allow for the CPU to wake up and complete the stopping
+   process.
+
+2. If CPU 134 was online at the time it was unplugged, it would have gone
+   through the new CPU hotplug state machine in kernel/cpu.c that was
+   introduced in v4.6 to get itself stopped. It's possible that the busy
+   loop in pseries_cpu_die() was long enough for the older hotplug code but
+   not for the new hotplug state machine.
+
+Either way, the solution is to only start querying if the CPU is stopped
+after it had a chance to call rtas_stop_self(). Since
+pseries_mach_cpu_die() sets the CPU current state to offline almost
+immediately before the RTAS call, we use that as a signal that it is either
+already stopped or very close to that point, and we can start the busy
+loop.
+
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ arch/powerpc/platforms/pseries/hotplug-cpu.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+index 2f8e62163602..fad3ceb74623 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
++++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
+@@ -214,13 +214,21 @@ static void pseries_cpu_die(unsigned int cpu)
+ 			msleep(1);
+ 		}
+ 	} else if (get_preferred_offline_state(cpu) == CPU_STATE_OFFLINE) {
++		/*
++		 * If the current state is not offline yet, it means that the
++		 * dying CPU (which is in pseries_mach_cpu_die) didn't have a
++		 * chance to call rtas_stop_self yet and therefore it's too
++		 * early to query if the CPU is stopped.
++		 */
++		spin_event_timeout(get_cpu_current_state(cpu) == CPU_STATE_OFFLINE,
++				   100000, 100);
+ 
+ 		for (tries = 0; tries < 25; tries++) {
+ 			cpu_status = smp_query_cpu_stopped(pcpu);
+ 			if (cpu_status == QCSS_STOPPED ||
+ 			    cpu_status == QCSS_HARDWARE_ERROR)
+ 				break;
+-			cpu_relax();
++			udelay(100);
+ 		}
+ 	}
+ 
+
