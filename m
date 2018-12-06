@@ -2,124 +2,98 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB42C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460C2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71226214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544078717;
-	bh=g6Czx7nLEy93+bDguAtYiatB9x3PPOqHGI/j5b57/Ak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QkjCinuOoS0PFPjBgr1VCZR6ibLU+lGX2taoISUSgkQ67ww0AlUQlo0XYSh72HS4i
-	 FTkhmTluMfkVlGooS/To5Ys/hK3wIYLLpHr7l4zq3jljlF/1A2JFrZMQAQTlQeCNFD
-	 J7U96U+c/EKXKkSnKASAr4wl4jWipclOSQN5ZYbM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71226214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E77E214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 06:46:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E77E214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbeLFGpP (ORCPT
+        id S1729128AbeLFGp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 01:45:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57192 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 01:45:59 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53756 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728294AbeLFGpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 01:45:15 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EB3220989;
-        Thu,  6 Dec 2018 06:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544078714;
-        bh=g6Czx7nLEy93+bDguAtYiatB9x3PPOqHGI/j5b57/Ak=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OJLScHgLgDQ1JZdxw2PmXeliVG9qLciE4iGyalPGKT+MNhI93eh5pXXbcuP2axMx2
-         ccmKIP3uIzsXH0/L7Q5FdKTNj8uMco4eTGSAqj5/S+b7z7HeKBOTvLQae1yJ13vM4w
-         Jv1XIReSKLcBBTG4dxsiL7CsUOxuhY/+G4wjWdyw=
-Date:   Thu, 6 Dec 2018 08:45:09 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     David Gibson <david@gibson.dropbear.id.au>
-Cc:     davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
-        tariqt@mellanox.com, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org, alex.williamson@redhat.com,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sbest@redhat.com, paulus@samba.org, benh@kernel.crashing.org
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20181206064509.GM15544@mtr-leonro.mtl.com>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+        id S1728294AbeLFGp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 01:45:58 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 409E220734; Thu,  6 Dec 2018 07:45:56 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E0C6D20729;
+        Thu,  6 Dec 2018 07:45:55 +0100 (CET)
+Date:   Thu, 6 Dec 2018 07:45:54 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     Vignesh R <vigneshr@ti.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
+Message-ID: <20181206074554.0ec0aecb@bbrezillon>
+In-Reply-To: <VI1PR04MB572646B71C6CB7BAAB4A1E1999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1543826226-30898-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+        <20181203101937.7b01a0ad@bbrezillon>
+        <214dadd9-859c-ca88-1aff-1c83fcfa3c0b@ti.com>
+        <20181205134618.56223758@bbrezillon>
+        <VI1PR04MB572646B71C6CB7BAAB4A1E1999A90@VI1PR04MB5726.eurprd04.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Re2uCLPLNzqOLVJA"
-Content-Disposition: inline
-In-Reply-To: <20181206041951.22413-1-david@gibson.dropbear.id.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 6 Dec 2018 04:20:26 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
---Re2uCLPLNzqOLVJA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Boris,
+> 
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Wednesday, December 5, 2018 6:16 PM
+> > To: Vignesh R <vigneshr@ti.com>; broonie@kernel.org
+> > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; linux-
+> > mtd@lists.infradead.org; marek.vasut@gmail.com; linux-spi@vger.kernel.org;
+> > devicetree@vger.kernel.org; robh@kernel.org; mark.rutland@arm.com;
+> > shawnguo@kernel.org; linux-arm-kernel@lists.infradead.org;
+> > computersforpeace@gmail.com; frieder.schrempf@exceet.de; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH v5 0/7] spi: add support for octal mode
+> > 
+> > On Wed, 5 Dec 2018 17:25:12 +0530
+> > Vignesh R <vigneshr@ti.com> wrote:
+> >   
+> > > >>   mtd: spi-nor: add opcodes for octal Read/Write commands
+> > > >>   mtd: spi-nor: add octal read flag for flash mt35xu512aba  
+> > >
+> > > Could you consider merging these two patches alone for v4.21?
+> > > These can be applied independent of other patches in the series and
+> > > would allow supporting OSPI flash at SPI NOR level with Cadence QSPI driver.  
+> > 
+> > Yep, I'll queue them to spi-nor/next.
+> >   
+> > > >>   spi: nxp-fspi: add octal mode flag bit for octal support  
+> > 
+> > Mark, I think you can pick this one too.  
+> 
+> This patch is dependent on the series [1] which is yet to be applied by you, please apply.
 
-On Thu, Dec 06, 2018 at 03:19:51PM +1100, David Gibson wrote:
-> Mellanox ConnectX-5 IB cards (MT27800) seem to cause a call trace when
-> unbound from their regular driver and attached to vfio-pci in order to pass
-> them through to a guest.
->
-> This goes away if the disable_idle_d3 option is used, so it looks like a
-> problem with the hardware handling D3 state.  To fix that more permanently,
-> use a device quirk to disable D3 state for these devices.
->
-> We do this by renaming the existing quirk_no_ata_d3() more generally and
-> attaching it to the ConnectX-[45] devices (0x15b3:0x1013).
->
-> Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-> ---
->  drivers/pci/quirks.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->
-
-Hi David,
-
-Thank for your patch,
-
-I would like to reproduce the calltrace before moving forward,
-but have trouble to reproduce the original issue.
-
-I'm working with vfio-pci and CX-4/5 cards on daily basis,
-tried manually enter into D3 state now, and it worked for me.
-
-Can you please post your full calltrace, and "lspci -s PCI_ID -vv"
-output?
-
-Thanks
-
---Re2uCLPLNzqOLVJA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcCMV1AAoJEORje4g2clinjAQP/1QohDmpz3Nx1/0h9KEad/Gv
-xb/XKSpynLFHroGdEEAHUaDgLOfsp5WoJxVs5sj8/EI7ZB7+jT89DAByeXkFQI5J
-8LBm+eEZboNTLa2lOcl5yBSVNWb3POGFmsuTAf2q4F+fijds+lyATk3kKYpDc7wC
-4zJ22LiEr4rryTOuxZyFi5YTaNso3WhHs0XB8bAFoJar9ypY+aSPq48C+wU+08da
-AbD3yThzPT++z61FgK5tmyaG2xN8uZmHzeRpSaX7vEDMgPznJk4qnIaA0FtCnjRu
-SYOg8XLPksqmrdU/N/vV5FM2uk77s8yoNtOEkdCg19rkG04c2pzqdX/aZtW4epKX
-h1mKWK2x21U2+l/gd5atRuFuJfP3k7P6LEsfzWprmFsyC6fwrt2H8ojN+10fuEiP
-1KURSsGdMYCrKrDklpsAeu5JHRc5UEOKyQsWPQZ+wmZtpI4zJTW9Av9YfYd/RZ6d
-PefEN2j6gmDpC7ffZqV0oenEuEgGAPGFiBRRTeOqgggfLMT1Rn9FZHX4zAGLZMpR
-jciOwJNwN9rPTkLyEyCQItjhqQjty3gvDMlYpuMpNsYIXcyl/gkjMWuke4TaHHZP
-M6g+P6qfUvDEDTlMO+wU6hcKRmqLFr+LsjQhtfHza9j1gGIcYO6FFTvPN0o0tGcq
-mItAd9DzgosnlmUT2DHQ
-=Hvye
------END PGP SIGNATURE-----
-
---Re2uCLPLNzqOLVJA--
+By me? I can't apply SPI patches.
