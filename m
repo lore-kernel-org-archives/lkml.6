@@ -2,389 +2,59 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C5C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4092C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5906920838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5906920838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 835A320989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835A320989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbeLFQ6e (ORCPT
+        id S1726095AbeLFQ6i convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:58:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeLFQ6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:58:32 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BC53288E58;
-        Thu,  6 Dec 2018 16:58:31 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7189F19C7D;
-        Thu,  6 Dec 2018 16:58:29 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: [PATCH 1/6] x86/hyper-v: Do some housekeeping in hyperv-tlfs.h
-Date:   Thu,  6 Dec 2018 17:58:20 +0100
-Message-Id: <20181206165825.1832-2-vkuznets@redhat.com>
-In-Reply-To: <20181206165825.1832-1-vkuznets@redhat.com>
-References: <20181206165825.1832-1-vkuznets@redhat.com>
+        Thu, 6 Dec 2018 11:58:38 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:50951 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726052AbeLFQ6f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:58:35 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 14804206-1500050 
+        for multiple; Thu, 06 Dec 2018 16:58:31 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 06 Dec 2018 16:58:31 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+To:     jglisse@redhat.com, linux-kernel@vger.kernel.org
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20181206154704.5366-1-jglisse@redhat.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+        =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        stable@vger.kernel.org,
+        =?utf-8?q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-media@vger.kernel.org
+References: <20181206154704.5366-1-jglisse@redhat.com>
+Message-ID: <154411550724.26970.8541642329782166943@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] dma-buf: fix debugfs versus rcu and fence dumping v2
+Date:   Thu, 06 Dec 2018 16:58:27 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hyperv-tlfs.h is a bit messy: CPUID feature bits are not always sorted,
-it's hard to get which CPUID they belong to, some items are duplicated
-(e.g. HV_X64_MSR_CRASH_CTL_NOTIFY/HV_CRASH_CTL_CRASH_NOTIFY).
+Quoting jglisse@redhat.com (2018-12-06 15:47:04)
+> From: Jérôme Glisse <jglisse@redhat.com>
+> 
+> The debugfs take reference on fence without dropping them. Also the
+> rcu section are not well balance. Fix all that ...
 
-Do some housekeeping work. While on it, replace all (1 << X) with BIT(X)
-macro.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/hyperv-tlfs.h | 186 ++++++++++++++---------------
- arch/x86/kvm/hyperv.c              |   4 +-
- 2 files changed, 93 insertions(+), 97 deletions(-)
-
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index ebfed56976d2..9e6f70e989c2 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -30,158 +30,151 @@
- /*
-  * Feature identification. EAX indicates which features are available
-  * to the partition based upon the current partition privileges.
-+ * These are HYPERV_CPUID_FEATURES.EAX bits.
-  */
- 
- /* VP Runtime (HV_X64_MSR_VP_RUNTIME) available */
--#define HV_X64_MSR_VP_RUNTIME_AVAILABLE		(1 << 0)
-+#define HV_X64_MSR_VP_RUNTIME_AVAILABLE		BIT(0)
- /* Partition Reference Counter (HV_X64_MSR_TIME_REF_COUNT) available*/
--#define HV_MSR_TIME_REF_COUNT_AVAILABLE		(1 << 1)
--/* Partition reference TSC MSR is available */
--#define HV_MSR_REFERENCE_TSC_AVAILABLE		(1 << 9)
--/* Partition Guest IDLE MSR is available */
--#define HV_X64_MSR_GUEST_IDLE_AVAILABLE		(1 << 10)
--
--/* A partition's reference time stamp counter (TSC) page */
--#define HV_X64_MSR_REFERENCE_TSC		0x40000021
--
--/*
-- * There is a single feature flag that signifies if the partition has access
-- * to MSRs with local APIC and TSC frequencies.
-- */
--#define HV_X64_ACCESS_FREQUENCY_MSRS		(1 << 11)
--
--/* AccessReenlightenmentControls privilege */
--#define HV_X64_ACCESS_REENLIGHTENMENT		BIT(13)
--
-+#define HV_MSR_TIME_REF_COUNT_AVAILABLE		BIT(1)
- /*
-  * Basic SynIC MSRs (HV_X64_MSR_SCONTROL through HV_X64_MSR_EOM
-  * and HV_X64_MSR_SINT0 through HV_X64_MSR_SINT15) available
-  */
--#define HV_X64_MSR_SYNIC_AVAILABLE		(1 << 2)
-+#define HV_X64_MSR_SYNIC_AVAILABLE		BIT(2)
- /*
-  * Synthetic Timer MSRs (HV_X64_MSR_STIMER0_CONFIG through
-  * HV_X64_MSR_STIMER3_COUNT) available
-  */
--#define HV_MSR_SYNTIMER_AVAILABLE		(1 << 3)
-+#define HV_MSR_SYNTIMER_AVAILABLE		BIT(3)
- /*
-  * APIC access MSRs (HV_X64_MSR_EOI, HV_X64_MSR_ICR and HV_X64_MSR_TPR)
-  * are available
-  */
--#define HV_X64_MSR_APIC_ACCESS_AVAILABLE	(1 << 4)
-+#define HV_X64_MSR_APIC_ACCESS_AVAILABLE	BIT(4)
- /* Hypercall MSRs (HV_X64_MSR_GUEST_OS_ID and HV_X64_MSR_HYPERCALL) available*/
--#define HV_X64_MSR_HYPERCALL_AVAILABLE		(1 << 5)
-+#define HV_X64_MSR_HYPERCALL_AVAILABLE		BIT(5)
- /* Access virtual processor index MSR (HV_X64_MSR_VP_INDEX) available*/
--#define HV_X64_MSR_VP_INDEX_AVAILABLE		(1 << 6)
-+#define HV_X64_MSR_VP_INDEX_AVAILABLE		BIT(6)
- /* Virtual system reset MSR (HV_X64_MSR_RESET) is available*/
--#define HV_X64_MSR_RESET_AVAILABLE		(1 << 7)
-- /*
--  * Access statistics pages MSRs (HV_X64_MSR_STATS_PARTITION_RETAIL_PAGE,
--  * HV_X64_MSR_STATS_PARTITION_INTERNAL_PAGE, HV_X64_MSR_STATS_VP_RETAIL_PAGE,
--  * HV_X64_MSR_STATS_VP_INTERNAL_PAGE) available
--  */
--#define HV_X64_MSR_STAT_PAGES_AVAILABLE		(1 << 8)
--
--/* Frequency MSRs available */
--#define HV_FEATURE_FREQUENCY_MSRS_AVAILABLE	(1 << 8)
--
--/* Crash MSR available */
--#define HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE (1 << 10)
--
--/* stimer Direct Mode is available */
--#define HV_STIMER_DIRECT_MODE_AVAILABLE		(1 << 19)
-+#define HV_X64_MSR_RESET_AVAILABLE		BIT(7)
-+/*
-+ * Access statistics pages MSRs (HV_X64_MSR_STATS_PARTITION_RETAIL_PAGE,
-+ * HV_X64_MSR_STATS_PARTITION_INTERNAL_PAGE, HV_X64_MSR_STATS_VP_RETAIL_PAGE,
-+ * HV_X64_MSR_STATS_VP_INTERNAL_PAGE) available
-+ */
-+#define HV_X64_MSR_STAT_PAGES_AVAILABLE		BIT(8)
-+/* Partition reference TSC MSR is available */
-+#define HV_MSR_REFERENCE_TSC_AVAILABLE		BIT(9)
-+/* Partition Guest IDLE MSR is available */
-+#define HV_X64_MSR_GUEST_IDLE_AVAILABLE		BIT(10)
-+/*
-+ * There is a single feature flag that signifies if the partition has access
-+ * to MSRs with local APIC and TSC frequencies.
-+ */
-+#define HV_X64_ACCESS_FREQUENCY_MSRS		BIT(11)
-+/* AccessReenlightenmentControls privilege */
-+#define HV_X64_ACCESS_REENLIGHTENMENT		BIT(13)
- 
- /*
-- * Feature identification: EBX indicates which flags were specified at
-- * partition creation. The format is the same as the partition creation
-- * flag structure defined in section Partition Creation Flags.
-+ * Feature identification: indicates which flags were specified at partition
-+ * creation. The format is the same as the partition creation flag structure
-+ * defined in section Partition Creation Flags.
-+ * These are HYPERV_CPUID_FEATURES.EBX bits.
-  */
--#define HV_X64_CREATE_PARTITIONS		(1 << 0)
--#define HV_X64_ACCESS_PARTITION_ID		(1 << 1)
--#define HV_X64_ACCESS_MEMORY_POOL		(1 << 2)
--#define HV_X64_ADJUST_MESSAGE_BUFFERS		(1 << 3)
--#define HV_X64_POST_MESSAGES			(1 << 4)
--#define HV_X64_SIGNAL_EVENTS			(1 << 5)
--#define HV_X64_CREATE_PORT			(1 << 6)
--#define HV_X64_CONNECT_PORT			(1 << 7)
--#define HV_X64_ACCESS_STATS			(1 << 8)
--#define HV_X64_DEBUGGING			(1 << 11)
--#define HV_X64_CPU_POWER_MANAGEMENT		(1 << 12)
--#define HV_X64_CONFIGURE_PROFILER		(1 << 13)
-+#define HV_X64_CREATE_PARTITIONS		BIT(0)
-+#define HV_X64_ACCESS_PARTITION_ID		BIT(1)
-+#define HV_X64_ACCESS_MEMORY_POOL		BIT(2)
-+#define HV_X64_ADJUST_MESSAGE_BUFFERS		BIT(3)
-+#define HV_X64_POST_MESSAGES			BIT(4)
-+#define HV_X64_SIGNAL_EVENTS			BIT(5)
-+#define HV_X64_CREATE_PORT			BIT(6)
-+#define HV_X64_CONNECT_PORT			BIT(7)
-+#define HV_X64_ACCESS_STATS			BIT(8)
-+#define HV_X64_DEBUGGING			BIT(11)
-+#define HV_X64_CPU_POWER_MANAGEMENT		BIT(12)
-+#define HV_X64_CONFIGURE_PROFILER		BIT(13)
- 
- /*
-  * Feature identification. EDX indicates which miscellaneous features
-  * are available to the partition.
-+ * These are HYPERV_CPUID_FEATURES.EDX bits.
-  */
- /* The MWAIT instruction is available (per section MONITOR / MWAIT) */
--#define HV_X64_MWAIT_AVAILABLE				(1 << 0)
-+#define HV_X64_MWAIT_AVAILABLE				BIT(0)
- /* Guest debugging support is available */
--#define HV_X64_GUEST_DEBUGGING_AVAILABLE		(1 << 1)
-+#define HV_X64_GUEST_DEBUGGING_AVAILABLE		BIT(1)
- /* Performance Monitor support is available*/
--#define HV_X64_PERF_MONITOR_AVAILABLE			(1 << 2)
-+#define HV_X64_PERF_MONITOR_AVAILABLE			BIT(2)
- /* Support for physical CPU dynamic partitioning events is available*/
--#define HV_X64_CPU_DYNAMIC_PARTITIONING_AVAILABLE	(1 << 3)
-+#define HV_X64_CPU_DYNAMIC_PARTITIONING_AVAILABLE	BIT(3)
- /*
-  * Support for passing hypercall input parameter block via XMM
-  * registers is available
-  */
--#define HV_X64_HYPERCALL_PARAMS_XMM_AVAILABLE		(1 << 4)
-+#define HV_X64_HYPERCALL_PARAMS_XMM_AVAILABLE		BIT(4)
- /* Support for a virtual guest idle state is available */
--#define HV_X64_GUEST_IDLE_STATE_AVAILABLE		(1 << 5)
--/* Guest crash data handler available */
--#define HV_X64_GUEST_CRASH_MSR_AVAILABLE		(1 << 10)
-+#define HV_X64_GUEST_IDLE_STATE_AVAILABLE		BIT(5)
-+/* Frequency MSRs available */
-+#define HV_FEATURE_FREQUENCY_MSRS_AVAILABLE		BIT(8)
-+/* Crash MSR available */
-+#define HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE		BIT(10)
-+/* stimer Direct Mode is available */
-+#define HV_STIMER_DIRECT_MODE_AVAILABLE			BIT(19)
- 
- /*
-  * Implementation recommendations. Indicates which behaviors the hypervisor
-  * recommends the OS implement for optimal performance.
-+ * These are HYPERV_CPUID_ENLIGHTMENT_INFO.EAX bits.
-+ */
-+/*
-+ * Recommend using hypercall for address space switches rather
-+ * than MOV to CR3 instruction
-  */
-- /*
--  * Recommend using hypercall for address space switches rather
--  * than MOV to CR3 instruction
--  */
--#define HV_X64_AS_SWITCH_RECOMMENDED		(1 << 0)
-+#define HV_X64_AS_SWITCH_RECOMMENDED			BIT(0)
- /* Recommend using hypercall for local TLB flushes rather
-  * than INVLPG or MOV to CR3 instructions */
--#define HV_X64_LOCAL_TLB_FLUSH_RECOMMENDED	(1 << 1)
-+#define HV_X64_LOCAL_TLB_FLUSH_RECOMMENDED		BIT(1)
- /*
-  * Recommend using hypercall for remote TLB flushes rather
-  * than inter-processor interrupts
-  */
--#define HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED	(1 << 2)
-+#define HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED		BIT(2)
- /*
-  * Recommend using MSRs for accessing APIC registers
-  * EOI, ICR and TPR rather than their memory-mapped counterparts
-  */
--#define HV_X64_APIC_ACCESS_RECOMMENDED		(1 << 3)
-+#define HV_X64_APIC_ACCESS_RECOMMENDED			BIT(3)
- /* Recommend using the hypervisor-provided MSR to initiate a system RESET */
--#define HV_X64_SYSTEM_RESET_RECOMMENDED		(1 << 4)
-+#define HV_X64_SYSTEM_RESET_RECOMMENDED			BIT(4)
- /*
-  * Recommend using relaxed timing for this partition. If used,
-  * the VM should disable any watchdog timeouts that rely on the
-  * timely delivery of external interrupts
-  */
--#define HV_X64_RELAXED_TIMING_RECOMMENDED	(1 << 5)
-+#define HV_X64_RELAXED_TIMING_RECOMMENDED		BIT(5)
- 
- /*
-  * Recommend not using Auto End-Of-Interrupt feature
-  */
--#define HV_DEPRECATING_AEOI_RECOMMENDED		(1 << 9)
-+#define HV_DEPRECATING_AEOI_RECOMMENDED			BIT(9)
- 
- /*
-  * Recommend using cluster IPI hypercalls.
-  */
--#define HV_X64_CLUSTER_IPI_RECOMMENDED         (1 << 10)
-+#define HV_X64_CLUSTER_IPI_RECOMMENDED			BIT(10)
- 
- /* Recommend using the newer ExProcessorMasks interface */
--#define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
-+#define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED		BIT(11)
- 
- /* Recommend using enlightened VMCS */
--#define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED    (1 << 14)
-+#define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED		BIT(14)
- 
--/*
-- * Crash notification flags.
-- */
--#define HV_CRASH_CTL_CRASH_NOTIFY_MSG	BIT_ULL(62)
--#define HV_CRASH_CTL_CRASH_NOTIFY	BIT_ULL(63)
-+/* Nested features. These are HYPERV_CPUID_NESTED_FEATURES.EAX bits. */
-+#define HV_X64_NESTED_GUEST_MAPPING_FLUSH		BIT(18)
-+#define HV_X64_NESTED_MSR_BITMAP			BIT(19)
-+
-+/* Hyper-V specific model specific registers (MSRs) */
- 
- /* MSR used to identify the guest OS. */
- #define HV_X64_MSR_GUEST_OS_ID			0x40000000
-@@ -201,6 +194,9 @@
- /* MSR used to read the per-partition time reference counter */
- #define HV_X64_MSR_TIME_REF_COUNT		0x40000020
- 
-+/* A partition's reference time stamp counter (TSC) page */
-+#define HV_X64_MSR_REFERENCE_TSC		0x40000021
-+
- /* MSR used to retrieve the TSC frequency */
- #define HV_X64_MSR_TSC_FREQUENCY		0x40000022
- 
-@@ -258,9 +254,11 @@
- #define HV_X64_MSR_CRASH_P3			0x40000103
- #define HV_X64_MSR_CRASH_P4			0x40000104
- #define HV_X64_MSR_CRASH_CTL			0x40000105
--#define HV_X64_MSR_CRASH_CTL_NOTIFY		(1ULL << 63)
--#define HV_X64_MSR_CRASH_PARAMS		\
--		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
-+
-+/* TSC emulation after migration */
-+#define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
-+#define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
-+#define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
- 
- /*
-  * Declare the MSR used to setup pages used to communicate with the hypervisor.
-@@ -311,13 +309,6 @@ struct ms_hyperv_tsc_page {
- 
- #define HV_LINUX_VENDOR_ID              0x8100
- 
--/* TSC emulation after migration */
--#define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
--
--/* Nested features (CPUID 0x4000000A) EAX */
--#define HV_X64_NESTED_GUEST_MAPPING_FLUSH	BIT(18)
--#define HV_X64_NESTED_MSR_BITMAP		BIT(19)
--
- struct hv_reenlightenment_control {
- 	__u64 vector:8;
- 	__u64 reserved1:8;
-@@ -326,9 +317,6 @@ struct hv_reenlightenment_control {
- 	__u64 target_vp:32;
- };
- 
--#define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
--#define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
--
- struct hv_tsc_emulation_control {
- 	__u64 enabled:1;
- 	__u64 reserved:63;
-@@ -344,6 +332,14 @@ struct hv_tsc_emulation_status {
- #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_MASK	\
- 		(~((1ull << HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT) - 1))
- 
-+/*
-+ * Crash notification (HV_X64_MSR_CRASH_CTL) flags.
-+ */
-+#define HV_CRASH_CTL_CRASH_NOTIFY_MSG		BIT_ULL(62)
-+#define HV_CRASH_CTL_CRASH_NOTIFY		BIT_ULL(63)
-+#define HV_X64_MSR_CRASH_PARAMS		\
-+		(1 + (HV_X64_MSR_CRASH_P4 - HV_X64_MSR_CRASH_P0))
-+
- #define HV_IPI_LOW_VECTOR	0x10
- #define HV_IPI_HIGH_VECTOR	0xff
- 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index e6a2a085644a..cecf907e4c49 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -861,9 +861,9 @@ static int kvm_hv_msr_set_crash_ctl(struct kvm_vcpu *vcpu, u64 data, bool host)
- 	struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
- 
- 	if (host)
--		hv->hv_crash_ctl = data & HV_X64_MSR_CRASH_CTL_NOTIFY;
-+		hv->hv_crash_ctl = data & HV_CRASH_CTL_CRASH_NOTIFY;
- 
--	if (!host && (data & HV_X64_MSR_CRASH_CTL_NOTIFY)) {
-+	if (!host && (data & HV_CRASH_CTL_CRASH_NOTIFY)) {
- 
- 		vcpu_debug(vcpu, "hv crash (0x%llx 0x%llx 0x%llx 0x%llx 0x%llx)\n",
- 			  hv->hv_crash_param[0],
--- 
-2.19.2
-
+Wouldn't the code be a lot simpler (and a consistent snapshot) if it used
+reservation_object_get_fences_rcu()?
+-Chris
