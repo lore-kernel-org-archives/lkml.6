@@ -2,127 +2,143 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635DAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BC1C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247B220838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13C6F20838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ywF/gaOR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 247B220838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="SFeJm7ly";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p921Bb9g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C6F20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbeLFLJD (ORCPT
+        id S1729573AbeLFLJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:09:03 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38563 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFLJC (ORCPT
+        Thu, 6 Dec 2018 06:09:08 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48771 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727575AbeLFLJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:09:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v13so62201wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:09:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vQbr0F5I1N19hJ3J2dfIpkjXW6EPS8xeKLa9XMbzeQs=;
-        b=ywF/gaOR6YqD3NDP4tk0RqvOMbvV6bwUNpqao3kbKZGZAXClhxIQ4qVFlEnXqK7iYQ
-         7sVT8IJqriEAKUtRtuBlkVBPXbzyqNYug7gJhFC+dpkSS8KvLETNCozJKJEqF5yDZq8/
-         axZRLW39q0tnmHV4DX5GmPpheI3dVU17KnES2ZKWV5qGhH7EDNaRSr95v5LJMpMoBwP7
-         AkOl1GK+enpYOqwWyorDsCbkncc354kqsu/q9bmA5H5xbHAQYhkC2fjZ3xoFAX/V5zsn
-         Gs5BltPxWucrr0RecZ8QIAuVJRWjTy/SqxzqG5HMMEXC2uUtjPF3XTjlEVTCkBU7IErw
-         lT+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vQbr0F5I1N19hJ3J2dfIpkjXW6EPS8xeKLa9XMbzeQs=;
-        b=siACopiyUS6m0VJfYaZJ2aAXeW2aB0GUUD98DGdqzNj0u1292uUGiR83NwVAAKmKGA
-         5TXSfS5V9T8fFeYsEzxeAY7MdbhtPJtte6FguzLzXFRyRTXepVHYV6sR2+nP0DDg5zLW
-         QUORRAlaG4dUFviMNhdHxX3OPoGjfjXth/1TzMXQpoWJi5C3dvtGNBdE38tZvhKRhBSy
-         pI6eQvuDU5hRQDM6NzI8wFsQGHgjr/Zh8DyZqfpJt4Me9MoA78mJ/jjF95ktjR4dlYs1
-         sQYSUp+amuvgGcEKSU73CCNi3zPXfCuwl3RVqpaN/ZPoIN+3SUzXOAxvn/3Wo0ee6h90
-         gUcg==
-X-Gm-Message-State: AA+aEWYTMWOn8C+P2uyK7RfX0vy/VbKXVVfHMnG22XGhs+humqT7JpPY
-        uGhm/YkbGXsAfspZDmlYIum8Zw==
-X-Google-Smtp-Source: AFSGD/Vm/Cr7rgcCOcIWbDOibQKduCPpmCx54NX0t/+TXCncnk8VjW5pOZPcU3yvPIg1gu3uXQ89CA==
-X-Received: by 2002:adf:9591:: with SMTP id p17mr25992599wrp.224.1544094540828;
-        Thu, 06 Dec 2018 03:09:00 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id w12sm75900wrr.23.2018.12.06.03.08.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 03:08:59 -0800 (PST)
-Date:   Thu, 6 Dec 2018 12:08:57 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        nhorman@tuxdriver.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] crypto: Implement a generic crypto statistics
-Message-ID: <20181206110857.GB12268@Red>
-References: <1537351855-16618-1-git-send-email-clabbe@baylibre.com>
- <1537351855-16618-2-git-send-email-clabbe@baylibre.com>
- <20181206000458.GA209772@gmail.com>
+        Thu, 6 Dec 2018 06:09:06 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9D44121C24;
+        Thu,  6 Dec 2018 06:09:05 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 06 Dec 2018 06:09:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=L2D3+lLPQSJrqy/Gm7kaF1fqscj
+        lK24PoFhIlhImJDk=; b=SFeJm7lyKQNZ5mZdo5r++Mxag+/jVgraYvToL0midGi
+        Cx9XvasgpMevluz2uRsb/7VHGUZG1LZPFTrthDG5Xxh2zieD+lrOuAW8aFuVJbfT
+        VROkZx+jgTO3ok8wj7k+26q+pAQfaXMkKROCAYzWet/R/IfN1mek+wsPgsESD01V
+        YOu3AQK1iO7yN8H1NmqN7VFSZXcINE+hEr6xPdGlnXR0QGl+y7vuQYQUS65C6xEs
+        NOL2JqAdurm7Fka4cYmlq2GMIzuxBbtZUTJbvYJYks2WSRFFMLDVT6FRLLyAM8fa
+        N8VuxwoAQ9bDb02uPCTZjg4Qg9HTKZbtJ0F31HM09Ng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=L2D3+l
+        LPQSJrqy/Gm7kaF1fqscjlK24PoFhIlhImJDk=; b=p921Bb9gNB8xI6dJZH3XfH
+        W+gnC2tnQ2OpyiYm1YtRrT826DlPzeWriUwnFJ/SoBcbnYjKa+kYt3nXsIF1C0Yk
+        1xpdOv0OI5DM/wFYya7OfJby9No7ms++B6h2qOt5XzeCdmfDxXNBbEXScvZo+Q1R
+        465VMJOioIz6OpRNOwEy5BHI8pbA8u9mLeuQ+lELv/Z7dOLSOXhdO9+w8Fy9/33r
+        7VJ8xS1BbNSRgTciY/jbYWRxC5unGuUGwDcbmZpTDMoxhzQ0m7z2w7oFaVwDCEWo
+        uetTb0miMekE7Mu5KwaS+rQOecygxgZJWQ1qEqJhydWOC4sJC067ZwIeGRVdlkew
+        ==
+X-ME-Sender: <xms:TwMJXEdXodfGe1P7CNUWXjDV-PcU5Nazp0s7RhqfhNNWsamNvYPTvA>
+X-ME-Proxy: <xmx:TwMJXAK-DjgczT4iIWHB-7XlHEBYJ1uk8UpFVpf5KnajHQ_KIp2NSg>
+    <xmx:TwMJXGvzHKlth92C87RW6exBX5tUt9RF-wH_VX7xmNR4MmFYkVdfgQ>
+    <xmx:TwMJXN7yMqYsFh6buwdtTVUXfTVuefWOdzIDiO1Ge4ppKSomp0D0HQ>
+    <xmx:TwMJXPe9wf8evX85AmLOQTiiQQ4g7pwS1lVXP5yY90L2eeKcGhnzBQ>
+    <xmx:TwMJXAW9xL5mJpnUN6HUnh8LX5eOUZyAy88Morr4ApIHT_x9fqwz7w>
+    <xmx:UQMJXLE3ejmfXwlZYkR9Y8b58z0BnL0ZysnwD8Ku1EQDat7nvtYqvw>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D9A9AE49E8;
+        Thu,  6 Dec 2018 06:09:02 -0500 (EST)
+Date:   Thu, 6 Dec 2018 12:09:01 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        stable@vger.kernel.org, dedekind1@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Juergen <juergen.lachmann@harman.com>
+Subject: Re: [PATCH] ubi: fastmap: Check each mapping only once
+Message-ID: <20181206110901.GN19891@kroah.com>
+References: <20181126103842.3249-1-martin.kepplinger@ginzinger.com>
+ <20181129080923.GE13859@kroah.com>
+ <1676802.TThbbZSlzy@blindfold>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181206000458.GA209772@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1676802.TThbbZSlzy@blindfold>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 04:04:59PM -0800, Eric Biggers wrote:
-> Hi Corentin,
+On Sun, Dec 02, 2018 at 09:51:34AM +0100, Richard Weinberger wrote:
+> Greg,
 > 
-> On Wed, Sep 19, 2018 at 10:10:54AM +0000, Corentin Labbe wrote:
-> > +int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
-> > +{
-> > +	struct crypto_alg *alg;
-> > +	struct crypto_dump_info info;
-> > +	int err;
-> > +
-> > +	if (cb->args[0])
-> > +		goto out;
-> > +
-> > +	cb->args[0] = 1;
-> > +
-> > +	info.in_skb = cb->skb;
-> > +	info.out_skb = skb;
-> > +	info.nlmsg_seq = cb->nlh->nlmsg_seq;
-> > +	info.nlmsg_flags = NLM_F_MULTI;
-> > +
-> > +	list_for_each_entry(alg, &crypto_alg_list, cra_list) {
-> > +		err = crypto_reportstat_alg(alg, &info);
-> > +		if (err)
-> > +			goto out_err;
-> > +	}
-> > +
-> > +out:
-> > +	return skb->len;
-> > +out_err:
-> > +	return err;
-> > +}
-> > +
-> > +int crypto_dump_reportstat_done(struct netlink_callback *cb)
-> > +{
-> > +	return 0;
-> > +}
+> Am Donnerstag, 29. November 2018, 09:09:23 CET schrieb Greg KH:
+> > On Mon, Nov 26, 2018 at 11:38:42AM +0100, Martin Kepplinger wrote:
+> > > From: Richard Weinberger <richard@nod.at>
+> > > 
+> > > [ Upstream commit 34653fd8c46e771585fce5975e4243f8fd401914 ]
+> > > 
+> > > This commit got merged along with commit 781932375ffc
+> > > ("ubi: fastmap: Correctly handle interrupted erasures in EBA") upstream but
+> > > only the latter has been applied to stable v4.14.54 as commit a23cf10d9abb.
+> > > This resulted in a performance regression. Startup on i.MX platforms is
+> > > delayed for up to a few seconds depending on the platform.
+> > > This fixes ubi fastmap to be of the same performance as it has been before
+> > > said fastmap changes.
+> > > 
+> > > Fixes: a23cf10d9abb ("ubi: fastmap: Correctly handle interrupted erasures in EBA")
+> > > Signed-off-by: Richard Weinberger <richard@nod.at>
+> > > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > ---
+> > > 
+> > > Richard, although this fixes a major slowdown regression in -stable, do you
+> > > consider this "stable" too?
+> > > 
+> > > This applies and is tested only for the 4.14 stable tree. It seems to be
+> > > equally relevant for 4.9 and 4.4 though.
+> > 
+> > Now queued up for 4.14.y, thanks.
 > 
-> How did you test this part?  Hint: these functions are never executed.
+> can you *please* slow a little down?
 > 
+> There are times (e.g. when I travel, visit customers on-site, being sick, etc...)
+> where I don't have the resources to monitor the mailinglists
+> in detail. Adding patches to stable on shout asks for trouble.
+> 
+> As Sudip points out, this patch needs a further fix patch:
+> 25677478474a ("ubi: Initialize Fastmap checkmapping correctly")
 
-Right, it is not used, only crypto_reportstat is used by the getstat.c example tool.
-And for using it, I need to do changes in crypto_user_rcv_msg().
-But I am not sure if it is interesting to do so.
+This is now in 4.14.86 so all should be fine now.
 
-So I will send a patch for removing it.
+As for "speed", most of the time people are complaining that I move too
+slow in getting fixes backported and to their patches.  Rarely am I told
+I am moving too fast, that's a nice change :)
 
-Regards
+As for doing releases on a "regular" schedule, I've tried it, and it
+didn't work any better/worse than what I'm doing now as everyone who
+consumes these kernels have their own cadence / acceptance process and I
+can never get in sync with _everyone_ let alone almost _anyone_.
+
+And due to travel and other things (like security issues coming up),
+trying to nail down a specific day-of-the-week doesn't work out at all
+either.
+
+thanks,
+
+greg k-h
