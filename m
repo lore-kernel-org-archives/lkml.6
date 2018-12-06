@@ -2,139 +2,163 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C101FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE39C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9554B20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9554B20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EA87120892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:45:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="B4Z/BKtR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA87120892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbeLFRp0 (ORCPT
+        id S1726148AbeLFRpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:45:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:57244 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFRpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:45:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D71980D;
-        Thu,  6 Dec 2018 09:45:25 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2633F3F5AF;
-        Thu,  6 Dec 2018 09:45:24 -0800 (PST)
-Date:   Thu, 6 Dec 2018 17:45:16 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCHv2] locking/atomics: build atomic headers as required
-Message-ID: <20181206174516.2bbjxzhsnwckqf5n@lakrids.cambridge.arm.com>
-References: <20181128085455.1164-1-mark.rutland@arm.com>
- <20181206161344.GA110430@gmail.com>
+        Thu, 6 Dec 2018 12:45:55 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38022 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeLFRpz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:45:55 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so524609pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 09:45:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=srbY72BCLNHKHGQVyFqh+bvKL9qqucUtCQ8Y5nQN3ZY=;
+        b=B4Z/BKtR29QaJhT+mjEBwZZVAcuGeRPlet0sGcmvG9pQZdKBaLNZKUBZrSSnJxkyME
+         JIW6rkBe+3/W4P+Gr3YmErm/Mjq4g7NuTP3a+q9w8H1OI7TPFsX243a2AqVgb15MNChg
+         C1tRhlB2MxBzJ05ZS3BND2brFP05bIpbHbcvnoXP5SwZJxre3h0hz5iGzBFBdewm7aQb
+         t2zD6vXy2I2JNE+h+U9mURy1Y7E9fnozrkBikOY8sFkJFZJDcviT66nkaeK7KqWtf1Aw
+         d50Kw+EGEqelVe3PWARLj5Cz0kDqlNpJRbp84WjE2HHRpGR8NTQ3TkvHeLnO4gpa5Kx2
+         Vetw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=srbY72BCLNHKHGQVyFqh+bvKL9qqucUtCQ8Y5nQN3ZY=;
+        b=chyzc5BAeZjkufMAhrlkSIKIXaYlKa5zccFepRyXQKN6h8ZrOVt2C9EzaW0b2ag+h8
+         entLltOJhN4BoyPAN8KZ6erQwVSARkm/rKIoqlQOvybXV3e8VITykk6ep7DVAD73Zs9O
+         1ZPjV9G53TXjZrlHH6QAmYKY4jtyf+eq6ayeDiqvHLdjsjp6uzxwLR9M6jPAURI1lrbJ
+         kDhsfozghpeAtMuaFGxIOFMgKsU3gKsHGrcBMXi2rySxMtno5+hmDQs3xjewWp8BZNaZ
+         BOLQTo0rhSDD6vjlidfBfO9TAq6GpeogSolMNxaU3xQVWnCgA5P+WNEuxYl7sIKER9H6
+         RTtw==
+X-Gm-Message-State: AA+aEWYYLwPo4KAleazuz35WqOCbw2Su1DViG7itlrfrgBwufOGkVIVn
+        K/8Lk+vRpxmRHnz0+tarPTlf0w==
+X-Google-Smtp-Source: AFSGD/UitTHcdPH9JEz8pP0M+XL8F+EFNwe1gBbo8LJjeWiJG2E4WNw2ztNNvxnZpjADtanxSeM2fA==
+X-Received: by 2002:aa7:85d7:: with SMTP id z23mr30579998pfn.205.1544118354263;
+        Thu, 06 Dec 2018 09:45:54 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:b824:a031:b50e:f401])
+        by smtp.gmail.com with ESMTPSA id k24sm1213535pfj.13.2018.12.06.09.45.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 09:45:53 -0800 (PST)
+Date:   Thu, 6 Dec 2018 18:45:46 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tkjos@android.com, maco@android.com, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, kilobyte@angband.pl,
+        darrick.wong@oracle.com, chouryzhou@tencent.com,
+        david@fromorbit.com, arve@android.com, joel@joelfernandes.org,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] binder: implement binderfs
+Message-ID: <20181206174544.d43vwuq7fnwpd7ti@brauner.io>
+References: <20181204131239.15158-1-christian@brauner.io>
+ <20181205200145.GA25230@kroah.com>
+ <20181205214203.cwcvsqe6ndu4e3vv@brauner.io>
+ <20181206140403.GA18947@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181206161344.GA110430@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181206140403.GA18947@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:13:44PM +0100, Ingo Molnar wrote:
-> 
-> * Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> > Andrew and Ingo report that the check-atomics.sh script is simply too
-> > slow to run for every kernel build, and it's impractical to make it
-> > faster without rewriting it in something other than shell.
+On Thu, Dec 06, 2018 at 03:04:03PM +0100, Greg KH wrote:
+> On Wed, Dec 05, 2018 at 10:42:06PM +0100, Christian Brauner wrote:
+> > On Wed, Dec 05, 2018 at 09:01:45PM +0100, Greg KH wrote:
+> > > > /* binder-control */
+> > > > Each new binderfs instance comes with a binder-control device. No other
+> > > > devices will be present at first. The binder-control device can be used to
+> > > > dynamically allocate binder devices. All requests operate on the binderfs
+> > > > mount the binder-control device resides in:
+> > > > - BINDER_CTL_ADD
+> > > >   Allocate a new binder device.
+> > > > Assuming a new instance of binderfs has been mounted at /dev/binderfs via
+> > > > mount -t binderfs binderfs /dev/binderfs. Then a request to create a new
+> > > > binder device can be made via:
+> > > > 
+> > > > struct binderfs_device device = {0};
+> > > > int fd = open("/dev/binderfs/binder-control", O_RDWR);
+> > > > ioctl(fd, BINDER_CTL_ADD, &device);
+> > > > 
+> > > > The struct binderfs_device will be used to return the major and minor
+> > > > number, as well as the index used as the new name for the device.
+> > > > Binderfs devices can simply be removed via unlink().
+> > > 
+> > > I think you should provide a name in the BINDER_CTL_ADD command.  That
+> > > way you can easily emulate the existing binder queues, and it saves you
+> > > a create/rename sequence that you will be forced to do otherwise.  Why
+> > > not do it just in a single command?
 > > 
-> > Rather than committing the generated headers, let's regenerate these
-> > as-required, if we change the data or scripts used to generate the
-> > atomic headers, or when building from a pristine tree.
+> > Sounds reasonable. How do you feel about capping the name length at 255
+> > bytes aka the standard Linux file name length (e.g. xfs, ext4 etc.)?
 > > 
-> > That ensures they're always up-to-date, allows them to be built in
-> > parallel, and avoid redundant rebuilds, which is a 2-8s saving per
-> > incremental build. Since the results are not committed, it's very
-> > obvious that they should not be modified directly. If we need to
-> > generate more headers in future, it's easy to extend Makefile.genheader
-> > to permit this.
+> > #define BINDERFS_NAME_MAX 255
 > > 
-> > I've verified that this works in the cases we previously had issues with
-> > (out-of-tree builds and where scripts have no execute permissions), and
-> > have tested these cases for both x86_64 and arm64.
-> > 
-> > The diffstat looks nice, at least...
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Borislav Petkov <bp@suse.de>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  Kbuild                                    |   18 +-
-> >  Makefile                                  |    8 +-
-> >  arch/arm64/include/asm/atomic.h           |    2 +-
-> >  arch/x86/include/asm/atomic.h             |    2 +-
-> >  include/asm-generic/atomic-instrumented.h | 1787 ----------------------
-> >  include/asm-generic/atomic-long.h         | 1012 -------------
-> >  include/linux/atomic-fallback.h           | 2294 -----------------------------
-> >  include/linux/atomic.h                    |    4 +-
-> >  scripts/Makefile.genheader                |   26 +
-> >  scripts/atomic/check-atomics.sh           |   19 -
-> >  10 files changed, 38 insertions(+), 5134 deletions(-)
-> >  delete mode 100644 include/asm-generic/atomic-instrumented.h
-> >  delete mode 100644 include/asm-generic/atomic-long.h
-> >  delete mode 100644 include/linux/atomic-fallback.h
-> >  create mode 100644 scripts/Makefile.genheader
-> >  delete mode 100755 scripts/atomic/check-atomics.sh
+> > struct binderfs_device {
+> >         char name[BINDERFS_NAME_MAX + 1];
 > 
-> So these 'automatically generated' headers are actual and important code, 
-> and I think it's bad practice to remove these from the git grep search 
-> space and history as well.
+> __u8 is the proper type to cross the user/kernel boundry :)
 
-Ok. Let's aim for that, then. :)
+Will switch. :)
 
-> Really, this whole notion of auto-generating the headers should be 
-> implemented correctly, instead of working around deficiencies in a 
-> short-term fashion that introduces other deficiencies.
-
-I certainly agree.
-
-> I never got any replies to my previous comments about this:
 > 
->   <20181128083057.GA7879@gmail.com>
+> > 	__u32 major;
+> > 	__u32 minor;
+> > }
 > 
-> Did I miss some mails of yours perhaps?
+> Yes, limiting it to 255 is fine with me.
 
-It appears my mailserver dropped that on the floor, as I can't find it
-in any of my mailboxes. :(
+Perfect!
 
-Sorry about that; I'll try to figure out what happened there.
+> 
+> > > That way also you don't need to care about the major/minor number at
+> > > all.  Userspace should never need to worry about that, use a name,
+> > > that's the best thing.  Also, it allows you to drop the use of the idr,
+> > > making the kernel code simpler overall.
+> > > 
+> > > > /* Implementation details */
+> > > > - When binderfs is registered as a new filesystem it will dynamically
+> > > >   allocate a new major number. The allocated major number will be returned
+> > > >   in struct binderfs_device when a new binder device is allocated.
+> > > 
+> > > Why does userspace care about major/minor numbers at all?  You should
+> > 
+> > Userspace cares for the sake of the devices cgroup which operates on
+> > device numnbers to restrict access to devices. Since binderfs doesn't
+> > have a static major number returning that information is helpful.
+> 
+> Ugh, ok, that makes sense.  If we really want to make the kernel
+> interface simpler, drop the major/minor and then have userspace do the
+> stat(2) to see what the major/minor number they care about is.
+> 
+> But yeah, keeping it here makes everyone's life simpler, the kernel
+> already knows this, and it's trivial to pass it back to userspace this
+> way.
+> 
+> Care to make this change and resend?
 
-This patch covers your suggestion of parallelizing things. On my box
-with -j64, that saves ~1.5s for a pristine allnoconfig build which
-otherwise takes ~15s.
+For sure. I have a long-haul flight for ~15h so by the time I land I
+have a new version I can send out. :)
 
-Practically, optimizing the scripts requires moving away from shell.
-The cost is all down to sub-shells resulting in fork+exec, but the
-scripts would be illegible without this.
-
-One option is to generate a checksum when the headers are generated and
-checked in, and check that at build time. I'll look into this tomorrow.
-
-Thanks,
-Mark.
+Thanks!
+Christian
