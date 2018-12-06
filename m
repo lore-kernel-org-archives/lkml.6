@@ -2,134 +2,106 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24B5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D4FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B635E214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A06220892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:23:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0SIHD9d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B635E214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="izBcePJw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A06220892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729886AbeLFNWi (ORCPT
+        id S1729649AbeLFNXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:22:38 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46111 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729831AbeLFNWf (ORCPT
+        Thu, 6 Dec 2018 08:23:16 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42281 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728744AbeLFNXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:22:35 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so142262pgp.13;
-        Thu, 06 Dec 2018 05:22:34 -0800 (PST)
+        Thu, 6 Dec 2018 08:23:15 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q18so452024wrx.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 05:23:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UUDpb/AopwzZY6zTDuSmIV20QlUMqZc1Sw37yTf055A=;
-        b=I0SIHD9da4kxvjq7lK7wqyyZIKx2uRYNWLOhgjONLPgb7Ek2HVrazmzob9cOccWBR8
-         oERUbuATW3pQqSDtNfXPJv2XrB4xjPk5KuZHHRFk6/lraGs5qMZ2ftAn5dvSwFXsWWK/
-         HMrZHdjnJo/y77zcb5Rz4kOV2LQUgTNDkvUEO2Xk8ldHf/l9BdZYvp7AIU+DbwgQDAr9
-         rshyqD7nmnZ2LOyBo6azq4ICeMldkNdeUo+/6JE0ODgPFZujZW4KtJD/80g5R3ATdJOk
-         GMrJ7POgCKkeoKcjUw2z7r8PHxh+h31AewYPxdkBNqx/yeTchvoHHc4FiM8B9n15x/Gu
-         Bepw==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lH8MSC1qJfoEJpVsttBDBCEiyuKYx7BBIW3tep4lLgE=;
+        b=izBcePJwngom7M05Pi1POPhFnLrxIqyzp0/SrtubjB/rn8rIS71ucZU7r/+xku7YIZ
+         ginbfiYIh2iOr1BDWUgtyKSoqynYP7XJFFbzejnLLDk5D1TWPgUjT4Y7JomAyJZU5wW7
+         6deJXvK8lww4KcLr08rIuoIpxDtNmBE37PFcU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UUDpb/AopwzZY6zTDuSmIV20QlUMqZc1Sw37yTf055A=;
-        b=ml7ZGGtjIBzquX9nzGgv4gJ/xnPk9wHjd1kL15nr8iHyjzbBcn8TrGnyOguJ5KX6Hm
-         nBQdWJ0kSFsX9pVRuui14WvjrU6g1bf4Lje5O41eopKur/aqe335dUcgl1jc0s+5s8Ab
-         tkVD5MuHJ3JV1fiix09V4/01YQAcdXHn2DinMRO5n21JoOORQlhqDEBPVBs59g8GVHVU
-         5EdEjFBYfQaj4uYi/06BksOU2bSFfX7w4U52xjwY5adbX2WZl7pB2NykbQguIgtM67WD
-         bNjaLUQRZ2PbAtOTp0wvRajp6hyl1wIZabgYlbeQhDcY6Zi1Sbdd+9NX8mXRrIWw3PZ9
-         fN/w==
-X-Gm-Message-State: AA+aEWYxEXTfoFupn8pffhUdnrsKto93k7AjdrBfj2gVfd883Ioka69U
-        c3aM56PremJUZrCn3YglnDA=
-X-Google-Smtp-Source: AFSGD/WVZVY8Ll/WK0uUuEap9MwCZAsQw/F6YiGcU71KT39iTGX6CyN4siF+c/6+P00A/XTCLsunnw==
-X-Received: by 2002:a62:1541:: with SMTP id 62mr28683728pfv.230.1544102554503;
-        Thu, 06 Dec 2018 05:22:34 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([2404:f801:9000:1a:d9bd:62c6:740b:9fc4])
-        by smtp.googlemail.com with ESMTPSA id y5sm2409246pge.49.2018.12.06.05.22.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 05:22:33 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com, linux@armlinux.org.uk
-Subject: [Resend PATCH V5 10/10] KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
-Date:   Thu,  6 Dec 2018 21:21:13 +0800
-Message-Id: <20181206132113.2691-11-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
-References: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lH8MSC1qJfoEJpVsttBDBCEiyuKYx7BBIW3tep4lLgE=;
+        b=uUKi9y1uoM2KR4nOww+J7InlZulYV020PAJglpw9015YbyWjp7mkTLTnWIhxmNDxlp
+         fveSvnKoc8RfmwLSWLiKXcAj5xSQh5ggfmsTtJgLOSHDkQA1iLHHw4WjVTWnf2Zlbn/J
+         2NjafLNm1czsiIcAdNIla4TKxIb/UE+BMd51l3phdyYkgnerjl+ZrHQtVdQ8JyrQlqWb
+         Qhf14hNKgEGW2wQ62aY/Sj1FflEJFKKM/OHUoXSR7Sa/XVXaD0bcOEK1ANw8QZdhS8JQ
+         SsDXuLwTO/UNe757j74TaV0lEi00ouxJ93N/VNkVEFUxm2Iqf4lvwzsupKA/j0laY+dQ
+         mWAg==
+X-Gm-Message-State: AA+aEWYIBuEMoYpPSsXi+gyjUZN6aTn0h6Jf9nIppR23pyoAfm+KOnEb
+        9GajK3k9qdbfS3Az2qMZv9MZKQ==
+X-Google-Smtp-Source: AFSGD/UQgEyKM22wgolckkxm3SH0B2kK20abQuKDke00P/LEHKjHBfCCKFpvXH/bX0/6JvX9B+tE6A==
+X-Received: by 2002:a5d:40c1:: with SMTP id b1mr26842238wrq.133.1544102593867;
+        Thu, 06 Dec 2018 05:23:13 -0800 (PST)
+Received: from localhost.localdomain (ip-161-243.sn-213-198.clouditalia.com. [213.198.161.243])
+        by smtp.gmail.com with ESMTPSA id z13sm363769wrq.19.2018.12.06.05.23.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 05:23:13 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 1/3] dt-bindings: media: sun6i: Add A64 CSI compatible (w/ H3 fallback)
+Date:   Thu,  6 Dec 2018 18:53:04 +0530
+Message-Id: <20181206132306.11843-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Allwinner A64 CSI has single channel time-multiplexed BT.656
+CMOS sensor interface like H3.
 
-Originally, flush tlb is done by slot_handle_level_range(). This patch
-is to flush tlb directly in the kvm_zap_gfn_range() when range
-flush is available.
+Add a compatible string for it with H3 fallback compatible string,
+in this case the H3 driver can be used.
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Change since v4:
-	Move operation of setting flush_tlb out of for loop.
----
- arch/x86/kvm/mmu.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Changes for v2:
+- none
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 64bd848f021e..94b0540b1471 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5624,8 +5624,13 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- {
- 	struct kvm_memslots *slots;
- 	struct kvm_memory_slot *memslot;
-+	bool flush_tlb = true;
-+	bool flush = false;
- 	int i;
- 
-+	if (kvm_available_flush_tlb_with_range())
-+		flush_tlb = false;
-+
- 	spin_lock(&kvm->mmu_lock);
- 	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
- 		slots = __kvm_memslots(kvm, i);
-@@ -5637,12 +5642,17 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 			if (start >= end)
- 				continue;
- 
--			slot_handle_level_range(kvm, memslot, kvm_zap_rmapp,
--						PT_PAGE_TABLE_LEVEL, PT_MAX_HUGEPAGE_LEVEL,
--						start, end - 1, true);
-+			flush |= slot_handle_level_range(kvm, memslot,
-+					kvm_zap_rmapp, PT_PAGE_TABLE_LEVEL,
-+					PT_MAX_HUGEPAGE_LEVEL, start,
-+					end - 1, flush_tlb);
- 		}
- 	}
- 
-+	if (flush)
-+		kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
-+				gfn_end - gfn_start + 1);
-+
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
+ Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+index eb5a14b828d9..5fb6fd4e2c7d 100644
+--- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
++++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+@@ -7,6 +7,7 @@ Required properties:
+   - compatible: value must be one of:
+     * "allwinner,sun6i-a31-csi"
+     * "allwinner,sun8i-h3-csi"
++    * "allwinner,sun50i-a64-csi", "allwinner,sun8i-h3-csi"
+     * "allwinner,sun8i-v3s-csi"
+   - reg: base address and size of the memory-mapped region.
+   - interrupts: interrupt associated to this IP
 -- 
-2.14.4
+2.18.0.321.gffc6fa0e3
 
