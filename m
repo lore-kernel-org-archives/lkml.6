@@ -3,45 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7619AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F37CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408EF2082D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:50:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408EF2082D
+	by mail.kernel.org (Postfix) with ESMTP id EE66F20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE66F20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbeLFJuf (ORCPT
+        id S1728941AbeLFJyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:50:35 -0500
-Received: from mail.netline.ch ([148.251.143.178]:55857 "EHLO
+        Thu, 6 Dec 2018 04:54:36 -0500
+Received: from mail.netline.ch ([148.251.143.178]:55918 "EHLO
         netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeLFJuf (ORCPT
+        with ESMTP id S1727804AbeLFJyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:50:35 -0500
+        Thu, 6 Dec 2018 04:54:36 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 9F72D2A604D;
-        Thu,  6 Dec 2018 10:50:32 +0100 (CET)
+        by netline-mail3.netline.ch (Postfix) with ESMTP id 96FBB2A604C;
+        Thu,  6 Dec 2018 10:54:33 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
 Received: from netline-mail3.netline.ch ([127.0.0.1])
         by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id uTBZW5LY36LD; Thu,  6 Dec 2018 10:50:31 +0100 (CET)
+        with LMTP id 230lMTFP4J4m; Thu,  6 Dec 2018 10:54:33 +0100 (CET)
 Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 3477A2A604C;
-        Thu,  6 Dec 2018 10:50:30 +0100 (CET)
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id D39592A604B;
+        Thu,  6 Dec 2018 10:54:32 +0100 (CET)
 Received: from localhost ([::1])
         by thor with esmtp (Exim 4.91)
         (envelope-from <michel@daenzer.net>)
-        id 1gUqIf-0003s8-TE; Thu, 06 Dec 2018 10:50:29 +0100
+        id 1gUqMa-0003vB-IO; Thu, 06 Dec 2018 10:54:32 +0100
 Subject: Re: [PATCH 2/2] drm/ttm: Use pr_debug for all output from
  ttm_bo_evict
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+To:     christian.koenig@amd.com,
+        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
         "Huang, Ray" <Ray.Huang@amd.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -53,7 +52,9 @@ References: <20181205165621.5805-1-michel@daenzer.net>
  <b0b57acb-7152-ab1a-855a-3de8c77fa425@amd.com>
  <3198051c-c09d-5bf9-e177-3a90b10b4149@daenzer.net>
  <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
- <29939fbd-939e-ca66-b355-d85b51c5a3ae@daenzer.net>
+ <357b0045-d2a2-2246-b69d-19e657f6e843@amd.com>
+ <50899531-c8ea-6562-f7f3-593481bcef60@gmail.com>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
 Openpgp: preference=signencrypt
 Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
  mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
@@ -73,12 +74,12 @@ Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
  GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
  YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
  Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <d1262420-7e36-07dc-ffa2-cc4492fa4097@daenzer.net>
-Date:   Thu, 6 Dec 2018 10:50:29 +0100
+Message-ID: <f8571bb8-2a9a-e7d0-956a-f5fa39d2a14f@daenzer.net>
+Date:   Thu, 6 Dec 2018 10:54:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <29939fbd-939e-ca66-b355-d85b51c5a3ae@daenzer.net>
+In-Reply-To: <50899531-c8ea-6562-f7f3-593481bcef60@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
@@ -87,44 +88,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 10:38 a.m., Michel Dänzer wrote:
-> On 2018-12-06 10:33 a.m., Koenig, Christian wrote:
->> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
->>> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
->>>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
->>>>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>>>
->>>>> All the output is related, so it should all be printed the same way.
->>>>> Some of it was using pr_debug, but some of it appeared in dmesg by
->>>>> default. The caller should handle failure, so there's no need to spam
->>>>> dmesg with potentially quite a lot of output by default.
->>>>>
->>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>>> Sounds reasonable, but personally prefer to show error when some
->>>> vital incident happens, e.g. no memory on eviction.
->>> The amdgpu driver still prints these in that case:
->>>
->>>   [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* amdgpu_cs_list_validate(validated) failed.
->>>   [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for command submission!
->>>
->>> That's plenty as far as I'm concerned. :)
+On 2018-12-06 10:49 a.m., Christian König wrote:
+> Am 06.12.18 um 10:39 schrieb Zhang, Jerry(Junwei):
+>> On 12/6/18 5:33 PM, Koenig, Christian wrote:
+>>> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
+>>>> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
+>>>>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
+>>>>>> From: Michel Dänzer <michel.daenzer@amd.com>
+>>>>>>
+>>>>>> All the output is related, so it should all be printed the same way.
+>>>>>> Some of it was using pr_debug, but some of it appeared in dmesg by
+>>>>>> default. The caller should handle failure, so there's no need to spam
+>>>>>> dmesg with potentially quite a lot of output by default.
+>>>>>>
+>>>>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+>>>>> Sounds reasonable, but personally prefer to show error when some
+>>>>> vital incident happens, e.g. no memory on eviction.
+>>>> The amdgpu driver still prints these in that case:
+>>>>
+>>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR*
+>>>> amdgpu_cs_list_validate(validated) failed.
+>>>>    [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for
+>>>> command submission!
 >>
->> Yeah, but in this case I would rather make the amdgpu messages debug 
->> level and leave the TTM meassages on error level.
+>> That's from cs submit, perhaps it may come from other places by
+>> ttm_bo_evict_mm().
+>> Is that right? Christian.
 > 
-> That makes no sense to me.
+> Yeah, exactly my thinking as well. When we silence the TTM messages we
+> might miss those cases.
 > 
-> The amdgpu messages have some value for normal users / bug reports,
-> indicating that something isn't going quite as planned.
+> Additional to that other drivers using TTM might not have those messages
+> either.
 > 
-> The TTM messages are orders of magnitude longer, and are basically noise
-> for a normal user.
+> If TTM is to noisy we should use ratelimit and/or reduce the number and
+> size of the warning messages.
 > 
-> Seems like a no-brainer to me which of these should be visible by default.
+> A simple "Warning, I ran out of memory during eviction!" should do.
 
-Moreover, not every case producing the driver output also produces the
-TTM output, so it could make it difficult to realize that there's a
-memory pressure situation.
+Just dropping the last hunk of this patch should do then. I can do that.
 
 
 -- 
