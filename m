@@ -2,134 +2,135 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C812C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F76C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC08208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:51:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC08208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DB34F214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:52:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="zMKafuEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB34F214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbeLFPvr (ORCPT
+        id S1726189AbeLFPwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:51:47 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53920 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeLFPvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:51:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5FA880D;
-        Thu,  6 Dec 2018 07:51:46 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE2253F59C;
-        Thu,  6 Dec 2018 07:51:44 -0800 (PST)
-Subject: Re: dmapool regression in next
-To:     Tony Battersby <tonyb@cybernetics.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, tony@atomide.com
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, john.garry@huawei.com,
-        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
-        andy.shevchenko@gmail.com, akpm@linux-foundation.org,
-        linux-omap@vger.kernel.org, hch@lst.de,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20181206013054.GI6707@atomide.com>
- <CAJKOXPcoK5SsXfXjdAWPHLX2KZRCqOv61HVf2DK9wm4_m+vJ0w@mail.gmail.com>
- <09e73d24-467a-52bb-0433-a9596d4d6f02@cybernetics.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <451215b8-548a-eff7-9e96-0ff5f8cbb614@arm.com>
-Date:   Thu, 6 Dec 2018 15:51:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 10:52:03 -0500
+Received: from mail.servus.at ([193.170.194.20]:50262 "EHLO mail.servus.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbeLFPwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:52:03 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.servus.at (Postfix) with ESMTP id CD4C3300069E;
+        Thu,  6 Dec 2018 16:52:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
+        content-transfer-encoding:content-type:content-type:in-reply-to
+        :mime-version:user-agent:date:date:message-id:organization:from
+        :from:references:subject:subject:received:received; s=main; t=
+        1544111517; x=1545925918; bh=QmL4OZ7E57qNCjThXRFnbX27/8HSvmaella
+        gz6iYVSE=; b=zMKafuEiChcVPh9XOYoXddQwUsWy2Cz5FxslJ6tvy5pV74R8VCI
+        A68KCKaYdBMIqVXN2wOhHH5OD2X3jn8kgdn2XDSg/EH+vnHvrDhbHLyoc9+t735e
+        WpcHuwAntuG2Y7Nw+dCC+LdaQjjYO/28t8D/TIbdLrrqq40oV0hHRVPM=
+X-Virus-Scanned: amavisd-new at servus.at
+Received: from mail.servus.at ([127.0.0.1])
+        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yh_VonA4ekXi; Thu,  6 Dec 2018 16:51:57 +0100 (CET)
+Received: from [192.168.216.53] (unknown [81.10.228.128])
+        (Authenticated sender: oh_markus)
+        by mail.servus.at (Postfix) with ESMTPSA id 7A35E300069D;
+        Thu,  6 Dec 2018 16:51:55 +0100 (CET)
+Subject: Re: [PATCH 3/8] lib/lzo: enable 64-bit CTZ on Arm
+To:     Dave Rodgman <dave.rodgman@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <20181130142600.13782-1-dave.rodgman@arm.com>
+ <20181130142600.13782-4-dave.rodgman@arm.com>
+Cc:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "sonnyrao@google.com" <sonnyrao@google.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Organization: oberhumer.com
+Message-ID: <5C09459B.5090201@oberhumer.com>
+Date:   Thu, 6 Dec 2018 16:51:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
 MIME-Version: 1.0
-In-Reply-To: <09e73d24-467a-52bb-0433-a9596d4d6f02@cybernetics.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181130142600.13782-4-dave.rodgman@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 15:11, Tony Battersby wrote:
-> On 12/6/18 4:25 AM, Krzysztof Kozlowski wrote:
->> On Thu, 6 Dec 2018 at 02:31, Tony Lindgren <tony@atomide.com> wrote:
->>> Hi,
->>>
->>> Looks like with commit 26abe88e830d ("mm/dmapool.c: improve scalability
->>> of dma_pool_free()") I'm now getting spammed with lots of "(bad vaddr)"
->>> on at least omap4 pandaboard, see below.
->>>
->>> Any ideas what might be going wrong?
->>>
->>> Regards,
->>>
->>> Tony
->>>
->>> 8< ---------------------
->>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe800000
->>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe80001c
->>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe800038
->>> ...
->> I see it as well on all my Exynos boards, since yesterday's next. In
->> my case it is the USB EHCI driver:
->> exynos-ehci 12110000.usb: dma_pool_free ehci_qtd, (ptrval) (bad
->> vaddr)/0xb8844180
->> Full log here:
->> https://krzk.eu/#/builders/1/builds/2937/steps/12/logs/serial0
->>
->> Best regards,
->> Krzysztof
->>
-> Here is the prototype:
-> 
-> void dma_pool_free(struct dma_pool *pool, void *vaddr, dma_addr_t dma);
-> 
-> With the old code, the 'dma' value had to be correct for use with
-> pool_find_page(), or else you would get an error.  If the 'vaddr' value
-> was incorrect, it would corrupt the dmapool freelist, but you wouldn't
-> get an error unless DMAPOOL_DEBUG was enabled.
-> 
-> With my patch applied, 'vaddr' has to be correct for virt_to_page().  My
-> code also checks that 'dma' is consistent with 'vaddr' even if
-> DMAPOOL_DEBUG is disabled, since the check is fast and it will prevent
-> problems like this in the future.
+I think that LZO_USE_CTZ64 should only be defined for ARM64 and
+not for 32-bit ARM.
 
-Unfortunately that logic has a fatal flaw - DMA pools are backed by 
-dma_alloc_coherent(), and there is absolutely no guarantee that the 
-memory dma_alloc_coherent() returns is backed by a struct page at all. 
-Even if it is, there is still absolutely no guarantee that the vaddr 
-value it returns is valid for virt_to_page() - on many systems it will 
-be in vmalloc or some architecture-specific region of address space.
 
-The problem is not that these drivers are buggy (they're not - the arch 
-code is returning a vmalloc()ed non-cacheable remap in the first place), 
-it's that 26abe88e830d is fundamentally unworkable and needs reverting. 
-Apparently the original patches managed not to catch my eye as something 
-I needed to review, sorry about that :(
+On 2018-11-30 15:26, Dave Rodgman wrote:
+> From: Matt Sealey <matt.sealey@arm.com>
+> 
+> ARMv6 Thumb state introduced an RBIT instruction which, combined with CLZ
+> as present in ARMv5, introduces an extremely fast path for counting
+> trailing zeroes.
+> 
+> Enable the use of the GCC builtin for this on ARMv6+ with
+> CONFIG_THUMB2_KERNEL to ensure we get the 'new' instruction usage.
+> 
+> We do not bother enabling LZO_USE_CTZ64 support for ARMv5 as the builtin
+> code path does the same thing as the LZO_USE_CTZ32 code, only with more
+> register pressure.
+> 
+> Link: http://lkml.kernel.org/r/20181127161913.23863-4-dave.rodgman@arm.com
+> Signed-off-by: Matt Sealey <matt.sealey@arm.com>
+> Signed-off-by: Dave Rodgman <dave.rodgman@arm.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: Markus F.X.J. Oberhumer <markus@oberhumer.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Nitin Gupta <nitingupta910@gmail.com>
+> Cc: Richard Purdie <rpurdie@openedhand.com>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> Cc: Sonny Rao <sonnyrao@google.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  lib/lzo/lzodefs.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
+> index e1b3cf6459a9..c0193f726db0 100644
+> --- a/lib/lzo/lzodefs.h
+> +++ b/lib/lzo/lzodefs.h
+> @@ -33,9 +33,14 @@
+>  #define LZO_USE_CTZ32	1
+>  #elif defined(CONFIG_X86) || defined(CONFIG_PPC)
+>  #define LZO_USE_CTZ32	1
+> -#elif defined(CONFIG_ARM) && (__LINUX_ARM_ARCH__ >= 5)
+> +#elif defined(CONFIG_ARM)
+> +#if (__LINUX_ARM_ARCH__ >= 5)
+>  #define LZO_USE_CTZ32	1
+>  #endif
+> +#if (__LINUX_ARM_ARCH__ >= 6) && defined(CONFIG_THUMB2_KERNEL)
+> +#define LZO_USE_CTZ64	1
+> +#endif
+> +#endif
+>  
+>  #define M1_MAX_OFFSET	0x0400
+>  #define M2_MAX_OFFSET	0x0800
+> 
 
-Robin.
-
-> 
-> So if a buggy driver passes in a good value for 'dma' but a bad value
-> for 'vaddr', then it may have appeared to work previously (but with
-> possible data corruption, depending on the circumstances), but my patch
-> will expose the problem.  You can confirm by reverting my dmapool
-> patches and enabling DMAPOOL_DEBUG, which is at the top of mm/dmapool.c:
-> 
-> #if defined(CONFIG_DEBUG_SLAB) || defined(CONFIG_SLUB_DEBUG_ON)
-> #define DMAPOOL_DEBUG 1
-> #endif
-> 
-> Tony Battersby
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+-- 
+Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
