@@ -2,119 +2,104 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EA1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D8C65BAF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BFD214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="YNEfU25C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BFD214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B734214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B734214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbeLFPyC (ORCPT
+        id S1726268AbeLFPyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:54:02 -0500
-Received: from mail.servus.at ([193.170.194.20]:50592 "EHLO mail.servus.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFPyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:54:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.servus.at (Postfix) with ESMTP id C1E9C300069D;
-        Thu,  6 Dec 2018 16:54:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-        content-transfer-encoding:content-type:content-type:in-reply-to
-        :mime-version:user-agent:date:date:message-id:organization:from
-        :from:references:subject:subject:received:received; s=main; t=
-        1544111636; x=1545926037; bh=Q3U9QBa14rvLKCcou8Sb9LjzDaYwcpwVIt7
-        HHxiudvk=; b=YNEfU25CNpe9cBjsbxVzb6TD8nJmz8gvJEbynfvRs2F4ebQQb4k
-        iO7Em1XC5NoJqkutr1flAZ1XdcuEC8283ik2u89zW6vo0glFmbvqJoWJuBnQ+6Qh
-        6tgIO1ZggZf3DsetvHL+x4ZQYgfcPcw21lZ75+cO+fp9fHAUizlzT9P8=
-X-Virus-Scanned: amavisd-new at servus.at
-Received: from mail.servus.at ([127.0.0.1])
-        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wMoNKpMVH8JU; Thu,  6 Dec 2018 16:53:56 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-        (Authenticated sender: oh_markus)
-        by mail.servus.at (Postfix) with ESMTPSA id 81338300069A;
-        Thu,  6 Dec 2018 16:53:56 +0100 (CET)
-Subject: Re: [PATCH 5/8] lib/lzo: fast 8-byte copy on arm64
-To:     Dave Rodgman <dave.rodgman@arm.com>,
+        Thu, 6 Dec 2018 10:54:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54022 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbeLFPyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:54:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E356480D;
+        Thu,  6 Dec 2018 07:54:03 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B18F43F59C;
+        Thu,  6 Dec 2018 07:54:03 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id C9A9C1AE0BD1; Thu,  6 Dec 2018 15:54:24 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 15:54:24 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, dyoung@redhat.com,
+        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
+        kexec@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <20181130142600.13782-1-dave.rodgman@arm.com>
- <20181130142600.13782-6-dave.rodgman@arm.com>
-Cc:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>,
-        "sonnyrao@google.com" <sonnyrao@google.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
-From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <5C094614.9090608@oberhumer.com>
-Date:   Thu, 6 Dec 2018 16:53:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v16 06/16] lib: fdt: add a helper function for handling
+ memory range property
+Message-ID: <20181206155424.GA4422@arm.com>
+References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
+ <20181115055254.2812-7-takahiro.akashi@linaro.org>
+ <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130142600.13782-6-dave.rodgman@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Markus F.X.J. Oberhumer <markus@oberhumer.com>
+Hi Rob,
 
+Thanks for reviewing this.
 
+On Thu, Dec 06, 2018 at 08:47:04AM -0600, Rob Herring wrote:
+> On Wed, Nov 14, 2018 at 11:52 PM AKASHI Takahiro
+> <takahiro.akashi@linaro.org> wrote:
+> >
+> > Added function, fdt_setprop_reg(), will be used later to handle
+> > kexec-specific property in arm64's kexec_file implementation.
+> > It will possibly be merged into libfdt in the future.
+> 
+> You generally can't modify libfdt files. Any changes will be blown
+> away with the next dtc sync (there's one in -next now). Though here
+> you are creating a new location with fdt code. lib/ is just a shim to
+> the actual libfdt code. Don't put any implementation there. You can
+> add this to drivers/of/fdt_address.c for the short term, but it still
+> needs to go upstream.
+> 
+> Otherwise, the implementation looks fine to me.
 
-On 2018-11-30 15:26, Dave Rodgman wrote:
-> From: Matt Sealey <matt.sealey@arm.com>
-> 
-> Enable faster 8-byte copies on arm64.
-> 
-> Link: http://lkml.kernel.org/r/20181127161913.23863-6-dave.rodgman@arm.com
-> Signed-off-by: Matt Sealey <matt.sealey@arm.com>
-> Signed-off-by: Dave Rodgman <dave.rodgman@arm.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Markus F.X.J. Oberhumer <markus@oberhumer.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Nitin Gupta <nitingupta910@gmail.com>
-> Cc: Richard Purdie <rpurdie@openedhand.com>
-> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-> Cc: Sonny Rao <sonnyrao@google.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  lib/lzo/lzodefs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
-> index c8965dc181df..06fa83a38e0a 100644
-> --- a/lib/lzo/lzodefs.h
-> +++ b/lib/lzo/lzodefs.h
-> @@ -15,7 +15,7 @@
->  
->  #define COPY4(dst, src)	\
->  		put_unaligned(get_unaligned((const u32 *)(src)), (u32 *)(dst))
-> -#if defined(CONFIG_X86_64)
-> +#if defined(CONFIG_X86_64) || defined(CONFIG_ARM64)
->  #define COPY8(dst, src)	\
->  		put_unaligned(get_unaligned((const u64 *)(src)), (u64 *)(dst))
->  #else
-> 
+I agree, but I don't think there's a real need for us to hack
+drivers/of/fdt_address.c in the meantime -- let's just target upstream
+and not carry this in the kernel.
 
--- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
+Akashi -- for now, I'll drop the kdump parts of this series which rely
+on this helper. The majority of the series is actually independent and
+can go in as-is.
+
+I've pushed out a kexec branch to the arm64 tree for you to take a look
+at:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=kexec
+
+Thanks,
+
+Will
