@@ -2,99 +2,154 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C039CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6A7C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7130820850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD23F20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GvTaENsb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7130820850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="ChCPscR8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD23F20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbeLFSGL (ORCPT
+        id S1726089AbeLFSG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:06:11 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:39778 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFSGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:06:10 -0500
-Received: from zn.tnic (p200300EC2BCE8F00FC176F88AC425FE9.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:8f00:fc17:6f88:ac42:5fe9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D0D0C1EC04DF;
-        Thu,  6 Dec 2018 19:06:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544119569;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=sgxX7qOiwpthTwIR7mh7W6yCw4yrP+yNggi7kHFKdU0=;
-        b=GvTaENsb3Xpazttulvcz97DrDHK+nRIbxnABcmQ2TknlGKM0Pkqb2A43dIC/yyGI+PYSad
-        uuSjX13WxxYVQkhk+q/sO9GTX9dykvKdsY+Yu+7DgehOMsv4UOipLxDOnoJRTtgNmI9hsi
-        TN4zd9xy4aKaNyAEGACJNctqBGQD4Os=
-Date:   Thu, 6 Dec 2018 19:05:52 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH] x86/mce: Streamline MCE subsystem's naming
-Message-ID: <20181206180552.GB3986@zn.tnic>
-References: <20181205141323.14995-1-bp@alien8.de>
- <20181205163037.GC109259@gmail.com>
- <20181205170006.GK29510@zn.tnic>
- <20181205180158.GA64770@gmail.com>
- <20181205190355.GP29510@zn.tnic>
- <20181206162703.GA119163@gmail.com>
- <3908561D78D1C84285E8C5FCA982C28F7D47B665@ORSMSX110.amr.corp.intel.com>
+        Thu, 6 Dec 2018 13:06:26 -0500
+Received: from mail-eopbgr680098.outbound.protection.outlook.com ([40.107.68.98]:35376
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725889AbeLFSG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:06:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C7Ym/28FbfYFjo8Kau28UHz6Ma0/EBHpbuB4MA9ZmNI=;
+ b=ChCPscR8Uxg6RfyDn0myrIV5KblnRMkUTNTTOz+L5BxblnB0gj4q09RvthSo1nfv8tE4T8W6yRsU6Aekf5vh6njYZrmlg2vhqz/XGVfu5s4jYXsxPuQaEWG5gQ71mIMSm0mfUdGMZAiZ/E1DsZ33DePsHZClPmEkRxaYd2gzuHE=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1261.namprd22.prod.outlook.com (10.174.162.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Thu, 6 Dec 2018 18:05:42 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985%4]) with mapi id 15.20.1404.021; Thu, 6 Dec 2018
+ 18:05:42 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+CC:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "uclinux-h8-devel@lists.sourceforge.jp" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "kgdb-bugreport@lists.sourceforge.net" 
+        <kgdb-bugreport@lists.sourceforge.net>
+Subject: Re: [PATCH 1/2] mips/kgdb: prepare arch_kgdb_ops for constness
+Thread-Topic: [PATCH 1/2] mips/kgdb: prepare arch_kgdb_ops for constness
+Thread-Index: AQHUjFTCvBEAjV0a3kG9cBZbfyErZqVxwdEAgABCHIA=
+Date:   Thu, 6 Dec 2018 18:05:41 +0000
+Message-ID: <20181206180539.fezd6bqce36tgmie@pburton-laptop>
+References: <75bbcdd1e9277d66ebb06e349dda304bd01ce761.1543957194.git.christophe.leroy@c-s.fr>
+ <20181206140902.ea6jlwqrbcwyxp5r@holly.lan>
+In-Reply-To: <20181206140902.ea6jlwqrbcwyxp5r@holly.lan>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR14CA0021.namprd14.prod.outlook.com
+ (2603:10b6:300:ae::31) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1261;6:Kqbme/8dGXWDFEDuuT4QXLURsuOs5QbQ5Xq+jYG4BwjoQPSZnhV3jRlhRdQfuctJXIXPe3a9VsI23WnOlExtXpkwvnNq7wQhjuI3TkzXBOUa/JVLaLoSpI9v5Ii6wKPFDN6BOs1qD7cXXM8pwuOkn9jLbXltvvpZK8LJTWriTok5Rt3inDJCQhTitxWipEpiyvLWTyUkVpWukEwpCMk2ZvUD1P1AMB766mV3YinUAJ9MfxDJ6EbproA3FqyYVIpLriGqbUBZt1VtlrnXN8eUsoWY+t7MqRZVqWXNRuGrFuvprgjGTYznk4u0a4Dxc+EumglvPRgrVjIi48xKdw7neI8AQnG3N7I2NBIFA8HYgNXbH/BBET7kPBjz2fsLrwlT/xotXTpZyA1v3rrRmlQV7rnrKV3JIMreLgayu8/uZHFtAwhBgeAN9JZNdtCBVZ42JVsLYvzwgV26Ne5e/jNRrA==;5:NSOUjRz/gGVHSxNMh3SdoQ1iiEUm7fkrXVSK7S/kEUJLHBRev0JOa3E4iRLKo53Lxepw0dJZA+EuXHNOeSfDipsRCuzLW3mXnUP64AgAH/0qb573VJ63idjHf0Pp1Edg3e3gTzqo9SC6Mn3yY3eCQ6VJN/KPELUmgEbaexkKBTc=;7:i1Jr10EGoyYrJhAUUD5mSSXByVqCW64AouzJ+51Scb4b512wCU5iWtIbI+iQQHSCKmBkF6QoM9EkoktMkOVCkxQ3jlbHzmbF0+lsmRGR+P7u/36vwBNquNYZKxPXNPlNAKp6uc4VNi8pfvw8tdhRAA==
+x-ms-office365-filtering-correlation-id: 457d6553-5b22-4360-7723-08d65ba56ee3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1261;
+x-ms-traffictypediagnostic: MWHPR2201MB1261:
+x-microsoft-antispam-prvs: <MWHPR2201MB1261BE283313A550AF3B7908C1A90@MWHPR2201MB1261.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1261;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1261;
+x-forefront-prvs: 087894CD3C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(39840400004)(366004)(346002)(376002)(396003)(189003)(199004)(8936002)(105586002)(1076002)(2906002)(6116002)(6916009)(316002)(58126008)(25786009)(66066001)(4326008)(26005)(3846002)(186003)(305945005)(81156014)(386003)(6246003)(6506007)(42882007)(102836004)(97736004)(33896004)(81166006)(7736002)(5660300001)(7406005)(76176011)(14454004)(476003)(52116002)(53936002)(486006)(229853002)(44832011)(7416002)(68736007)(71200400001)(11346002)(446003)(6436002)(8676002)(71190400001)(99286004)(33716001)(6512007)(256004)(6486002)(106356001)(508600001)(54906003)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1261;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: RBODwkcEs7rhB+DcAO1i/msJXgIAGxA7LhCkciKDHchazPyulsxRChueCtbEa2P1WfPn+T+L6it5OcP9Pw7TyhburN49/FE9lrL6++iMpb6avG1ebwmmvLvqJUsvb92qXLWXxJ70na/PQ7dmAANPsRE+BvaUez6hM43mM3gHagVuwF6tqvogBMZfO0UTFjLI7zlaUWBmf6s2oiAZmN4gjD7MsQqSe2S7J+gEH2Yjw2aC39MugmQLJlLWpgNr0TM2DKcTfq2PqottulWd4cZnAjKuLMOcJV1iRhfUkHcDsBuMu0CBLW+pZeTGtTwyIzzGuEM3/XRyLrQ1QqTWmg+R2t43Y4ZKofXG2jZETd1BJCU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <502BAAE9FE2E6E45B9CE975E9FA539FF@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D47B665@ORSMSX110.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 457d6553-5b22-4360-7723-08d65ba56ee3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 18:05:41.5853
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1261
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:36:03PM +0000, Luck, Tony wrote:
-> > So the real question is, is there a signifcant class of MCE events that 
-> > are not tied to the reporting channel which is per CPU (-ish ...) MCA 
-> > banks?
-> 
-> Perhaps QPI/UPI interconnect errors?
+Hi Christophe & Daniel,
 
-Whatever, this is pure bikeshedding what we're doing right now. All the
-errors are reported through the CPU's MCA banks and the argument whether
-an error class which is maybe not really tied to the CPU, should dictate
-which path to put the files in, does not make any sense to me.
+On Thu, Dec 06, 2018 at 02:09:02PM +0000, Daniel Thompson wrote:
+> On Wed, Dec 05, 2018 at 04:41:09AM +0000, Christophe Leroy wrote:
+> > MIPS is the only architecture modifying arch_kgdb_ops during init.
+> > This patch makes the init static, so that it can be changed to
+> > const in following patch, as recommended by checkpatch.pl
+> >=20
+> > Suggested-by: Paul Burton <paul.burton@mips.com>
+> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>=20
+> From my side this is
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+>=20
+> Since this is a dependency for the next patch I'd be happy to take via
+> my tree... but would need an ack from the MIPS guys to do that.
 
-The only argument which makes sense IMO is whether the path should be
-short. :-)
+For both patches in this series:
 
-And both
+    Acked-by: Paul Burton <paul.burton@mips.com>
 
-arch/x86/cpu/mce/
-arch/x86/mce/
-
-are short enough to me.
-
-Now, the real question is, how do we want to place the rest of the
-files/folders so that we can get rid of deeper directory structures.
-
-If we say, we don't want to have .../cpu/... and put everything in
-arch/x86/ then this answers the above question too.
-
-IMO, of course.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thanks,
+    Paul
