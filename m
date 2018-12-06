@@ -2,104 +2,80 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA0DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54CEC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 611A82146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544136616;
-	bh=AQDugY4nh3/WNirV89dHDsIWcEG+qqLLrGxAqtmhGg0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=XV7Fel9T4nZdZSfZhEW1lzWosg9hLB1NVWQVMl/cu9jCsq3PNOUNf0hP/qlUcNqW2
-	 yO+QyWiM9+s8rEujKmtqtkkd1KgAV54xqHbRB2ewUuSJxJgha3W459vp8n7wYdDal9
-	 rg+WZ6zmnzbi97GHMnUlH7JdnLd6jPTfBg34f5g4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 611A82146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 318F820989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:52:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="MjaUjY0e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 318F820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbeLFWuP (ORCPT
+        id S1726184AbeLFWwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:50:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLFWuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:50:15 -0500
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 739A22146F
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 22:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544136614;
-        bh=AQDugY4nh3/WNirV89dHDsIWcEG+qqLLrGxAqtmhGg0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qtwMkMiqGmD4sn/YpTuY7waRurt2pt8Y7YT0fT5i70HPb2mlGoVS0hZbylQIZRlrH
-         UtWxgouacE2betUG0w+2vhHt1SdyIPa2WkZy6Epdf1jrVFmPKcxdnf2XsR+LNWjKPg
-         i5yEfbD3ipR3fo8YfzyNtTNEQoNE8k/BG1oQjWW4=
-Received: by mail-wr1-f46.google.com with SMTP id x10so2051517wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:50:14 -0800 (PST)
-X-Gm-Message-State: AA+aEWYklLIkEPFeige9dLvG8tG6fG1Pb9Yr54IZSYlmcZzgJuuGI/Bl
-        bP2iNtXwFr4hwnMNOvTXTjPYfyE/sTihnmuVOZLYLg==
-X-Google-Smtp-Source: AFSGD/V3kiRF/yqufZzKPyIXFnntFRk8zytrrGqJ1YD/jjc7jcYysSl4YQMawzhwPB0gIJe4EJ5ARIy65YpgafrErL8=
-X-Received: by 2002:adf:ea81:: with SMTP id s1mr26135004wrm.309.1544136612955;
- Thu, 06 Dec 2018 14:50:12 -0800 (PST)
+        Thu, 6 Dec 2018 17:52:09 -0500
+Received: from one.firstfloor.org ([193.170.194.197]:43250 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeLFWwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:52:08 -0500
+Received: by one.firstfloor.org (Postfix, from userid 503)
+        id 8B87D868D9; Thu,  6 Dec 2018 23:52:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
+        s=mail; t=1544136727;
+        bh=paa2phaSxGTZuj9bs7xPRnHI7Eax5tLDSBYfkZcVK4E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MjaUjY0eJ0tqcO/9HrNt3DAv1ZxZevM85bMuOoxVoOAYpJkfV1MFri4l4ussCIu3K
+         vBQwVFOT7r4xedUDU1tSBz7/Ng7Fw9aalQ1C+WaS7ip4CMISYW92HKUauyTkgCWUpu
+         uGmoScTOuv09urXEP7r9U9JaGlnNEQP5u+EShHR8=
+Date:   Thu, 6 Dec 2018 14:52:07 -0800
+From:   Andi Kleen <andi@firstfloor.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Andi Kleen <andi@firstfloor.org>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf script: Fix LBR skid dump problems in brstackinsn
+Message-ID: <20181206225207.eomszl6sq3omrth7@two.firstfloor.org>
+References: <20181120050617.4119-1-andi@firstfloor.org>
+ <20181206170140.GJ19069@kernel.org>
+ <20181206205146.hsiehbf6fyee2uec@two.firstfloor.org>
+ <20181206212920.GC32567@kernel.org>
 MIME-Version: 1.0
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com> <20181206221922.31012-5-sean.j.christopherson@intel.com>
-In-Reply-To: <20181206221922.31012-5-sean.j.christopherson@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Dec 2018 14:50:01 -0800
-X-Gmail-Original-Message-ID: <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
-Message-ID: <CALCETrXRJ645=08fyeoMQ949fLB1TvhsgERFVx5mAHdViEjq8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206212920.GC32567@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 2:19 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
- +
-> +       /*
-> +        * Invoke the caller's exit handler if one was provided.  The return
-> +        * value tells us whether to re-enter the enclave (EENTER or ERESUME)
-> +        * or to return (EEXIT).
-> +        */
-> +       if (exit_handler) {
-> +               leaf = exit_handler(exit_info, tcs, priv);
-> +               if (leaf == SGX_EENTER || leaf == SGX_ERESUME)
-> +                       goto enter_enclave;
-> +               if (leaf == SGX_EEXIT)
-> +                       return 0;
-> +               return -EINVAL;
-> +       } else if (leaf != SGX_EEXIT) {
-> +               return -EFAULT;
-> +       }
+On Thu, Dec 06, 2018 at 06:29:20PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Dec 06, 2018 at 12:51:48PM -0800, Andi Kleen escreveu:
+> > On Thu, Dec 06, 2018 at 02:01:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > Em Mon, Nov 19, 2018 at 09:06:17PM -0800, Andi Kleen escreveu:
+> > > > From: Andi Kleen <ak@linux.intel.com>
+> > > > 
+> > > > This is a fix for another instance of the skid problem Milian
+> > > > recently found [1]
+> 
+> I think you forgot to add the reference, i.e. what is the url or
+> message-id that this [1] refers to?
 
-This still seems overcomplicated to me.  How about letting the
-requested leaf (EENTER or ERESUME) be a parameter to the function and
-then just returning here?  As it stands, you're requiring any ERESUME
-that gets issued (other than the implicit ones) to be issued in the
-same call stack, which is very awkward if you're doing something like
-forwarding the fault to a different task over a socket and then
-waiting in epoll_wait() or similar before resuming the enclave.
+Hmm, I thought I saw some patches from Milian for this earlier,
+but now I can't find them. Perhaps I misremember. Milian
+can point to them if they exist and are not just a figment
+of my imagination :-)
 
---Andy
+These were the changes to report the stack frame RIP/RSP in the PEBS
+handler and use it for unwinding in perf.
+
+-Andi
