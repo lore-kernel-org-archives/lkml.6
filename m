@@ -2,55 +2,57 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83762C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECC4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB8A21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 518D220892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107665;
-	bh=XgwXtl0LqdCGh1fKT4jAoywiy6ItGx59N8Ue09RnVnE=;
+	s=default; t=1544107671;
+	bh=WPYW+iIEPFHUYDdvdiMkxBGc6FNXqlcK+mWzIYty9Nw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tAIyZAzDMQtXZTCe+2+CyWl+GoplHwbsarSoVSF/DucQBwFRbxdAfOIA+NrfoBNtU
-	 raGP8gUmA4wC+p8e8Ya/mZjPf+EDnCaIGR4CvK+QL8EX7H5BfAZwRxwu54hsGTkeDQ
-	 vF/0PebpQj6+D+utKm+wpZB7grYaqAgS5Zp+Njuo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB8A21479
+	b=D2Pw1rgyHivPffYfnFOcpTzscv4BWZPVYvd1cP9+cr1QbyZ3wMoR+8J2SXYc0nSfb
+	 7Lb3MiFJoHEISEBAI4OthsHHe0R033RsF6tFMcO51a0RVBNEqMVYAUAz8TEceGpeON
+	 YVRLZzK9c3ZXIOkQkTYMzFjqvWj4oj+4PXi1w8mg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518D220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731490AbeLFOro (ORCPT
+        id S1731500AbeLFOrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:47:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52750 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:47:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731476AbeLFOrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:47:41 -0500
+        id S1730276AbeLFOrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:47:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B0AC20661;
-        Thu,  6 Dec 2018 14:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94C9E2146D;
+        Thu,  6 Dec 2018 14:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107659;
-        bh=XgwXtl0LqdCGh1fKT4jAoywiy6ItGx59N8Ue09RnVnE=;
+        s=default; t=1544107665;
+        bh=WPYW+iIEPFHUYDdvdiMkxBGc6FNXqlcK+mWzIYty9Nw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8D2B36+BoVryUW0hd/BIr0OxAAHcJWCgj3MMSERUDI6+i8T7l1qC/SwJsYa/YJgw
-         vRYOQZOJKN2olnOf3VemxN+FG6cBze9XLnUshH5jQKf5itTSOEsqZgoX6vFIAnLsoG
-         XhMS0EGrzXKEAooT5yqfkmO+2L1JO3snSKCoGAts=
+        b=xqqc5qOU5/H3LIdG25cYXJOaf0IP2CyUyRCaIibH9eW/il8rR5mRxsBeDDm2s//Cn
+         7fUMMiLGQm5jibXc6k4S2VE9dSg0jwX6JmId37JUNKv+Ob0iIg5ZOf8H5yYZ30nz8n
+         U1VijJQHCBB29oKObglFhdb3LlpSmYOx0TKaHefY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Su Yue <suy.fnst@cn.fujitsu.com>,
+        David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 091/101] f2fs: introduce and spread verify_blkaddr
-Date:   Thu,  6 Dec 2018 15:39:30 +0100
-Message-Id: <20181206143018.111333050@linuxfoundation.org>
+Subject: [PATCH 4.9 075/101] btrfs: tree-checker: Add checker for dir item
+Date:   Thu,  6 Dec 2018 15:39:14 +0100
+Message-Id: <20181206143016.411314214@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,319 +71,208 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit e1da7872f6eda977bd812346bf588c35e4495a1e upstream.
+commit ad7b0368f33cffe67fecd302028915926e50ef7e upstream.
 
-This patch introduces verify_blkaddr to check meta/data block address
-with valid range to detect bug earlier.
+Add checker for dir item, for key types DIR_ITEM, DIR_INDEX and
+XATTR_ITEM.
 
-In addition, once we encounter an invalid blkaddr, notice user to run
-fsck to fix, and let the kernel panic.
+This checker does comprehensive checks for:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 4.9:
- - I skipped an earlier renaming of is_valid_meta_blkaddr() to
-   f2fs_is_valid_meta_blkaddr()
- - Adjust context]
+1) dir_item header and its data size
+   Against item boundary and maximum name/xattr length.
+   This part is mostly the same as old verify_dir_item().
+
+2) dir_type
+   Against maximum file types, and against key type.
+   Since XATTR key should only have FT_XATTR dir item, and normal dir
+   item type should not have XATTR key.
+
+   The check between key->type and dir_type is newly introduced by this
+   patch.
+
+3) name hash
+   For XATTR and DIR_ITEM key, key->offset is name hash (crc32c).
+   Check the hash of the name against the key to ensure it's correct.
+
+   The name hash check is only found in btrfs-progs before this patch.
+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 4.9: BTRFS_MAX_XATTR_SIZE() takes a root not an fs_info]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/checkpoint.c |   11 +++++++++--
- fs/f2fs/data.c       |    6 +++---
- fs/f2fs/f2fs.h       |   32 +++++++++++++++++++++++++++++---
- fs/f2fs/file.c       |    9 +++++----
- fs/f2fs/inode.c      |    7 ++++---
- fs/f2fs/node.c       |    4 ++--
- fs/f2fs/recovery.c   |    6 +++---
- fs/f2fs/segment.c    |    4 ++--
- fs/f2fs/segment.h    |    8 +++-----
- 9 files changed, 60 insertions(+), 27 deletions(-)
+ fs/btrfs/tree-checker.c |  141 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 141 insertions(+)
 
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -118,7 +118,8 @@ struct page *get_tmp_page(struct f2fs_sb
- 	return __get_meta_page(sbi, index, false);
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -30,6 +30,7 @@
+ #include "tree-checker.h"
+ #include "disk-io.h"
+ #include "compression.h"
++#include "hash.h"
+ 
+ #define CORRUPT(reason, eb, root, slot)					\
+ 	btrfs_crit(root->fs_info,					\
+@@ -176,6 +177,141 @@ static int check_csum_item(struct btrfs_
  }
  
--bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
-+bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
-+					block_t blkaddr, int type)
- {
- 	switch (type) {
- 	case META_NAT:
-@@ -138,10 +139,16 @@ bool is_valid_meta_blkaddr(struct f2fs_s
- 			return false;
- 		break;
- 	case META_POR:
-+	case DATA_GENERIC:
- 		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
- 			blkaddr < MAIN_BLKADDR(sbi)))
- 			return false;
- 		break;
-+	case META_GENERIC:
-+		if (unlikely(blkaddr < SEG0_BLKADDR(sbi) ||
-+			blkaddr >= MAIN_BLKADDR(sbi)))
-+			return false;
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -173,7 +180,7 @@ int ra_meta_pages(struct f2fs_sb_info *s
- 	blk_start_plug(&plug);
- 	for (; nrpages-- > 0; blkno++) {
- 
--		if (!is_valid_meta_blkaddr(sbi, blkno, type))
-+		if (!f2fs_is_valid_blkaddr(sbi, blkno, type))
- 			goto out;
- 
- 		switch (type) {
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -267,7 +267,7 @@ void f2fs_submit_page_mbio(struct f2fs_i
- 
- 	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
- 
--	if (is_valid_blkaddr(fio->old_blkaddr))
-+	if (__is_valid_data_blkaddr(fio->old_blkaddr))
- 		verify_block_addr(fio, fio->old_blkaddr);
- 	verify_block_addr(fio, fio->new_blkaddr);
- 
-@@ -723,7 +723,7 @@ next_dnode:
- next_block:
- 	blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
- 
--	if (!is_valid_blkaddr(blkaddr)) {
-+	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
- 		if (create) {
- 			if (unlikely(f2fs_cp_error(sbi))) {
- 				err = -EIO;
-@@ -1217,7 +1217,7 @@ retry_encrypt:
- 	 * If current allocation needs SSR,
- 	 * it had better in-place writes for updated data.
- 	 */
--	if (unlikely(is_valid_blkaddr(fio->old_blkaddr) &&
-+	if (unlikely(is_valid_data_blkaddr(fio->sbi, fio->old_blkaddr) &&
- 			!is_cold_data(page) &&
- 			!IS_ATOMIC_WRITTEN_PAGE(page) &&
- 			need_inplace_update(inode))) {
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -145,7 +145,7 @@ struct cp_control {
- };
- 
  /*
-- * For CP/NAT/SIT/SSA readahead
-+ * indicate meta/data type
-  */
- enum {
- 	META_CP,
-@@ -153,6 +153,8 @@ enum {
- 	META_SIT,
- 	META_SSA,
- 	META_POR,
-+	DATA_GENERIC,
-+	META_GENERIC,
- };
- 
- /* for the list of ino */
-@@ -1930,13 +1932,36 @@ static inline void *f2fs_kvzalloc(size_t
- 	(pgofs - ADDRS_PER_INODE(inode) + ADDRS_PER_BLOCK) /	\
- 	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(inode))
- 
--static inline bool is_valid_blkaddr(block_t blkaddr)
-+bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
-+					block_t blkaddr, int type);
-+void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
-+static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
-+					block_t blkaddr, int type)
++ * Customized reported for dir_item, only important new info is key->objectid,
++ * which represents inode number
++ */
++__printf(4, 5)
++static void dir_item_err(const struct btrfs_root *root,
++			 const struct extent_buffer *eb, int slot,
++			 const char *fmt, ...)
 +{
-+	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"invalid blkaddr: %u, type: %d, run fsck to fix.",
-+			blkaddr, type);
-+		f2fs_bug_on(sbi, 1);
++	struct btrfs_key key;
++	struct va_format vaf;
++	va_list args;
++
++	btrfs_item_key_to_cpu(eb, &key, slot);
++	va_start(args, fmt);
++
++	vaf.fmt = fmt;
++	vaf.va = &args;
++
++	btrfs_crit(root->fs_info,
++	"corrupt %s: root=%llu block=%llu slot=%d ino=%llu, %pV",
++		btrfs_header_level(eb) == 0 ? "leaf" : "node", root->objectid,
++		btrfs_header_bytenr(eb), slot, key.objectid, &vaf);
++	va_end(args);
++}
++
++static int check_dir_item(struct btrfs_root *root,
++			  struct extent_buffer *leaf,
++			  struct btrfs_key *key, int slot)
++{
++	struct btrfs_dir_item *di;
++	u32 item_size = btrfs_item_size_nr(leaf, slot);
++	u32 cur = 0;
++
++	di = btrfs_item_ptr(leaf, slot, struct btrfs_dir_item);
++	while (cur < item_size) {
++		char namebuf[max(BTRFS_NAME_LEN, XATTR_NAME_MAX)];
++		u32 name_len;
++		u32 data_len;
++		u32 max_name_len;
++		u32 total_size;
++		u32 name_hash;
++		u8 dir_type;
++
++		/* header itself should not cross item boundary */
++		if (cur + sizeof(*di) > item_size) {
++			dir_item_err(root, leaf, slot,
++		"dir item header crosses item boundary, have %lu boundary %u",
++				cur + sizeof(*di), item_size);
++			return -EUCLEAN;
++		}
++
++		/* dir type check */
++		dir_type = btrfs_dir_type(leaf, di);
++		if (dir_type >= BTRFS_FT_MAX) {
++			dir_item_err(root, leaf, slot,
++			"invalid dir item type, have %u expect [0, %u)",
++				dir_type, BTRFS_FT_MAX);
++			return -EUCLEAN;
++		}
++
++		if (key->type == BTRFS_XATTR_ITEM_KEY &&
++		    dir_type != BTRFS_FT_XATTR) {
++			dir_item_err(root, leaf, slot,
++		"invalid dir item type for XATTR key, have %u expect %u",
++				dir_type, BTRFS_FT_XATTR);
++			return -EUCLEAN;
++		}
++		if (dir_type == BTRFS_FT_XATTR &&
++		    key->type != BTRFS_XATTR_ITEM_KEY) {
++			dir_item_err(root, leaf, slot,
++			"xattr dir type found for non-XATTR key");
++			return -EUCLEAN;
++		}
++		if (dir_type == BTRFS_FT_XATTR)
++			max_name_len = XATTR_NAME_MAX;
++		else
++			max_name_len = BTRFS_NAME_LEN;
++
++		/* Name/data length check */
++		name_len = btrfs_dir_name_len(leaf, di);
++		data_len = btrfs_dir_data_len(leaf, di);
++		if (name_len > max_name_len) {
++			dir_item_err(root, leaf, slot,
++			"dir item name len too long, have %u max %u",
++				name_len, max_name_len);
++			return -EUCLEAN;
++		}
++		if (name_len + data_len > BTRFS_MAX_XATTR_SIZE(root)) {
++			dir_item_err(root, leaf, slot,
++			"dir item name and data len too long, have %u max %u",
++				name_len + data_len,
++				BTRFS_MAX_XATTR_SIZE(root));
++			return -EUCLEAN;
++		}
++
++		if (data_len && dir_type != BTRFS_FT_XATTR) {
++			dir_item_err(root, leaf, slot,
++			"dir item with invalid data len, have %u expect 0",
++				data_len);
++			return -EUCLEAN;
++		}
++
++		total_size = sizeof(*di) + name_len + data_len;
++
++		/* header and name/data should not cross item boundary */
++		if (cur + total_size > item_size) {
++			dir_item_err(root, leaf, slot,
++		"dir item data crosses item boundary, have %u boundary %u",
++				cur + total_size, item_size);
++			return -EUCLEAN;
++		}
++
++		/*
++		 * Special check for XATTR/DIR_ITEM, as key->offset is name
++		 * hash, should match its name
++		 */
++		if (key->type == BTRFS_DIR_ITEM_KEY ||
++		    key->type == BTRFS_XATTR_ITEM_KEY) {
++			read_extent_buffer(leaf, namebuf,
++					(unsigned long)(di + 1), name_len);
++			name_hash = btrfs_name_hash(namebuf, name_len);
++			if (key->offset != name_hash) {
++				dir_item_err(root, leaf, slot,
++		"name hash mismatch with key, have 0x%016x expect 0x%016llx",
++					name_hash, key->offset);
++				return -EUCLEAN;
++			}
++		}
++		cur += total_size;
++		di = (struct btrfs_dir_item *)((void *)di + total_size);
 +	}
++	return 0;
 +}
 +
-+static inline bool __is_valid_data_blkaddr(block_t blkaddr)
- {
- 	if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR)
- 		return false;
- 	return true;
- }
- 
-+static inline bool is_valid_data_blkaddr(struct f2fs_sb_info *sbi,
-+						block_t blkaddr)
-+{
-+	if (!__is_valid_data_blkaddr(blkaddr))
-+		return false;
-+	verify_blkaddr(sbi, blkaddr, DATA_GENERIC);
-+	return true;
-+}
-+
- /*
-  * file.c
++/*
+  * Common point to switch the item-specific validation.
   */
-@@ -2122,7 +2147,8 @@ void f2fs_stop_checkpoint(struct f2fs_sb
- struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
- struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
- struct page *get_tmp_page(struct f2fs_sb_info *, pgoff_t);
--bool is_valid_meta_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type);
-+bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
-+					block_t blkaddr, int type);
- int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int, bool);
- void ra_meta_pages_cond(struct f2fs_sb_info *, pgoff_t);
- long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -310,13 +310,13 @@ static pgoff_t __get_first_dirty_index(s
- 	return pgofs;
- }
- 
--static bool __found_offset(block_t blkaddr, pgoff_t dirty, pgoff_t pgofs,
--							int whence)
-+static bool __found_offset(struct f2fs_sb_info *sbi, block_t blkaddr,
-+				pgoff_t dirty, pgoff_t pgofs, int whence)
- {
- 	switch (whence) {
- 	case SEEK_DATA:
- 		if ((blkaddr == NEW_ADDR && dirty == pgofs) ||
--			is_valid_blkaddr(blkaddr))
-+			is_valid_data_blkaddr(sbi, blkaddr))
- 			return true;
+ static int check_leaf_item(struct btrfs_root *root,
+@@ -191,6 +327,11 @@ static int check_leaf_item(struct btrfs_
+ 	case BTRFS_EXTENT_CSUM_KEY:
+ 		ret = check_csum_item(root, leaf, key, slot);
  		break;
- 	case SEEK_HOLE:
-@@ -378,7 +378,8 @@ static loff_t f2fs_seek_block(struct fil
- 			block_t blkaddr;
- 			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
- 
--			if (__found_offset(blkaddr, dirty, pgofs, whence)) {
-+			if (__found_offset(F2FS_I_SB(inode), blkaddr, dirty,
-+							pgofs, whence)) {
- 				f2fs_put_dnode(&dn);
- 				goto found;
- 			}
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -59,11 +59,12 @@ static void __get_inode_rdev(struct inod
++	case BTRFS_DIR_ITEM_KEY:
++	case BTRFS_DIR_INDEX_KEY:
++	case BTRFS_XATTR_ITEM_KEY:
++		ret = check_dir_item(root, leaf, key, slot);
++		break;
  	}
+ 	return ret;
  }
- 
--static bool __written_first_block(struct f2fs_inode *ri)
-+static bool __written_first_block(struct f2fs_sb_info *sbi,
-+					struct f2fs_inode *ri)
- {
- 	block_t addr = le32_to_cpu(ri->i_addr[0]);
- 
--	if (is_valid_blkaddr(addr))
-+	if (is_valid_data_blkaddr(sbi, addr))
- 		return true;
- 	return false;
- }
-@@ -159,7 +160,7 @@ static int do_read_inode(struct inode *i
- 	/* get rdev by using inline_info */
- 	__get_inode_rdev(inode, ri);
- 
--	if (__written_first_block(ri))
-+	if (__written_first_block(sbi, ri))
- 		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- 
- 	if (!need_inode_block_update(sbi, inode->i_ino))
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -304,7 +304,7 @@ static void set_node_addr(struct f2fs_sb
- 			new_blkaddr == NULL_ADDR);
- 	f2fs_bug_on(sbi, nat_get_blkaddr(e) == NEW_ADDR &&
- 			new_blkaddr == NEW_ADDR);
--	f2fs_bug_on(sbi, is_valid_blkaddr(nat_get_blkaddr(e)) &&
-+	f2fs_bug_on(sbi, is_valid_data_blkaddr(sbi, nat_get_blkaddr(e)) &&
- 			new_blkaddr == NEW_ADDR);
- 
- 	/* increment version no as node is removed */
-@@ -319,7 +319,7 @@ static void set_node_addr(struct f2fs_sb
- 
- 	/* change address */
- 	nat_set_blkaddr(e, new_blkaddr);
--	if (!is_valid_blkaddr(new_blkaddr))
-+	if (!is_valid_data_blkaddr(sbi, new_blkaddr))
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
- 	__set_nat_cache_dirty(nm_i, e);
- 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -236,7 +236,7 @@ static int find_fsync_dnodes(struct f2fs
- 	while (1) {
- 		struct fsync_inode_entry *entry;
- 
--		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
-+		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
- 			return 0;
- 
- 		page = get_tmp_page(sbi, blkaddr);
-@@ -468,7 +468,7 @@ retry_dn:
- 		}
- 
- 		/* dest is valid block, try to recover from src to dest */
--		if (is_valid_meta_blkaddr(sbi, dest, META_POR)) {
-+		if (f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
- 
- 			if (src == NULL_ADDR) {
- 				err = reserve_new_block(&dn);
-@@ -527,7 +527,7 @@ static int recover_data(struct f2fs_sb_i
- 	while (1) {
- 		struct fsync_inode_entry *entry;
- 
--		if (!is_valid_meta_blkaddr(sbi, blkaddr, META_POR))
-+		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
- 			break;
- 
- 		ra_meta_pages_cond(sbi, blkaddr);
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -944,7 +944,7 @@ bool is_checkpointed_data(struct f2fs_sb
- 	struct seg_entry *se;
- 	bool is_cp = false;
- 
--	if (!is_valid_blkaddr(blkaddr))
-+	if (!is_valid_data_blkaddr(sbi, blkaddr))
- 		return true;
- 
- 	mutex_lock(&sit_i->sentry_lock);
-@@ -1668,7 +1668,7 @@ void f2fs_wait_on_encrypted_page_writeba
- {
- 	struct page *cpage;
- 
--	if (!is_valid_blkaddr(blkaddr))
-+	if (!is_valid_data_blkaddr(sbi, blkaddr))
- 		return;
- 
- 	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -81,7 +81,7 @@
- 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & (sbi->blocks_per_seg - 1))
- 
- #define GET_SEGNO(sbi, blk_addr)					\
--	((!is_valid_blkaddr(blk_addr)) ?			\
-+	((!is_valid_data_blkaddr(sbi, blk_addr)) ?			\
- 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
- 		GET_SEGNO_FROM_SEG0(sbi, blk_addr)))
- #define GET_SECNO(sbi, segno)					\
-@@ -603,11 +603,9 @@ static inline void verify_block_addr(str
- 
- 	if (PAGE_TYPE_OF_BIO(fio->type) == META &&
- 				(!is_read_io(fio->op) || fio->is_meta))
--		BUG_ON(blk_addr < SEG0_BLKADDR(sbi) ||
--				blk_addr >= MAIN_BLKADDR(sbi));
-+		verify_blkaddr(sbi, blk_addr, META_GENERIC);
- 	else
--		BUG_ON(blk_addr < MAIN_BLKADDR(sbi) ||
--				blk_addr >= MAX_BLKADDR(sbi));
-+		verify_blkaddr(sbi, blk_addr, DATA_GENERIC);
- }
- 
- /*
 
 
