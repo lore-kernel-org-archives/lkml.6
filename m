@@ -2,134 +2,132 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E72C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F0EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1822082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544109411;
-	bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=fzeusZEui/547EldX3km8cEx421XiXFrnMBi6b9Lonx4RQOa/xIsiXc52dhe/ulmb
-	 XSywoWzqPh9riwqgtUdMTgwJh1Puqd+rXcruag/anlLyFuQl/0HKLy01/d3/Szz7w3
-	 thvJsFFxfZ4zR9P89l+NSvS0Fxf4rDtUEL/DSq78=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1822082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 379DB20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:18:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="K5LNRQ48"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379DB20700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbeLFPQu (ORCPT
+        id S1726043AbeLFPSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:16:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeLFPQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:16:49 -0500
-Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 872FD20700;
-        Thu,  6 Dec 2018 15:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544109409;
-        bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DMP/h7L8uL4WvOCqpE4/aRQa7RZg4AVDhxt2RnBSCpAL1MYJVnT+qdmlmWnr79ISh
-         qIfg02QCh4In6MpefzmIVSfEaB49vvd9L4k8cpVDM4QdIAFKAzAMpmITmRdx6u/jVx
-         7EOvl1vm/++JAj9ar4vmb5iAHQuo1rLMAMaZnszU=
-Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
- <20181204193416.24661-1-sboyd@kernel.org>
- <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
- <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
- <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
- Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
- yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
- c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
- smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
- K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
- yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
- LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
- 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
- 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
- biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
- CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
- AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
- twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
- cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
- NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
- n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
- yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
- Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
- m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
- ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
- zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
- 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
- cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
- xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
- 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
- UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
- 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
- rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
- eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
- prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
- J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
- 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
- d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
- K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
- oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
- 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
- 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
- cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
- Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
- JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
-Date:   Thu, 6 Dec 2018 09:16:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 10:18:38 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40198 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFPSh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:18:37 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so852898wrt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:18:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0kxcYZ5L42j1jO324rbmlL1PwuJ7eyUnUniDRBwVrQ8=;
+        b=K5LNRQ48nxsm8TNpfFObhraZlNiaal9mG/dOUMgnwy1V1b0i1AsZU8BHZJi5yCzKwF
+         VfGjxv9Ou7KEDaVHic1wqxVHwuPdBaK/qNXDAboM/J25qxuHLJNWWPYHG0YFMYJKh5fz
+         AZqBG7SnFBAsk3chjySj1OrrXq+2pJmIsvjwsbAeb4zlqST4yqSRdJd8Js0BRW9KfehK
+         RC8odlWu39Z4IlJzGevJecbUqS69eYMxg5hgJZoXRisc7sI0nuWzos6+4WTJ88aFM+lY
+         VT0qyLWVlbLp71O8cKGAhSphmk7MOgHPnx9Ih58oG7ItleJ5L8Xj8iU4lMk8+R+0+BI0
+         SDoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0kxcYZ5L42j1jO324rbmlL1PwuJ7eyUnUniDRBwVrQ8=;
+        b=g7v2HvPLypQWKxbnzGXHB9ffHZ7Uc1sVdpVpYJavTijCqE6vec9rISDQCjSltxHW+r
+         PhSzYPA8nATRlJvgcH8RXp2AlM+okWP3kjYYHO46y2VUY0On1TDzfODQFYPxT/ublsdB
+         xYiMaRHNfsPvkDvsg+5XFh/pQLwimLE60oJD9L7YPm77/JzMRkHV0xOiKpQLjSZXjeWR
+         W++3IEryM36c8s50l03dxCSyKYNHhMaFXutV3fEfPMWR96tAE329Lffc2tgM1eeds/8+
+         vVf/OV2kzEyeJ3wagOlK5mYUjXUZObGgdd7E+FDG4MyEOcJu2bN9jdF5blFoz2HISKux
+         OMIA==
+X-Gm-Message-State: AA+aEWZSq1K7z4sx4C7Ay74740YWjjvKRx3sZWR4PvH43B+3qZq5fWWv
+        luWy1ht8RPkswILDnNwPhCmhdQ==
+X-Google-Smtp-Source: AFSGD/WXgD9EMDbWVRhpui4eQTBX20TrL6Kx7h59E0LnRduCTChVh5v8N3zP1LQdeWBAiYbJ7qdLTA==
+X-Received: by 2002:adf:8b4d:: with SMTP id v13mr24836376wra.282.1544109515959;
+        Thu, 06 Dec 2018 07:18:35 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id j33sm939652wre.91.2018.12.06.07.18.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 07:18:35 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] mmc: meson-gx: chained descriptor fixup and improvements
+Date:   Thu,  6 Dec 2018 16:18:24 +0100
+Message-Id: <20181206151828.24417-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The goal of the patchset was mainly to address the following warning:
 
+WARNING: CPU: 0 PID: 0 at /usr/src/kernel/drivers/mmc/host/meson-gx-mmc.c:1025 meson_mmc_irq+0xc0/0x1e0
+Modules linked in: crc32_ce crct10dif_ce ipv6 overlay
+CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.19.1 #1
+Hardware name: Some A113 Board (DT)
+pstate: 40000085 (nZcv daIf -PAN -UAO)
+pc : meson_mmc_irq+0xc0/0x1e0
+lr : __handle_irq_event_percpu+0x70/0x180
+sp : ffff000008003980
+x29: ffff000008003980 x28: 0000000000000000
+[...]
+x1 : ffff80001a71bd40 x0 : 0000000000000000
+Call trace:
+ meson_mmc_irq+0xc0/0x1e0
+ __handle_irq_event_percpu+0x70/0x180
+ handle_irq_event_percpu+0x34/0x88
+ handle_irq_event+0x48/0x78
+ handle_fasteoi_irq+0xa0/0x180
+ generic_handle_irq+0x24/0x38
+ __handle_domain_irq+0x5c/0xb8
+ gic_handle_irq+0x58/0xa8
 
-On 12/5/18 9:55 AM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2018-12-05 07:17:41)
->> Hi Stephen,
->>
->> On 12/5/18 1:17 AM, Stephen Boyd wrote:
->>> (Adding Dinh's korg email)
->>>
->>> I also wonder if this driver is even used anymore or maybe we can delete
->>> it?
->>>
->>
->> The armv7 SoCFPGA platforms are using this driver.
->>
-> 
-> Ok and those platforms are booting in kernelci.org as
-> https://kernelci.org/boot/socfpga_cyclone5_de0_sockit/ perhaps?
-> 
+This happens when using the chained descriptor mode. If there is an
+error, we call mmc_request_done(), loosing any reference to the cmd. It
+turns out that the chained descriptor does really stops when we do so, at
+least not completly. Most of the time, it can be seen with this harmless
+warning because the descriptor will raise another unexpected IRQ. On rare
+occasion, it will completly break the MMC.
 
-Yes that's right.
+This is mostly adressed by patch #1.
+With this fixed, I took (yet) another look at the ultra-high speed modes
+and the tuning.
 
-Dinh
+I came up with new settings in patch 3 and 4. I've tested them on eMMC,
+sdcard and sdio on the following platforms:
+ * gxbb p200
+ * gxl p230, libretech (eMMC only), kvim.
+ * axg s400
+
+So far, these new settings seems to be working great but I think it
+would be nice if others could test this and provide their feedback.
+This why  patch 3 and 4 are RFT tagged.
+
+Jerome Brunet (4):
+  mmc: meson-gx: make sure the descriptor is stopped on errors
+  mmc: meson-gx: remove useless lock
+  mmc: meson-gx: align default phase on soc vendor tree
+  mmc: meson-gx: add signal resampling
+
+ drivers/mmc/host/meson-gx-mmc.c | 100 ++++++++++++++++++++++++--------
+ 1 file changed, 75 insertions(+), 25 deletions(-)
+
+-- 
+2.19.2
+
