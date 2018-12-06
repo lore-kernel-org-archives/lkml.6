@@ -2,125 +2,137 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 352BAC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD86C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BA520892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02BA520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id E1E7520892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:39:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSh4XoBP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E7520892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbeLFJip (ORCPT
+        id S1729411AbeLFJjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:38:45 -0500
-Received: from mail.netline.ch ([148.251.143.178]:55656 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFJip (ORCPT
+        Thu, 6 Dec 2018 04:39:23 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52746 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbeLFJjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:38:45 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 7EE852A604C;
-        Thu,  6 Dec 2018 10:38:42 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id KXTPqqCRR69o; Thu,  6 Dec 2018 10:38:41 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 4E45E2A604B;
-        Thu,  6 Dec 2018 10:38:41 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gUq7E-0003mx-Vo; Thu, 06 Dec 2018 10:38:41 +0100
-Subject: Re: [PATCH 2/2] drm/ttm: Use pr_debug for all output from
- ttm_bo_evict
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20181205165621.5805-1-michel@daenzer.net>
- <20181205165621.5805-2-michel@daenzer.net>
- <b0b57acb-7152-ab1a-855a-3de8c77fa425@amd.com>
- <3198051c-c09d-5bf9-e177-3a90b10b4149@daenzer.net>
- <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <29939fbd-939e-ca66-b355-d85b51c5a3ae@daenzer.net>
-Date:   Thu, 6 Dec 2018 10:38:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 04:39:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r11-v6so271361wmb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:39:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d1+BTdxj2KV5OgO7Eh6W4io7PjLKDST3CdGEejtC8Ek=;
+        b=dSh4XoBP8vXWpfC9HCta3u+XGs3mBkgTnmWZxZ29DeeQ4ctzubRlMVn4ewPLPdbVju
+         8oVHRcbDYqNytGck5LGb18FLlAzgBHpRrekM/paGu/hpCS2tXWUFi2Nf5YtkqqxfkSsk
+         zE+5QUZV22v9hBI7LZ9M7XxTk1YPzt6fLmHaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d1+BTdxj2KV5OgO7Eh6W4io7PjLKDST3CdGEejtC8Ek=;
+        b=slzgSW+WOph/yxXN2UcpUAb2KRUHkRgV32os0fYEwrsAvRc5kRAzZeGrYivFK8JGke
+         U/hgQdSZUpECADFHJ7BNEOBcPhZX406vvTCz/fMxPAPlLzG0w66DoyyjC55AaE9Ng1OJ
+         SoHgtiMUdHvLfs/PFqhZ8FIG9hBw56aZ1eHnQqdonFzbk6w0tzsn38HHT5qTHRrv4u5n
+         qCz3EUbwijEZruKKkv6/ga9aYyRJZwMBAyNwepAtMlWFpUnrHHX4U8Sn7vg5QxM9ajHn
+         syY77n8raKga8KcBPH+p/SrgxGoaXumcXQTyf5f8jQZ4rV+8/gFDXWYRHm1lELS3MlNK
+         4b3Q==
+X-Gm-Message-State: AA+aEWbuRsSj1ALjhB70Y58bBoRKyXifL9egauIQx8mG4PxZzS/3qC6p
+        H8o11UJnVBpdHJQhJCq0WO2OJA==
+X-Google-Smtp-Source: AFSGD/W/39Muwb1Br8jLL2DVpYMQotDzUpQyipo9NcNjuElD3RzP0+oVW6/i36ia5VdZqqwOPQoOdw==
+X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr14769713wmf.17.1544089161511;
+        Thu, 06 Dec 2018 01:39:21 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id o81sm378003wmd.10.2018.12.06.01.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 06 Dec 2018 01:39:20 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     amit.kucheria@linaro.org, edubezval@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org, daniel.lezcano@linaro.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] thermal: tsens: qcom: do not create duplicate regmap debugfs entries
+Date:   Thu,  6 Dec 2018 09:39:17 +0000
+Message-Id: <20181206093917.26610-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <d0990059-24bb-3f21-8b9d-85761f0be409@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 10:33 a.m., Koenig, Christian wrote:
-> Am 06.12.18 um 10:09 schrieb Michel Dänzer:
->> On 2018-12-06 3:43 a.m., Zhang, Jerry(Junwei) wrote:
->>> On 12/6/18 12:56 AM, Michel Dänzer wrote:
->>>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>>
->>>> All the output is related, so it should all be printed the same way.
->>>> Some of it was using pr_debug, but some of it appeared in dmesg by
->>>> default. The caller should handle failure, so there's no need to spam
->>>> dmesg with potentially quite a lot of output by default.
->>>>
->>>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->>> Sounds reasonable, but personally prefer to show error when some
->>> vital incident happens, e.g. no memory on eviction.
->> The amdgpu driver still prints these in that case:
->>
->>   [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* amdgpu_cs_list_validate(validated) failed.
->>   [drm:amdgpu_cs_ioctl [amdgpu]] *ERROR* Not enough memory for command submission!
->>
->> That's plenty as far as I'm concerned. :)
-> 
-> Yeah, but in this case I would rather make the amdgpu messages debug 
-> level and leave the TTM meassages on error level.
+Regmap would use device name to create debugfs entries. If the device
+has multiple regmaps it is recommended to use name field in regmap_config.
+Fix this by providing name to the regmap configs correctly.
 
-That makes no sense to me.
+Without this patch we would see below error on DB820c.
 
-The amdgpu messages have some value for normal users / bug reports,
-indicating that something isn't going quite as planned.
+qcom-tsens 4a9000.thermal-sensor: Failed to create 4a9000.thermal-sensor
+debugfs directory
 
-The TTM messages are orders of magnitude longer, and are basically noise
-for a normal user.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Acked-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+Changes since v1:
+ -rename tsens_config to tsens_tm_config as suggested by Amit.
 
-Seems like a no-brainer to me which of these should be visible by default.
+ drivers/thermal/qcom/tsens-common.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 3be4be2e0465..ddfdf88ffb4e 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -113,7 +113,15 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
+ 	return 0;
+ }
+ 
+-static const struct regmap_config tsens_config = {
++static const struct regmap_config tsens_tm_config = {
++	.name		= "tm",
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++};
++
++static const struct regmap_config tsens_srot_config = {
++	.name		= "srot",
+ 	.reg_bits	= 32,
+ 	.val_bits	= 32,
+ 	.reg_stride	= 4,
+@@ -139,8 +147,8 @@ int __init init_common(struct tsens_device *tmdev)
+ 		if (IS_ERR(srot_base))
+ 			return PTR_ERR(srot_base);
+ 
+-		tmdev->srot_map = devm_regmap_init_mmio(tmdev->dev,
+-							srot_base, &tsens_config);
++		tmdev->srot_map = devm_regmap_init_mmio(tmdev->dev, srot_base,
++							&tsens_srot_config);
+ 		if (IS_ERR(tmdev->srot_map))
+ 			return PTR_ERR(tmdev->srot_map);
+ 
+@@ -154,7 +162,8 @@ int __init init_common(struct tsens_device *tmdev)
+ 	if (IS_ERR(tm_base))
+ 		return PTR_ERR(tm_base);
+ 
+-	tmdev->tm_map = devm_regmap_init_mmio(tmdev->dev, tm_base, &tsens_config);
++	tmdev->tm_map = devm_regmap_init_mmio(tmdev->dev, tm_base,
++						 &tsens_tm_config);
+ 	if (IS_ERR(tmdev->tm_map))
+ 		return PTR_ERR(tmdev->tm_map);
+ 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.19.2
+
