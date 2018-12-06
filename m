@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F68C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0D5C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0496121479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9A92146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107557;
-	bh=MTLRkr0re1AlR6zo89GXQ4n+lckIwumSKxZKlPbAIKA=;
+	s=default; t=1544107560;
+	bh=6t903W8YieBXVB8S7S/OrC9gPH5xHWw4bwNCKdk3CRA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LCep8PskVU1uZXXG9+3XE1oCzAHnCUAToShxfuE8H2/CUixQXAGFPPJ6c+v4CaBht
-	 7FXIn22qrcHYNcWHhEgebdEUP5TmM7imo/EtQG24Yk1Rvdb3f78n3UoPG/22q+uW2C
-	 Gdh32A+xMGBmFNHIhvWkJSoDzZ5Yw3he4Xb4vJjE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0496121479
+	b=MuhF8P4ErpjJ6PUqZZfyaooqS+1Vgm4fv58aYsRBJE5jDnyWaMpRQj6oU99Knf6ob
+	 fXcT29qq99IRXGq+tSF1d6iIMvEc0Rur32p7Z8pqL01p9pVlJKVuZFB34l9KfV/QCe
+	 gN2aOKZ1BdXWy/sj5k1OdL6KvS+L7rIzFMkySx7o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9A92146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbeLFOpz (ORCPT
+        id S1731182AbeLFOp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:45:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50570 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:45:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731150AbeLFOpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:45:53 -0500
+        id S1730436AbeLFOp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:45:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 770FB2146D;
-        Thu,  6 Dec 2018 14:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC37C2082B;
+        Thu,  6 Dec 2018 14:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107552;
-        bh=MTLRkr0re1AlR6zo89GXQ4n+lckIwumSKxZKlPbAIKA=;
+        s=default; t=1544107557;
+        bh=6t903W8YieBXVB8S7S/OrC9gPH5xHWw4bwNCKdk3CRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ps7rqsIvINbH31PACFn5ziqYkvrj6DixZhpGcJ5aYgUgvcY9u9zMoiZnN6lMtFkyg
-         qDfULz+rriL8w4UhgF+q3nu4rlxJGX5fOGPty7xUUbKt87ipR8ty15mhsVx7jCm26F
-         g5Mmx9jIVz8I6vKTMsrwJ5uFjDWmg01Ra5OgfuBY=
+        b=ClgG3pGZ7beIiKxx24+Gf3KtbzMGYPh9aZHqwlqw2SVLbUXmp4skODO9oG88ruJQ9
+         YbzacJQ7LHG7zXIXMd3jo70f4Ys1u2/QG6sZscsXC0uLpjM6W/qu3SG4rj4z4hRTkG
+         6jxwE2NhdtfjPQ+Bf2UW1vpNV10TIsp+B4Pm/irM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
         Sage Weil <sage@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 050/101] libceph: store ceph_auth_handshake pointer in ceph_connection
-Date:   Thu,  6 Dec 2018 15:38:49 +0100
-Message-Id: <20181206143014.434108260@linuxfoundation.org>
+Subject: [PATCH 4.9 052/101] libceph: factor out __ceph_x_decrypt()
+Date:   Thu,  6 Dec 2018 15:38:51 +0100
+Message-Id: <20181206143014.552570407@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -71,145 +71,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 262614c4294d33b1f19e0d18c0091d9c329b544a upstream.
+commit c571fe24d243bfe7017f0e67fe800b3cc2a1d1f7 upstream.
 
-We already copy authorizer_reply_buf and authorizer_reply_buf_len into
-ceph_connection.  Factoring out __prepare_write_connect() requires two
-more: authorizer_buf and authorizer_buf_len.  Store the pointer to the
-handshake in con->auth rather than piling on.
+Will be used for decrypting the server challenge which is only preceded
+by ceph_x_encrypt_header.
+
+Drop struct_v check to allow for extending ceph_x_encrypt_header in the
+future.
 
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Reviewed-by: Sage Weil <sage@redhat.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/ceph/messenger.h |    3 --
- net/ceph/messenger.c           |   54 +++++++++++++++++++----------------------
- 2 files changed, 27 insertions(+), 30 deletions(-)
+ net/ceph/auth_x.c |   33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
 
---- a/include/linux/ceph/messenger.h
-+++ b/include/linux/ceph/messenger.h
-@@ -200,9 +200,8 @@ struct ceph_connection {
- 				 attempt for this connection, client */
- 	u32 peer_global_seq;  /* peer's global seq for this connection */
- 
-+	struct ceph_auth_handshake *auth;
- 	int auth_retry;       /* true if we need a newer authorizer */
--	void *auth_reply_buf;   /* where to put the authorizer reply */
--	int auth_reply_buf_len;
- 
- 	struct mutex mutex;
- 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -1394,24 +1394,26 @@ static void prepare_write_keepalive(stru
-  * Connection negotiation.
-  */
- 
--static struct ceph_auth_handshake *get_connect_authorizer(struct ceph_connection *con,
--						int *auth_proto)
-+static int get_connect_authorizer(struct ceph_connection *con)
- {
- 	struct ceph_auth_handshake *auth;
-+	int auth_proto;
- 
- 	if (!con->ops->get_authorizer) {
-+		con->auth = NULL;
- 		con->out_connect.authorizer_protocol = CEPH_AUTH_UNKNOWN;
- 		con->out_connect.authorizer_len = 0;
--		return NULL;
-+		return 0;
- 	}
- 
--	auth = con->ops->get_authorizer(con, auth_proto, con->auth_retry);
-+	auth = con->ops->get_authorizer(con, &auth_proto, con->auth_retry);
- 	if (IS_ERR(auth))
--		return auth;
-+		return PTR_ERR(auth);
- 
--	con->auth_reply_buf = auth->authorizer_reply_buf;
--	con->auth_reply_buf_len = auth->authorizer_reply_buf_len;
--	return auth;
-+	con->auth = auth;
-+	con->out_connect.authorizer_protocol = cpu_to_le32(auth_proto);
-+	con->out_connect.authorizer_len = cpu_to_le32(auth->authorizer_buf_len);
-+	return 0;
+--- a/net/ceph/auth_x.c
++++ b/net/ceph/auth_x.c
+@@ -69,25 +69,40 @@ static int ceph_x_encrypt(struct ceph_cr
+ 	return sizeof(u32) + ciphertext_len;
  }
  
- /*
-@@ -1431,8 +1433,7 @@ static int prepare_write_connect(struct
- {
- 	unsigned int global_seq = get_global_seq(con->msgr, 0);
- 	int proto;
--	int auth_proto;
--	struct ceph_auth_handshake *auth;
++static int __ceph_x_decrypt(struct ceph_crypto_key *secret, void *p,
++			    int ciphertext_len)
++{
++	struct ceph_x_encrypt_header *hdr = p;
++	int plaintext_len;
 +	int ret;
- 
- 	switch (con->peer_name.type) {
- 	case CEPH_ENTITY_TYPE_MON:
-@@ -1459,20 +1460,15 @@ static int prepare_write_connect(struct
- 	con->out_connect.protocol_version = cpu_to_le32(proto);
- 	con->out_connect.flags = 0;
- 
--	auth_proto = CEPH_AUTH_UNKNOWN;
--	auth = get_connect_authorizer(con, &auth_proto);
--	if (IS_ERR(auth))
--		return PTR_ERR(auth);
--
--	con->out_connect.authorizer_protocol = cpu_to_le32(auth_proto);
--	con->out_connect.authorizer_len = auth ?
--		cpu_to_le32(auth->authorizer_buf_len) : 0;
-+	ret = get_connect_authorizer(con);
++
++	ret = ceph_crypt(secret, false, p, ciphertext_len, ciphertext_len,
++			 &plaintext_len);
 +	if (ret)
 +		return ret;
- 
- 	con_out_kvec_add(con, sizeof (con->out_connect),
- 					&con->out_connect);
--	if (auth && auth->authorizer_buf_len)
--		con_out_kvec_add(con, auth->authorizer_buf_len,
--					auth->authorizer_buf);
-+	if (con->auth)
-+		con_out_kvec_add(con, con->auth->authorizer_buf_len,
-+				 con->auth->authorizer_buf);
- 
- 	con->out_more = 0;
- 	con_flag_set(con, CON_FLAG_WRITE_PENDING);
-@@ -1737,11 +1733,14 @@ static int read_partial_connect(struct c
- 	if (ret <= 0)
- 		goto out;
- 
--	size = le32_to_cpu(con->in_reply.authorizer_len);
--	end += size;
--	ret = read_partial(con, end, size, con->auth_reply_buf);
--	if (ret <= 0)
--		goto out;
-+	if (con->auth) {
-+		size = le32_to_cpu(con->in_reply.authorizer_len);
-+		end += size;
-+		ret = read_partial(con, end, size,
-+				   con->auth->authorizer_reply_buf);
-+		if (ret <= 0)
-+			goto out;
++
++	if (le64_to_cpu(hdr->magic) != CEPHX_ENC_MAGIC) {
++		pr_err("%s bad magic\n", __func__);
++		return -EINVAL;
 +	}
++
++	return plaintext_len - sizeof(*hdr);
++}
++
+ static int ceph_x_decrypt(struct ceph_crypto_key *secret, void **p, void *end)
+ {
+-	struct ceph_x_encrypt_header *hdr = *p + sizeof(u32);
+-	int ciphertext_len, plaintext_len;
++	int ciphertext_len;
+ 	int ret;
  
- 	dout("read_partial_connect %p tag %d, con_seq = %u, g_seq = %u\n",
- 	     con, (int)con->in_reply.tag,
-@@ -1749,7 +1748,6 @@ static int read_partial_connect(struct c
- 	     le32_to_cpu(con->in_reply.global_seq));
- out:
- 	return ret;
+ 	ceph_decode_32_safe(p, end, ciphertext_len, e_inval);
+ 	ceph_decode_need(p, end, ciphertext_len, e_inval);
+ 
+-	ret = ceph_crypt(secret, false, *p, end - *p, ciphertext_len,
+-			 &plaintext_len);
+-	if (ret)
++	ret = __ceph_x_decrypt(secret, *p, ciphertext_len);
++	if (ret < 0)
+ 		return ret;
+ 
+-	if (hdr->struct_v != 1 || le64_to_cpu(hdr->magic) != CEPHX_ENC_MAGIC)
+-		return -EPERM;
 -
- }
+ 	*p += ciphertext_len;
+-	return plaintext_len - sizeof(struct ceph_x_encrypt_header);
++	return ret;
  
- /*
-@@ -2033,7 +2031,7 @@ static int process_connect(struct ceph_c
- 
- 	dout("process_connect on %p tag %d\n", con, (int)con->in_tag);
- 
--	if (con->auth_reply_buf) {
-+	if (con->auth) {
- 		/*
- 		 * Any connection that defines ->get_authorizer()
- 		 * should also define ->verify_authorizer_reply().
+ e_inval:
+ 	return -EINVAL;
 
 
