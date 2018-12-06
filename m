@@ -2,108 +2,421 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F8DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61048C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CF720700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1127208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:08:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQudOtgP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CF720700
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="COdN/r7f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1127208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbeLFVFZ (ORCPT
+        id S1725985AbeLFVIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:05:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33396 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeLFVFP (ORCPT
+        Thu, 6 Dec 2018 16:08:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60914 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbeLFVIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:05:15 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so1725352ljd.0;
-        Thu, 06 Dec 2018 13:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DInuEKdbNHvaSBbjubOXmw0RPlkgMluOKS1WEsr6y5c=;
-        b=gQudOtgPnk+ovQWOqW8yAo+fK1O02eOjiYcpHSE8HGAYa615Re2Rxf0RloFfoqK1U6
-         MsuNrJ2v/VoomfFtM+w+EMi45yVFQokShfw194a2556q/SVgGfS4z/cOQikXfO4oUIEc
-         l4DSRFONdolyn5eeIDysA6D6a9J2+RTdMENrnW1JJpB/QRXYe/p7aVvknk7T22KAhNE9
-         /UOOUPXsl84nIf/OJgIv4FLZtRtfMtTJYqL9bqcwSe3cVRoV1fQAl6KgWbDiBloZ7UYy
-         CRuEJYxm5ssOUOysFVq+a3PRjjH6erltF4dXtyGR32bWopXEySwN98dBFjHVDpzfDk7y
-         8Elw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DInuEKdbNHvaSBbjubOXmw0RPlkgMluOKS1WEsr6y5c=;
-        b=HIJtrZS11SX5RQbKk52iVurh4uSTYnr1UJAqT5YrmwR1f+30s9ze7zmZ79Zgd4Pz9I
-         +DYyoyIFxZRElUG3sPXS0u80q0qguOpoJth8BiZcqg34/bVRz9JEyMPJ7WB3HAuMJTiV
-         Pk7Blw5Co6tJynhJktX9aSTz2imZqtWCJ+hG+8TX8apA8FB3IKW2RdWA3zXT5akrLU0K
-         Ov6Lt/g95aGPIfHDczNAUVOBQG9n6NDBIHVPaXuVSkLROUso250eBDHNlTJnE/Y8WqmZ
-         hq8lFKPYUgUkLmTahKilwZ1Umu07NRlLNgYYsyVLU+H0V30L0TCJ9wdlnXJkcNSBVmzX
-         uZcQ==
-X-Gm-Message-State: AA+aEWYiKQ/SMQyOrSdL12K+4NMgK8/evKNgwvluysScXNtlgW9D/BAx
-        XDtvxntnWiuftmjoVPDiVdiQtPTxZVM=
-X-Google-Smtp-Source: AFSGD/WpPBhgUdwNoJRphrT0yMkN/NdTOV8ft94yXAR4iEhWEwVP98UjY9in+/si+uv6yG096Iueqw==
-X-Received: by 2002:a2e:5b93:: with SMTP id m19-v6mr16760115lje.115.1544130313167;
-        Thu, 06 Dec 2018 13:05:13 -0800 (PST)
-Received: from arch.domain.name (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
-        by smtp.gmail.com with ESMTPSA id e94sm267366lfi.23.2018.12.06.13.05.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 13:05:12 -0800 (PST)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, jic23@jic23.retrosnub.co.uk,
-        a.brauchli@elementarea.net, Tomasz Duszynski <tduszyns@gmail.com>
-Subject: [PATCH v2 3/3] iio: chemical: sps30: add device tree support
-Date:   Thu,  6 Dec 2018 22:04:43 +0100
-Message-Id: <20181206210443.21052-4-tduszyns@gmail.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206210443.21052-1-tduszyns@gmail.com>
-References: <20181206210443.21052-1-tduszyns@gmail.com>
+        Thu, 6 Dec 2018 16:08:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bbKrBZfPM+E4Jjz0nA9r3UDIMW++WZicIi1RTJiZzEA=; b=COdN/r7f+tuKn7+BRK/RdA7UV
+        PQBofwA5ErVGLwh4uUkOanYDEUVN7ajKj/9+jKNTxS/3cd/74k+7B/wXx+ZO5yKqdpPgzXJIKnTqN
+        xkqkuQ7yERiHMHAylb6AGkkdJo2kBXk0ncnZF7GA+kDn1CLW0iRIiYiox5vi+RqY0tpWPquuS+UKb
+        hImET7nnwIhfJoYucz5w6ouYPmf03aIjWNxsxVC7Dv7F8PVcdX9DYO2Nu+BW8L22kkLDCUxe+TfSF
+        juKarWrWY7FVl+DjJHLyDTGWjEpkxJNHysoms4zJZODdU5TzfcTYXD4cmbUHsWufZdjwKienAjziI
+        9IxXNbZmA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gV0sL-0004oS-Lt; Thu, 06 Dec 2018 21:08:01 +0000
+Date:   Thu, 6 Dec 2018 13:08:01 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
+Message-ID: <20181206210801.GA12675@bombadil.infradead.org>
+References: <20181128183531.5139-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128183531.5139-1-willy@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree support for Sensirion SPS30 particulate
-matter sensor.
+ping
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
----
- .../bindings/iio/chemical/sensirion,sps30.txt        | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-
-diff --git a/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-new file mode 100644
-index 000000000000..6eee2709b5b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
-@@ -0,0 +1,12 @@
-+* Sensirion SPS30 particulate matter sensor
-+
-+Required properties:
-+- compatible: must be "sensirion,sps30"
-+- reg: the I2C address of the sensor
-+
-+Example:
-+
-+sps30@69 {
-+	compatible = "sensirion,sps30";
-+	reg = <0x69>;
-+};
--- 
-2.19.2
-
+On Wed, Nov 28, 2018 at 10:35:31AM -0800, Matthew Wilcox wrote:
+> This custom resizing array was vulnerable to a Spectre attack (speculating
+> off the end of an array to a user-controlled offset).  The XArray is
+> not vulnerable to Spectre as it always masks its lookups to be within
+> the bounds of the array.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  fs/aio.c                 | 182 ++++++++++++++-------------------------
+>  include/linux/mm_types.h |   5 +-
+>  kernel/fork.c            |   3 +-
+>  mm/debug.c               |   6 --
+>  4 files changed, 67 insertions(+), 129 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 301e6314183b..51ba7446a24f 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -71,12 +71,6 @@ struct aio_ring {
+>  
+>  #define AIO_RING_PAGES	8
+>  
+> -struct kioctx_table {
+> -	struct rcu_head		rcu;
+> -	unsigned		nr;
+> -	struct kioctx __rcu	*table[];
+> -};
+> -
+>  struct kioctx_cpu {
+>  	unsigned		reqs_available;
+>  };
+> @@ -313,27 +307,22 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
+>  {
+>  	struct file *file = vma->vm_file;
+>  	struct mm_struct *mm = vma->vm_mm;
+> -	struct kioctx_table *table;
+> -	int i, res = -EINVAL;
+> +	struct kioctx *ctx;
+> +	unsigned long index;
+> +	int res = -EINVAL;
+>  
+> -	spin_lock(&mm->ioctx_lock);
+> -	rcu_read_lock();
+> -	table = rcu_dereference(mm->ioctx_table);
+> -	for (i = 0; i < table->nr; i++) {
+> -		struct kioctx *ctx;
+> -
+> -		ctx = rcu_dereference(table->table[i]);
+> -		if (ctx && ctx->aio_ring_file == file) {
+> -			if (!atomic_read(&ctx->dead)) {
+> -				ctx->user_id = ctx->mmap_base = vma->vm_start;
+> -				res = 0;
+> -			}
+> -			break;
+> +	xa_lock(&mm->ioctx);
+> +	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
+> +		if (ctx->aio_ring_file != file)
+> +			continue;
+> +		if (!atomic_read(&ctx->dead)) {
+> +			ctx->user_id = ctx->mmap_base = vma->vm_start;
+> +			res = 0;
+>  		}
+> +		break;
+>  	}
+> +	xa_unlock(&mm->ioctx);
+>  
+> -	rcu_read_unlock();
+> -	spin_unlock(&mm->ioctx_lock);
+>  	return res;
+>  }
+>  
+> @@ -617,57 +606,21 @@ static void free_ioctx_users(struct percpu_ref *ref)
+>  
+>  static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+>  {
+> -	unsigned i, new_nr;
+> -	struct kioctx_table *table, *old;
+>  	struct aio_ring *ring;
+> +	int err;
+>  
+> -	spin_lock(&mm->ioctx_lock);
+> -	table = rcu_dereference_raw(mm->ioctx_table);
+> -
+> -	while (1) {
+> -		if (table)
+> -			for (i = 0; i < table->nr; i++)
+> -				if (!rcu_access_pointer(table->table[i])) {
+> -					ctx->id = i;
+> -					rcu_assign_pointer(table->table[i], ctx);
+> -					spin_unlock(&mm->ioctx_lock);
+> -
+> -					/* While kioctx setup is in progress,
+> -					 * we are protected from page migration
+> -					 * changes ring_pages by ->ring_lock.
+> -					 */
+> -					ring = kmap_atomic(ctx->ring_pages[0]);
+> -					ring->id = ctx->id;
+> -					kunmap_atomic(ring);
+> -					return 0;
+> -				}
+> -
+> -		new_nr = (table ? table->nr : 1) * 4;
+> -		spin_unlock(&mm->ioctx_lock);
+> -
+> -		table = kzalloc(sizeof(*table) + sizeof(struct kioctx *) *
+> -				new_nr, GFP_KERNEL);
+> -		if (!table)
+> -			return -ENOMEM;
+> -
+> -		table->nr = new_nr;
+> -
+> -		spin_lock(&mm->ioctx_lock);
+> -		old = rcu_dereference_raw(mm->ioctx_table);
+> -
+> -		if (!old) {
+> -			rcu_assign_pointer(mm->ioctx_table, table);
+> -		} else if (table->nr > old->nr) {
+> -			memcpy(table->table, old->table,
+> -			       old->nr * sizeof(struct kioctx *));
+> +	err = xa_alloc(&mm->ioctx, &ctx->id, UINT_MAX, ctx, GFP_KERNEL);
+> +	if (err)
+> +		return err;
+>  
+> -			rcu_assign_pointer(mm->ioctx_table, table);
+> -			kfree_rcu(old, rcu);
+> -		} else {
+> -			kfree(table);
+> -			table = old;
+> -		}
+> -	}
+> +	/*
+> +	 * While kioctx setup is in progress, we are protected from
+> +	 * page migration changing ring_pages by ->ring_lock.
+> +	 */
+> +	ring = kmap_atomic(ctx->ring_pages[0]);
+> +	ring->id = ctx->id;
+> +	kunmap_atomic(ring);
+> +	return 0;
+>  }
+>  
+>  static void aio_nr_sub(unsigned nr)
+> @@ -793,27 +746,8 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
+>  	return ERR_PTR(err);
+>  }
+>  
+> -/* kill_ioctx
+> - *	Cancels all outstanding aio requests on an aio context.  Used
+> - *	when the processes owning a context have all exited to encourage
+> - *	the rapid destruction of the kioctx.
+> - */
+> -static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+> -		      struct ctx_rq_wait *wait)
+> +static void __kill_ioctx(struct kioctx *ctx, struct ctx_rq_wait *wait)
+>  {
+> -	struct kioctx_table *table;
+> -
+> -	spin_lock(&mm->ioctx_lock);
+> -	if (atomic_xchg(&ctx->dead, 1)) {
+> -		spin_unlock(&mm->ioctx_lock);
+> -		return -EINVAL;
+> -	}
+> -
+> -	table = rcu_dereference_raw(mm->ioctx_table);
+> -	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
+> -	RCU_INIT_POINTER(table->table[ctx->id], NULL);
+> -	spin_unlock(&mm->ioctx_lock);
+> -
+>  	/* free_ioctx_reqs() will do the necessary RCU synchronization */
+>  	wake_up_all(&ctx->wait);
+>  
+> @@ -831,6 +765,30 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+>  
+>  	ctx->rq_wait = wait;
+>  	percpu_ref_kill(&ctx->users);
+> +}
+> +
+> +/* kill_ioctx
+> + *	Cancels all outstanding aio requests on an aio context.  Used
+> + *	when the processes owning a context have all exited to encourage
+> + *	the rapid destruction of the kioctx.
+> + */
+> +static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+> +		      struct ctx_rq_wait *wait)
+> +{
+> +	struct kioctx *old;
+> +
+> +	/* I don't understand what this lock is protecting against */
+> +	xa_lock(&mm->ioctx);
+> +	if (atomic_xchg(&ctx->dead, 1)) {
+> +		xa_unlock(&mm->ioctx);
+> +		return -EINVAL;
+> +	}
+> +
+> +	old = __xa_erase(&mm->ioctx, ctx->id);
+> +	WARN_ON(old != ctx);
+> +	xa_unlock(&mm->ioctx);
+> +
+> +	__kill_ioctx(ctx, wait);
+>  	return 0;
+>  }
+>  
+> @@ -844,26 +802,21 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
+>   */
+>  void exit_aio(struct mm_struct *mm)
+>  {
+> -	struct kioctx_table *table = rcu_dereference_raw(mm->ioctx_table);
+> +	struct kioctx *ctx;
+>  	struct ctx_rq_wait wait;
+> -	int i, skipped;
+> +	unsigned long index;
+>  
+> -	if (!table)
+> +	if (xa_empty(&mm->ioctx))
+>  		return;
+>  
+> -	atomic_set(&wait.count, table->nr);
+> +	/*
+> +	 * Prevent count from getting to 0 until we're ready for it
+> +	 */
+> +	atomic_set(&wait.count, 1);
+>  	init_completion(&wait.comp);
+>  
+> -	skipped = 0;
+> -	for (i = 0; i < table->nr; ++i) {
+> -		struct kioctx *ctx =
+> -			rcu_dereference_protected(table->table[i], true);
+> -
+> -		if (!ctx) {
+> -			skipped++;
+> -			continue;
+> -		}
+> -
+> +	xa_lock(&mm->ioctx);
+> +	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
+>  		/*
+>  		 * We don't need to bother with munmap() here - exit_mmap(mm)
+>  		 * is coming and it'll unmap everything. And we simply can't,
+> @@ -872,16 +825,16 @@ void exit_aio(struct mm_struct *mm)
+>  		 * that it needs to unmap the area, just set it to 0.
+>  		 */
+>  		ctx->mmap_size = 0;
+> -		kill_ioctx(mm, ctx, &wait);
+> +		atomic_inc(&wait.count);
+> +		__xa_erase(&mm->ioctx, ctx->id);
+> +		__kill_ioctx(ctx, &wait);
+>  	}
+> +	xa_unlock(&mm->ioctx);
+>  
+> -	if (!atomic_sub_and_test(skipped, &wait.count)) {
+> +	if (!atomic_sub_and_test(1, &wait.count)) {
+>  		/* Wait until all IO for the context are done. */
+>  		wait_for_completion(&wait.comp);
+>  	}
+> -
+> -	RCU_INIT_POINTER(mm->ioctx_table, NULL);
+> -	kfree(table);
+>  }
+>  
+>  static void put_reqs_available(struct kioctx *ctx, unsigned nr)
+> @@ -1026,24 +979,17 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
+>  	struct aio_ring __user *ring  = (void __user *)ctx_id;
+>  	struct mm_struct *mm = current->mm;
+>  	struct kioctx *ctx, *ret = NULL;
+> -	struct kioctx_table *table;
+>  	unsigned id;
+>  
+>  	if (get_user(id, &ring->id))
+>  		return NULL;
+>  
+>  	rcu_read_lock();
+> -	table = rcu_dereference(mm->ioctx_table);
+> -
+> -	if (!table || id >= table->nr)
+> -		goto out;
+> -
+> -	ctx = rcu_dereference(table->table[id]);
+> +	ctx = xa_load(&mm->ioctx, id);
+>  	if (ctx && ctx->user_id == ctx_id) {
+>  		if (percpu_ref_tryget_live(&ctx->users))
+>  			ret = ctx;
+>  	}
+> -out:
+>  	rcu_read_unlock();
+>  	return ret;
+>  }
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 5ed8f6292a53..1a95bb27f5a7 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -14,6 +14,7 @@
+>  #include <linux/uprobes.h>
+>  #include <linux/page-flags-layout.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/xarray.h>
+>  
+>  #include <asm/mmu.h>
+>  
+> @@ -336,7 +337,6 @@ struct core_state {
+>  	struct completion startup;
+>  };
+>  
+> -struct kioctx_table;
+>  struct mm_struct {
+>  	struct {
+>  		struct vm_area_struct *mmap;		/* list of VMAs */
+> @@ -431,8 +431,7 @@ struct mm_struct {
+>  		atomic_t membarrier_state;
+>  #endif
+>  #ifdef CONFIG_AIO
+> -		spinlock_t			ioctx_lock;
+> -		struct kioctx_table __rcu	*ioctx_table;
+> +		struct xarray ioctx;
+>  #endif
+>  #ifdef CONFIG_MEMCG
+>  		/*
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 07cddff89c7b..acb775f9592d 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -946,8 +946,7 @@ __setup("coredump_filter=", coredump_filter_setup);
+>  static void mm_init_aio(struct mm_struct *mm)
+>  {
+>  #ifdef CONFIG_AIO
+> -	spin_lock_init(&mm->ioctx_lock);
+> -	mm->ioctx_table = NULL;
+> +	xa_init_flags(&mm->ioctx, XA_FLAGS_ALLOC);
+>  #endif
+>  }
+>  
+> diff --git a/mm/debug.c b/mm/debug.c
+> index cdacba12e09a..d45ec63aed8c 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -127,9 +127,6 @@ void dump_mm(const struct mm_struct *mm)
+>  		"start_brk %lx brk %lx start_stack %lx\n"
+>  		"arg_start %lx arg_end %lx env_start %lx env_end %lx\n"
+>  		"binfmt %px flags %lx core_state %px\n"
+> -#ifdef CONFIG_AIO
+> -		"ioctx_table %px\n"
+> -#endif
+>  #ifdef CONFIG_MEMCG
+>  		"owner %px "
+>  #endif
+> @@ -158,9 +155,6 @@ void dump_mm(const struct mm_struct *mm)
+>  		mm->start_brk, mm->brk, mm->start_stack,
+>  		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
+>  		mm->binfmt, mm->flags, mm->core_state,
+> -#ifdef CONFIG_AIO
+> -		mm->ioctx_table,
+> -#endif
+>  #ifdef CONFIG_MEMCG
+>  		mm->owner,
+>  #endif
+> -- 
+> 2.19.1
+> 
