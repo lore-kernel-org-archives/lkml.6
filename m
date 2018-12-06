@@ -2,112 +2,123 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0080C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB2FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A66208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107196;
-	bh=SzPHtumVaP4R0LZEs/Z/LZ2+nVfYjZd3in9+ua7bO4o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DSPV5Yw9I3nbX0x3dZ23Ag49BNBA/lg/L1XTIoIsazeITSSQ/ThVNFvEyJqP7EOzA
-	 FR2B8JEoEvMKcm1xkF2NGoRLHtq9IuLL+Bg0Un6CQvjQYHML9WsWTqSMGRo85iNrad
-	 cyvuusSvcasX6xYJnMCJrTYLkQU9aWgx5ZsX+a/4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72A66208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DA3F208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA3F208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbeLFOjz (ORCPT
+        id S1729777AbeLFOkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:39:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52442 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727737AbeLFOjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:39:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729699AbeLFOjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:39:55 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C929320892;
-        Thu,  6 Dec 2018 14:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107192;
-        bh=SzPHtumVaP4R0LZEs/Z/LZ2+nVfYjZd3in9+ua7bO4o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nI6A0fOI7dX4XSnnCukRvC8+ULzrBGdqtXaZ+QA3fSGsfLJY1sdjfRO+n2SwaMdtB
-         oNQFwX4EiSzdo2d0jsmxtqS3LZfPm8zzh42OAkK7kg1xBKumTPoo2EecYI4iiVr2cF
-         tS+140zA0meLxmGsUhUeI/0zGWmvvbklwfeps7cs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kristian Evensen <kristian.evensen@gmail.com>,
-        Mathias Kresin <dev@kresin.me>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.19 10/41] MIPS: ralink: Fix mt7620 nd_sd pinmux
-Date:   Thu,  6 Dec 2018 15:38:50 +0100
-Message-Id: <20181206142950.517810462@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
-References: <20181206142949.757402551@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id 8EF353082143;
+        Thu,  6 Dec 2018 14:39:54 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EF836F428;
+        Thu,  6 Dec 2018 14:39:54 +0000 (UTC)
+Received: from zmail25.collab.prod.int.phx2.redhat.com (zmail25.collab.prod.int.phx2.redhat.com [10.5.83.31])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 5049B181B9E4;
+        Thu,  6 Dec 2018 14:39:54 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 09:39:54 -0500 (EST)
+From:   Frediano Ziglio <fziglio@redhat.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Message-ID: <885772449.48610143.1544107194097.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20181206113416.yydgi7ro47vwgf2d@sirius.home.kraxel.org>
+References: <20181206104638.23330-1-kraxel@redhat.com> <20181206104638.23330-2-kraxel@redhat.com> <1897496108.48579647.1544093758850.JavaMail.zimbra@redhat.com> <20181206113416.yydgi7ro47vwgf2d@sirius.home.kraxel.org>
+Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: allow both PRIV and VRAM
+ placement for QXL_GEM_DOMAIN_SURFACE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.33.32.16, 10.4.195.20]
+Thread-Topic: drm/qxl: allow both PRIV and VRAM placement for QXL_GEM_DOMAIN_SURFACE
+Thread-Index: 70b9Vryx2gOTCErvYrqGLMk6Cy/pvg==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Dec 2018 14:39:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+> 
+> On Thu, Dec 06, 2018 at 05:55:58AM -0500, Frediano Ziglio wrote:
+> > 
+> > > qxl surfaces (used for framebuffers and gem objects) can live in both
+> > > VRAM and PRIV ttm domains.  Update placement setup to include both.  Put
+> > > PRIV first in the list so it is preferred, so VRAM will have more room
+> > > for objects which must be allocated there.
+> > > 
+> > > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > 
+> > I remember these kind of changes in the past made migration
+> > fails. I proposed similar patches years ago and they were rejected
+> > for these reasons.
+> 
+> Pointer?
+> 
 
-------------------
+I think is this:
+https://patchwork.kernel.org/patch/7374931/
 
-From: Mathias Kresin <dev@kresin.me>
+I think all started with Windows where we have:
+https://gitlab.freedesktop.org/spice/win32/qxl-wddm-dod/commit/0214d5ceda3f0da94de3813fc902150d497c6b26
+https://gitlab.freedesktop.org/spice/win32/qxl-wddm-dod/commit/54a719e14f1204143da2c64f8a2aaee4fe5cd7d6
 
-commit 7d35baa4e9ec4b717bc0e58a39cdb6a1c50f5465 upstream.
+> > Why now they are safe?
+> 
+> Well, you have to be careful what object you are allocating.  Surfaces
+> can be in both PRIV and VRAM.  Everything else (qxl commands, monitors
+> config, ...) must be in VRAM.
+> 
+> > Looks like we are improving QXL, so that means we are actively working
+> > on it.
+> 
+> Well, I'm just trying make qxl behave better with wayland.
+> 
 
-In case the nd_sd group is set to the sd-card function, Pins 45 + 46 are
-configured as GPIOs. If they are blocked by the sd function, they can't
-be used as GPIOs.
+As far as I remember the Linux kernel driver simulates the frame buffer
+swap with drawings which cause more memory copies.
+Not also sure if this workaround make the server consume more network
+bandwidth.
+Are we supporting multiple monitors for Wayland?
 
-Reported-by: Kristian Evensen <kristian.evensen@gmail.com>
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: f576fb6a0700 ("MIPS: ralink: cleanup the soc specific pinmux data")
-Patchwork: https://patchwork.linux-mips.org/patch/21220/
-Cc: John Crispin <john@phrozen.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Should we not then thinking about moving feature in the proper
+> > places (like spice-server for atomic mode setting instead of implementin
+> > work around) ??
+> 
+> Main advantage is that it doesn't need qxl device changes, so it works
+> on old hosts too.  But, yes, we can consider to also modernize spice
+> protocol and qxl device.
+> 
+> cheers,
+>   Gerd
+> 
+> 
 
----
- arch/mips/ralink/mt7620.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On the other hand we faced some bugs due these workarounds so we end up
+with a solution that is less optimal than before and potentially
+with more bugs to fix.
+At the end we sell to customer a worst product.
 
---- a/arch/mips/ralink/mt7620.c
-+++ b/arch/mips/ralink/mt7620.c
-@@ -84,7 +84,7 @@ static struct rt2880_pmx_func pcie_rst_g
- };
- static struct rt2880_pmx_func nd_sd_grp[] = {
- 	FUNC("nand", MT7620_GPIO_MODE_NAND, 45, 15),
--	FUNC("sd", MT7620_GPIO_MODE_SD, 45, 15)
-+	FUNC("sd", MT7620_GPIO_MODE_SD, 47, 13)
- };
- 
- static struct rt2880_pmx_group mt7620a_pinmux_data[] = {
-
-
+Frediano
