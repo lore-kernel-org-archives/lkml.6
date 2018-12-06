@@ -7,55 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60429C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132DCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D7120850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2DEF20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108464;
-	bh=qrP4hft2aD+aiGucNN+SfC6hLUdlGoM4zPwCL2XMh7w=;
+	s=default; t=1544108476;
+	bh=3Nn9ftUtwjCpAWwlQdrOD+UtdNEQynmX0olRrq1YtQ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2e86eBTX7nYswY1ObL5TSZn105M/1gMcGQlKULdGhbJGpELnpXZwjb+eOrQmpUug1
-	 KGQB3UW/IRxbkA59n4f5QAGNh6pxZ0wgd0iANQYha+a2KE33YbwcfY/kICUbuGeSnf
-	 Y1kCi6wxj9i0bVWuzQgHbb1ZgDoOarpGjveyc/7c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D7120850
+	b=NeJtXzPdW0WqZaOEs5KBaGUkovWSMZbTOQjMwmf4WS2S6RTYh/RvsVlsLMJUg9/sV
+	 o89wggzXNcRIY3CelE5wzoGBeCRS35iONHjY7GmKaxI+SKaCxl6EI4yPdjHF9cpruH
+	 6GniIfw/2lRp8OBlfwDnMcLwVNNy6csk1GiGFWYs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DEF20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeLFPBD (ORCPT
+        id S1729871AbeLFOkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:01:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44484 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729935AbeLFOkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:24 -0500
+        id S1729834AbeLFOkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E98C208E7;
-        Thu,  6 Dec 2018 14:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09ED821479;
+        Thu,  6 Dec 2018 14:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107224;
-        bh=qrP4hft2aD+aiGucNN+SfC6hLUdlGoM4zPwCL2XMh7w=;
+        s=default; t=1544107210;
+        bh=3Nn9ftUtwjCpAWwlQdrOD+UtdNEQynmX0olRrq1YtQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VMqzyKC3OqUtTalf6LdBx4whgs+DwTZnUAn2DmhM9Brmus31/LslwdJT1CC0WBe2r
-         otdmSnuMc+iEePkWBZ2TML1XZKfhqkGyU1igZ1J1E5yKQqzZXW/VaOOTnEzuzobw+P
-         tHDZj+f21ZiyNtwb2ojeROh14aZz93PJG/oFF7lM=
+        b=tUMZJ5iMxDlyWf6lDQhRjRuHJkRM9h/qCxB4YOeO9OHH4vJt1E5Wj1HU6OtO45kfG
+         k2brFIokrQYrcLsxQrzxUKnmEbXe3bhuZ0RzL+R3Zq9hCvQGyXY4cP+RVEpl8qqBjg
+         UdWhxxXlA5abgzknVGSDofVJ3bZB+1z+8SQC6dYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Hugh Dickins <hughd@google.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Jann Horn <jannh@google.com>, Peter Xu <peterx@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 21/41] userfaultfd: use ENOENT instead of EFAULT if the atomic copy user fails
-Date:   Thu,  6 Dec 2018 15:39:01 +0100
-Message-Id: <20181206142951.554944815@linuxfoundation.org>
+        stable@vger.kernel.org, Sergio Correia <sergio@correia.cc>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.19 17/41] drm: set is_master to 0 upon drm_new_set_master() failure
+Date:   Thu,  6 Dec 2018 15:38:57 +0100
+Message-Id: <20181206142951.156572150@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -74,107 +69,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Sergio Correia <sergio@correia.cc>
 
-commit 9e368259ad988356c4c95150fafd1a06af095d98 upstream.
+commit 23a336b34258aba3b50ea6863cca4e81b5ef6384 upstream.
 
-Patch series "userfaultfd shmem updates".
+When drm_new_set_master() fails, set is_master to 0, to prevent a
+possible NULL pointer deref.
 
-Jann found two bugs in the userfaultfd shmem MAP_SHARED backend: the
-lack of the VM_MAYWRITE check and the lack of i_size checks.
+Here is a problematic flow: we check is_master in drm_is_current_master(),
+then proceed to call drm_lease_owner() passing master. If we do not restore
+is_master status when drm_new_set_master() fails, we may have a situation
+in which is_master will be 1 and master itself, NULL, leading to the deref
+of a NULL pointer in drm_lease_owner().
 
-Then looking into the above we also fixed the MAP_PRIVATE case.
+This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
+kernel:
 
-Hugh by source review also found a data loss source if UFFDIO_COPY is
-used on shmem MAP_SHARED PROT_READ mappings (the production usages
-incidentally run with PROT_READ|PROT_WRITE, so the data loss couldn't
-happen in those production usages like with QEMU).
+[   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+[   97.807224] PGD 0 P4D 0
+[   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
+[   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
+[   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
+[   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
+[   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
+[   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
+[   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
+[   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
+[   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
+[   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
+[   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
+[   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
+[   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
+[   97.807224] Call Trace:
+[   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
+[   97.807224]  drm_master_release+0x3e/0x130 [drm]
+[   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
+[   97.807224]  drm_open+0x1ba/0x1e0 [drm]
+[   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
+[   97.807224]  chrdev_open+0xa3/0x1b0
+[   97.807224]  ? cdev_put.part.0+0x20/0x20
+[   97.807224]  do_dentry_open+0x132/0x340
+[   97.807224]  path_openat+0x2d1/0x14e0
+[   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
+[   97.807224]  do_filp_open+0x93/0x100
+[   97.807224]  ? __check_object_size+0x102/0x189
+[   97.807224]  ? _raw_spin_unlock+0x16/0x30
+[   97.807224]  do_sys_open+0x186/0x210
+[   97.807224]  do_syscall_64+0x5b/0x170
+[   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   97.807224] RIP: 0033:0x7f4147b07976
+[   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
+[   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+[   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
+[   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
+[   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
+[   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
+[   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
+[   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
+[   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
+[   98.040039] CR2: 0000000000000080
+[   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
+[   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
+[   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
+[   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
+[   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
+[   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
+[   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
+[   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
+[   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
+[   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
+[   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
 
-The whole patchset is marked for stable.
-
-We verified QEMU postcopy live migration with guest running on shmem
-MAP_PRIVATE run as well as before after the fix of shmem MAP_PRIVATE.
-Regardless if it's shmem or hugetlbfs or MAP_PRIVATE or MAP_SHARED, QEMU
-unconditionally invokes a punch hole if the guest mapping is filebacked
-and a MADV_DONTNEED too (needed to get rid of the MAP_PRIVATE COWs and
-for the anon backend).
-
-This patch (of 5):
-
-We internally used EFAULT to communicate with the caller, switch to
-ENOENT, so EFAULT can be used as a non internal retval.
-
-Link: http://lkml.kernel.org/r/20181126173452.26955-2-aarcange@redhat.com
-Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-Reviewed-by: Hugh Dickins <hughd@google.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Sergio Correia <sergio@correia.cc>
 Cc: stable@vger.kernel.org
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181122053329.2692-1-sergio@correia.cc
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c     |    2 +-
- mm/shmem.c       |    2 +-
- mm/userfaultfd.c |    6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_auth.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4080,7 +4080,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_s
+--- a/drivers/gpu/drm/drm_auth.c
++++ b/drivers/gpu/drm/drm_auth.c
+@@ -142,6 +142,7 @@ static int drm_new_set_master(struct drm
  
- 		/* fallback to copy_from_user outside mmap_sem */
- 		if (unlikely(ret)) {
--			ret = -EFAULT;
-+			ret = -ENOENT;
- 			*pagep = page;
- 			/* don't free the page */
- 			goto out;
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2286,7 +2286,7 @@ static int shmem_mfill_atomic_pte(struct
- 				*pagep = page;
- 				shmem_inode_unacct_blocks(inode, 1);
- 				/* don't free the page */
--				return -EFAULT;
-+				return -ENOENT;
- 			}
- 		} else {		/* mfill_zeropage_atomic */
- 			clear_highpage(page);
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -48,7 +48,7 @@ static int mcopy_atomic_pte(struct mm_st
+ 	lockdep_assert_held_once(&dev->master_mutex);
  
- 		/* fallback to copy_from_user outside mmap_sem */
- 		if (unlikely(ret)) {
--			ret = -EFAULT;
-+			ret = -ENOENT;
- 			*pagep = page;
- 			/* don't free the page */
- 			goto out;
-@@ -275,7 +275,7 @@ retry:
++	WARN_ON(fpriv->is_master);
+ 	old_master = fpriv->master;
+ 	fpriv->master = drm_master_create(dev);
+ 	if (!fpriv->master) {
+@@ -170,6 +171,7 @@ out_err:
+ 	/* drop references and restore old master on failure */
+ 	drm_master_put(&fpriv->master);
+ 	fpriv->master = old_master;
++	fpriv->is_master = 0;
  
- 		cond_resched();
- 
--		if (unlikely(err == -EFAULT)) {
-+		if (unlikely(err == -ENOENT)) {
- 			up_read(&dst_mm->mmap_sem);
- 			BUG_ON(!page);
- 
-@@ -527,7 +527,7 @@ retry:
- 				       src_addr, &page, zeropage);
- 		cond_resched();
- 
--		if (unlikely(err == -EFAULT)) {
-+		if (unlikely(err == -ENOENT)) {
- 			void *page_kaddr;
- 
- 			up_read(&dst_mm->mmap_sem);
+ 	return ret;
+ }
 
 
