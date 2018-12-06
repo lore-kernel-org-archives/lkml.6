@@ -2,124 +2,109 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7EDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9FDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF6F2064D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF6F2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id F189A20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:12:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="MuPYaquT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F189A20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeLFUMN (ORCPT
+        id S1726043AbeLFUMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:12:13 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:45344 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbeLFUMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:12:12 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gUzzn-0003on-BS; Thu, 06 Dec 2018 13:11:40 -0700
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
- <20181205001544.GR2937@redhat.com>
- <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
- <20181205021334.GB3045@redhat.com>
- <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
- <20181205175357.GG3536@redhat.com>
- <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
- <20181206192050.GC3544@redhat.com>
- <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
-Date:   Thu, 6 Dec 2018 13:11:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Dec 2018 15:12:38 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37916 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeLFUMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:12:38 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so2365826wml.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 12:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=T0pLC4iMCNPCig/8AcMJIz9QI262AjSzHsrEpOfECk8=;
+        b=MuPYaquTjkanNAV1yWOBJ5/4uxv0pBlHAS8aEEIGJb67u1Cm6w8l+nsGqx1dSyraCT
+         EmvBLwbZ8lAu+x/vYopOQje7dHuLN7OFlnWgpqDE0rtD5gtYTpHiOFi0d42NMaR+TWzd
+         wi2iQo8hR4IUTMqVkY818VKpuiicYTcciw9peS8+xI1nhaS4tYK8Yb8D9nqIm61fNbhS
+         GNK+XdZ6x8Vi9yZTZQ/5d0+AqiaxPPqCOIdJFCUGm8y5DKbKwPcVwlTNywKMTI5Q5Z81
+         /7nzZB70eKCswWiGt3yZNH+Ccve+STrlGC7GJUTM2HmDXYq5N4ETvilBTxB9rkesdKPQ
+         1U2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=T0pLC4iMCNPCig/8AcMJIz9QI262AjSzHsrEpOfECk8=;
+        b=Fi23f/pt/oQjOg6JM2MTSLEWH6pvOdObfbEvfQa1uCZX0HR7WMefw2ADkoi0NoeoFf
+         pZFRTq1R1pKBQbKtwEBTavUyGSvSAQagekaNZz8MsCAPzeNHf91g+C/2omAWSGNcp6mi
+         Rz/FqJsryrTvk8U91zSOyCnXPKsFAjefm2AygSa5lqeUHBrXRgpvy6L7g2tNxIfphyUS
+         CYW6ntiNX8UP/VlFUn4MnLY548UWaVo29qtY2BZIMqtubckZTFN5ulEDzPmEM0OW49ow
+         qKEO1FEWDrj+/jGtGdAI7lQTo+Cb5NoWmZFybgz29c1UAPxuxZn9eSlyC+mJAXKTYJWr
+         p6+w==
+X-Gm-Message-State: AA+aEWYztftcPhyqbakY6OODnBQlWBOnZr6T8PqqmH+mVkBKTWK9MVYl
+        lEjlOnQnVDS08Ofcr5HPA6LBvlPi1sCYlA==
+X-Google-Smtp-Source: AFSGD/VZm27RQyH1eaENkwVaXm4WO1ErQu0PH0HaAKQk4+IxV7OkDTVdd/RtmL9jCOhRvwywIDuvHg==
+X-Received: by 2002:a1c:11c1:: with SMTP id 184mr16251784wmr.59.1544127156388;
+        Thu, 06 Dec 2018 12:12:36 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e16sm1893885wrn.72.2018.12.06.12.12.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 12:12:35 -0800 (PST)
+Message-ID: <5c0982b3.1c69fb81.a088c.c15a@mx.google.com>
+Date:   Thu, 06 Dec 2018 12:12:35 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-acpi@vger.kernel.org, woodard@redhat.com, riel@surriel.com, aarcange@redhat.com, bskeggs@redhat.com, airlied@redhat.com, mgorman@techsingularity.net, vkini@nvidia.com, mhairgrove@nvidia.com, jonathan.cameron@huawei.com, mhocko@kernel.org, rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, bsingharora@gmail.com, haggaie@mellanox.com, dan.j.williams@intel.com, keith.busch@intel.com, ross.zwisler@linux.intel.com, willy@infradead.org, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, jglisse@redhat.com, dave.hansen@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.9.y
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.9.143-102-gcf137e4b4373
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
+References: <20181206143011.174892052@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+stable-rc/linux-4.9.y boot: 105 boots: 0 failed, 104 passed with 1 offline =
+(v4.9.143-102-gcf137e4b4373)
 
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.9.y/kernel/v4.9.143-102-gcf137e4b4373/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
+/kernel/v4.9.143-102-gcf137e4b4373/
 
-On 2018-12-06 12:31 p.m., Dave Hansen wrote:
-> On 12/6/18 11:20 AM, Jerome Glisse wrote:
->>>> For case 1 you can pre-parse stuff but this can be done by helper library
->>> How would that work?  Would each user/container/whatever do this once?
->>> Where would they keep the pre-parsed stuff?  How do they manage their
->>> cache if the topology changes?
->> Short answer i don't expect a cache, i expect that each program will have
->> a init function that query the topology and update the application codes
->> accordingly.
-> 
-> My concern with having folks do per-program parsing, *and* having a huge
-> amount of data to parse makes it unusable.  The largest systems will
-> literally have hundreds of thousands of objects in /sysfs, even in a
-> single directory.  That makes readdir() basically impossible, and makes
-> even open() (if you already know the path you want somehow) hard to do fast.
+Tree: stable-rc
+Branch: linux-4.9.y
+Git Describe: v4.9.143-102-gcf137e4b4373
+Git Commit: cf137e4b43737b5c238350d3e22f031c616dd9f9
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 47 unique boards, 20 SoC families, 15 builds out of 193
 
-Is this actually realistic? I find it hard to imagine an actual hardware
-bus that can have even thousands of devices under a single node, let
-alone hundreds of thousands. At some point the laws of physics apply.
-For example, in present hardware, the most ports a single PCI switch can
-have these days is under one hundred. I'd imagine any such large systems
-would have a hierarchy of devices (ie. layers of switch-like devices)
-which implies the existing sysfs bus/devices  should have a path through
-it without navigating a directory with that unreasonable a number of
-objects in it. HMS, on the other hand, has all possible initiators
-(,etc) under a single directory.
+Offline Platforms:
 
-The caveat to this is, that to find an initial starting point in the bus
-hierarchy you might have to go through /sys/dev/{block|char} or
-/sys/class which may have directories with a large number of objects.
-Though, such a system would necessarily have a similarly large number of
-objects in /dev which means means you will probably never get around the
-readdir/open bottleneck you mention... and, thus, this doesn't seem
-overly realistic to me.
+arm:
 
-Logan
+    multi_v7_defconfig:
+        stih410-b2120: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
