@@ -2,109 +2,92 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B4CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2AAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7EAD2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7EAD2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 2C93A21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544093652;
+	bh=RdU04X7KWxterWJUY5M8QKseZAdJaJqWo5YYFHG+ubk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KgOXZCgw0vlH0wL7HbhpmJg2CyrbWnqbej4/rIY0Ba7GaJd+Pcne7fDqUIqhFYznZ
+	 UIlMSaDsBjj8VtfSpIUOxyDvcirXG9tW9ujNX0JUzQcZaoS6W/AyiK5XFK/4xigTC9
+	 f9xSQ8X5wKyVW7C7BJR2PX4nY23iAbcaL4c0iTsQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C93A21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbeLFKwO (ORCPT
+        id S1729408AbeLFKyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:52:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45818 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727806AbeLFKwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:52:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07B0BAFA4;
-        Thu,  6 Dec 2018 10:52:11 +0000 (UTC)
+        Thu, 6 Dec 2018 05:54:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727806AbeLFKyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 05:54:10 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82DC42082B;
+        Thu,  6 Dec 2018 10:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544093650;
+        bh=RdU04X7KWxterWJUY5M8QKseZAdJaJqWo5YYFHG+ubk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GUnBNxXo8r4UnssiD8ankHu/gUwA423ZZIR1QQFzmEAHfaIzJqVkIGubq5dfN+lg3
+         Kkv/tAlrF2KoKQqExR66CM3vf/hBq5OBD7vYmPKmXcNuGETpAo+fCruwJcZhIaGBOk
+         pRutu0W30e+c17nS0MG6hh+S86qtZjmYp/zpmzcQ=
+Date:   Thu, 6 Dec 2018 11:54:07 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jari Ruusu <jariruusu@users.sourceforge.net>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?iso-8859-1?B?S3I/beE/?= <rkrcmar@redhat.com>,
+        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>
+Subject: Re: [PATCH 4.14 121/146] x86/fpu: Disable bottom halves while
+ loading FPU registers
+Message-ID: <20181206105407.GH19891@kroah.com>
+References: <20181204103726.750894136@linuxfoundation.org>
+ <20181204103731.697870447@linuxfoundation.org>
+ <5C07FC30.43601034@users.sourceforge.net>
+ <20181205190020.GO29510@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 06 Dec 2018 11:52:11 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Eric Wong <e@80x24.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [RFC PATCH 1/1] epoll: use rwlock in order to reduce
- ep_poll_callback() contention
-In-Reply-To: <20181205234649.ssvmv4ulwevgdla4@dcvr>
-References: <20181203110237.14787-1-rpenyaev@suse.de>
- <20181205234649.ssvmv4ulwevgdla4@dcvr>
-Message-ID: <39192b9caf1114c95cd23e786a9c3e60@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205190020.GO29510@zn.tnic>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 00:46, Eric Wong wrote:
-> Roman Penyaev <rpenyaev@suse.de> wrote:
->> Hi all,
->> 
->> The goal of this patch is to reduce contention of ep_poll_callback() 
->> which
->> can be called concurrently from different CPUs in case of high events
->> rates and many fds per epoll.  Problem can be very well reproduced by
->> generating events (write to pipe or eventfd) from many threads, while
->> consumer thread does polling.  In other words this patch increases the
->> bandwidth of events which can be delivered from sources to the poller 
->> by
->> adding poll items in a lockless way to the list.
+On Wed, Dec 05, 2018 at 08:00:20PM +0100, Borislav Petkov wrote:
+> On Wed, Dec 05, 2018 at 06:26:24PM +0200, Jari Ruusu wrote:
+> > That same race appears to be present in older kernel branches also.
+> > The context is sligthly different, so the patch for 4.14 does not
+> > apply cleanly to older kernels. For 4.9 branch, this edit works:
 > 
-> Hi Roman,
+> You could take the upstream one, amend it with your change, test it and
+> send it to Greg - I believe he'll take the backport gladly.
 > 
-> I also tried to solve this problem many years ago with help of
-> the well-tested-in-userspace wfcqueue from Mathieu's URCU.
-> 
-> I was also looking to solve contention with parallel epoll_wait
-> callers with this.  AFAIK, it worked well; but needed the
-> userspace tests from wfcqueue ported over to the kernel and more
-> review.
-> 
-> I didn't have enough computing power to show the real-world
-> benefits or funding to continue:
-> 
-> 	https://lore.kernel.org/lkml/?q=wfcqueue+d:..20130501
+> :-)
 
-Hi Eric,
+Yes, that's the easiest way for me to accept such a patch, otherwise it
+gets put on the end of the very-long-queue...
 
-Nice work.  That was a huge change by itself and by dependency
-on wfcqueue.  I could not find any valuable discussion on this,
-what was the reaction of the community?
+thanks,
 
-
-> It might not be too much trouble for you to brush up the wait-free
-> patches and test them against the rwlock implementation.
-
-Ha :)  I may try to cherry-pick these patches, let's see how many
-conflicts I have to resolve, eventpoll.c has been changed a lot
-since that (6 years passed, right?)
-
-But reading your work description I can assume that epoll_wait() calls
-should be faster, because they do not content with ep_poll_callback(),
-and I did not try to solve this, only contention between producers,
-which make my change tiny.
-
-I also found your https://yhbt.net/eponeshotmt.c , where you count
-number of bare epoll_wait() calls, which IMO is not correct, because
-we need to count how many events are delivered, but not how fast
-you've returned from epoll_wait().  But as I said no doubts that
-getting rid of contention between consumer and producers will show
-even better results.
-
---
-Roman
+greg k-h
