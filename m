@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A55C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968E6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9EE021479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 559AF214F1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107584;
-	bh=M3xdBRGww5er9HDj/rTcJZuyAagwtmdWp/U9raUGM9A=;
+	s=default; t=1544107590;
+	bh=FA50cmMUeTcTfgMqkG1YndB+TUAw+8PB80N2BlJIRAI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Iuzgts5uCwJZIB8R8f8WQr5E4l5OGg2d5jQEc1tzy6fPhM4OkMwDZpuXzus0IS32S
-	 SsKM7Ec/VgTlDrnZCJ1M4ZlfWBov4mlzRWJLINCD0YuwPXSi4Ou38iUEWC/XBK5X4e
-	 TXsFSsk8QRiBC4/yMkehSBqkVbbrVu+wIAYV7k84=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9EE021479
+	b=0/zcbd1uN4GEnHS/R4fgZKtQSPObUX7ouOScYJvBPGHORNqBx3C+YeXOeCMfiglYE
+	 TRSwrkkkfuy0FmKimzN1hSc5basQMjI36fOnJuYSY9AhKWuqS0z7fZHrHZgM5PC62i
+	 vrYPPMqo7o1ZPvEV1tt4usyXszJvQsDmPTC86aR8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559AF214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731236AbeLFOqX (ORCPT
+        id S1731260AbeLFOq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:46:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51016 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731225AbeLFOqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:16 -0500
+        id S1731241AbeLFOqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E4202146D;
-        Thu,  6 Dec 2018 14:46:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6824120892;
+        Thu,  6 Dec 2018 14:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107576;
-        bh=M3xdBRGww5er9HDj/rTcJZuyAagwtmdWp/U9raUGM9A=;
+        s=default; t=1544107584;
+        bh=FA50cmMUeTcTfgMqkG1YndB+TUAw+8PB80N2BlJIRAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LVkJh6POCR03Y4pJUhFn+52GhVnNkXz6qrFAOHFU+mrEk3xjN1sxTju3iuOs8cN0x
-         7ANT6QsAm8+dqRIUj7YHicIUAAHhuDFbz4k1xt4JuxT62we62u23mnXvdkTsrDAcS9
-         5zDvpRB4s4n1yZv/dvf11e6hu/F5SXamuF9Pj3Ss=
+        b=QZ78dKSHokYysLf9ygUJgx8k2PCviC9/MmmLNO0oiVCE8nQT1oBhmULk1ccq0hHmd
+         m6iOaVMro7JY3kiFuDiY0D0/JDsrY/IEe+ul5xpreFljMWzAzCi6wcBbouMtSyP1x1
+         e+BBagbOmDlYpCac4YfIY7BTd/ExAgLt4vk3823E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Lior David <qca_liord@qca.qualcomm.com>,
+        Maya Erez <qca_merez@qca.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 058/101] bpf/verifier: Add spi variable to check_stack_write()
-Date:   Thu,  6 Dec 2018 15:38:57 +0100
-Message-Id: <20181206143014.935676158@linuxfoundation.org>
+Subject: [PATCH 4.9 061/101] wil6210: missing length check in wmi_set_ie
+Date:   Thu,  6 Dec 2018 15:39:00 +0100
+Message-Id: <20181206143015.150112618@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,47 +70,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Lior David <qca_liord@qca.qualcomm.com>
 
-Extracted from commit dc503a8ad984 "bpf/verifier: track liveness for
-pruning".
+commit b5a8ffcae4103a9d823ea3aa3a761f65779fbe2a upstream.
 
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
+Add a length check in wmi_set_ie to detect unsigned integer
+overflow.
+
+Signed-off-by: Lior David <qca_liord@qca.qualcomm.com>
+Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/wil6210/wmi.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -543,7 +543,7 @@ static bool is_spillable_regtype(enum bp
- static int check_stack_write(struct bpf_verifier_state *state, int off,
- 			     int size, int value_regno)
- {
--	int i;
-+	int i, spi = (MAX_BPF_STACK + off) / BPF_REG_SIZE;
- 	/* caller checked that off % size == 0 and -MAX_BPF_STACK <= off < 0,
- 	 * so it's aligned access and [off, off + size) are within stack limits
- 	 */
-@@ -558,15 +558,13 @@ static int check_stack_write(struct bpf_
- 		}
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -1302,8 +1302,14 @@ int wmi_set_ie(struct wil6210_priv *wil,
+ 	};
+ 	int rc;
+ 	u16 len = sizeof(struct wmi_set_appie_cmd) + ie_len;
+-	struct wmi_set_appie_cmd *cmd = kzalloc(len, GFP_KERNEL);
++	struct wmi_set_appie_cmd *cmd;
  
- 		/* save register state */
--		state->spilled_regs[(MAX_BPF_STACK + off) / BPF_REG_SIZE] =
--			state->regs[value_regno];
-+		state->spilled_regs[spi] = state->regs[value_regno];
- 
- 		for (i = 0; i < BPF_REG_SIZE; i++)
- 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_SPILL;
- 	} else {
- 		/* regular write of data into stack */
--		state->spilled_regs[(MAX_BPF_STACK + off) / BPF_REG_SIZE] =
--			(struct bpf_reg_state) {};
-+		state->spilled_regs[spi] = (struct bpf_reg_state) {};
- 
- 		for (i = 0; i < size; i++)
- 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_MISC;
++	if (len < ie_len) {
++		rc = -EINVAL;
++		goto out;
++	}
++
++	cmd = kzalloc(len, GFP_KERNEL);
+ 	if (!cmd) {
+ 		rc = -ENOMEM;
+ 		goto out;
 
 
