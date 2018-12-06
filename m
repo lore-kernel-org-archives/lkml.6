@@ -2,330 +2,154 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB60C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF0EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E151420989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:55:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g4nfZppK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E151420989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id AF9D120892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544126193;
+	bh=mcvyoth+pT5ZtMtloHOGI12SE+L78Rp4o5EVE0dfgd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A5yOW2pacHCtX5vr4/xTaOKcxYfdbmN7clF6SAb+tFDE/sLNULdibynAAkA5qtE6C
+	 o6EOIcKFiZ4+Ib1Fur2Jj9c3yMHgWiODTyJyAq2D9Tr1nJkPq9LAH8E9n9FWyshvUD
+	 LSeqfWsi2f6deMBq+/5Q505zhGMaYTIomUqMEvDw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9D120892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbeLFTzO (ORCPT
+        id S1725996AbeLFT4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:55:14 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38315 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeLFTzN (ORCPT
+        Thu, 6 Dec 2018 14:56:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43394 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbeLFT4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:55:13 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181206195510euoutp023fefd593c11d6c36d87b7903fa39daab~t1oRFqDz81167611676euoutp02f
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 19:55:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181206195510euoutp023fefd593c11d6c36d87b7903fa39daab~t1oRFqDz81167611676euoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544126110;
-        bh=s+vIBKm3zah1KNi6qdZ7micu10JKc38SiTPFQ1YrEBA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=g4nfZppKnuI2bD2vZdxbh9TC+6jo83dIQ4k+8CxBiD0Fj3Hi/XJ1RxK+cipCcPt1/
-         Gw5BIGsXgq6catlUXt1zTLcJsT3g9wQQm4GPLjLyWrFe8E7kWe1A/OJmuGlY0t+Wa3
-         gVExm/6qGXBymHqckj9XmE3RH7Lr/yPIv0wYCdnw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181206195509eucas1p241ed156a8d361ac5f7aadbd143a68128~t1oPjO3jX0342703427eucas1p2Y;
-        Thu,  6 Dec 2018 19:55:09 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id D8.D9.04441.C9E790C5; Thu,  6
-        Dec 2018 19:55:08 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181206195507eucas1p1c47750cb4d12a0876873209f638e9467~t1oN-JYuH3132231322eucas1p1S;
-        Thu,  6 Dec 2018 19:55:07 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181206195507eusmtrp1df046db5c6b92276aa6b3fec7249b177~t1oNwemEU0729607296eusmtrp1M;
-        Thu,  6 Dec 2018 19:55:07 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-42-5c097e9c3af2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id E4.C7.04284.A9E790C5; Thu,  6
-        Dec 2018 19:55:06 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181206195506eusmtip2f7a152e99efd55c02c25e3d30411e171~t1oM9fu560500705007eusmtip24;
-        Thu,  6 Dec 2018 19:55:06 +0000 (GMT)
-Subject: Re: [PATCH v2 02/11] thermal: add irq-mode configuration for trip
- point
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     Zhang Rui <rui.zhang@intel.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, corbet@lwn.net, b.zolnierkie@samsung.com,
-        krzk@kernel.org
-Message-ID: <3314da31-1b8b-ec19-4aee-38d98aa8adbf@partner.samsung.com>
-Date:   Thu, 6 Dec 2018 20:55:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Thu, 6 Dec 2018 14:56:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fRNdLXsZ8ImvjXxjKSq7ZQGm2Ix2MfpDK3d0ZBRFAC8=; b=vUyKWCFIkE8ngQryXB3bAyLtj
+        0+bYW9ZzfBuuavvQRYgNJ/l6HR6fABtNuYU95485SvhUDBPSze5N0gi4tv3nfd9OTXpI9gZBXGmyq
+        O8bsC7WU8R1eTIzj8plMu3DG12XgHEtKMQPY+CVs2zSYuU2pTNJEHPjQifZnW50hq8OrU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gUzky-0001bP-3J; Thu, 06 Dec 2018 19:56:20 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 73B6D11252F7; Thu,  6 Dec 2018 19:56:19 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 19:56:19 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Kurtz <djkurtz@chromium.org>
+Cc:     Adam.Thomson.Opensource@diasemi.com,
+        Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        Alexander.Deucher@amd.com, Support.Opensource@diasemi.com,
+        Liam Girdwood <lgirdwood@gmail.com>, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: DA7219: Implement error check on reg read and
+ write
+Message-ID: <20181206195619.GA3084@sirena.org.uk>
+References: <1543948103-20752-1-git-send-email-akshu.agrawal@amd.com>
+ <1543948103-20752-2-git-send-email-akshu.agrawal@amd.com>
+ <AM5PR1001MB099412DDC3B33069BCFDC38B80AF0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <50cffd9e-74f4-b0af-5eed-3dad5f32d8f9@amd.com>
+ <AM5PR1001MB0994CDEC9FB92DBCEB83892280A80@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <20181205112832.GA6205@sirena.org.uk>
+ <CAGS+omCSrt_Fe5=qQc28Dc4GZB-jUH-7kVQ3-Cq6E15tTarxZQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2ac425fc-7c32-6e2f-7086-c14f85b0bbfd@partner.samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3Z2zs5Gk8+p7c0uxiqoSCtQOGRIkdSJwMLKSs1cedDI606a
-        dqe8NWxEwso5t2qasSxrmplY5CVtRNoy1FaWpXQjE1sjpIicZ5L/Pe/z/j6e94GPJhROMpA+
-        kH6I06SrU1WUTNzQMd4VbDwhjV/ZdTWMuXOplmSGHxUhxuSax5jbu0jG/LKXZLq7b0sY29CE
-        ulJYKWZ6mowU4zrXjpiqPoeIKXjQLmGG3+uotXK2xlSD2PuGAQlraf4iYm3WsxT7preZYusq
-        T7IWXSnJ6uqtiHXZ5m+VxsrWJHGpB3I4zYqIRFmK9tw1KtMckWus6qNOoc5QLZLSgEOhxWEX
-        aZGMVuDrCPTu597hJ4Iei54UBheC0Yq34qknj0t+eKlqBFXmj95hBIHl7yfCQ/nhaHjd76a0
-        iKYpHAKN1iyP7Y+bEXT/Wu7hCVyOQFtdIfIs5HgD6L574qS0GC+C008KJnUA3gXF725QAuML
-        9rLhySukeCOYPusnswisBOewWSToIDhzt5zwBAAel4DxWyUlnB0JN50mJGg/+NpZLxH0XHha
-        WuKtxsOzYquXPwZF9kYvEw5tnQ7SU4bAS6G2aYVgr4P+jjaJxwbsA/0jvsIJPnCh4SIh2HIo
-        LlQI9BKoL3kuEvQsqK7RS84jlWFaMcO0MoZpZQz/cy8jsRUpuWw+LZnjV6Vzh0N4dRqfnZ4c
-        sj8jzYYmftzTv50/GpH7xb5WhGmkminPXSuNV5DqHD4vrRUBTaj85YpjE5Y8SZ13hNNk7NVk
-        p3J8K5pDi1VK+dEZg3EKnKw+xB3kuExOM7UV0dLAU8jsjN5xryViaHGgfbssKf9hYZArpFdZ
-        KovxHwjvfRd1bzx8dez6/J6ogqETxpMJVYNZ8ZS7zJ5vrW9QjmZuG9z9J2XRpksdBQGNt27s
-        3XJWI800vqojrllm9y10HN+zKXHBL0VOzIddkbYXfJlsc8LY2G9H9MGOvlnBeHT+zjAyI04l
-        5lPUq5YRGl79D5gas6BtAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xe7qz6jhjDL59sbDYOGM9q8WTA+2M
-        FvM+y1rMP3KO1WL+lWusFufPb2C32PQYyFrYtoTF4vKuOWwWn3uPMFosvX6RyaJ17xF2iycP
-        +9gceD3WzFvD6LFz1l12j8V7XjJ5bFrVyeZx59oeNo/NS+o9FvdNZvXo27KK0ePzJrkAzig9
-        m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jK7eZWwF
-        8+0q5iy9ztbAeNyki5GTQ0LAROJozyemLkYuDiGBpYwS97adYYdIiElM2rcdyhaW+HOtiw2i
-        6DWjxLNHLWwgCWGBIInbN74C2RwcbAJ6EjtWFYKERQT2MEo8Wq0JUs8sMJtR4sOro1AbDjNJ
-        7Gu5zAxSxSvgJtH3bhoriM0ioCLRdKIVzBYViJA4+3IdI0SNoMTJmU9YQGxOAXeJeS+mgfUy
-        C5hJzNv8EMoWl7j1ZD4ThC0v0bx1NvMERqFZSNpnIWmZhaRlFpKWBYwsqxhFUkuLc9Nziw31
-        ihNzi0vz0vWS83M3MQLjetuxn5t3MF7aGHyIUYCDUYmHt8KBM0aINbGsuDL3EKMEB7OSCK9Q
-        DVCINyWxsiq1KD++qDQntfgQoynQcxOZpUST84EpJ68k3tDU0NzC0tDc2NzYzEJJnPe8QWWU
-        kEB6YklqdmpqQWoRTB8TB6dUA6PDscT/uwJdnuYf05rg5SnRVFAhKs92uWVJRIyW9J8dv1yc
-        /UxiDafwv29/Feu3buoe9b+TNiacrEmQ+Gv4NqnqeHa/8t+Ljk5Pmx7evhV0ISrpz1SdaKZJ
-        fVbsjTsKF13gmn/N8/D85AS3dyoR93hLAqfpaf839GFXfXK2/fHcJWrrm6QVJiixFGckGmox
-        FxUnAgCUpcRhAQMAAA==
-X-CMS-MailID: 20181206195507eucas1p1c47750cb4d12a0876873209f638e9467
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181107171036eucas1p13253d56b463c8f888ab8f8e418635297
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181107171036eucas1p13253d56b463c8f888ab8f8e418635297
-References: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181107171036eucas1p13253d56b463c8f888ab8f8e418635297@eucas1p1.samsung.com>
-        <1541610593-28542-3-git-send-email-l.luba@partner.samsung.com>
-        <1544022595.2841.45.camel@intel.com>
-        <2ac425fc-7c32-6e2f-7086-c14f85b0bbfd@partner.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <CAGS+omCSrt_Fe5=qQc28Dc4GZB-jUH-7kVQ3-Cq6E15tTarxZQ@mail.gmail.com>
+X-Cookie: You will be successful in love.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/6/18 8:18 PM, Lukasz Luba wrote:
-> Hi Rui,
-> 
-> On 12/5/18 4:09 PM, Zhang Rui wrote:
->> On 三, 2018-11-07 at 18:09 +0100, Lukasz Luba wrote:
->>> This patch adds support irq mode in trip point.
->>> When that flag is set in DT, there is no need for polling
->>> in thermal framework. Crossing the trip point will rise an IRQ.
->>> The naming convention for tip point 'type' can be confussing
->>> and 'passive' (whic is passive cooling) might be interpretted
->>> wrongly.
->>>
->>> This mechanism prevents from missue and adds explicit setting
->>> for hardware which support interrupts for pre-configured temperature
->>> threshold.
->>>
->>> Cc: Zhang Rui <rui.zhang@intel.com>
->>> Cc: Eduardo Valentin <edubezval@gmail.com>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>> ---
->>>   drivers/thermal/of-thermal.c   | 17 +++++++++++++++++
->>>   drivers/thermal/thermal_core.c | 10 ++++++++--
->>>   include/linux/thermal.h        |  5 +++++
->>>   3 files changed, 30 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-
->>> thermal.c
->>> index 4bfdb4a..1a75946a 100644
->>> --- a/drivers/thermal/of-thermal.c
->>> +++ b/drivers/thermal/of-thermal.c
->>> @@ -312,6 +312,20 @@ static int of_thermal_get_trip_type(struct
->>> thermal_zone_device *tz, int trip,
->>>       return 0;
->>>   }
->>> +static int
->>> +of_thermal_get_trip_irq_mode(struct thermal_zone_device *tz, int
->>> trip,
->>> +                 bool *mode)
->>> +{
->>> +    struct __thermal_zone *data = tz->devdata;
->>> +
->>> +    if (trip >= data->ntrips || trip < 0)
->>> +        return -EDOM;
->>> +
->>> +    *mode = data->trips[trip].irq_mode;
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>   static int of_thermal_get_trip_temp(struct thermal_zone_device *tz,
->>> int trip,
->>>                       int *temp)
->>>   {
->>> @@ -394,6 +408,7 @@ static struct thermal_zone_device_ops
->>> of_thermal_ops = {
->>>       .set_mode = of_thermal_set_mode,
->>>       .get_trip_type = of_thermal_get_trip_type,
->>> +    .get_trip_irq_mode = of_thermal_get_trip_irq_mode,
->>>       .get_trip_temp = of_thermal_get_trip_temp,
->>>       .set_trip_temp = of_thermal_set_trip_temp,
->>>       .get_trip_hyst = of_thermal_get_trip_hyst,
->>> @@ -827,6 +842,8 @@ static int thermal_of_populate_trip(struct
->>> device_node *np,
->>>           return ret;
->>>       }
->>> +    trip->irq_mode = of_property_read_bool(np, "irq-mode");
->>> +
->>>       /* Required for cooling map matching */
->>>       trip->np = np;
->>>       of_node_get(np);
->>> diff --git a/drivers/thermal/thermal_core.c
->>> b/drivers/thermal/thermal_core.c
->>> index 39fc812..6d41e08 100644
->>> --- a/drivers/thermal/thermal_core.c
->>> +++ b/drivers/thermal/thermal_core.c
->>> @@ -406,6 +406,7 @@ static void handle_critical_trips(struct
->>> thermal_zone_device *tz,
->>>   static void handle_thermal_trip(struct thermal_zone_device *tz, int
->>> trip)
->>>   {
->>>       enum thermal_trip_type type;
->>> +    bool irq_mode = false;
->>>       /* Ignore disabled trip points */
->>>       if (test_bit(trip, &tz->trips_disabled))
->>> @@ -419,9 +420,14 @@ static void handle_thermal_trip(struct
->>> thermal_zone_device *tz, int trip)
->>>           handle_non_critical_trips(tz, trip);
->>>       /*
->>>        * Alright, we handled this trip successfully.
->>> -     * So, start monitoring again.
->>> +     * So, start monitoring in polling mode if
->>> +     * trip is not using irq HW support.
->>>        */
->>> -    monitor_thermal_zone(tz);
->>> +    if (tz->ops->get_trip_irq_mode)
->>> +        tz->ops->get_trip_irq_mode(tz, trip, &irq_mode);
->>> +
->>> +    if (!irq_mode)
->>> +        monitor_thermal_zone(tz);
->>>   }
->> handle_thermal_trip() is called from thermal_zone_device_update(), and
->> it is invoked for every trip points.
->> say, you have a passive trip point 1 that supports irq_mode, and
->> another passive trip point 2 that does not support irq_mode,
->> monitor_thermal_zone() is still called in handle_thermal_trip(tz, 2),
->> and the passive timer will be activated anyway, do I miss something?
-> Yes, the passive timer will be activated in your example. It is correct
-> behavior and does not break anything.
-> case 1: there is 'k' passive trip points which have irq_mode and 1
-> additional which does not have 'irq_mode', the framework will start
-> polling but skip check for those 'k' trip points.
-> case 2: all of the passive trip points have irq_mode set, the framework
-> will not register 'scheduled_work' because it will not call 
-> 'monitor_thermal_zone()'.
-> This is the case of most Exynos platforms, but there is one exception 
-> which has 'case 1' with 2 trip points not supporting irq_mode.
-Do you suggest to cover the 'case 1'?
-It would be possible after adding a new enum THERMAL_FRAMEWORK_POLL, 
-then function:
-thermal_zone_device_check() will call
-thermal_zone_device_update(tz, THERMAL_FRAMEWORK_POLL)
-and in handle_thermal_trip() implement something like:
---------------8<----------------
-static void handle_thermal_trip(struct thermal_zone_device *tz, int trip)
-{
-	enum thermal_trip_type type;
-	bool irq_mode = false;
+On Wed, Dec 05, 2018 at 10:50:29AM -0700, Daniel Kurtz wrote:
 
-	/* Ignore disabled trip points */
-	if (test_bit(trip, &tz->trips_disabled))
-		return;
+> I agree, there is no guarantee here once things have gone wrong, and
+> the concerns above are reasonable.  However, in the real world, I2C
+> transactions do sometimes fail for various reasons.  The I2C (and
 
-	if (tz->ops->get_trip_irq_mode)
-		tz->ops->get_trip_irq_mode(tz, trip, &irq_mode)
+It's *vanishingly* rare and like I say we don't have any constructive
+recovery plans - I've never seen a practical system that had any better
+idea than hoping the user noticed a problem and reboots.  Probably the
+best we can really do is try to reset the device, or at least resync the
+register map.  That would probably do something useful in the
+vanishingly rare case where it were a singular glitch, at the cost of
+obvious and painful user visible issues (which would probably be
+happening anyway).  The nearest I've seen to that is one of the CODEC
+drivers which has watchdog code to monitor the device in case it
+spontaneously reboots and will resync the register cache if that happened.
 
-	if (tz->notify_event == THERMAL_FRAMEWORK_POLL && irq_mode)
-		return;
-...
+I'm gathering that there are Chromebooks that do have I/O problems here?
 
-	if (!irq_mode)
-		monitor_thermal_zone(tz);
-}
+> other bus) APIs have ways of reporting up their errors so callers can
+> take appropriate action.  This codec driver can run on all kinds of
+> hardware that can experience transient I2C errors, thus it sounds like
+> a reasonable idea to have the driver do some error checking on the
+> APIs it calls and take whatever action it can.  Just ignoring the
+> errors and proceeding like nothing is wrong is one option, but we can
+> probably do a little better by at least checking for errors, abort the
+> current operation, and pass up errors to higher layers when an i2c
+> transaction failure is detected.  If nothing else, this would enable
+> higher policy layers to take appropriate corrective action - for
+> example, if there is an i2c error when configuring a codec, it seems
+> advisable to report this up so that a machine driver would know to
+> abort and not turn on downstream amplifiers [I am assuming here that
+> something like this would happen, I don't know if the sound stack
+> really works this way].
 
----------->8-----------------------
+Yeah, so this is partly why I'm not super thrilled here - none of the
+layers currently have any especially bright ideas about how to handle
+things and giving up part way through an operation and returning an
+error without any attempt to unwind or recover feels like it's just
+trying to give a false sense of security. =20
 
-I could implement it in v3 if you don't see that it add too much of mess 
-and agree for this approach.
+> Once the default "check, abort and report" error checking is in place,
+> we could perhaps think about actions that the driver could take to
+> recover from various failures, such as resetting the device or
+> unwinding previous transactions before aborting, or retrying....  but
+> those are all policy, and this patch is more mechanism that enables
+> policy.
 
-Regards,
-Lukasz
+But is this going to be a useful way of handling such policy and is any
+work on that from whoever has these unreliable systems likely to be
+forthcoming?  We're going to end up with partially done reconfigurations
+in the register cache which is a potential issue for recovery strategies
+based around resyncing that, it's not so bad on things like starting a
+stream but bias level reconfigurations could be fun.
 
-> 
-> Regards,
-> Lukasz
-> 
->>
->> thanks,
->> rui
->>
->>>   static void update_temperature(struct thermal_zone_device *tz)
->>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
->>> index 5f4705f..b064565 100644
->>> --- a/include/linux/thermal.h
->>> +++ b/include/linux/thermal.h
->>> @@ -103,6 +103,7 @@ struct thermal_zone_device_ops {
->>>           enum thermal_device_mode);
->>>       int (*get_trip_type) (struct thermal_zone_device *, int,
->>>           enum thermal_trip_type *);
->>> +    int (*get_trip_irq_mode) (struct thermal_zone_device *, int,
->>> bool *);
->>>       int (*get_trip_temp) (struct thermal_zone_device *, int, int
->>> *);
->>>       int (*set_trip_temp) (struct thermal_zone_device *, int,
->>> int);
->>>       int (*get_trip_hyst) (struct thermal_zone_device *, int, int
->>> *);
->>> @@ -196,6 +197,7 @@ struct thermal_zone_device {
->>>       struct thermal_attr *trip_temp_attrs;
->>>       struct thermal_attr *trip_type_attrs;
->>>       struct thermal_attr *trip_hyst_attrs;
->>> +    struct thermal_attr *trip_irq_mode_attrs;
->>>       void *devdata;
->>>       int trips;
->>>       unsigned long trips_disabled;    /* bitmap for disabled
->>> trips */
->>> @@ -364,6 +366,8 @@ struct thermal_zone_of_device_ops {
->>>    * @temperature: temperature value in miliCelsius
->>>    * @hysteresis: relative hysteresis in miliCelsius
->>>    * @type: trip point type
->>> + * @irq_mode: to not use polling in framework set support of HW irq
->>> (which will
->>> + *          be triggered when temperature reaches this level).
->>>    */
->>>   struct thermal_trip {
->>> @@ -371,6 +375,7 @@ struct thermal_trip {
->>>       int temperature;
->>>       int hysteresis;
->>>       enum thermal_trip_type type;
->>> +    bool irq_mode;
->>>   };
->>>   /* Function declarations */
->>
->>
+--2fHTh5uZTiUOsy+g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwJfuIACgkQJNaLcl1U
+h9ByIAf9Fs4MIvnokH1GaamyWnCsns/7ZZsboXYWmErv7jwTVyMkFazNGGj5WvHo
+PIfTXXHAXmnRgSwrr0NG/fZmSuT5ipEyuVvK5a/6jQChCfa1eqctnzy0ufWyvprh
+t/IxAsfywfJvLXEH789+khJkA6OMz2A9F6bhEQPW5bNEgQJxTN3RX6h069dHtbRt
+tbKhTEzQfe/LSmD6oyP70yJvunrguFNDOMQ/RjOR2h0oo0YatvvwUY4dNcCPAixd
+JqxFlMnC9mYk8J1lR4JWIKsMcQ/R+Q2ecdMNqZfLvtjSVFq23lzCtchI+okeNVOI
+QoNmX7cXNuqY5PgijXoh0XO16wuiqQ==
+=oW7T
+-----END PGP SIGNATURE-----
+
+--2fHTh5uZTiUOsy+g--
