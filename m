@@ -6,51 +6,52 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BCFC67838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7D7C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8598720989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5B42146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131754;
-	bh=9PExCkeCqfWX4hf5RMtzarSgLbDWYs+8EzgW7AIjmtw=;
+	s=default; t=1544131757;
+	bh=ITO8IADVekSRkSvaJwj5tE6WRlMX/EnMIazWQeS1x0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DeeKI3yW3ixpWBIq1C+F0AohjuYvWXG0e/6PcVC7ojNZop2Sizdd7mYVadQFejMjS
-	 MiKsPay2byfYvXCjZZwZqqnT2Z3W0Lv5YhLgKhTMXORupyPtdYX/NVhR7NqLNpk0sE
-	 +Qe4iehOSsjaiEtFDJTDehMktEoXITzwJGRZOZmw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8598720989
+	b=zw+Fe+tSgX3+1ttAX+sfiSuxAXsTV5YB4MK3bDmIxuY+xv24slYUK7LY1cGeGC8l7
+	 E3uroOsxRPH2O/fowErrD6MRoHtch4GeGDpGeHCPCIExd77AsD8RjRMtMo12YSuNCC
+	 y02pI6jh8rVurQvwagSoLJ7SecqrXiMMt3oDTCGI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D5B42146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbeLFV3N (ORCPT
+        id S1726540AbeLFV3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbeLFV3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:29:10 -0500
+        id S1726530AbeLFV3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:29:13 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19A562146F;
-        Thu,  6 Dec 2018 21:29:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF9712082B;
+        Thu,  6 Dec 2018 21:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131749;
-        bh=9PExCkeCqfWX4hf5RMtzarSgLbDWYs+8EzgW7AIjmtw=;
+        s=default; t=1544131753;
+        bh=ITO8IADVekSRkSvaJwj5tE6WRlMX/EnMIazWQeS1x0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zrgqjk1Z29mTi6J/9zu/i9bfU7b6oDLJXJcmuYbHqk3+pklk3RmVkvOD2xTyK+//H
-         rMoNtPWQ0AZcckeTRvfq0Ro9RKl9+1yRm2CZ5x8Rlga5e/OEv3FC/V1Y1460xePL2x
-         ujfO0vOGG8ZvR+9sgGGSQoM9JXgNcz03jeyd+Ul0=
+        b=ILy8B/byiqndY1D1w8Av3w8rPFsd+BzU3zBoZB3RGuV/+xiCit8tMyCDxNye1Oj52
+         jlB/IgRcgt7aCJW0NeKkxj58B+SYSpCT+SFtM9qfMyk5wefXkpgHfzINPj5BybbiPy
+         jUAQtNOayJlQhTi6sb6sNeFd3oHP21DNCH4CduTo=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Wang Nan <wangnan0@huawei.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 39/75] perf tools Documentation: Fix diverse typos
-Date:   Thu,  6 Dec 2018 18:25:26 -0300
-Message-Id: <20181206212602.20474-40-acme@kernel.org>
+Subject: [PATCH 40/75] perf bpf-loader: Fix debugging message typo
+Date:   Thu,  6 Dec 2018 18:25:27 -0300
+Message-Id: <20181206212602.20474-41-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -75,69 +76,33 @@ This was split from a larger patch as there are code that is,
 additionally, maintained outside the kernel tree, so to ease cherry
 picking and/or backporting, split this into multiple patches.
 
-In this particular case, it affects documentation, so may be interesting
-to cherry pick as it is information that is presented to the user.
+This one has information that is presented to the user, albeit in debug
+mode.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
 Link: http://lkml.kernel.org/r/20181203102200.GA104797@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-list.txt   | 2 +-
- tools/perf/Documentation/perf-report.txt | 2 +-
- tools/perf/Documentation/perf-stat.txt   | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/util/bpf-loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index 667c14e56031..138fb6e94b3c 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -172,7 +172,7 @@ like cycles and instructions and some software events.
- Other PMUs and global measurements are normally root only.
- Some event qualifiers, such as "any", are also root only.
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index 9a280647d829..2f3eb6d293ee 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -99,7 +99,7 @@ struct bpf_object *bpf__prepare_load(const char *filename, bool source)
+ 			if (err)
+ 				return ERR_PTR(-BPF_LOADER_ERRNO__COMPILE);
+ 		} else
+-			pr_debug("bpf: successfull builtin compilation\n");
++			pr_debug("bpf: successful builtin compilation\n");
+ 		obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, filename);
  
--This can be overriden by setting the kernel.perf_event_paranoid
-+This can be overridden by setting the kernel.perf_event_paranoid
- sysctl to -1, which allows non root to use these events.
- 
- For accessing trace point events perf needs to have read access to
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index ed2bf37ab132..1a27bfe05039 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -252,7 +252,7 @@ OPTIONS
- 	          Usually more convenient to use --branch-history for this.
- 
- 	value can be:
--	- percent: diplay overhead percent (default)
-+	- percent: display overhead percent (default)
- 	- period: display event period
- 	- count: display event count
- 
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index b10a90b6a718..4bc2085e5197 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -50,7 +50,7 @@ report::
- 	  /sys/bus/event_source/devices/<pmu>/format/*
- 
- 	Note that the last two syntaxes support prefix and glob matching in
--	the PMU name to simplify creation of events accross multiple instances
-+	the PMU name to simplify creation of events across multiple instances
- 	of the same type of PMU in large systems (e.g. memory controller PMUs).
- 	Multiple PMU instances are typical for uncore PMUs, so the prefix
- 	'uncore_' is also ignored when performing this match.
-@@ -277,7 +277,7 @@ echo 0 > /proc/sys/kernel/nmi_watchdog
- for best results. Otherwise the bottlenecks may be inconsistent
- on workload with changing phases.
- 
--This enables --metric-only, unless overriden with --no-metric-only.
-+This enables --metric-only, unless overridden with --no-metric-only.
- 
- To interpret the results it is usually needed to know on which
- CPUs the workload runs on. If needed the CPUs can be forced using
+ 		if (!IS_ERR_OR_NULL(obj) && llvm_param.dump_obj)
 -- 
 2.19.2
 
