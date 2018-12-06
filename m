@@ -2,97 +2,80 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8ACC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D136EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8627121479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544103275;
-	bh=/brkj+bZc9NrR3D3W5uJBwFGEeeZyiyeMAwTVS7zWB4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=QVntl0h2H7UBxgJVceO5YhSgzo/oqXlx7NnSoyyx3DGuPS14mN9UNTzOP0mvh1nZZ
-	 hOM5QeNl7G8VZ/eguU3ewZl4Y/meDjLb+7rs+52fuZi3GfhIo81VQjx5xSZ0tG1HZf
-	 ROMBzKl7fydpFoTdfKnZLMXGacsy4epVfpeg28Kk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8627121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 846E821479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:36:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DVEGvgeR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 846E821479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbeLFNee (ORCPT
+        id S1729060AbeLFNgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:34:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728209AbeLFNee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:34:34 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5876B214DB;
-        Thu,  6 Dec 2018 13:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544103273;
-        bh=/brkj+bZc9NrR3D3W5uJBwFGEeeZyiyeMAwTVS7zWB4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0uEHwq8N6kkKyL21e2wU1H4xbS32augUKuzU1A51NQWB0oHsMgQP8AgBctPjF1peA
-         EUiaAWiUNc/HhFRLolTHlI+lx+fFALJDIe3yTYvAixYuxubqNVhCcQQFdJ8gXnkv0q
-         rxG4nG/ZQzYB6npp0lFwlTjq4GvKGxeBkWMtQVzc=
-Received: by mail-qt1-f172.google.com with SMTP id y20so451512qtm.13;
-        Thu, 06 Dec 2018 05:34:33 -0800 (PST)
-X-Gm-Message-State: AA+aEWa/stq8Mlmj088X541ICNM+xeZceTSTF6fiSfoPLnZ/Xrebia8P
-        LQEnYOlbam2aHnuK47wqZFNAGAA+/7+CZP52Pg==
-X-Google-Smtp-Source: AFSGD/WMz6HaJ2c71Al6DS/WkKTMkdi1Wm/kJ9g79viEeAYh9z4otUggX3MLhuBcAD7eSuW4e6BiXEkYUkNgaGDianU=
-X-Received: by 2002:a0c:9e05:: with SMTP id p5mr27099210qve.246.1544103272519;
- Thu, 06 Dec 2018 05:34:32 -0800 (PST)
+        Thu, 6 Dec 2018 08:36:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47628 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeLFNgU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:36:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A9bUj8qKByziXJe8knW/1KJe5DNQkkrr4jgFlsvWEEg=; b=DVEGvgeRUGwardkU8UrrHmZBW
+        c3cYsUxapXICUyfP2vCoAUXX/qGnB8RssgmaGEqySCYnIhdH5SBJ8I+kqfe0NuLofnwjGeZkqpnWk
+        JRtvr+EvoqI49mGbxFA/vN5hwe2HBorDdMArFLHxOqfXkN1EsZX3g9tD3YgQd5dkOFx+jze1Uic+0
+        cMvBVTgdS9r/4YCL25/tgaNHulMq7vgzpfMzN6pVcWU6Jo67EfV1iek8c2qGd8gSAjc4gVcJzzdOC
+        w/h7zq65V4RtWVje47JL/TRcmXO4E/XlcZDeU3HX0wS73CIBOAT8FubGSJIHBZs/mPdpjEYzAFV8a
+        u31kk82fQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUtpE-0003qK-CO; Thu, 06 Dec 2018 13:36:20 +0000
+Date:   Thu, 6 Dec 2018 05:36:20 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Greg Kurz <groug@kaod.org>
+Cc:     linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Subject: Re: [PATCH] radix tree: Don't return internal entries on lookup
+Message-ID: <20181206133620.GC24603@bombadil.infradead.org>
+References: <154408284374.405977.5950625525821388567.stgit@bahia.lan>
 MIME-Version: 1.0
-References: <20181205195050.4759-33-robh@kernel.org> <CAGoOwPReuEgzgYng0YeffgejVKPcoQinnNeFu_f2QBgs5daGdg@mail.gmail.com>
-In-Reply-To: <CAGoOwPReuEgzgYng0YeffgejVKPcoQinnNeFu_f2QBgs5daGdg@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 6 Dec 2018 07:34:18 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJiQnQ0PgQz-G=Cj0-cEffMDx0H8vR7wjB25qwRWo-xRw@mail.gmail.com>
-Message-ID: <CAL_JsqJiQnQ0PgQz-G=Cj0-cEffMDx0H8vR7wjB25qwRWo-xRw@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: Use of_node_name_eq for node name comparisons
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154408284374.405977.5950625525821388567.stgit@bahia.lan>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 7:53 PM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
->
-> Hi Rob,
->
-> On Thu, Dec 6, 2018 at 3:51 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > Convert string compares of DT node names to use of_node_name_eq helper
-> > instead. This removes direct access to the node name pointer.
-> >
-> > For the FSL ASoC card, the full node names appear to be "ssi", "esai",
-> > and "sai", so there's not any reason to use strstr and of_node_name_eq
->
-> I am not quite sure about the replacement of strstr.
-> IIRC, a node name in fsl dts might appear to be "ssi@xxxx".
+On Thu, Dec 06, 2018 at 08:54:03AM +0100, Greg Kurz wrote:
+> Commit 66ee620f06f9 ("idr: Permit any valid kernel pointer to
+> be stored") changed the radix tree lookup so that it stops when
+> reaching the bottom of the tree. But radix_tree_descend() may have
+> changed the node variable to point to an internal entry which then
+> gets returned to the caller and bad things may happen.
 
-That will work fine. Unit-addresses are not part of the node name for
-the comparison.
+> pe_data is equal to R3 which is the return value of radix_tree_lookup(),
+> ie, 0x406 == RADIX_TREE_RETRY.
 
-> I am currently out of town so cannot verify the patch.
->
-> Fabio, would it be possible for you to run a boot test?
->
-> Thanks
-> Nicolin
+Thank you for the report and the debugging!  I've decided to fix the
+problem slightly differently, and I've also added a test to the test-suite
+that reproduces the problem in only a few iterations (the largest I've
+seen is a few hundred; and often it'll reproduce in under twenty).
+
+You can see it here:
+http://git.infradead.org/users/willy/linux-dax.git/commitdiff/eff3860bbfedbac6edac57fb0d7f3a60e860c1c3
+
+I'll give the build bots a couple of days to chew on it and then ask
+Linus to pull it.
