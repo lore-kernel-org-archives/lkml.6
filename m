@@ -2,55 +2,55 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F16C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8443EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C072146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A18221479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107677;
-	bh=2UFBkkOrhewkyTat16C4ULHK7XHbUDsBWsNe73jXFcc=;
+	s=default; t=1544107679;
+	bh=nLNTGs0u1yjXrSpnDEKfdMLhqPbEcTYKzgcL1P8ZKbo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jMkFdDpfv3qOGmwsdpSd9rInxvIbp6XTFWELNol/zre+iMbUiY5vPIBVTV83H+Vtk
-	 cJ8/mUxBG3OgsxZluOJD+6KSKeal4naWDqQUvxQaGQHmp6LCTfgllkxbxEnKLnkc8W
-	 0oju/zLH+i+Tl/cC1pse1KPwIPYuMA9gobB8+XK8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C072146D
+	b=gs/nnj8ASMTfmr2j5UBDlmQEDVRod7XKIZSKSWMUSlyDCZyKqjhclJPP5PGy31Bpy
+	 XbV+MrPPsX1FldTgwLC/kvLMibzeuCIll3dddSiNffpA0hbn4D5W2QU+N6JkOGVvin
+	 EJSciw1TnXjOmMudnR7oeWr62LYML846Hm2v0Tzw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A18221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbeLFOrz (ORCPT
+        id S1731523AbeLFOr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52894 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:47:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731074AbeLFOrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:47:49 -0500
+        id S1731503AbeLFOru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:47:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232072082B;
-        Thu,  6 Dec 2018 14:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1B9621479;
+        Thu,  6 Dec 2018 14:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107667;
-        bh=2UFBkkOrhewkyTat16C4ULHK7XHbUDsBWsNe73jXFcc=;
+        s=default; t=1544107670;
+        bh=nLNTGs0u1yjXrSpnDEKfdMLhqPbEcTYKzgcL1P8ZKbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xgk7yBwmas8Z1mfkzlk/vfUuoNP/xtKGshIBQM66qe8BZG7Z1qX+hJRE8ewgTJv0r
-         7a3Rk/1u0UzoGoY+lNtNv7tDPr2Gs6hMsXIPq479OvYk5cfz16UoklCUcMLGWL7++w
-         XLYGAIM1X2+xbGCZ4IiUXTvIb28azgePY9tnNBxw=
+        b=PB0JYf23W+6egPKpnzZUHkWJgMZbIzhY0+ZWpQyfN/2YGPigxCLkLo0oD92SZ16l+
+         k2VZB2fbvCfTMuy+GmAcJMzI0vS3c+2MTyfxjlL3n/s7/rIMbe0qki/Q6mGIPQ44jD
+         PR5uEk8yct55zWdM3G/RpJSZBkkNymWZf2tZkuug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 093/101] f2fs: fix to do sanity check with user_block_count
-Date:   Thu,  6 Dec 2018 15:39:32 +0100
-Message-Id: <20181206143018.342229816@linuxfoundation.org>
+Subject: [PATCH 4.9 094/101] f2fs: Add sanity_check_inode() function
+Date:   Thu,  6 Dec 2018 15:39:33 +0100
+Message-Id: <20181206143018.404273274@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,148 +69,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 9dc956b2c8523aed39d1e6508438be9fea28c8fc upstream.
+This was done as part of commits 5d64600d4f33 "f2fs: avoid bug_on on
+corrupted inode" and 76d56d4ab4f2 "f2fs: fix to do sanity check with
+extra_attr feature" upstream, but the specific checks they added are
+not applicable to 4.9.
 
-This patch fixs to do sanity check with user_block_count.
-
-- Overview
-Divide zero in utilization when mount() a corrupted f2fs image
-
-- Reproduce (4.18 upstream kernel)
-
-- Kernel message
-[  564.099503] F2FS-fs (loop0): invalid crc value
-[  564.101991] divide error: 0000 [#1] SMP KASAN PTI
-[  564.103103] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Not tainted 4.18.0-rc1+ #4
-[  564.104584] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.106624] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.107692] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.111686] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.112775] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.114250] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.115706] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.117177] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.118634] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.120094] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.121748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.122923] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.124383] Call Trace:
-[  564.124924]  ? __issue_discard_cmd+0x480/0x480
-[  564.125882]  ? __sched_text_start+0x8/0x8
-[  564.126756]  ? __kthread_parkme+0xcb/0x100
-[  564.127620]  ? kthread_blkcg+0x70/0x70
-[  564.128412]  kthread+0x180/0x1d0
-[  564.129105]  ? __issue_discard_cmd+0x480/0x480
-[  564.130029]  ? kthread_associate_blkcg+0x150/0x150
-[  564.131033]  ret_from_fork+0x35/0x40
-[  564.131794] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  564.141798] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  564.142773] RIP: 0010:issue_discard_thread+0x248/0x5c0
-[  564.143885] Code: ff ff 48 8b bd e8 fe ff ff 41 8b 9d 4c 04 00 00 e8 cd b8 ad ff 41 8b 85 50 04 00 00 31 d2 48 8d 04 80 48 8d 04 80 48 c1 e0 02 <48> f7 f3 83 f8 50 7e 16 41 c7 86 7c ff ff ff 01 00 00 00 41 c7 86
-[  564.147776] RSP: 0018:ffff8801f3117dc0 EFLAGS: 00010206
-[  564.148856] RAX: 0000000000000384 RBX: 0000000000000000 RCX: ffffffffb88c1e03
-[  564.150424] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffff8801e3aa4850
-[  564.151906] RBP: ffff8801f3117f00 R08: 1ffffffff751a1d0 R09: fffffbfff751a1d0
-[  564.153463] R10: 0000000000000001 R11: fffffbfff751a1d0 R12: 00000000fffffffc
-[  564.154915] R13: ffff8801e3aa4400 R14: ffff8801f3117ed8 R15: ffff8801e2050000
-[  564.156405] FS:  0000000000000000(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  564.158070] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  564.159279] CR2: 000000000202b078 CR3: 00000001f11ac000 CR4: 00000000000006e0
-[  564.161043] ==================================================================
-[  564.162587] BUG: KASAN: stack-out-of-bounds in from_kuid_munged+0x1d/0x50
-[  564.163994] Read of size 4 at addr ffff8801f3117c84 by task f2fs_discard-7:/1298
-
-[  564.165852] CPU: 1 PID: 1298 Comm: f2fs_discard-7: Tainted: G      D           4.18.0-rc1+ #4
-[  564.167593] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  564.169522] Call Trace:
-[  564.170057]  dump_stack+0x7b/0xb5
-[  564.170778]  print_address_description+0x70/0x290
-[  564.171765]  kasan_report+0x291/0x390
-[  564.172540]  ? from_kuid_munged+0x1d/0x50
-[  564.173408]  __asan_load4+0x78/0x80
-[  564.174148]  from_kuid_munged+0x1d/0x50
-[  564.174962]  do_notify_parent+0x1f5/0x4f0
-[  564.175808]  ? send_sigqueue+0x390/0x390
-[  564.176639]  ? css_set_move_task+0x152/0x340
-[  564.184197]  do_exit+0x1290/0x1390
-[  564.184950]  ? __issue_discard_cmd+0x480/0x480
-[  564.185884]  ? mm_update_next_owner+0x380/0x380
-[  564.186829]  ? __sched_text_start+0x8/0x8
-[  564.187672]  ? __kthread_parkme+0xcb/0x100
-[  564.188528]  ? kthread_blkcg+0x70/0x70
-[  564.189333]  ? kthread+0x180/0x1d0
-[  564.190052]  ? __issue_discard_cmd+0x480/0x480
-[  564.190983]  rewind_stack_do_exit+0x17/0x20
-
-[  564.192190] The buggy address belongs to the page:
-[  564.193213] page:ffffea0007cc45c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  564.194856] flags: 0x2ffff0000000000()
-[  564.195644] raw: 02ffff0000000000 0000000000000000 dead000000000200 0000000000000000
-[  564.197247] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  564.198826] page dumped because: kasan: bad access detected
-
-[  564.200299] Memory state around the buggy address:
-[  564.201306]  ffff8801f3117b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.202779]  ffff8801f3117c00: 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3
-[  564.204252] >ffff8801f3117c80: f3 f3 f3 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-[  564.205742]                    ^
-[  564.206424]  ffff8801f3117d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  564.207908]  ffff8801f3117d80: f3 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-[  564.209389] ==================================================================
-[  564.231795] F2FS-fs (loop0): Mounted with checkpoint version = 2
-
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.h#L586
-	return div_u64((u64)valid_user_blocks(sbi) * 100,
-					sbi->user_block_count);
-Missing checks on sbi->user_block_count.
-
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/f2fs/inode.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1486,6 +1486,8 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 	unsigned int sit_segs, nat_segs;
- 	unsigned int sit_bitmap_size, nat_bitmap_size;
- 	unsigned int log_blocks_per_seg;
-+	unsigned int segment_count_main;
-+	block_t user_block_count;
- 	int i;
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -104,6 +104,13 @@ static void __recover_inline_status(stru
+ 	return;
+ }
  
- 	total = le32_to_cpu(raw_super->segment_count);
-@@ -1510,6 +1512,16 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 		return 1;
- 	}
++static bool sanity_check_inode(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	return true;
++}
++
+ static int do_read_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -153,6 +160,11 @@ static int do_read_inode(struct inode *i
  
-+	user_block_count = le64_to_cpu(ckpt->user_block_count);
-+	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
-+	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	if (!user_block_count || user_block_count >=
-+			segment_count_main << log_blocks_per_seg) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong user_block_count: %u", user_block_count);
-+		return 1;
+ 	get_inline_info(inode, ri);
+ 
++	if (!sanity_check_inode(inode)) {
++		f2fs_put_page(node_page, 1);
++		return -EINVAL;
 +	}
 +
- 	main_segs = le32_to_cpu(raw_super->segment_count_main);
- 	blocks_per_seg = sbi->blocks_per_seg;
- 
-@@ -1526,7 +1538,6 @@ int sanity_check_ckpt(struct f2fs_sb_inf
- 
- 	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
- 	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
--	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
- 
- 	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
- 		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
+ 	/* check data exist */
+ 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
+ 		__recover_inline_status(inode, node_page);
 
 
