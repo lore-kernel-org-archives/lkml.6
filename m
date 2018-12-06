@@ -2,149 +2,172 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 292CCC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27762C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D688320989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:40:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="CB90cp7E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D688320989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	by mail.kernel.org (Postfix) with ESMTP id C92F521479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbeLFWkC (ORCPT
+        id S1726080AbeLFWnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:40:02 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34375 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeLFWkC (ORCPT
+        Thu, 6 Dec 2018 17:43:31 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:32940 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeLFWnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:40:02 -0500
-Received: by mail-pf1-f194.google.com with SMTP id h3so890558pfg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:40:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t77eOMa11P5XrIFxy2lHsrVEGddYOda6ZI5IRZjxtMw=;
-        b=CB90cp7EfPnYEHOa/8HaBPDpoLfZXZ3bRG6WghiyTgl9FjGtRkop/wslZz9gA3HHC4
-         zKQkQ1Ub5tV0L8plzXF3tXlf+pVyu5KI4x1A7AD/GeK9J254SYbpYN0+7Ixm7xkxpNwt
-         4pe8j6XcWhL53MdyetD5zLU8yTLu9jUNOrSXinkizXcAVDGW10s45bh9asngs7rmKZd2
-         aFAMWc4URFYvnSb20ZyTNT+1fQgCmWrm3p+CJqCVpEXu5GR5+wUTPwoxLAjm7MYnwYkD
-         eEljnpQCg6xCCkpYoxUrxt4cdiaV63W8kP8Ei3Fvp+T0y9slUifmxAHnCLp5UTdp5f69
-         1I/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t77eOMa11P5XrIFxy2lHsrVEGddYOda6ZI5IRZjxtMw=;
-        b=VGOsc9yDGaX8x40dnbYEAgVzR10PRh/QL+q+ukrSRQLQNJvBLPXhbYXDUo6Ojt7xJW
-         SETw/KqRnhqoqjMMwXbf7nGAbeBDyo2izazdMv5eW82TkrrAiUODajqCniZ2xrin4hPd
-         LMP0S4DMnutzWHF6QLUhFur/VYX1CZdkK8REw1+2f7kjzs3CxBohhjESVKHDqGZS+Mex
-         tPjHOeuisSSXpP9CDqxsO0U2QOjGm0CeI33tVZouftfyfZLXQF5bLmCK7eHxSkk4+5FK
-         Hgu7djf/Q8XWx5IHRfNHuY/psiNyEwul4To8VTbYgpbYUZYYc5K6hxrgKkUL6GhcMe5N
-         YbZg==
-X-Gm-Message-State: AA+aEWbOgyrVMA0qNzw54UVcr5hXThKjQhGxR3LEcjgnenPznRv5bYY/
-        sdJcXi4iQlMOJOY7pbJHCn2m2Q==
-X-Google-Smtp-Source: AFSGD/V8RYnFapcRu+//MIH5ZcQvH7tspIkPdjL5qrLSCEwwvFzoRierOZtlzIFtBDbr2taNIN2+yA==
-X-Received: by 2002:a62:130c:: with SMTP id b12mr30599837pfj.247.1544136001467;
-        Thu, 06 Dec 2018 14:40:01 -0800 (PST)
-Received: from brauner.io ([2404:4404:133a:4500:b824:a031:b50e:f401])
-        by smtp.gmail.com with ESMTPSA id d3sm1535883pgl.64.2018.12.06.14.39.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 14:40:00 -0800 (PST)
-Date:   Thu, 6 Dec 2018 23:39:51 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-Message-ID: <20181206223948.gyfdtkgbhtozmpsp@brauner.io>
-References: <20181206121858.12215-1-christian@brauner.io>
- <87sgzahf7k.fsf@xmission.com>
- <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
- <875zw6bh2z.fsf@xmission.com>
- <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
- <871s6u9z6u.fsf@xmission.com>
- <20181206213152.gvci7ijr3dokew7w@brauner.io>
- <87o99y72gi.fsf@xmission.com>
+        Thu, 6 Dec 2018 17:43:31 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gV2Mk-0006e0-7i; Thu, 06 Dec 2018 15:43:30 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gV2Mj-0002jC-9A; Thu, 06 Dec 2018 15:43:30 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181112192443.GL3645@cisco> <20181127232126.GA23658@cisco>
+        <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
+        <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
+        <87zhtthkuy.fsf@xmission.com>
+        <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
+        <87k1ktqoe5.fsf@xmission.com>
+        <CAGXu5jJgFrWajK5m8ev72DV9ueznLnbGV2-UGECnz0iZ_EFDUg@mail.gmail.com>
+        <87r2euiuql.fsf@xmission.com>
+        <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
+        <20181206192059.GD10086@cisco> <87lg528io7.fsf@xmission.com>
+        <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
+Date:   Thu, 06 Dec 2018 16:43:18 -0600
+In-Reply-To: <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com>
+        (Kees Cook's message of "Thu, 6 Dec 2018 13:34:21 -0800")
+Message-ID: <87tvjq2s55.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87o99y72gi.fsf@xmission.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-XM-SPF: eid=1gV2Mj-0002jC-9A;;;mid=<87tvjq2s55.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19KWdRu4sVJkszW8STVoh256z+tm6VZoU8=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: siginfo pid not populated from ptrace?
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:46:53PM -0600, Eric W. Biederman wrote:
-> Christian Brauner <christian@brauner.io> writes:
-> 
-> >> Your intention is to add the thread case to support pthreads once the
-> >> process case is sorted out.  So this is something that needs to be made
-> >> clear.  Did I miss how you plan to handle threads?
-> >
-> > Yeah, maybe you missed it in the commit message [2] which is based on a
-> > discussion with Andy [3] and Arnd [4]:
-> 
-> Looking at your references I haven't missed it.  You are not deciding
-> anything as of yet to keep it simple.  Except you are returning
-> EOPNOTSUPP.  You are very much intending to do something.
+Kees Cook <keescook@chromium.org> writes:
 
-That was clear all along and was pointed at every occassion in the
-threads. I even went through the hazzle to give you all of the
-references when there's lore.kernel.org.
+> On Thu, Dec 6, 2018 at 1:11 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> Tycho Andersen <tycho@tycho.ws> writes:
+>>
+>> > On Thu, Dec 06, 2018 at 10:48:39AM -0800, Linus Torvalds wrote:
+>> >> On Thu, Dec 6, 2018 at 6:40 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> >> >
+>> >> > We have in the past had ptrace users that weren't just about debugging
+>> >> > so I don't know that it is fair to just dismiss it as debugging
+>> >> > infrastructure.
+>> >>
+>> >> Absolutely.
+>> >>
+>> >> Some uses are more than just debug. People occasionally use ptrace
+>> >> because it's the only way to do what they want, so you'll find people
+>> >> who do it for sandboxing, for example. It's not necessarily designed
+>> >> for that, or particularly fast or well-suited for it, but I've
+>> >> definitely seen it used that way.
+>> >>
+>> >> So I don't think the behavioral test breakage like this is necessarily
+>> >> a huge deal, and until some "real use" actually shows that it cares it
+>> >> might be something we dismiss as "just test", but it very much has the
+>> >> potential to hit real uses.
+>> >>
+>> >> The fact that a behavioral test broke is definitely interesting.
+>> >>
+>> >> And maybe some of the siginfo allocations could depend on whether the
+>> >> signal is actually ever caught or not.
+>> >>
+>> >> For example, a terminal signal (or one that is ignored) might not need
+>> >> siginfo. But if the process is ptraced, maybe that terminal signal
+>> >> isn't actually terminal? So we might have situations where we want to
+>> >> simply check "is the signal target being ptraced"..
+>> >
+>> > Yes, something like this, I suppose? It works for me.
+>>
+>> The challenge is that we could be delivering this to a zombie signal
+>> group leader.  At which point we won't deliver it to the target task.
+>>
+>> Sigh it is probably time that I dig in and figure out how to avoid that
+>> case which we need to fix anyway because we can get the permission
+>> checks wrong for multi-threaded processes that call setuid and friends.
+>>
+>> Once that is sorted your small change will at least be safe.
+>>
+>> Eric
+>>
+>> > From 3bcaadd56ebb532ab4d481556fcc0826d65efc43 Mon Sep 17 00:00:00 2001
+>> > From: Tycho Andersen <tycho@tycho.ws>
+>> > Date: Thu, 6 Dec 2018 12:15:22 -0700
+>> > Subject: [PATCH] signal: allocate siginfo when a traced task gets SIGSTOP
+>> >
+>> > Tracers can view SIGSTOP:
+>> >
+>> > https://lore.kernel.org/lkml/87zhtthkuy.fsf@xmission.com/T/#u
+>> >
+>> > so let's allocate a siginfo for SIGSTOP when a task is traced.
+>> >
+>> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+>> > ---
+>> >  kernel/signal.c | 9 ++++++---
+>> >  1 file changed, 6 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/kernel/signal.c b/kernel/signal.c
+>> > index 9a32bc2088c9..ab4ba00119f4 100644
+>> > --- a/kernel/signal.c
+>> > +++ b/kernel/signal.c
+>> > @@ -1056,11 +1056,14 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+>> >               goto ret;
+>> >
+>> >       result = TRACE_SIGNAL_DELIVERED;
+>> > +
+>> >       /*
+>> > -      * Skip useless siginfo allocation for SIGKILL SIGSTOP,
+>> > -      * and kernel threads.
+>> > +      * Skip useless siginfo allocation for SIGKILL and kernel threads.
+>> > +      * SIGSTOP is visible to tracers, so only skip allocation when the task
+>> > +      * is not traced.
+>> >        */
+>> > -     if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
+>> > +     if ((sig == SIGKILL) || (!task_is_traced(t) && sig == SIGSTOP) ||
+>> > +         (t->flags & PF_KTHREAD))
+>> >               goto out_set;
+>> >
+>> >       /*
+>
+> What should we do for v4.20? I need to have the selftests actually
+> passing. :)
 
-> 
-> Decide.  Do you use the flags parameter or is the width of the
-> target depending on the flags.
+For v4.20 we need to do one of two things.
+1) Present a plausible case that someone will could care about,
+   we document it in the commit we can perform my earlier partial revert.
 
-I'm sorry I don't understand what you a) mean with this sentence "width
-of the target" and b) what you *exactly* want from us to get this accepted.
+2) Remove the sanity check seccomp_bpf.c
 
-> 
-> That is fundamental to how the system call and it's extensions work.
-> That is fundamental to my review.
-> 
-> Until that is decided.
-> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> There are a lot of fundamental maintenance issues and you can very easily
-> get them wrong if you are not clear on the job of the file descriptor
-> and the job of the flags argument.
-> 
-> I want don't want new crap that we have to abandon that has a nasty set
-> of bugs because no one wanted to think through the system call all of
-> the way and understand the corner cases.
+I really just want to ensure we have clear reasoning here.
 
-That's why this system call is exactly kept as simple as it is. Which I
-had to fight for! You kept consistenly asking for features such as:
-- add a pid parameter maybe
-- allow to signal into ancestor and cousin pid namespaces
-I fought all of those off for the sake of keeping this patch as simple
-as possible so that we can get it in.
-We don't even need to decide whether we go for flags or another type of
-fd right now. The point was that we can postpone this to a later
-discussion. Which also has been discussed in multiple threads. That's
-literally what I wrote in prior mails and nearly everyone agreed that
-this is a good strategy.
+Eric
 
-I honestly have no idea what to make of your review given that it
-started from a naming issue and suddenly the whole api is crap.
-If you want this to be named fd_send_signal() to get in. Then seriously,
-I'm happy to rename it. I honestly don't care even though I think taskfd
-is a better name.
-
-> 
-> Eric
