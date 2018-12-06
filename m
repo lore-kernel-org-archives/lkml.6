@@ -2,129 +2,118 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3124BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084FFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49E921479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49E921479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id CD1B1208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1B1208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbeLFTRl (ORCPT
+        id S1726007AbeLFTS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:17:41 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:35563 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeLFTRl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:17:41 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gUz9W-0004kz-5K; Thu, 06 Dec 2018 12:17:38 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gUz9V-0002Jc-BY; Thu, 06 Dec 2018 12:17:37 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org
-References: <20181206121858.12215-1-christian@brauner.io>
-        <87sgzahf7k.fsf@xmission.com>
-        <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
-Date:   Thu, 06 Dec 2018 13:17:24 -0600
-In-Reply-To: <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io> (Christian
-        Brauner's message of "Fri, 07 Dec 2018 06:14:34 +1300")
-Message-ID: <875zw6bh2z.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 6 Dec 2018 14:18:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:59078 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbeLFTS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 14:18:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C699DA78;
+        Thu,  6 Dec 2018 11:18:25 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 96B863F59C;
+        Thu,  6 Dec 2018 11:18:25 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B9BB81AE0BAD; Thu,  6 Dec 2018 19:18:46 +0000 (GMT)
+Date:   Thu, 6 Dec 2018 19:18:46 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, catalin.marinas@arm.com, rml@tech9.net,
+        tglx@linutronix.de, schwidefsky@de.ibm.com
+Subject: Re: [PATCH v2 0/2] arm64: Only call into preempt_schedule() if
+ need_resched()
+Message-ID: <20181206191846.GB20796@arm.com>
+References: <1543599271-14339-1-git-send-email-will.deacon@arm.com>
+ <20181206150850.GI13538@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gUz9V-0002Jc-BY;;;mid=<875zw6bh2z.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX188A9TKyzRFrtIa1MCJvlVKJVm3UcuiMcU=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206150850.GI13538@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
+Hi Peter,
 
-> On December 7, 2018 4:01:19 AM GMT+13:00, ebiederm@xmission.com wrote:
->>Christian Brauner <christian@brauner.io> writes:
->>
->>> The kill() syscall operates on process identifiers (pid). After a
->>process
->>> has exited its pid can be reused by another process. If a caller
->>sends a
->>> signal to a reused pid it will end up signaling the wrong process.
->>This
->>> issue has often surfaced and there has been a push [1] to address
->>this
->>> problem.
->>>
->>> This patch uses file descriptors (fd) from proc/<pid> as stable
->>handles on
->>> struct pid. Even if a pid is recycled the handle will not change. The
->>fd
->>> can be used to send signals to the process it refers to.
->>> Thus, the new syscall taskfd_send_signal() is introduced to solve
->>this
->>> problem. Instead of pids it operates on process fds (taskfd).
->>
->>I am not yet thrilled with the taskfd naming.
->
-> Userspace cares about what does this thing operate on?
-> It operates on processes and threads.
-> The most common term people use is "task".
-> I literally "polled" ten non-kernel people for that purpose and asked:
-> "What term would you use to refer to a process and a thread?"
-> Turns out it is task. So if find this pretty apt.
-> Additionally, the proc manpage uses task in the exact same way (also see the commit message).
-> If you can get behind that name even if feeling it's not optimal it would be great.
+On Thu, Dec 06, 2018 at 04:08:50PM +0100, Peter Zijlstra wrote:
+> On Fri, Nov 30, 2018 at 05:34:29PM +0000, Will Deacon wrote:
+> > This is version two of the patches I originally posted here:
+> > 
+> >   http://lkml.kernel.org/r/1543347902-21170-1-git-send-email-will.deacon@arm.com
+> > 
+> > The only change since v1 is that  __preempt_count_dec_and_test() now
+> > reloads the need_resched flag if it initially saw that it was set. This
+> > resolves the issue spotted by Peter, where an IRQ coming in during the
+> > decrement can cause a reschedule to be missed.
+> 
+> Yes, I think this one will work, so:
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Once I understand why threads and not process groups.  I don't see that
-logic yet.
+Thanks!
 
->>Is there any plan to support sesssions and process groups?
->
-> I don't see the necessity.
-> As I said in previous mails:
-> we can emulate all interesting signal syscalls with this one.
+> However, this leaves me wondering if the sequence is actually much
+> better than what you had?
+> 
+> I suppose there's a win due to cache locality -- you only have to load a
+> single line -- but I'm thinking that on pure instruction count, you're
+> not actually winning much.
 
-I don't know what you mean by all of the interesting signal system
-calls.  I do know you can not replicate kill(2).
+The fast path is still slightly shorter in terms of executed instructions,
+but you're right that the win is likely to be because everything hits in the
+cache or the store buffer when we're not preempting, so we should run
+through the code reasonably quickly and avoid the unconditional call to
+preempt_schedule().
 
-Sending signals to a process group the "kill(-pgrp)" case with kill
-sends the signals to an atomic snapshot of processes.  If the signal
-is SIGKILL then it is guaranteed that then entire process group is
-killed with no survivors.
+Will
 
-> We succeeded in doing that.
+--->8
 
-I am not certain you have.
+// Before
+  20:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
+  24:   910003fd        mov     x29, sp
+  28:   d5384101        mrs     x1, sp_el0
+  2c:   b9401020        ldr     w0, [x1, #16]
+  30:   51000400        sub     w0, w0, #0x1
+  34:   b9001020        str     w0, [x1, #16]
+  38:   350000a0        cbnz    w0, 4c <preempt_enable+0x2c>
+  3c:   f9400020        ldr     x0, [x1]
+  40:   721f001f        tst     w0, #0x2
+  44:   54000040        b.eq    4c <preempt_enable+0x2c>  // b.none
+  48:   94000000        bl      0 <preempt_schedule>
+  4c:   a8c17bfd        ldp     x29, x30, [sp], #16
+  50:   d65f03c0        ret
 
-> No need to get more fancy.
-> There's currently no obvious need for more features.
-> Features should be implemented when someone actually needs them.
-
-That is fair.  I don't understand what you are doing with sending
-signals to a thread.  That seems like one of the least useful
-corner cases of sending signals.
-
-Eric
+// After
+  20:   a9bf7bfd        stp     x29, x30, [sp, #-16]!
+  24:   910003fd        mov     x29, sp
+  28:   d5384101        mrs     x1, sp_el0
+  2c:   f9400820        ldr     x0, [x1, #16]
+  30:   d1000400        sub     x0, x0, #0x1
+  34:   b9001020        str     w0, [x1, #16]
+  38:   b5000080        cbnz    x0, 48 <preempt_enable+0x28>
+  3c:   94000000        bl      0 <preempt_schedule>
+  40:   a8c17bfd        ldp     x29, x30, [sp], #16
+  44:   d65f03c0        ret
+  48:   f9400820        ldr     x0, [x1, #16]
+  4c:   b5ffffa0        cbnz    x0, 40 <preempt_enable+0x20>
+  50:   94000000        bl      0 <preempt_schedule>
+  54:   17fffffb        b       40 <will_preempt_enable+0x20>
