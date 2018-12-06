@@ -7,57 +7,52 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E0CC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C61C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0772C2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E49762146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:43:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107408;
-	bh=MF7Gr8lNvQeSKuKPrNBAh1FOll9W5Ey0MlNjMMMKwKk=;
+	s=default; t=1544107411;
+	bh=enkqHnl505A2Wrv1Df9nEW0vCpC36NsjFN0HKGm3Ago=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y07aBIHmy32IP19S2P9JYsoFQwkxB5cWptRxrPQKnR+da95kZLIP9JGwtnRzArS93
-	 ZGc4NMyKpbQnJc+sdHC2M8YnZsN9WzsF/5vCjBT8YYBLyw2bTGIWvyxGMyc+uSaAsY
-	 r/zTIqlBS0C+6sU0N5xvwg3Inak1539hZEagWlsQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0772C2146D
+	b=pyGxss2gvYWbeusXva/dK4tbOeRBiElQHWaRZ/KoM9iWmvKTxcNwtTXnl4VQJzZBx
+	 E1Nv9u+c5mOz8/VT3cuw2edvAmxNoxp4CM2+LSsGBStOHDhyZuR9I+iTh1s08vGRzz
+	 bgRTgB97Vj4OxOXwsvsVWseL5UNnpb9StrUEPbtA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49762146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbeLFOn0 (ORCPT
+        id S1730675AbeLFOna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:43:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47784 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:43:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730647AbeLFOnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:43:24 -0500
+        id S1730657AbeLFOn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:43:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FF6C2082B;
-        Thu,  6 Dec 2018 14:43:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96640214E0;
+        Thu,  6 Dec 2018 14:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107403;
-        bh=MF7Gr8lNvQeSKuKPrNBAh1FOll9W5Ey0MlNjMMMKwKk=;
+        s=default; t=1544107406;
+        bh=enkqHnl505A2Wrv1Df9nEW0vCpC36NsjFN0HKGm3Ago=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hsN7IInKbmUK2L3zTOeRi78QuWzSCptrZFddVNv42pdLANAVkcMztXk4JJPM9bvhB
-         V6SSe6zIxT7vXW6pcFWdFUIgGJtn/iBQv0dA5p+UdXOKH/vhM0zw+991OPlP1ZNvdv
-         EWZHhrCSjfB0BwzLoa5VZIBcbEX7zfcXQB1lYslo=
+        b=QlJZf1DpZEvWyBRAqtnW99AnGOS+1+xVnDgY0wfoTjjq7MXvs7WgSMFcZoFHYn7Gu
+         vQZlpuYwaybIKkUZWIiFOC8tvUtY34yEGYQyJuTwUKLTET+Gt7tyTwBUZgYpHjilH7
+         1tRmtdzhRm9Ho3UZw/NGSXiV7H8NO2sDzQvVySi4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Jan Kara <jack@suse.cz>, Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 47/55] mm: cleancache: fix corruption on missed inode invalidation
-Date:   Thu,  6 Dec 2018 15:39:21 +0100
-Message-Id: <20181206143004.279250271@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        "Wangtao (Kevin, Kirin)" <kevin.wangtao@hisilicon.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>
+Subject: [PATCH 4.14 48/55] thermal/drivers/hisi: Remove the multiple sensors support
+Date:   Thu,  6 Dec 2018 15:39:22 +0100
+Message-Id: <20181206143004.335300031@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -76,74 +71,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-commit 6ff38bd40230af35e446239396e5fc8ebd6a5248 upstream.
+commit ff4ec2997df8fe7cc40513dbe5f86d9f88fb6be7 upstream.
 
-If all pages are deleted from the mapping by memory reclaim and also
-moved to the cleancache:
+By essence, the tsensor does not really support multiple sensor at the same
+time. It allows to set a sensor and use it to get the temperature, another
+sensor could be switched but with a delay of 3-5ms. It is difficult to read
+simultaneously several sensors without a big delay.
 
-__delete_from_page_cache
-  (no shadow case)
-  unaccount_page_cache_page
-    cleancache_put_page
-  page_cache_delete
-    mapping->nrpages -= nr
-    (nrpages becomes 0)
+Today, just one sensor is used, it is not necessary to deal with multiple
+sensors in the code. Remove them and if it is needed in the future add them
+on top of a code which will be clean up in the meantime.
 
-We don't clean the cleancache for an inode after final file truncation
-(removal).
-
-truncate_inode_pages_final
-  check (nrpages || nrexceptional) is false
-    no truncate_inode_pages
-      no cleancache_invalidate_inode(mapping)
-
-These way when reading the new file created with same inode we may get
-these trash leftover pages from cleancache and see wrong data instead of
-the contents of the new file.
-
-Fix it by always doing truncate_inode_pages which is already ready for
-nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
-
-[akpm@linux-foundation.org: add comment, per Jan]
-Link: http://lkml.kernel.org/r/20181112095734.17979-1-ptikhomirov@virtuozzo.com
-Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Wangtao (Kevin, Kirin) <kevin.wangtao@hisilicon.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/truncate.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/thermal/hisi_thermal.c |   75 ++++++++++-------------------------------
+ 1 file changed, 19 insertions(+), 56 deletions(-)
 
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -471,9 +471,13 @@ void truncate_inode_pages_final(struct a
- 		 */
- 		spin_lock_irq(&mapping->tree_lock);
- 		spin_unlock_irq(&mapping->tree_lock);
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -40,6 +40,7 @@
+ #define HISI_TEMP_STEP			(784)
+ 
+ #define HISI_MAX_SENSORS		4
++#define HISI_DEFAULT_SENSOR		2
+ 
+ struct hisi_thermal_sensor {
+ 	struct hisi_thermal_data *thermal;
+@@ -54,9 +55,8 @@ struct hisi_thermal_data {
+ 	struct mutex thermal_lock;    /* protects register data */
+ 	struct platform_device *pdev;
+ 	struct clk *clk;
+-	struct hisi_thermal_sensor sensors[HISI_MAX_SENSORS];
 -
--		truncate_inode_pages(mapping, 0);
+-	int irq, irq_bind_sensor;
++	struct hisi_thermal_sensor sensors;
++	int irq;
+ 	bool irq_enabled;
+ 
+ 	void __iomem *regs;
+@@ -133,7 +133,7 @@ static void hisi_thermal_enable_bind_irq
+ 
+ 	mutex_lock(&data->thermal_lock);
+ 
+-	sensor = &data->sensors[data->irq_bind_sensor];
++	sensor = &data->sensors;
+ 
+ 	/* setting the hdak time */
+ 	writel(0x0, data->regs + TEMP0_CFG);
+@@ -181,31 +181,8 @@ static int hisi_thermal_get_temp(void *_
+ 	struct hisi_thermal_sensor *sensor = _sensor;
+ 	struct hisi_thermal_data *data = sensor->thermal;
+ 
+-	int sensor_id = -1, i;
+-	long max_temp = 0;
+-
+ 	*temp = hisi_thermal_get_sensor_temp(data, sensor);
+ 
+-	sensor->sensor_temp = *temp;
+-
+-	for (i = 0; i < HISI_MAX_SENSORS; i++) {
+-		if (!data->sensors[i].tzd)
+-			continue;
+-
+-		if (data->sensors[i].sensor_temp >= max_temp) {
+-			max_temp = data->sensors[i].sensor_temp;
+-			sensor_id = i;
+-		}
+-	}
+-
+-	/* If no sensor has been enabled, then skip to enable irq */
+-	if (sensor_id == -1)
+-		return 0;
+-
+-	mutex_lock(&data->thermal_lock);
+-	data->irq_bind_sensor = sensor_id;
+-	mutex_unlock(&data->thermal_lock);
+-
+ 	dev_dbg(&data->pdev->dev, "id=%d, irq=%d, temp=%d, thres=%d\n",
+ 		sensor->id, data->irq_enabled, *temp, sensor->thres_temp);
+ 	/*
+@@ -218,7 +195,7 @@ static int hisi_thermal_get_temp(void *_
+ 		return 0;
  	}
-+
-+	/*
-+	 * Cleancache needs notification even if there are no pages or shadow
-+	 * entries.
-+	 */
-+	truncate_inode_pages(mapping, 0);
+ 
+-	if (max_temp < sensor->thres_temp) {
++	if (*temp < sensor->thres_temp) {
+ 		data->irq_enabled = true;
+ 		hisi_thermal_enable_bind_irq_sensor(data);
+ 		enable_irq(data->irq);
+@@ -245,22 +222,16 @@ static irqreturn_t hisi_thermal_alarm_ir
+ {
+ 	struct hisi_thermal_data *data = dev;
+ 	struct hisi_thermal_sensor *sensor;
+-	int i;
+ 
+ 	mutex_lock(&data->thermal_lock);
+-	sensor = &data->sensors[data->irq_bind_sensor];
++	sensor = &data->sensors;
+ 
+ 	dev_crit(&data->pdev->dev, "THERMAL ALARM: T > %d\n",
+ 		 sensor->thres_temp);
+ 	mutex_unlock(&data->thermal_lock);
+ 
+-	for (i = 0; i < HISI_MAX_SENSORS; i++) {
+-		if (!data->sensors[i].tzd)
+-			continue;
+-
+-		thermal_zone_device_update(data->sensors[i].tzd,
+-					   THERMAL_EVENT_UNSPECIFIED);
+-	}
++	thermal_zone_device_update(data->sensors.tzd,
++				   THERMAL_EVENT_UNSPECIFIED);
+ 
+ 	return IRQ_HANDLED;
  }
- EXPORT_SYMBOL(truncate_inode_pages_final);
+@@ -317,7 +288,6 @@ static int hisi_thermal_probe(struct pla
+ {
+ 	struct hisi_thermal_data *data;
+ 	struct resource *res;
+-	int i;
+ 	int ret;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+@@ -359,14 +329,13 @@ static int hisi_thermal_probe(struct pla
+ 	hisi_thermal_enable_bind_irq_sensor(data);
+ 	data->irq_enabled = true;
+ 
+-	for (i = 0; i < HISI_MAX_SENSORS; ++i) {
+-		ret = hisi_thermal_register_sensor(pdev, data,
+-						   &data->sensors[i], i);
+-		if (ret)
+-			dev_err(&pdev->dev,
+-				"failed to register thermal sensor: %d\n", ret);
+-		else
+-			hisi_thermal_toggle_sensor(&data->sensors[i], true);
++	ret = hisi_thermal_register_sensor(pdev, data,
++					   &data->sensors,
++					   HISI_DEFAULT_SENSOR);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to register thermal sensor: %d\n",
++			ret);
++		return ret;
+ 	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, data->irq,
+@@ -378,6 +347,8 @@ static int hisi_thermal_probe(struct pla
+ 		return ret;
+ 	}
+ 
++	hisi_thermal_toggle_sensor(&data->sensors, true);
++
+ 	enable_irq(data->irq);
+ 
+ 	return 0;
+@@ -386,17 +357,9 @@ static int hisi_thermal_probe(struct pla
+ static int hisi_thermal_remove(struct platform_device *pdev)
+ {
+ 	struct hisi_thermal_data *data = platform_get_drvdata(pdev);
+-	int i;
+-
+-	for (i = 0; i < HISI_MAX_SENSORS; i++) {
+-		struct hisi_thermal_sensor *sensor = &data->sensors[i];
+-
+-		if (!sensor->tzd)
+-			continue;
+-
+-		hisi_thermal_toggle_sensor(sensor, false);
+-	}
++	struct hisi_thermal_sensor *sensor = &data->sensors;
+ 
++	hisi_thermal_toggle_sensor(sensor, false);
+ 	hisi_thermal_disable_sensor(data);
+ 	clk_disable_unprepare(data->clk);
  
 
 
