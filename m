@@ -2,104 +2,138 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33D8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB632C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A39C920878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:34:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FXuyOYZe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39C920878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F8D62146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8D62146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeLFXeY (ORCPT
+        id S1726423AbeLFXe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:34:24 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:39635 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLFXeY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:34:24 -0500
-Received: by mail-ua1-f65.google.com with SMTP id k10so792393ual.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:34:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MS88ko9gb54lDREVjPnuISfIKtgGb7ByGl5IyXo1bCs=;
-        b=FXuyOYZepGKM08hC+NI0MSwL5fg17JhPCefcg/72Lil+g78VeXh55vFkWOCqOEDPai
-         t32LbkzJv5wNzy2bllOtMxWAUCUN5ngYVJ7evKr94OAVo+yRSk+BOydXNeoTcSDEhQh1
-         jCwT8ltzPl5AcbJ7TYpa/wXfMe/4UQyiE3S7U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MS88ko9gb54lDREVjPnuISfIKtgGb7ByGl5IyXo1bCs=;
-        b=T8OngVRp7prlv0aqQxWe/dsiE6Fp7o9coLnLsNmkvNBG8U7IT00i2peCX7hcWl5OiZ
-         dWEi1pKCDUj03fzwYDvaepr+0HrW3oluTu4qkHqEDg3qTPHxA+DRKXSqlCIsgFUZuVwq
-         vysnQhLRRWrEAvj/CuMYrUu6MJpb5vzKFtrxJFTv00W3T0WET9LOe7/G5V8M8DvSEl35
-         hgXjADp8I9u4aF6aEi+8yhqwxyPnhQ7FGINDkvNoto7VAMAE9chnQth6PJxLz6K+D8te
-         OxdyMLlXBI3tpvzbKrlmisPh913s60Qb1TJ4Zhw+JQoSKTBkKwDXs+gCZRv5bFBwZL3a
-         D80Q==
-X-Gm-Message-State: AA+aEWZO75hOVJibOH7Frbax1dgljdojsgFqmxioH7wfBSRIBeY7E3AJ
-        tSeyhUeVnD0KM5vC+TUmYTfziaOmF98=
-X-Google-Smtp-Source: AFSGD/WIJFRRzJ/Xz2EZ4FQ+2ctFCUP5b3zgPa3PE5743jyHRzxNjJR/CzxIk2t2V8oliM5fY72W9w==
-X-Received: by 2002:ab0:526:: with SMTP id 35mr14069123uax.25.1544139262768;
-        Thu, 06 Dec 2018 15:34:22 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id k199sm589172vka.6.2018.12.06.15.34.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 15:34:22 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id h18so1413743vsj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:34:21 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr13716418vsj.144.1544139261385;
- Thu, 06 Dec 2018 15:34:21 -0800 (PST)
+        Thu, 6 Dec 2018 18:34:27 -0500
+Received: from mga18.intel.com ([134.134.136.126]:9619 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeLFXeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:34:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 15:34:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
+   d="scan'208";a="116678036"
+Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
+  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2018 15:34:24 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+ <20181205021334.GB3045@redhat.com>
+ <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
+ <20181205175357.GG3536@redhat.com>
+ <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+ <20181206192050.GC3544@redhat.com>
+ <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
+ <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
+ <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
+ <20181206223935.GG3544@redhat.com>
+ <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
+ <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <7cda7111-6b13-cb46-d2c0-2cc52cf8a87f@intel.com>
+Date:   Thu, 6 Dec 2018 15:34:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206184522.118062-1-evgreen@chromium.org> <20181206184522.118062-2-evgreen@chromium.org>
-In-Reply-To: <20181206184522.118062-2-evgreen@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 6 Dec 2018 15:34:07 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XWpLcevH72bchsKauqRpH3FSSKooQ7r6uoEgjN=4k_PQ@mail.gmail.com>
-Message-ID: <CAD=FV=XWpLcevH72bchsKauqRpH3FSSKooQ7r6uoEgjN=4k_PQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: sdhci-msm: Clarify register requirements
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, Dec 6, 2018 at 10:45 AM Evan Green <evgreen@chromium.org> wrote:
->
-> In sdhci-msm-v5 and beyond, the MCI registers are removed, so there is only
-> one register region required.
->
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
->
-> Changes in v2: None
->
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 12/6/18 3:28 PM, Logan Gunthorpe wrote:
+> These patches are really tied to world view #1.  But, the HMAT is really
+> tied to world view #1.
 
-You probably should have skipped this patch from v2.  Ulf already
-landed it.  It can be found at:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=next&id=68fe87ac8a9309bbdc960cbd774725e44ea98b58
-
--Doug
+Whoops, should have been "the HMAT is really tied to world view #2"
