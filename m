@@ -2,105 +2,93 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3C8C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069A620850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108353;
-	bh=7ZIIj1laTzBIxb6GrBSnnS8p397DY40qsOF9T2/6D2o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PRVzBT2cD3xP/iA560xbCxR7RDswu4+PlirlwMCSU1h0Gl6+e9FE5Vne+J+dYd9KC
-	 l7P1n0p1fK7Ai+V4kqUkOIGaUBiTOYuOeY9dNO/BkB51JMYKp6Ph8+8ynJdsx11vBI
-	 2pl8h6SRa8pWyA5s6iXudINlAu8kcq7o0t9OWQnw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069A620850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A021720850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BTwhcUaI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A021720850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeLFO7L (ORCPT
+        id S1726277AbeLFO7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730278AbeLFOlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:41:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5081121479;
-        Thu,  6 Dec 2018 14:41:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107294;
-        bh=7ZIIj1laTzBIxb6GrBSnnS8p397DY40qsOF9T2/6D2o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tRz6oiJaFcvVbPfM4QJl41n8mmcnNPqXgKoSQdVOWO2HhD8U111rB/aGpG4R/JO0O
-         owKrJJODVT5yTG8n7WcxK0MFf2yKK6lRY4sXL69+aD2xir1ogl/EX7SHmR6vSb1Iec
-         SrGzvwklLtjXT5lHrHQJUbGmX6cVVQoe8DNJ0jsA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 41/41] tipc: use destination length for copy string
-Date:   Thu,  6 Dec 2018 15:39:21 +0100
-Message-Id: <20181206142954.069346323@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
-References: <20181206142949.757402551@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 6 Dec 2018 09:59:18 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45974 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730251AbeLFOle (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:41:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so589127ljd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 06:41:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6numlv32oFc61TvwBF/tFURTaowj7NWGsOUf6c2rp/o=;
+        b=BTwhcUaIbnbSUdg6lMSvacD1LegaR64dNfl621JVVF/4DabiXGT5dem2gQRyZd/MvF
+         ToWAkrR/z9r9qlW7dDHWNREjxM0I35TY1g4pj+ZpgQFTvByiQusgRwlJWiIiL5xWN7B8
+         MbS/B+anwYRh9Na9hwRYFQqzF7B57ZNIYje1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6numlv32oFc61TvwBF/tFURTaowj7NWGsOUf6c2rp/o=;
+        b=RjBxFqCokAeHYVXdijl+4KailtETxERG3zwy8EmA2M/AGUxDW+3vyRo7cASjn9pBux
+         Z2KC2/dpYFY5hhDFUEpZyK0ZY4b3OVHvMWpS2QS9rDUrJFoaul8fFt8aC7MieaApmdkm
+         2BVpYV3nI/sKwEYkQE1kRQAtTlM04YZVsKI+CrsiaK5/URjwBjs+duu+mIPeoPuzpovY
+         DMWIpCo6+ndF90kdNvAtyCstN8kMY5YTyqxkqCAdk3dfmE7SivxOPGoQVqZw/bRF+uHH
+         4emLW5mB/keTSSp+fF7lpXq2WdE60vXvXQmuLXXtl72joc+R3ZNQZCLgcF4B+3Oo+7w7
+         A58w==
+X-Gm-Message-State: AA+aEWZlPhWHYkVdFNBJBIStHtI2NNYYlaOtJXxj0MDGs1q4+vxViMc6
+        B0wUbd9DyBbSwFjzS5Az/ETM6Crv+H24uS6DCcKqZA==
+X-Google-Smtp-Source: AFSGD/XkJ6SL631ACTymVrU7Nnpyi3+u1Wxf1IF0P/NiWChRypDt0ETuHe+lVk+X3GXzOWk6GkLMTFPLYVPeWMcKu6s=
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr18395459ljp.12.1544107292663;
+ Thu, 06 Dec 2018 06:41:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20181206124518epcas4p2fd2837b5bc5e0c806e93ce752599e264@epcas4p2.samsung.com>
+ <20181206124351.10155-1-linus.walleij@linaro.org> <b2dd4b32-9929-19b1-c849-63d8c793c187@samsung.com>
+ <20181206134901.GJ16508@imbe.wolfsonmicro.main>
+In-Reply-To: <20181206134901.GJ16508@imbe.wolfsonmicro.main>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Dec 2018 15:41:20 +0100
+Message-ID: <CACRpkdZV5NHEh1FdrUCDozXFdNcM=FQQnvnLJAUtwV3qD3FEZg@mail.gmail.com>
+Subject: Re: [PATCH 00/15 v4] Regulator ena_gpiod fixups
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Dec 6, 2018 at 2:49 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Thu, Dec 06, 2018 at 02:27:03PM +0100, Marek Szyprowski wrote:
+> > On 2018-12-06 13:43, Linus Walleij wrote:
+> > One more thing - if I got everything right, gpiod_put() in
+> > *regulator_register() error path has to be removed also in
+> > wm8994-regulator.c and arizona-ldo1.c.
+>
+> Indeed yes, good spot.
+>
+> But apart from those additional two patches, series
+> also looks good to me:
+>
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-------------------
+Thanks a lot, I hope Mark can merge this for starters and then I can go in
+and fix the two outliers separately.
 
-From: Guoqing Jiang <gqjiang@suse.com>
-
-commit 29e270fc32192e7729057963ae7120663856c93e upstream.
-
-Got below warning with gcc 8.2 compiler.
-
-net/tipc/topsrv.c: In function ‘tipc_topsrv_start’:
-net/tipc/topsrv.c:660:2: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-  strncpy(srv->name, name, strlen(name) + 1);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/tipc/topsrv.c:660:27: note: length computed here
-  strncpy(srv->name, name, strlen(name) + 1);
-                           ^~~~~~~~~~~~
-So change it to correct length and use strscpy.
-
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
-index d8956f7daac4..4bdea0057171 100644
---- a/net/tipc/topsrv.c
-+++ b/net/tipc/topsrv.c
-@@ -651,7 +651,7 @@ int tipc_topsrv_start(struct net *net)
- 	srv->max_rcvbuf_size = sizeof(struct tipc_subscr);
- 	INIT_WORK(&srv->awork, tipc_topsrv_accept);
- 
--	strncpy(srv->name, name, strlen(name) + 1);
-+	strscpy(srv->name, name, sizeof(srv->name));
- 	tn->topsrv = srv;
- 	atomic_set(&tn->subscription_count, 0);
- 
-
-
+Yours,
+Linus Walleij
