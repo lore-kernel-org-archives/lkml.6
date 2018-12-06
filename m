@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A97EC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6657AC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D553214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2069D20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcPVozyH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D553214C1
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ym3EseBJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2069D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbeLFTXE (ORCPT
+        id S1726231AbeLFTXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:23:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36552 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbeLFTW4 (ORCPT
+        Thu, 6 Dec 2018 14:23:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36553 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeLFTW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:22:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id n2so576220pgm.3;
-        Thu, 06 Dec 2018 11:22:55 -0800 (PST)
+        Thu, 6 Dec 2018 14:22:59 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so576273pgm.3;
+        Thu, 06 Dec 2018 11:22:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kxQNx5U5OpAjYRP1NllBU4oOIxGI/CyHuvMxeTPU4ss=;
-        b=PcPVozyH8cFMPlMHnTQkEjaqh0A16RKbkg7l66y4OG3ym0dGFRaDSCKVrSmBP+WtGw
-         25PY/ZikslutJuaetLo0qeX4BF4UuWnxBi+js29V9yoADo938D3xy6hmsp3+iKzGoYpg
-         w1QdLg579R/KLDLpzG/hskBr6xdQ3D0gMQds8VoFq0uiI7g2gAfxCILeK4sdu8UnEVDp
-         NuuIgR842Z9pz2Yn3GJ7rRPCMeV4keQ0I3wTijiGdZP4Fq5vLKOJjIxvZt4AqkRltwW0
-         UJRdqEfv0Tpml9O9elj8QumvEGrCEFJepXUEgm4wWaoe/IpgORlKd0vAoQdeE38NlGjd
-         r3Hw==
+        bh=ZOqczAKBBnFxC04H7GYZ0UbWasi4OSn8T6AcRscW/14=;
+        b=Ym3EseBJBhlZqbTRtpTtrGihgjr2/7bR2H6KkXi2GRA4wWWQwj76AnzoL37u1DhSaX
+         fBtG/jYDGueeWhtJV73NjlsVdbiyadz6zAfhc2+Ws5VPTiXPkALaSCvXl6wdjxrDaA+P
+         vDSOmAtwglnEwdsT0WepvvrY0xI3rWbXpnYmdSf4OEdAV4v4MJOoc65mXKcfZ0I6W9T7
+         cZo82EhB+UDCd7rddQVKqWrzH15M9fnwJeolYG12MtEiNvWEm+I+KPAFZ28SxlXdvMEk
+         y1oG5rZ7oitQklrcJNpw4DAc0WFl1Ky1u2E91rG138GJoFyHTT64r2vcxLhYQnw2QH3F
+         mHcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=kxQNx5U5OpAjYRP1NllBU4oOIxGI/CyHuvMxeTPU4ss=;
-        b=bvFhGA4shALaiQCBivIfsnJS049jnem31VkbfmqyDKKLQ/bVCoEwMFafIMTUupSorg
-         rE7kaM+oOjxyKrYBAsb5jG1pp9LkDm8IG6RUL7vqpA5KvuGlY/Yq2ckTHNhz/XpB/n5/
-         FkL50i56Qv4Cm8IGgwyv4eIC8zgsWnqgGrC653oT7OvqthVE/Ni+jWuneoZCJ0B4jSTj
-         D6mytg9XTwc9m4icJK6nbmVlwo2IIiqp7YgdMW2DDoHKLkgd9TJaXUUDgZ0OwzL2/HJi
-         PZkaQv/qL91KL1mHgC9Jw9NB+CwFu4KkEcd+sB+guvWrSoEL0q8tq1Rbf/eJ1eShYReo
-         U5ug==
-X-Gm-Message-State: AA+aEWaJCgBg8Q5LnxHpTJeQmjkCbpKEpcp8cB4TUyM4/W7KQ5MAjQiA
-        s9oHE5zUcIDoKWjW2IyG52ZOfLLh
-X-Google-Smtp-Source: AFSGD/Vg7l38tc0t0C64cHRYrTQWy+G9D8Dk3gCy365XjkVgcSiJwZHfy2CrrsLODEFNzuZqiVRiIg==
-X-Received: by 2002:a63:6782:: with SMTP id b124mr25513333pgc.151.1544124175051;
-        Thu, 06 Dec 2018 11:22:55 -0800 (PST)
+        bh=ZOqczAKBBnFxC04H7GYZ0UbWasi4OSn8T6AcRscW/14=;
+        b=iD6aDWLvxVubdQNPPTKumkfYiz8gKSUE3MKMMSTfB8r3ll+l1QIhxmtl5XyMJ9SNn2
+         5P8nXOl5B8mZ0BglonpbRkG+czN5K2GxqqVDLynJlpzwFMzTakQUjLMxdOoZ3mGoS989
+         YEHZBX+UNpGK8xngv7OwynzHskzhzjzkUGFlgNV0yi3lM36SVwxtu18WqX40vcivc7dQ
+         EX5BXlK6G6UPV/wq+QL+Ohotpus7cH+Mf0TmNcLk11daVXFTELeGQVmHzPzMq2ZDV4VP
+         BEuzOSTrD8/eMaA7oa9guS4VV4SLFf6H8HmgYVvqeHIZChq3Sq7LULgqeFghFYWePBSy
+         Qg/Q==
+X-Gm-Message-State: AA+aEWbie+VC8d82W+0KuKnKCiHdt0iIvTfWrySpPcGQd3zG2OP2VDnl
+        3WseXzKRDoeh/jBf7X8OgorLJLf0
+X-Google-Smtp-Source: AFSGD/VSl3XIg7F2LNDyoUke7FheeVfKFUOolEBulrRDbIU36Rt+f913qjEd0LEA1wGj5eD0iHw9wA==
+X-Received: by 2002:a62:4641:: with SMTP id t62mr29428059pfa.141.1544124178129;
+        Thu, 06 Dec 2018 11:22:58 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l22sm2229135pfj.179.2018.12.06.11.22.54
+        by smtp.gmail.com with ESMTPSA id 89sm1903650pfl.120.2018.12.06.11.22.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 11:22:54 -0800 (PST)
+        Thu, 06 Dec 2018 11:22:57 -0800 (PST)
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     linux-hwmon@vger.kernel.org
 Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 11/13] hwmon: (tmp401) Auto-convert to use SENSOR_DEVICE_ATTR_{RO, RW, WO}
-Date:   Thu,  6 Dec 2018 11:22:31 -0800
-Message-Id: <1544124153-23961-12-git-send-email-linux@roeck-us.net>
+Subject: [PATCH 13/13] hwmon: (ltc4215) Auto-convert to use SENSOR_DEVICE_ATTR_{RO, RW, WO}
+Date:   Thu,  6 Dec 2018 11:22:33 -0800
+Message-Id: <1544124153-23961-14-git-send-email-linux@roeck-us.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
 References: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
@@ -78,209 +78,95 @@ https://github.com/groeck/coccinelle-patches/raw/master/hwmon/sensor-devattr-w6.
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/hwmon/tmp401.c | 126 ++++++++++++++++++++++---------------------------
- 1 file changed, 57 insertions(+), 69 deletions(-)
+ drivers/hwmon/ltc4215.c | 42 ++++++++++++++++--------------------------
+ 1 file changed, 16 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/hwmon/tmp401.c b/drivers/hwmon/tmp401.c
-index 1f2d13dc9439..ff66cf1bfb2e 100644
---- a/drivers/hwmon/tmp401.c
-+++ b/drivers/hwmon/tmp401.c
-@@ -288,8 +288,8 @@ static struct tmp401_data *tmp401_update_device(struct device *dev)
- 	return ret;
+diff --git a/drivers/hwmon/ltc4215.c b/drivers/hwmon/ltc4215.c
+index c8a9bd9b050f..d4a1d033d3e8 100644
+--- a/drivers/hwmon/ltc4215.c
++++ b/drivers/hwmon/ltc4215.c
+@@ -136,9 +136,8 @@ static unsigned int ltc4215_get_current(struct device *dev)
+ 	return curr;
  }
  
--static ssize_t show_temp(struct device *dev,
--			 struct device_attribute *devattr, char *buf)
-+static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
-+			 char *buf)
+-static ssize_t ltc4215_show_voltage(struct device *dev,
+-				    struct device_attribute *da,
+-				    char *buf)
++static ssize_t ltc4215_voltage_show(struct device *dev,
++				    struct device_attribute *da, char *buf)
  {
- 	int nr = to_sensor_dev_attr_2(devattr)->nr;
- 	int index = to_sensor_dev_attr_2(devattr)->index;
-@@ -302,8 +302,9 @@ static ssize_t show_temp(struct device *dev,
- 		tmp401_register_to_temp(data->temp[nr][index], data->config));
+ 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
+ 	const int voltage = ltc4215_get_voltage(dev, attr->index);
+@@ -146,18 +145,16 @@ static ssize_t ltc4215_show_voltage(struct device *dev,
+ 	return snprintf(buf, PAGE_SIZE, "%d\n", voltage);
  }
  
--static ssize_t show_temp_crit_hyst(struct device *dev,
--	struct device_attribute *devattr, char *buf)
-+static ssize_t temp_crit_hyst_show(struct device *dev,
-+				   struct device_attribute *devattr,
-+				   char *buf)
+-static ssize_t ltc4215_show_current(struct device *dev,
+-				    struct device_attribute *da,
+-				    char *buf)
++static ssize_t ltc4215_current_show(struct device *dev,
++				    struct device_attribute *da, char *buf)
  {
- 	int temp, index = to_sensor_dev_attr(devattr)->index;
- 	struct tmp401_data *data = tmp401_update_device(dev);
-@@ -319,8 +320,8 @@ static ssize_t show_temp_crit_hyst(struct device *dev,
- 	return sprintf(buf, "%d\n", temp);
+ 	const unsigned int curr = ltc4215_get_current(dev);
+ 
+ 	return snprintf(buf, PAGE_SIZE, "%u\n", curr);
  }
  
--static ssize_t show_status(struct device *dev,
--	struct device_attribute *devattr, char *buf)
-+static ssize_t status_show(struct device *dev,
-+			   struct device_attribute *devattr, char *buf)
+-static ssize_t ltc4215_show_power(struct device *dev,
+-				  struct device_attribute *da,
+-				  char *buf)
++static ssize_t ltc4215_power_show(struct device *dev,
++				  struct device_attribute *da, char *buf)
  {
- 	int nr = to_sensor_dev_attr_2(devattr)->nr;
- 	int mask = to_sensor_dev_attr_2(devattr)->index;
-@@ -332,8 +333,9 @@ static ssize_t show_status(struct device *dev,
- 	return sprintf(buf, "%d\n", !!(data->status[nr] & mask));
+ 	const unsigned int curr = ltc4215_get_current(dev);
+ 	const int output_voltage = ltc4215_get_voltage(dev, LTC4215_ADIN);
+@@ -168,9 +165,8 @@ static ssize_t ltc4215_show_power(struct device *dev,
+ 	return snprintf(buf, PAGE_SIZE, "%u\n", power);
  }
  
--static ssize_t store_temp(struct device *dev, struct device_attribute *devattr,
--			  const char *buf, size_t count)
-+static ssize_t temp_store(struct device *dev,
-+			  struct device_attribute *devattr, const char *buf,
-+			  size_t count)
+-static ssize_t ltc4215_show_alarm(struct device *dev,
+-					  struct device_attribute *da,
+-					  char *buf)
++static ssize_t ltc4215_alarm_show(struct device *dev,
++				  struct device_attribute *da, char *buf)
  {
- 	int nr = to_sensor_dev_attr_2(devattr)->nr;
- 	int index = to_sensor_dev_attr_2(devattr)->index;
-@@ -365,8 +367,9 @@ static ssize_t store_temp(struct device *dev, struct device_attribute *devattr,
- 	return count;
- }
+ 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
+ 	struct ltc4215_data *data = ltc4215_update_device(dev);
+@@ -189,26 +185,20 @@ static ssize_t ltc4215_show_alarm(struct device *dev,
+ /* Construct a sensor_device_attribute structure for each register */
  
--static ssize_t store_temp_crit_hyst(struct device *dev, struct device_attribute
--	*devattr, const char *buf, size_t count)
-+static ssize_t temp_crit_hyst_store(struct device *dev,
-+				    struct device_attribute *devattr,
-+				    const char *buf, size_t count)
- {
- 	int temp, index = to_sensor_dev_attr(devattr)->index;
- 	struct tmp401_data *data = tmp401_update_device(dev);
-@@ -404,8 +407,9 @@ static ssize_t store_temp_crit_hyst(struct device *dev, struct device_attribute
-  * This is done by writing any value to any of the minimum/maximum registers
-  * (0x30-0x37).
-  */
--static ssize_t reset_temp_history(struct device *dev,
--	struct device_attribute	*devattr, const char *buf, size_t count)
-+static ssize_t reset_temp_history_store(struct device *dev,
-+					struct device_attribute *devattr,
-+					const char *buf, size_t count)
- {
- 	struct tmp401_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
-@@ -467,38 +471,29 @@ static ssize_t update_interval_store(struct device *dev,
- 	return count;
- }
+ /* Current */
+-static SENSOR_DEVICE_ATTR(curr1_input, S_IRUGO, ltc4215_show_current, NULL, 0);
+-static SENSOR_DEVICE_ATTR(curr1_max_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
+-			  1 << 2);
++static SENSOR_DEVICE_ATTR_RO(curr1_input, ltc4215_current, 0);
++static SENSOR_DEVICE_ATTR_RO(curr1_max_alarm, ltc4215_alarm, 1 << 2);
  
--static SENSOR_DEVICE_ATTR_2(temp1_input, S_IRUGO, show_temp, NULL, 0, 0);
--static SENSOR_DEVICE_ATTR_2(temp1_min, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 1, 0);
--static SENSOR_DEVICE_ATTR_2(temp1_max, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 2, 0);
--static SENSOR_DEVICE_ATTR_2(temp1_crit, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 3, 0);
--static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IWUSR | S_IRUGO,
--			  show_temp_crit_hyst, store_temp_crit_hyst, 0);
--static SENSOR_DEVICE_ATTR_2(temp1_min_alarm, S_IRUGO, show_status, NULL,
--			    1, TMP432_STATUS_LOCAL);
--static SENSOR_DEVICE_ATTR_2(temp1_max_alarm, S_IRUGO, show_status, NULL,
--			    2, TMP432_STATUS_LOCAL);
--static SENSOR_DEVICE_ATTR_2(temp1_crit_alarm, S_IRUGO, show_status, NULL,
--			    3, TMP432_STATUS_LOCAL);
--static SENSOR_DEVICE_ATTR_2(temp2_input, S_IRUGO, show_temp, NULL, 0, 1);
--static SENSOR_DEVICE_ATTR_2(temp2_min, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 1, 1);
--static SENSOR_DEVICE_ATTR_2(temp2_max, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 2, 1);
--static SENSOR_DEVICE_ATTR_2(temp2_crit, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 3, 1);
--static SENSOR_DEVICE_ATTR(temp2_crit_hyst, S_IRUGO, show_temp_crit_hyst,
--			  NULL, 1);
--static SENSOR_DEVICE_ATTR_2(temp2_fault, S_IRUGO, show_status, NULL,
--			    0, TMP432_STATUS_REMOTE1);
--static SENSOR_DEVICE_ATTR_2(temp2_min_alarm, S_IRUGO, show_status, NULL,
--			    1, TMP432_STATUS_REMOTE1);
--static SENSOR_DEVICE_ATTR_2(temp2_max_alarm, S_IRUGO, show_status, NULL,
--			    2, TMP432_STATUS_REMOTE1);
--static SENSOR_DEVICE_ATTR_2(temp2_crit_alarm, S_IRUGO, show_status, NULL,
--			    3, TMP432_STATUS_REMOTE1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_input, temp, 0, 0);
-+static SENSOR_DEVICE_ATTR_2_RW(temp1_min, temp, 1, 0);
-+static SENSOR_DEVICE_ATTR_2_RW(temp1_max, temp, 2, 0);
-+static SENSOR_DEVICE_ATTR_2_RW(temp1_crit, temp, 3, 0);
-+static SENSOR_DEVICE_ATTR_RW(temp1_crit_hyst, temp_crit_hyst, 0);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_min_alarm, status, 1,
-+			       TMP432_STATUS_LOCAL);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_max_alarm, status, 2,
-+			       TMP432_STATUS_LOCAL);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_crit_alarm, status, 3,
-+			       TMP432_STATUS_LOCAL);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_input, temp, 0, 1);
-+static SENSOR_DEVICE_ATTR_2_RW(temp2_min, temp, 1, 1);
-+static SENSOR_DEVICE_ATTR_2_RW(temp2_max, temp, 2, 1);
-+static SENSOR_DEVICE_ATTR_2_RW(temp2_crit, temp, 3, 1);
-+static SENSOR_DEVICE_ATTR_RO(temp2_crit_hyst, temp_crit_hyst, 1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_fault, status, 0, TMP432_STATUS_REMOTE1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_min_alarm, status, 1,
-+			       TMP432_STATUS_REMOTE1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_max_alarm, status, 2,
-+			       TMP432_STATUS_REMOTE1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_crit_alarm, status, 3,
-+			       TMP432_STATUS_REMOTE1);
+ /* Power (virtual) */
+-static SENSOR_DEVICE_ATTR(power1_input, S_IRUGO, ltc4215_show_power, NULL, 0);
++static SENSOR_DEVICE_ATTR_RO(power1_input, ltc4215_power, 0);
  
- static DEVICE_ATTR_RW(update_interval);
+ /* Input Voltage */
+-static SENSOR_DEVICE_ATTR(in1_input, S_IRUGO, ltc4215_show_voltage, NULL,
+-			  LTC4215_ADIN);
+-static SENSOR_DEVICE_ATTR(in1_max_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
+-			  1 << 0);
+-static SENSOR_DEVICE_ATTR(in1_min_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
+-			  1 << 1);
++static SENSOR_DEVICE_ATTR_RO(in1_input, ltc4215_voltage, LTC4215_ADIN);
++static SENSOR_DEVICE_ATTR_RO(in1_max_alarm, ltc4215_alarm, 1 << 0);
++static SENSOR_DEVICE_ATTR_RO(in1_min_alarm, ltc4215_alarm, 1 << 1);
  
-@@ -538,12 +533,11 @@ static const struct attribute_group tmp401_group = {
-  * minimum and maximum register reset for both the local
-  * and remote channels.
-  */
--static SENSOR_DEVICE_ATTR_2(temp1_lowest, S_IRUGO, show_temp, NULL, 4, 0);
--static SENSOR_DEVICE_ATTR_2(temp1_highest, S_IRUGO, show_temp, NULL, 5, 0);
--static SENSOR_DEVICE_ATTR_2(temp2_lowest, S_IRUGO, show_temp, NULL, 4, 1);
--static SENSOR_DEVICE_ATTR_2(temp2_highest, S_IRUGO, show_temp, NULL, 5, 1);
--static SENSOR_DEVICE_ATTR(temp_reset_history, S_IWUSR, NULL, reset_temp_history,
--			  0);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_lowest, temp, 4, 0);
-+static SENSOR_DEVICE_ATTR_2_RO(temp1_highest, temp, 5, 0);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_lowest, temp, 4, 1);
-+static SENSOR_DEVICE_ATTR_2_RO(temp2_highest, temp, 5, 1);
-+static SENSOR_DEVICE_ATTR_WO(temp_reset_history, reset_temp_history, 0);
+ /* Output Voltage */
+-static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO, ltc4215_show_voltage, NULL,
+-			  LTC4215_SOURCE);
+-static SENSOR_DEVICE_ATTR(in2_min_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
+-			  1 << 3);
++static SENSOR_DEVICE_ATTR_RO(in2_input, ltc4215_voltage, LTC4215_SOURCE);
++static SENSOR_DEVICE_ATTR_RO(in2_min_alarm, ltc4215_alarm, 1 << 3);
  
- static struct attribute *tmp411_attributes[] = {
- 	&sensor_dev_attr_temp1_highest.dev_attr.attr,
-@@ -558,23 +552,18 @@ static const struct attribute_group tmp411_group = {
- 	.attrs = tmp411_attributes,
- };
- 
--static SENSOR_DEVICE_ATTR_2(temp3_input, S_IRUGO, show_temp, NULL, 0, 2);
--static SENSOR_DEVICE_ATTR_2(temp3_min, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 1, 2);
--static SENSOR_DEVICE_ATTR_2(temp3_max, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 2, 2);
--static SENSOR_DEVICE_ATTR_2(temp3_crit, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 3, 2);
--static SENSOR_DEVICE_ATTR(temp3_crit_hyst, S_IRUGO, show_temp_crit_hyst,
--			  NULL, 2);
--static SENSOR_DEVICE_ATTR_2(temp3_fault, S_IRUGO, show_status, NULL,
--			    0, TMP432_STATUS_REMOTE2);
--static SENSOR_DEVICE_ATTR_2(temp3_min_alarm, S_IRUGO, show_status, NULL,
--			    1, TMP432_STATUS_REMOTE2);
--static SENSOR_DEVICE_ATTR_2(temp3_max_alarm, S_IRUGO, show_status, NULL,
--			    2, TMP432_STATUS_REMOTE2);
--static SENSOR_DEVICE_ATTR_2(temp3_crit_alarm, S_IRUGO, show_status, NULL,
--			    3, TMP432_STATUS_REMOTE2);
-+static SENSOR_DEVICE_ATTR_2_RO(temp3_input, temp, 0, 2);
-+static SENSOR_DEVICE_ATTR_2_RW(temp3_min, temp, 1, 2);
-+static SENSOR_DEVICE_ATTR_2_RW(temp3_max, temp, 2, 2);
-+static SENSOR_DEVICE_ATTR_2_RW(temp3_crit, temp, 3, 2);
-+static SENSOR_DEVICE_ATTR_RO(temp3_crit_hyst, temp_crit_hyst, 2);
-+static SENSOR_DEVICE_ATTR_2_RO(temp3_fault, status, 0, TMP432_STATUS_REMOTE2);
-+static SENSOR_DEVICE_ATTR_2_RO(temp3_min_alarm, status, 1,
-+			       TMP432_STATUS_REMOTE2);
-+static SENSOR_DEVICE_ATTR_2_RO(temp3_max_alarm, status, 2,
-+			       TMP432_STATUS_REMOTE2);
-+static SENSOR_DEVICE_ATTR_2_RO(temp3_crit_alarm, status, 3,
-+			       TMP432_STATUS_REMOTE2);
- 
- static struct attribute *tmp432_attributes[] = {
- 	&sensor_dev_attr_temp3_input.dev_attr.attr,
-@@ -598,8 +587,7 @@ static const struct attribute_group tmp432_group = {
-  * Additional features of the TMP461 chip.
-  * The TMP461 temperature offset for the remote channel.
-  */
--static SENSOR_DEVICE_ATTR_2(temp2_offset, S_IWUSR | S_IRUGO, show_temp,
--			    store_temp, 6, 1);
-+static SENSOR_DEVICE_ATTR_2_RW(temp2_offset, temp, 6, 1);
- 
- static struct attribute *tmp461_attributes[] = {
- 	&sensor_dev_attr_temp2_offset.dev_attr.attr,
+ /*
+  * Finally, construct an array of pointers to members of the above objects,
 -- 
 2.7.4
 
