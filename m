@@ -2,193 +2,300 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FA6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF7CC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CC22133F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:31:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CC22133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C90120850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 00:38:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gD21tiMJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C90120850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeLFAbd (ORCPT
+        id S1728696AbeLFAi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:31:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbeLFAbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:31:33 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 5 Dec 2018 19:38:27 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44214 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727575AbeLFAi0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 19:38:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2ED1C8EE107;
+        Wed,  5 Dec 2018 16:38:26 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5H61SOKnHVqI; Wed,  5 Dec 2018 16:38:26 -0800 (PST)
+Received: from [192.168.100.106] (252.173.221.202.bf.2iij.net [202.221.173.252])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 125383086249;
-        Thu,  6 Dec 2018 00:31:32 +0000 (UTC)
-Received: from sky.random (ovpn-122-73.rdu2.redhat.com [10.10.122.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 535565D757;
-        Thu,  6 Dec 2018 00:31:27 +0000 (UTC)
-Date:   Wed, 5 Dec 2018 19:31:26 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        mgorman@techsingularity.net,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [patch 0/2 for-4.20] mm, thp: fix remote access and allocation
- regressions
-Message-ID: <20181206003126.GA21159@redhat.com>
-References: <alpine.DEB.2.21.1812031545080.161134@chino.kir.corp.google.com>
- <bb198d88-27be-0d5c-d871-1ffd26a08e29@suse.cz>
- <alpine.DEB.2.21.1812041356490.157466@chino.kir.corp.google.com>
- <20181205090554.GX1286@dhcp22.suse.cz>
- <alpine.DEB.2.21.1812051142040.240991@chino.kir.corp.google.com>
- <20181205214542.GC11899@redhat.com>
- <alpine.DEB.2.21.1812051402150.9633@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812051402150.9633@chino.kir.corp.google.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 06 Dec 2018 00:31:32 +0000 (UTC)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 18D928EE0D3;
+        Wed,  5 Dec 2018 16:38:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1544056705;
+        bh=AdPrAn4XR5FlSjvSIYSgj0P8SEuZHD0lpco+LKS2jHE=;
+        h=Subject:From:To:Cc:Date:From;
+        b=gD21tiMJydh4kwL7nQOXh6t7gDscugoyFmUrTLaYK3qfOOlgZexIlPNUYDRokyot6
+         sc0uD3yb62w4dPy0Kn0yY+rsNaSDrtFWq0PyoYuqMpDhBOY1p8fLFrAFucAvjbSr59
+         xU4Yr8fq2ckP8Cvo9IKcHwVPrX68o276PyNTTpWk=
+Message-ID: <1544056700.3414.6.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.20-rc5
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Thu, 06 Dec 2018 09:38:20 +0900
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 02:10:47PM -0800, David Rientjes wrote:
-> I've must have said this at least six or seven times: fault latency is 
+Four obvious bug fixes.  The vmw_pscsi one is so old that it's amazing
+no-one noticed before now.
 
-In your original regression report in this thread to Linus:
+The patch is available here:
 
-https://lkml.kernel.org/r/alpine.DEB.2.21.1811281504030.231719@chino.kir.corp.google.com
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-you said "On a fragmented host, the change itself showed a 13.9%
-access latency regression on Haswell and up to 40% allocation latency
-                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-regression. This is more substantial on Naples and Rome.  I also
-^^^^^^^^^^
-measured similar numbers to this for Haswell."
+The short changelog is:
 
-> secondary to the *access* latency.  We want to try hard for MADV_HUGEPAGE 
-> users to do synchronous compaction and try to make a hugepage available.  
+Cathy Avery (1):
+      scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
 
-I'm glad you said it six or seven times now, because you forgot to
-mention in the above email that the "40% allocation/fault latency
-regression" you reported above, is actually a secondary concern because
-those must be long lived allocations and we can't yet generate
-compound pages for free after all..
+Dexuan Cui (1):
+      scsi: storvsc: Fix a race in sub-channel creation that can cause panic
 
-> We really want to be backed by hugepages, but certainly not when the 
-> access latency becomes 13.9% worse as a result compared to local pages of 
-> the native page size.
+Fred Herard (1):
+      scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
 
-Yes the only regression that you measure that isn't only a secondary
-concern, is that 13.9% access latency because of not immediate NUMA
-locality.
+Martin Wilck (1):
+      scsi: lpfc: fix block guard enablement on SLI3 adapters
 
-BTW, I never bothered to ask yet, but, did you enable NUMA balancing
-in your benchmarks? NUMA balancing would fix the access latency very
-easily too, so that 13.9% access latency must quickly disappear if you
-correctly have NUMA balancing enabled in a NUMA system.
+And the diffstat:
 
-Furthermore NUMA balancing is fully converging guaranteed if the
-workload can fit in a single node (your case or __GFP_THISNODE would
-hardly fly in the first place). It'll work even better for you because
-you copy off all MAP_PRIVATE binaries into MAP_ANON to make them THP
-backed so they can also be replicated per NODE and they won't increase
-the NUMA balancing false sharing. And khugepaged always remains NUMA
-agnostic so it won't risk to stop on NUMA balancing toes no matter how
-we tweak the MADV_HUGEPAGE behavior.
+ drivers/scsi/libiscsi.c       |  4 +--
+ drivers/scsi/lpfc/lpfc_init.c |  6 ++++-
+ drivers/scsi/lpfc/lpfc_sli.c  |  1 -
+ drivers/scsi/storvsc_drv.c    | 61 +++++++++++++++++++++----------------------
+ drivers/scsi/vmw_pvscsi.c     |  4 +--
+ 5 files changed, 39 insertions(+), 37 deletions(-)
 
-> This is not a system-wide configuration detail, it is specific to the 
-> workload: does it span more than one node or not?  No workload that can 
-> fit into a single node, which you also say is going to be the majority of 
-> workloads on today's platforms, is going to want to revert __GFP_THISNODE 
-> behavior of the past almost four years.  It perfectly makes sense, 
-> however, to be a new mempolicy mode, a new madvise mode, or a prctl.
+With full diff below.
 
-qemu has been using MADV_HUGEPAGE since the below commit in Oct 2012.
+James
 
-From ad0b5321f1f797274603ebbe20108b0750baee94 Mon Sep 17 00:00:00 2001
-From: Luiz Capitulino <lcapitulino@redhat.com>
-Date: Fri, 5 Oct 2012 16:47:57 -0300
-Subject: [PATCH 1/1] Call MADV_HUGEPAGE for guest RAM allocations
-
-This makes it possible for QEMU to use transparent huge pages (THP)
-when transparent_hugepage/enabled=madvise. Otherwise THP is only
-used when it's enabled system wide.
-
-Signed-off-by: Luiz Capitulino <lcapitulino@redhat.com>
-Signed-off-by: Anthony Liguori <aliguori@us.ibm.com>
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 ---
- exec.c  | 1 +
- osdep.h | 5 +++++
- 2 files changed, 6 insertions(+)
 
-diff --git a/exec.c b/exec.c
-index c4ed6fdef1..750008c4e1 100644
---- a/exec.c
-+++ b/exec.c
-@@ -2571,6 +2571,7 @@ ram_addr_t qemu_ram_alloc_from_ptr(ram_addr_t size, void *host,
-     cpu_physical_memory_set_dirty_range(new_block->offset, size, 0xff);
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 93c66ebad907..f78d2e5c1471 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2416,8 +2416,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 20fa6785a0e2..68d62d55a3a5 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -167,7 +167,11 @@ lpfc_config_port_prep(struct lpfc_hba *phba)
+ 		       sizeof(phba->wwpn));
+ 	}
  
-     qemu_ram_setup_dump(new_block->host, size);
-+    qemu_madvise(new_block->host, size, QEMU_MADV_HUGEPAGE);
+-	phba->sli3_options = 0x0;
++	/*
++	 * Clear all option bits except LPFC_SLI3_BG_ENABLED,
++	 * which was already set in lpfc_get_cfgparam()
++	 */
++	phba->sli3_options &= (uint32_t)LPFC_SLI3_BG_ENABLED;
  
-     if (kvm_enabled())
-         kvm_setup_guest_memory(new_block->host, size);
-diff --git a/osdep.h b/osdep.h
-index cb213e0295..c5fd3d91ff 100644
---- a/osdep.h
-+++ b/osdep.h
-@@ -108,6 +108,11 @@ void qemu_vfree(void *ptr);
- #else
- #define QEMU_MADV_DONTDUMP QEMU_MADV_INVALID
- #endif
-+#ifdef MADV_HUGEPAGE
-+#define QEMU_MADV_HUGEPAGE MADV_HUGEPAGE
-+#else
-+#define QEMU_MADV_HUGEPAGE QEMU_MADV_INVALID
-+#endif
+ 	/* Setup and issue mailbox READ REV command */
+ 	lpfc_read_rev(phba, pmb);
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index 783a1540cfbe..b9e5cd79931a 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -4965,7 +4965,6 @@ lpfc_sli_config_port(struct lpfc_hba *phba, int sli_mode)
+ 		phba->sli3_options &= ~(LPFC_SLI3_NPIV_ENABLED |
+ 					LPFC_SLI3_HBQ_ENABLED |
+ 					LPFC_SLI3_CRP_ENABLED |
+-					LPFC_SLI3_BG_ENABLED |
+ 					LPFC_SLI3_DSS_ENABLED);
+ 		if (rc != MBX_SUCCESS) {
+ 			lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index f03dc03a42c3..8f88348ebe42 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -446,7 +446,6 @@ struct storvsc_device {
  
- #elif defined(CONFIG_POSIX_MADVISE)
+ 	bool	 destroy;
+ 	bool	 drain_notify;
+-	bool	 open_sub_channel;
+ 	atomic_t num_outstanding_req;
+ 	struct Scsi_Host *host;
  
-> Please: if we wish to change behavior from February 2015, let's extend the 
-> API to allow for remote allocations in several of the ways we have already 
-> brainstormed rather than cause regressions.
-
-So if I understand correctly, you broke QEMU 3 years ago (again only
-noticed Jan 2018 because it requires >2 nodes and it requires a VM
-larger than 1 NODE which isn't common).
-
-QEMU before your regression in April 2015:
-
-Finished: 30 GB mapped, 10.163159s elapsed, 2.95GB/s
-Finished: 34 GB mapped, 11.806526s elapsed, 2.88GB/s
-Finished: 38 GB mapped, 10.369081s elapsed, 3.66GB/s
-Finished: 42 GB mapped, 12.357719s elapsed, 3.40GB/s
-
-QEMU after your regression in April 2015:
-
-Finished: 30 GB mapped, 8.821632s elapsed, 3.40GB/s
-Finished: 34 GB mapped, 341.979543s elapsed, 0.10GB/s
-Finished: 38 GB mapped, 761.933231s elapsed, 0.05GB/s
-Finished: 42 GB mapped, 1188.409235s elapsed, 0.04GB/s
-
-And now you ask open source upstream QEMU to start using a special
-mempolicy if it doesn't want to keep breaking with your change, so you
-don't have to apply a one liner to your unreleased so far proprietary
-software that uses MADV_HUGEPAGE and depends on a special
-__GFP_THISNODE behavior that broke qemu in the first place?
-
-Thanks,
-Andrea
+@@ -636,33 +635,38 @@ static inline struct storvsc_device *get_in_stor_device(
+ static void handle_sc_creation(struct vmbus_channel *new_sc)
+ {
+ 	struct hv_device *device = new_sc->primary_channel->device_obj;
++	struct device *dev = &device->device;
+ 	struct storvsc_device *stor_device;
+ 	struct vmstorage_channel_properties props;
++	int ret;
+ 
+ 	stor_device = get_out_stor_device(device);
+ 	if (!stor_device)
+ 		return;
+ 
+-	if (stor_device->open_sub_channel == false)
+-		return;
+-
+ 	memset(&props, 0, sizeof(struct vmstorage_channel_properties));
+ 
+-	vmbus_open(new_sc,
+-		   storvsc_ringbuffer_size,
+-		   storvsc_ringbuffer_size,
+-		   (void *)&props,
+-		   sizeof(struct vmstorage_channel_properties),
+-		   storvsc_on_channel_callback, new_sc);
++	ret = vmbus_open(new_sc,
++			 storvsc_ringbuffer_size,
++			 storvsc_ringbuffer_size,
++			 (void *)&props,
++			 sizeof(struct vmstorage_channel_properties),
++			 storvsc_on_channel_callback, new_sc);
+ 
+-	if (new_sc->state == CHANNEL_OPENED_STATE) {
+-		stor_device->stor_chns[new_sc->target_cpu] = new_sc;
+-		cpumask_set_cpu(new_sc->target_cpu, &stor_device->alloced_cpus);
++	/* In case vmbus_open() fails, we don't use the sub-channel. */
++	if (ret != 0) {
++		dev_err(dev, "Failed to open sub-channel: err=%d\n", ret);
++		return;
+ 	}
++
++	/* Add the sub-channel to the array of available channels. */
++	stor_device->stor_chns[new_sc->target_cpu] = new_sc;
++	cpumask_set_cpu(new_sc->target_cpu, &stor_device->alloced_cpus);
+ }
+ 
+ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
+ {
++	struct device *dev = &device->device;
+ 	struct storvsc_device *stor_device;
+ 	int num_cpus = num_online_cpus();
+ 	int num_sc;
+@@ -679,21 +683,11 @@ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
+ 	request = &stor_device->init_request;
+ 	vstor_packet = &request->vstor_packet;
+ 
+-	stor_device->open_sub_channel = true;
+ 	/*
+ 	 * Establish a handler for dealing with subchannels.
+ 	 */
+ 	vmbus_set_sc_create_callback(device->channel, handle_sc_creation);
+ 
+-	/*
+-	 * Check to see if sub-channels have already been created. This
+-	 * can happen when this driver is re-loaded after unloading.
+-	 */
+-
+-	if (vmbus_are_subchannels_present(device->channel))
+-		return;
+-
+-	stor_device->open_sub_channel = false;
+ 	/*
+ 	 * Request the host to create sub-channels.
+ 	 */
+@@ -710,23 +704,29 @@ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
+ 			       VM_PKT_DATA_INBAND,
+ 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
+ 
+-	if (ret != 0)
++	if (ret != 0) {
++		dev_err(dev, "Failed to create sub-channel: err=%d\n", ret);
+ 		return;
++	}
+ 
+ 	t = wait_for_completion_timeout(&request->wait_event, 10*HZ);
+-	if (t == 0)
++	if (t == 0) {
++		dev_err(dev, "Failed to create sub-channel: timed out\n");
+ 		return;
++	}
+ 
+ 	if (vstor_packet->operation != VSTOR_OPERATION_COMPLETE_IO ||
+-	    vstor_packet->status != 0)
++	    vstor_packet->status != 0) {
++		dev_err(dev, "Failed to create sub-channel: op=%d, sts=%d\n",
++			vstor_packet->operation, vstor_packet->status);
+ 		return;
++	}
+ 
+ 	/*
+-	 * Now that we created the sub-channels, invoke the check; this
+-	 * may trigger the callback.
++	 * We need to do nothing here, because vmbus_process_offer()
++	 * invokes channel->sc_creation_callback, which will open and use
++	 * the sub-channel(s).
+ 	 */
+-	stor_device->open_sub_channel = true;
+-	vmbus_are_subchannels_present(device->channel);
+ }
+ 
+ static void cache_wwn(struct storvsc_device *stor_device,
+@@ -1794,7 +1794,6 @@ static int storvsc_probe(struct hv_device *device,
+ 	}
+ 
+ 	stor_device->destroy = false;
+-	stor_device->open_sub_channel = false;
+ 	init_waitqueue_head(&stor_device->waiting_to_drain);
+ 	stor_device->device = device;
+ 	stor_device->host = host;
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 6e491023fdd8..0d6b2a88fc8e 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -1202,8 +1202,6 @@ static void pvscsi_shutdown_intr(struct pvscsi_adapter *adapter)
+ 
+ static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
+ {
+-	pvscsi_shutdown_intr(adapter);
+-
+ 	if (adapter->workqueue)
+ 		destroy_workqueue(adapter->workqueue);
+ 
+@@ -1534,6 +1532,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ out_reset_adapter:
+ 	ll_adapter_reset(adapter);
+ out_release_resources:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	scsi_host_put(host);
+ out_disable_device:
+@@ -1542,6 +1541,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	return error;
+ 
+ out_release_resources_and_disable:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	goto out_disable_device;
+ }
