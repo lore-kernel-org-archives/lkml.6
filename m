@@ -2,161 +2,242 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551F0C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0F0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F97F214DE
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:01:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="P48f+HEH";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="fPq9Z7d+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F97F214DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id CE73020878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:01:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544097706;
+	bh=syq9P1eHuALHNRddiJ9oM76nPam1XXOr5AyQT013scA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=0qPBySiQgtd5B4euCVCwF6p9r/YycXYYG8h84EVoN1I/s1FXNpiNLi1n93+s8K1Ha
+	 mxyBg+p5oodzZf2L9jS4YbHlU8nDcMUcUt6Re/GQjoruFWc8ai/+Yd0U/Tf9ySO6oh
+	 d2tqbIvijwg18+N3GdEjm5V1vsLrJEULTykAa6is=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE73020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbeLFMBP (ORCPT
+        id S1729503AbeLFMBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:01:15 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:36444 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728144AbeLFMBO (ORCPT
+        Thu, 6 Dec 2018 07:01:45 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40924 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbeLFMBo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:01:14 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB6Bvdl1003816;
-        Thu, 6 Dec 2018 04:00:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=KYEbDip+LbBP/poKXNCZwsAw5u8KLKsB3Snqmwpqtgk=;
- b=P48f+HEHK4nT0czKUINNSG4AE/RU+NF323VoJ+15ugn0bstOP43mz4rLr0Q2S67t7Znp
- X9EfB33VPbZQXzEpvURDOYlzUZSD5QUSODvfs4wzCw7G2xtPs4AvN5SbGSxfYKnY0Z6p
- XGvDvE3rRkftIK3eSOXib31zg7axxHoi4/fHq5spnT6AM4NSiFTQj6eKCfdhxiUdZWnY
- hy7igdNwhGUHT12XczsBt270LcUDYJ7fE84QApEsGR7ysbLC2ch3JXY3sOM7xKEmKS9G
- 3b0bmrlg0vdzyu+Dxat3qG5m2nkmXDnAZdDadJ2hmrftbD97zB/Coj0aS0Os7zOF4eAS HQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2p737u81cs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Dec 2018 04:00:54 -0800
-Received: from m0042385.ppops.net (m0042385.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id wB6BwVDx005009;
-        Thu, 6 Dec 2018 04:00:53 -0800
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2059.outbound.protection.outlook.com [104.47.42.59])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2p737u81cn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 06 Dec 2018 04:00:53 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KYEbDip+LbBP/poKXNCZwsAw5u8KLKsB3Snqmwpqtgk=;
- b=fPq9Z7d++SSIm32SCVo2IE7XNlyuAyvLd0whbSqql/VXP7JX/LdInk6xEXLUmHaDya/Ov38fWyDRN4ryfQorhG+88r6o26OgmASEpDwLNeX0xiNSe49go61+Ke7ca2uhr8dGXP90mlkPbY0vetivAheAZ1D0ShXHRLsTygWB+jc=
-Received: from MWHPR07MB3502.namprd07.prod.outlook.com (10.164.192.29) by
- MWHPR07MB2782.namprd07.prod.outlook.com (10.169.237.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Thu, 6 Dec 2018 12:00:50 +0000
-Received: from MWHPR07MB3502.namprd07.prod.outlook.com
- ([fe80::70e2:ccd9:2baf:68f9]) by MWHPR07MB3502.namprd07.prod.outlook.com
- ([fe80::70e2:ccd9:2baf:68f9%5]) with mapi id 15.20.1382.024; Thu, 6 Dec 2018
- 12:00:50 +0000
-From:   Alan Douglas <adouglas@cadence.com>
-To:     Wen Yang <wen.yang99@zte.com.cn>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhong.weidong@zte.com.cn" <zhong.weidong@zte.com.cn>,
-        Bob Copeland <me@bobcopeland.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: RE: [PATCH] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-Thread-Topic: [PATCH] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-Thread-Index: AQHUjU2PiCR+5hvyDU6PPfEeCbv436Vxm41w
-Date:   Thu, 6 Dec 2018 12:00:50 +0000
-Message-ID: <MWHPR07MB350216ECF82E2730CF87A7D2D8A90@MWHPR07MB3502.namprd07.prod.outlook.com>
-References: <20181206102105.53098-1-wen.yang99@zte.com.cn>
-In-Reply-To: <20181206102105.53098-1-wen.yang99@zte.com.cn>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWRvdWdsYXNcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy05Mjc3MzM4Zi1mOTRlLTExZTgtYWI4Zi1hNDRjYzg0ZTk5NTlcYW1lLXRlc3RcOTI3NzMzOTEtZjk0ZS0xMWU4LWFiOGYtYTQ0Y2M4NGU5OTU5Ym9keS50eHQiIHN6PSIxODI4IiB0PSIxMzE4ODU3MTI1MDUwMDcyMDQiIGg9InBtaDdxMkwrSFdjaVRKa3ZtcE5iYXMzcTJhZz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR07MB2782;20:RhHPsn/DS2416yh7FMlz3/AqNTdsAgn307QkJCHUsGRFmEEvQnyPRCP8B6qrEHbE8pbb/iSxO+cug/4dl6SJGtqYhM2Oct9122A9ldGII0n8E/XizbTJA0mn+A2fDs8TFllU4Q0PnOMtgC+LYOL05l/gxPbTQFOUCpRlXNFHCwJiLUBOzYyQb30bPLFciqDO5H04LpWTZziLpK9cKPvw5fzP1q7isOM/cJ46YD4O9ut4ZFqab+/7LBOcTTOe/VBa
-x-ms-office365-filtering-correlation-id: ec573c95-ba8a-4106-7319-08d65b72774d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR07MB2782;
-x-ms-traffictypediagnostic: MWHPR07MB2782:
-x-microsoft-antispam-prvs: <MWHPR07MB2782A9F86C109635C0540186D8A90@MWHPR07MB2782.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR07MB2782;BCL:0;PCL:0;RULEID:;SRVR:MWHPR07MB2782;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(39860400002)(376002)(366004)(189003)(199004)(36092001)(478600001)(97736004)(55016002)(305945005)(7736002)(74316002)(6116002)(3846002)(5660300001)(9686003)(7416002)(86362001)(105586002)(6436002)(106356001)(68736007)(54906003)(110136005)(316002)(99286004)(26005)(76176011)(186003)(102836004)(53546011)(4326008)(6246003)(2906002)(6506007)(53936002)(33656002)(7696005)(14454004)(81156014)(81166006)(256004)(8936002)(476003)(486006)(8676002)(25786009)(66066001)(229853002)(71200400001)(11346002)(446003)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB2782;H:MWHPR07MB3502.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: XPmXlimpEm85lV7MH87d+YKX6NU0ix5iMnDdg2735n2AjNtA3CQ0NfUf1JscuTR3T8b8W7qLbuXHwMHRhgJijvS6J4qimlJMsFgq+0UEnjak9zxrHHV9Hq7sA/39NBGqHxPP5B/ZyPnm53dJu8mWuZjAk9fNODGC7kuyEI11La8GlLvzczwXe4nZJyh9lwnV0ekqFZpS8Yva7Ruanllmv3g4RJMCEg5Fx2AYNAcZC6+MGQ0hnoOr1B5g9sH292LS8lD+oYQnop9O2MlpFq0KkJT+pzL5/BJNC3bktsKWKuoh+pnBg1FpUpiX/2dJjzNLnKJZBpJ+VfuBjr5m7KbTm3o9KJeuyKrcyQ/rr9Zn/2M=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 07:01:44 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so533999edx.7;
+        Thu, 06 Dec 2018 04:01:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b5TkJhql5OBpvOowGb/KHk5rTWf30x5NqRh/BRHPLBw=;
+        b=Y+de0W23ZN5Ph209xQU1akj5qP0OyROPjt6Dk8+F/xCMhvlq5UgDdDmtB23h42u0wO
+         553IzL3dbT5eCP4JykllC5WYItM/tpyPteXTYpeRau6CwItRgeZ0RKu+cM08t7tdZBvU
+         4OjP5xE5/EfWl2cDVuscl1pGbHGqmC9SZgKCRZq21UVXAiNlfzFvtnTvYPrjS9pg5iyf
+         4B3huvxF0DRyaIbyGUC6xOam14gFffx+kpWf1zajuIzAujt56I26xch3v5/jjvpOZPAY
+         gGaeEF1jE6JrzlHIX8NwyqJaFzw9amISmTmQBALuZiX9STGx/H3xCUGF1/FBbCrELM0B
+         WiCg==
+X-Gm-Message-State: AA+aEWatpEyYN1Th0C1whugxcoS8WmD5UuaNTh9NieIrb87CBu9vPFtY
+        lhGIKtrDdziyaOCRE7HUcyv94FB9
+X-Google-Smtp-Source: AFSGD/Wgk26DD5g8zxqrAg+P8SpaJgqXq/W6GG12mOCYTftAGV+enenI1QRvAYmlKEh3dx/WRciFow==
+X-Received: by 2002:a50:8719:: with SMTP id i25mr25219515edb.53.1544097702144;
+        Thu, 06 Dec 2018 04:01:42 -0800 (PST)
+Received: from tiehlicka.microfocus.com (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id p30sm131273eda.68.2018.12.06.04.01.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 04:01:41 -0800 (PST)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Stable tree <stable@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Oscar Salvador <osalvador@suse.com>
+Subject: [PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Thu,  6 Dec 2018 13:01:35 +0100
+Message-Id: <20181206120135.14079-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec573c95-ba8a-4106-7319-08d65b72774d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 12:00:50.3996
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB2782
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812060107
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCk9uIDA2IERlY2VtYmVyIDIwMTggMTA6MjEsIFdlbiBZYW5nIHdyb3RlOg0KPiBrbWVt
-ZHVwIGhhcyBpbXBsZW1lbnRlZCB0aGUgZnVuY3Rpb24gdGhhdCBrbWFsbG9jKCkgKyBtZW1jcHko
-KS4NCj4gV2UgcHJlZmVyIHRvIGttZW1kdXAgcmF0aGVyIHRoYW4gY29kZSBvcGVuZWQgaW1wbGVt
-ZW50YXRpb24uDQo+IA0KPiBUaGlzIGlzc3VlIHdhcyBkZXRlY3RlZCB3aXRoIHRoZSBoZWxwIG9m
-IGNvY2NpbmVsbGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBXZW4gWWFuZyA8d2VuLnlhbmc5OUB6
-dGUuY29tLmNuPg0KPiBDQzogQm9iIENvcGVsYW5kIDxtZUBib2Jjb3BlbGFuZC5jb20+DQo+IA0K
-PiBDQzogS2lzaG9uIFZpamF5IEFicmFoYW0gSSA8a2lzaG9uQHRpLmNvbT4NCj4gQ0M6IExvcmVu
-em8gUGllcmFsaXNpIDxsb3JlbnpvLnBpZXJhbGlzaUBhcm0uY29tPg0KPiBDQzogQmpvcm4gSGVs
-Z2FhcyA8YmhlbGdhYXNAZ29vZ2xlLmNvbT4NCj4gQ0M6IEd1c3Rhdm8gUGltZW50ZWwgPGd1c3Rh
-dm8ucGltZW50ZWxAc3lub3BzeXMuY29tPg0KPiBDQzogTmlrbGFzIENhc3NlbCA8bmlrbGFzLmNh
-c3NlbEBheGlzLmNvbT4NCj4gQ0M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91
-bmRhdGlvbi5vcmc+DQo+IENDOiBDeXJpbGxlIFBpdGNoZW4gPGN5cmlsbGUucGl0Y2hlbkBmcmVl
-LWVsZWN0cm9ucy5jb20+DQo+IENDOiBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnIChvcGVuIGxp
-c3Q6UENJIEVORFBPSU5UIFNVQlNZU1RFTSkNCj4gQ0M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmcgKG9wZW4gbGlzdCkNCj4gLS0tDQo+ICBkcml2ZXJzL3BjaS9lbmRwb2ludC9mdW5jdGlv
-bnMvcGNpLWVwZi10ZXN0LmMgfCA0ICstLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
-bigrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9lbmRw
-b2ludC9mdW5jdGlvbnMvcGNpLWVwZi10ZXN0LmMgYi9kcml2ZXJzL3BjaS9lbmRwb2ludC9mdW5j
-dGlvbnMvcGNpLWVwZi10ZXN0LmMNCj4gaW5kZXggM2U4NmZhM2M3ZGEzLi42ZTQyZGFhMmE2NTEg
-MTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcGNpL2VuZHBvaW50L2Z1bmN0aW9ucy9wY2ktZXBmLXRl
-c3QuYw0KPiArKysgYi9kcml2ZXJzL3BjaS9lbmRwb2ludC9mdW5jdGlvbnMvcGNpLWVwZi10ZXN0
-LmMNCj4gQEAgLTE2OSwxNCArMTY5LDEyIEBAIHN0YXRpYyBpbnQgcGNpX2VwZl90ZXN0X3JlYWQo
-c3RydWN0IHBjaV9lcGZfdGVzdCAqZXBmX3Rlc3QpDQo+ICAJCWdvdG8gZXJyX2FkZHI7DQo+ICAJ
-fQ0KPiANCj4gLQlidWYgPSBremFsbG9jKHJlZy0+c2l6ZSwgR0ZQX0tFUk5FTCk7DQo+ICsJYnVm
-ID0ga3phbGxvYyhzcmNfYWRkciwgcmVnLT5zaXplLCBHRlBfS0VSTkVMKTsNCkxvb2tzIGxpa2Ug
-YSB0eXBvIC0ga21lbWR1cCBpbnN0ZWFkIG9mIGt6YWxsb2M/DQoNCj4gIAlpZiAoIWJ1Zikgew0K
-PiAgCQlyZXQgPSAtRU5PTUVNOw0KPiAgCQlnb3RvIGVycl9tYXBfYWRkcjsNCj4gIAl9DQo+IA0K
-PiAtCW1lbWNweShidWYsIHNyY19hZGRyLCByZWctPnNpemUpOw0KPiAtDQo+ICAJY3JjMzIgPSBj
-cmMzMl9sZSh+MCwgYnVmLCByZWctPnNpemUpOw0KPiAgCWlmIChjcmMzMiAhPSByZWctPmNoZWNr
-c3VtKQ0KPiAgCQlyZXQgPSAtRUlPOw0KPiAtLQ0KPiAyLjE5LjENCg0KUmVnYXJkcywNCkFsYW4N
-Cg0K
+From: Michal Hocko <mhocko@suse.com>
+
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed on 4.4 base kernel. The underlying
+reason was that the HWPoison page has an elevated reference count and
+the migration keeps failing. There are two problems with that. First
+of all it is dubious to migrate the poisoned page because we know that
+accessing that memory is possible to fail. Secondly it doesn't make any
+sense to migrate a potentially broken content and preserve the memory
+corruption over to a new location.
+
+Oscar has found out that 4.4 and the current upstream kernels behave
+slightly differently with his simply testcase
+===
+
+int main(void)
+{
+        int ret;
+        int i;
+        int fd;
+        char *array = malloc(4096);
+        char *array_locked = malloc(4096);
+
+        fd = open("/tmp/data", O_RDONLY);
+        read(fd, array, 4095);
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
+        if (ret)
+                perror("mlock");
+
+        sleep (20);
+
+        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
+        if (ret)
+                perror("madvise");
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        return 0;
+}
+===
+
++ offline this memory.
+
+In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
+list
+kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
+kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
+kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
+kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
+kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
+kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
+kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
+kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
+kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
+kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
+kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
+kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
+kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
+kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
+kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
+kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
+kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
+kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
+kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
+kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
+
+And that later confuses the hotremove path because an LRU page is
+attempted to be migrated and that fails due to an elevated reference
+count. It is quite possible that the reuse of the HWPoisoned page is
+some kind of fixed race condition but I am not really sure about that.
+
+With the upstream kernel the failure is slightly different. The page
+doesn't seem to have LRU bit set but isolate_movable_page simply fails
+and do_migrate_range simply puts all the isolated pages back to LRU and
+therefore no progress is made and scan_movable_pages finds same set of
+pages over and over again.
+
+Fix both cases by explicitly checking HWPoisoned pages before we even
+try to get a reference on the page, try to unmap it if it is still
+mapped. As explained by Naoya
+: Hwpoison code never unmapped those for no big reason because
+: Ksm pages never dominate memory, so we simply didn't have strong
+: motivation to save the pages.
+
+Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
+HWPoison pages which shouldn't happen but I couldn't convince myself
+about that. Naoya has noted the following
+: Theoretically no such gurantee, because try_to_unmap() doesn't have a
+: guarantee of success and then memory_failure() returns immediately
+: when hwpoison_user_mappings fails.
+: Or the following code (comes after hwpoison_user_mappings block) also impli=
+: es
+: that the target page can still have PageLRU flag.
+:
+:         /*
+:          * Torn down by someone else?
+:          */
+:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
+:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+:                 res =3D -EBUSY;
+:                 goto out;
+:         }
+:
+: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+: current version of your patch.
+
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Cc: stable
+Reviewed-by: Oscar Salvador <osalvador@suse.com>
+Tested-by: Oscar Salvador <osalvador@suse.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+
+Hi Andrew,
+this has been posted as an RFC [1] previously. It took 2 versions to get
+the patch right but it seems that this one should work reasonably well.
+I guess we want to have it in linux-next for some time but I do not
+expect many people do test MCEs + hotremove considering the breakage is
+old and nobody has noticed so far.
+
+[1] http://lkml.kernel.org/r/20181203100309.14784-1-mhocko@kernel.org
+
+ mm/memory_hotplug.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c6c42a7425e5..cfa1a2736876 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -34,6 +34,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/memblock.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
+ 
+ #include <asm/tlbflush.h>
+ 
+@@ -1366,6 +1367,21 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+ 			pfn = page_to_pfn(compound_head(page))
+ 				+ hpage_nr_pages(page) - 1;
+ 
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped
++		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
++		 * the unmap as the catch all safety net).
++		 */
++		if (PageHWPoison(page)) {
++			if (WARN_ON(PageLRU(page)))
++				isolate_lru_page(page);
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
++
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
+-- 
+2.19.2
+
