@@ -2,177 +2,180 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_RHS_DOB autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650A1C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A65EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2110D20645
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D02D21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:49:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="e1lm7Gjj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2110D20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBfuNCNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D02D21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeLFJsN (ORCPT
+        id S1729347AbeLFJtv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:48:13 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:58176 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbeLFJsN (ORCPT
+        Thu, 6 Dec 2018 04:49:51 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45949 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbeLFJtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:48:13 -0500
-X-IronPort-AV: E=Sophos;i="5.56,321,1539673200"; 
-   d="scan'208";a="23908969"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Dec 2018 02:48:12 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 6 Dec 2018 02:48:11 -0700
+        Thu, 6 Dec 2018 04:49:51 -0500
+Received: by mail-io1-f66.google.com with SMTP id o5so13199777iop.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:49:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UfLrTLNAalKo2dkSNPqpJtlEhRjpA84wqep4W8kat3Q=;
- b=e1lm7GjjI4XO/TMHIlczujQXQ28WV0FEOyIEK5PbqTvdPjU4Wd5zdqD1Uyiy1baj6vq4mei/2Hnjz9/xT6YcrUJhU02I0Cra+NPcVCXCbCFDu4EO5rPvur2va4hwRICfJmrLh8lXbBntm4+h44SH9hov++lRqkegnf3M1Q68bEs=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0661.namprd11.prod.outlook.com (10.163.159.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Thu, 6 Dec 2018 09:48:10 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::6c42:c3b0:5734:1681%5]) with mapi id 15.20.1404.020; Thu, 6 Dec 2018
- 09:48:10 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <sebastian.reichel@collabora.com>, <alexandre.belloni@bootlin.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/4] power: reset: at91-poweroff: move shdwc related data
- to one structure
-Thread-Topic: [PATCH 2/4] power: reset: at91-poweroff: move shdwc related data
- to one structure
-Thread-Index: AQHUdPi2R8S5SO7XUE65Fo0kFeM8lqVw7UehgAC6UwA=
-Date:   Thu, 6 Dec 2018 09:48:10 +0000
-Message-ID: <a0db3b8a-3c2b-02fd-64cc-b490a75b8b7c@microchip.com>
-References: <1541416443-4321-1-git-send-email-claudiu.beznea@microchip.com>
- <1541416443-4321-3-git-send-email-claudiu.beznea@microchip.com>
- <20181106210933.GU24212@piout.net>
- <6719a808-e704-3c63-f592-3b90d44ccbfe@microchip.com>
- <20181107172340.GF21694@piout.net>
- <20181205224052.34o3cmh3y3htchcj@earth.universe>
-In-Reply-To: <20181205224052.34o3cmh3y3htchcj@earth.universe>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0166.eurprd07.prod.outlook.com
- (2603:10a6:802:3e::14) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0661;6:xOs+TGLc+vmtvayqAUSqp0VSLuM9H/zeWsd3zRpKAILQSefcYdGkQ4725SS6vmDmzUD4L9JyuCDK1KuJeVr7cbGi4Httg5mLF/sVwTZBQwxeOLcuI9RtcmvVnT0MtXOH4tD5eKdZk5veIAgqbBgTQbMemJ2bK9aHnjQFSC6zgc8FLybQrdwfY+FcYHlPePwkToiIfQDWVQQut8HYO1hSB67uPshf0OhT79BiepZLsc4IlF6gEFgRnlAn71RhoJc/Tav4/QsmmirsLIyztncRYkRRdDlRHcx57rh8axIZF9Txh426Jzi3LQHXOikbjGNKkG+LIzIzXfk1EEVWuBJKM72pNMIuP1Ujj89SmkMGYaDhlEyS5BRdVSL7fqhW2O6QMTxTCRCTa8tXShBUYMGFvZTLy68h1iTdbSh9gW+13uhqFyNayT13jBnycwbtkMGhKanKdWmLAfwYSoqd8uu9Fw==;5:cGzsmH7Hxs8z7jPXMeJWIKFL3v8kUzseUZhDz+KK52FZ+kBjX9SYi10AkDmgfCNgFDaMLI2QScHwVb1Gb+wO1vINbcjSi5CU+dhLEbhTET+Or0gvwQz3ejK5DcInQZ0NKPUBMl+Dl/gYKdpytceo6tzMuhbVMn44g+lT4ycLbM0=;7:F0FyB5I3XBIVCgoS74tcMQoJr8ErRXRlWzOqpeOHQB5scpzbelIIx9nCMFzoH4UiYfhp9wb6mQgqnIJ6eGcPePHMNZDQzacrV/dGpZyw4GIiQckz1MK7ifSiMXOCB8gyGeEz2GAzSwrMUo3AmugmMg==
-x-ms-office365-filtering-correlation-id: 6a1907e0-c012-4cfc-d918-08d65b5fee6f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0661;
-x-ms-traffictypediagnostic: BY2PR11MB0661:
-x-microsoft-antispam-prvs: <BY2PR11MB0661A8EC3AC45A697A18243E87A90@BY2PR11MB0661.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0661;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0661;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(39860400002)(366004)(376002)(189003)(52314003)(199004)(86362001)(229853002)(305945005)(102836004)(2906002)(54906003)(6512007)(7736002)(53936002)(478600001)(72206003)(110136005)(99286004)(8936002)(6486002)(11346002)(6436002)(81156014)(81166006)(446003)(14454004)(31686004)(966005)(316002)(6306002)(5660300001)(3846002)(6116002)(2616005)(25786009)(6506007)(386003)(66066001)(486006)(4326008)(186003)(76176011)(71190400001)(26005)(71200400001)(106356001)(476003)(36756003)(105586002)(68736007)(8676002)(93886005)(256004)(53546011)(31696002)(6246003)(97736004)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0661;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EgJ1fAdEuq8MLVUud0ryjg2c3ZLowCy8XZnpRp0yFlf+3R94Gu9WTLbZXe49eDQsarpQeadA2RGGHLWgVI40aIATDa24sTtVx30OX9YNGGDPW7qpBK+wJkur8Jq5IuwUx4YFrvrJ669Lafe5ZNnUjY0LM0aVOtQ+QoT5M6WZIYWVjEpnYbWCd0vYqi5Fkt5NSJcA14k0eijo2l9iycn/WPU/B6n5m5uO36yUxA/0U6oT3Q+cV6dNUxmPvAZJ5o3zkfDB9wR5mJb7hWR5yig165Khjpo7lyibW9tTGtIFeX6XVq3v3RznLdz2EDHql5xHMCrVkwh6KwsiAQ2KpXbidrAPyLZ1tieuaPZs2C+U9gU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <D84CF29545773F4AB1BEAA5C00B72BA2@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S0KIlzZELJVLYVe19PyEtQbi4RpFjlas2MpPq4GEk1Y=;
+        b=VBfuNCNqQwRbb8h3QXvoRkFgv7+EjGEbxDaqF/mzDW5NUAIpnhn/X9pysR0uZEIxAi
+         n8XL1IbzKU6yeag5uCOjdx4fjohbN1AbsOUAOUNGUmv7vrTaWWsMNEOdT4CboWGAv6FR
+         03tci/j6OoffLEhfI0u9tnbwoVyFmwvGhbUpY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S0KIlzZELJVLYVe19PyEtQbi4RpFjlas2MpPq4GEk1Y=;
+        b=K2BfzG6bKyifmTxsTJb4a5voCSzdGyPs0QfesOQ339TUVrV/sfIMYA5+iWmyXvwsr0
+         Q6Jr9eQY7pxr9g73z5lb24NcwAQVrv4MqK50gXi0xCdwbwc/TGHat1KqiEC0FWUVA7E3
+         KvfVohpODpCtqKi7hh7IGcevu5zHRSdtVWCB13PZuJqstL9CGLrxvYWDBqgN7CzMp5s3
+         GZ5NTqD9ZXap794YhJHyKkYJyVpTKr7wQlgqs9dVcl2VGLfiVemnnotaC36mjwqJqzjw
+         3764G3KLojW4vJcd8nCSikzPwY8VqqQCL546u7id19tWnzSmgtPHZ59Tk2wOv48usqDv
+         n3bw==
+X-Gm-Message-State: AA+aEWamQn5p9Rn9t//542S5FsRH6JYT/DmirBr0cHUibX5hrw9Va8VI
+        L/SnWQLzfwvDb27ZyQWVLjoeavCZ1JXBKvEZkDducg==
+X-Google-Smtp-Source: AFSGD/WBEWCuOwCCo2hvhEJ4Z0csNylJCE7h5moXE8MSk8NDNdhhqR2vQz3TsHKgiGd/5bbD14vQjRc0SBG4Jh6ga8A=
+X-Received: by 2002:a5d:8415:: with SMTP id i21mr13738731ion.173.1544089789848;
+ Thu, 06 Dec 2018 01:49:49 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a1907e0-c012-4cfc-d918-08d65b5fee6f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 09:48:10.3985
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0661
-X-OriginatorOrg: microchip.com
+References: <20181206091719.GH23332@shao2-debian>
+In-Reply-To: <20181206091719.GH23332@shao2-debian>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 6 Dec 2018 10:49:38 +0100
+Message-ID: <CAKv+Gu9upt+zHPB3Qc2P6fd4jc7yup71nj0VsmFuLnYdS5dX1A@mail.gmail.com>
+Subject: Re: [LKP] [x86/jump_table] b34006c425: BUG:unable_to_handle_kernel
+To:     rong.a.chen@intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+On Thu, 6 Dec 2018 at 10:17, kernel test robot <rong.a.chen@intel.com> wrote:
+>
+> FYI, we noticed the following commit (built with gcc-7):
+>
+> commit: b34006c4258c9c86597b6b7123d6a9a3513d6cd7 ("x86/jump_table: Use relative references")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> in testcase: boot
+>
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+>
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+>
+>
+> +------------------------------------------+------------+------------+
+> |                                          | 9fc0f798ab | b34006c425 |
+> +------------------------------------------+------------+------------+
+> | boot_successes                           | 4          | 0          |
+> | boot_failures                            | 0          | 4          |
+> | BUG:unable_to_handle_kernel              | 0          | 4          |
+> | Oops:#[##]                               | 0          | 4          |
+> | RIP:memcmp                               | 0          | 4          |
+> | Kernel_panic-not_syncing:Fatal_exception | 0          | 4          |
+> +------------------------------------------+------------+------------+
+>
 
-On 06.12.2018 00:40, Sebastian Reichel wrote:
-> Hi,
->=20
-> On Wed, Nov 07, 2018 at 06:23:40PM +0100, Alexandre Belloni wrote:
->> On 07/11/2018 14:54:17+0000, Claudiu.Beznea@microchip.com wrote:
->>> Hi Alexandre,
->>>
->>> On 06.11.2018 23:09, Alexandre Belloni wrote:
->>>> Hi Claudiu,
->>>>
->>>> On 05/11/2018 11:14:26+0000, Claudiu.Beznea@microchip.com wrote:
->>>>>  static int __init at91_poweroff_probe(struct platform_device *pdev)
->>>>> @@ -154,16 +160,22 @@ static int __init at91_poweroff_probe(struct pl=
-atform_device *pdev)
->>>>>  	u32 ddr_type;
->>>>>  	int ret;
->>>>> =20
->>>>> +	at91_shdwc =3D devm_kzalloc(&pdev->dev, sizeof(*at91_shdwc), GFP_KE=
-RNEL);
->>>>> +	if (!at91_shdwc)
->>>>> +		return -ENOMEM;
->>>>> +
->>>>
->>>> Is there any real benefit that will offset the time lost for that
->>>> allocation at boot time?
->>>
->>> No, I haven't run benchmarks on this. I only wanted to have them groupe=
-d in
->>> one structure. Please let me know if you have some tests in mind.
->>>
->>
->> Well, it is probably not much but small things adds up. Having it as a
->> global structure is probably good enough.
->=20
-> I suppose I will get a new patch with this change?
+From the attached log:
+[    0.000000] Linux version 4.19.0-rc5-00006-gb34006c
 
-Yes, I will send a new version for this one.
+while
 
-Thank you,
-Claudiu Beznea
+$ git tag --contains b34006c
+v4.20-rc1
+v4.20-rc2
+v4.20-rc3
+v4.20-rc4
+v4.20-rc5
 
->=20
-> -- Sebastian
->=20
->>
->>>>
->>>> I understand you are then testing at91_shdwc to know whether the drive=
-r
->>>> already probed once. But, the driver will never probe twice as there i=
-s
->>>> only one shutdown controller on the SoC and anyway, If it was to probe
->>>> twice, it will still work as expected.
->>>
->>> I had in mind the scenario where the driver would be compiled as module=
-. I
->>> know insmod already does this checking. I'm ok to remove this checking.=
- I
->>> will do it in next version. With this I will also remove devm_kzalloc()=
- of
->>> at91_shdwc.
->>>
->>
->> Thanks,
->>
->> --=20
->> Alexandre Belloni, Bootlin
->> Embedded Linux and Kernel engineering
->> https://bootlin.com
+If this is reproducible on a clean rebuild of b34006c425, I'm happy to
+look into it.
+
+
+
+> [   21.261613] BUG: unable to handle kernel paging request at 0000000001001893
+> [   21.262316] PGD 0 P4D 0
+> [   21.262578] Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC PTI
+> [   21.263139] CPU: 1 PID: 252 Comm: systemd-udevd Not tainted 4.19.0-rc5-00006-gb34006c #1
+> [   21.263952] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [   21.264797] RIP: 0010:memcmp+0x7/0x1d
+> [   21.265179] Code: 39 ca 75 e7 41 c6 41 01 00 c3 c3 48 01 fa 48 89 f8 48 39 d0 74 0c 0f b6 08 39 f1 74 05 48 ff c0 eb ef c3 31 c9 48 39 d1 74 13 <0f> b6 04 0f 44 0f b6 04 0e 48 ff c1 44 29 c0 74 ea eb 02 31 c0 c3
+> [   21.267043] RSP: 0018:ffff880110aebc50 EFLAGS: 00010293
+> [   21.267579] RAX: ffffffff8101b80d RBX: 0000000001001893 RCX: 0000000000000000
+> [   21.268299] RDX: 0000000000000005 RSI: ffff880110aebc6b RDI: 0000000001001893
+> [   21.269015] RBP: ffffffff824019a4 R08: 0000000000000044 R09: 0000000000000008
+> [   21.269736] R10: 0000000701029ae0 R11: ffffffff82a42360 R12: ffffffff8101b80d
+> [   21.270458] R13: ffffc90001029ae0 R14: ffffc900010297e0 R15: ffffc900010295e0
+> [   21.271185] FS:  00007f22ad10e8c0(0000) GS:ffff88013b300000(0000) knlGS:0000000000000000
+> [   21.271989] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   21.272571] CR2: 0000000001001893 CR3: 0000000110ae6000 CR4: 00000000000406a0
+> [   21.273290] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   21.274006] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   21.274724] Call Trace:
+> [   21.274993]  __jump_label_transform+0xb6/0x11f
+> [   21.275455]  jump_label_apply_nops+0x5d/0x72
+> [   21.275894]  module_finalize+0x18d/0x1c3
+> [   21.276323]  load_module+0x1800/0x236d
+> [   21.276710]  ? vfs_read+0x108/0x116
+> [   21.277068]  ? set_fs+0x9/0x20
+> [   21.277390]  ? security_kernel_post_read_file+0x67/0x75
+> [   21.277916]  ? allow_write_access+0x13/0x24
+> [   21.278346]  ? kernel_read_file+0x1d3/0x1fa
+> [   21.278773]  ? __do_sys_finit_module+0xae/0xd4
+> [   21.279238]  __do_sys_finit_module+0xae/0xd4
+> [   21.279675]  do_syscall_64+0x20f/0x224
+> [   21.280063]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   21.280602] RIP: 0033:0x7f22abf8b229
+> [   21.280970] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3f 4c 2b 00 f7 d8 64 89 01 48
+> [   21.282830] RSP: 002b:00007fff5c9d38e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> [   21.283599] RAX: ffffffffffffffda RBX: 000055e996bd96b0 RCX: 00007f22abf8b229
+> [   21.284316] RDX: 0000000000000000 RSI: 00007f22ac8a4265 RDI: 0000000000000007
+> [   21.285027] RBP: 00007f22ac8a4265 R08: 0000000000000000 R09: 000055e996bcd860
+> [   21.285743] R10: 0000000000000007 R11: 0000000000000246 R12: 0000000000000000
+> [   21.286459] R13: 000055e996bd04d0 R14: 0000000000020000 R15: 000055e996439cbc
+> [   21.287186] Modules linked in: button(+) ip_tables x_tables ipv6
+> [   21.287800] CR2: 0000000001001893
+>          Starting LSB: Execute the kexec -e command to reboot system...
+> [   21.346498] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input4
+> [   21.347338] evbug: Connected device: input4 (Power Button at LNXPWRBN/button/input0)
+> [   21.347665] ---[ end trace 3282d04b21b84631 ]---
+>
+>
+> To reproduce:
+>
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+>
+>
+>
+> Thanks,
+> lkp
