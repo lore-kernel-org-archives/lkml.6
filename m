@@ -2,108 +2,110 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37541C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5487CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E1720850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:41:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H8atqT5Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E1720850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id BA2B320850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2B320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbeLFIlt (ORCPT
+        id S1728851AbeLFIn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:41:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57306 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFIlt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:41:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yK67o+3adp3nUlF6SqR7I48Ami8E6e6XDClA4A7ZbU8=; b=H8atqT5YNACmsoeXJRSB/WoNm
-        2UsoZlvTMs2wHyWza3YTx7fcUXKAi++l09x69nNFI+xzQvsy+b/f1LVbIeINhVyNo53e+fKFoF3OF
-        8ta34C2xV+mF0asQzS8qNqNeE9dStosAJ8D67w0AcgxL9p3DtvJtXqK2q7pM4HlFLG8l+qtSHT8Jv
-        sATjVdddFMpWU1PQZd/0DVm4h0PpJ04oPghCl7hAnQwi4+BkiMilRqBNyIib1mnHYWqwnd88+bfOF
-        bqFIv+p/nzItEKsnYE5CP0UPl2M+2ruE3GuRend7dwXjs48OAgRZ5pfgcVVVdOmm8M1Z+B28835UP
-        itszVvFww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUpE7-00088X-AQ; Thu, 06 Dec 2018 08:41:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 83514200FB7D8; Thu,  6 Dec 2018 09:41:41 +0100 (CET)
-Date:   Thu, 6 Dec 2018 09:41:41 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH 2/2] x86/speculation: switch_to_cond_stibp on is the
- likely case
-Message-ID: <20181206084141.GA13538@hirez.programming.kicks-ass.net>
-References: <1544039368-9009-1-git-send-email-longman@redhat.com>
- <1544039368-9009-2-git-send-email-longman@redhat.com>
+        Thu, 6 Dec 2018 03:43:58 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:33260 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727575AbeLFIn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 03:43:58 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 9E7647B1CEEFA50B69E0;
+        Thu,  6 Dec 2018 16:43:52 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wB68hilO035360;
+        Thu, 6 Dec 2018 16:43:44 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018120616441495-15101499 ;
+          Thu, 6 Dec 2018 16:44:14 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH] ocfs2: fix memdup.cocci warnings
+Date:   Thu, 6 Dec 2018 16:43:25 +0800
+Message-Id: <20181206084325.20773-1-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544039368-9009-2-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-12-06 16:44:15,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-12-06 16:43:32
+Content-Transfer-Encoding: quoted-printable
+X-MAIL: mse01.zte.com.cn wB68hilO035360
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 02:49:28PM -0500, Waiman Long wrote:
-> Since conditional STIBP is the default, it should be treated as
-> the likely case. Changes the use of static_branch_unlikely() to
-> static_branch_likely() for switch_to_cond_stibp.
+fs/ocfs2/localalloc.c:1289:14-21: WARNING opportunity for kmemdup
+fs/ocfs2/localalloc.c:441:14-21: WARNING opportunity for kmemdup
 
-So now you're making kernels on 'fixed' or unaffected hardware slower.
+Use kmemdup rather than duplicating its implementation
 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 2 +-
->  arch/x86/kernel/process.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index a68b32c..bd11119 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -153,7 +153,7 @@ void __init check_bugs(void)
->  			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
->  
->  		/* Conditional STIBP enabled? */
-> -		if (static_branch_unlikely(&switch_to_cond_stibp))
-> +		if (static_branch_likely(&switch_to_cond_stibp))
->  			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
->  
->  		if (hostval != guestval) {
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 7d31192..39a21ae 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -434,7 +434,7 @@ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
->  	 * otherwise avoid the MSR write.
->  	 */
->  	if (IS_ENABLED(CONFIG_SMP) &&
-> -	    static_branch_unlikely(&switch_to_cond_stibp)) {
-> +	    static_branch_likely(&switch_to_cond_stibp)) {
->  		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
->  		msr |= stibp_tif_to_spec_ctrl(tifn);
->  	}
-> -- 
-> 1.8.3.1
-> 
+Generated by: scripts/coccinelle/api/memdup.cocci
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Mark Fasheh <mark@fasheh.com>
+CC: Joel Becker <jlbec@evilplan.org>
+CC: ocfs2-devel@oss.oracle.com
+CC: linux-kernel@vger.kernel.org
+---
+ fs/ocfs2/localalloc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 58973e4d2471..3f3047fb934b 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -438,12 +438,11 @@ void ocfs2=5Fshutdown=5Flocal=5Falloc(struct ocfs2=5F=
+super *osb)
+ 	bh =3D osb->local=5Falloc=5Fbh;
+ 	alloc =3D (struct ocfs2=5Fdinode *) bh->b=5Fdata;
+=20
+-	alloc=5Fcopy =3D kmalloc(bh->b=5Fsize, GFP=5FNOFS);
++	alloc=5Fcopy =3D kmemdup(alloc, bh->b=5Fsize, GFP=5FNOFS);
+ 	if (!alloc=5Fcopy) {
+ 		status =3D -ENOMEM;
+ 		goto out=5Fcommit;
+ 	}
+-	memcpy(alloc=5Fcopy, alloc, bh->b=5Fsize);
+=20
+ 	status =3D ocfs2=5Fjournal=5Faccess=5Fdi(handle, INODE=5FCACHE(local=5Fal=
+loc=5Finode),
+ 					 bh, OCFS2=5FJOURNAL=5FACCESS=5FWRITE);
+@@ -1286,13 +1285,12 @@ static int ocfs2=5Flocal=5Falloc=5Fslide=5Fwindow(s=
+truct ocfs2=5Fsuper *osb,
+ 	 * local alloc shutdown won't try to double free main bitmap
+ 	 * bits. Make a copy so the sync function knows which bits to
+ 	 * free. */
+-	alloc=5Fcopy =3D kmalloc(osb->local=5Falloc=5Fbh->b=5Fsize, GFP=5FNOFS);
++	alloc=5Fcopy =3D kmemdup(alloc, osb->local=5Falloc=5Fbh->b=5Fsize, GFP=5F=
+NOFS);
+ 	if (!alloc=5Fcopy) {
+ 		status =3D -ENOMEM;
+ 		mlog=5Ferrno(status);
+ 		goto bail;
+ 	}
+-	memcpy(alloc=5Fcopy, alloc, osb->local=5Falloc=5Fbh->b=5Fsize);
+=20
+ 	status =3D ocfs2=5Fjournal=5Faccess=5Fdi(handle,
+ 					 INODE=5FCACHE(local=5Falloc=5Finode),
+--=20
+2.19.1
+
