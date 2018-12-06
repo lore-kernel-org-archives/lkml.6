@@ -2,231 +2,218 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14EFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A8FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B142146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FA2F20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:08:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exBlxDSj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B142146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="uBdfEN6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA2F20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbeLFXII (ORCPT
+        id S1726244AbeLFXIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:08:08 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33152 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbeLFXIH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:08:07 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z11so821345pgu.0;
-        Thu, 06 Dec 2018 15:08:06 -0800 (PST)
+        Thu, 6 Dec 2018 18:08:40 -0500
+Received: from mail-eopbgr740048.outbound.protection.outlook.com ([40.107.74.48]:65432
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726226AbeLFXIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:08:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ezkaT4Ec4xBLAgz7aCF1tAyDAzze9Mk68K5AmyOWWvk=;
-        b=exBlxDSjH2x+GL/xdqSaTqexl4UeRqZQEjUbXYwRbCOK2VFF6NZqF45OYm1nqknbCH
-         sy0qvR8j0a4F5rSZaPcrhvQOyYvTOuz5T7JVhJMqaboOumZfE/hs5uJrWF2cIWNc/FuS
-         ZtnqIfAYXe0nq6Q0HBIKxTDYIOUycxHjQMofML1eefUHoQt2/8INLOvpw93PKsY5GcsO
-         gJw/ZNk08L9DxgxjqqnGX+D1sYGrQBqZtU7ePeo5vaCf56C31kXJtDxQOQl8Pt1Qiazb
-         axeU724Wy0fOKF6drWxzpTDQn3Ihmo2xkNQRnLr8GsDyJGHWvYQPw26/ignPVMbzAgwM
-         0/Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ezkaT4Ec4xBLAgz7aCF1tAyDAzze9Mk68K5AmyOWWvk=;
-        b=ub0LTHmy7aak02gmPu0+AS6zOrKw8RlF+rwfoI1eBpI0uX1ddAzU5WTECqHMM85LVu
-         9k5qyJv6Jm5p/po5AP3/8X1bpRKl+R7KoKzJZBn+tbrWBjDY+GpY3+h5bcPymdfDXBIH
-         8BfTATNrrst5HWVGUjFbwMONAHe5QwIaClJfWvb2wHsMpL8NhMLE5eMAhyoYZLBMYbEo
-         a7X5l/yBiVczhopXrChm+0fTbOUEGyxeHyYNcBvsPsYWFDW3NgiMaZ4JRXVQfJeo1sUV
-         RIHymptS9IPWn0T8Y5OrmmHr8WR8o6fip7PIbfzybPf3PF4kJdwMWmDCVZ9LTQk+XEqC
-         T/ag==
-X-Gm-Message-State: AA+aEWYCqlDvzTCCCPF8K+2iJiQtzAHuHkeUmIZtMaWYumvmFWO2ys0K
-        HaPR1/6+7Si5pGIdNifyMpM=
-X-Google-Smtp-Source: AFSGD/VG65nPVtV9dJbqR6XgzdXR4i8T803KTgVPJxFpResI5GxiX/myOtjypKfbNr6Wfb09qLzjZw==
-X-Received: by 2002:a63:ef47:: with SMTP id c7mr26098089pgk.386.1544137686022;
-        Thu, 06 Dec 2018 15:08:06 -0800 (PST)
-Received: from [10.2.19.70] ([208.91.2.1])
-        by smtp.gmail.com with ESMTPSA id e128sm1807995pfe.67.2018.12.06.15.08.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 15:08:04 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH 1/2] vmalloc: New flag for flush before releasing pages
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrUbmmcL7pixsP9AH1-AE2WMVgbDkoP_E4wAJMbuZ0CzCg@mail.gmail.com>
-Date:   Thu, 6 Dec 2018 15:08:02 -0800
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jann Horn <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EFB09636-D34F-4C63-87E6-76C49007C2CA@gmail.com>
-References: <20181128000754.18056-1-rick.p.edgecombe@intel.com>
- <20181128000754.18056-2-rick.p.edgecombe@intel.com>
- <4883FED1-D0EC-41B0-A90F-1A697756D41D@gmail.com>
- <20181204160304.GB7195@arm.com>
- <51281e69a3722014f718a6840f43b2e6773eed90.camel@intel.com>
- <CALCETrUiEWkSjnruCbBSi8WsDm071YiU5WEqoPhZbjezS0CrFw@mail.gmail.com>
- <20181205114148.GA15160@arm.com>
- <CALCETrUdTShjY+tQoRsE1uR1cnL9cr2Trbz-g5=WaLGA3rWXzA@mail.gmail.com>
- <CAKv+Gu_EEjhwbfp1mdB0Pu3ZyAsZgNeaCDArs569hAeWzHMWpw@mail.gmail.com>
- <CALCETrVedB7yacMU=i3JaUZxiwsnM+PnABfG48K9TZK32UWshA@mail.gmail.com>
- <20181206190115.GC10086@cisco>
- <CALCETrUmxht8dibJPBbPudQnoe6mHsKocEBgkJ7O1eFrVBfekQ@mail.gmail.com>
- <F5664C1D-C3E7-433B-8E5A-7967023E0567@gmail.com>
- <CALCETrUbmmcL7pixsP9AH1-AE2WMVgbDkoP_E4wAJMbuZ0CzCg@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.101.1)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bcVc/dyMZLe+/zvLHtN8rNVqY4rti0P3BJlT1eraADQ=;
+ b=uBdfEN6VOwso4Co7tv5R03R13pwh6uuJQ361ptYXCnnl9paXjkIvXT6Z574F14nugRVrLpo1cZpxCEmRXC/oGViF+V8haWfpzGBB9T5bLZp7gBziaZ6uH/bZU1jR1dgQleyjiB8d2zCjT1F4xrDfWnIOpoL50d8KoZbSGVqvDHA=
+Received: from DM5PR0201MB3525.namprd02.prod.outlook.com (10.167.106.13) by
+ DM5PR0201MB3541.namprd02.prod.outlook.com (10.167.106.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.21; Thu, 6 Dec 2018 23:08:34 +0000
+Received: from DM5PR0201MB3525.namprd02.prod.outlook.com
+ ([fe80::8571:d4a3:73e6:913]) by DM5PR0201MB3525.namprd02.prod.outlook.com
+ ([fe80::8571:d4a3:73e6:913%2]) with mapi id 15.20.1404.020; Thu, 6 Dec 2018
+ 23:08:33 +0000
+From:   Jolly Shah <JOLLYS@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Nava kishore Manne <navam@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
+Thread-Topic: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
+Thread-Index: AQHUfggvkVKuttW8xEq5Oarr4c4vt6VvPxIAgAFr3pCAACp4AIABnj2A
+Date:   Thu, 6 Dec 2018 23:08:33 +0000
+Message-ID: <DM5PR0201MB35254435007BB1A4272160A6B8A90@DM5PR0201MB3525.namprd02.prod.outlook.com>
+References: <1542412619-387-1-git-send-email-jollys@xilinx.com>
+ <20181204220612.GA640@bogus>
+ <SN4PR0201MB3536E825E836337D1535B812B8A80@SN4PR0201MB3536.namprd02.prod.outlook.com>
+ <20181205222032.GA810@bogus>
+In-Reply-To: <20181205222032.GA810@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=JOLLYS@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR0201MB3541;6:aBUv9k/P51yp4JX0kcym+MLAgclBe/ZbIPbWPsFtp29OOWJ4oVEaLESCvgVc+uc7BufyUk1dPByDbVZKDbNc9LFQ3DhmOXhCjfq8ArrP8KPb0hBcuqTZRz9BD8D/d5OKL0zln0z40RFRBfUd0a6t6i6vQJ6fbOUen7bpP8E0vIZskesgLNMUkn2lP77/MWGgqVbbeEl8+nUIgzxKeQvZatpohgC49B9uml3hFMm+OLXhwy2YJYYz2tIMiY/bQ9LMmP1ECb0l0cRbvx/EDLdzRuMFaRDthJh3A1wKikx9GRVi4FmYk0XUnhipuE2CNurhD8d5y5WUnuqCl2cLA6tf7BfUqb4usQUYvf3PJtOV7D3Lpcm8SBta7pz0Ct70uYxgjSc4nI85EkekK7k/yMpjj+2W/GuW+ajw680pbxPzhkgrvJeznAcodK33HKJ2267oSnpdABoTqvfbwbaaOqETYw==;5:Rt5//uN+VKmVmBWTjxs6mP1TaxnUw5bf1wlQjcaFVaVebkpBR6YQdalUmKajzmwLj1R2nq/LdG9TKFT9vRgK3GlGw1UmngCRQ44wbas3rQ5uJHVrz/lJBxaTxN7kFQxkD3v26fYevx0JDXLQhst1CdF/li7yJ1qK+DvGSIeH7Tc=;7:fJH+LxKDaYROiI4upaR5b/xEeVqjDuAyc+oo4LAAiWyS1UTwERpKyBK8bA3li5ISIowNAs2UzfvW4STyh3/+bXABBb7C+Fel1lIro7Xi6fA53QoiDL4ku9JdByyen0bAMqCM6uynl/o7nHJ31g4cEw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(376002)(39840400004)(136003)(13464003)(199004)(189003)(51914003)(106356001)(105586002)(25786009)(478600001)(186003)(2906002)(14454004)(86362001)(6506007)(53546011)(76176011)(93886005)(26005)(97736004)(6246003)(7696005)(5660300001)(102836004)(99286004)(66066001)(53936002)(81166006)(3846002)(54906003)(81156014)(6116002)(8676002)(7736002)(4326008)(8936002)(74316002)(305945005)(256004)(68736007)(9686003)(575784001)(72206003)(33656002)(71200400001)(55016002)(71190400001)(316002)(6916009)(14444005)(229853002)(486006)(11346002)(6436002)(476003)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0201MB3541;H:DM5PR0201MB3525.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: ebaaffb2-f6ad-49aa-cf27-08d65bcfbed4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR0201MB3541;
+x-ms-traffictypediagnostic: DM5PR0201MB3541:
+x-microsoft-antispam-prvs: <DM5PR0201MB354168877A779552278131F2B8A90@DM5PR0201MB3541.namprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR0201MB3541;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0201MB3541;
+x-forefront-prvs: 087894CD3C
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: KsikKx/Szbcrao8KYr3zgKQNZZzYw3DA6gmXvwwSRwXw/llD5FZNy5jRekc21jAyEXdR6ONgl3uYYc1FRyutgNJTYV+rEQNE/qr1N/z0wMQYXNDoluLFu/GhAvAxACqnhqRQrrqaDBkqDcOCmTWlCCy4UwLnfc5FhxpjsVy5R0QMPDuTZLqHAHArInNzr4ZgTsl0kZ6xczZ0dr2QVr+Xio3CfKpnclXRU00gLrXRSL5ZoZSjNiLLqeDl55IryWt9Amk7jS2+xx6N4lz1BSlJsNxsAYHyaZf7GeXdZVYys26kqied2v7l9ZLJ+cLK5mfYPD4HjU6jaN9sn3ldmRVGfKts6S84A8xp9rsnEVOJSyU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebaaffb2-f6ad-49aa-cf27-08d65bcfbed4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 23:08:33.6073
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0201MB3541
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 6, 2018, at 12:17 PM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> On Thu, Dec 6, 2018 at 11:39 AM Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->>> On Dec 6, 2018, at 11:19 AM, Andy Lutomirski <luto@kernel.org> =
-wrote:
->>>=20
->>> On Thu, Dec 6, 2018 at 11:01 AM Tycho Andersen <tycho@tycho.ws> =
-wrote:
->>>> On Thu, Dec 06, 2018 at 10:53:50AM -0800, Andy Lutomirski wrote:
->>>>>> If we are going to unmap the linear alias, why not do it at =
-vmalloc()
->>>>>> time rather than vfree() time?
->>>>>=20
->>>>> That=E2=80=99s not totally nuts. Do we ever have code that expects =
-__va() to
->>>>> work on module data?  Perhaps crypto code trying to encrypt static
->>>>> data because our APIs don=E2=80=99t understand virtual addresses.  =
-I guess if
->>>>> highmem is ever used for modules, then we should be fine.
->>>>>=20
->>>>> RO instead of not present might be safer.  But I do like the idea =
-of
->>>>> renaming Rick's flag to something like VM_XPFO or VM_NO_DIRECT_MAP =
-and
->>>>> making it do all of this.
->>>>=20
->>>> Yeah, doing it for everything automatically seemed like it was/is
->>>> going to be a lot of work to debug all the corner cases where =
-things
->>>> expect memory to be mapped but don't explicitly say it. And in
->>>> particular, the XPFO series only does it for user memory, whereas =
-an
->>>> additional flag like this would work for extra paranoid allocations
->>>> of kernel memory too.
->>>=20
->>> I just read the code, and I looks like vmalloc() is already using
->>> highmem (__GFP_HIGH) if available, so, on big x86_32 systems, for
->>> example, we already don't have modules in the direct map.
->>>=20
->>> So I say we go for it.  This should be quite simple to implement --
->>> the pageattr code already has almost all the needed logic on x86.  =
-The
->>> only arch support we should need is a pair of functions to remove a
->>> vmalloc address range from the address map (if it was present in the
->>> first place) and a function to put it back.  On x86, this should =
-only
->>> be a few lines of code.
->>>=20
->>> What do you all think?  This should solve most of the problems we =
-have.
->>>=20
->>> If we really wanted to optimize this, we'd make it so that
->>> module_alloc() allocates memory the normal way, then, later on, we
->>> call some function that, all at once, removes the memory from the
->>> direct map and applies the right permissions to the vmalloc alias =
-(or
->>> just makes the vmalloc alias not-present so we can add permissions
->>> later without flushing), and flushes the TLB.  And we arrange for
->>> vunmap to zap the vmalloc range, then put the memory back into the
->>> direct map, then free the pages back to the page allocator, with the
->>> flush in the appropriate place.
->>>=20
->>> I don't see why the page allocator needs to know about any of this.
->>> It's already okay with the permissions being changed out from under =
-it
->>> on x86, and it seems fine.  Rick, do you want to give some variant =
-of
->>> this a try?
->>=20
->> Setting it as read-only may work (and already happens for the =
-read-only
->> module data). I am not sure about setting it as non-present.
->>=20
->> At some point, a discussion about a threat-model, as Rick indicated, =
-would
->> be required. I presume ROP attacks can easily call =
-set_all_modules_text_rw()
->> and override all the protections.
->=20
-> I am far from an expert on exploit techniques, but here's a
-> potentially useful model: let's assume there's an attacker who can
-> write controlled data to a controlled kernel address but cannot
-> directly modify control flow.  It would be nice for such an attacker
-> to have a very difficult time of modifying kernel text or of
-> compromising control flow.  So we're assuming a feature like kernel
-> CET or that the attacker finds it very difficult to do something like
-> modifying some thread's IRET frame.
->=20
-> Admittedly, for the kernel, this is an odd threat model, since an
-> attacker can presumably quite easily learn the kernel stack address of
-> one of their tasks, do some syscall, and then modify their kernel
-> thread's stack such that it will IRET right back to a fully controlled
-> register state with RSP pointing at an attacker-supplied kernel stack.
-> So this threat model gives very strong ROP powers. unless we have
-> either CET or some software technique to harden all the RET
-> instructions in the kernel.
->=20
-> I wonder if there's a better model to use.  Maybe with stack-protector
-> we get some degree of protection?  Or is all of this is rather weak
-> until we have CET or a RAP-like feature.
-
-I believe that seeing the end-goal would make reasoning about patches
-easier, otherwise the complaint =E2=80=9Cbut anyhow it=E2=80=99s all =
-insecure=E2=80=9D keeps popping
-up.
-
-I=E2=80=99m not sure CET or other CFI would be enough even with this =
-threat-model.
-The page-tables (the very least) need to be write-protected, as =
-otherwise
-controlled data writes may just modify them. There are various possible
-solutions I presume: write_rare for page-tables, hypervisor-assisted
-security to obtain physical level NX/RO (a-la Microsoft VBS) or some =
-sort of
-hardware enclave.
-
-What do you think?=
+SGkgUm9iLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYiBIZXJy
+aW5nIFttYWlsdG86cm9iaEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVy
+IDA1LCAyMDE4IDI6MjEgUE0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPg0K
+PiBDYzogbWFyay5ydXRsYW5kQGFybS5jb207IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBO
+YXZhIGtpc2hvcmUgTWFubmUNCj4gPG5hdmFtQHhpbGlueC5jb20+OyBsaW51eC1rZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyBSYWphbiBWYWphDQo+IDxSQUpBTlZAeGlsaW54LmNvbT47IE1pY2hhbCBT
+aW1layA8bWljaGFsc0B4aWxpbnguY29tPjsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5m
+cmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvOV0gZHQtYmluZGluZ3M6IEZpcm13
+YXJlIG5vZGUgYmluZGluZyBmb3IgWnlucU1QIGNvcmUNCj4gDQo+IE9uIFdlZCwgRGVjIDA1LCAy
+MDE4IGF0IDA4OjI5OjM2UE0gKzAwMDAsIEpvbGx5IFNoYWggd3JvdGU6DQo+ID4gSGkgUm9iLA0K
+PiA+DQo+ID4gVGhhbmtzIGZvciB0aGUgcmV2aWV3LiBQbGVhc2UgZmluZCBteSByZXNwb25zZXMg
+aW5saW5lLg0KPiANCj4gWW91IG5lZWQgdG8gZml4IHlvdXIgbWFpbCBjbGllbnQgdG8gd3JhcCBs
+aW5lcy4NCg0KVGhhbmtzIEkgd2lsbC4NCg0KPiANCj4gPiBUaGFua3MsDQo+ID4gSm9sbHkgU2hh
+aA0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTogUm9i
+IEhlcnJpbmcgW21haWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+ID4gPiBTZW50OiBUdWVzZGF5LCBE
+ZWNlbWJlciAwNCwgMjAxOCAyOjA2IFBNDQo+ID4gPiBUbzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhp
+bGlueC5jb20+DQo+ID4gPiBDYzogbWFyay5ydXRsYW5kQGFybS5jb207IE1pY2hhbCBTaW1layA8
+bWljaGFsc0B4aWxpbnguY29tPjsgUmFqYW4gVmFqYQ0KPiA+ID4gPFJBSkFOVkB4aWxpbnguY29t
+PjsgTmF2YSBraXNob3JlIE1hbm5lIDxuYXZhbUB4aWxpbnguY29tPjsgbGludXgtDQo+IGFybS0N
+Cj4gPiA+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOw0KPiA+ID4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IEpvbGx5IFNoYWggPEpP
+TExZU0B4aWxpbnguY29tPg0KPiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAwLzldIGR0LWJpbmRp
+bmdzOiBGaXJtd2FyZSBub2RlIGJpbmRpbmcgZm9yIFp5bnFNUA0KPiBjb3JlDQo+ID4gPg0KPiA+
+ID4gT24gRnJpLCBOb3YgMTYsIDIwMTggYXQgMDM6NTY6NTBQTSAtMDgwMCwgSm9sbHkgU2hhaCB3
+cm90ZToNCj4gPiA+ID4gQmFzZSBmaXJtd2FyZSBub2RlIGFuZCBjbG9jayBjaGlsZCBub2RlIGJp
+bmRpbmcgYXJlIHBhcnQgb2YgbWFpbmxpbmUNCj4ga2VybmVsLg0KPiA+ID4gVGhpcyBwYXRjaHNl
+dCBhZGRzIGRvY3VtZW50YXRpb24gdG8gZGVzY3JpYmUgcmVzdCBvZiB0aGUgZmlybXdhcmUgY2hp
+bGQNCj4gbm9kZQ0KPiA+ID4gYmluZGluZ3MuDQo+ID4gPiA+IENvbXBsZXRlIGZpcm13YXJlIERU
+IG5vZGUgZXhhbXBsZSBpcyBzaG93biBiZWxvdyBmb3IgZWFzZSBvZg0KPiA+ID4gdW5kZXJzdGFu
+ZGluZzoNCj4gPiA+DQo+ID4gPiBTaG91bGRuJ3QgdGhlcmUgYmUgYSBmcGdhIG1nciBub2RlIHRv
+bz8gQ2FsbGVkIHBjYXAgSUlSQy4NCj4gPiA+DQo+ID4gW0pvbGx5XSBBcyB5b3Ugc3VnZ2VzdGVk
+LCB3ZSBvbmx5IGFkZGVkIGNoaWxkIG5vZGVzIGlmIHRoZQ0KPiA+IHN1Yi1mdW5jdGlvbnMgaGF2
+ZSB0aGVpciBvd24gcmVzb3VyY2VzIChjbGtzLCBpcnFzLCBldGMuKS4gRlBHQSBkb2Vzbid0DQo+
+ID4gaGF2ZSBhbnkgcmVzb3VyY2VzIHNvIG5vdCBhZGRlZCAuIEZpcm13YXJlIGRyaXZlciB3b3Vs
+ZCBzdGlsbCByZWdpc3Rlcg0KPiA+IGl0IGFzIG1mZCBkZXZpY2UgdG8gaW5zdGFudGlhdGUgdGhl
+IGRyaXZlci4NCj4gDQo+IE9rYXksIGJ1dCB3b24ndCB0aGVpciBuZWVkIHRvIGJlIGNoaWxkIGRl
+dmljZXMgZm9yDQoNClRoZXJlIGFyZSBubyBmcGdhIGNoaWxkIGRldmljZXMuIFNob3VsZCBpdCBi
+ZSBtb3ZlZCBvdXQ/DQoNCj4gDQo+IA0KPiA+DQo+ID4gPiA+DQo+ID4gPiA+IGZpcm13YXJlIHsN
+Cj4gPiA+ID4gCXp5bnFtcF9maXJtd2FyZTogenlucW1wLWZpcm13YXJlIHsNCj4gPiA+ID4gCQlj
+b21wYXRpYmxlID0gInhsbngsenlucW1wLWZpcm13YXJlIjsNCj4gPiA+ID4gCQltZXRob2QgPSAi
+c21jIjsNCj4gPiA+ID4gCQkjcG93ZXItZG9tYWluLWNlbGxzID0gPDE+Ow0KPiA+ID4gPiAJCSNy
+ZXNldC1jZWxscyA9IDwxPjsNCj4gPiA+ID4NCj4gPiA+ID4gCQl6eW5xbXBfY2xrOiBjbG9jay1j
+b250cm9sbGVyIHsNCj4gPiA+ID4gCQkJI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPiA+ID4gPiAJCQlj
+b21wYXRpYmxlID0gInhsbngsenlucW1wLWNsayI7DQo+ID4gPiA+IAkJCWNsb2NrcyA9IDwmcHNz
+X3JlZl9jbGs+LCA8JnZpZGVvX2Nsaz4sDQo+ID4gPiA8JnBzc19hbHRfcmVmX2Nsaz4sIDwmYXV4
+X3JlZl9jbGs+LCA8Jmd0X2NyeF9yZWZfY2xrPjsNCj4gPiA+ID4gCQkJY2xvY2stbmFtZXMgPSAi
+cHNzX3JlZl9jbGsiLCAidmlkZW9fY2xrIiwNCj4gPiA+ICJwc3NfYWx0X3JlZl9jbGsiLCJhdXhf
+cmVmX2NsayIsICJndF9jcnhfcmVmX2NsayI7DQo+ID4gPiA+IAkJfTsNCj4gPiA+ID4NCj4gPiA+
+ID4gCQl6eW5xbXBfcG93ZXI6IHp5bnFtcC1wb3dlciB7DQo+ID4gPiA+IAkJCWNvbXBhdGlibGUg
+PSAieGxueCx6eW5xbXAtcG93ZXIiOw0KPiA+ID4gPiAJCQlpbnRlcnJ1cHRzID0gPDAgMzUgND47
+DQo+ID4gPiA+IAkJfTsNCj4gPiA+ID4NCj4gPiA+ID4gCQludm1lbV9maXJtd2FyZSB7DQo+ID4g
+PiA+IAkJCWNvbXBhdGlibGUgPSAieGxueCx6eW5xbXAtbnZtZW0tZnciOw0KPiA+ID4gPiAJCQkj
+YWRkcmVzcy1jZWxscyA9IDwxPjsNCj4gPiA+ID4gCQkJI3NpemUtY2VsbHMgPSA8MT47DQo+ID4g
+PiA+DQo+ID4gPiA+IAkJCS8qIERhdGEgY2VsbHMgKi8NCj4gPiA+ID4gCQkJc29jX3JldmlzaW9u
+OiBzb2NfcmV2aXNpb24gew0KPiA+ID4gPiAJCQkJcmVnID0gPDB4MCAweDQ+Ow0KPiA+ID4gPiAJ
+CQl9Ow0KPiA+ID4gPiAJCX07DQo+ID4gPiA+DQo+ID4gPiA+IAkJYWZpMDogYWZpMCB7DQo+ID4g
+PiA+IAkJCWNvbXBhdGlibGUgPSAieGxueCxhZmktZnBnYSI7DQo+ID4gPiA+IAkJCWNvbmZpZy1h
+ZmkgPSA8MCAyPiwgPDEgMT4sIDwyIDE+Ow0KPiA+ID4gPiAJCX07DQo+ID4gPiA+DQo+ID4gPiA+
+IAkJcXNwaTogc3BpQGZmMGYwMDAwIHsNCj4gPiA+DQo+ID4gPiBXaHkgaXMgdGhpcyB1bmRlciBm
+aXJtd2FyZSBub2RlPw0KPiA+IFtKb2xseV0gUXNwaSBpcyBhIHVzZXIgb2YgZWVtaSBBUEkgcHJv
+dmlkZWQgYnkgZmlybXdhcmUgbm9kZSB0bw0KPiA+IHBlcmZvcm0gcHJpdmlsZWdlZCByZWdpc3Rl
+ciB3cml0ZXMuIEFsdGVybmF0aXZlbHksIHdlIGNhbiBrZWVwIHN1Y2gNCj4gPiB1c2VyIG5vZGVz
+IG91dHNpZGUgb2YgZmlybXdhcmUgbm9kZSBhbmQga2VlcCBub2RlcyB3aGljaCBmaXJtd2FyZSBp
+cw0KPiA+IHByb3ZpZGVyIGZvciBsaWtlIGNsb2NrLCByZXNldCwgcGlucyBhbmQgcG93ZXIuDQo+
+ID4gUGxlYXNlIHN1Z2dlc3QuDQo+IA0KPiBDaGlsZCBub2RlcyBvZiB0aGUgZmlybXdhcmUgc2hv
+dWxkIGJlIHByb3ZpZGVycywgbm90IGNvbnN1bWVycyAob2YgdGhlDQo+IGZpcm13YXJlKS4gSWYg
+eW91IGhhZCBhIGZpcm13YXJlIGludGVyZmFjZSB0byB0aGF0IHByb3ZpZGVkIGEgU1BJDQo+IGlu
+dGVyZmFjZSwgdGhlbiBpdCB3b3VsZCBiZSBoZXJlLiBCdXQganVzdCBoYXZpbmcgYSBzcGVjaWFs
+IG1lY2hhbmlzbSB0bw0KPiBhY2Nlc3MgdGhlIHJlZ2lzdGVycy4NCg0KT2sgZ290IGl0LiBTbyB3
+aWxsIG1vdmUgaXQgb3V0Lg0KDQo+IA0KPiA+ID4NCj4gPiA+ID4gCQkJY29tcGF0aWJsZSA9ICJ4
+bG54LHp5bnFtcC1xc3BpLTEuMCI7DQo+IA0KPiBJZiB0aGlzIHNhbWUgYmxvY2sgd29ya3Mgd2l0
+aCB1bnByaXZpbGVnZWQgYWNjZXNzZXMsIHRoZW4geW91IHdpbGwgbmVlZA0KPiBzb21lIHdheSB0
+byBkaXN0aW5ndWlzaCB0aGF0Lg0KPiANCj4gPiA+ID4gCQkJY2xvY2stbmFtZXMgPSAicmVmX2Ns
+ayIsICJwY2xrIjsNCj4gPiA+ID4gCQkJY2xvY2tzID0gPCZtaXNjX2NsayAmbWlzY19jbGs+Ow0K
+PiA+ID4gPiAJCQlpbnRlcnJ1cHRzID0gPDAgMTUgND47DQo+ID4gPiA+IAkJCWludGVycnVwdC1w
+YXJlbnQgPSA8JmdpYz47DQo+ID4gPiA+IAkJCW51bS1jcyA9IDwxPjsNCj4gPiA+ID4gCQkJcmVn
+ID0gPDB4MCAweGZmMGYwMDAwIDB4MTAwMD4sPDB4MCAweGMwMDAwMDAwDQo+ID4gPiAweDgwMDAw
+MDA+Ow0KPiA+ID4gPiAJCX07DQo+ID4gPiA+DQo+ID4gPiA+IAkJc2VyZGVzOiB6eW5xbXBfcGh5
+QGZkNDAwMDAwIHsNCj4gPiA+DQo+ID4gPiBBbmQgdGhpcz8NCj4gPg0KPiA+IFtKb2xseV0gU2Ft
+ZSBhcyBhYm92ZS4NCj4gPg0KPiA+ID4NCj4gPiA+ID4gCQkJY29tcGF0aWJsZSA9ICJ4bG54LHp5
+bnFtcC1wc2d0ciI7DQo+ID4gPiA+IAkJCXN0YXR1cyA9ICJva2F5IjsNCj4gPiA+ID4gCQkJcmVn
+ID0gPDB4MCAweGZkNDAwMDAwIDB4MCAweDQwMDAwPiwgPDB4MCAweGZkM2QwMDAwDQo+ID4gPiAw
+eDAgMHgxMDAwPiwNCj4gPiA+ID4gCQkJCTwweDAgMHhmZjVlMDAwMCAweDAgMHgxMDAwPjsNCj4g
+PiA+ID4gCQkJcmVnLW5hbWVzID0gInNlcmRlcyIsICJzaW91IiwgImxwZCI7DQo+ID4gPiA+DQo+
+ID4gPiA+IAkJCWxhbmUwOiBsYW5lQDAgew0KPiA+ID4gPiAJCQkJI3BoeS1jZWxscyA9IDw0PjsN
+Cj4gPiA+ID4gCQkJfTsNCj4gPiA+ID4gCQkJbGFuZTE6IGxhbmVAMSB7DQo+ID4gPiA+IAkJCQkj
+cGh5LWNlbGxzID0gPDQ+Ow0KPiA+ID4gPiAJCQl9Ow0KPiA+ID4gPiAJCQlsYW5lMjogbGFuZUAy
+IHsNCj4gPiA+ID4gCQkJCSNwaHktY2VsbHMgPSA8ND47DQo+ID4gPiA+IAkJCX07DQo+ID4gPiA+
+IAkJCWxhbmUzOiBsYW5lQDMgew0KPiA+ID4gPiAJCQkJI3BoeS1jZWxscyA9IDw0PjsNCj4gPiA+
+ID4gCQkJfTsNCj4gPiA+ID4gCQl9Ow0KPiA+ID4gPg0KPiA+ID4gPiAJCXBpbmN0cmxfdWFydDFf
+ZGVmYXVsdDogdWFydDEtZGVmYXVsdCB7DQo+ID4gPg0KPiA+ID4gVGhpcyBnb2VzIHVuZGVyIGEg
+cGluY3RybCBub2RlLg0KPiA+IFtKb2xseV0gUGluY29udHJvbCBub2RlIGlzIG5vdCBhZGRlZCBh
+cyBpdCBkb2Vzbid0IGhhdmUgYW55DQo+ID4gcmVzb3VyY2VzLiBBcyBJIHVuZGVyc3RhbmQsIHlv
+dSBzdWdnZXN0IHRvIHN0aWxsIGFkZCBwaW5jb250cm9sIG5vZGUNCj4gPiBhbmQgdGhpcyB1bmRl
+ciBwaW5jb250cm9sIG5vZGUuDQo+IA0KPiBUaGVzZSBub2RlcyBhcmUgcmVzb3VyY2VzLCBzbyB5
+ZXMgeW91IHNob3VsZCBoYXZlIGEgY2hpbGQgaGVyZS4NCg0KR290IGl0LiBXaWxsIGFkZCBwaW5j
+dHJsIG5vZGUgYWxvbmcgd2l0aCBiZWxvdyByZXNvdXJjZXMuDQoNCj4gPg0KPiA+ID4NCj4gPiA+
+ID4gCQkJbXV4IHsNCj4gPiA+ID4gCQkJCWdyb3VwcyA9ICJ1YXJ0MF80X2dycCI7DQo+ID4gPiA+
+IAkJCQlmdW5jdGlvbiA9ICJ1YXJ0MCI7DQo+ID4gPiA+IAkJCX07DQo+ID4gPiA+DQo+ID4gPiA+
+IAkJCWNvbmYgew0KPiA+ID4gPiAJCQkJZ3JvdXBzID0gInVhcnQwXzRfZ3JwIjsNCj4gPiA+ID4g
+CQkJCXNsZXctcmF0ZSA9IDxTTEVXX1JBVEVfU0xPVz47DQo+ID4gPiA+IAkJCQlpby1zdGFuZGFy
+ZCA9IDxJT19TVEFOREFSRF9MVkNNT1MxOD47DQo+ID4gPiA+IAkJCX07DQo+ID4gPiA+DQo+ID4g
+PiA+IAkJCWNvbmYtcnggew0KPiA+ID4gPiAJCQkJcGlucyA9ICJNSU8xOCI7DQo+ID4gPiA+IAkJ
+CQliaWFzLWhpZ2gtaW1wZWRhbmNlOw0KPiA+ID4gPiAJCQl9Ow0KPiA+ID4gPg0KPiA+ID4gPiAJ
+CQljb25mLXR4IHsNCj4gPiA+ID4gCQkJCXBpbnMgPSAiTUlPMTkiOw0KPiA+ID4gPiAJCQkJYmlh
+cy1kaXNhYmxlOw0KPiA+ID4gPiAJCQkJc2NobWl0dC1jbW9zID0gPFBJTl9JTlBVVF9UWVBFX0NN
+T1M+Ow0KPiA+ID4gPiAJCQl9Ow0KPiA+ID4gPiAJCX07DQo+ID4gPiA+IAkJenlucW1wLXI1LXJl
+bW90ZXByb2NAMCB7DQo+ID4gPg0KPiA+ID4gV3JvbmcgdW5pdC1hZGRyZXNzIGFuZCB0aGlzIGRv
+ZXNuJ3QgYmVsb25nIGhlcmUuDQo+ID4gW0pvbGx5XSAgQWdhaW4gYXMgaXQgaXMgb25lIG9mIHRo
+ZSB1c2VyIG9mIGZpcm13YXJlIEFQSXMsIGl0cyBrZXB0DQo+ID4gaGVyZS4gQWx0ZXJuYXRpdmVs
+eSwgd2UgY2FuIGtlZXAgc3VjaCB1c2VyIG5vZGVzIG91dHNpZGUgb2YgZmlybXdhcmUNCj4gPiBu
+b2RlIGFuZCBrZWVwIG5vZGVzIHdoaWNoIGZpcm13YXJlIGlzIHByb3ZpZGVyIGZvciBsaWtlIGNs
+b2NrLCByZXNldCwNCj4gPiBwaW5zIGFuZCBwb3dlci4NCj4gPiBQbGVhc2Ugc3VnZ2VzdC4NCj4g
+DQo+IFllcywgaXQgc2hvdWxkIGJlIG91dHNpZGUgdGhpcy4NCg0KT2suIA0KDQo+IA0KPiA+ID4N
+Cj4gPiA+ID4gCQkJY29tcGF0aWJsZSA9ICJ4bG54LHp5bnFtcC1yNS1yZW1vdGVwcm9jLTEuMCI7
+DQo+ID4gPg0KPiA+ID4gJ3JlbW90ZXByb2MnIGlzIHdoYXQgdGhlIGgvdyBibG9jayBpcyBjYWxs
+ZWQ/DQo+ID4NCj4gPiBbSm9sbHldIFRoZSBodyBibG9jayBpcyBjYWxsZWQgcnB1Lg0KPiANCj4g
+VGhlbiBjYWxsIGl0IHRoYXQgaW4gdGhlIERULg0KDQpPay4NCg0KVGhhbmtzLA0KSm9sbHkgU2hh
+aA0KDQo+IA0KPiBSb2INCg==
