@@ -2,137 +2,144 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60BBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A8FC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABFFF21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoZr2plO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABFFF21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5730820989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5730820989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbeLFHdJ (ORCPT
+        id S1729310AbeLFHdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:33:09 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44242 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729287AbeLFHdI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:33:08 -0500
-Received: by mail-pl1-f194.google.com with SMTP id k8so11367718pls.11
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 23:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
-        b=hoZr2plOPuxeaxDOwX/82KyNCsezxbKlCZmlj+fGmiOro2P388n7hYFMl9TC5gGEzH
-         fgK2xoQoHMoNY9DRnEf4knK7/+NBs4J6D8+sp+WO3IVQR/7v4IiVAZEpcsC/weKDnizx
-         IVKHT8sdqIKHBSc3fAPNQOE189DFe1/qLZDqw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
-        b=k6Kaz3G5qva/EeeCIF55ctTz0q5QfB3bETmGKHowd2IbNKY+oPB62U2P1Pn+Cml6/R
-         t4Y6tFeJfR37lH/qj/iauA7lj6MhvLL3dUAd7CHoN4YxZhDR3isOE0QxlKNUxjBtrlxq
-         0Fbe5mMtT2Jrve+ANA8WBA3GurU1wwz7/NIPPqsDcGadIwvHt/JreMHcr9nP8bJURDcj
-         l7WMB/u+jpevjDAc6uWHUHkNarxSGjSDInN26xRU8z+SFlXadnAMxZhUrYOUz+bXPKSA
-         CC6hvKQ9iA7YqQ2sxlr42fl5pxdVs2wNsUWMyGrWUfM000BYPeI+AqZ47KUeUg8jvsQq
-         XUvw==
-X-Gm-Message-State: AA+aEWbvogXfLsRjXyYQy4WLnPkeoqus4SsG9bcm+0vjoy9zBxXuF6Xm
-        LcsRpMlgn+WA53kK0qNtvPigOA==
-X-Google-Smtp-Source: AFSGD/UQtJ4xW4HzmKoW+CFcP78zvDeUZ7GHgwiur6JRVpvHIn5glFTbzxgRYkn3meozL1V7dt8FZw==
-X-Received: by 2002:a17:902:d806:: with SMTP id a6mr26165686plz.172.1544081587396;
-        Wed, 05 Dec 2018 23:33:07 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h69sm30075331pge.4.2018.12.05.23.33.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 23:33:06 -0800 (PST)
-Date:   Wed, 5 Dec 2018 23:33:04 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Alex Elder <elder@linaro.org>,
-        David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, georgi.djakov@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org
-Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-Message-ID: <20181206073304.GB5232@tuxbook-pro>
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
- <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
- <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
- <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
- <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
- <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
- <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+        Thu, 6 Dec 2018 02:33:17 -0500
+Received: from mail-eopbgr740083.outbound.protection.outlook.com ([40.107.74.83]:21216
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729110AbeLFHdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 02:33:16 -0500
+Received: from CY4PR19CA0025.namprd19.prod.outlook.com (2603:10b6:903:103::11)
+ by DM3PR19MB0794.namprd19.prod.outlook.com (2603:10b6:0:1a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.22; Thu, 6 Dec
+ 2018 07:33:12 +0000
+Received: from BN1AFFO11FD020.protection.gbl (2a01:111:f400:7c10::103) by
+ CY4PR19CA0025.outlook.office365.com (2603:10b6:903:103::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1404.17 via Frontend Transport; Thu, 6 Dec 2018 07:33:12 +0000
+Authentication-Results: spf=softfail (sender IP is 208.19.99.221)
+ smtp.mailfrom=microchip.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=microchip.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ microchip.com discourages use of 208.19.99.221 as permitted sender)
+Received: from AUSMBX1.microsemi.net (208.19.99.221) by
+ BN1AFFO11FD020.mail.protection.outlook.com (10.58.52.80) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.1404.13 via Frontend Transport; Thu, 6 Dec 2018 07:33:11 +0000
+Received: from AUSMBX2.microsemi.net (10.201.34.32) by AUSMBX1.microsemi.net
+ (10.201.34.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Thu, 6 Dec 2018
+ 00:32:51 -0600
+Received: from server1.microsemi.net (10.188.116.209) by ausmbx2.microsemi.net
+ (10.201.34.32) with Microsoft SMTP Server id 15.1.1531.3 via Frontend
+ Transport; Thu, 6 Dec 2018 00:32:48 -0600
+From:   Wesley Sheng <wesley.sheng@microchip.com>
+To:     <kurt.schwemmer@microsemi.com>, <logang@deltatee.com>,
+        <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <wesleyshenggit@sina.com>, <wesley.sheng@microchip.com>
+Subject: [PATCH v2 1/3] ntb_hw_switchtec: debug print 64bit aligned crosslink BAR Numbers
+Date:   Thu, 6 Dec 2018 21:30:50 +0800
+Message-ID: <1544103052-28191-2-git-send-email-wesley.sheng@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
+References: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-Matching-Connectors: 131885551919890736;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
+X-Forefront-Antispam-Report: CIP:208.19.99.221;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(396003)(136003)(2980300002)(189003)(199004)(69596002)(105596002)(81156014)(48376002)(50466002)(106466001)(53416004)(8676002)(498600001)(2616005)(50226002)(446003)(476003)(126002)(486006)(6666004)(86362001)(336012)(2201001)(8936002)(11346002)(44832011)(81166006)(450100002)(47776003)(2906002)(107886003)(5660300001)(53936002)(305945005)(14444005)(356004)(51416003)(76176011)(26005)(77096007)(316002)(4326008)(16586007)(97736004)(110136005)(36756003)(68736007)(54906003)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR19MB0794;H:AUSMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD020;1:2/c80LEhId7lHdwSzmiEmMJ2giwK1m3789w40115EcdwnS/OPtgy+ytTtOxa89NiLwH7nMawBIWchhOSZh+t5bFAIjmqbnIbGj/PWl1fZD7TB7oggkD2agGBn6YSqbih
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6fda56b5-d911-4e60-77da-08d65b4d139e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:DM3PR19MB0794;
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;3:oVAGwcEjG6SIxJ+2ymSoQgIXXQ0k/+Sa7wsQQwXPgYLujz9aTuOn5GyNGIaOvVuDWZ+Fm9iR2quH/hHcoZ5LXnrf9EBgNTuMjmrEuZsmDYVFg+BZNSz9Y99enYHiEoR2ySadgXmUMCDrB71GfUC52GUSwUzuSAcM5Cl5tw0qzkCtzRj1p7WziJofil+BGr2pccy2df+S2wIFJW8oFuSoU2cPmyq3hsW01nqiijBMqCHD6xuLKDu8v/1czll+cfOroMdyxWsRznrI7VAobK7wmHzZjI/sOxlNXbgWsfmw0vMMbItjpKdzPTHi2SuOt+AeCwy2GVMBNT55IjaJGo6AzWxDf/fTCEB87xm+YxlIdzI=;25:re/DyDYqGwYFJAUORVpWbpQplQwg4unUOCpkAeOfDwyw29AO+fiiBbuxf0x2ZKw7nW+6Zqqu+Y4ozIb55HK1F5Gag6MVnMIT8ZZNbCuZGV7n0UTtBuEcDONalWzJpzmVmMkWHvX1/0vx13m0CdcB4P+Y2RCNoUIylrtsiKGSZhIDh0DampS+azL2RxTfFnimPaPIpM4fysoqdHRcS3ZheSsZB95DfSTh0ngOlr6IVyyxCTOm2QP216Q2fVXVSoKaWerwU6gLgLWfiaLIWVql9s67LUzjwv1cMUf0+fu2y9kB3DMhPDD+qzWdOX1CGpHiuDBnaIjNsy0CEcXb0nKMFg==;31:g35B7ZL+DlzjFZ4ESXnRSG4mphww9VbUd/yLcyhScSmclkBqtSGpDc+1eQqq5h4UC1K64NtQsdkjP2FNmfpl8l2pig3k1yTR710jE9Y7s+2Gu6j2fcoBtTFAG+SZSrLyPN/yOgNRjVefhyZ5W71+NwqvuSWq3L575AJ286B3EoxrNVnYxZzm8Gw4wh0AN4ol4dY3maLuwovIZjSvW56XZQ==
+X-MS-TrafficTypeDiagnostic: DM3PR19MB0794:
+X-Microsoft-Antispam-PRVS: <DM3PR19MB0794D595DB6D39FAC0632F6A95A90@DM3PR19MB0794.namprd19.prod.outlook.com>
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(6096035)(20161123565025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123563025)(20161123561025)(20161123556025)(20161123559100)(201708071742011)(7699051)(76991095);SRVR:DM3PR19MB0794;BCL:0;PCL:0;RULEID:(400006);SRVR:DM3PR19MB0794;
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;4:zQKCCKdRW5Owy1Grobxbodkn1OXb4M2fruSP+WTSTRGjjRnNWr1q3QbfBi4Mu5s/IrIN55sVl/MvevPdm8Rggu5hJoh8dSlFLsWVrrn1BxLH2rBcY6XIgQnvGXV4g1mJefFi//Vh6VfW4eOZag+se0X9Htna5cfPpzyBHa8i4yVSrHQdgU++qk4bIfHqd5lH6vcWu+PeD//f1LNEC/McGnn6FGNValBwaJNXvO76vlmsD/5EtDYTQH+/enm5qNpVZmfyUalafkIBA842KO16QA==
+X-Forefront-PRVS: 087894CD3C
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR19MB0794;23:QVqQHrTKH4IImvmOktooCxKrJ8fWyvU0WrllILbzS?=
+ =?us-ascii?Q?wyZMkC1iypivWQ5bwvAzCIXV6nYeuGkK8VfwjJpTw3YCjwIm0ghr4MZCKboh?=
+ =?us-ascii?Q?Y8fWH/2nqvZvnW9yeNkCK+vggX8VO2lAu35HmDRQ2H597U32PORVGCZR+RW2?=
+ =?us-ascii?Q?4IT/+b6pg+vAeaLaUCIgmzxWBWJmHq/xZHgzbgDXOxn9Y36vVtl6BVkMGTsd?=
+ =?us-ascii?Q?jTS7dYObENh6KgYwTCDWJd/5R+KmUDcAOPxjHHU5YuVpuKgDyBc6gyHB1wXu?=
+ =?us-ascii?Q?Lg0/LDr59SXoSwro1vgQL7o8CJT8DeDI4soSAgXYOJSKrBYbBrX3UCp2MWwh?=
+ =?us-ascii?Q?H9MOJjfVXt8bPa0tiSwDSCC+2maSYppNafktXGcvHpIO5VUTn3hMG2ZhKRiC?=
+ =?us-ascii?Q?OSDPL5SfuU9T6Nzvok7TEV3dbrL1OHCcJcubfxul9cALGE5PFdcCYu3NSuBu?=
+ =?us-ascii?Q?/RYqz8VI6ecrnx4kZuE0wdorMNJGGemkdN4CwjTJ0QadDEVbXdxlSsn4UsuC?=
+ =?us-ascii?Q?lOCea0cwJY3ewVT9PBKPDHifR4jeSLIqNb0Y/1Fpe0L3AY4Jm52+HMbnuJgA?=
+ =?us-ascii?Q?ki+gqNlLsfaBLhslasLWXXGuwOxRXRlMaspwQ/rYyxobT/XjEBc/eTVAarPb?=
+ =?us-ascii?Q?b5f2eKbrSyF7ULsWsDGf0oHUY74A80NPr8HYEelwEbVxDsSXpVFh+CLTsups?=
+ =?us-ascii?Q?u7INXDqnjESqwtCvARBoeCg76Jt5fZHVVWkeCna8YK1RKXLizSYgRaVJb+xf?=
+ =?us-ascii?Q?7lBDQ9OJ3Hp3/CLoK8bzgsNm6TcTgDupwOiTB8joudIa6dFEH8I3FIOx+Ana?=
+ =?us-ascii?Q?L9Q1bhUjDEziCAjMHaS4g1OYmkaYAD+uCp1yYK7tQirBTwMCL/wVjmJCZotC?=
+ =?us-ascii?Q?yOmeDKJZsHRLEFjJ2s6Rt9rEjMaSd5Jm4F4X0RV1Y4NTfRbbgCZf5IBGRxIN?=
+ =?us-ascii?Q?8BR0xbtfkYaAEeaTmyt72ZH69Gmqr2aeT3J6YoVw8s+YTiUwotjOsXI74Jaj?=
+ =?us-ascii?Q?jwpcSAfSyoHg4VkJZiItJQE4u9x4JH8QzDOnXIGn6j5BWzwBBQUwq2cMuPR2?=
+ =?us-ascii?Q?1CF5wY1TTOoX/owaOkPQ04K6T8co1MRq4u9nc70XykzQat5iIc2BEJ3BAqoL?=
+ =?us-ascii?Q?/eqj3U2acoLLMH462Pvtm4NFxnOlyUt5iYWBve8vjvD/xfCNx+X4svPgY3An?=
+ =?us-ascii?Q?OnJDwmjCscus78=3D?=
+X-Microsoft-Antispam-Message-Info: CGpARdc6uQntCv09lBh4ddb9Kj24NLzYpS8YKqitm0RdOJJjdrqjsOJyu2gdFKSTo0vB6rC8vHFIO2TyWD7PSGQqiQE3wOy5cLHNt45aJK+ZLMjyym7T9EuvgaAp0S6cQXW+mD19llJ3mbixR03H0ujxfdxpN0HAO0PmG68+niGjgAE9u/KiVvXzdtf4VuInN1h1VWKs8RAQl93zpT61XbRpvZrXMW5nGiN4K0AyunaFOvARYGKISMMi3FqzIypfLXdo8gaipTFjdRTsnDfSv1EIdtU9TiA7jnUJhfe1XHRhlW+KeXkYwmeZOqSAQO3fFknox6pjJfWxicNecLyRyA==
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;6:rWnCEWcrBsZt14t8aNl4GvMu1Vcgk+1aVWruc2qZ8hmV59lxq8Wg8KvEsQsIKO3ZWLHljgEjhCuh/QI3EVpvAfrYR+37Qd5rUoprhv9g3H9gr1w1ziI+dNQ2zmCpkmJmmQQtTQ/iIcRTAYoJ8rTKIoXAIrinyy6Ez2poKE/W4kZJUeitStfS/78hqjj+qXQBFJUWypDTzZp2B+vbQ9DuCHs2bVu6Ub96+kO9nJLOKLHRL3XIqQr70qppHpCYjfBLrRVqJQID12qbvCcA5HHMK0Fj25oakLnb39A01/gBdC7Yo1ypU0VQoTMQVhZxZZ0cESWy//QB2I3mxY0bdBHdMvJJvcwsmyvZtq/Ucton0ZS/+MOXBeD0XLQp920icn2zgmoC2Yq8coBDELeRYq4/6xdfUzhuM+KoxbEWzWoU2gpwMb9c+PsSUXJmTOrWmZdeXStwJK6VgZQLG80Ctct5SA==;5:66iIGWGA3aPX8NrzT+aJhyvL8DuaFtgkNFzNixARRjDhhZzJpZpR5kJLtZfLNUx0wUtowKk+O9HRbtbE2iRmLLnLAOHg2CvBvhaAu40RQz3Q+fq1BNxeUweKIlfkq2eC+wR2VpofDxZsF+F13Ph2geAq30FvSSgRL/2CrHjkZKA=;7:y+hJJW5Mfr/JA+b0GeNoUhSh6DqSA8pWOS3Cq3j9/eQnZU4L+GBBzy3Zg9EWYN2fMC30f+zT2Y1sEfqHusuwyplpCeJYOi2y2Yt2FtGJLulzLTMyx5PQllS5ovP98wRaYg4DRNZ7q7j//xEm5DAwCw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2018 07:33:11.0984
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fda56b5-d911-4e60-77da-08d65b4d139e
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[208.19.99.221];Helo=[AUSMBX1.microsemi.net]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR19MB0794
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Dec 23:15 PST 2018, Stephen Boyd wrote:
+From: Paul Selles <paul.selles@microchip.com>
 
-> Quoting David Dai (2018-12-04 17:14:10)
-> > 
-> > On 12/4/2018 2:34 PM, Stephen Boyd wrote:
-> > > Quoting Alex Elder (2018-12-04 13:41:47)
-> > >> On 12/4/18 1:24 PM, Stephen Boyd wrote:
-> > >>> Quoting David Dai (2018-12-03 19:50:13)
-> > >>>> Add IPA clock support by extending the current clk rpmh driver to support
-> > >>>> clocks that are managed by a different type of RPMh resource known as
-> > >>>> Bus Clock Manager(BCM).
-> > >>> Yes, but why? Does the IPA driver need to set clk rates and that somehow
-> > >>> doesn't work as a bandwidth request?
-> > >> The IPA core clock is a *clock*, not a bus.  Representing it as if
-> > >> it were a bus, abusing the interconnect interface--pretending a bandwidth
-> > >> request is really a clock rate request--is kind of kludgy.  I think Bjorn
-> > >> and David (and maybe Georgi? I don't know) decided a long time ago that
-> > >> exposing this as a clock is the right way to do it.  I agree with that.
-> > >>
-> > > But then we translate that clock rate into a bandwidth request to the
-> > > BCM hardware? Seems really weird because it's doing the opposite of what
-> > > you say is abusive. What does the IPA driver plan to do with this clk?
-> > > Calculate a frequency by knowing that it really boils down to some
-> > > bandwidth that then gets converted back into some clock frequency? Do we
-> > > have the user somewhere that can be pointed to?
-> > The clock rate is translated into a unitless threshold value sent as 
-> > part of the rpmh msg
-> > that BCM takes to select a performance. In this case, the unit 
-> > conversion is based on
-> > the unit value read from the aux data which is in Khz. I understand that 
-> > this wasn't
-> > explicitly mentioned anywhere and I'll improve on that next patch. 
-> 
-> How is this different from bus bandwidth requests? In those cases the
-> bandwidth is calculated in bits per second or something like that, and
-> written to the hardware so it can convert that bandwidth into kHz and
-> set a bus clk frequency in the clock controller? So in the IPA case
-> we've skipped the bps to kHz conversion step and gone straight to the
-> clk frequency setting part? Is a BCM able to aggregate units of
-> bandwidth or kHz depending on how it's configured and this BCM is
-> configured for kHz?
-> 
+Switchtec NTB crosslink BARs are 64bit addressed but they are printed as
+32bit addressed BARs. Fix debug log to increment the BAR numbers by 2 to
+reflect the 64bit address alignment.
 
-My objection to the use of msm_bus vs clock framework is not related to
-how the actual interface of configuring the hardware looks like. It's
-simply a matter of how this is represented in software, between some
-provider and the IPA driver.
+Fixes: 017525018202 ("ntb_hw_switchtec: Add initialization code for crosslink")
+Signed-off-by: Paul Selles <paul.selles@microchip.com>
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+---
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The IPA driver wants the IPA block to tick at 75MHz and I do not think
-it's appropriate to achieve that by requesting a path between IPA Core
-and IPA Core of 75000000 Kbytes/s.
+diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+index 5ee5f40..9916bc5 100644
+--- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
++++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+@@ -1120,7 +1120,7 @@ static int crosslink_enum_partition(struct switchtec_ntb *sndev,
+ 
+ 		dev_dbg(&sndev->stdev->dev,
+ 			"Crosslink BAR%d addr: %llx\n",
+-			i, bar_addr);
++			i*2, bar_addr);
+ 
+ 		if (bar_addr != bar_space * i)
+ 			continue;
+-- 
+2.7.4
 
-Regards,
-Bjorn
