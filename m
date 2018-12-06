@@ -2,118 +2,101 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CF0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86467C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35034208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35034208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FCCF20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544118594;
+	bh=UhjuXLBmh1XserCkBPHUP8Bpt//cuqVi04KnlJhBL80=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=OoeOW0F4r2Xw0NRy/C+T8btzQ1QsWxEAQX7BXa2VTxWidohUcIu8qdG+T1WHtbbaW
+	 tl4swxSAHFbvG+lgcJxVsYEHkvCXWoSCDK0odEkKzZZTY5zfTdMEn5bd5TmZTByn2N
+	 BDRtrO2+4kzyW/yvlTmWi+jUAeuMQ5ijx/PxgWfM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCCF20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbeLFRrW (ORCPT
+        id S1725958AbeLFRtx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:47:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeLFRrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:47:22 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FB1920892;
-        Thu,  6 Dec 2018 17:47:21 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 12:47:19 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] Uprobes: Fix kernel oops with delayed_uprobe_remove()
-Message-ID: <20181206124719.1fa76d92@vmware.local.home>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 12:49:53 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:44193 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFRtw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:49:52 -0500
+Received: by mail-yb1-f193.google.com with SMTP id j145so1076121ybg.11;
+        Thu, 06 Dec 2018 09:49:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s2I4+XiKGymX1GJhBaczK+dUn/gC4npGb++LfKSs/JA=;
+        b=UdxkzWsxtHHqpBqe5KUaQrA1G2I/GQFCs/nWu5QzVodRMhb0MhxtfCx6HB29ZnkLy0
+         xmvC0kjYRz4sD156/fhU1/hir8S+/gO8l1kxhs/PCsTAsS1msvBH5Twv0o3l96dCSp3I
+         EsAeKDcl80M+JQyvVcZBNIQiULtyTrb41tNPMuF5p9XqoMzFpatPYFFWrlLxcBV13bBQ
+         tYhHkUiQEr2u8prjfCJDulHR+NvL/Tm3tFJGcYljB2QRIYYg7WHVPZLgUfYA9B/UnvTM
+         JB93PTmoBavnU/3OsRk8oLJK13m7ghFt5hoQQvWGzD/GrxP4FHr9s6DbG1ZdQ5JVi3Ku
+         ydCQ==
+X-Gm-Message-State: AA+aEWbXttP0P3YOD2o9OoBSuUoCP1MmTfeJO2jFRdHMnQd2JGZS5Wm5
+        SP0LsGjZoMCnjW8M2DN4L1pd+IvSvx4=
+X-Google-Smtp-Source: AFSGD/VVZ0nrOPEWSSJcm9wJ2EszCJIzNmMffSRjVNnj+K1nGLngnUexpI6vkN4hPTyYGUdopdYn8w==
+X-Received: by 2002:a5b:28e:: with SMTP id x14-v6mr28221226ybl.238.1544118591409;
+        Thu, 06 Dec 2018 09:49:51 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id u81sm228853ywf.6.2018.12.06.09.49.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 06 Dec 2018 09:49:50 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH] blkcg: put back rcu lock in blkcg_bio_issue_check()
+Date:   Thu,  6 Dec 2018 12:49:38 -0500
+Message-Id: <20181206174938.2326-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I was a little overzealous in removing the rcu_read_lock() call from
+blkcg_bio_issue_check() and it broke blk-throttle. Put it back.
 
-Linus,
+Fixes: e35403a034bf ("blkcg: associate blkg when associating a device")
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+---
+ include/linux/blk-cgroup.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-This is a single commit that fixes a bug in uprobes SDT code
-due to a missing mutex protection.
-
-
-Please pull the latest trace-v4.20-rc5 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.20-rc5
-
-Tag SHA1: a5405a88026387f237d97b607234db71d91c13e2
-Head SHA1: 1aed58e67a6ec1e7a18bfabe8ba6ec2d27c15636
-
-
-Ravi Bangoria (1):
-      Uprobes: Fix kernel oops with delayed_uprobe_remove()
-
-----
- kernel/events/uprobes.c | 2 ++
- 1 file changed, 2 insertions(+)
----------------------------
-commit 1aed58e67a6ec1e7a18bfabe8ba6ec2d27c15636
-Author: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed Dec 5 09:04:23 2018 +0530
-
-    Uprobes: Fix kernel oops with delayed_uprobe_remove()
-    
-    There could be a race between task exit and probe unregister:
-    
-      exit_mm()
-      mmput()
-      __mmput()                     uprobe_unregister()
-      uprobe_clear_state()          put_uprobe()
-      delayed_uprobe_remove()       delayed_uprobe_remove()
-    
-    put_uprobe() is calling delayed_uprobe_remove() without taking
-    delayed_uprobe_lock and thus the race sometimes results in a
-    kernel crash. Fix this by taking delayed_uprobe_lock before
-    calling delayed_uprobe_remove() from put_uprobe().
-    
-    Detailed crash log can be found at:
-      Link: http://lkml.kernel.org/r/000000000000140c370577db5ece@google.com
-    
-    Link: http://lkml.kernel.org/r/20181205033423.26242-1-ravi.bangoria@linux.ibm.com
-    
-    Acked-by: Oleg Nesterov <oleg@redhat.com>
-    Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-    Reported-by: syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com
-    Fixes: 1cc33161a83d ("uprobes: Support SDT markers having reference count (semaphore)")
-    Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 96d4bee83489..98b9312ce6b2 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -572,7 +572,9 @@ static void put_uprobe(struct uprobe *uprobe)
- 		 * gets called, we don't get a chance to remove uprobe from
- 		 * delayed_uprobe_list from remove_breakpoint(). Do it here.
- 		 */
-+		mutex_lock(&delayed_uprobe_lock);
- 		delayed_uprobe_remove(uprobe, NULL);
-+		mutex_unlock(&delayed_uprobe_lock);
- 		kfree(uprobe);
- 	}
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 752de1becb5c..bf13ecb0fe4f 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -764,6 +764,8 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 	struct blkcg_gq *blkg;
+ 	bool throtl = false;
+ 
++	rcu_read_lock();
++
+ 	if (!bio->bi_blkg) {
+ 		char b[BDEVNAME_SIZE];
+ 
+@@ -791,6 +793,7 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
+ 
+ 	blkcg_bio_issue_init(bio);
+ 
++	rcu_read_unlock();
+ 	return !throtl;
  }
+ 
+-- 
+2.17.1
+
