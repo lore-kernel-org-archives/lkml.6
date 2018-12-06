@@ -2,55 +2,55 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65500C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D40C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12228208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 408D620700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X+vSM8pq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12228208E7
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AYt43aqe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408D620700
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeLFVjL (ORCPT
+        id S1726210AbeLFVjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:39:11 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33072 "EHLO
+        Thu, 6 Dec 2018 16:39:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33068 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbeLFVit (ORCPT
+        with ESMTP id S1726085AbeLFVis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:38:49 -0500
+        Thu, 6 Dec 2018 16:38:48 -0500
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYvSN192520;
-        Thu, 6 Dec 2018 21:38:28 GMT
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYNH8192355;
+        Thu, 6 Dec 2018 21:38:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=JArIvczr9LdBB1czXYVsoZTFYGTMuDnBa7wq27tn6lw=;
- b=X+vSM8pqsBYsZd3Pl3yX+sbLwX+SNRdcEVJDhEovvsu6446PFM3BUdE8/weZxUOyyRNS
- y1SwWfDuLRq+sveLFGVx3phWaFZ8ZJeniuI4g9+p560dk8kGxQfuYHqPtOMsYX8Xi4nt
- 2GhkCkttCutxt6rc81Xm5Jybe/34Wb1153T9yfCLLB3z6CFSZ4f38IWWcpN6maeS6+0Y
- GLG6HEuC7565it3P7H4wDaVyP9mLikzJURSaVQBM/p4KLEvzbg00UmeZGo9cq85/k+BZ
- 38oJvy4LE+sXl0syl/X42KOONMCi6PJ4V2mWAGFOFCqfEXIRUB84xlNYzPWiAxJwlLnr 5Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hquar66-1
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=tR5jL8T/uYvnStLua5t/AnRFtuGWdB8YWks0SzuVobI=;
+ b=AYt43aqejcaxn3gZPNlDJFk4NG51K1gdPPIpzgZcSKAWJQ1Bzm/DJd4QdQ+bxSKm652s
+ SS/ubInPx5ogU8O2+jxKk3QLwIY7pbrIKuaRnLOPWG4hD/eRD7GXkjdyIfSB/fQ49yL5
+ cBDAK07hC9Gqvc9y/lJtbysQFFHCPuCwby34rJmOu90LfIw0AdnimnikF1utjqZxSXhG
+ +qV566Rca85hMkHtkpeQ5Me7Uo5vlNoGL7SJbLHQ6nKIjvpcw3StqLYmV9RzmJBZgpBa
+ 4WgBluWzcMppdxq0C+nk4Q2E8FgkX+AN5EY7nSp4PzuSiJVPLndzgfNuyFFu4T5Tb1D6 mQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2p3hquar5h-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:38:28 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcMTG017547
+        Thu, 06 Dec 2018 21:38:22 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcFYh007091
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:38:22 GMT
+        Thu, 6 Dec 2018 21:38:15 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcMOo022877;
-        Thu, 6 Dec 2018 21:38:22 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcFvI021688;
+        Thu, 6 Dec 2018 21:38:15 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 21:38:21 +0000
+        with ESMTP ; Thu, 06 Dec 2018 21:38:14 +0000
 From:   Steve Sistare <steven.sistare@oracle.com>
 To:     mingo@redhat.com, peterz@infradead.org
 Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
@@ -60,12 +60,10 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         valentin.schneider@arm.com, vincent.guittot@linaro.org,
         quentin.perret@arm.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 09/10] sched/fair: disable stealing if too many NUMA nodes
-Date:   Thu,  6 Dec 2018 13:28:15 -0800
-Message-Id: <1544131696-2888-10-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH v4 00/10] steal tasks to improve CPU utilization
+Date:   Thu,  6 Dec 2018 13:28:06 -0800
+Message-Id: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -76,233 +74,266 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The STEAL feature causes regressions on hackbench on larger NUMA systems,
-so disable it on systems with more than sched_steal_node_limit nodes
-(default 2).  Note that the feature remains enabled as seen in features.h
-and /sys/kernel/debug/sched_features, but stealing is only performed if
-nodes <= sched_steal_node_limit.  This arrangement allows users to activate
-stealing on reboot by setting the kernel parameter sched_steal_node_limit
-on kernels built without CONFIG_SCHED_DEBUG.  The parameter is temporary
-and will be deleted when the regression is fixed.
+When a CPU has no more CFS tasks to run, and idle_balance() fails to
+find a task, then attempt to steal a task from an overloaded CPU in the
+same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+identify candidates.  To minimize search time, steal the first migratable
+task that is found when the bitmap is traversed.  For fairness, search
+for migratable tasks on an overloaded CPU in order of next to run.
 
-Details of the regression follow.  With the STEAL feature set, hackbench
-is slower on many-node systems:
+This simple stealing yields a higher CPU utilization than idle_balance()
+alone, because the search is cheap, so it may be called every time the CPU
+is about to go idle.  idle_balance() does more work because it searches
+widely for the busiest queue, so to limit its CPU consumption, it declines
+to search if the system is too busy.  Simple stealing does not offload the
+globally busiest queue, but it is much better than running nothing at all.
 
-X5-8: 8 sockets * 18 cores * 2 hyperthreads = 288 CPUs
-Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz
-Average of 10 runs of: hackbench <groups> processes 50000
+The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
+reduce cache contention vs the usual bitmap when many threads concurrently
+set, clear, and visit elements.
 
-          --- base --    --- new ---
-groups    time %stdev    time %stdev  %speedup
-     1   3.627   15.8   3.876    7.3      -6.5
-     2   4.545   24.7   5.583   16.7     -18.6
-     3   5.716   25.0   7.367   14.2     -22.5
-     4   6.901   32.9   7.718   14.5     -10.6
-     8   8.604   38.5   9.111   16.0      -5.6
-    16   7.734    6.8  11.007    8.2     -29.8
+Patch 1 defines the sparsemask type and its operations.
 
-Total CPU time increases.  Profiling shows that CPU time increases
-uniformly across all functions, suggesting a systemic increase in cache
-or memory latency.  This may be due to NUMA migrations, as they cause
-loss of LLC cache footprint and remote memory latencies.
+Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
 
-The domains for this system and their flags are:
+Patches 5 and 6 refactor existing code for a cleaner merge of later
+  patches.
 
-  domain0 (SMT) : 1 core
-    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
-    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING SD_SHARE_CPUCAPACITY
-    SD_WAKE_AFFINE
+Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
 
-  domain1 (MC) : 1 socket
-    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
-    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING
-    SD_WAKE_AFFINE
+Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
+time being because of performance regressions that are not due to stealing
+per-se.  See the patch description for details.
 
-  domain2 (NUMA) : 4 sockets
-    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
-    SD_SERIALIZE SD_OVERLAP SD_NUMA
-    SD_WAKE_AFFINE
+Patch 10 adds schedstats for comparing the new behavior to the old, and
+  provided as a convenience for developers only, not for integration.
 
-  domain3 (NUMA) : 8 sockets
-    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE
-    SD_SERIALIZE SD_OVERLAP SD_NUMA
+The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
+runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
+and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
+CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
+CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
+bandwidth control were tested.
 
-Schedstats point to the root cause of the regression.  hackbench is run
-10 times per group and the average schedstat accumulation per-run and
-per-cpu is shown below.  Note that domain3 moves are zero because
-SD_WAKE_AFFINE is not set there.
+Stealing improves utilization with only a modest CPU overhead in scheduler
+code.  In the following experiment, hackbench is run with varying numbers
+of groups (40 tasks per group), and the delta in /proc/schedstat is shown
+for each run, averaged per CPU, augmented with these non-standard stats:
 
-NO_STEAL
-                                         --- domain2 ---   --- domain3 ---
-grp time %busy sched  idle   wake steal remote  move pull remote  move pull
- 1 20.3 10.3  28710  14346  14366     0    490  3378    0   4039     0    0
- 2 26.4 18.8  56721  28258  28469     0    792  7026   12   9229     0    7
- 3 29.9 28.3  90191  44933  45272     0   5380  7204   19  16481     0    3
- 4 30.2 35.8 121324  60409  60933     0   7012  9372   27  21438     0    5
- 8 27.7 64.2 229174 111917 117272     0  11991  1837  168  44006     0   32
-16 32.6 74.0 334615 146784 188043     0   3404  1468   49  61405     0    8
+  %find - percent of time spent in old and new functions that search for
+    idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
 
-STEAL
-                                         --- domain2 ---   --- domain3 ---
-grp time %busy sched  idle   wake steal remote  move pull remote  move pull
- 1 20.6 10.2  28490  14232  14261    18      3  3525    0   4254     0    0
- 2 27.9 18.8  56757  28203  28562   303   1675  7839    5   9690     0    2
- 3 35.3 27.7  87337  43274  44085   698    741 12785   14  15689     0    3
- 4 36.8 36.0 118630  58437  60216  1579   2973 14101   28  18732     0    7
- 8 48.1 73.8 289374 133681 155600 18646  35340 10179  171  65889     0   34
-16 41.4 82.5 268925  91908 177172 47498  17206  6940  176  71776     0   20
+  steal - number of times a task is stolen from another CPU.
 
-Cross-numa-node migrations are caused by load balancing pulls and
-wake_affine moves.  Pulls are small and similar for no_steal and steal.
-However, moves are significantly higher for steal, and rows above with the
-highest moves have the worst regressions for time; see for example grp=8.
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+hackbench <grps> process 100000
+sched_wakeup_granularity_ns=15000000
 
-Moves increase for steal due to the following logic in wake_affine_idle()
-for synchronous wakeup:
+  baseline
+  grps  time  %busy  slice   sched   idle     wake %find  steal
+  1    8.084  75.02   0.10  105476  46291    59183  0.31      0
+  2   13.892  85.33   0.10  190225  70958   119264  0.45      0
+  3   19.668  89.04   0.10  263896  87047   176850  0.49      0
+  4   25.279  91.28   0.10  322171  94691   227474  0.51      0
+  8   47.832  94.86   0.09  630636 144141   486322  0.56      0
 
-    if (sync && cpu_rq(this_cpu)->nr_running == 1)
-        return this_cpu;        // move the task
+  new
+  grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
+  1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
+  2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
+  3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
+  4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
+  8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
 
-The steal feature does a better job of smoothing the load between idle
-and busy CPUs, so nr_running is 1 more often, and moves are performed
-more often.  For hackbench, cross-node affine moves early in the run are
-good because they colocate wakers and wakees from the same group on the
-same node, but continued moves later in the run are bad, because the wakee
-is moved away from peers on its previous node.  Note that even no_steal
-is far from optimal; binding an instance of "hackbench 2" to each of the
-8 NUMA nodes runs much faster than running "hackbench 16" with no binding.
+Elapsed time improves by 8 to 36%, and CPU busy utilization is up
+by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
+The cost is at most 0.4% more find time.
 
-Clearing SD_WAKE_AFFINE for domain2 eliminates the affine cross-node
-migrations and eliminates the difference between no_steal and steal
-performance.  However, overall performance is lower than WA_IDLE because
-some migrations are helpful as explained above.
+Additional performance results follow.  A negative "speedup" is a
+regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
+is set to 15 msec.  Otherwise, preemptions increase at higher loads and
+distort the comparison between baseline and new.
 
-I have tried many heuristics in a attempt to optimize the number of
-cross-node moves in all conditions, with limited success.  The fundamental
-problem is that the scheduler does not track which groups of tasks talk to
-each other.  Parts of several groups become entrenched on the same node,
-filling it to capacity, leaving no room for either group to pull its peers
-over, and there is neither data nor mechanism for the scheduler to evict
-one group to make room for the other.
+------------------ 1 Socket Results ------------------
 
-For now, disable STEAL on such systems until we can do better, or it is
-shown that hackbench is atypical and most workloads benefit from stealing.
+X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
 
-Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
----
- kernel/sched/fair.c     | 16 +++++++++++++---
- kernel/sched/sched.h    |  2 +-
- kernel/sched/topology.c | 25 +++++++++++++++++++++++++
- 3 files changed, 39 insertions(+), 4 deletions(-)
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   8.008    0.1   5.905    0.2      35.6
+       2  13.814    0.2  11.438    0.1      20.7
+       3  19.488    0.2  16.919    0.1      15.1
+       4  25.059    0.1  22.409    0.1      11.8
+       8  47.478    0.1  44.221    0.1       7.3
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1476ae8..1efd9c4 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3735,11 +3735,21 @@ static inline void rq_idle_stamp_clear(struct rq *rq)
- 	rq->idle_stamp = 0;
- }
- 
-+static inline bool steal_enabled(void)
-+{
-+#ifdef CONFIG_NUMA
-+	bool allow = static_branch_likely(&sched_steal_allow);
-+#else
-+	bool allow = true;
-+#endif
-+	return sched_feat(STEAL) && allow;
-+}
-+
- static void overload_clear(struct rq *rq)
- {
- 	struct sparsemask *overload_cpus;
- 
--	if (!sched_feat(STEAL))
-+	if (!steal_enabled())
- 		return;
- 
- 	rcu_read_lock();
-@@ -3753,7 +3763,7 @@ static void overload_set(struct rq *rq)
- {
- 	struct sparsemask *overload_cpus;
- 
--	if (!sched_feat(STEAL))
-+	if (!steal_enabled())
- 		return;
- 
- 	rcu_read_lock();
-@@ -9902,7 +9912,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 	int stolen = 0;
- 	struct sparsemask *overload_cpus;
- 
--	if (!sched_feat(STEAL))
-+	if (!steal_enabled())
- 		return 0;
- 
- 	if (!cpu_active(dst_cpu))
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index eacf5db..2a28340 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -936,7 +936,6 @@ static inline int cpu_of(struct rq *rq)
- #endif
- }
- 
--
- #ifdef CONFIG_SCHED_SMT
- 
- extern struct static_key_false sched_smt_present;
-@@ -1185,6 +1184,7 @@ enum numa_topology_type {
- #endif
- 
- #ifdef CONFIG_NUMA
-+extern struct static_key_true sched_steal_allow;
- extern void sched_init_numa(void);
- extern void sched_domains_numa_masks_set(unsigned int cpu);
- extern void sched_domains_numa_masks_clear(unsigned int cpu);
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 89a78ce..259d659 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1344,6 +1344,30 @@ static void init_numa_topology_type(void)
- 	}
- }
- 
-+DEFINE_STATIC_KEY_TRUE(sched_steal_allow);
-+static int sched_steal_node_limit;
-+#define SCHED_STEAL_NODE_LIMIT_DEFAULT 2
-+
-+static int __init steal_node_limit_setup(char *buf)
-+{
-+	get_option(&buf, &sched_steal_node_limit);
-+	return 0;
-+}
-+
-+early_param("sched_steal_node_limit", steal_node_limit_setup);
-+
-+static void check_node_limit(void)
-+{
-+	int n = num_possible_nodes();
-+
-+	if (sched_steal_node_limit == 0)
-+		sched_steal_node_limit = SCHED_STEAL_NODE_LIMIT_DEFAULT;
-+	if (n > sched_steal_node_limit) {
-+		static_branch_disable(&sched_steal_allow);
-+		pr_debug("Suppressing sched STEAL. To enable, reboot with sched_steal_node_limit=%d", n);
-+	}
-+}
-+
- void sched_init_numa(void)
- {
- 	int next_distance, curr_distance = node_distance(0, 0);
-@@ -1492,6 +1516,7 @@ void sched_init_numa(void)
- 	sched_max_numa_distance = sched_domains_numa_distance[level - 1];
- 
- 	init_numa_topology_type();
-+	check_node_limit();
- }
- 
- void sched_domains_numa_masks_set(unsigned int cpu)
+X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   4.586    0.8   4.596    0.6      -0.3
+       2   7.693    0.2   5.775    1.3      33.2
+       3  10.442    0.3   8.288    0.3      25.9
+       4  13.087    0.2  11.057    0.1      18.3
+       8  24.145    0.2  22.076    0.3       9.3
+      16  43.779    0.1  41.741    0.2       4.8
+
+KVM 4-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+tbench, average of 11 runs.
+
+  clients    %speedup
+        1        16.2
+        2        11.7
+        4         9.9
+        8        12.8
+       16        13.7
+
+KVM 2-cpu
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  Benchmark                     %speedup
+  specjbb2015_critical_jops          5.7
+  mysql_sysb1.0.14_mutex_2          40.6
+  mysql_sysb1.0.14_oltp_2            3.9
+
+------------------ 2 Socket Results ------------------
+
+X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
+Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   7.945    0.2   7.219    8.7      10.0
+       2   8.444    0.4   6.689    1.5      26.2
+       3  12.100    1.1   9.962    2.0      21.4
+       4  15.001    0.4  13.109    1.1      14.4
+       8  27.960    0.2  26.127    0.3       7.0
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Average of 10 runs of: hackbench <groups> process 100000
+
+            --- base --    --- new ---
+  groups    time %stdev    time %stdev  %speedup
+       1   5.826    5.4   5.840    5.0      -0.3
+       2   5.041    5.3   6.171   23.4     -18.4
+       3   6.839    2.1   6.324    3.8       8.1
+       4   8.177    0.6   7.318    3.6      11.7
+       8  14.429    0.7  13.966    1.3       3.3
+      16  26.401    0.3  25.149    1.5       4.9
+
+
+X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+Oracle database OLTP, logging disabled, NVRAM storage
+
+  Customers   Users   %speedup
+    1200000      40       -1.2
+    2400000      80        2.7
+    3600000     120        8.9
+    4800000     160        4.4
+    6000000     200        3.0
+
+X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
+Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Results from the Oracle "Performance PIT".
+
+  Benchmark                                           %speedup
+
+  mysql_sysb1.0.14_fileio_56_rndrd                        19.6
+  mysql_sysb1.0.14_fileio_56_seqrd                        12.1
+  mysql_sysb1.0.14_fileio_56_rndwr                         0.4
+  mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
+
+  pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
+  pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
+  pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
+  pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
+
+  opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
+  select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
+  select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
+  swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
+
+  lm3_memlat_L2                                            4.8
+  lm3_memlat_L1                                            0.0
+
+  ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
+  ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
+  ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
+  ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
+
+X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
+Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+
+  NAS_OMP
+  bench class   ncpu    %improved(Mops)
+  dc    B       72      1.3
+  is    C       72      0.9
+  is    D       72      0.7
+
+  sysbench mysql, average of 24 runs
+          --- base ---     --- new ---
+  nthr   events  %stdev   events  %stdev %speedup
+     1    331.0    0.25    331.0    0.24     -0.1
+     2    661.3    0.22    661.8    0.22      0.0
+     4   1297.0    0.88   1300.5    0.82      0.2
+     8   2420.8    0.04   2420.5    0.04     -0.1
+    16   4826.3    0.07   4825.4    0.05     -0.1
+    32   8815.3    0.27   8830.2    0.18      0.1
+    64  12823.0    0.24  12823.6    0.26      0.0
+
+--------------------------------------------------------------
+
+Changes from v1 to v2:
+  - Remove stray find_time hunk from patch 5
+  - Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
+  - Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2
+  - Steal iff avg_idle exceeds the cost of stealing
+
+Changes from v2 to v3:
+  - Update series for kernel 4.20.  Context changes only.
+
+Changes from v3 to v4:
+  - Avoid 64-bit division on 32-bit processors in compute_skid()
+  - Replace IF_SMP with inline functions to set idle_stamp
+  - Push ZALLOC_MASK body into calling function
+  - Set rq->cfs_overload_cpus in update_top_cache_domain instead of
+    cpu_attach_domain
+  - Rewrite sparsemask iterator for complete inlining
+  - Cull and clean up sparsemask functions and moved all into
+    sched/sparsemask.h
+
+Steve Sistare (10):
+  sched: Provide sparsemask, a reduced contention bitmap
+  sched/topology: Provide hooks to allocate data shared per LLC
+  sched/topology: Provide cfs_overload_cpus bitmap
+  sched/fair: Dynamically update cfs_overload_cpus
+  sched/fair: Hoist idle_stamp up from idle_balance
+  sched/fair: Generalize the detach_task interface
+  sched/fair: Provide can_migrate_task_llc
+  sched/fair: Steal work from an overloaded CPU when CPU goes idle
+  sched/fair: disable stealing if too many NUMA nodes
+  sched/fair: Provide idle search schedstats
+
+ include/linux/sched/topology.h |   1 +
+ kernel/sched/core.c            |  31 +++-
+ kernel/sched/fair.c            | 354 +++++++++++++++++++++++++++++++++++++----
+ kernel/sched/features.h        |   6 +
+ kernel/sched/sched.h           |  13 +-
+ kernel/sched/sparsemask.h      | 210 ++++++++++++++++++++++++
+ kernel/sched/stats.c           |  11 +-
+ kernel/sched/stats.h           |  13 ++
+ kernel/sched/topology.c        | 121 +++++++++++++-
+ 9 files changed, 726 insertions(+), 34 deletions(-)
+ create mode 100644 kernel/sched/sparsemask.h
+
 -- 
 1.8.3.1
 
