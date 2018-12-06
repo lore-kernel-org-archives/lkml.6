@@ -4,52 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA86CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BD2C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E9320850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 894D920878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107945;
-	bh=wKB4lH7HY4LwE6YVrSN19qerz8Arc4wjWPmdZkmUiZ0=;
+	s=default; t=1544107960;
+	bh=AUC7K+ItJMmQFmhNeVp7Er8dv2isWWXEMJa/ASKCqWc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yE6PKvVIR12+BGHv+mnikw3QBa2bMdEFyo3qj1e//nQQ04b6wRnM4/KxGVnVqF47k
-	 t4cHJOE4kCzi8jJC09QQ3xlNAxZqiDKuoBu5Hx4pYDC4ZcdxNtoPWiXJgIQgXm16Jf
-	 huT8pzW1aZH+7yK6GFJYF8YX3Qa0KFjmRK95VY94=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E9320850
+	b=fw+mj94mJg3vbZ0TGYl24Fx5VC+HqeMVmgusWU7abzy/mEiMX1atHX2TfuaqUYrGL
+	 FcFs7TBURmgZrNeP1sre713cp7/6tjeMfXghEvDSxQAbPEMBa43sTGEnrwFvF0/9Os
+	 Ti0P3evCreoFTWTPOooFFD1JkTKa96+5riorYXNU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 894D920878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbeLFOwY (ORCPT
+        id S1726278AbeLFOwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:52:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50864 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:52:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731189AbeLFOqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:09 -0500
+        id S1731163AbeLFOpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:45:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 010F320661;
-        Thu,  6 Dec 2018 14:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32289214DE;
+        Thu,  6 Dec 2018 14:45:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107568;
-        bh=wKB4lH7HY4LwE6YVrSN19qerz8Arc4wjWPmdZkmUiZ0=;
+        s=default; t=1544107554;
+        bh=AUC7K+ItJMmQFmhNeVp7Er8dv2isWWXEMJa/ASKCqWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BvVn1xSt15YAiq39dss8zpVIBQk8fG0J1u4LAZLX8e0OAe1CdvfomzLTGg2jyhP4j
-         IBEZuAsG6btwMqpGkDVqhM+zxYVusL7f+YmxxVu3VUZ+YUUWhBqMRmfVqzF4/94IPe
-         XFjTMfl/W+3AZhjdUdjy98F74eHpS134/mkFhSAs=
+        b=hluVsbMQhUu8sVEXIQT7aAJ6snnr0BT4VkwG+aQs+IGkL4V3ZvqmtehdYo7cbW9KY
+         i/MDr3LxrliQp8uojnWnINSJULdtHgQQQ8h+YxKKvh5NWRCSEyv8RrSC8iw8Cmj/XO
+         pp9ye5u9WdcL/QhnWsRtEV9uwToNJbI99l+1bMrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
         Sage Weil <sage@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 055/101] libceph: implement CEPHX_V2 calculation mode
-Date:   Thu,  6 Dec 2018 15:38:54 +0100
-Message-Id: <20181206143014.720460465@linuxfoundation.org>
+Subject: [PATCH 4.9 051/101] libceph: factor out __prepare_write_connect()
+Date:   Thu,  6 Dec 2018 15:38:50 +0100
+Message-Id: <20181206143014.490007108@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -70,138 +71,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ilya Dryomov <idryomov@gmail.com>
 
-commit cc255c76c70f7a87d97939621eae04b600d9f4a1 upstream.
+commit c0f56b483aa09c99bfe97409a43ad786f33b8a5a upstream.
 
-Derive the signature from the entire buffer (both AES cipher blocks)
-instead of using just the first half of the first block, leaving out
-data_crc entirely.
+Will be used for sending ceph_msg_connect with an updated authorizer,
+after the server challenges the initial authorizer.
 
-This addresses CVE-2018-1129.
-
-Link: http://tracker.ceph.com/issues/24837
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Reviewed-by: Sage Weil <sage@redhat.com>
-[bwh: Backported to 4.9:
- - Define and test the feature bit in the old way
- - Don't change any other feature bits in ceph_features.h]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/ceph/ceph_features.h |    4 +
- net/ceph/auth_x.c                  |   77 +++++++++++++++++++++++++++----------
- 2 files changed, 61 insertions(+), 20 deletions(-)
+ net/ceph/messenger.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/include/linux/ceph/ceph_features.h
-+++ b/include/linux/ceph/ceph_features.h
-@@ -76,6 +76,7 @@
- // duplicated since it was introduced at the same time as CEPH_FEATURE_CRUSH_TUNABLES5
- #define CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING   (1ULL<<58) /* New, v7 encoding */
- #define CEPH_FEATURE_FS_FILE_LAYOUT_V2       (1ULL<<58) /* file_layout_t */
-+#define CEPH_FEATURE_CEPHX_V2	(1ULL<<61) // *do not share this bit*
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -1429,6 +1429,17 @@ static void prepare_write_banner(struct
+ 	con_flag_set(con, CON_FLAG_WRITE_PENDING);
+ }
  
- /*
-  * The introduction of CEPH_FEATURE_OSD_SNAPMAPPER caused the feature
-@@ -124,7 +125,8 @@ static inline u64 ceph_sanitize_features
- 	 CEPH_FEATURE_MSGR_KEEPALIVE2 |		\
- 	 CEPH_FEATURE_CRUSH_V4 |		\
- 	 CEPH_FEATURE_CRUSH_TUNABLES5 |		\
--	 CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING)
-+	 CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING |	\
-+	 CEPH_FEATURE_CEPHX_V2)
- 
- #define CEPH_FEATURES_REQUIRED_DEFAULT   \
- 	(CEPH_FEATURE_NOSRCADDR |	 \
---- a/net/ceph/auth_x.c
-+++ b/net/ceph/auth_x.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/ceph/decode.h>
- #include <linux/ceph/auth.h>
-+#include <linux/ceph/ceph_features.h>
- #include <linux/ceph/libceph.h>
- #include <linux/ceph/messenger.h>
- 
-@@ -799,26 +800,64 @@ static int calc_signature(struct ceph_x_
- 			  __le64 *psig)
++static void __prepare_write_connect(struct ceph_connection *con)
++{
++	con_out_kvec_add(con, sizeof(con->out_connect), &con->out_connect);
++	if (con->auth)
++		con_out_kvec_add(con, con->auth->authorizer_buf_len,
++				 con->auth->authorizer_buf);
++
++	con->out_more = 0;
++	con_flag_set(con, CON_FLAG_WRITE_PENDING);
++}
++
+ static int prepare_write_connect(struct ceph_connection *con)
  {
- 	void *enc_buf = au->enc_buf;
--	struct {
--		__le32 len;
--		__le32 header_crc;
--		__le32 front_crc;
--		__le32 middle_crc;
--		__le32 data_crc;
--	} __packed *sigblock = enc_buf + ceph_x_encrypt_offset();
--	int ret;
--
--	sigblock->len = cpu_to_le32(4*sizeof(u32));
--	sigblock->header_crc = msg->hdr.crc;
--	sigblock->front_crc = msg->footer.front_crc;
--	sigblock->middle_crc = msg->footer.middle_crc;
--	sigblock->data_crc =  msg->footer.data_crc;
--	ret = ceph_x_encrypt(&au->session_key, enc_buf, CEPHX_AU_ENC_BUF_LEN,
--			     sizeof(*sigblock));
--	if (ret < 0)
--		return ret;
-+	int ret;
-+
-+	if (msg->con->peer_features & CEPH_FEATURE_CEPHX_V2) {
-+		struct {
-+			__le32 len;
-+			__le32 header_crc;
-+			__le32 front_crc;
-+			__le32 middle_crc;
-+			__le32 data_crc;
-+		} __packed *sigblock = enc_buf + ceph_x_encrypt_offset();
-+
-+		sigblock->len = cpu_to_le32(4*sizeof(u32));
-+		sigblock->header_crc = msg->hdr.crc;
-+		sigblock->front_crc = msg->footer.front_crc;
-+		sigblock->middle_crc = msg->footer.middle_crc;
-+		sigblock->data_crc =  msg->footer.data_crc;
-+
-+		ret = ceph_x_encrypt(&au->session_key, enc_buf,
-+				     CEPHX_AU_ENC_BUF_LEN, sizeof(*sigblock));
-+		if (ret < 0)
-+			return ret;
-+
-+		*psig = *(__le64 *)(enc_buf + sizeof(u32));
-+	} else {
-+		struct {
-+			__le32 header_crc;
-+			__le32 front_crc;
-+			__le32 front_len;
-+			__le32 middle_crc;
-+			__le32 middle_len;
-+			__le32 data_crc;
-+			__le32 data_len;
-+			__le32 seq_lower_word;
-+		} __packed *sigblock = enc_buf;
-+		struct {
-+			__le64 a, b, c, d;
-+		} __packed *penc = enc_buf;
-+		int ciphertext_len;
-+
-+		sigblock->header_crc = msg->hdr.crc;
-+		sigblock->front_crc = msg->footer.front_crc;
-+		sigblock->front_len = msg->hdr.front_len;
-+		sigblock->middle_crc = msg->footer.middle_crc;
-+		sigblock->middle_len = msg->hdr.middle_len;
-+		sigblock->data_crc =  msg->footer.data_crc;
-+		sigblock->data_len = msg->hdr.data_len;
-+		sigblock->seq_lower_word = *(__le32 *)&msg->hdr.seq;
-+
-+		/* no leading len, no ceph_x_encrypt_header */
-+		ret = ceph_crypt(&au->session_key, true, enc_buf,
-+				 CEPHX_AU_ENC_BUF_LEN, sizeof(*sigblock),
-+				 &ciphertext_len);
-+		if (ret)
-+			return ret;
-+
-+		*psig = penc->a ^ penc->b ^ penc->c ^ penc->d;
-+	}
+ 	unsigned int global_seq = get_global_seq(con->msgr, 0);
+@@ -1464,15 +1475,7 @@ static int prepare_write_connect(struct
+ 	if (ret)
+ 		return ret;
  
--	*psig = *(__le64 *)(enc_buf + sizeof(u32));
+-	con_out_kvec_add(con, sizeof (con->out_connect),
+-					&con->out_connect);
+-	if (con->auth)
+-		con_out_kvec_add(con, con->auth->authorizer_buf_len,
+-				 con->auth->authorizer_buf);
+-
+-	con->out_more = 0;
+-	con_flag_set(con, CON_FLAG_WRITE_PENDING);
+-
++	__prepare_write_connect(con);
  	return 0;
  }
  
