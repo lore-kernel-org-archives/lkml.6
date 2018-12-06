@@ -2,124 +2,121 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B52DC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BA1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DFB21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DFB21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id CEDC220850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:22:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bryVDwDv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEDC220850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbeLFJVs (ORCPT
+        id S1729271AbeLFJWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:21:48 -0500
-Received: from mail.netline.ch ([148.251.143.178]:55361 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFJVs (ORCPT
+        Thu, 6 Dec 2018 04:22:22 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39991 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFJWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:21:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id BE6C82A604C;
-        Thu,  6 Dec 2018 10:21:45 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 744l9qAB3yMI; Thu,  6 Dec 2018 10:21:41 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 172982A604B;
-        Thu,  6 Dec 2018 10:21:41 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gUpqm-0003db-P2; Thu, 06 Dec 2018 10:21:40 +0100
-Subject: Re: [PATCH 1/2] drm: Only #define DEBUG if CONFIG_DYNAMIC_DEBUG is
- disabled
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>, Huang Rui <ray.huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181205165621.5805-1-michel@daenzer.net>
- <10fca21a-5d7c-fe9e-07f0-6200e9de538e@amd.com>
- <154408757908.3572.9138595858555797029@skylake-alporthouse-com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <d81f2067-db9f-eeca-7d65-956d5f772093@daenzer.net>
-Date:   Thu, 6 Dec 2018 10:21:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 04:22:22 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so150033edx.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:22:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=Y1Mlu7qb1AiYxX+6iMv9nonpeVP5x7XtVoO7OXGW/Pc=;
+        b=bryVDwDv14xDBn0J73T2zKBz/LSepvSjPZncU/i6UJPGyueBue8pMhz/h4QnbJMXpS
+         J/6+AQeeaxNdlse+e+vU3s8izen4OJZu6VzQaXjRM7sSJJwgGL6/6+U017oWjzIDZlqc
+         kNN3krwhnmlsddwWcLjOlI5D2jrQCe8E5iy3xuuPu0d9HQJxl0ogZs9AhVpFWWmmwe3Z
+         sJtWyvewwofGU7mtjk7FshWgCxFZmNddiDvYSUlX1TYsPGmD1Zeq7NXlHfOAcq8A4cu+
+         MyFNhEY60hnes7pG5cnMY0S1pM+6Ui97wNtOsMy7k9727rbHZHo9cfQJzEaYOVvzmRu+
+         ajTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=Y1Mlu7qb1AiYxX+6iMv9nonpeVP5x7XtVoO7OXGW/Pc=;
+        b=TRehm3iidKkL+ymUtEm/DRwhzK5bmN3Zntw+R3KurFbjAq03gc1pAG5WtLqVHazH8P
+         gsoRpm/B3wru3tP9wNjU84Lg9J6N3jfYnfDxCwI3MH/S8a4ViBp9V5ZsJdEh37FpoCy3
+         LMj+LA8TIebtTfaWDivpmBuaQsMp0OhDz68+y5bziQjIfeEiM0e1kbduuDjfl+uHlpN3
+         zFyVILPNzsdXFwqbfOqgf8PfimDFCd4Zx0Z8ddos8HN++4gYW0P7Ly5FAInvbqPGnAUO
+         dvpgwMKUcU/02kVPJpRQ+sjj0YPbzSy2J7rbng5yMLbP5zjqOd3YkVtIgPaL+CZiVFyv
+         ybqA==
+X-Gm-Message-State: AA+aEWa50jZvKh+A95QSuY3nUhDhrMdr12YmtiKZIYkiJIr8dujMT6AR
+        4AB9oPfx/O+023UUA3r1ogiz6ukh
+X-Google-Smtp-Source: AFSGD/WyRvmcjS83Q4T2gs38FpyWsGrgJLElmdPvu1KVujOtjLplYjh0IbN7DwIVTMr+ub+Gx0GC/g==
+X-Received: by 2002:a50:ba3d:: with SMTP id g58mr24240049edc.35.1544088140328;
+        Thu, 06 Dec 2018 01:22:20 -0800 (PST)
+Received: from dell.be.48ers.dk (d528f5fe4.static.telenet.be. [82.143.95.228])
+        by smtp.gmail.com with ESMTPSA id v43sm44911edc.18.2018.12.06.01.22.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 01:22:19 -0800 (PST)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peter@korsgaard.com>)
+        id 1gUprO-0001n2-Fg; Thu, 06 Dec 2018 10:22:18 +0100
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Jean Delvare <jdelvare@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "firmware: dmi_scan: Use lowercase letters for UUID"
+References: <20181205211351.5309-1-peter@korsgaard.com>
+        <1544086444.5492.1.camel@suse.com>
+Date:   Thu, 06 Dec 2018 10:22:18 +0100
+In-Reply-To: <1544086444.5492.1.camel@suse.com> (Jean Delvare's message of
+        "Thu, 06 Dec 2018 09:54:04 +0100")
+Message-ID: <87a7ljyppx.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <154408757908.3572.9138595858555797029@skylake-alporthouse-com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 10:12 a.m., Chris Wilson wrote:
-> Quoting Zhang, Jerry(Junwei) (2018-12-06 02:40:42)
->> On 12/6/18 12:56 AM, Michel Dänzer wrote:
->>> From: Michel Dänzer <michel.daenzer@amd.com>
->>>
->>> The following cases are possible for pr_debug():
->>>
->>> 1. CONFIG_DYNAMIC_DEBUG disabled
->>>     a) DEBUG not defined: pr_debug() translates to no_printk(...), i.e.
->>>        it never generates any output.
->>>     b) DEBUG defined: pr_debug() translates to printk(KERN_DEBUG ...),
->>>        i.e. it generates output which doesn't appear in dmesg by default,
->>>        can be enabled dynamically.
->>>
->>> 2. CONFIG_DYNAMIC_DEBUG enabled: pr_debug() translates to
->>>     dynamic_pr_debug()
->>>     a) DEBUG not defined: dynamic_pr_debug() generates no output by
->>>        default, can be enabled dynamically.
->>>     b) DEBUG defined: dynamic_pr_debug() generates output by default,
->>>        can be disabled dynamically.
->>>
->>> The intention for drm_debug_printer() is to generate output which
->>> doesn't appear in dmesg by default, but can be enabled dynamically, i.e.
->>> cases 1b) and 2a). However, defining DEBUG unconditionally gave us 2b)
->>> instead of 2a) with CONFIG_DYNAMIC_DEBUG enabled.
->>>
->>> Fixes: 79a5ad2fdb3c ("drm: Enable pr_debug() for drm_printer")
->>> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
->> Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-> 
-> At the cost of 1a? Nah.
+>>>>> "Jean" == Jean Delvare <jdelvare@suse.com> writes:
 
-We still #define DEBUG if CONFIG_DYNAMIC_DEBUG isn't defined, so it's
-still 1b), not 1a).
+ > On Wed, 2018-12-05 at 22:13 +0100, Peter Korsgaard wrote:
+ >> This reverts commit 712ff25450bd01366301eef81c33e865d901e7b7.
+ >> 
+ >> The output of dmi_save_uuid() is exposed to user space as
+ >> /sys/devices/virtual/dmi/id/*_uuid, so this breaks backwards compatibility,
+ >> E.G.  I have systems that include the content of dmi/id/product_uuid as part
+ >> of the keyphrase for cryptsetup luksOpen.
+ >> 
+ >> As the change was purely cosmetical, revert it to fix such breakage.
 
+ > The change is not "cosmetical". The change was done to comply with RFC
+ > 4122:
+
+ > https://tools.ietf.org/html/rfc4122
+
+ >   The hexadecimal values "a" through "f" are output as
+ >   lower case characters and are case insensitive on input.
+
+I get that - but it changes the content of sysfs entries, breaking real
+systems - E.G. a user space ABI regression.
+
+It is a cosmetic code change in the sense that no known software was
+broken with the upper case characters.
+
+
+ > If "cryptsetup luksOpen" does not lowercase digits before computing its
+ > key passphrase, then it's not RFC 4122-compliant and should be fixed.
+
+cryptsetup naturally doesn't know anything about RFC 4122. It just reads
+a disk encryption keyphrase which happen to include the content of
+id/product_uuid because of my scripts.
+
+ > Nak. This is too late. Changing it again would just add confusion.
+
+Please reconsider. 4.17 is from June, and 4.19 has only recently become
+LTS.
 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Bye, Peter Korsgaard
