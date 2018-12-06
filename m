@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF81C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EAAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4672082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36B5220892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107455;
-	bh=a0pJjIEj6bfIMUdEQ13DX8JMnjIvdCIs7Iexdq0tafg=;
+	s=default; t=1544107459;
+	bh=jauIOnLMSuT1MYajvg59O8W++NLatCMI4W8RLqv4CB4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r65aFvhvqxPXeX1EAz+YQRb6jfI/4WKFphEmhpwFnRsH/3WmCJKvgyhTC2p7AFJ7J
-	 0dDY5p+yHS9LEk6DVtnSWLMfg8fXuJaHeCq1tjtRPG+9/752k+Jc15QsqNGKHFaLtf
-	 8KylbuZTvEsAOaRg2yYTq+7z1TgvS3JA9d8CGpyE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4672082B
+	b=J+mRyJLxcCsgv3Pz3U8U52xvCFQ8aQdrdV0d5SITcZdPnmNfqTARl9JDAMlHde6C0
+	 WkyLdv9bqSxVv9AEfFngHmiH0TK1PIOtCvlyN+P6Nbyp0STvEdLLkC8lpoqAEXCPvO
+	 fD+0xB53rKZw+4ew52dImRyvL9pc/jor6UcNOf7I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B5220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbeLFOoO (ORCPT
+        id S1730849AbeLFOoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:44:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48724 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:44:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730810AbeLFOoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:08 -0500
+        id S1730810AbeLFOoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 279E620661;
-        Thu,  6 Dec 2018 14:44:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00E9520661;
+        Thu,  6 Dec 2018 14:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107447;
-        bh=a0pJjIEj6bfIMUdEQ13DX8JMnjIvdCIs7Iexdq0tafg=;
+        s=default; t=1544107455;
+        bh=jauIOnLMSuT1MYajvg59O8W++NLatCMI4W8RLqv4CB4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YGZdA1Mp67WD9delgGHgmI0Vc6CWM31rx3tdzEmL3kQz2b2ArfQG+lbJaqeC36LfO
-         5dZjsHShcN7vqxYRV76AZvEkhJGcTGqhVaxesY8AFYP6F3zoJqI+niflnx+jSksoqn
-         QlwA8E+Z1h2/JMLdkyyPL6c93ow6EdLYpQ5cneFI=
+        b=cDyOy7e2aS0EQGisDR1RGrjeowz1VVrGHBgRZb/BRwtBI2z+9eZMFdOIo5jwnUKlN
+         by/fjfwy2dReugJKduN+aZlNidZiJdqtc4YKzRXj2VrzLlGfbqGq1RByFLIrP8aInv
+         DlAg6zeIGam+cL2SBuGKnwURuKc12+MUE3fyp1Nw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 010/101] staging: rts5208: fix gcc-8 logic error warning
-Date:   Thu,  6 Dec 2018 15:38:09 +0100
-Message-Id: <20181206143012.168547454@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 013/101] iser: set sector for ambiguous mr status errors
+Date:   Thu,  6 Dec 2018 15:38:12 +0100
+Message-Id: <20181206143012.322948317@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -67,45 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-commit 58930cced012adb01bc78b3687049b17ef44d0a3 upstream.
+commit 24c3456c8d5ee6fc1933ca40f7b4406130682668 upstream.
 
-As gcc-8 points out, the bit mask check makes no sense here:
+If for some reason we failed to query the mr status, we need to make sure
+to provide sufficient information for an ambiguous error (guard error on
+sector 0).
 
-drivers/staging/rts5208/sd.c: In function 'ext_sd_send_cmd_get_rsp':
-drivers/staging/rts5208/sd.c:4130:25: error: bitwise comparison always evaluates to true [-Werror=tautological-compare]
-
-However, the code is even more bogus, as we have already
-checked for the SD_RSP_TYPE_R0 case earlier in the function
-and returned success. As seen in the mmc/sd driver core,
-SD_RSP_TYPE_R0 means "no response" anyway, so checking for
-a particular response would not help either.
-
-This just removes the nonsensical code to get rid of the
-warning.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 0a7a08ad6f5f ("IB/iser: Implement check_protection")
+Cc: <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rts5208/sd.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/infiniband/ulp/iser/iser_verbs.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -4110,12 +4110,6 @@ RTY_SEND_CMD:
- 					rtsx_trace(chip);
- 					return STATUS_FAIL;
- 				}
--
--			} else if (rsp_type == SD_RSP_TYPE_R0) {
--				if ((ptr[3] & 0x1E) != 0x03) {
--					rtsx_trace(chip);
--					return STATUS_FAIL;
--				}
- 			}
+--- a/drivers/infiniband/ulp/iser/iser_verbs.c
++++ b/drivers/infiniband/ulp/iser/iser_verbs.c
+@@ -1110,7 +1110,9 @@ u8 iser_check_task_pi_status(struct iscs
+ 					 IB_MR_CHECK_SIG_STATUS, &mr_status);
+ 		if (ret) {
+ 			pr_err("ib_check_mr_status failed, ret %d\n", ret);
+-			goto err;
++			/* Not a lot we can do, return ambiguous guard error */
++			*sector = 0;
++			return 0x1;
  		}
+ 
+ 		if (mr_status.fail_status & IB_MR_CHECK_SIG_STATUS) {
+@@ -1138,9 +1140,6 @@ u8 iser_check_task_pi_status(struct iscs
  	}
+ 
+ 	return 0;
+-err:
+-	/* Not alot we can do here, return ambiguous guard error */
+-	return 0x1;
+ }
+ 
+ void iser_err_comp(struct ib_wc *wc, const char *type)
 
 
