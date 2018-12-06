@@ -2,108 +2,115 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405D0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0729B20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4D3C21479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107650;
-	bh=HdSskfssIl18xMwTKzi7LjT5G8u/h01kPL4foRsMkhc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=igojnf0xNd7nBA0EudO6UP1lkRTZoYiLRA/QE3RUNwcyx5K0yB+WRwK+dnrGIzeMF
-	 AqYIpFd6CnpaS5Sk5lL/LXJPUbu3qHvLlvqAqAK1s9LQQsqKJVyRgw8xcrhjdVvyy2
-	 dlt0XKbjaHrWimvBEGFL26R2LofHGKiTodXX+Hdc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0729B20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=default; t=1544107654;
+	bh=ahM0vENcfmYccr7KmWt3oK8rj3AjRk/YqYLt1KZjAcY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=oDFy19PCkdxnVcRj/HFsJj70AmEbh6L3pAMG9zBzKTEhseKVzaIKM2X93oA9iTy/Z
+	 WRcPfDpRRBuwTee4xlEHL/zLJcpNHq5u/ywLM8x0h8VhwML7BEVlQKRlJLcjDoLylA
+	 TKVHYmrzMkzu4v9i6XZFF1QRkvekcEVDsKtWcnxw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4D3C21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731414AbeLFOr2 (ORCPT
+        id S1731448AbeLFOrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:47:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52406 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:47:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730249AbeLFOrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:47:23 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730026AbeLFOrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:47:20 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20DF2215E5;
-        Thu,  6 Dec 2018 14:47:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E87042146D;
+        Thu,  6 Dec 2018 14:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107642;
-        bh=HdSskfssIl18xMwTKzi7LjT5G8u/h01kPL4foRsMkhc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OMLID9Wt79hzanLzk+lLc7sv2MDeWcWD3bq+tvwuUAr12dgS5V5CWfPf+uJVdeZVt
-         9u7CICbPgJzJiaw3y63yjx74mqpIje3GPh+FJ7IXk94+TRgp3aslGxUGrbbfmuLTpu
-         jmxlVDsOf/VCPFmRMxLV0XH/NWENkr0r5GoZ/R+8=
-Received: by mail-qt1-f173.google.com with SMTP id y20so721885qtm.13;
-        Thu, 06 Dec 2018 06:47:22 -0800 (PST)
-X-Gm-Message-State: AA+aEWbyTG1oMaKEg8qqmO4YoV8C0ykGN25qA+x870CaAqFjeV+Mpj0Y
-        DBUSZkARXhJjzgVsmOtI8oCy4+tjSiz+yhFLPw==
-X-Google-Smtp-Source: AFSGD/Xp8meM97qTpKa9DbSEVeCe0BNe9keZMHZ72aJRp1X7x/5xHzrSPezR5Jnpvv14zyI7B/aRLbNUXKh977bQD/k=
-X-Received: by 2002:a0c:c389:: with SMTP id o9mr27889568qvi.90.1544107641259;
- Thu, 06 Dec 2018 06:47:21 -0800 (PST)
+        s=default; t=1544107639;
+        bh=ahM0vENcfmYccr7KmWt3oK8rj3AjRk/YqYLt1KZjAcY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nFpeLk2XZLO6I3jagnFQnkPomleV+Np9hMcjSz8P0s1xOaS6nnNEofAPhO+ORVia1
+         TeqXmIUm4aG2t4d70qOOOMs9xbgGwaOGXN40nxfIYEXSr3596miku0Ww9ZbjsJ5pdc
+         p2wN8zG54wrYp509Dg9dKDEOk1CdlvjLk6bup78c=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 083/101] f2fs: fix a panic caused by NULL flush_cmd_control
+Date:   Thu,  6 Dec 2018 15:39:22 +0100
+Message-Id: <20181206143017.450236496@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
+References: <20181206143011.174892052@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20181115055254.2812-1-takahiro.akashi@linaro.org> <20181115055254.2812-7-takahiro.akashi@linaro.org>
-In-Reply-To: <20181115055254.2812-7-takahiro.akashi@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 6 Dec 2018 08:47:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
-Message-ID: <CAL_JsqL4_Z5pVfoB3opjL7eTzZvhBJW7_aQS443quAAR0gGH1w@mail.gmail.com>
-Subject: Re: [PATCH v16 06/16] lib: fdt: add a helper function for handling
- memory range property
-To:     "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        prudo@linux.ibm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, bhsharma@redhat.com,
-        kexec@lists.infradead.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 11:52 PM AKASHI Takahiro
-<takahiro.akashi@linaro.org> wrote:
->
-> Added function, fdt_setprop_reg(), will be used later to handle
-> kexec-specific property in arm64's kexec_file implementation.
-> It will possibly be merged into libfdt in the future.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-You generally can't modify libfdt files. Any changes will be blown
-away with the next dtc sync (there's one in -next now). Though here
-you are creating a new location with fdt code. lib/ is just a shim to
-the actual libfdt code. Don't put any implementation there. You can
-add this to drivers/of/fdt_address.c for the short term, but it still
-needs to go upstream.
+------------------
 
-Otherwise, the implementation looks fine to me.
+From: Yunlei He <heyunlei@huawei.com>
 
-> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> ---
->  include/linux/libfdt.h | 26 ++++++++++++++++++++
->  lib/Makefile           |  2 +-
->  lib/fdt_addresses.c    | 56 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 83 insertions(+), 1 deletion(-)
->  create mode 100644 lib/fdt_addresses.c
+commit d4fdf8ba0e5808ba9ad6b44337783bd9935e0982 upstream.
+
+Mount fs with option noflush_merge, boot failed for illegal address
+fcc in function f2fs_issue_flush:
+
+        if (!test_opt(sbi, FLUSH_MERGE)) {
+                ret = submit_flush_wait(sbi);
+                atomic_inc(&fcc->issued_flush);   ->  Here, fcc illegal
+                return ret;
+        }
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 4.9: adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/f2fs/segment.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -493,6 +493,9 @@ int create_flush_cmd_control(struct f2fs
+ 	init_waitqueue_head(&fcc->flush_wait_queue);
+ 	init_llist_head(&fcc->issue_list);
+ 	SM_I(sbi)->cmd_control_info = fcc;
++	if (!test_opt(sbi, FLUSH_MERGE))
++		return err;
++
+ 	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+ 				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(fcc->f2fs_issue_flush)) {
+@@ -2539,7 +2542,7 @@ int build_segment_manager(struct f2fs_sb
+ 
+ 	INIT_LIST_HEAD(&sm_info->sit_entry_set);
+ 
+-	if (test_opt(sbi, FLUSH_MERGE) && !f2fs_readonly(sbi->sb)) {
++	if (!f2fs_readonly(sbi->sb)) {
+ 		err = create_flush_cmd_control(sbi);
+ 		if (err)
+ 			return err;
+
+
