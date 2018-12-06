@@ -2,143 +2,128 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98379C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C95C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D828214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5681214DE
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:47:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="AvIX82gQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D828214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Hu/Bm2ar"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5681214DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbeLFPre (ORCPT
+        id S1726212AbeLFPrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:47:34 -0500
-Received: from mail.servus.at ([193.170.194.20]:49372 "EHLO mail.servus.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeLFPrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:47:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.servus.at (Postfix) with ESMTP id B69BF3000694;
-        Thu,  6 Dec 2018 16:47:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-        content-transfer-encoding:content-type:content-type:in-reply-to
-        :mime-version:user-agent:date:date:message-id:organization:from
-        :from:references:subject:subject:received:received; s=main; t=
-        1544111246; x=1545925647; bh=kltSlKA3mbcTujRIdGfrANs0ZeALK2B9AEr
-        AOYNpXsA=; b=AvIX82gQyQoo6zR6Hn1mM2z9MSE2T1E8X1Bip2hnWLtlujX9AFt
-        e/viIiv2WeHITA/VzcSeaXOnHLN8qATiCmapH2SotFkZktthnsmlG5ydRlzVzSTR
-        ppfxFPx3v1xTbarRdQa3Eqj2GSqZRy/TRfioPMImGZEYtceS+eYLFzKk=
-X-Virus-Scanned: amavisd-new at servus.at
-Received: from mail.servus.at ([127.0.0.1])
-        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6MxphbQIXpG4; Thu,  6 Dec 2018 16:47:26 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-        (Authenticated sender: oh_markus)
-        by mail.servus.at (Postfix) with ESMTPSA id A70973000692;
-        Thu,  6 Dec 2018 16:47:25 +0100 (CET)
-Subject: Re: [PATCH v4 0/7] lib/lzo: performance improvements
-To:     Dave Rodgman <dave.rodgman@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <20181130142600.13782-1-dave.rodgman@arm.com>
-Cc:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>,
-        "sonnyrao@google.com" <sonnyrao@google.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
-From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <5C09448C.8010506@oberhumer.com>
-Date:   Thu, 6 Dec 2018 16:47:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
+        Thu, 6 Dec 2018 10:47:39 -0500
+Received: from mail-eopbgr710059.outbound.protection.outlook.com ([40.107.71.59]:55296
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726184AbeLFPri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:47:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rM29Kj4gI0JrGQFH2NM1oiUEqi3V9YClootFV/uB6dk=;
+ b=Hu/Bm2ar0zWww0e6mEDlvhgz3cJbSbNaDqHZ7ddgsEvGRL2J2LyTp++lw60WgdusI4MBzfocaAefmcxISC0cNUSLL2SsTkRl/g6ovjoRx1XS7gWvXE+Oa9zHuRL7AT+uvbEX5TUyqDGQ6/N186j0djVj/8XR+1rEvyo+rJop/M8=
+Received: from MWHPR02MB2783.namprd02.prod.outlook.com (10.175.49.149) by
+ MWHPR02MB2528.namprd02.prod.outlook.com (10.168.205.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Thu, 6 Dec 2018 15:47:36 +0000
+Received: from MWHPR02MB2783.namprd02.prod.outlook.com
+ ([fe80::3cdc:f4c:38f2:f62f]) by MWHPR02MB2783.namprd02.prod.outlook.com
+ ([fe80::3cdc:f4c:38f2:f62f%3]) with mapi id 15.20.1404.021; Thu, 6 Dec 2018
+ 15:47:34 +0000
+From:   Bharat Kumar Gogada <bharatku@xilinx.com>
+To:     Bharat Kumar Gogada <bharatku@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        Ravikiran Gummaluri <rgummal@xilinx.com>
+Subject: RE: [PATCH v2 0/4] Add support to register platform service IRQ
+Thread-Topic: [PATCH v2 0/4] Add support to register platform service IRQ
+Thread-Index: AQHUfCoaaO4km+A5C0WJAhnBWxE0a6Vx/aAg
+Date:   Thu, 6 Dec 2018 15:47:34 +0000
+Message-ID: <MWHPR02MB27832B867A3557D07B8788BAA5A90@MWHPR02MB2783.namprd02.prod.outlook.com>
+References: <1542206878-24587-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+In-Reply-To: <1542206878-24587-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=bharatku@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2528;6:IYHP6z/xTqzwHhpVjVU0y3ajaFz9TGSKzyiIyyUDd/xPe9DlLVFIibaQJjzoDzBgDW6ZXjkFdI1vcwZ8VdZ6E6zq9x+PSoiyj8ztENxBioJob543KuFogsOpQOcJhkqSljMyiG+9NQHqObJEk8EI/91ZQYp+ysn+779Onke/U4HY3J04UKq6FzNNQ6ScXs4xDmrbNiS0R6nbdEwfL8320r3WqcOVy3LNy1+ASz3XZTTHqbURTZY2pGxq/In5PHfQg9kU8o5b6z3MOPveokLOB+chFGIMhYZxSdvER0vbRMEejfFns97zcioKwxxOrlL/sBBpOC7LhOwsFT/+ws8HwZOrU7w7/68JGbCyxoUh01nAwWnFAkJKW7OYKHicJ61sXDzq+0faEI98CRCojTZS7WYeZuQLeF+QA9rhpJagW7vanOSFTry3slhmb1s8lqdgyZ2lFyilaSdMpKmpVLPsAA==;5:Q19Yj7oCBgamRvE+xklBLQBRYx65yFDPbcN9bFia1JXaSou3kUKNgk+aqZuC0jhF48PS4YLDsCwopBSulD6/dw+K59w1fsPAB3LPMsUhGLSSOs3c5VaWnj+vx4rU0K/525WZm0PVK6+rlvAT2Os71WDM5kqvjonSzcOsIExMaA4=;7:xuJXEPZ6+2AKvSJILPi7jSUrgNnBZBgp2qKbK7wtiVt3KAZH7lAc5lIMrTWx2eNlW27XKLTt0W1bVCME1urAhCQgK4j/MNj7PEv6AzDFB0uOSK6CDa6bJuzAItyknQAtp+fMQPqDjydnLPETEvRpwQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(366004)(136003)(346002)(13464003)(189003)(199004)(53754006)(186003)(26005)(97736004)(6436002)(105586002)(55016002)(2501003)(8936002)(99286004)(110136005)(54906003)(316002)(81166006)(68736007)(229853002)(8676002)(86362001)(2906002)(6116002)(3846002)(81156014)(446003)(486006)(476003)(25786009)(74316002)(7736002)(305945005)(53546011)(6506007)(76176011)(5660300001)(478600001)(256004)(102836004)(33656002)(14454004)(11346002)(106356001)(6246003)(107886003)(4326008)(71190400001)(53936002)(66066001)(71200400001)(7696005)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2528;H:MWHPR02MB2783.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 91488485-e8f3-470b-539e-08d65b9223f3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2528;
+x-ms-traffictypediagnostic: MWHPR02MB2528:
+x-microsoft-antispam-prvs: <MWHPR02MB2528901BBE40D75117135FC0A5A90@MWHPR02MB2528.namprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR02MB2528;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2528;
+x-forefront-prvs: 087894CD3C
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fipCMGBervP40xuF9gEklhAnJVcG+Xoj2ePRp5VHRdubhOImWPAa4F1ptzZiA+wmYnId7MpstbDjPIXz1c0/xFECv2vpViYSTI2tt89w7ihsrJ80ppy03CEhL+oVlEw+9qgVbBhL8OaQ282z5ro++oMG8g8K7oiZgoY7A5mxEKolVtakE4bRXF8T9w1MVbBsshWDB2DVKRyZIyoQAb6KmzsazqwlRJfm+/d3DYRIpu0Ru2epFf/H8VN/AcVn1/6q5FDU8ahxegzhDIo2nqEAr0bm/8P3xyCFvTIE5NxEIZpro/JM4WDu89EUbptmkxkkFLDWt+WkJJkYorKCo49Ua6YLJxTvjHy4kpITOjTH57M=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20181130142600.13782-1-dave.rodgman@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91488485-e8f3-470b-539e-08d65b9223f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 15:47:34.3363
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2528
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-30 15:26, Dave Rodgman wrote:
-> This patch series introduces performance improvements for lzo.
-> 
-> The previous version of this patchset is here:
-> https://lkml.org/lkml/2018/11/30/807
-> 
-> This version of the patchset fixes a maybe-used-uninitialized warning
-> (although the previous version was still safe).
-> 
-> Dave
+Hi All,
 
-Hi Dave,
+Please let me know if anyone has any issue with this patch series.
 
-as indicated in my previous mail please split your series into three
-distinct pull requests.
+Regards,
+Bharat
 
+> -----Original Message-----
+> From: Bharat Kumar Gogada [mailto:bharat.kumar.gogada@xilinx.com]
+> Sent: Wednesday, November 14, 2018 8:18 PM
+> To: linux-kernel@vger.kernel.org
+> Cc: bhelgaas@google.com; Ravikiran Gummaluri <rgummal@xilinx.com>;
+> Bharat Kumar Gogada <bharatku@xilinx.com>
+> Subject: [PATCH v2 0/4] Add support to register platform service IRQ
+>=20
+> Some platforms have dedicated IRQ lines for PCIe services like AER/PME et=
+c.
+> The root complex on these platform will use these seperate IRQ lines to
+> report AER/PME etc., interrupts and will not generate MSI/MSI-X/INTx
+> interrupts for these services.
+> These patches will add new method for these kind of platforms to register
+> the platform IRQ number with respective PCIe services.
+>=20
+> Bharat Kumar Gogada (4):
+>   PCI: Add setup_platform_service_irq hook to struct pci_host_bridge
+>   PCI: Add pci_check_platform_service_irqs
+>   PCI/portdrv: Check platform supported service IRQ's
+>   PCI: xilinx-nwl: Add method to setup_platform_service_irq hook
+>=20
+>  drivers/pci/controller/pcie-xilinx-nwl.c | 12 ++++++++++++
+>  drivers/pci/pcie/portdrv_core.c          |  8 ++++++++
+>  include/linux/pci.h                      | 20 ++++++++++++++++++++
+>  3 files changed, 40 insertions(+)
+>=20
+> --
+> 2.7.4
 
-Request 1 - ARM64 improvements; acked by me
-
-   [PATCH 1/8] lib/lzo: tidy-up ifdefs
-   [PATCH 3/8] lib/lzo: enable 64-bit CTZ on Arm
-   [PATCH 4/8] lib/lzo: 64-bit CTZ on arm64
-   [PATCH 5/8] lib/lzo: fast 8-byte copy on arm64
-
-are simple arch patches that give a nice speedup on ARM64 and should
-get merged ASAP.
-
-
-
-Request 2 - add COPY16; *NOT* acked by me
-
-  [PATCH 2/8] lib/lzo: clean-up by introducing COPY16
-
-is still not correct because of possible overlapping copies. I'll
-address this on the weekend.
-
-
-
-Request 3 - add lzo-rle; *NOT* acked by me
-
-   [PATCH 6/8] lib/lzo: implement run-length encoding
-   [PATCH 7/8] lib/lzo: separate lzo-rle from lzo
-   [PATCH 8/8] zram: default to lzo-rle instead of lzo
-
-This can *NOT* be applied in the current implementation.
-
-It (1) silently changes the compressed data format, (2) crashes on MIPS,
-and (3) makes compression and decompression on typical data 10% slower on
-X86_64 with our internal benchmarks, and (4) has to be carefully checked
-for buffer overflows.
-
-I understand that we want some optimizations for data with many zeros like
-in the typical ZRAM use case, but the implementation will clearly need some
-more work. I'll also have a look at the weekend - eg I have a nice idea
-how to deal with (1).
-
-
-
-As a final comment, I question the quality your benchmarks - combining
-arch-related ARM64 improvements and algorithmic changes into one
-benchmark comparision is just unprofessional marketing.
-
-Cheers,
-Markus
-
-
-
--- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
