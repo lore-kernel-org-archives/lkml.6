@@ -2,92 +2,286 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2AAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFC7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C93A21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544093652;
-	bh=RdU04X7KWxterWJUY5M8QKseZAdJaJqWo5YYFHG+ubk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KgOXZCgw0vlH0wL7HbhpmJg2CyrbWnqbej4/rIY0Ba7GaJd+Pcne7fDqUIqhFYznZ
-	 UIlMSaDsBjj8VtfSpIUOxyDvcirXG9tW9ujNX0JUzQcZaoS6W/AyiK5XFK/4xigTC9
-	 f9xSQ8X5wKyVW7C7BJR2PX4nY23iAbcaL4c0iTsQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C93A21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E559214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E559214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbeLFKyL (ORCPT
+        id S1729439AbeLFKyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:54:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbeLFKyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:54:10 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82DC42082B;
-        Thu,  6 Dec 2018 10:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544093650;
-        bh=RdU04X7KWxterWJUY5M8QKseZAdJaJqWo5YYFHG+ubk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GUnBNxXo8r4UnssiD8ankHu/gUwA423ZZIR1QQFzmEAHfaIzJqVkIGubq5dfN+lg3
-         Kkv/tAlrF2KoKQqExR66CM3vf/hBq5OBD7vYmPKmXcNuGETpAo+fCruwJcZhIaGBOk
-         pRutu0W30e+c17nS0MG6hh+S86qtZjmYp/zpmzcQ=
-Date:   Thu, 6 Dec 2018 11:54:07 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jari Ruusu <jariruusu@users.sourceforge.net>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?iso-8859-1?B?S3I/beE/?= <rkrcmar@redhat.com>,
-        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>
-Subject: Re: [PATCH 4.14 121/146] x86/fpu: Disable bottom halves while
- loading FPU registers
-Message-ID: <20181206105407.GH19891@kroah.com>
-References: <20181204103726.750894136@linuxfoundation.org>
- <20181204103731.697870447@linuxfoundation.org>
- <5C07FC30.43601034@users.sourceforge.net>
- <20181205190020.GO29510@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205190020.GO29510@zn.tnic>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Thu, 6 Dec 2018 05:54:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46440 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727806AbeLFKyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 05:54:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25701AE7A;
+        Thu,  6 Dec 2018 10:54:41 +0000 (UTC)
+Date:   Thu, 06 Dec 2018 11:54:41 +0100
+Message-ID: <s5hsgzbrklq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 4.20-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 08:00:20PM +0100, Borislav Petkov wrote:
-> On Wed, Dec 05, 2018 at 06:26:24PM +0200, Jari Ruusu wrote:
-> > That same race appears to be present in older kernel branches also.
-> > The context is sligthly different, so the patch for 4.14 does not
-> > apply cleanly to older kernels. For 4.9 branch, this edit works:
-> 
-> You could take the upstream one, amend it with your change, test it and
-> send it to Greg - I believe he'll take the backport gladly.
-> 
-> :-)
+Linus,
 
-Yes, that's the easiest way for me to accept such a patch, otherwise it
-gets put on the end of the very-long-queue...
+please pull sound fixes for v4.20-rc6 from:
 
-thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.20-rc6
 
-greg k-h
+The topmost commit is b72f936f6b325f4fde06b02e4b6ab682f6f2e73f
+
+----------------------------------------------------------------
+
+sound fixes for 4.20-rc6
+
+Still more incoming fixes than wished at this stage, but all look like
+small and reasonable fixes.  In addition to the usual HD-audio and
+USB-audio quirks for various devices, two notable changes are
+included:
+- A fix for USB-audio UAF at probing a malformed descriptor
+- Workarounds for PCM rwsem mutex starvation
+
+----------------------------------------------------------------
+
+Chanho Min (1):
+      ALSA: pcm: Fix starvation on down_write_nonblock()
+
+Chris Chiu (4):
+      ALSA: hda/realtek: ALC286 mic and headset-mode fixups for Acer Aspire U27-880
+      ALSA: hda/realtek - Add support for Acer Aspire C24-860 headset mic
+      ALSA: hda/realtek: Fix mic issue on Acer AIO Veriton Z4660G
+      ALSA: hda/realtek: Fix mic issue on Acer AIO Veriton Z4860G/Z6860G
+
+Hui Peng (1):
+      ALSA: usb-audio: Fix UAF decrement if card has no live interfaces in card.c
+
+Kai-Heng Feng (1):
+      ALSA: hda: Add support for AMD Stoney Ridge
+
+Takashi Iwai (3):
+      ALSA: pcm: Call snd_pcm_unlink() conditionally at closing
+      ALSA: pcm: Fix interval evaluation with openmin/max
+      ALSA: hda/realtek - Fix speaker output regression on Thinkpad T570
+
+Tony Das (1):
+      ALSA: usb-audio: Add SMSL D1 to quirks for native DSD support
+
+---
+ include/sound/pcm_params.h    |  4 +++-
+ sound/core/pcm_native.c       | 14 ++++++++------
+ sound/pci/hda/hda_intel.c     |  4 ++++
+ sound/pci/hda/patch_realtek.c | 27 +++++++++++++++++++++++++++
+ sound/usb/card.c              |  5 ++++-
+ sound/usb/quirks.c            |  1 +
+ 6 files changed, 47 insertions(+), 8 deletions(-)
+
+diff --git a/include/sound/pcm_params.h b/include/sound/pcm_params.h
+index 2dd37cada7c0..888a833d3b00 100644
+--- a/include/sound/pcm_params.h
++++ b/include/sound/pcm_params.h
+@@ -254,11 +254,13 @@ static inline int snd_interval_empty(const struct snd_interval *i)
+ static inline int snd_interval_single(const struct snd_interval *i)
+ {
+ 	return (i->min == i->max || 
+-		(i->min + 1 == i->max && i->openmax));
++		(i->min + 1 == i->max && (i->openmin || i->openmax)));
+ }
+ 
+ static inline int snd_interval_value(const struct snd_interval *i)
+ {
++	if (i->openmin && !i->openmax)
++		return i->max;
+ 	return i->min;
+ }
+ 
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 66c90f486af9..818dff1de545 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -36,6 +36,7 @@
+ #include <sound/timer.h>
+ #include <sound/minors.h>
+ #include <linux/uio.h>
++#include <linux/delay.h>
+ 
+ #include "pcm_local.h"
+ 
+@@ -91,12 +92,12 @@ static DECLARE_RWSEM(snd_pcm_link_rwsem);
+  * and this may lead to a deadlock when the code path takes read sem
+  * twice (e.g. one in snd_pcm_action_nonatomic() and another in
+  * snd_pcm_stream_lock()).  As a (suboptimal) workaround, let writer to
+- * spin until it gets the lock.
++ * sleep until all the readers are completed without blocking by writer.
+  */
+-static inline void down_write_nonblock(struct rw_semaphore *lock)
++static inline void down_write_nonfifo(struct rw_semaphore *lock)
+ {
+ 	while (!down_write_trylock(lock))
+-		cond_resched();
++		msleep(1);
+ }
+ 
+ #define PCM_LOCK_DEFAULT	0
+@@ -1967,7 +1968,7 @@ static int snd_pcm_link(struct snd_pcm_substream *substream, int fd)
+ 		res = -ENOMEM;
+ 		goto _nolock;
+ 	}
+-	down_write_nonblock(&snd_pcm_link_rwsem);
++	down_write_nonfifo(&snd_pcm_link_rwsem);
+ 	write_lock_irq(&snd_pcm_link_rwlock);
+ 	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN ||
+ 	    substream->runtime->status->state != substream1->runtime->status->state ||
+@@ -2014,7 +2015,7 @@ static int snd_pcm_unlink(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_substream *s;
+ 	int res = 0;
+ 
+-	down_write_nonblock(&snd_pcm_link_rwsem);
++	down_write_nonfifo(&snd_pcm_link_rwsem);
+ 	write_lock_irq(&snd_pcm_link_rwlock);
+ 	if (!snd_pcm_stream_linked(substream)) {
+ 		res = -EALREADY;
+@@ -2369,7 +2370,8 @@ int snd_pcm_hw_constraints_complete(struct snd_pcm_substream *substream)
+ 
+ static void pcm_release_private(struct snd_pcm_substream *substream)
+ {
+-	snd_pcm_unlink(substream);
++	if (snd_pcm_stream_linked(substream))
++		snd_pcm_unlink(substream);
+ }
+ 
+ void snd_pcm_release_substream(struct snd_pcm_substream *substream)
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 0bbdf1a01e76..76f03abd15ab 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2498,6 +2498,10 @@ static const struct pci_device_id azx_ids[] = {
+ 	/* AMD Hudson */
+ 	{ PCI_DEVICE(0x1022, 0x780d),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	/* AMD Stoney */
++	{ PCI_DEVICE(0x1022, 0x157a),
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
++			 AZX_DCAPS_PM_RUNTIME },
+ 	/* AMD Raven */
+ 	{ PCI_DEVICE(0x1022, 0x15e3),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 06f93032d0cc..8d75597028ee 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4988,9 +4988,18 @@ static void alc_fixup_tpt470_dock(struct hda_codec *codec,
+ 		{ 0x19, 0x21a11010 }, /* dock mic */
+ 		{ }
+ 	};
++	/* Assure the speaker pin to be coupled with DAC NID 0x03; otherwise
++	 * the speaker output becomes too low by some reason on Thinkpads with
++	 * ALC298 codec
++	 */
++	static hda_nid_t preferred_pairs[] = {
++		0x14, 0x03, 0x17, 0x02, 0x21, 0x02,
++		0
++	};
+ 	struct alc_spec *spec = codec->spec;
+ 
+ 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		spec->gen.preferred_dacs = preferred_pairs;
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+ 		snd_hda_apply_pincfgs(codec, pincfgs);
+ 	} else if (action == HDA_FIXUP_ACT_INIT) {
+@@ -5510,6 +5519,7 @@ enum {
+ 	ALC221_FIXUP_HP_HEADSET_MIC,
+ 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+ 	ALC295_FIXUP_HP_AUTO_MUTE,
++	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6387,6 +6397,15 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_auto_mute_via_amp,
+ 	},
++	[ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x18, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6401,7 +6420,11 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1025, 0x0762, "Acer Aspire E1-472", ALC271_FIXUP_HP_GATE_MIC_JACK_E1_572),
+ 	SND_PCI_QUIRK(0x1025, 0x0775, "Acer Aspire E1-572", ALC271_FIXUP_HP_GATE_MIC_JACK_E1_572),
+ 	SND_PCI_QUIRK(0x1025, 0x079b, "Acer Aspire V5-573G", ALC282_FIXUP_ASPIRE_V5_PINS),
++	SND_PCI_QUIRK(0x1025, 0x102b, "Acer Aspire C24-860", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1025, 0x106d, "Acer Cloudbook 14", ALC283_FIXUP_CHROME_BOOK),
++	SND_PCI_QUIRK(0x1025, 0x128f, "Acer Veriton Z6860G", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1025, 0x1290, "Acer Veriton Z4860G", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1025, 0x1291, "Acer Veriton Z4660G", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x0470, "Dell M101z", ALC269_FIXUP_DELL_M101Z),
+ 	SND_PCI_QUIRK(0x1028, 0x054b, "Dell XPS one 2710", ALC275_FIXUP_DELL_XPS),
+ 	SND_PCI_QUIRK(0x1028, 0x05bd, "Dell Latitude E6440", ALC292_FIXUP_DELL_E7X),
+@@ -7065,6 +7088,10 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x04a11040},
+ 		{0x21, 0x04211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0286, 0x1025, "Acer", ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
++		{0x12, 0x90a60130},
++		{0x17, 0x90170110},
++		{0x21, 0x02211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0288, 0x1028, "Dell", ALC288_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60120},
+ 		{0x14, 0x90170110},
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 2bfe4e80a6b9..a105947eaf55 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -682,9 +682,12 @@ static int usb_audio_probe(struct usb_interface *intf,
+ 
+  __error:
+ 	if (chip) {
++		/* chip->active is inside the chip->card object,
++		 * decrement before memory is possibly returned.
++		 */
++		atomic_dec(&chip->active);
+ 		if (!chip->num_interfaces)
+ 			snd_card_free(chip->card);
+-		atomic_dec(&chip->active);
+ 	}
+ 	mutex_unlock(&register_mutex);
+ 	return err;
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 8a945ece9869..6623cafc94f2 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1373,6 +1373,7 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+ 		break;
+ 
++	case USB_ID(0x152a, 0x85de): /* SMSL D1 DAC */
+ 	case USB_ID(0x16d0, 0x09dd): /* Encore mDSD */
+ 	case USB_ID(0x0d8c, 0x0316): /* Hegel HD12 DSD */
+ 	case USB_ID(0x16b0, 0x06b2): /* NuPrime DAC-10 */
