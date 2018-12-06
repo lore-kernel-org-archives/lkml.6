@@ -2,150 +2,129 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5675AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A6DC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB7C20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB7C20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sedsystems.ca
+	by mail.kernel.org (Postfix) with ESMTP id CFB4F20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:10:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aae6PN5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB4F20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbeLFQKC (ORCPT
+        id S1726273AbeLFQKS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:10:02 -0500
-Received: from sed198n136.SEDSystems.ca ([198.169.180.136]:9345 "EHLO
-        sed198n136.sedsystems.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbeLFQKC (ORCPT
+        Thu, 6 Dec 2018 11:10:18 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50530 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFQKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:10:02 -0500
-Received: from barney.sedsystems.ca (barney [198.169.180.121])
-        by sed198n136.sedsystems.ca  with ESMTP id wB6GA1Ts001404
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 6 Dec 2018 10:10:01 -0600 (CST)
-Received: from eng1n65.eng.sedsystems.ca (eng1n65.eng.sedsystems.ca [172.21.1.65])
-        by barney.sedsystems.ca (8.14.7/8.14.4) with ESMTP id wB6GA0bY022948
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 6 Dec 2018 10:10:00 -0600
-Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux-pci@vger.kernel.org, "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, bhelgaas@google.com,
-        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
-        Trent Piepho <tpiepho@impinj.com>
-References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
- <87o99zjcsc.fsf@tkos.co.il>
- <5a3543f2-fe58-221d-694f-0f98a643edfc@sedsystems.ca>
- <1544111431.3709.70.camel@pengutronix.de>
-From:   Robert Hancock <hancock@sedsystems.ca>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hancock@sedsystems.ca; prefer-encrypt=mutual; keydata=
- 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
-Organization: SED Systems
-Message-ID: <ff33ed91-431d-9620-da75-216298a58667@sedsystems.ca>
-Date:   Thu, 6 Dec 2018 10:10:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 11:10:18 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n190so1561878wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=P+N3XANXwak6co/c8fNynu7T4eKz/PqGFkBBi9bwGo0=;
+        b=Aae6PN5ofQ+YD5XUJttSLSD5PL4v7+t1MIacgdrz5XL3WMK1a9X4rjSHrtSXa+a6NS
+         GyLd+FHWdmQ/SBCBBSBRpu9wr9TUpx51tsnfBPyd2yQz8E+UyiV/LjPJbPH8htQ3Q5OF
+         KWFOcDDVxPZ8OtmtgZ9nMNSO3SZMcrOJ0rZhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=P+N3XANXwak6co/c8fNynu7T4eKz/PqGFkBBi9bwGo0=;
+        b=Lmb6Wc510OBmvAyhvUZoYsbR0izifm6E/siGjnRjdMAMelqKbGBLQ/V3/71iWl+neW
+         7JAY94U3V7KAfH5UCY6YVJhlKgbC9GUHGs/OGsjPpRr57t50YGbAI5t4/Ehta3dGLmq9
+         964aw/gpcIsXihoBpTX1uyT9tlCo2Ees/Sobp4AbnGz25Lam++Kh9QPBlypjjhUpo9A5
+         3+itw82USwcOhC+vQgdjO1vlF4H7+1YWWcmdGPuz1cNgnKXGQLtB4Q4kHQti9vwxGX5P
+         aEw1PuNYK1+ItblNwqjog2mhcPms6DUdd/uxinV1tPdpNBhPF7UmcvLBfvYiA7vklYNp
+         Xcng==
+X-Gm-Message-State: AA+aEWbZ+QJY8lx3qcRv79C9+utzZf3IAvHCJR2jty+2nIAEibi9Dua7
+        JvMcwQusPkZQ4LO7mmb9mRV90g==
+X-Google-Smtp-Source: AFSGD/W7nV5//clGouek8OXQBn9tC5Qq/fcLwZWnNA5F3TJwGYqMXxyGHStcrreGytYtsYPaJY2azw==
+X-Received: by 2002:a1c:5f8a:: with SMTP id t132mr20911623wmb.40.1544112615447;
+        Thu, 06 Dec 2018 08:10:15 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id g129sm1384898wmf.39.2018.12.06.08.10.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 08:10:14 -0800 (PST)
+Date:   Thu, 6 Dec 2018 16:10:11 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Michel =?utf-8?Q?D=C3=A4nzer?= <michel@daenzer.net>
+Cc:     Joe Perches <joe@perches.com>,
+        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] drm: Only #define DEBUG if CONFIG_DYNAMIC_DEBUG is
+ disabled
+Message-ID: <20181206161011.hkjjzdtfzd2hthos@holly.lan>
+References: <20181205165621.5805-1-michel@daenzer.net>
+ <10fca21a-5d7c-fe9e-07f0-6200e9de538e@amd.com>
+ <1586a49594d30b4bf4d88eba0d258e21efd26da2.camel@perches.com>
+ <276fbf7f-d33f-83a5-cb88-bd4051dc03ba@daenzer.net>
+ <e7859ce4b8417b094604d9ab4740d338730e38bf.camel@perches.com>
+ <d2a1f009-b2c7-240d-7e1c-e48a08d8ac7d@daenzer.net>
+ <61385d4cb6c9d990427349849d0af28faa3b67af.camel@perches.com>
+ <747d6c1b-8c0a-8168-bd1e-e969839ff5be@daenzer.net>
 MIME-Version: 1.0
-In-Reply-To: <1544111431.3709.70.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.64 on 198.169.180.136
+In-Reply-To: <747d6c1b-8c0a-8168-bd1e-e969839ff5be@daenzer.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 9:50 a.m., Lucas Stach wrote:
-> Am Donnerstag, den 06.12.2018, 09:45 -0600 schrieb Robert Hancock:
->> On 2018-12-06 2:10 a.m., Baruch Siach wrote:
->>> Hi Andrey,
->>>
->>> Adding Robert Hancock who reported[1] on a PCIe MSI issue with i.MX6.
->>>
->>> Andrey Smirnov writes:
->>>
->>>> Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
->>>> produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
->>>> to pcieport driver. This, in turn, results in a PCIE bus that is
->>>> capable of enumerating attached PCIE device, but lacks functional
->>>> interrupt support.
->>>
->>> Robert, does that fix your issue?
->>
->> Unfortunately, no.. in fact the situation on my setup is even worse with
->> CONFIG_PCIEPORTBUS enabled: Not only does MSI still not function, but
->> now INTx interrupts are somehow broken as well - no interrupts are
->> received. The IRQ information shown in /proc/interrupts is correct, but
->> the count remains stubbornly at 0.
+On Thu, Dec 06, 2018 at 03:41:16PM +0100, Michel Dänzer wrote:
+> On 2018-12-06 1:23 p.m., Joe Perches wrote:
+> > On Thu, 2018-12-06 at 12:52 +0100, Michel Dänzer wrote:
+> >> In contrast to the 2b case, the pr_debug output isn't visible by default
+> >> with 1b, so the latter doesn't fit "always produce output" either.
+> > 
+> > I think you are mistaken here.
 > 
-> That's expected. The port services will use an MSI IRQ when available
-> and due to a design issue with the DWC PCIe it will not forward any
-> legacy IRQs if any MSI is in use. If any of the PCIe devices in your
-> system are unable to work with MSI IRQs, you must boot with "nomsi" on
-> the kernel command line set.
+> Still puzzled as to what you're hoping to achieve with that kind of
+> language. None of the confusion about this patch has been on my part. :)
+> 
+> 
+> > Adding #define DEBUG as Chris did enables pr_debug output
+> > and is your 1b.
+> > 
+> > Perhaps your default console logging level is set to a
+> > non-default value.
+> 
+> I have CONFIG_DYNAMIC_DEBUG enabled in my kernels. The problem addressed
+> by this patch is that messages from drm_debug_printer are visible by
+> default (case 2b), whereas they shouldn't be (case 2a, like 1b).
 
-That seems like an unfortunate design choice on their part.. well that
-would probably argue against adding this as a hard dependency then, if
-non-MSI-supporting PCIe devices can't work with default boot options
-with that set.
+When enabled (either dynamically or statically) pr_debug() will emit
+output at KERN_DEBUG level regardless of whether CONFIG_DYNAMIC_DEBUG
+is defined or not.
 
-I'm looking into testing with an NXP Smart Devices board and some PCIe
-cards to see if I can verify whether MSI works on those or not, since we
-currently don't have a way to independently verify that the MSI
-implementation in our FPGA is working or whether another PCIe device
-works with MSI (the FPGA is integrated on the system board).
+Thus unless you change additional settings (either dynamically or
+statically) then debug messages should not be shown on the console
+because the default settings filter KERN_DEBUG messages. However they
+are available via dmesg and system loggers (syslogd, journal, etc).
 
--- 
-Robert Hancock
-Senior Software Developer
-SED Systems
-Email: hancock@sedsystems.ca
+The patch proposed will change the behaviour of the debug messages
+w.r.t. system loggers based on whether the user has enabled
+CONFIG_DYNAMIC_DEBUG or not, violating the principle of least surprise.
+
+
+Daniel.
