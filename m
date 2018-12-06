@@ -2,59 +2,92 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214EDC65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29460C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B5D20878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B5D20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id EB9C120850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:20:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9C120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbeLFRRE (ORCPT
+        id S1725952AbeLFRUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:17:04 -0500
-Received: from ms.lwn.net ([45.79.88.28]:33866 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbeLFRRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:17:04 -0500
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id BD513A9B;
-        Thu,  6 Dec 2018 17:17:01 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 10:16:56 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH] x86, boot: documentation whitespace fixup
-Message-ID: <20181206101656.5c403c2d@lwn.net>
-In-Reply-To: <20181130142209.7617-1-mst@redhat.com>
-References: <20181130142209.7617-1-mst@redhat.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 6 Dec 2018 12:20:47 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:62174 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFRUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:20:47 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gUxKL-0000pL-SU from joseph_myers@mentor.com ; Thu, 06 Dec 2018 09:20:41 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 6 Dec 2018 17:20:38 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gUxKI-0006nE-0H; Thu, 06 Dec 2018 17:20:38 +0000
+Date:   Thu, 6 Dec 2018 17:20:37 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+CC:     Paul Burton <paul.burton@mips.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        <libc-alpha@sourceware.org>
+Subject: Re: [PATCH v3 0/6] mips: system call table generation support
+In-Reply-To: <alpine.LFD.2.21.1812061659210.4294@eddie.linux-mips.org>
+Message-ID: <alpine.DEB.2.21.1812061719180.12167@digraph.polyomino.org.uk>
+References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org> <CALxhOnjSEp++W5T3Sf0eX+8hPt08ER22M817M-Vhd24_96a_EQ@mail.gmail.com> <20181205063436.kzxgnvgexcgq572k@pburton-laptop> <alpine.LFD.2.21.1812061209220.7193@eddie.linux-mips.org>
+ <alpine.DEB.2.21.1812061618110.12167@digraph.polyomino.org.uk> <alpine.LFD.2.21.1812061659210.4294@eddie.linux-mips.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-07.mgc.mentorg.com (139.181.222.7) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Nov 2018 09:22:17 -0500
-"Michael S. Tsirkin" <mst@redhat.com> wrote:
+On Thu, 6 Dec 2018, Maciej W. Rozycki wrote:
 
-> Fix an extra space that sneaked in with commit 09c205afd "(x86, boot:
-> Define the 2.12 bzImage boot protocol").
+> On Thu, 6 Dec 2018, Joseph Myers wrote:
 > 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > >  I believe this file is used by the glibc build process to retrieve 
+> > > syscall numbers for glibc's own use as well for <sys/syscall.h>.  Has the 
+> > > change been verified not to break this process?
+> > > 
+> > >  Cc-ing <libc-alpha@sourceware.org> for information and possible further 
+> > > input.
+> > 
+> > I'm not sure what "this file" is.  The glibc build uses the installed 
+> > <asm/unistd.h> (the results of #including it, not any other kind of 
+> > processing the file).
+> 
+>  So how are `SYS_<name>' macros generated that land in <bits/syscall.h>?
 
-Applied, thanks.
+By gen-syscall-h.awk, which generates #ifdef conditionals for each 
+possible __NR_* name (as listed in syscall-names.list in glibc).
 
-jon
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
