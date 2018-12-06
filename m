@@ -2,188 +2,117 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340E4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E57C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE46B2146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9666520868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFopDaaU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE46B2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cx1MqXyy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9666520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbeLFXtX (ORCPT
+        id S1726378AbeLFXum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:49:23 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45889 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeLFXtS (ORCPT
+        Thu, 6 Dec 2018 18:50:42 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33730 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeLFXum (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:49:18 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so947120pfd.12;
-        Thu, 06 Dec 2018 15:49:17 -0800 (PST)
+        Thu, 6 Dec 2018 18:50:42 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so863736pgu.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:50:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QLrm4SHc02GI3zDMsSJUVjRbsRuR/xOuwMacYyI6Yjc=;
-        b=IFopDaaU7PSx5MJt3x6nR+zJQeC/kh9b9JGGvrbP+71FIWG+j9tMAyT+KDYfZni6Wb
-         e6kTihuUVjbfcxRY5optAv5wE5S38ZWnrwXpjhj/xrOx0eNXLafRo62gda5mZZs+K5QF
-         +U+/fES6waRV4V1J2y/gyKIP1HHmDKFwViehRsyjhBBJQEogPB5HDE/rs9iWpnqkgIR+
-         COaS65ErPCFUJgcFvFt2uwt9lc0KzLh9lNm4lCv/nmxDeJ/WNPHMIofL5ZtWZsl318eZ
-         aAwzwwdFdqdI5O6RTwyjgBXvcZOzBxAZxiZuBQDZV3dZEH5hy4P+7ddCJ/+f2Dntr6Xh
-         VNyQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=54Wo/joBzUQUfmFU3PrU1d49R3TsSQp+xuxFIuUaM1U=;
+        b=Cx1MqXyyODo4wGJHo0sk02bm5nrcactfILNHxLmDryNNiqmoYnFwRPOY3YM2Uis7Cr
+         qfGtKuSJqlgYULBCpV46DAqAlxDKjbfgoj/HqRVdcGswT+XXNcB+fqGxTcjCWI+Ev/Ks
+         q/4fAusI4IleV4MCRTcTO3C+88T7X5JO6m2+I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QLrm4SHc02GI3zDMsSJUVjRbsRuR/xOuwMacYyI6Yjc=;
-        b=plH2ZR2LD45dRgCM589oGt5eHdUnmq5wUvHt4ukJIqwBnNjVc+gAnFwik3AFkVfwf/
-         SeIWJRCN6e34uLfQQbSOyoMpRZbjZDyFFCQzkZFJWuYiDwbds8Pb/6VtJCTNWeZDurZY
-         2Ll4xs1tnJk4qERt1THQzRPgsqspQGuOZihakAh8JrJuNqN54Bw6N8dHW/XMSKeH8oU/
-         JUxbyttr5h96rB/R8hnle2t4eTT4XjCrdp7zF5ZkBFklYF1kLoaYZhy3qZmskxE40bCZ
-         +hbPp/i4q5pcZRDpc2/pr3k8Lo4qhftrbRUf5N94q7TCR3LL23y7fE+qgtNg/ytTPUHH
-         VchA==
-X-Gm-Message-State: AA+aEWZ2ER2TEjAf/4AzM3SGvzBmIQNiOnjciKrSJISOw+zsT84QIxGS
-        bXRBtmG1DUs8Y5derH4lFNA=
-X-Google-Smtp-Source: AFSGD/WxaMBf8KtmS602GUpe4Cge3G7tWhrVpMAE9JsxhZxaGPRX/R2H+6W5NxpyzCyXGhk9vV/2Zg==
-X-Received: by 2002:a63:a84a:: with SMTP id i10mr26257315pgp.263.1544140156447;
-        Thu, 06 Dec 2018 15:49:16 -0800 (PST)
-Received: from dev-aglagolev.dev.purestorage.com ([192.30.188.252])
-        by smtp.googlemail.com with ESMTPSA id y5sm4212107pge.49.2018.12.06.15.49.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Dec 2018 15:49:15 -0800 (PST)
-From:   Anatoliy Glagolev <glagolig@gmail.com>
-To:     aglagolev@purestorage.com, adailey@purestorage.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, hch@lst.de,
-        qla2xxx-upstream@qlogic.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Anatoliy Glagolev <glagolig@gmail.com>
-Subject: [PATCH] scsi: qla2xxx: deadlock by configfs_depend_item
-Date:   Thu,  6 Dec 2018 16:48:45 -0700
-Message-Id: <1544140125-3060-1-git-send-email-glagolig@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=54Wo/joBzUQUfmFU3PrU1d49R3TsSQp+xuxFIuUaM1U=;
+        b=NcToYEQTHF4fmyO1/e9MEXa9Rys2y+kzRdmrb4M1E7nVJDuADLGcwsN69NtSAefjIG
+         9kwrchuMTVnUEIJ/yOxxKOkKL0NPJcpIwCSclXt70CX9l+DDN3I1/FxThRFK4R3XPFuN
+         oy6nyrHtsBSfP12DqrsVAdvIcqZRnKaWMGpGVwLSiLTh8HG+M0j68pwetoGyukj7RTTT
+         Ueyrlp/12HBCNGHPaDGw6JW/Cr+lKg+ApLfwJoLHiBA39VZfwe5YNILhLTrUNOvnSD3T
+         7rmuKb3TufNK7m7qhmKO8sBGzTUJfG9/Cbm0wxWArv3kA4eGWik4tJ/E/50Abho11DN2
+         nYug==
+X-Gm-Message-State: AA+aEWYUP1EyTHyzjsj3vo8VtEEhCCPrRf+zKZaYyPZamvKaPbwyOsNJ
+        e1uhUf5N9PK2hUFLDU54JVmZlg==
+X-Google-Smtp-Source: AFSGD/ULZCvdfEx3FRYVbDUIabGbXrqkGz1oduwFsSUxo1vfz1ImyWoPUChPDSUnULab+A664EELbg==
+X-Received: by 2002:a63:9c1a:: with SMTP id f26mr7376328pge.381.1544140241108;
+        Thu, 06 Dec 2018 15:50:41 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id r130sm2503337pfr.48.2018.12.06.15.50.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 15:50:39 -0800 (PST)
+Date:   Thu, 6 Dec 2018 15:50:38 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH] selftests/seccomp: Remove SIGSTOP si_pid check
+Message-ID: <20181206235038.GA18273@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intent of invoking configfs_depend_item in commit 7474f52a82d51
-("tcm_qla2xxx: Perform configfs depend/undepend for base_tpg")
-was to prevent a physical Fibre Channel port removal when
-virtual (NPIV) ports announced through that physical port are active.
-The change does not work as expected: it makes enabled physical port
-dependent on target configfs subsystem (the port's parent), something
-the configfs guarantees anyway.
+Commit f149b3155744 ("signal: Never allocate siginfo for SIGKILL or SIGSTOP")
+means that the seccomp selftest cannot check si_pid under SIGSTOP anymore.
+Since it's believed[1] there are no other userspace things depending on the
+old behavior, this removes the behavioral check in the selftest, since it's
+more a "extra" sanity check (which turns out, maybe, not to have been
+useful to test).
 
-Besides, scheduling work in a worker thread and waiting for the work's
-completion is not really a valid workaround for the requirement not
-to call configfs_depend_item from a configfs callback: the call
-occasionally deadlocks.
+[1] https://lkml.kernel.org/r/CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com
 
-Thus, removing configfs_depend_item calls does not break anything
-and fixes the deadlock problem.
-
-Signed-off-by: Anatoliy Glagolev <glagolig@gmail.com>
+Reported-by: Tycho Andersen <tycho@tycho.ws>
+Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/scsi/qla2xxx/tcm_qla2xxx.c | 48 +++++++-------------------------------
- drivers/scsi/qla2xxx/tcm_qla2xxx.h |  3 ---
- 2 files changed, 8 insertions(+), 43 deletions(-)
+Shuah, can you make sure that Linus gets this before v4.20 is released? Thanks!
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-index 7732e93..1c7ca84 100644
---- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-+++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-@@ -929,38 +929,14 @@ static ssize_t tcm_qla2xxx_tpg_enable_show(struct config_item *item,
- 			atomic_read(&tpg->lport_tpg_enabled));
- }
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index e1473234968d..c9a2abf8be1b 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -2731,9 +2731,14 @@ TEST(syscall_restart)
+ 	ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
+ 	ASSERT_EQ(true, WIFSTOPPED(status));
+ 	ASSERT_EQ(SIGSTOP, WSTOPSIG(status));
+-	/* Verify signal delivery came from parent now. */
+ 	ASSERT_EQ(0, ptrace(PTRACE_GETSIGINFO, child_pid, NULL, &info));
+-	EXPECT_EQ(getpid(), info.si_pid);
++	/*
++	 * There is no siginfo on SIGSTOP any more, so we can't verify
++	 * signal delivery came from parent now (getpid() == info.si_pid).
++	 * https://lkml.kernel.org/r/CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com
++	 * At least verify the SIGSTOP via PTRACE_GETSIGINFO.
++	 */
++	EXPECT_EQ(SIGSTOP, info.si_signo);
  
--static void tcm_qla2xxx_depend_tpg(struct work_struct *work)
--{
--	struct tcm_qla2xxx_tpg *base_tpg = container_of(work,
--				struct tcm_qla2xxx_tpg, tpg_base_work);
--	struct se_portal_group *se_tpg = &base_tpg->se_tpg;
--	struct scsi_qla_host *base_vha = base_tpg->lport->qla_vha;
--
--	if (!target_depend_item(&se_tpg->tpg_group.cg_item)) {
--		atomic_set(&base_tpg->lport_tpg_enabled, 1);
--		qlt_enable_vha(base_vha);
--	}
--	complete(&base_tpg->tpg_base_comp);
--}
--
--static void tcm_qla2xxx_undepend_tpg(struct work_struct *work)
--{
--	struct tcm_qla2xxx_tpg *base_tpg = container_of(work,
--				struct tcm_qla2xxx_tpg, tpg_base_work);
--	struct se_portal_group *se_tpg = &base_tpg->se_tpg;
--	struct scsi_qla_host *base_vha = base_tpg->lport->qla_vha;
--
--	if (!qlt_stop_phase1(base_vha->vha_tgt.qla_tgt)) {
--		atomic_set(&base_tpg->lport_tpg_enabled, 0);
--		target_undepend_item(&se_tpg->tpg_group.cg_item);
--	}
--	complete(&base_tpg->tpg_base_comp);
--}
--
- static ssize_t tcm_qla2xxx_tpg_enable_store(struct config_item *item,
- 		const char *page, size_t count)
- {
- 	struct se_portal_group *se_tpg = to_tpg(item);
-+	struct se_wwn *se_wwn = se_tpg->se_tpg_wwn;
-+	struct tcm_qla2xxx_lport *lport = container_of(se_wwn,
-+			struct tcm_qla2xxx_lport, lport_wwn);
-+	struct scsi_qla_host *vha = lport->qla_vha;
- 	struct tcm_qla2xxx_tpg *tpg = container_of(se_tpg,
- 			struct tcm_qla2xxx_tpg, se_tpg);
- 	unsigned long op;
-@@ -979,24 +955,16 @@ static ssize_t tcm_qla2xxx_tpg_enable_store(struct config_item *item,
- 		if (atomic_read(&tpg->lport_tpg_enabled))
- 			return -EEXIST;
- 
--		INIT_WORK(&tpg->tpg_base_work, tcm_qla2xxx_depend_tpg);
-+		atomic_set(&tpg->lport_tpg_enabled, 1);
-+		qlt_enable_vha(vha);
- 	} else {
- 		if (!atomic_read(&tpg->lport_tpg_enabled))
- 			return count;
- 
--		INIT_WORK(&tpg->tpg_base_work, tcm_qla2xxx_undepend_tpg);
-+		atomic_set(&tpg->lport_tpg_enabled, 0);
-+		qlt_stop_phase1(vha->vha_tgt.qla_tgt);
- 	}
--	init_completion(&tpg->tpg_base_comp);
--	schedule_work(&tpg->tpg_base_work);
--	wait_for_completion(&tpg->tpg_base_comp);
- 
--	if (op) {
--		if (!atomic_read(&tpg->lport_tpg_enabled))
--			return -ENODEV;
--	} else {
--		if (atomic_read(&tpg->lport_tpg_enabled))
--			return -EPERM;
--	}
- 	return count;
- }
- 
-diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.h b/drivers/scsi/qla2xxx/tcm_qla2xxx.h
-index 7550ba2..147cf6c 100644
---- a/drivers/scsi/qla2xxx/tcm_qla2xxx.h
-+++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.h
-@@ -48,9 +48,6 @@ struct tcm_qla2xxx_tpg {
- 	struct tcm_qla2xxx_tpg_attrib tpg_attrib;
- 	/* Returned by tcm_qla2xxx_make_tpg() */
- 	struct se_portal_group se_tpg;
--	/* Items for dealing with configfs_depend_item */
--	struct completion tpg_base_comp;
--	struct work_struct tpg_base_work;
- };
- 
- struct tcm_qla2xxx_fc_loopid {
+ 	/* Restart nanosleep with SIGCONT, which triggers restart_syscall. */
+ 	ASSERT_EQ(0, kill(child_pid, SIGCONT));
 -- 
-1.9.1
+2.17.1
 
+
+-- 
+Kees Cook
