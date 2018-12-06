@@ -2,114 +2,96 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D85C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D10C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BF4214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BF4214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daenzer.net
+	by mail.kernel.org (Postfix) with ESMTP id A89F5214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544107286;
+	bh=hD2g+8V+caVLkUMqz/oevXEcRxRBfCBAmK1JmqZOMYw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=WCSmlPlWFNvkBUuO2tXATciutxsQ+okuXtQ6I3U5qm+xF8fGyBgW3J0PSTXrngc3t
+	 +4VXIXh7ri3AQV3btUhN4nStIRkPhrxNfSiUcdbK7ldqqZCcE6WkfhgUoOc/6fC0DS
+	 XkXCHhp85xbdIYtk+8wMnI/1BPWGhIIdH0IEZ/cE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89F5214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbeLFOl2 (ORCPT
+        id S1730234AbeLFOlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:41:28 -0500
-Received: from mail.netline.ch ([148.251.143.178]:32969 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730205AbeLFOlV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:41:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730217AbeLFOlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 6 Dec 2018 09:41:21 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id DDC022A604C;
-        Thu,  6 Dec 2018 15:41:17 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id qHD3mobsug6N; Thu,  6 Dec 2018 15:41:17 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id EA8A72A604B;
-        Thu,  6 Dec 2018 15:41:16 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1gUuq4-0006bN-KT; Thu, 06 Dec 2018 15:41:16 +0100
-Subject: Re: [PATCH 1/2] drm: Only #define DEBUG if CONFIG_DYNAMIC_DEBUG is
- disabled
-To:     Joe Perches <joe@perches.com>,
-        "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181205165621.5805-1-michel@daenzer.net>
- <10fca21a-5d7c-fe9e-07f0-6200e9de538e@amd.com>
- <1586a49594d30b4bf4d88eba0d258e21efd26da2.camel@perches.com>
- <276fbf7f-d33f-83a5-cb88-bd4051dc03ba@daenzer.net>
- <e7859ce4b8417b094604d9ab4740d338730e38bf.camel@perches.com>
- <d2a1f009-b2c7-240d-7e1c-e48a08d8ac7d@daenzer.net>
- <61385d4cb6c9d990427349849d0af28faa3b67af.camel@perches.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <747d6c1b-8c0a-8168-bd1e-e969839ff5be@daenzer.net>
-Date:   Thu, 6 Dec 2018 15:41:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C5E7214C1;
+        Thu,  6 Dec 2018 14:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544107280;
+        bh=hD2g+8V+caVLkUMqz/oevXEcRxRBfCBAmK1JmqZOMYw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=q+ySPTEAwYM/Cz1YQPUN8a8b/y1dCyaqFaBYiU6UebQSxElAF8oFS18tpZfWm2mQK
+         sYWQEuf7UHivMIz7zALmDWHAXd400l37YHhmGdQtDyUyjSLSe93e2jothRH0aC98/G
+         twnmOiftr0mu/ZUYP8+LSGNMzoMXQU8D7SMiRzA0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Noah Westervelt <nwestervelt@outlook.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 36/41] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15ARR
+Date:   Thu,  6 Dec 2018 15:39:16 +0100
+Message-Id: <20181206142953.225807974@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
+References: <20181206142949.757402551@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <61385d4cb6c9d990427349849d0af28faa3b67af.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-06 1:23 p.m., Joe Perches wrote:
-> On Thu, 2018-12-06 at 12:52 +0100, Michel Dänzer wrote:
->> In contrast to the 2b case, the pr_debug output isn't visible by default
->> with 1b, so the latter doesn't fit "always produce output" either.
-> 
-> I think you are mistaken here.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Still puzzled as to what you're hoping to achieve with that kind of
-language. None of the confusion about this patch has been on my part. :)
+------------------
+
+From: Noah Westervelt <nwestervelt@outlook.com>
+
+commit ad33429cd02565c28404bb16ae7a4c2bdfda6626 upstream.
+
+Add ELAN061E to the ACPI table to support Elan touchpad found in Lenovo
+IdeaPad 330-15ARR.
+
+Signed-off-by: Noah Westervelt <nwestervelt@outlook.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/input/mouse/elan_i2c_core.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1348,6 +1348,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
++	{ "ELAN061E", 0 },
+ 	{ "ELAN0620", 0 },
+ 	{ "ELAN0622", 0 },
+ 	{ "ELAN1000", 0 },
 
 
-> Adding #define DEBUG as Chris did enables pr_debug output
-> and is your 1b.
-> 
-> Perhaps your default console logging level is set to a
-> non-default value.
-
-I have CONFIG_DYNAMIC_DEBUG enabled in my kernels. The problem addressed
-by this patch is that messages from drm_debug_printer are visible by
-default (case 2b), whereas they shouldn't be (case 2a, like 1b).
-
-
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
