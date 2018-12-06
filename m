@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E0EC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10385C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1697420661
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAB552082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107696;
-	bh=JdRx9pDh2HzSi52UtyZYQNSxcJiNNXFl2l/owIrXfm0=;
+	s=default; t=1544107700;
+	bh=5Kuv+ugKVoOn13978xUTDMl3/Fzt5q7FRaEiILsF33M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sT1baQKFuBNxW/pXF22UhfOLnKIS0rNrV0B/lHEEyMrZFfQFtqNnxGjRJZLoWGYv8
-	 RaW1GBB3tiUkvjagyluDDZsqr1c6zIAs7nEaLw6d76EWu3QQbZTBHS9hiX2RPNJY72
-	 BmQkF+mJqFkLrK6ff2CyVsDpNq56ug/gGWDVpsnk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1697420661
+	b=o4EZdFiHSzCZ+hOuC49gMYoudTNoz0hxImK2YjjC/fNA+g2nDLvGuWQmG15sl0k9v
+	 wjggacZpfNgpm6BhZJonK58ZflJoGBsfk8bm7/JttzjT+JDBcJoQt5GEu06+XrCmus
+	 PYm/YyZ1C35vJzudksnbep6/oQg6M1ASe41dkEwM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB552082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbeLFOsO (ORCPT
+        id S1731575AbeLFOsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:48:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:48:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731545AbeLFOsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:48:09 -0500
+        id S1730829AbeLFOsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:48:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D40FD2082B;
-        Thu,  6 Dec 2018 14:48:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C7AB2146D;
+        Thu,  6 Dec 2018 14:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107689;
-        bh=JdRx9pDh2HzSi52UtyZYQNSxcJiNNXFl2l/owIrXfm0=;
+        s=default; t=1544107692;
+        bh=5Kuv+ugKVoOn13978xUTDMl3/Fzt5q7FRaEiILsF33M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZxPbhWmTMVsLGj8PjEbuzbTVfVU/DoP4sStkuZ5aWhna+agbji7S/RpjaO7L2v74
-         pjriWA46oodEa+LZT32+yF7RdcEKq5PHMfW3MvDdCXjkqBVLZUdhjt+2a9xsHf+W1c
-         4EkpGQdhODOZRztLO2C9pP4fphZFQyMhqY+sA9zE=
+        b=prjx2EEuQJlkEV86BPWF5+A+gpSFbugomqXJ9FPCnbDMl2ttgBmwjbvrDWbGCWp3N
+         M4WHFfnfiauDO53WeWI7NDJFrztvewzt5ZsvO+sHVinUrZ1bHrrKqEdrnmHn3uqkhU
+         MBk1qUFxVDEnbtiF35NNjjpP3YIWWcol9NXlq75M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kanda.motohiro@gmail.com,
-        Dave Chinner <dchinner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 101/101] xfs: dont fail when converting shortform attr to long form during ATTR_REPLACE
-Date:   Thu,  6 Dec 2018 15:39:40 +0100
-Message-Id: <20181206143019.063026750@linuxfoundation.org>
+Subject: [PATCH 4.9 076/101] btrfs: tree-checker: use %zu format string for size_t
+Date:   Thu,  6 Dec 2018 15:39:15 +0100
+Message-Id: <20181206143016.481137012@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -71,47 +69,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 7b38460dc8e4eafba06c78f8e37099d3b34d473c upstream.
+commit 7cfad65297bfe0aa2996cd72d21c898aa84436d9 upstream.
 
-Kanda Motohiro reported that expanding a tiny xattr into a large xattr
-fails on XFS because we remove the tiny xattr from a shortform fork and
-then try to re-add it after converting the fork to extents format having
-not removed the ATTR_REPLACE flag.  This fails because the attr is no
-longer present, causing a fs shutdown.
+The return value of sizeof() is of type size_t, so we must print it
+using the %z format modifier rather than %l to avoid this warning
+on some architectures:
 
-This is derived from the patch in his bug report, but we really
-shouldn't ignore a nonzero retval from the remove call.
+fs/btrfs/tree-checker.c: In function 'check_dir_item':
+fs/btrfs/tree-checker.c:273:50: error: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32' {aka 'unsigned int'} [-Werror=format=]
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199119
-Reported-by: kanda.motohiro@gmail.com
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Fixes: 005887f2e3e0 ("btrfs: tree-checker: Add checker for dir item")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/libxfs/xfs_attr.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-checker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/xfs/libxfs/xfs_attr.c
-+++ b/fs/xfs/libxfs/xfs_attr.c
-@@ -487,7 +487,14 @@ xfs_attr_shortform_addname(xfs_da_args_t
- 		if (args->flags & ATTR_CREATE)
- 			return retval;
- 		retval = xfs_attr_shortform_remove(args);
--		ASSERT(retval == 0);
-+		if (retval)
-+			return retval;
-+		/*
-+		 * Since we have removed the old attr, clear ATTR_REPLACE so
-+		 * that the leaf format add routine won't trip over the attr
-+		 * not being around.
-+		 */
-+		args->flags &= ~ATTR_REPLACE;
- 	}
- 
- 	if (args->namelen >= XFS_ATTR_SF_ENTSIZE_MAX ||
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -223,7 +223,7 @@ static int check_dir_item(struct btrfs_r
+ 		/* header itself should not cross item boundary */
+ 		if (cur + sizeof(*di) > item_size) {
+ 			dir_item_err(root, leaf, slot,
+-		"dir item header crosses item boundary, have %lu boundary %u",
++		"dir item header crosses item boundary, have %zu boundary %u",
+ 				cur + sizeof(*di), item_size);
+ 			return -EUCLEAN;
+ 		}
 
 
