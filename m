@@ -2,98 +2,426 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5EEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04B6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBEF214F1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBEF214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A1B0F20878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:36:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5ycftgZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B0F20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbeLFLeS (ORCPT
+        id S1729200AbeLFLgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:34:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35100 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729193AbeLFLeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:34:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CF1BE8A15;
-        Thu,  6 Dec 2018 11:34:17 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E8775E1B0;
-        Thu,  6 Dec 2018 11:34:17 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 83D2E99BD; Thu,  6 Dec 2018 12:34:16 +0100 (CET)
-Date:   Thu, 6 Dec 2018 12:34:16 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Frediano Ziglio <fziglio@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: allow both PRIV and VRAM
- placement for QXL_GEM_DOMAIN_SURFACE
-Message-ID: <20181206113416.yydgi7ro47vwgf2d@sirius.home.kraxel.org>
-References: <20181206104638.23330-1-kraxel@redhat.com>
- <20181206104638.23330-2-kraxel@redhat.com>
- <1897496108.48579647.1544093758850.JavaMail.zimbra@redhat.com>
+        Thu, 6 Dec 2018 06:36:11 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37491 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFLgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 06:36:11 -0500
+Received: by mail-vs1-f65.google.com with SMTP id h18so71834vsj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:36:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=pXFy1RgA+EO/1fRmywErAh2J6e1aHs3lEHgamyHWU0s=;
+        b=C5ycftgZ45devNN4FCqZjpyIFUTYSTR0tFyxGn+PcquzdLQZLly69oXFExM59ktEuS
+         0SS/7MxYHoAxv/+mhf0nOfoZqsBiMkd3m4986dJm8wVGY+E2lHTr/Y2CRmqQILeaNQ06
+         CVTYI1HXpL6VLEINgKnMrMa3kwAa+PufFxktyOiq5+RKeA1mLZCInm1FUWL02t3tr7Bs
+         fP5xtDal1vhzIORsqnBTo9DK3/Z7aFIjDhjPrZ9D5bqfyjoLzoebyeq8gj5swN9ZJ1bz
+         WJLy1sZJ/i4/x1UdTVWbF21OqfUb/QcInCi+HRttjgpNTKPIuM69yAA6/bHOuvWCERuC
+         CsfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pXFy1RgA+EO/1fRmywErAh2J6e1aHs3lEHgamyHWU0s=;
+        b=dblUdt+VjueqDLPa5MO+LVo7aqlbaCIiPF0fcA+q6ey3fmT3vivBZaEcvuxBqZCd6W
+         BgWrmpX+C3HO7OG92CD0e7BqZNDdGtsziOdLO6cXAtU4FHSqAraOLuHa5dlBC/9SNrOH
+         Hh/jPkuTxgkbxBbkaF90CHPfZOGQaxjZ7VkbzmArX/Nhcl0n9WRbCjpImRBEn8bPtsNj
+         E44VvUaVVqbeohGvJDing+BgEyQTnjOMEji5end8XjZXCC8sZjtUzMupU3zeFwUp+1fq
+         SY4VCAp8GLrpLCHQsDIrDZOKHzmdZRtb6rZJ2h2S+sDoA7Eq1lsShSkLUDmDl/Iu4T+d
+         hgrw==
+X-Gm-Message-State: AA+aEWbar78UDBL5GpvVu2M9eEVLHQ41NKGGIVpvbnlcqfSnwgJoSOR2
+        Yv5ZjhEjU0ivYWqckQFXQIwSUsK9GV9Qgk0Q/cP+82AYJrc=
+X-Google-Smtp-Source: AFSGD/WqguFNvgXHTybyeNsoVB2xg7it4nBUrpfsRxMRrU+dkNIoUUmCklgrYTq5VtVNEDJ0F3QNoQs4qWSNB7Qu7KU=
+X-Received: by 2002:a67:88c9:: with SMTP id k192mr12385896vsd.103.1544096168629;
+ Thu, 06 Dec 2018 03:36:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1897496108.48579647.1544093758850.JavaMail.zimbra@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 06 Dec 2018 11:34:17 +0000 (UTC)
+References: <000000000000311344057c4b6cc3@google.com> <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
+ <20181206110634.GA9056@localhost.localdomain>
+In-Reply-To: <20181206110634.GA9056@localhost.localdomain>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 6 Dec 2018 12:35:55 +0100
+Message-ID: <CAG_fn=WcdbTQNW0gTRj9nvgsEtoU3TXYTWjp84=YF8b8qdRejg@mail.gmail.com>
+Subject: Re: KMSAN: kernel-infoleak in sctp_getsockopt
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:55:58AM -0500, Frediano Ziglio wrote:
-> 
-> > qxl surfaces (used for framebuffers and gem objects) can live in both
-> > VRAM and PRIV ttm domains.  Update placement setup to include both.  Put
-> > PRIV first in the list so it is preferred, so VRAM will have more room
-> > for objects which must be allocated there.
-> > 
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> 
-> I remember these kind of changes in the past made migration
-> fails. I proposed similar patches years ago and they were rejected
-> for these reasons.
+On Thu, Dec 6, 2018 at 12:06 PM Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+>
+> On Thu, Dec 06, 2018 at 11:36:08AM +0100, Alexander Potapenko wrote:
+> > On Wed, Dec 5, 2018 at 8:31 PM syzbot
+> > <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_C=
+SUM o..
+> > > git tree:       https://github.com/google/kmsan.git/master
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e84a474=
+00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D56b48b46d=
+afe4516
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dad5d327e693=
+6a2e284be
+> > > compiler:       clang version 8.0.0 (trunk 343298)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D103cd22=
+5400000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the co=
+mmit:
+> > > Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+> > >
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > 8021q: adding VLAN 0 to HW filter on device team0
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy=
+.c:33
+> > > CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
+OS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x32d/0x480 lib/dump_stack.c:113
+> > >   kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+> > >   kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+> > >   kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+> > >   _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+> > >   copy_to_user include/linux/uaccess.h:183 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+> > >   sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > > RIP: 0033:0x457569
+> > > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 =
+89 f7
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f=
+0 ff
+> > > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 000000000000003=
+7
+> > > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
+> > > RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
+> > > RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
+> > > R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
+> > > R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
+> > >
+> > > Uninit was stored to memory at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+> > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+> > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+> > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+> > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+> > >   sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+> > >   sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Uninit was stored to memory at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+> > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+> > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+> > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+> > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+> > >   sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
+> > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+> > >   sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
+> > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+> > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+> > >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+> > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Uninit was created at:
+> > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+> > >   kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
+> > >   kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
+> > >   __kmalloc+0x14c/0x4d0 mm/slub.c:3825
+> > >   kmalloc include/linux/slab.h:551 [inline]
+> > >   sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
+> > >   notifier_call_chain kernel/notifier.c:93 [inline]
+> > >   __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
+> > >   atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
+> > >   inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:10=
+7
+> > >   ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
+> > >   inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
+> > >   inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
+> > >   rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
+> > >   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+> > >   rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+> > >   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+> > >   netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+> > >   netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+> > >   sock_sendmsg_nosec net/socket.c:621 [inline]
+> > >   sock_sendmsg net/socket.c:631 [inline]
+> > >   ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+> > >   __sys_sendmsg net/socket.c:2154 [inline]
+> > >   __do_sys_sendmsg net/socket.c:2163 [inline]
+> > >   __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+> > >   __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+> > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+> > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > >
+> > > Bytes 32-35 of 2100 are uninitialized
+> > > Memory access of size 2100 starts at ffff888185d8b000
+> > > Data copied to user address 0000000020001108
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > When a network device goes up and sctp_inetaddr_event() is called, it
+> > allocates a partially initialized struct sctp_sockaddr_entry to hold
+> > the newly created address.
+> > The attached reproducer can be then used to read up to 8 uninit bytes
+> > for each of the local addresses.
+> > I guess the devices aren't created so often that this can pose any
+> > security risk, but we probably still need to allocate this structure
+> > with __GFP_ZERO.
+>
+> Agree. Thanks Alexander.
+> Looks like this is the last/only place left with this issue.
+It also turns out that a non-privileged user is allowed to create
+network devices within a namespace, which makes it easier to generate
+more uninitialized data.
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > > syzbot.
+> > > syzbot can test patches for this bug, for details see:
+> > > https://goo.gl/tpsmEJ#testing-patches
+> > >
+> > > --
+> > > You received this message because you are subscribed to the Google Gr=
+oups "syzkaller-bugs" group.
+> > > To unsubscribe from this group and stop receiving emails from it, sen=
+d an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > > To view this discussion on the web visit https://groups.google.com/d/=
+msgid/syzkaller-bugs/000000000000311344057c4b6cc3%40google.com.
+> > > For more options, visit https://groups.google.com/d/optout.
+> >
+> >
+> >
+> > --
+> > Alexander Potapenko
+> > Software Engineer
+> >
+> > Google Germany GmbH
+> > Erika-Mann-Stra=C3=9Fe, 33
+> > 80636 M=C3=BCnchen
+> >
+> > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+> > Registergericht und -nummer: Hamburg, HRB 86891
+> > Sitz der Gesellschaft: Hamburg
+>
+> > #ifndef DUMP_BUF_H
+> > #define DUMP_BUF_H
+> >
+> > #ifndef DUMP_MIN_STRLEN
+> > #define DUMP_MIN_STRLEN 1
+> > #endif
+> >
+> > #ifndef DUMP_PARALLEL
+> > #define DUMP_PARALLEL 0
+> > #endif
+> >
+> > #ifndef DUMP_PRINT_BUF_ADDR
+> > #define DUMP_PRINT_BUF_ADDR 0
+> > #endif
+> >
+> > #ifndef DUMP_PRINT_HEX
+> > #define DUMP_PRINT_HEX 0
+> > #endif
+> >
+> > #ifndef DUMP_PRINT_STRING
+> > #define DUMP_PRINT_STRING 0
+> > #endif
+> >
+> > #if DUMP_PARALLEL
+> > pthread_mutex_t out_mutex =3D PTHREAD_MUTEX_INITIALIZER;
+> > #endif
+> >
+> > void dump_buf(unsigned char *buf, int len) {
+> >   int i, nz =3D 0;
+> >   for (i =3D 0; i < len; i++) {
+> >     if (buf[i]) {
+> >       nz =3D 1;
+> >       break;
+> >     }
+> >   }
+> >   if (!nz) {
+> >     // The buffer is empty.
+> >     return;
+> >   } else {
+> > #if DUMP_PARALLEL
+> >     pthread_mutex_lock(&out_mutex);
+> > #endif
+> > #if DUMP_PRINT_BUF_ADDR
+> >     fprintf(stderr, "nonempty buffer at %p\n", buf);
+> > #endif
+> > #if DUMP_PRINT_HEX
+> >     for (i=3D0; i < len; i++) {
+> >       if (buf[i]) {
+> >         fprintf(stderr, "buf[%d]: %x (%p)\n", i, buf[i], *(void**)&buf[=
+i]);
+> >       }
+> >     }
+> > #endif // DUMP_PRINT_HEX
+> > #if DUMP_PARALLEL
+> >     pthread_mutex_unlock(&out_mutex);
+> > #endif
+> >   }
+> > #if DUMP_PARALLEL
+> >   pthread_mutex_lock(&out_mutex);
+> > #endif
+> > #if DUMP_PRINT_STRING
+> >   for (i =3D 0; i < len; i++) {
+> >     if (buf[i]) {
+> >       int str_len =3D strlen(&buf[i]);
+> >       // Short string pieces are too boring.
+> >       if (str_len >=3D DUMP_MIN_STRLEN) {
+> >         unsigned char *c;
+> >         for (c =3D &buf[i]; c < &buf[i + str_len]; c++) {
+> >           if ((*c > 127) || ((*c < 32) && (*c !=3D 10) && (*c !=3D 13))=
+)  {
+> >             *c =3D ' ';
+> >             continue;
+> >           }
+> >         }
+> >         // Dump the buffer.
+> >         fprintf(stderr, "%s\n", &buf[i]);
+> >       }
+> >       i +=3D str_len;
+> >     }
+> >   }
+> > #endif // DUMP_PRINT_STRING
+> > #if DUMP_PARALLEL
+> >   pthread_mutex_unlock(&out_mutex);
+> > #endif
+> > }
+> >
+> > #endif
+>
+> > #include <stdio.h>
+> > #include <pthread.h>
+> > #include <sys/types.h>          /* See NOTES */
+> > #include <sys/socket.h>
+> > #include <unistd.h>
+> >
+> > #define DUMP_PARALLEL 1
+> > #define DUMP_PRINT_BUF_ADDR 1
+> > #define DUMP_PRINT_STRING 1
+> > #define DUMP_PRINT_HEX 1
+> > #include "dump_buf.h"
+> >
+> > void *setsockopt_fn(void *arg) {
+> >   int sock =3D (int)arg;
+> >   struct sockaddr addr;
+> >   memset(&addr, 0, sizeof(addr));
+> >   addr.sa_family =3D 2;
+> >   addr.sa_data[2] =3D 0xac;
+> >   addr.sa_data[3] =3D 0x14;
+> >   addr.sa_data[4] =3D 0x14;
+> >   setsockopt(sock, 0x84, 0x6e, &addr, 0x10);
+> > }
+> >
+> > #define BUFLEN (0x2c2)
+> > void *getsockopt_fn(void *arg) {
+> >   int sock =3D (int)arg;
+> >   char buf[BUFLEN];
+> >   memset(buf, 0, BUFLEN);
+> >   int socklen =3D BUFLEN;
+> >   getsockopt(sock, 0x84, /*SCTP_GET_LOCAL_ADDRS*/0x6d, buf, &socklen);
+> >   dump_buf(&(buf[8]), 32);
+> > }
+> >
+> > void do_work(int sock) {
+> >   pthread_t t1, t2;
+> >   for (int i =3D 0; i < 10; i++) {
+> >     pthread_create(&t1, NULL, getsockopt_fn, (void*)sock);
+> >     pthread_create(&t2, NULL, setsockopt_fn, (void*)sock);
+> >     usleep(100);
+> >   }
+> > }
+> >
+> > int main(int argc, char *argv[]) {
+> >   int res;
+> >   int pid =3D fork();
+> >   if (pid =3D=3D 0) {
+> >     int sock =3D socket(0x2, 0x1, 0x84);
+> >     do_work(sock);
+> >   }
+> >   sleep(10);
+> >   return 0;
+> > }
+>
 
-Pointer?
 
-> Why now they are safe?
+--=20
+Alexander Potapenko
+Software Engineer
 
-Well, you have to be careful what object you are allocating.  Surfaces
-can be in both PRIV and VRAM.  Everything else (qxl commands, monitors
-config, ...) must be in VRAM.
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-> Looks like we are improving QXL, so that means we are actively working
-> on it.
-
-Well, I'm just trying make qxl behave better with wayland.
-
-> Should we not then thinking about moving feature in the proper
-> places (like spice-server for atomic mode setting instead of implementin
-> work around) ??
-
-Main advantage is that it doesn't need qxl device changes, so it works
-on old hosts too.  But, yes, we can consider to also modernize spice
-protocol and qxl device.
-
-cheers,
-  Gerd
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
