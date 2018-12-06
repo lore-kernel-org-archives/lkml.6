@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B0FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6B6C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFCF208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AAB620838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:27:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lYPWD4dz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAFCF208E7
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dhrVAvtp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAB620838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbeLFM0z (ORCPT
+        id S1729660AbeLFMZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:26:55 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40363 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729609AbeLFMZH (ORCPT
+        Thu, 6 Dec 2018 07:25:06 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37705 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729620AbeLFMZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:25:07 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so287185wrt.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:05 -0800 (PST)
+        Thu, 6 Dec 2018 07:25:03 -0500
+Received: by mail-wm1-f65.google.com with SMTP id g67so833994wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:25:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qsCjCKV+q57Vg4Qo+ex38n8fMkQGTNd9MzBlJ42c62w=;
-        b=lYPWD4dzXCyGlWApicPbPWrOJcyzUAMrHRa9ML+WypDuXdVkzJ/cNmx3Tj3z5kn0X+
-         wXsJE/+j+Upc/1yIDjCHMrh4af5GeudR6utpq6u2ci47XkTpdttHYOChrnJgRCp1Jes2
-         estwO/nvoxmr4u9CJvAs4fwDMRhOR3SASD46MBoLNGjCKdYhlnqD4Qy52vO72QuyB+Fb
-         jiSB4eJh3TYn8dAVPZx5dk/WDuwIDlyfcLXcTABmAqAcpqSsx3o3o9xSpKnO97j6yKsd
-         ROuu+YVoBACV0QzThJXynS8N/eIMhCvtBaD5xvna4tCWj53zdpp907T0luqWbFsjQUj8
-         NWdA==
+        bh=G5Ka/D9ThH8pnE4eoPJ0OLfzNTsBwnEIL720J8sMTz0=;
+        b=dhrVAvtpao4EYg7FPVcAkM1wtgiCBBI9ASJhoyX/vv+zvJ5zk95ov0eIQZZadClZMy
+         C9GuvdBwcXqwqHElxuDXEIz889yekq6iNXAe7oMkWsjIBsJ9rt8EwF02GzX729gCYrKI
+         ynUxvY44E8YwCyPeGFjutDX/Ka4dGW+JpBDkXy6pmjwo/Rq5KY/j3JJ5r3kwmG4hQNSM
+         4stTjLLbbsYQYnRqF3a4u1Q0q/jojd03Tl+wDvTna6jK/WpUnbO2YeYOwxaFWZG0Yj1N
+         LhSyyeYMWO8CsVUWLNmXcxBL3cZLwTNssIUkFccRsslhrLDvpgG3oyko66ErTK7fQUUV
+         ZqYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qsCjCKV+q57Vg4Qo+ex38n8fMkQGTNd9MzBlJ42c62w=;
-        b=nNhhA4u7tJqB7EfAiTqHPWfiaJ29NaGU9HqcwFcNnCF9zj2UCVBbKCoz7KlzaQU0yQ
-         X+PiaHRMdnsq7QXMUGEpKY0wVQSD11zMuUgxox081fPBvPjcpKDzD+GzOasW7sOb2ZaN
-         p5qu/x/85N9QJxK/U4AV2OdLvhpLW/9heR1jWPqj1IdYxPzTVbL+Wv2egiIbzVUW19Ww
-         a1ppcqWi+kOyRNWKMD/qp3Z0FTa31qSSEKeR6N0SLwkV2mpNIK4i8eW/1r5hMkP3x1x5
-         3opL8mfSU9ngYAUOkRVy4kRSzsg50NLzr1QhNMTZEtklcirFZy65FGzG56hHHbvliU5E
-         afBQ==
-X-Gm-Message-State: AA+aEWb9bcWAlCj4zvtH9ECCSC021nWfuB1et5x9xu8N5SBdMa4qm4st
-        TvNhSa0AKJgLEK8io/xbVVsHUQ==
-X-Google-Smtp-Source: AFSGD/XUku20Jyax7BJye38HG84DVpktJbYsI3QLS0+xkAhyhZ+Y+sA1HXilshs7C7kohJO9GetxgA==
-X-Received: by 2002:adf:9591:: with SMTP id p17mr26240808wrp.224.1544099104494;
-        Thu, 06 Dec 2018 04:25:04 -0800 (PST)
+        bh=G5Ka/D9ThH8pnE4eoPJ0OLfzNTsBwnEIL720J8sMTz0=;
+        b=Vv/YIbLhKY7D7TGiaeChDeAeU8q5/zm9WXkjtFTqKzMC4yc9V/ZfBYT2OcfNEapS5h
+         Wd8ZT/ZsrIu6oyKjKsMaim3v615cpVhzO8heILTFxaq+9SCax17dcT0T/i420nUrAi3C
+         xUVX8L9bUiDPyE5K7/p1xYtjBc15okoBxYYumH6U1vnCqRRpe/ewmBR5G/nXcpsfpc+f
+         jIEyqrJ+xKXcBI+KWHlQItfGCUUQ1OftG5hEQJr8Usq38dI6Yg/DYgIKQh57K4Pleks6
+         3KWEAYRFEbd+FyQjdLuHU4C62onk6kNNs1AhRn+el3zjEe7R3pAG3z2C/KixCf6BUQ1L
+         faNg==
+X-Gm-Message-State: AA+aEWZV5yHNZdsqWAWudcFaF5OFUagNb+BTKXuRM+vKtxkw1QqpIeSm
+        PQSIcLPy7jpWP+mF77JXkAPGsQ==
+X-Google-Smtp-Source: AFSGD/XJ8zcmMWXD8FWzGxaH3vNIgkyiPtwnihpR7W2ZVOr16EQd1yHbYp8lY9MsaH6CEj9t73DTeA==
+X-Received: by 2002:a1c:8d49:: with SMTP id p70mr1774408wmd.68.1544099101009;
+        Thu, 06 Dec 2018 04:25:01 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.25.02
+        by smtp.gmail.com with ESMTPSA id j8sm339988wrt.40.2018.12.06.04.24.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 04:25:03 -0800 (PST)
+        Thu, 06 Dec 2018 04:25:00 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v13 10/25] kasan: add tag related helper functions
-Date:   Thu,  6 Dec 2018 13:24:28 +0100
-Message-Id: <f6c6437bb8e143bc44f42c3c259c62e734be7935.1544099024.git.andreyknvl@google.com>
+Subject: [PATCH v13 08/25] kasan: initialize shadow to 0xff for tag-based mode
+Date:   Thu,  6 Dec 2018 13:24:26 +0100
+Message-Id: <5cc1b789aad7c99cf4f3ec5b328b147ad53edb40.1544099024.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 In-Reply-To: <cover.1544099024.git.andreyknvl@google.com>
 References: <cover.1544099024.git.andreyknvl@google.com>
@@ -109,200 +109,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds a few helper functions, that are meant to be used to
-work with tags embedded in the top byte of kernel pointers: to set, to
-get or to reset the top byte.
+A tag-based KASAN shadow memory cell contains a memory tag, that
+corresponds to the tag in the top byte of the pointer, that points to that
+memory. The native top byte value of kernel pointers is 0xff, so with
+tag-based KASAN we need to initialize shadow memory to 0xff.
 
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/kasan.h  |  8 +++++--
- arch/arm64/include/asm/memory.h | 12 +++++++++++
- arch/arm64/mm/kasan_init.c      |  2 ++
- include/linux/kasan.h           | 13 ++++++++++++
- mm/kasan/kasan.h                | 31 +++++++++++++++++++++++++++
- mm/kasan/tags.c                 | 37 +++++++++++++++++++++++++++++++++
- 6 files changed, 101 insertions(+), 2 deletions(-)
+ arch/arm64/mm/kasan_init.c | 15 +++++++++++++--
+ include/linux/kasan.h      |  8 ++++++++
+ mm/kasan/common.c          |  3 ++-
+ 3 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kasan.h b/arch/arm64/include/asm/kasan.h
-index 8758bb008436..b52aacd2c526 100644
---- a/arch/arm64/include/asm/kasan.h
-+++ b/arch/arm64/include/asm/kasan.h
-@@ -4,12 +4,16 @@
- 
- #ifndef __ASSEMBLY__
- 
--#ifdef CONFIG_KASAN
--
- #include <linux/linkage.h>
- #include <asm/memory.h>
- #include <asm/pgtable-types.h>
- 
-+#define arch_kasan_set_tag(addr, tag)	__tag_set(addr, tag)
-+#define arch_kasan_reset_tag(addr)	__tag_reset(addr)
-+#define arch_kasan_get_tag(addr)	__tag_get(addr)
-+
-+#ifdef CONFIG_KASAN
-+
- /*
-  * KASAN_SHADOW_START: beginning of the kernel virtual addresses.
-  * KASAN_SHADOW_END: KASAN_SHADOW_START + 1/N of kernel virtual addresses,
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index e2c9857157f2..83c1366a1233 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -219,6 +219,18 @@ static inline unsigned long kaslr_offset(void)
- #define untagged_addr(addr)	\
- 	((__typeof__(addr))sign_extend64((u64)(addr), 55))
- 
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define __tag_shifted(tag)	((u64)(tag) << 56)
-+#define __tag_set(addr, tag)	(__typeof__(addr))( \
-+		((u64)(addr) & ~__tag_shifted(0xff)) | __tag_shifted(tag))
-+#define __tag_reset(addr)	untagged_addr(addr)
-+#define __tag_get(addr)		(__u8)((u64)(addr) >> 56)
-+#else
-+#define __tag_set(addr, tag)	(addr)
-+#define __tag_reset(addr)	(addr)
-+#define __tag_get(addr)		0
-+#endif
-+
- /*
-  * Physical vs virtual RAM address space conversion.  These are
-  * private definitions which should NOT be used outside memory.h
 diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 7a4a0904cac8..1df536bdabcb 100644
+index 4ebc19422931..7a4a0904cac8 100644
 --- a/arch/arm64/mm/kasan_init.c
 +++ b/arch/arm64/mm/kasan_init.c
-@@ -253,6 +253,8 @@ void __init kasan_init(void)
- 	memset(kasan_early_shadow_page, KASAN_SHADOW_INIT, PAGE_SIZE);
- 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+@@ -43,6 +43,15 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int node)
+ 	return __pa(p);
+ }
  
-+	kasan_init_tags();
-+
- 	/* At this point kasan is fully initialized. Enable error messages */
- 	init_task.kasan_depth = 0;
- 	pr_info("KernelAddressSanitizer initialized\n");
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index c56af24bd3e7..a477ce2abdc9 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -169,6 +169,19 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
- 
- #define KASAN_SHADOW_INIT 0xFF
- 
-+void kasan_init_tags(void);
-+
-+void *kasan_reset_tag(const void *addr);
-+
-+#else /* CONFIG_KASAN_SW_TAGS */
-+
-+static inline void kasan_init_tags(void) { }
-+
-+static inline void *kasan_reset_tag(const void *addr)
++static phys_addr_t __init kasan_alloc_raw_page(int node)
 +{
-+	return (void *)addr;
++	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
++						__pa(MAX_DMA_ADDRESS),
++						MEMBLOCK_ALLOC_ACCESSIBLE,
++						node);
++	return __pa(p);
 +}
 +
- #endif /* CONFIG_KASAN_SW_TAGS */
+ static pte_t *__init kasan_pte_offset(pmd_t *pmdp, unsigned long addr, int node,
+ 				      bool early)
+ {
+@@ -92,7 +101,9 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
+ 	do {
+ 		phys_addr_t page_phys = early ?
+ 				__pa_symbol(kasan_early_shadow_page)
+-					: kasan_alloc_zeroed_page(node);
++					: kasan_alloc_raw_page(node);
++		if (!early)
++			memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_SIZE);
+ 		next = addr + PAGE_SIZE;
+ 		set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
+ 	} while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)));
+@@ -239,7 +250,7 @@ void __init kasan_init(void)
+ 			pfn_pte(sym_to_pfn(kasan_early_shadow_page),
+ 				PAGE_KERNEL_RO));
  
- #endif /* LINUX_KASAN_H */
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 19b950eaccff..b080b8d92812 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -8,6 +8,10 @@
- #define KASAN_SHADOW_SCALE_SIZE (1UL << KASAN_SHADOW_SCALE_SHIFT)
- #define KASAN_SHADOW_MASK       (KASAN_SHADOW_SCALE_SIZE - 1)
+-	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
++	memset(kasan_early_shadow_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+ 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
  
-+#define KASAN_TAG_KERNEL	0xFF /* native kernel pointers tag */
-+#define KASAN_TAG_INVALID	0xFE /* inaccessible memory tag */
-+#define KASAN_TAG_MAX		0xFD /* maximum value for random tags */
+ 	/* At this point kasan is fully initialized. Enable error messages */
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index ec22d548d0d7..c56af24bd3e7 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -153,6 +153,8 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
+ 
+ #ifdef CONFIG_KASAN_GENERIC
+ 
++#define KASAN_SHADOW_INIT 0
 +
- #define KASAN_FREE_PAGE         0xFF  /* page was freed */
- #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
- #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
-@@ -126,6 +130,33 @@ static inline void quarantine_reduce(void) { }
- static inline void quarantine_remove_cache(struct kmem_cache *cache) { }
- #endif
+ void kasan_cache_shrink(struct kmem_cache *cache);
+ void kasan_cache_shutdown(struct kmem_cache *cache);
+ 
+@@ -163,4 +165,10 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+ 
+ #endif /* CONFIG_KASAN_GENERIC */
  
 +#ifdef CONFIG_KASAN_SW_TAGS
 +
-+u8 random_tag(void);
++#define KASAN_SHADOW_INIT 0xFF
 +
-+#else
++#endif /* CONFIG_KASAN_SW_TAGS */
 +
-+static inline u8 random_tag(void)
-+{
-+	return 0;
-+}
-+
-+#endif
-+
-+#ifndef arch_kasan_set_tag
-+#define arch_kasan_set_tag(addr, tag)	((void *)(addr))
-+#endif
-+#ifndef arch_kasan_reset_tag
-+#define arch_kasan_reset_tag(addr)	((void *)(addr))
-+#endif
-+#ifndef arch_kasan_get_tag
-+#define arch_kasan_get_tag(addr)	0
-+#endif
-+
-+#define set_tag(addr, tag)	((void *)arch_kasan_set_tag((addr), (tag)))
-+#define reset_tag(addr)		((void *)arch_kasan_reset_tag(addr))
-+#define get_tag(addr)		arch_kasan_get_tag(addr)
-+
- /*
-  * Exported functions for interfaces called from assembly or from generated
-  * code. Declarations here to avoid warning about missing declarations.
-diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-index 04194923c543..1c4e7ce2e6fe 100644
---- a/mm/kasan/tags.c
-+++ b/mm/kasan/tags.c
-@@ -38,6 +38,43 @@
- #include "kasan.h"
- #include "../slab.h"
+ #endif /* LINUX_KASAN_H */
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 5f68c93734ba..7134e75447ff 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -473,11 +473,12 @@ int kasan_module_alloc(void *addr, size_t size)
  
-+static DEFINE_PER_CPU(u32, prng_state);
-+
-+void kasan_init_tags(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		per_cpu(prng_state, cpu) = get_random_u32();
-+}
-+
-+/*
-+ * If a preemption happens between this_cpu_read and this_cpu_write, the only
-+ * side effect is that we'll give a few allocated in different contexts objects
-+ * the same tag. Since tag-based KASAN is meant to be used a probabilistic
-+ * bug-detection debug feature, this doesn't have significant negative impact.
-+ *
-+ * Ideally the tags use strong randomness to prevent any attempts to predict
-+ * them during explicit exploit attempts. But strong randomness is expensive,
-+ * and we did an intentional trade-off to use a PRNG. This non-atomic RMW
-+ * sequence has in fact positive effect, since interrupts that randomly skew
-+ * PRNG at unpredictable points do only good.
-+ */
-+u8 random_tag(void)
-+{
-+	u32 state = this_cpu_read(prng_state);
-+
-+	state = 1664525 * state + 1013904223;
-+	this_cpu_write(prng_state, state);
-+
-+	return (u8)(state % (KASAN_TAG_MAX + 1));
-+}
-+
-+void *kasan_reset_tag(const void *addr)
-+{
-+	return reset_tag(addr);
-+}
-+
- void check_memory_region(unsigned long addr, size_t size, bool write,
- 				unsigned long ret_ip)
- {
+ 	ret = __vmalloc_node_range(shadow_size, 1, shadow_start,
+ 			shadow_start + shadow_size,
+-			GFP_KERNEL | __GFP_ZERO,
++			GFP_KERNEL,
+ 			PAGE_KERNEL, VM_NO_GUARD, NUMA_NO_NODE,
+ 			__builtin_return_address(0));
+ 
+ 	if (ret) {
++		__memset(ret, KASAN_SHADOW_INIT, shadow_size);
+ 		find_vm_area(addr)->flags |= VM_KASAN;
+ 		kmemleak_ignore(ret);
+ 		return 0;
 -- 
 2.20.0.rc1.387.gf8505762e3-goog
 
