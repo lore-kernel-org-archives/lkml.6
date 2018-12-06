@@ -2,55 +2,54 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25323C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B25C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E143F20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D6C2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107250;
-	bh=Q7mOY2zSevvx5eM+w5YjhNR7hFNgDLzNUG276gb+boA=;
+	s=default; t=1544107256;
+	bh=xQ5KrvsG+MGk6tWUAFWpsGACp0x53xISV3bDcMTd4Kk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uAed05TsVY+fs2fHYF8mwsGHR5ZmM02WzZNw4WflIybUrhNVVor+YHDuQUbclVRdb
-	 A0ZHxddCfWrgeNHG3Dfg7d1HuGkCO+Dezj6p/AwdC4ltqWQ9u6SfjbWJUwCJFnpJTB
-	 wl1wqfgzW/LKFA2iXxcFa7JJ9Kbkkm3IS2kNMvcE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E143F20892
+	b=HlHU57n2WBB5yEd9B2McJQ/ZjYA2mKCkItl1T+nNd3J8+XABXbkqgM56mQxtPki8X
+	 SOIjM6tQ/vGjKSYjs1SUxwRkV2+YidL7O/v3Ju+ZTY732y3fjbZNPaWrSzKdi3iehZ
+	 OyjC6pyXpYpQ/Sd2Bt9UsXdWm7VU73FYkE/XKGKU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D6C2082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbeLFOks (ORCPT
+        id S1730084AbeLFOkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:40:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44892 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730027AbeLFOko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:44 -0500
+        id S1730064AbeLFOkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB76020672;
-        Thu,  6 Dec 2018 14:40:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BFCC20672;
+        Thu,  6 Dec 2018 14:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107244;
-        bh=Q7mOY2zSevvx5eM+w5YjhNR7hFNgDLzNUG276gb+boA=;
+        s=default; t=1544107252;
+        bh=xQ5KrvsG+MGk6tWUAFWpsGACp0x53xISV3bDcMTd4Kk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I939dJiASDTbF0F0+CrBBqeWYFP0d18bceQzWMF3Vp2AKrqm3+zpLzLh7doa6Ovn2
-         94r7ISUs12YmVJm5ECGOeRxGFEDv7D+g0wCaNQo9k8/e41xsWTJql+CUcZ34+RDeq0
-         6Fy2RUfXBrdRBt2U2tAxmksd/VXNEVCh3Uk4EkMY=
+        b=K6/Oc1oBT39EvFGN5XbcScS8EYy4XvjRJQyaWzyIidoityKbYGXhflzuAg0L6UDVM
+         K3paY3rFOiGHhqQM9SCqmLF6nYC5PRj5bAgpyqwQXRCikabD4fWOJN27DcA9wIHUhp
+         tIbjZ9u+70S4d80j3UbG27vTQRj2yjvQBhSzEXsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lihong Yang <lihong.yang@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 4.19 29/41] i40e: Fix deletion of MAC filters
-Date:   Thu,  6 Dec 2018 15:39:09 +0100
-Message-Id: <20181206142952.236156978@linuxfoundation.org>
+        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 31/41] Input: xpad - quirk all PDP Xbox One gamepads
+Date:   Thu,  6 Dec 2018 15:39:11 +0100
+Message-Id: <20181206142952.715381429@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -69,35 +68,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lihong Yang <lihong.yang@intel.com>
+From: Cameron Gutman <aicommander@gmail.com>
 
-commit eab077aa84331afbda071a213925d4cdbca58941 upstream.
+commit a6754fae1e66e9a40fed406290d7ca3f2b4d227c upstream.
 
-In __i40e_del_filter function, the flag __I40E_MACVLAN_SYNC_PENDING for
-the PF state is wrongly set for the VSI. Deleting any of the MAC filters
-has caused the incorrect syncing for the PF. Fix it by setting this state
-flag to the intended PF.
+Since we continue to find tons of new variants [0,1,2,3,4,5,6] that
+need the PDP quirk, let's just quirk all devices from PDP.
 
-CC: stable <stable@vger.kernel.org>
-Signed-off-by: Lihong Yang <lihong.yang@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+[0]: https://github.com/paroj/xpad/pull/104
+[1]: https://github.com/paroj/xpad/pull/105
+[2]: https://github.com/paroj/xpad/pull/108
+[3]: https://github.com/paroj/xpad/pull/109
+[4]: https://github.com/paroj/xpad/pull/112
+[5]: https://github.com/paroj/xpad/pull/115
+[6]: https://github.com/paroj/xpad/pull/116
+
+Fixes: e5c9c6a885fa ("Input: xpad - add support for PDP Xbox One controllers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Cameron Gutman <aicommander@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/joystick/xpad.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -1409,7 +1409,7 @@ void __i40e_del_filter(struct i40e_vsi *
- 	}
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -480,18 +480,18 @@ static const u8 xboxone_hori_init[] = {
+ };
  
- 	vsi->flags |= I40E_VSI_FLAG_FILTER_CHANGED;
--	set_bit(__I40E_MACVLAN_SYNC_PENDING, vsi->state);
-+	set_bit(__I40E_MACVLAN_SYNC_PENDING, vsi->back->state);
- }
+ /*
+- * This packet is required for some of the PDP pads to start
++ * This packet is required for most (all?) of the PDP pads to start
+  * sending input reports. These pads include: (0x0e6f:0x02ab),
+- * (0x0e6f:0x02a4).
++ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
+  */
+ static const u8 xboxone_pdp_init1[] = {
+ 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
+ };
  
- /**
+ /*
+- * This packet is required for some of the PDP pads to start
++ * This packet is required for most (all?) of the PDP pads to start
+  * sending input reports. These pads include: (0x0e6f:0x02ab),
+- * (0x0e6f:0x02a4).
++ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
+  */
+ static const u8 xboxone_pdp_init2[] = {
+ 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
+@@ -527,12 +527,8 @@ static const struct xboxone_init_packet
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
+ 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
+-	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
 
 
