@@ -2,136 +2,102 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1353BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08DCC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF1D320700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B55D720700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:19:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c+bM7IaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF1D320700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="oqwmfpK6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55D720700
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeLFPSm (ORCPT
+        id S1726157AbeLFPTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:18:42 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40950 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbeLFPSk (ORCPT
+        Thu, 6 Dec 2018 10:19:31 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35075 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbeLFPTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:18:40 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q26so1412690wmf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:18:39 -0800 (PST)
+        Thu, 6 Dec 2018 10:19:31 -0500
+Received: by mail-it1-f193.google.com with SMTP id p197so1995822itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 07:19:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Y7CGHPuU0cKd8uxanXCkssfy7HoOVVH2fzqpoBO3MJk=;
-        b=c+bM7IaWZi1H/3FYMQILbAyq3SkhW7Uih01O/P0gAfzhOuiZ5bnjA7L7I8NlwiHI/h
-         H3OzC5LtUaJ3Tt+AqTqgP6zvsv3H3STi6sCHOoc3iiUkw9VJrjD4nw/ljk7rlFdYfZPZ
-         n9lPPlK5rN0Rt2KtNVt7DMayET1i97tQKB+A5OnowPY5mN2MIKF5C1RarI4cDEb+fwkb
-         IkTZ+bGtP7E5G0DsA5fVu/lPbzIQ+6aL4I1rL7Nn9MWo8aAK30cScv/o+rlOFACB4wVa
-         8Gbqh2mm58L1zsQhs1IgVCxGbY17DH2CUdB7UUG5H4rwVYbzRKmnjuPV8alx7YokJN9m
-         wi+A==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NMb8x1M1yA6S+t3bU8+fBaScmnvLKxY2xxKbeilHybg=;
+        b=oqwmfpK6JK+lCqLoOUOAFcAXi7fiJamImbWbktdrqcrs1iuV8hl9TyK/OjCiNNPV/K
+         dU82sxg49w63uVMuLrJEF5pYnUy5r0y+Yn2s83U9xommKd3sPXDmmL31lgC6pHSDi6la
+         vrGOAJHEdQ41dNJ+VKsxcqD51np84O7ElRYzPSW57LyCSIUjn4gVy544UAklyvlUY6Jq
+         Adsjogis+WFvRZqDRlIqh9z6Tc7u2pkhrw0JtKZHMOe5VUZ6PZ6Pv6C3iRW5ysxjcPgS
+         UP/bVKUhI9SdIpTymbNd17rjkd5x2vUQZxUWqvhxx9ijgLhPQ7F2QL47I/T0i9DPlLLa
+         2QRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Y7CGHPuU0cKd8uxanXCkssfy7HoOVVH2fzqpoBO3MJk=;
-        b=Wc2eG/vTsMT/ye1QIwZm1T2uFH90OGRsF8GxSMSlVHSAWw8reS7DWhDIYx0aggCWdK
-         iEoxlFkgyhpGnGB6d2EGFoiiQj5jpqBfjy6j2mYSh5sy/prn1l1mmyteEwJ7AhGZYccJ
-         c4DjzBYltf5KLbvEK1XaNXLt3D2SEq3Zrr/U7/do29XdQIgIbIXQQU96fIl40bGTS+1R
-         TcmmElM5Z9iWeMYuoEEXqvVi3fSB5m5cYuRWRBWR5KQirAdS5xnhCdGfELRKiPv9bXg5
-         pmDSRIwLwriwf4wZf0mobbOifhe5zSgPCrdU5qB84zWgmnCzkOAqaysmMMRm14EvauMD
-         SOFQ==
-X-Gm-Message-State: AA+aEWb6+Iasws1ThTakpU1NkR83zZNGyJKdITxWIARTFdwuEO6ytLgI
-        Hx2HGBTIsuEwL056KfAF1/p4uw==
-X-Google-Smtp-Source: AFSGD/Xv9y5Gp69PrLbFCQosYzPu0t940Sru5qC/QjA70Z1iyheNfOgkmA5JlbjaAS+UP/JrjTlFjw==
-X-Received: by 2002:a7b:c1d7:: with SMTP id a23mr19076799wmj.48.1544109519103;
-        Thu, 06 Dec 2018 07:18:39 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id j33sm939652wre.91.2018.12.06.07.18.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 07:18:38 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] mmc: meson-gx: remove useless lock
-Date:   Thu,  6 Dec 2018 16:18:26 +0100
-Message-Id: <20181206151828.24417-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206151828.24417-1-jbrunet@baylibre.com>
-References: <20181206151828.24417-1-jbrunet@baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NMb8x1M1yA6S+t3bU8+fBaScmnvLKxY2xxKbeilHybg=;
+        b=ht98vqVoMt7t3DFfcLobfPMfvLW0QJUSwdzjYX/k6sX775mygtN7LtqQJOJy4ocEcZ
+         PTTSO94xahxE8GxaSe3ahUfd6v5O0CjKZRuC8NeaMNU8PZcQH9KLCE8l3Qm9LMFMB843
+         jC+COdqiIe1mIyBs5A98XhKAW9A+iGBuHsNnCs4wXezmViK+mwzx01shpOhtGIDYxWR4
+         OwJHO4MDyRMDUmfG5gImRFZbfG71ThVYovLq2YRUPC6qsW3bgNN0M2UGYwHjJfBTOph0
+         oFnvJLHckFBlHUr1UCj+SwGNe4JpKrziUKYDW8O1gc3C9C+IEhhhAv6RpRX8mS6Ty+3T
+         aVEg==
+X-Gm-Message-State: AA+aEWawoUmHaK8QTL2BkpbuFQfhcuHQDF5PZAePmtof5NWYNx3H9mEc
+        DgnNc1l95q33PL5XUHt4e9GaJ0snGLI=
+X-Google-Smtp-Source: AFSGD/XHkbjLGRg+iYEe9blfvmuXAu/w9tNrBJ9x90n528cCgj65lG5jQZHXC+ZUCFCdhszzp3ojRA==
+X-Received: by 2002:a24:2f82:: with SMTP id j124mr17888969itj.166.1544109569480;
+        Thu, 06 Dec 2018 07:19:29 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id f13sm245100iol.82.2018.12.06.07.19.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 07:19:27 -0800 (PST)
+Subject: Re: [PATCH V10 3/4] blk-mq: issue directly with bypass 'false' in
+ blk_mq_sched_insert_requests
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544067160-20564-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1544067160-20564-4-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <840accff-5050-744d-9c95-febce5433ab2@kernel.dk>
+Date:   Thu, 6 Dec 2018 08:19:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544067160-20564-4-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The spinlock is only used within the irq handler so it does not
-seem very useful.
+On 12/5/18 8:32 PM, Jianchao Wang wrote:
+> It is not necessary to issue request directly with bypass 'true'
+> in blk_mq_sched_insert_requests and handle the non-issued requests
+> itself. Just set bypass to 'false' and let blk_mq_try_issue_directly
+> handle them totally. Remove the blk_rq_can_direct_dispatch check,
+> because blk_mq_try_issue_directly can handle it well.
+> 
+> With respect to commit_rqs hook, we only need to care about the last
+> request's result. If it is inserted, invoke commit_rqs.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/mmc/host/meson-gx-mmc.c | 7 -------
- 1 file changed, 7 deletions(-)
+I don't think there's anything wrong, functionally, with this patch,
+but I question the logic of continuing to attempt direct dispatch
+if we fail one. If we get busy on one, for instance, we should just
+insert that one to the dispatch list, and insert the rest of the list
+normally.
 
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index fcb5d693c897..5cc31e434ca1 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -26,7 +26,6 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/ioport.h>
--#include <linux/spinlock.h>
- #include <linux/dma-mapping.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
-@@ -159,7 +158,6 @@ struct meson_host {
- 	struct	mmc_host	*mmc;
- 	struct	mmc_command	*cmd;
- 
--	spinlock_t lock;
- 	void __iomem *regs;
- 	struct clk *core_clk;
- 	struct clk *mmc_clk;
-@@ -1040,8 +1038,6 @@ static irqreturn_t meson_mmc_irq(int irq, void *dev_id)
- 	if (WARN_ON(!host) || WARN_ON(!host->cmd))
- 		return IRQ_NONE;
- 
--	spin_lock(&host->lock);
--
- 	cmd = host->cmd;
- 	data = cmd->data;
- 	cmd->error = 0;
-@@ -1091,7 +1087,6 @@ static irqreturn_t meson_mmc_irq(int irq, void *dev_id)
- 	if (ret == IRQ_HANDLED)
- 		meson_mmc_request_done(host->mmc, cmd->mrq);
- 
--	spin_unlock(&host->lock);
- 	return ret;
- }
- 
-@@ -1244,8 +1239,6 @@ static int meson_mmc_probe(struct platform_device *pdev)
- 	host->dev = &pdev->dev;
- 	dev_set_drvdata(&pdev->dev, host);
- 
--	spin_lock_init(&host->lock);
--
- 	/* Get regulators and the supported OCR mask */
- 	host->vqmmc_enabled = false;
- 	ret = mmc_regulator_get_supply(mmc);
+
 -- 
-2.19.2
+Jens Axboe
 
