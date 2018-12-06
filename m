@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6657AC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F8BC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2069D20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BCBE20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:23:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ym3EseBJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2069D20892
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuWRs/W+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCBE20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbeLFTXM (ORCPT
+        id S1726241AbeLFTXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:23:12 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36553 "EHLO
+        Thu, 6 Dec 2018 14:23:17 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44950 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeLFTW7 (ORCPT
+        with ESMTP id S1726186AbeLFTWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:22:59 -0500
-Received: by mail-pg1-f193.google.com with SMTP id n2so576273pgm.3;
-        Thu, 06 Dec 2018 11:22:58 -0800 (PST)
+        Thu, 6 Dec 2018 14:22:55 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so561345pgr.11;
+        Thu, 06 Dec 2018 11:22:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZOqczAKBBnFxC04H7GYZ0UbWasi4OSn8T6AcRscW/14=;
-        b=Ym3EseBJBhlZqbTRtpTtrGihgjr2/7bR2H6KkXi2GRA4wWWQwj76AnzoL37u1DhSaX
-         fBtG/jYDGueeWhtJV73NjlsVdbiyadz6zAfhc2+Ws5VPTiXPkALaSCvXl6wdjxrDaA+P
-         vDSOmAtwglnEwdsT0WepvvrY0xI3rWbXpnYmdSf4OEdAV4v4MJOoc65mXKcfZ0I6W9T7
-         cZo82EhB+UDCd7rddQVKqWrzH15M9fnwJeolYG12MtEiNvWEm+I+KPAFZ28SxlXdvMEk
-         y1oG5rZ7oitQklrcJNpw4DAc0WFl1Ky1u2E91rG138GJoFyHTT64r2vcxLhYQnw2QH3F
-         mHcA==
+        bh=Z1/6agFlpRt+08ZxxIaIhPePfLZAeTzCqcROYxg7U30=;
+        b=JuWRs/W+oKLte3cavGDQTHcueOeAt4Z585VjC8/Er0t58pADhJWGuahxYWUTSi2A0s
+         wIfVlJRncLShONrpZyVOMnfF1RE9ZR4Ut4MoNIk3oinEtndOZwbVzMXHtRhZ9rZfguJ9
+         yTVlqvkLZGqsCu8oJ+81SUXhg4u2gYpz0rfQVnyoXfDa/4m5d/DZwI/cXJCy9C5MU6TJ
+         aLwfWfxKBm70almfizg9qbonCRk4HgjKWhROh37y6DvT8sRKlRrAg1Y424T5T5u114Rk
+         OzDBuYgLuigHokA+6hKN93WPvS6Fbva5U1tUpQFXWoPUJUfgTLTMOWEwXHgTOyoy1jE6
+         CLsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=ZOqczAKBBnFxC04H7GYZ0UbWasi4OSn8T6AcRscW/14=;
-        b=iD6aDWLvxVubdQNPPTKumkfYiz8gKSUE3MKMMSTfB8r3ll+l1QIhxmtl5XyMJ9SNn2
-         5P8nXOl5B8mZ0BglonpbRkG+czN5K2GxqqVDLynJlpzwFMzTakQUjLMxdOoZ3mGoS989
-         YEHZBX+UNpGK8xngv7OwynzHskzhzjzkUGFlgNV0yi3lM36SVwxtu18WqX40vcivc7dQ
-         EX5BXlK6G6UPV/wq+QL+Ohotpus7cH+Mf0TmNcLk11daVXFTELeGQVmHzPzMq2ZDV4VP
-         BEuzOSTrD8/eMaA7oa9guS4VV4SLFf6H8HmgYVvqeHIZChq3Sq7LULgqeFghFYWePBSy
-         Qg/Q==
-X-Gm-Message-State: AA+aEWbie+VC8d82W+0KuKnKCiHdt0iIvTfWrySpPcGQd3zG2OP2VDnl
-        3WseXzKRDoeh/jBf7X8OgorLJLf0
-X-Google-Smtp-Source: AFSGD/VSl3XIg7F2LNDyoUke7FheeVfKFUOolEBulrRDbIU36Rt+f913qjEd0LEA1wGj5eD0iHw9wA==
-X-Received: by 2002:a62:4641:: with SMTP id t62mr29428059pfa.141.1544124178129;
-        Thu, 06 Dec 2018 11:22:58 -0800 (PST)
+        bh=Z1/6agFlpRt+08ZxxIaIhPePfLZAeTzCqcROYxg7U30=;
+        b=lia6ilJzFuDPi4ExY7nbwMTgIdZHF56tWbJWGReGGoTpmor4MAnvqQArjIrvXbpJON
+         s3e8OeIsujhHtpmbp9D2Z2dlS7FS2Zmpofquvx/n4ce+zvyMtV5NaVYOfwyw8YkxNQ9v
+         F5tJuTe+J8YbmAA7+fChoOBHymdMZBrKVdC4HGZGGhe2xRNOi7j+o5uTsmb9Dv+IAsBV
+         uo/2A+NH5qW63opl6G8hGClQNdKRk3fbpj5Rg5c17Hcf40kHmgMSsXUVMVzikr6gdgJj
+         rtUXicjp3P27UJ8E2llprhfUOCe6VHAdX2mwcQFD3CvHbHOiBjs/DyZK5Wyt3r7WOQN4
+         xQ5g==
+X-Gm-Message-State: AA+aEWbFwNKhln/uK2cEBNbPbRqLU1O1YYw75jr0dtQypN9RTnzq0Cij
+        /T6hgzXawdFkx+vstowMQX+aiTFz
+X-Google-Smtp-Source: AFSGD/VPc7M6w+EUQ/ihEViXPutqbvEfMDFpjkORLF5K3BWsScib0qFlsRWAfq/kDk0AEpUSU8X0Ow==
+X-Received: by 2002:a62:f247:: with SMTP id y7mr29824794pfl.25.1544124173505;
+        Thu, 06 Dec 2018 11:22:53 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 89sm1903650pfl.120.2018.12.06.11.22.57
+        by smtp.gmail.com with ESMTPSA id s2sm1547353pfa.167.2018.12.06.11.22.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 11:22:57 -0800 (PST)
+        Thu, 06 Dec 2018 11:22:52 -0800 (PST)
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     linux-hwmon@vger.kernel.org
 Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 13/13] hwmon: (ltc4215) Auto-convert to use SENSOR_DEVICE_ATTR_{RO, RW, WO}
-Date:   Thu,  6 Dec 2018 11:22:33 -0800
-Message-Id: <1544124153-23961-14-git-send-email-linux@roeck-us.net>
+Subject: [PATCH 10/13] hwmon: (max6697) Auto-convert to use SENSOR_DEVICE_ATTR_{RO, RW, WO}
+Date:   Thu,  6 Dec 2018 11:22:30 -0800
+Message-Id: <1544124153-23961-11-git-send-email-linux@roeck-us.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
 References: <1544124153-23961-1-git-send-email-linux@roeck-us.net>
@@ -78,95 +78,192 @@ https://github.com/groeck/coccinelle-patches/raw/master/hwmon/sensor-devattr-w6.
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/hwmon/ltc4215.c | 42 ++++++++++++++++--------------------------
- 1 file changed, 16 insertions(+), 26 deletions(-)
+ drivers/hwmon/max6697.c | 144 +++++++++++++++++++++---------------------------
+ 1 file changed, 64 insertions(+), 80 deletions(-)
 
-diff --git a/drivers/hwmon/ltc4215.c b/drivers/hwmon/ltc4215.c
-index c8a9bd9b050f..d4a1d033d3e8 100644
---- a/drivers/hwmon/ltc4215.c
-+++ b/drivers/hwmon/ltc4215.c
-@@ -136,9 +136,8 @@ static unsigned int ltc4215_get_current(struct device *dev)
- 	return curr;
+diff --git a/drivers/hwmon/max6697.c b/drivers/hwmon/max6697.c
+index 221fd1492057..da43f7ae3de1 100644
+--- a/drivers/hwmon/max6697.c
++++ b/drivers/hwmon/max6697.c
+@@ -250,7 +250,7 @@ static struct max6697_data *max6697_update_device(struct device *dev)
+ 	return ret;
  }
  
--static ssize_t ltc4215_show_voltage(struct device *dev,
--				    struct device_attribute *da,
--				    char *buf)
-+static ssize_t ltc4215_voltage_show(struct device *dev,
-+				    struct device_attribute *da, char *buf)
+-static ssize_t show_temp_input(struct device *dev,
++static ssize_t temp_input_show(struct device *dev,
+ 			       struct device_attribute *devattr, char *buf)
  {
- 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
- 	const int voltage = ltc4215_get_voltage(dev, attr->index);
-@@ -146,18 +145,16 @@ static ssize_t ltc4215_show_voltage(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "%d\n", voltage);
+ 	int index = to_sensor_dev_attr(devattr)->index;
+@@ -266,8 +266,8 @@ static ssize_t show_temp_input(struct device *dev,
+ 	return sprintf(buf, "%d\n", temp * 125);
  }
  
--static ssize_t ltc4215_show_current(struct device *dev,
--				    struct device_attribute *da,
--				    char *buf)
-+static ssize_t ltc4215_current_show(struct device *dev,
-+				    struct device_attribute *da, char *buf)
+-static ssize_t show_temp(struct device *dev,
+-			 struct device_attribute *devattr, char *buf)
++static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
++			 char *buf)
  {
- 	const unsigned int curr = ltc4215_get_current(dev);
- 
- 	return snprintf(buf, PAGE_SIZE, "%u\n", curr);
+ 	int nr = to_sensor_dev_attr_2(devattr)->nr;
+ 	int index = to_sensor_dev_attr_2(devattr)->index;
+@@ -283,7 +283,7 @@ static ssize_t show_temp(struct device *dev,
+ 	return sprintf(buf, "%d\n", temp * 1000);
  }
  
--static ssize_t ltc4215_show_power(struct device *dev,
--				  struct device_attribute *da,
--				  char *buf)
-+static ssize_t ltc4215_power_show(struct device *dev,
-+				  struct device_attribute *da, char *buf)
+-static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
++static ssize_t alarm_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
  {
- 	const unsigned int curr = ltc4215_get_current(dev);
- 	const int output_voltage = ltc4215_get_voltage(dev, LTC4215_ADIN);
-@@ -168,9 +165,8 @@ static ssize_t ltc4215_show_power(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "%u\n", power);
+ 	int index = to_sensor_dev_attr(attr)->index;
+@@ -298,9 +298,9 @@ static ssize_t show_alarm(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%u\n", (data->alarms >> index) & 0x1);
  }
  
--static ssize_t ltc4215_show_alarm(struct device *dev,
--					  struct device_attribute *da,
--					  char *buf)
-+static ssize_t ltc4215_alarm_show(struct device *dev,
-+				  struct device_attribute *da, char *buf)
+-static ssize_t set_temp(struct device *dev,
+-			struct device_attribute *devattr,
+-			const char *buf, size_t count)
++static ssize_t temp_store(struct device *dev,
++			  struct device_attribute *devattr, const char *buf,
++			  size_t count)
  {
- 	struct sensor_device_attribute *attr = to_sensor_dev_attr(da);
- 	struct ltc4215_data *data = ltc4215_update_device(dev);
-@@ -189,26 +185,20 @@ static ssize_t ltc4215_show_alarm(struct device *dev,
- /* Construct a sensor_device_attribute structure for each register */
+ 	int nr = to_sensor_dev_attr_2(devattr)->nr;
+ 	int index = to_sensor_dev_attr_2(devattr)->index;
+@@ -325,79 +325,63 @@ static ssize_t set_temp(struct device *dev,
+ 	return ret < 0 ? ret : count;
+ }
  
- /* Current */
--static SENSOR_DEVICE_ATTR(curr1_input, S_IRUGO, ltc4215_show_current, NULL, 0);
--static SENSOR_DEVICE_ATTR(curr1_max_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
--			  1 << 2);
-+static SENSOR_DEVICE_ATTR_RO(curr1_input, ltc4215_current, 0);
-+static SENSOR_DEVICE_ATTR_RO(curr1_max_alarm, ltc4215_alarm, 1 << 2);
+-static SENSOR_DEVICE_ATTR(temp1_input, S_IRUGO, show_temp_input, NULL, 0);
+-static SENSOR_DEVICE_ATTR_2(temp1_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    0, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp1_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    0, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp2_input, S_IRUGO, show_temp_input, NULL, 1);
+-static SENSOR_DEVICE_ATTR_2(temp2_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    1, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp2_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    1, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp3_input, S_IRUGO, show_temp_input, NULL, 2);
+-static SENSOR_DEVICE_ATTR_2(temp3_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    2, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp3_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    2, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp4_input, S_IRUGO, show_temp_input, NULL, 3);
+-static SENSOR_DEVICE_ATTR_2(temp4_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    3, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp4_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    3, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp5_input, S_IRUGO, show_temp_input, NULL, 4);
+-static SENSOR_DEVICE_ATTR_2(temp5_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    4, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp5_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    4, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp6_input, S_IRUGO, show_temp_input, NULL, 5);
+-static SENSOR_DEVICE_ATTR_2(temp6_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    5, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp6_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    5, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp7_input, S_IRUGO, show_temp_input, NULL, 6);
+-static SENSOR_DEVICE_ATTR_2(temp7_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    6, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp7_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    6, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp8_input, S_IRUGO, show_temp_input, NULL, 7);
+-static SENSOR_DEVICE_ATTR_2(temp8_max, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    7, MAX6697_TEMP_MAX);
+-static SENSOR_DEVICE_ATTR_2(temp8_crit, S_IRUGO | S_IWUSR, show_temp, set_temp,
+-			    7, MAX6697_TEMP_CRIT);
+-
+-static SENSOR_DEVICE_ATTR(temp1_max_alarm, S_IRUGO, show_alarm, NULL, 22);
+-static SENSOR_DEVICE_ATTR(temp2_max_alarm, S_IRUGO, show_alarm, NULL, 16);
+-static SENSOR_DEVICE_ATTR(temp3_max_alarm, S_IRUGO, show_alarm, NULL, 17);
+-static SENSOR_DEVICE_ATTR(temp4_max_alarm, S_IRUGO, show_alarm, NULL, 18);
+-static SENSOR_DEVICE_ATTR(temp5_max_alarm, S_IRUGO, show_alarm, NULL, 19);
+-static SENSOR_DEVICE_ATTR(temp6_max_alarm, S_IRUGO, show_alarm, NULL, 20);
+-static SENSOR_DEVICE_ATTR(temp7_max_alarm, S_IRUGO, show_alarm, NULL, 21);
+-static SENSOR_DEVICE_ATTR(temp8_max_alarm, S_IRUGO, show_alarm, NULL, 23);
+-
+-static SENSOR_DEVICE_ATTR(temp1_crit_alarm, S_IRUGO, show_alarm, NULL, 14);
+-static SENSOR_DEVICE_ATTR(temp2_crit_alarm, S_IRUGO, show_alarm, NULL, 8);
+-static SENSOR_DEVICE_ATTR(temp3_crit_alarm, S_IRUGO, show_alarm, NULL, 9);
+-static SENSOR_DEVICE_ATTR(temp4_crit_alarm, S_IRUGO, show_alarm, NULL, 10);
+-static SENSOR_DEVICE_ATTR(temp5_crit_alarm, S_IRUGO, show_alarm, NULL, 11);
+-static SENSOR_DEVICE_ATTR(temp6_crit_alarm, S_IRUGO, show_alarm, NULL, 12);
+-static SENSOR_DEVICE_ATTR(temp7_crit_alarm, S_IRUGO, show_alarm, NULL, 13);
+-static SENSOR_DEVICE_ATTR(temp8_crit_alarm, S_IRUGO, show_alarm, NULL, 15);
+-
+-static SENSOR_DEVICE_ATTR(temp2_fault, S_IRUGO, show_alarm, NULL, 1);
+-static SENSOR_DEVICE_ATTR(temp3_fault, S_IRUGO, show_alarm, NULL, 2);
+-static SENSOR_DEVICE_ATTR(temp4_fault, S_IRUGO, show_alarm, NULL, 3);
+-static SENSOR_DEVICE_ATTR(temp5_fault, S_IRUGO, show_alarm, NULL, 4);
+-static SENSOR_DEVICE_ATTR(temp6_fault, S_IRUGO, show_alarm, NULL, 5);
+-static SENSOR_DEVICE_ATTR(temp7_fault, S_IRUGO, show_alarm, NULL, 6);
+-static SENSOR_DEVICE_ATTR(temp8_fault, S_IRUGO, show_alarm, NULL, 7);
++static SENSOR_DEVICE_ATTR_RO(temp1_input, temp_input, 0);
++static SENSOR_DEVICE_ATTR_2_RW(temp1_max, temp, 0, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp1_crit, temp, 0, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp2_input, temp_input, 1);
++static SENSOR_DEVICE_ATTR_2_RW(temp2_max, temp, 1, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp2_crit, temp, 1, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp3_input, temp_input, 2);
++static SENSOR_DEVICE_ATTR_2_RW(temp3_max, temp, 2, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp3_crit, temp, 2, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp4_input, temp_input, 3);
++static SENSOR_DEVICE_ATTR_2_RW(temp4_max, temp, 3, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp4_crit, temp, 3, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp5_input, temp_input, 4);
++static SENSOR_DEVICE_ATTR_2_RW(temp5_max, temp, 4, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp5_crit, temp, 4, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp6_input, temp_input, 5);
++static SENSOR_DEVICE_ATTR_2_RW(temp6_max, temp, 5, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp6_crit, temp, 5, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp7_input, temp_input, 6);
++static SENSOR_DEVICE_ATTR_2_RW(temp7_max, temp, 6, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp7_crit, temp, 6, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp8_input, temp_input, 7);
++static SENSOR_DEVICE_ATTR_2_RW(temp8_max, temp, 7, MAX6697_TEMP_MAX);
++static SENSOR_DEVICE_ATTR_2_RW(temp8_crit, temp, 7, MAX6697_TEMP_CRIT);
++
++static SENSOR_DEVICE_ATTR_RO(temp1_max_alarm, alarm, 22);
++static SENSOR_DEVICE_ATTR_RO(temp2_max_alarm, alarm, 16);
++static SENSOR_DEVICE_ATTR_RO(temp3_max_alarm, alarm, 17);
++static SENSOR_DEVICE_ATTR_RO(temp4_max_alarm, alarm, 18);
++static SENSOR_DEVICE_ATTR_RO(temp5_max_alarm, alarm, 19);
++static SENSOR_DEVICE_ATTR_RO(temp6_max_alarm, alarm, 20);
++static SENSOR_DEVICE_ATTR_RO(temp7_max_alarm, alarm, 21);
++static SENSOR_DEVICE_ATTR_RO(temp8_max_alarm, alarm, 23);
++
++static SENSOR_DEVICE_ATTR_RO(temp1_crit_alarm, alarm, 14);
++static SENSOR_DEVICE_ATTR_RO(temp2_crit_alarm, alarm, 8);
++static SENSOR_DEVICE_ATTR_RO(temp3_crit_alarm, alarm, 9);
++static SENSOR_DEVICE_ATTR_RO(temp4_crit_alarm, alarm, 10);
++static SENSOR_DEVICE_ATTR_RO(temp5_crit_alarm, alarm, 11);
++static SENSOR_DEVICE_ATTR_RO(temp6_crit_alarm, alarm, 12);
++static SENSOR_DEVICE_ATTR_RO(temp7_crit_alarm, alarm, 13);
++static SENSOR_DEVICE_ATTR_RO(temp8_crit_alarm, alarm, 15);
++
++static SENSOR_DEVICE_ATTR_RO(temp2_fault, alarm, 1);
++static SENSOR_DEVICE_ATTR_RO(temp3_fault, alarm, 2);
++static SENSOR_DEVICE_ATTR_RO(temp4_fault, alarm, 3);
++static SENSOR_DEVICE_ATTR_RO(temp5_fault, alarm, 4);
++static SENSOR_DEVICE_ATTR_RO(temp6_fault, alarm, 5);
++static SENSOR_DEVICE_ATTR_RO(temp7_fault, alarm, 6);
++static SENSOR_DEVICE_ATTR_RO(temp8_fault, alarm, 7);
  
- /* Power (virtual) */
--static SENSOR_DEVICE_ATTR(power1_input, S_IRUGO, ltc4215_show_power, NULL, 0);
-+static SENSOR_DEVICE_ATTR_RO(power1_input, ltc4215_power, 0);
+ static DEVICE_ATTR(dummy, 0, NULL, NULL);
  
- /* Input Voltage */
--static SENSOR_DEVICE_ATTR(in1_input, S_IRUGO, ltc4215_show_voltage, NULL,
--			  LTC4215_ADIN);
--static SENSOR_DEVICE_ATTR(in1_max_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
--			  1 << 0);
--static SENSOR_DEVICE_ATTR(in1_min_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
--			  1 << 1);
-+static SENSOR_DEVICE_ATTR_RO(in1_input, ltc4215_voltage, LTC4215_ADIN);
-+static SENSOR_DEVICE_ATTR_RO(in1_max_alarm, ltc4215_alarm, 1 << 0);
-+static SENSOR_DEVICE_ATTR_RO(in1_min_alarm, ltc4215_alarm, 1 << 1);
- 
- /* Output Voltage */
--static SENSOR_DEVICE_ATTR(in2_input, S_IRUGO, ltc4215_show_voltage, NULL,
--			  LTC4215_SOURCE);
--static SENSOR_DEVICE_ATTR(in2_min_alarm, S_IRUGO, ltc4215_show_alarm, NULL,
--			  1 << 3);
-+static SENSOR_DEVICE_ATTR_RO(in2_input, ltc4215_voltage, LTC4215_SOURCE);
-+static SENSOR_DEVICE_ATTR_RO(in2_min_alarm, ltc4215_alarm, 1 << 3);
- 
- /*
-  * Finally, construct an array of pointers to members of the above objects,
 -- 
 2.7.4
 
