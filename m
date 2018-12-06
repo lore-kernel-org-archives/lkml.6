@@ -2,100 +2,83 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04163C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59CDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD92D208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:37:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD92D208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id A6E2521479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:37:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="G0Vhiq4+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E2521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbeLFKhO (ORCPT
+        id S1729485AbeLFKhp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:37:14 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:45969 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728245AbeLFKhL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:37:11 -0500
-Received: by mail-ua1-f68.google.com with SMTP id e16so8199438uam.12;
-        Thu, 06 Dec 2018 02:37:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aNfbB/d2ZD4fXfo0GjreIEblWjPSYEgLVSWDow+fqKw=;
-        b=p75NfWpJiNrfiUIMN2UQsxcp/jobz2nM/ANFOK5ZVhxb1ILNY7AvJjhskb0KbiaXJC
-         Bb+TDuQjH4JVD5fqMrZxGLuHjHclxteqeBF9YlBK8e6maFbn6oPohKd/05VBVhf2qDCQ
-         EhGHU90hav7OJiHQsPq8VJLIvYdJcGbdg4w1+7vhr6CKogPwhHuns/hWzlpkC0H6GWdK
-         o9CShjp+enrSOq+CUSeWbK7jhCTMx59EA0Q2WeZhytdqo8+mSG87hWYLyCochyTSgMXt
-         Dn5apkfqGPLpB8pEgsna6nWru/DxLtB7/M5DFy+NoWVM8PM7UZffJC93WJzngO/zGH9h
-         9QHw==
-X-Gm-Message-State: AA+aEWYtTyBNQSbN35x0JCZTEC5Ju8C4vWwRtnQYmmzTasLpiWlpKWVD
-        brmPkOr5FmzpYBpwjpAKm8lZ9qnOATAcZSU5CT0LKw==
-X-Google-Smtp-Source: AFSGD/V/bqvg/8uBak7uWXhgxLgZM/pyLVHQL+kAnmYuU+tYB0AKxMrFOHbqmYK/9sBu90ienKxwsJVgQtz2VWRUA38=
-X-Received: by 2002:ab0:465:: with SMTP id 92mr12732097uav.28.1544092630651;
- Thu, 06 Dec 2018 02:37:10 -0800 (PST)
+        Thu, 6 Dec 2018 05:37:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53762 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727763AbeLFKhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 05:37:45 -0500
+Received: from zn.tnic (p200300EC2BCE8F00DD72F512FF71F350.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:8f00:dd72:f512:ff71:f350])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D99E61EC03D4;
+        Thu,  6 Dec 2018 11:37:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544092664;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=u5UUzIH7VB2FoNOGeXijpzRxoUl7CMpM8T+GixeGMdI=;
+        b=G0Vhiq4+DpFDKoeEfmha5vusxMQJAiurE+Rfos/Wy/pGkSbT+wy6N5ShzaNfiOeMgxzSNf
+        7abb6YFFcAO99+CH1C8BhihPSMod81mlTr6VH9p0w3iWgF1xPSiI/B24cKq/1Grl0t1+07
+        bigfsTd218XRwS8VB8SIOcAkJMzmLkU=
+Date:   Thu, 6 Dec 2018 11:37:36 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND] x86/cpu: Avoid endless loop to get the number
+ of cache leaves
+Message-ID: <20181206103736.GA3986@zn.tnic>
+References: <1544081173-25059-1-git-send-email-puwen@hygon.cn>
 MIME-Version: 1.0
-References: <20181111193114.24307-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20181111193114.24307-1-alexandre.belloni@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 6 Dec 2018 11:36:59 +0100
-Message-ID: <CAMuHMdX9xZgAiBeXCXxLRSJYMefsFwhH3NGC7=EYteFd6kODMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: rtc: add generic bindings
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-rtc@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1544081173-25059-1-git-send-email-puwen@hygon.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+On Thu, Dec 06, 2018 at 03:26:13PM +0800, Pu Wen wrote:
+> To get the number of cache leaves on AMD or Hygon platform, it should
+> get the value of cpuid leaf 0x8000001d. But on certain broken platform
+> such as a not fullly implemented virtual platform(for example Xen),
+> the value of the cpuid leaf will nerver be CTYPE_NULL, so the kernel
+> will run into an endless loop.
+> 
+> To fix this problem, add a new enum type CTYPE_MAX to limit the maximum
+> cpuid accessing.
+> 
+> Signed-off-by: Pu Wen <puwen@hygon.cn>
+> ---
+>  arch/x86/kernel/cpu/cacheinfo.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Sun, Nov 11, 2018 at 8:31 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> Add generic binding documentation for the RTC subsystem.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Did you not see my reply to this last time?
 
-Thanks for your patch!
-
-> new file mode 100644
-> index 000000000000..221b7da50aca
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/rtc.txt
-> @@ -0,0 +1,30 @@
-
-> +The following properties may not be supported by all drivers. However, if a
-> +driver wants to support one of the below features, it should adapt the bindings
-> +below.
-> +- trickle-resistor-ohms : Selected resistor for trickle charger. Should be given
-
-Can this resistor be less than 1 ohm?
-trickle-resistor-milli-ohms?
-
-> +                          if trickle charger should be enabled
-> +- trickle-diode-disable : Do not use internal trickle charger diode Should be
-> +                          given if internal trickle charger diode should be
-> +                          disabled
-> +- wakeup-source :         Enables wake up of host system on alarm
-
-Gr{oetje,eeting}s,
-
-                        Geert
+https://lkml.kernel.org/r/20181115172155.GB25056@zn.tnic
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards/Gruss,
+    Boris.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Good mailing practices for 400: avoid top-posting and trim the reply.
