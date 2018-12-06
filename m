@@ -2,295 +2,100 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F9CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DA8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954B020868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:46:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954B020868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D025420868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:47:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D025420868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725984AbeLFVq6 (ORCPT
+        id S1726014AbeLFVrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:46:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbeLFVq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:46:58 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8CDBB3001AC0;
-        Thu,  6 Dec 2018 21:46:55 +0000 (UTC)
-Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B4D561001F57;
-        Thu,  6 Dec 2018 21:46:49 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 16:46:47 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-Message-ID: <20181206214647.GE3544@redhat.com>
-References: <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
- <20181205001544.GR2937@redhat.com>
- <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
- <20181205021334.GB3045@redhat.com>
- <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
- <20181205175357.GG3536@redhat.com>
- <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
- <20181206192050.GC3544@redhat.com>
- <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
- <20181206202706.GD3544@redhat.com>
+        Thu, 6 Dec 2018 16:47:08 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:55062 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeLFVrI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:47:08 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gV1U9-0007R4-K9; Thu, 06 Dec 2018 14:47:05 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gV1U8-0007rG-U8; Thu, 06 Dec 2018 14:47:05 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian@brauner.io>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org
+References: <20181206121858.12215-1-christian@brauner.io>
+        <87sgzahf7k.fsf@xmission.com>
+        <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
+        <875zw6bh2z.fsf@xmission.com>
+        <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
+        <871s6u9z6u.fsf@xmission.com>
+        <20181206213152.gvci7ijr3dokew7w@brauner.io>
+Date:   Thu, 06 Dec 2018 15:46:53 -0600
+In-Reply-To: <20181206213152.gvci7ijr3dokew7w@brauner.io> (Christian Brauner's
+        message of "Thu, 6 Dec 2018 22:31:57 +0100")
+Message-ID: <87o99y72gi.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181206202706.GD3544@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Dec 2018 21:46:57 +0000 (UTC)
+Content-Type: text/plain
+X-XM-SPF: eid=1gV1U8-0007rG-U8;;;mid=<87o99y72gi.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX197I2lOQZMKRcTAyanx2Fb6HkXUcekaDDY=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:27:06PM -0500, Jerome Glisse wrote:
-> On Thu, Dec 06, 2018 at 11:31:21AM -0800, Dave Hansen wrote:
-> > On 12/6/18 11:20 AM, Jerome Glisse wrote:
-> > >>> For case 1 you can pre-parse stuff but this can be done by helper library
-> > >> How would that work?  Would each user/container/whatever do this once?
-> > >> Where would they keep the pre-parsed stuff?  How do they manage their
-> > >> cache if the topology changes?
-> > > Short answer i don't expect a cache, i expect that each program will have
-> > > a init function that query the topology and update the application codes
-> > > accordingly.
-> > 
-> > My concern with having folks do per-program parsing, *and* having a huge
-> > amount of data to parse makes it unusable.  The largest systems will
-> > literally have hundreds of thousands of objects in /sysfs, even in a
-> > single directory.  That makes readdir() basically impossible, and makes
-> > even open() (if you already know the path you want somehow) hard to do fast.
-> > 
-> > I just don't think sysfs (or any filesystem, really) can scale to
-> > express large, complicated topologies in a way that any normal program
-> > can practically parse it.
-> > 
-> > My suspicion is that we're going to need to have the kernel parse and
-> > cache these things.  We *might* have the data available in sysfs, but we
-> > can't reasonably expect anyone to go parsing it.
-> 
-> What i am failing to explain is that kernel can not parse because kernel
-> does not know what the application cares about and every single applications
-> will make different choices and thus select differents devices and memory.
-> 
-> It is not even gonna a thing like class A of application will do X and
-> class B will do Y. Every single application in class A might do something
-> different because somes care about the little details.
-> 
-> So any kind of pre-parsing in the kernel is defeated by the fact that the
-> kernel does not know what the application is looking for.
-> 
-> I do not see anyway to express the application logic in something that
-> can be some kind of automaton or regular expression. The application can
-> litteraly intro-inspect itself and the topology to partition its workload.
-> The topology and device selection is expected to be thousands of line of
-> code in the most advance application.
-> 
-> Even worse inside one same application, they might be different device
-> partition and memory selection for different function in the application.
-> 
-> 
-> I am not scare about the anount of data to parse really, even on big node
-> it is gonna be few dozens of links and bridges, and few dozens of devices.
-> So we are talking hundred directories to parse and read.
-> 
-> 
-> Maybe an example will help. Let say we have an application with the
-> following pipeline:
-> 
->     inA -> functionA -> outA -> functionB -> outB -> functionC -> result
-> 
->     - inA 8 gigabytes
->     - outA 8 gigabytes
->     - outB one dword
->     - result something small
->     - functionA is doing heavy computation on inA (several thousands of
->       instructions for each dword in inA).
->     - functionB is doing heavy computation for each dword in outA (again
->       thousand of instruction for each dword) and it is looking for a
->       specific result that it knows will be unique among all the dword
->       computation ie it is output only one dword in outB
->     - functionC is something well suited for CPU that take outB and turns
->       it into the final result
-> 
-> Now let see few different system and their topologies:
->     [T2] 1 GPU with 16GB of memory and a handfull of CPU cores
->     [T1] 1 GPU with 8GB of memory and a handfull of CPU cores
->     [T3] 2 GPU with 8GB of memory and a handfull of CPU core
->     [T4] 2 GPU with 8GB of memory and a handfull of CPU core
->          the 2 GPU have a very fast link between each others
->          (400GBytes/s)
-> 
-> Now let see how the program will partition itself for each topology:
->     [T1] Application partition its computation in 3 phases:
->             P1: - migrate inA to GPU memory
->             P2: - execute functionA on inA producing outA
->             P3  - execute functionB on outA producing outB
->                 - run functionC and see if functionB have found the
->                   thing and written it to outB if so then kill all
->                   GPU threads and return the result we are done
-> 
->     [T2] Application partition its computation in 5 phases:
->             P1: - migrate first 4GB of inA to GPU memory
->             P2: - execute functionA for the 4GB and write the 4GB
->                   outA result to the GPU memory
->             P3: - execute functionB for the first 4GB of outA
->                 - while functionB is running DMA in the background
->                   the the second 4GB of inA to the GPU memory
->                 - once one of the millions of thread running functionB
->                   find the result it is looking for it writes it to
->                   outB which is in main memory
->                 - run functionC and see if functionB have found the
->                   thing and written it to outB if so then kill all
->                   GPU thread and DMA and return the result we are
->                   done
->             P4: - run functionA on the second half of inA ie we did
->                   not find the result in the first half so we no
->                   process the second half that have been migrated to
->                   the GPU memory in the background (see above)
->             P5: - run functionB on the second 4GB of outA like
->                   above
->                 - run functionC on CPU and kill everything as soon
->                   as one of the thread running functionB has found
->                   the result
->                 - return the result
-> 
->     [T3] Application partition its computation in 3 phases:
->             P1: - migrate first 4GB of inA to GPU1 memory
->                 - migrate last 4GB of inA to GPU2 memory
->             P2: - execute functionA on GPU1 on the first 4GB -> outA
->                 - execute functionA on GPU2 on the last 4GB -> outA
->             P3: - execute functionB on GPU1 on the first 4GB of outA
->                 - execute functionB on GPU2 on the last 4GB of outA
->                 - run functionC and see if functionB running on GPU1
->                   and GPU2 have found the thing and written it to outB
->                   if so then kill all GPU threads and return the result
->                   we are done
-> 
->     [T4] Application partition its computation in 2 phases:
->             P1: - migrate 8GB of inA to GPU1 memory
->                 - allocate 8GB for outA in GPU2 memory
->             P2: - execute functionA on GPU1 on the inA 8GB and write
->                   out result to GPU2 through the fast link
->                 - execute functionB on GPU2 and look over each
->                   thread on functionB on outA (busy running even
->                   if outA is not valid for each thread running
->                   functionB)
->                 - run functionC and see if functionB running on GPU2
->                   have found the thing and written it to outB if so
->                   then kill all GPU threads and return the result
->                   we are done
-> 
-> 
-> So this is widely different partition that all depends on the topology
-> and how accelerator are inter-connected and how much memory they have.
-> This is a relatively simple example, they are people out there spending
-> month on designing adaptive partitioning algorithm for their application.
-> 
+Christian Brauner <christian@brauner.io> writes:
 
-And since i am writting example, another funny one let say you have
-a system with 2 nodes and on each node 2 GPU and one network. On each
-node the local network adapter can only access one of the 2 GPU memory.
-All the GPU are conntected to each other through a fully symmetrical
-mesh inter-connect.
+>> Your intention is to add the thread case to support pthreads once the
+>> process case is sorted out.  So this is something that needs to be made
+>> clear.  Did I miss how you plan to handle threads?
+>
+> Yeah, maybe you missed it in the commit message [2] which is based on a
+> discussion with Andy [3] and Arnd [4]:
 
-Now let say your program has 4 functions back to back, each functions
-consuming the output of the previous one. Finaly you get your input
-from the network and stream out the final function output to the network
+Looking at your references I haven't missed it.  You are not deciding
+anything as of yet to keep it simple.  Except you are returning
+EOPNOTSUPP.  You are very much intending to do something.
 
-So what you can do is:
-    Node0 Net0 -> write to Node0 GPU0 memory
-    Node0 GPU0 -> run first function and write result to Node0 GPU1
-    Node0 GPU1 -> run second function and write result to Node1 GPU3
-    Node1 GPU3 -> run third function and write result to Node1 GPU2
-    Node1 Net1 -> read result from Node1 GPU2 and stream it out
+Decide.  Do you use the flags parameter or is the width of the
+target depending on the flags.
 
+That is fundamental to how the system call and it's extensions work.
+That is fundamental to my review.
 
-Yes this kind of thing can be decided at application startup during
-initialization. Idea is that you model your program computation graph
-each node is a function (or group of functions) and each arrow is
-data flow (input and output).
+Until that is decided.
+Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-So you have a graph, now what you do is try to find a sub-graph of
-your system topology that match this graph and for the system topology
-you also have to check that each of your program node can run on
-the specific accelerator node of your system (does the accelerator
-have the feature X and Y ?)
+There are a lot of fundamental maintenance issues and you can very easily
+get them wrong if you are not clear on the job of the file descriptor
+and the job of the flags argument.
 
-If you are not lucky and that there is no 1 to 1 match the you can
-can re-arrange/simplify your application computation graph. For
-instance group multiple of your application function node into just
-one node to shrink your computation graph. Rinse and repeat.
+I want don't want new crap that we have to abandon that has a nasty set
+of bugs because no one wanted to think through the system call all of
+the way and understand the corner cases.
 
-
-Moreover each application will have multiple separate computation
-graph and the application will want to spread as evenly as possible
-its workload and select the most powerfull accelerator for the most
-intensive computation ...
-
-
-I do not see how to have graph matching API with complex testing
-where you need to query back userspace library. Like querying if
-the userspace penCL driver for GPU A support feature X ? Which
-might not only depend on the device generation or kernel device
-driver version but also on the version of the userspace driver.
-
-I feel it would be a lot easier to provide a graph to userspace
-and have userspace do this complex matching and adaption of its
-computation graph and load balance its computation at the same
-time.
-
-
-Of course not all application will be that complex and like i said
-i believe average app (especialy desktop app design to run on
-laptop) will just use a dumb down thing ie they will only use
-one or two devices at the most.
-
-
-Yes all this is hard but easy problems are not interesting to
-solve.
-
-Cheers,
-Jérôme
+Eric
