@@ -7,49 +7,53 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18F2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4F6C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895242146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89EED20661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107356;
-	bh=2m+cJE6Ie9DsgQyXYqbvZvbFORsttAsEPIx9879M02Q=;
+	s=default; t=1544107359;
+	bh=fQl2Ca7gd5YobGaViCma84UPo2v2QmyUk3Iqm99Qt0A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P7Zj96wdQ/L/kZkF46s4E50HtuFUx2p/hUJIbn3HxdDHVVCrXOGpotqRDhVdPWA2v
-	 iS5hJf/FT5bnxNG895XlOHLPJ8FDe2gagnl3i8FIxF263jlLp8rfYiwfzuuZDWyb8y
-	 TGbaSN6KVw+45BqQimso01J07t6hgTW5knROLgHQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895242146D
+	b=uEBfnuB84t+yEeRptRgeA1iWUA3pjlaEQ9lLDyIfkeVmw/Dlnu6On+E81Nk2d8vyW
+	 DylHd9ONGCBnhtsBH58syxADNADEVUsxoR3vxlAdN8vp2EqtznWM8y3h0JsItewTXZ
+	 ou/0Kwgd16wexm4FRjVq21wgrjqYJH1qwcFStUEg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89EED20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeLFOmf (ORCPT
+        id S1730511AbeLFOmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:42:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46814 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:42:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730473AbeLFOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:42:31 -0500
+        id S1730500AbeLFOmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:42:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 595A021479;
-        Thu,  6 Dec 2018 14:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 801BB20661;
+        Thu,  6 Dec 2018 14:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107350;
-        bh=2m+cJE6Ie9DsgQyXYqbvZvbFORsttAsEPIx9879M02Q=;
+        s=default; t=1544107356;
+        bh=fQl2Ca7gd5YobGaViCma84UPo2v2QmyUk3Iqm99Qt0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGEEZKhq2413QsMVerI+ttirL79/2YqLNNHmlf7tzFJJ9BXM3UNpnjO9gMP9ADvG7
-         zqzuZdvA+PvnjZ6TeHMRHTL0/RJqzTkcG9uQF7CPnjdcNoEE9VE79LUYPgpTl0ht3R
-         BPUup7PQydL2svozF9l4x7gpCsPsP37kMXnJ0Xdc=
+        b=W3VF86UYVOc75ePn/3+O8h3qxWpzIMgsXbEGi/WoKWUi1KUA6Eqr1M3TVrQttmOFr
+         R+EYaU9PLASui7a9VKC8KHYh+bkPn08qmDKudaHdM9E4E+Y2eqQgB0u1oLYn4IMSOV
+         o6jEodUZVsgx0HKaUh99jXYcV9UP5AGu+8/3EZkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 4.14 29/55] kgdboc: Fix restrict error
-Date:   Thu,  6 Dec 2018 15:39:03 +0100
-Message-Id: <20181206143003.301611791@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Wang <wawei@amazon.de>,
+        Amadeusz Juskowiak <ajusk@amazon.de>,
+        Julian Stecklina <jsteckli@amazon.de>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 31/55] svm: Add mutex_lock to protect apic_access_page_done on AMD systems
+Date:   Thu,  6 Dec 2018 15:39:05 +0100
+Message-Id: <20181206143003.400935976@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -68,49 +72,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Wei Wang <wawei@amazon.de>
 
-commit 2dd453168643d9475028cd867c57e65956a0f7f9 upstream.
+commit 30510387a5e45bfcf8190e03ec7aa15b295828e2 upstream.
 
-There's an error when compiled with restrict:
+There is a race condition when accessing kvm->arch.apic_access_page_done.
+Due to it, x86_set_memory_region will fail when creating the second vcpu
+for a svm guest.
 
-drivers/tty/serial/kgdboc.c: In function ‘configure_kgdboc’:
-drivers/tty/serial/kgdboc.c:137:2: error: ‘strcpy’ source argument is the same
-as destination [-Werror=restrict]
-  strcpy(config, opt);
-  ^~~~~~~~~~~~~~~~~~~
+Add a mutex_lock to serialize the accesses to apic_access_page_done.
+This lock is also used by vmx for the same purpose.
 
-As the error implies, this is from trying to use config as both source and
-destination. Drop the call to the function where config is the argument
-since nothing else happens in the function.
-
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Wei Wang <wawei@amazon.de>
+Signed-off-by: Amadeusz Juskowiak <ajusk@amazon.de>
+Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/kvm/svm.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -162,15 +162,13 @@ static int configure_kgdboc(void)
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1399,20 +1399,23 @@ static u64 *avic_get_physical_id_entry(s
+ static int avic_init_access_page(struct kvm_vcpu *vcpu)
  {
- 	struct tty_driver *p;
- 	int tty_line = 0;
--	int err;
-+	int err = -ENODEV;
- 	char *cptr = config;
- 	struct console *cons;
+ 	struct kvm *kvm = vcpu->kvm;
+-	int ret;
++	int ret = 0;
  
--	err = kgdboc_option_setup(config);
--	if (err || !strlen(config) || isspace(config[0]))
-+	if (!strlen(config) || isspace(config[0]))
- 		goto noconfig;
++	mutex_lock(&kvm->slots_lock);
+ 	if (kvm->arch.apic_access_page_done)
+-		return 0;
++		goto out;
  
--	err = -ENODEV;
- 	kgdboc_io_ops.is_console = 0;
- 	kgdb_tty_driver = NULL;
+-	ret = x86_set_memory_region(kvm,
+-				    APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
+-				    APIC_DEFAULT_PHYS_BASE,
+-				    PAGE_SIZE);
++	ret = __x86_set_memory_region(kvm,
++				      APIC_ACCESS_PAGE_PRIVATE_MEMSLOT,
++				      APIC_DEFAULT_PHYS_BASE,
++				      PAGE_SIZE);
+ 	if (ret)
+-		return ret;
++		goto out;
  
+ 	kvm->arch.apic_access_page_done = true;
+-	return 0;
++out:
++	mutex_unlock(&kvm->slots_lock);
++	return ret;
+ }
+ 
+ static int avic_init_backing_page(struct kvm_vcpu *vcpu)
 
 
