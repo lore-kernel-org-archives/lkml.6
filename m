@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96EEC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F411CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C6C820700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA80B20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108301;
-	bh=j5PWf8isANn+fOx9E0zDOgwJS1PfyNiL25MNWyN2bNw=;
+	s=default; t=1544108311;
+	bh=m1PeOOd+wvmswooEF0g2uJ4B+81daG2qyIez2wvC54Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MhDKO/36sa248b8YN/KfyourGQNNzLyEsWinq8lVZlAUhknaixpUZR6qIkIlZmgAg
-	 iIYUozJ8aXhh30n65Sec/kiCJw1Xk1n0zkvKbPSU05JeJU3jJ496fgK9PBM3a3VGwR
-	 AnIRWvLQTkI3SJvvjFbYoRDUxxjRSg0ZY6BgViws=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6C820700
+	b=eQN9oP5Yas2zJTz6zhhiprYs4fdGWwdDW/A314xiCCzt+mxfPM9Cx3GZGXZGQyQVV
+	 IpYymCzsxxsYmb23bKghEDjYXIFKon4vxfFg7QKT2lGmaE4jln/iQ90pSjnXSoPNWZ
+	 3mjZg3iUNGc17Mi7MpZKAveqQgM8MsFuLQ0IjjRM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA80B20700
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbeLFO6U (ORCPT
+        id S1730407AbeLFOmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:58:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46604 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:42:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729907AbeLFOmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:42:18 -0500
+        id S1728482AbeLFOmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:42:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1F382146D;
-        Thu,  6 Dec 2018 14:42:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1872E2082B;
+        Thu,  6 Dec 2018 14:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107338;
-        bh=j5PWf8isANn+fOx9E0zDOgwJS1PfyNiL25MNWyN2bNw=;
+        s=default; t=1544107325;
+        bh=m1PeOOd+wvmswooEF0g2uJ4B+81daG2qyIez2wvC54Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B+Az8EmTHrL8e0By6SrNFjB0kGmwtez+twkK2Gf+ws8sw+FzQOx3mvqMx6FzmGzo0
-         Yz6X16bmOct7LAEabacxeDgTVzNbbBjY7MzXRSQlsr3Vw1MrFA9BE0ues1wlqzEQ+g
-         776b2v/DgvS23/o6s4sUhH4cZFi7CvtYhCDNwybg=
+        b=1unSYaVJdA2L/MM30ahGMmQeQ06c3o4sBdlVwswKe+yfbsOLoc0MO4kMe3TZmPrY5
+         y7Ffr/oV6+p5uwQtxlQPV36Xk5cG23wAuwStmTlwW0INUkU02rb/uqJvq91PDIwKV7
+         mOCC2a5ZZ1VbxniQGbS5AJafeS5PXmLpiyIu13aU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 09/55] drm: gma500: fix logic error
-Date:   Thu,  6 Dec 2018 15:38:43 +0100
-Message-Id: <20181206143002.232710661@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 04/55] kobject: Replace strncpy with memcpy
+Date:   Thu,  6 Dec 2018 15:38:38 +0100
+Message-Id: <20181206143001.987978040@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -67,39 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 67a3b63a54cbe18944191f43d644686731cf30c7 upstream.
+commit 77d2a24b6107bd9b3bf2403a65c1428a9da83dd0 upstream.
 
-gcc-8 points out a condition that almost certainly doesn't
-do what the author had in mind:
+gcc 8.1.0 complains:
 
-drivers/gpu/drm/gma500/mdfld_intel_display.c: In function 'mdfldWaitForPipeEnable':
-drivers/gpu/drm/gma500/mdfld_intel_display.c:102:37: error: bitwise comparison always evaluates to false [-Werror=tautological-compare]
+lib/kobject.c:128:3: warning:
+	'strncpy' output truncated before terminating nul copying as many
+	bytes from a string as its length [-Wstringop-truncation]
+lib/kobject.c: In function 'kobject_get_path':
+lib/kobject.c:125:13: note: length computed here
 
-This changes it to a simple bit mask operation to check
-whether the bit is set.
+Using strncpy() is indeed less than perfect since the length of data to
+be copied has already been determined with strlen(). Replace strncpy()
+with memcpy() to address the warning and optimize the code a little.
 
-Fixes: 026abc333205 ("gma500: initial medfield merge")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170905074741.435324-1-arnd@arndb.de
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/gma500/mdfld_intel_display.c |    2 +-
+ lib/kobject.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-+++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-@@ -99,7 +99,7 @@ void mdfldWaitForPipeEnable(struct drm_d
- 	/* Wait for for the pipe enable to take effect. */
- 	for (count = 0; count < COUNT_MAX; count++) {
- 		temp = REG_READ(map->conf);
--		if ((temp & PIPEACONF_PIPE_STATE) == 1)
-+		if (temp & PIPEACONF_PIPE_STATE)
- 			break;
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -127,7 +127,7 @@ static void fill_kobj_path(struct kobjec
+ 		int cur = strlen(kobject_name(parent));
+ 		/* back up enough to print this name with '/' */
+ 		length -= cur;
+-		strncpy(path + length, kobject_name(parent), cur);
++		memcpy(path + length, kobject_name(parent), cur);
+ 		*(path + --length) = '/';
  	}
- }
+ 
 
 
