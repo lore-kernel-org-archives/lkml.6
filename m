@@ -2,193 +2,282 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BA8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9FDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5415920838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063EB20838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:39:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Erg2GV48"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5415920838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Nsy20nm6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063EB20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeLFQiZ (ORCPT
+        id S1726047AbeLFQjI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:38:25 -0500
-Received: from mail-eopbgr130074.outbound.protection.outlook.com ([40.107.13.74]:43936
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbeLFQiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:38:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qujxz7HqmhT6jWV9rRLjw3fmJdV52CwVMPQZ16RCzGs=;
- b=Erg2GV48VO6aH+W+NgkaVCUEvxKQNiWOT2O1401jb2QgW+LRe2XopPTM1Y7/si0xz+KckgHiugf9MhRzgNeAcW73LhSuYt34QtuggsgST0o9W5Vr82imWgx/fktSGvz1pxZqZ6cYHrRa619RNxlq3FP6PBunIHOvgvEV7ZoH+as=
-Received: from DB6PR0801MB1366.eurprd08.prod.outlook.com (10.168.11.142) by
- DB6PR0801MB1942.eurprd08.prod.outlook.com (10.168.85.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Thu, 6 Dec 2018 16:38:20 +0000
-Received: from DB6PR0801MB1366.eurprd08.prod.outlook.com
- ([fe80::8d10:1b0d:4dc1:cf07]) by DB6PR0801MB1366.eurprd08.prod.outlook.com
- ([fe80::8d10:1b0d:4dc1:cf07%7]) with mapi id 15.20.1404.021; Thu, 6 Dec 2018
- 16:38:20 +0000
-From:   Steve Capper <Steve.Capper@arm.com>
-To:     Allen Pais <allen.pais@oracle.com>
-CC:     Catalin Marinas <Catalin.Marinas@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>, Will Deacon <Will.Deacon@arm.com>,
-        Anshuman Khandual <Anshuman.Khandual@arm.com>
-Subject: Re: [PATCH] arm64: hugetlb: Register hugepages during arch init
-Thread-Topic: [PATCH] arm64: hugetlb: Register hugepages during arch init
-Thread-Index: AQHUamzWh21jCJGCvkCd5Sdgg3o/0aVyL0sA
-Date:   Thu, 6 Dec 2018 16:38:20 +0000
-Message-ID: <20181206163810.GA1084@capper-debian.cambridge.arm.com>
-References: <1540256817-3327-1-git-send-email-allen.pais@oracle.com>
-In-Reply-To: <1540256817-3327-1-git-send-email-allen.pais@oracle.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-x-originating-ip: [217.140.106.32]
-x-clientproxiedby: DM5PR18CA0068.namprd18.prod.outlook.com
- (2603:10b6:3:22::30) To DB6PR0801MB1366.eurprd08.prod.outlook.com
- (2603:10a6:4:b::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Steve.Capper@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0801MB1942;6:9QUZww0M1iqyeCKxF7SXKeP+SFU/fzY0lvTQ8SctkgZt/4brCVmmP5UQfNNRBwPG/nbUKhEErI2nO17RUkliEUbrPznRsI87a5MUuvWGz6JQ5PtRdLcJF7cFOu8oG0CKlEf3f9+FKbJGsi6cdEjldDNfol/+QwNNE+HMMod8o8S70Ksxd41CDgJcZ8uRdDmfrID494X7FPRFFPYaF+/vbwu3V7MCX7LfQa8XgNR5B0w4KlkrUoCb3+3ORBpxg883XeSNFjAQplq/uwpEwjehUz22oM1n3v1btdM3n68PgDHPKkzOwg9nPp7+E+YuAxDFNjYVJvuZi/UM9dN5LSplfdnoTFd3OKKbttG74VZG1kpNBIhAF++3co3HJdQcO8Jzr8wWqJhXFko8S7qJ3TSee2qGvMYWrhI8ih5QsXKiWj3MuheQmxPFQMoNlPHiGKkY2ZN7H/Ea6JavzV8FkxFL9g==;5:ULwNqp+vH0yuWrW4HJLRjmNxAVwqZmhvFUGpkEcL7bo9djvhgm5B3FHNuSxQWu/1i+UBohUq5LSOygbGg+PKVsu2UOMwV+6PQy4B/Yo0E/nv0zEyPLrhruWLr9QOPhIy/pNmhLZgkjmxAuMco3n632P+BuKR48kODREo6dqAVX0=;7:9PfqLy/7G+AXssWzfWOFO2hebvPmQRslq4n01F9DXk4J0lHZd+C5HI4VKQuSjczF/2HX4zfL1FdsjkFf/QT+GQ8a1BiZPxEcGyAa+nn6utMxRM6OGMAE0PNXUX3QRDPxcimEcN+XH3XaK2HEihYIMw==
-x-ms-office365-filtering-correlation-id: 283a4714-ad57-4f1a-50a5-08d65b993ae1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1942;
-x-ms-traffictypediagnostic: DB6PR0801MB1942:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <DB6PR0801MB1942FB0014055A653A06AC2881A90@DB6PR0801MB1942.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB6PR0801MB1942;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1942;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(58126008)(7736002)(86362001)(229853002)(26005)(305945005)(106356001)(105586002)(256004)(186003)(1076002)(54906003)(71200400001)(44832011)(2906002)(71190400001)(76176011)(5660300001)(8936002)(316002)(6512007)(99286004)(476003)(11346002)(446003)(14454004)(68736007)(478600001)(6116002)(3846002)(486006)(25786009)(52116002)(53936002)(6246003)(6506007)(386003)(6436002)(6916009)(66066001)(72206003)(102836004)(8676002)(4326008)(6486002)(81156014)(81166006)(33656002)(97736004)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1942;H:DB6PR0801MB1366.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: KG+tAiqUQk6iqJS6ZNWIRrgy8c6y7pstYexD2wN2f47sAuKEaAal+83ydY9WTdGZgzMwGbwiztAuw4PmHel23PtoJqZiJA5GJ/f3t1TECMAWQvp+Xr75zvFe7rUnJFZinWb9v3ZmcYlTZQw2+TGrUKoA9fK+iJmWF9mkDCbG/VstYYh8Ez0R1sOMd4uVpOWk5M9fbklGrpaNj7nbAkoo1m0m7rlPaVoyEKtSEMXvR3+5QsQc8ogvndTlK3rQ8DEsnujr/sFXwzbKUmKoIwcDM6xA2lziFMoJLst3tCm2uXnrtF+8dWviiswiJa7h+eU0VBw19BDBSBRENdoBcMOQFmE6iVeoBrqSWb/eVmzvSsc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <93B0BFDA9607C644A8C07B230C56C8A0@eurprd08.prod.outlook.com>
+        Thu, 6 Dec 2018 11:39:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42600 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeLFQjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 11:39:08 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 64so429205pfr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=udiQJJcn4nE0aVYzQACeHraPTDeU/ZbLmxjcFCIsdtM=;
+        b=Nsy20nm6153G7YUz0rr0KD2Yhb/Pzj8ckxS0Ci8R6y4NnS7hDj+JQ3fbyFmMcLtbsX
+         LKdDxjx8tn/0CNdvoLVofibBFQ+dRi5RrA+KtPYYdfYwzyWoo7FVDQ9QnUUiT7b46p27
+         rCc0coGRZEX3vPX6N0hUXnHvbAt/xSPJi0QW/wMKy+7BzZOL7xXl1Teu3oyFqswlQSC9
+         BMP6Cb3a3Uo7rtJW6UKmzB0vsaXDo24nSPkOUwNQu8iOHMU+ksbKW8UHxORLUaNQtc3p
+         RwVrBlYIexFL8s1VcESNyrzQkmlfF7eNCvw2WwUnwXnYxZpNqfjlOAQLr/BbYRsDWeuE
+         Ruwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=udiQJJcn4nE0aVYzQACeHraPTDeU/ZbLmxjcFCIsdtM=;
+        b=SINEf4tJGkLCQbn4Y4YIB3SFPOpZdg4zqnHVXEgeAjFMbCFqIxHX9k4/fiO3OU4MQD
+         OlP8J5JLuiyl4OeqF6g2gkvDQXbzfaQBqizC4uuWU7jUAM5UEKGrtJ1RT7e17E0ik9I7
+         uBhFkRF1adViDKkVFR+vxHQpySCcFvf5zuUpOBPLKi56YSIM7N+2T2YN99HfYXNZGCmc
+         XQrYWcFJD65ptjpkfapetA8Mx8qN8dSrVNoiZWsM8yUvUeu7BXGvhwrOcXPN6cPkx7JT
+         2u3+V99T8I1IsxiymxYHzFXOxNdKjNSuf3X8R3azMW8LGcXnnFcOmEb39LsoLjixbsPb
+         SkzQ==
+X-Gm-Message-State: AA+aEWa0U7BEe+UPCHmqreWMNutYSkPgIUM4cGEhqvsB6E6xjlyJUlt2
+        NDkW7mXTH1JhNtvbQtG7alb3eg==
+X-Google-Smtp-Source: AFSGD/WMPdmWcPib7+jDtJQfxZBwfW0cHFWbqlCRVGhcDONfO9OPGwBtIxQ+IWmUAB32cDEh44rATQ==
+X-Received: by 2002:a65:4b82:: with SMTP id t2mr23571011pgq.189.1544114347080;
+        Thu, 06 Dec 2018 08:39:07 -0800 (PST)
+Received: from ?IPv6:2600:1010:b02e:9276:9150:d817:51ad:68a1? ([2600:1010:b02e:9276:9150:d817:51ad:68a1])
+        by smtp.gmail.com with ESMTPSA id d202sm1207715pfd.58.2018.12.06.08.39.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 08:39:05 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86/mm/fault: Streamline the fault error_code decoder some more
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <20181206155336.GC31263@linux.intel.com>
+Date:   Thu, 6 Dec 2018 08:39:04 -0800
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 283a4714-ad57-4f1a-50a5-08d65b993ae1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 16:38:20.0766
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1942
+Message-Id: <C1F7477E-70B1-4F26-9457-EA6D825501A6@amacapital.net>
+References: <20181205163624.1842-1-sean.j.christopherson@intel.com> <20181206073409.GA64887@gmail.com> <20181206155336.GC31263@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 06:36:57AM +0530, Allen Pais wrote:
-> Add hstate for each supported hugepage size using arch initcall.
->=20
-> * no hugepage parameters
->=20
->   Without hugepage parameters, only a default hugepage size is
->   available for dynamic allocation.  It's different, for example, from
->   x86_64 and sparc64 where all supported hugepage sizes are available.
->=20
-> * only default_hugepagesz=3D is specified and set not to HPAGE_SIZE
->=20
->   In spite of the fact that default_hugepagesz=3D is set to a valid
->   hugepage size, it's treated as unsupported and reverted to
->   HPAGE_SIZE.  Such behaviour is also different from x86_64 and
->   sparc64.
->=20
-> Reviewed-by: Tom Saeger <tom.saeger@oracle.com>
-> Signed-off-by: Dmitry Klochkov <dmitry.klochkov@oracle.com>
-> Signed-off-by: Allen Pais <allen.pais@oracle.com>
-> ---
->  arch/arm64/mm/hugetlbpage.c | 33 ++++++++++++++++++++++-----------
->  1 file changed, 22 insertions(+), 11 deletions(-)
->=20
-> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-> index f58ea50..28cbc22 100644
-> --- a/arch/arm64/mm/hugetlbpage.c
-> +++ b/arch/arm64/mm/hugetlbpage.c
-> @@ -429,6 +429,27 @@ void huge_ptep_clear_flush(struct vm_area_struct *vm=
-a,
->  	clear_flush(vma->vm_mm, addr, ptep, pgsize, ncontig);
->  }
-> =20
-> +static void __init add_huge_page_size(unsigned long size)
-> +{
-> +	if (size_to_hstate(size))
-> +		return;
-> +
-> +	hugetlb_add_hstate(ilog2(size) - PAGE_SHIFT);
-> +}
-> +
-> +static int __init hugetlbpage_init(void)
-> +{
-> +#ifdef CONFIG_ARM64_4K_PAGES
-> +	add_huge_page_size(PUD_SIZE);
-> +#endif
-> +	add_huge_page_size(PMD_SIZE * CONT_PMDS);
-> +	add_huge_page_size(PMD_SIZE);
-> +	add_huge_page_size(PAGE_SIZE * CONT_PTES);
-> +
-> +	return 0;
-> +}
-> +arch_initcall(hugetlbpage_init);
-> +
->  static __init int setup_hugepagesz(char *opt)
->  {
->  	unsigned long ps =3D memparse(opt, &opt);
-> @@ -440,7 +461,7 @@ static __init int setup_hugepagesz(char *opt)
->  	case PMD_SIZE * CONT_PMDS:
->  	case PMD_SIZE:
->  	case PAGE_SIZE * CONT_PTES:
-> -		hugetlb_add_hstate(ilog2(ps) - PAGE_SHIFT);
-> +		add_huge_page_size(ps);
->  		return 1;
->  	}
-> =20
-> @@ -449,13 +470,3 @@ static __init int setup_hugepagesz(char *opt)
->  	return 0;
->  }
->  __setup("hugepagesz=3D", setup_hugepagesz);
-> -
-> -#ifdef CONFIG_ARM64_64K_PAGES
-> -static __init int add_default_hugepagesz(void)
-> -{
-> -	if (size_to_hstate(CONT_PTES * PAGE_SIZE) =3D=3D NULL)
-> -		hugetlb_add_hstate(CONT_PTE_SHIFT);
-> -	return 0;
-> -}
-> -arch_initcall(add_default_hugepagesz);
-> -#endif
-> --=20
-> 1.8.3.1
->=20
 
 
-Apologies for missing this, I like the idea of having all the hugetlb
-sizes accessible right away.
 
-FWIW:
-Acked-by: Steve Capper <steve.capper@arm.com>
+> On Dec 6, 2018, at 7:53 AM, Sean Christopherson <sean.j.christopherson@int=
+el.com> wrote:
+>=20
+>> On Thu, Dec 06, 2018 at 08:34:09AM +0100, Ingo Molnar wrote:
+>> I like your '!' idea, but with a further simplification: how about using=20=
 
-Cheers,
---=20
-Steve
+>> '-/+' differentiation and a single character and a fixed-length message.
+>>=20
+>> The new output will be lines of:
+>>=20
+>>  #PF error code: -P -W -U -S -I -K (0x00)
+>>  ...
+>>  #PF error code: -P -W +U +S -I -K (0x0c)
+>>  ...
+>>  #PF error code: +P +W +U +S +I +K (0x3f)
+>>=20
+>> The symbol abbreviations are pretty self-explanatory:
+>>=20
+>>  P =3D protection fault   (X86_PF_PROT)
+>>  W =3D write access       (X86_PF_WRITE)
+>>  U =3D user-mode access   (X86_PF_USER)
+>>  S =3D supervisor mode    (X86_PF_RSVD)
+>>  I =3D instruction fault  (X86_PF_INSTR)
+>>  K =3D keys fault         (X86_PF_PK)
+>>=20
+>> Misc notes:
+>>=20
+>> - In principle the new text is now short enough to include it in one of=20=
+
+>>  the existing output lines, further shortening the oops output - but I
+>>  havent done that in this patch.
+>>=20
+>> - Another question is the ordering of the bits: the symbolic display is=20=
+
+>>  actually big endian, while the numeric hexa printout is little endian.
+>>=20
+>>  I kind of still like it that way, not just because the decoding loop is=20=
+
+>>  more natural, but because the bits are actually ordered by importance:=20=
+
+>>  the PROT bits is more important than the INSTR or the PK bits - and the=20=
+
+>>  more important bits are displayed first.
+>=20
+> Hmm, my eyes tend to be drawn to the end of the line, e.g. having PROT
+> be the last thing makes it stand out more than being buried in the middle
+> of the line.  Inverting the ordering between raw and decoded also makes
+> it very difficult to correlate the raw value with each bit.
+>=20
+>> - Only build-tested the patch and looked at the generated assembly, but=20=
+
+>>  it all looks sane enough so will obviously work just fine! ;-)
+>=20
+> ...
+>=20
+>> /*
+>> - * This helper function transforms the #PF error_code bits into
+>> - * "[PROT] [USER]" type of descriptive, almost human-readable error stri=
+ngs:
+>> + * This maps the somewhat obscure error_code number to symbolic text:
+>> + *
+>> + * P =3D protection fault   (X86_PF_PROT)
+>> + * W =3D write access       (X86_PF_WRITE)
+>> + * U =3D user-mode access   (X86_PF_USER)
+>> + * S =3D supervisor mode    (X86_PF_RSVD)
+>> + * I =3D instruction fault  (X86_PF_INSTR)
+>> + * K =3D keys fault         (X86_PF_PK)
+>>  */
+>> -static void err_str_append(unsigned long error_code, char *buf, unsigned=
+ long mask, const char *txt)
+>> +static const char error_code_chars[] =3D "PWUSIK";
+>> +
+>> +/*
+>> + * This helper function transforms the #PF error_code bits into " +P -W +=
+U -R -I -K"
+>> + * type of descriptive, almost human-readable error strings:
+>> + */
+>> +static void show_error_code(struct pt_regs *regs, unsigned long error_co=
+de)
+>=20
+> No need for @regs.
+>=20
+>> {
+>> -     if (error_code & mask) {
+>> -             if (buf[0])
+>> -                     strcat(buf, " ");
+>> -             strcat(buf, txt);
+>> +     unsigned int bit, mask;
+>> +     char err_txt[6*3+1]; /* Fixed length of 6 bits decoded plus zero at=
+ the end */
+>=20
+> Assuming the error code bits are contiguous breaks if/when SGX gets added,=
+
+> which uses bit 15.  Oopsing on an SGX fault should be nigh impossible, but=
+
+> it might be nice to be able to reuse show_error_code in other places.
+>=20
+> Hardcoding "6" is also a bit painful.
+>=20
+>> +
+>> +     /* We go from the X86_PF_PROT bit to the X86_PF_PK bit: */
+>> +
+>> +     for (bit =3D 0; bit < 6; bit++) {
+>> +             unsigned int offset =3D bit*3;
+>> +
+>> +             err_txt[offset+0] =3D ' ';
+>> +
+>> +             mask =3D 1 << bit;
+>> +             if (error_code & mask)
+>> +                     err_txt[offset+1] =3D '+';
+>> +             else
+>> +                     err_txt[offset+1] =3D '-';
+>=20
+> To me, using '!' contrasts better when side-by-side with '+'.
+>=20
+>> +
+>> +             err_txt[offset+2] =3D error_code_chars[bit];
+>>      }
+>> +
+>> +     /* Close the string: */
+>> +     err_txt[sizeof(err_txt)-1] =3D 0;
+>> +
+>> +     pr_alert("#PF error code: %s (%02lx)\n", err_txt, error_code);
+>=20
+> The changelog example has a leading "0x" on the error code.  That being
+> said, I actually like it without the "0x".
+>=20
+> How about printing the raw value before the colon?  Having it at the end
+> makes it look like extra noise.  And for me, seeing the raw code first
+> (reading left to right) cue's my brain that it's about to decode some
+> bits.
+>=20
+> SGX will also break the two digit printing.  And for whatever reason four
+> digits makes me think "this is an error code!".  IIRC the vectoring ucode
+> makes a lot of assumptions about the error code being at most 16 bits, so
+> in theory four digits is all we'll ever need.
+>=20
+> E.g.
+>=20
+> [    0.144247] #PF error code:  +P -W -U -S -I -K (01)
+> [    0.144411] #PF error code:  +P +W -U -S -I -K (03)
+> [    0.144826] #PF error code:  +P +W +U -S -I -K (07)
+> [    0.145252] #PF error code:  +P -W +U -S -I +K (25)
+> [    0.145706] #PF error code:  -P +W -U -S -I -K (02)
+> [    0.146111] #PF error code:  -P -W +U -S -I -K (04)
+> [    0.146521] #PF error code:  -P +W +U -S -I -K (06)
+> [    0.146934] #PF error code:  -P -W +U -S +I -K (14)
+> [    0.147348] #PF error code:  +P -W -U -S +I -K (11)
+> [    0.147767] #PF error code:  -P -W -U -S -I -K (00)
+
+>=20
+> vs. (with SGX added as 'G' for testing purposes)
+>=20
+> [    0.158849] #PF error code(0001):  +P !W !U !S !I !K !G
+> [    0.159292] #PF error code(0003):  +P +W !U !S !I !K !G
+> [    0.159742] #PF error code(0007):  +P +W +U !S !I !K !G
+> [    0.160190] #PF error code(0025):  +P !W +U !S !I +K !G
+> [    0.160638] #PF error code(0002):  !P +W !U !S !I !K !G
+> [    0.161087] #PF error code(0004):  !P !W +U !S !I !K !G
+> [    0.161538] #PF error code(0006):  !P +W +U !S !I !K !G
+> [    0.161992] #PF error code(0014):  !P !W +U !S +I !K !G
+> [    0.162450] #PF error code(0011):  +P !W !U !S +I !K !G
+> [    0.162667] #PF error code(8001):  +P !W !U !S !I !K +G
+> [    0.162667] #PF error code(8003):  +P +W !U !S !I !K +G
+> [    0.162667] #PF error code(8007):  +P +W +U !S !I !K +G
+> [    0.162667] #PF error code(8025):  +P !W +U !S !I +K +G
+> [    0.162667] #PF error code(8002):  !P +W !U !S !I !K +G
+> [    0.162667] #PF error code(8004):  !P !W +U !S !I !K +G
+> [    0.162667] #PF error code(8006):  !P +W +U !S !I !K +G
+> [    0.162667] #PF error code(8014):  !P !W +U !S +I !K +G
+> [    0.162667] #PF error code(8011):  +P !W !U !S +I !K +G
+> [    0.162667] #PF error code(0000):  !P !W !U !S !I !K !G
+>=20
+
+Please don=E2=80=99t. The whole reason I added the decoding was to make it e=
+asy to read without a cheat sheet. This is incomprehensible without referenc=
+e to the code, and I=E2=80=99m familiar with it to begin with.
+
+How about:
+
+#PF error code: 0001 [PROT read kernel]
+
+#PF error code: 0001 [PROT WRITE kernel]
+
+#PF error code: 0001 [PROT read kernel]
+
+#PF error code: 8011 [PROT INSTR kernel SGX]
+
+This has no noise from unset bits except that we add lowercase =E2=80=9Cread=
+=E2=80=9D or =E2=80=9Ckernel=E2=80=9D as appropriate.  Even =E2=80=9Ckernel=E2=
+=80=9D seems barely necessary.
+
