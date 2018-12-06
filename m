@@ -7,59 +7,63 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD8DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13E4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1815020850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746BA20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544127953;
-	bh=RPveVupHtIxb3kRzmL6X+9T4FPEF/jzL7g+bUk8P9qo=;
+	s=default; t=1544127977;
+	bh=0wPDtX5OA3DbjV7VbEIrXgyKIprM+1U9IRGO+jBtJS8=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=0kjjxmSQKxJW7WpImTm7WbtALd3J8KpajUSAI6JVoAjgMFR5XzKAbj9QtbZX538QS
-	 er5C3m+IyrRpNSr1NC548acmCO+s1tIOMgUtS7L2g1nwNj2MukwOzaU8/hflOroGn4
-	 GAsGo4b736JDEF6gV2u1gq1jMd4Oa98MQ9vRH2KI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1815020850
+	b=a729IMi5fmIjZqqOgjHeJx9pU66LB8wmFnxGgRRJ+3+PQAGRvoYoUoYFPcMrHx8BC
+	 Ay1OKl/WEqzGxyFy13mIHOkdLuWQfgL8J9ema569s8dNTgalv261ETv55o4LuNRTZH
+	 5hPWMTvv9S1/fTNgmLV1M8/hz+HB13Z0aJAiAHPo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746BA20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726078AbeLFUZw (ORCPT
+        id S1726050AbeLFU0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:25:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36220 "EHLO
+        Thu, 6 Dec 2018 15:26:16 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37110 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeLFUZt (ORCPT
+        with ESMTP id S1725993AbeLFU0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:25:49 -0500
+        Thu, 6 Dec 2018 15:26:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Xa+zrjGuS+IaLsvruXe4XrE+H99vY0ypP+12/NiRJQw=; b=LpDvN9CpCOP+
-        l2iFgBolvInL1G3tLIa3XEWdkY4u5Q07mB5vG7Wr/qAo1hTKEaZ+/2rwjKloXezzbPqG7Xbh1r85G
-        0KIVKk6ksn5huCqafn+OGhzqsuz2OpeB2Zeo3VdQ+OjotOhjya96jzO91am2VBq8gvtnv5gdBY5MN
-        rhn1g=;
+        List-Archive; bh=7Dpa3fEkZkb7TktocD6arHERMVCyxx1R12xaOFEbhqs=; b=CmSivIzw9UQ2
+        0fLev91UngYmKptuD1uSujZ7tb76WbT3zqpiwA0710zFTls0oFR4gkj8JaQGtBHGinSxfQpIlfJ6p
+        Fnmr1TiYL2rO/cuIeTcVahb0YWO9tzIUZcbsrA495bbT/0IIN83CfpKtsQuUR3O+xEMacAdwVWpge
+        ILxUI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gV0DQ-0001g8-F6; Thu, 06 Dec 2018 20:25:44 +0000
+        id 1gV0Dk-0001hS-HK; Thu, 06 Dec 2018 20:26:04 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2AF2111252F7; Thu,  6 Dec 2018 20:25:44 +0000 (GMT)
+        id 3B4DD11252F7; Thu,  6 Dec 2018 20:26:04 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, tzungbi@chromium.org,
+To:     Yu Zhao <yuzhao@google.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
-        Rohit kumar <rohitkr@codeaurora.org>, dgreid@chromium.org,
+        aroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: sdm845: Add TDM configuration for speaker" to the asoc tree
-In-Reply-To:  <20181128090037.257359-3-cychiang@chromium.org>
+Subject: Applied "ASoC: use dma_ops of parent device for acp_audio_dma" to the asoc tree
+In-Reply-To:  <20181204224253.216075-2-yuzhao@google.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20181206202544.2AF2111252F7@debutante.sirena.org.uk>
-Date:   Thu,  6 Dec 2018 20:25:44 +0000 (GMT)
+Message-Id: <20181206202604.3B4DD11252F7@debutante.sirena.org.uk>
+Date:   Thu,  6 Dec 2018 20:26:04 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sdm845: Add TDM configuration for speaker
+   ASoC: use dma_ops of parent device for acp_audio_dma
 
 has been applied to the asoc tree at
 
@@ -92,142 +96,63 @@ to this mail.
 Thanks,
 Mark
 
-From 1d92332180659fab7d014eff5e0ab5e133424e3e Mon Sep 17 00:00:00 2001
-From: Cheng-Yi Chiang <cychiang@chromium.org>
-Date: Wed, 28 Nov 2018 17:00:35 +0800
-Subject: [PATCH] ASoC: sdm845: Add TDM configuration for speaker
+From 23aa128bb28d9da69bb1bdb2b70e50128857884a Mon Sep 17 00:00:00 2001
+From: Yu Zhao <yuzhao@google.com>
+Date: Tue, 4 Dec 2018 15:42:53 -0700
+Subject: [PATCH] ASoC: use dma_ops of parent device for acp_audio_dma
 
-Set TDM time slots and DAI format for speaker codec.
+AMD platform device acp_audio_dma can only be created by parent PCI
+device driver (drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c). Pass struct
+device of the parent to snd_pcm_lib_preallocate_pages() so
+dma_alloc_coherent() can use correct dma_ops. Otherwise, it will
+use default dma_ops which is nommu_dma_ops on x86_64 even when
+IOMMU is enabled and set to non passthrough mode.
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Though platform device inherits some dma related fields during its
+creation in mfd_add_device(), we can't simply pass its struct device
+to snd_pcm_lib_preallocate_pages() because dma_ops is not among the
+inherited fields. Even it were, drivers/iommu/amd_iommu.c would
+ignore it because get_device_id() doesn't handle platform device.
+
+This change shouldn't give us any trouble even struct device of the
+parent becomes null or represents some non PCI device in the future,
+because get_dma_ops() correctly handles null struct device or uses
+the default dma_ops if struct device doesn't have it set.
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/sdm845.c | 69 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 68 insertions(+), 1 deletion(-)
+ sound/soc/amd/acp-pcm-dma.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 43c03f8e8cdc..d0df7ec6042e 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -6,9 +6,11 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/of_device.h>
-+#include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/jack.h>
-+#include <sound/soc.h>
- #include <uapi/linux/input-event-codes.h>
- #include "common.h"
- #include "qdsp6/q6afe.h"
-@@ -17,6 +19,10 @@
- #define DEFAULT_MCLK_RATE		24576000
- #define TDM_BCLK_RATE		6144000
- #define MI2S_BCLK_RATE		1536000
-+#define LEFT_SPK_TDM_TX_MASK    0x30
-+#define RIGHT_SPK_TDM_TX_MASK   0xC0
-+#define SPK_TDM_RX_MASK         0x03
-+#define NUM_TDM_SLOTS           8
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index fd3db4c37882..f4011bebc7ec 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -1146,18 +1146,21 @@ static int acp_dma_new(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd,
+ 								    DRV_NAME);
+ 	struct audio_drv_data *adata = dev_get_drvdata(component->dev);
++	struct device *parent = component->dev->parent;
  
- struct sdm845_snd_data {
- 	struct snd_soc_jack jack;
-@@ -34,7 +40,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--	int ret = 0;
-+	int ret = 0, j;
- 	int channels, slot_width;
- 
- 	switch (params_format(params)) {
-@@ -81,6 +87,35 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
- 			goto end;
- 		}
- 	}
-+
-+	for (j = 0; j < rtd->num_codecs; j++) {
-+		struct snd_soc_dai *codec_dai = rtd->codec_dais[j];
-+
-+		if (!strcmp(codec_dai->component->name_prefix, "Left")) {
-+			ret = snd_soc_dai_set_tdm_slot(
-+					codec_dai, LEFT_SPK_TDM_TX_MASK,
-+					SPK_TDM_RX_MASK, NUM_TDM_SLOTS,
-+					slot_width);
-+			if (ret < 0) {
-+				dev_err(rtd->dev,
-+					"DEV0 TDM slot err:%d\n", ret);
-+				return ret;
-+			}
-+		}
-+
-+		if (!strcmp(codec_dai->component->name_prefix, "Right")) {
-+			ret = snd_soc_dai_set_tdm_slot(
-+					codec_dai, RIGHT_SPK_TDM_TX_MASK,
-+					SPK_TDM_RX_MASK, NUM_TDM_SLOTS,
-+					slot_width);
-+			if (ret < 0) {
-+				dev_err(rtd->dev,
-+					"DEV1 TDM slot err:%d\n", ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
- end:
- 	return ret;
- }
-@@ -155,10 +190,14 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
- static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- {
- 	unsigned int fmt = SND_SOC_DAIFMT_CBS_CFS;
-+	unsigned int codec_dai_fmt = SND_SOC_DAIFMT_CBS_CFS;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_card *card = rtd->card;
- 	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	int j;
-+	int ret;
- 
- 	switch (cpu_dai->id) {
- 	case PRIMARY_MI2S_RX:
-@@ -190,6 +229,34 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 				Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT,
- 				TDM_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
- 		}
-+
-+		codec_dai_fmt |= SND_SOC_DAIFMT_IB_NF | SND_SOC_DAIFMT_DSP_B;
-+
-+		for (j = 0; j < rtd->num_codecs; j++) {
-+			codec_dai = rtd->codec_dais[j];
-+
-+			if (!strcmp(codec_dai->component->name_prefix,
-+				    "Left")) {
-+				ret = snd_soc_dai_set_fmt(
-+						codec_dai, codec_dai_fmt);
-+				if (ret < 0) {
-+					dev_err(rtd->dev,
-+						"Left TDM fmt err:%d\n", ret);
-+					return ret;
-+				}
-+			}
-+
-+			if (!strcmp(codec_dai->component->name_prefix,
-+				    "Right")) {
-+				ret = snd_soc_dai_set_fmt(
-+						codec_dai, codec_dai_fmt);
-+				if (ret < 0) {
-+					dev_err(rtd->dev,
-+						"Right TDM slot err:%d\n", ret);
-+					return ret;
-+				}
-+			}
-+		}
+ 	switch (adata->asic_type) {
+ 	case CHIP_STONEY:
+ 		ret = snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
+ 							    SNDRV_DMA_TYPE_DEV,
+-							    NULL, ST_MIN_BUFFER,
++							    parent,
++							    ST_MIN_BUFFER,
+ 							    ST_MAX_BUFFER);
  		break;
- 
  	default:
+ 		ret = snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
+ 							    SNDRV_DMA_TYPE_DEV,
+-							    NULL, MIN_BUFFER,
++							    parent,
++							    MIN_BUFFER,
+ 							    MAX_BUFFER);
+ 		break;
+ 	}
 -- 
 2.19.0.rc2
 
