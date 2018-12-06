@@ -2,72 +2,71 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D9AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35848C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E1D21527
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E1D21527
+	by mail.kernel.org (Postfix) with ESMTP id F3F5420878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 04:51:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F5420878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeLFEuA (ORCPT
+        id S1729007AbeLFEv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 23:50:00 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52128 "EHLO
+        Wed, 5 Dec 2018 23:51:29 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:52182 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728156AbeLFEuA (ORCPT
+        with ESMTP id S1727940AbeLFEv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 23:50:00 -0500
+        Wed, 5 Dec 2018 23:51:28 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 658011457DBE2;
-        Wed,  5 Dec 2018 20:49:59 -0800 (PST)
-Date:   Wed, 05 Dec 2018 20:49:58 -0800 (PST)
-Message-Id: <20181205.204958.1878018442106277817.davem@davemloft.net>
-To:     pabeni@redhat.com
-Cc:     netdev@vger.kernel.org, eric.dumazet@gmail.com, pjt@google.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 0/4] net: mitigate retpoline overhead
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CC21C145A9B38;
+        Wed,  5 Dec 2018 20:51:27 -0800 (PST)
+Date:   Wed, 05 Dec 2018 20:51:27 -0800 (PST)
+Message-Id: <20181205.205127.959001731251775241.davem@davemloft.net>
+To:     robh@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        claudiu.manoil@nxp.com, grygorii.strashko@ti.com, w-kwok2@ti.com,
+        m-karicheri2@ti.com, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] net: Use of_node_name_eq for node name comparisons
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1544032300.git.pabeni@redhat.com>
-References: <cover.1544032300.git.pabeni@redhat.com>
+In-Reply-To: <20181205195050.4759-16-robh@kernel.org>
+References: <20181205195050.4759-16-robh@kernel.org>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 05 Dec 2018 20:49:59 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 05 Dec 2018 20:51:28 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Abeni <pabeni@redhat.com>
-Date: Wed,  5 Dec 2018 19:13:38 +0100
+From: Rob Herring <robh@kernel.org>
+Date: Wed,  5 Dec 2018 13:50:32 -0600
 
- ...
-> This may lead to some uglification around the indirect calls. In netconf 2018
-> Eric Dumazet described a technique to hide the most relevant part of the needed
-> boilerplate with some macro help.
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
 > 
-> This series is a [re-]implementation of such idea, exposing the introduced
-> helpers in a new header file. They are later leveraged to avoid the indirect
-> call overhead in the GRO path, when possible.
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
 > 
-> Overall this gives > 10% performance improvement for UDP GRO benchmark and
-> smaller but measurable for TCP syn flood.
-> 
-> The added infra can be used in follow-up patches to cope with retpoline overhead
-> in other points of the networking stack (e.g. at the qdisc layer) and possibly
-> even in other subsystems.
- ...
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Claudiu Manoil <claudiu.manoil@nxp.com>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Wingman Kwok <w-kwok2@ti.com>
+> Cc: Murali Karicheri <m-karicheri2@ti.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-I like this a lot and unless I hear some objections I'm going to apply this
-series tomorrow.
-
-Thanks for working on this Paolo.
+Applied to net-next, thanks Rob.
