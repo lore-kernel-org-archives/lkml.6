@@ -7,53 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EDBC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E309C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23F420850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5F220850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107920;
-	bh=O7TC8EftALK3d30GHslNvFmseALI6fgmVU09LMfsDhI=;
+	s=default; t=1544107925;
+	bh=m4sRIWw6xKXNgG6d+TQiA5bLILJ65npeX/AK0ekeQX8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pfGXWlwXkXbIRmHyNblIFZM5iBZa8WGqiCtvpaamgbfXM/0MPhMwDp0vJpDUwW5B3
-	 VCQxUwn8FDp7W8mbRxdEwkyBh5Y6MjA8GtHr31T0A/j+cTCx3Zuwurv+C/4iNGfwmn
-	 6K66UcKAUPu+EeLfkZlxveJu/I3LpVIDLm8z22bo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23F420850
+	b=akYreZjJfSGgVVufy3k3zgT5b77cnmxuSNQWT6lPIIztc0lmdJhDY2mqceC9ffVPT
+	 SOF+1R+qFfaHkbUStQxYiYqws6zb5Ldrh6/+PfPoWfjEbcd1oLIRlu+duuYLW9L0lR
+	 3ftsB3axeeiNCbCicHvGr3pHKP5zQdTrgILXARPA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5F220850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbeLFOv6 (ORCPT
+        id S1731249AbeLFOq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:51:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51218 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:46:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731250AbeLFOq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:46:28 -0500
+        id S1729716AbeLFOqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:46:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E716421479;
-        Thu,  6 Dec 2018 14:46:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A252082B;
+        Thu,  6 Dec 2018 14:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107587;
-        bh=O7TC8EftALK3d30GHslNvFmseALI6fgmVU09LMfsDhI=;
+        s=default; t=1544107582;
+        bh=m4sRIWw6xKXNgG6d+TQiA5bLILJ65npeX/AK0ekeQX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M3UImsNtQLPltgHJzZMvraUK8So5uU6GpYg2Mk2gxEoKFx/xv7EBfhCXcYtJIlCWk
-         NmeAyr4oBEA9NWtuxGIlUj5o0GOkMmoLwRGdcxKnOUE/7kDkc+3qFJrqDFQxQsHUql
-         Z1viE/3kq6W4zInUa5g+D/icbs9ANmhx2JXLdgwo=
+        b=kHTRPep+IhdK9WeycSHeQTQiW9KYyOeB7RgOHtcMCPFWX6+idSq3qn7tmmBzsUOZo
+         FRXTyLG5MyJRxH3E68INbJpCPiJ3jbQmq2iKP78QNyg8H8zC3/6JfZw4cyTpxIq3jP
+         wIi5MWbUJfzLo+cHn5gYz+uEKaQORa7s1FFfN/ig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 062/101] mm/hugetlb.c: dont call region_abort if region_chg fails
-Date:   Thu,  6 Dec 2018 15:39:01 +0100
-Message-Id: <20181206143015.213389051@linuxfoundation.org>
+Subject: [PATCH 4.9 060/101] bpf: Prevent memory disambiguation attack
+Date:   Thu,  6 Dec 2018 15:38:59 +0100
+Message-Id: <20181206143015.089926003@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -72,62 +69,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Alexei Starovoitov <ast@kernel.org>
 
-commit ff8c0c53c47530ffea82c22a0a6df6332b56c957 upstream.
+commit af86ca4e3088fe5eacf2f7e58c01fa68ca067672 upstream.
 
-Changes to hugetlbfs reservation maps is a two step process.  The first
-step is a call to region_chg to determine what needs to be changed, and
-prepare that change.  This should be followed by a call to call to
-region_add to commit the change, or region_abort to abort the change.
+Detect code patterns where malicious 'speculative store bypass' can be used
+and sanitize such patterns.
 
-The error path in hugetlb_reserve_pages called region_abort after a
-failed call to region_chg.  As a result, the adds_in_progress counter in
-the reservation map is off by 1.  This is caught by a VM_BUG_ON in
-resv_map_release when the reservation map is freed.
+ 39: (bf) r3 = r10
+ 40: (07) r3 += -216
+ 41: (79) r8 = *(u64 *)(r7 +0)   // slow read
+ 42: (7a) *(u64 *)(r10 -72) = 0  // verifier inserts this instruction
+ 43: (7b) *(u64 *)(r8 +0) = r3   // this store becomes slow due to r8
+ 44: (79) r1 = *(u64 *)(r6 +0)   // cpu speculatively executes this load
+ 45: (71) r2 = *(u8 *)(r1 +0)    // speculatively arbitrary 'load byte'
+                                 // is now sanitized
 
-syzkaller fuzzer (when using an injected kmalloc failure) found this
-bug, that resulted in the following:
+Above code after x86 JIT becomes:
+ e5: mov    %rbp,%rdx
+ e8: add    $0xffffffffffffff28,%rdx
+ ef: mov    0x0(%r13),%r14
+ f3: movq   $0x0,-0x48(%rbp)
+ fb: mov    %rdx,0x0(%r14)
+ ff: mov    0x0(%rbx),%rdi
+103: movzbq 0x0(%rdi),%rsi
 
- kernel BUG at mm/hugetlb.c:742!
- Call Trace:
-  hugetlbfs_evict_inode+0x7b/0xa0 fs/hugetlbfs/inode.c:493
-  evict+0x481/0x920 fs/inode.c:553
-  iput_final fs/inode.c:1515 [inline]
-  iput+0x62b/0xa20 fs/inode.c:1542
-  hugetlb_file_setup+0x593/0x9f0 fs/hugetlbfs/inode.c:1306
-  newseg+0x422/0xd30 ipc/shm.c:575
-  ipcget_new ipc/util.c:285 [inline]
-  ipcget+0x21e/0x580 ipc/util.c:639
-  SYSC_shmget ipc/shm.c:673 [inline]
-  SyS_shmget+0x158/0x230 ipc/shm.c:657
-  entry_SYSCALL_64_fastpath+0x1f/0xc2
- RIP: resv_map_release+0x265/0x330 mm/hugetlb.c:742
-
-Link: http://lkml.kernel.org/r/1490821682-23228-1-git-send-email-mike.kravetz@oracle.com
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[bwh: Backported to 4.9:
+ - Add bpf_verifier_env parameter to check_stack_write()
+ - Look up stack slot_types with state->stack_slot_type[] rather than
+   state->stack[].slot_type[]
+ - Drop bpf_verifier_env argument to verbose()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/hugetlb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/bpf_verifier.h |    1 
+ kernel/bpf/verifier.c        |   62 ++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 59 insertions(+), 4 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4259,7 +4259,9 @@ int hugetlb_reserve_pages(struct inode *
- 	return 0;
- out_err:
- 	if (!vma || vma->vm_flags & VM_MAYSHARE)
--		region_abort(resv_map, from, to);
-+		/* Don't call region_abort if region_chg failed */
-+		if (chg >= 0)
-+			region_abort(resv_map, from, to);
- 	if (vma && is_vma_resv_set(vma, HPAGE_RESV_OWNER))
- 		kref_put(&resv_map->refs, resv_map_release);
- 	return ret;
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -71,6 +71,7 @@ struct bpf_insn_aux_data {
+ 		enum bpf_reg_type ptr_type;     /* pointer type for load/store insns */
+ 		struct bpf_map *map_ptr;        /* pointer for call insn into lookup_elem */
+ 	};
++	int sanitize_stack_off; /* stack slot to be cleared */
+ 	bool seen; /* this insn was processed by the verifier */
+ };
+ 
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -540,8 +540,9 @@ static bool is_spillable_regtype(enum bp
+ /* check_stack_read/write functions track spill/fill of registers,
+  * stack boundary and alignment are checked in check_mem_access()
+  */
+-static int check_stack_write(struct bpf_verifier_state *state, int off,
+-			     int size, int value_regno)
++static int check_stack_write(struct bpf_verifier_env *env,
++			     struct bpf_verifier_state *state, int off,
++			     int size, int value_regno, int insn_idx)
+ {
+ 	int i, spi = (MAX_BPF_STACK + off) / BPF_REG_SIZE;
+ 	/* caller checked that off % size == 0 and -MAX_BPF_STACK <= off < 0,
+@@ -560,8 +561,32 @@ static int check_stack_write(struct bpf_
+ 		/* save register state */
+ 		state->spilled_regs[spi] = state->regs[value_regno];
+ 
+-		for (i = 0; i < BPF_REG_SIZE; i++)
++		for (i = 0; i < BPF_REG_SIZE; i++) {
++			if (state->stack_slot_type[MAX_BPF_STACK + off + i] == STACK_MISC &&
++			    !env->allow_ptr_leaks) {
++				int *poff = &env->insn_aux_data[insn_idx].sanitize_stack_off;
++				int soff = (-spi - 1) * BPF_REG_SIZE;
++
++				/* detected reuse of integer stack slot with a pointer
++				 * which means either llvm is reusing stack slot or
++				 * an attacker is trying to exploit CVE-2018-3639
++				 * (speculative store bypass)
++				 * Have to sanitize that slot with preemptive
++				 * store of zero.
++				 */
++				if (*poff && *poff != soff) {
++					/* disallow programs where single insn stores
++					 * into two different stack slots, since verifier
++					 * cannot sanitize them
++					 */
++					verbose("insn %d cannot access two stack slots fp%d and fp%d",
++						insn_idx, *poff, soff);
++					return -EINVAL;
++				}
++				*poff = soff;
++			}
+ 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_SPILL;
++		}
+ 	} else {
+ 		/* regular write of data into stack */
+ 		state->spilled_regs[spi] = (struct bpf_reg_state) {};
+@@ -841,7 +866,8 @@ static int check_mem_access(struct bpf_v
+ 				verbose("attempt to corrupt spilled pointer on stack\n");
+ 				return -EACCES;
+ 			}
+-			err = check_stack_write(state, off, size, value_regno);
++			err = check_stack_write(env, state, off, size,
++						value_regno, insn_idx);
+ 		} else {
+ 			err = check_stack_read(state, off, size, value_regno);
+ 		}
+@@ -3367,6 +3393,34 @@ static int convert_ctx_accesses(struct b
+ 		else
+ 			continue;
+ 
++		if (type == BPF_WRITE &&
++		    env->insn_aux_data[i + delta].sanitize_stack_off) {
++			struct bpf_insn patch[] = {
++				/* Sanitize suspicious stack slot with zero.
++				 * There are no memory dependencies for this store,
++				 * since it's only using frame pointer and immediate
++				 * constant of zero
++				 */
++				BPF_ST_MEM(BPF_DW, BPF_REG_FP,
++					   env->insn_aux_data[i + delta].sanitize_stack_off,
++					   0),
++				/* the original STX instruction will immediately
++				 * overwrite the same stack slot with appropriate value
++				 */
++				*insn,
++			};
++
++			cnt = ARRAY_SIZE(patch);
++			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
++			if (!new_prog)
++				return -ENOMEM;
++
++			delta    += cnt - 1;
++			env->prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++			continue;
++		}
++
+ 		if (env->insn_aux_data[i + delta].ptr_type != PTR_TO_CTX)
+ 			continue;
+ 
 
 
