@@ -2,144 +2,235 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF16DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB5B20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:32:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DCDly5GN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB5B20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 35D3720892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D3720892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbeLFNc0 (ORCPT
+        id S1729568AbeLFNdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:32:26 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54674 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeLFNcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:32:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z18so1000066wmc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 05:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ma7F/MaGF7iButmMQePk0cKTz/A+1Gb0fFsb/aq9g6M=;
-        b=DCDly5GNurc+2KWbcML7ieCgR10KD2oe7OHdxENylgHVysEA1EZQNyMX6WIk6UOTLy
-         vrl54p25WekKlkg4u+T84aALSWjcO8YOyg9TFAo4z0PW0k90dd/MaThVAsxO4Zl06ISt
-         YP/jc9pxjr2Bf4YLaO2VgmacYc8xxQZo7mrLc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ma7F/MaGF7iButmMQePk0cKTz/A+1Gb0fFsb/aq9g6M=;
-        b=dpGjQsPV5uYrlM0wxzMF3pMWHFuTZReAFXzPyNQuDNkqoi+yn8hjpNFJrsOK8sEZ6q
-         2CAxyy4pJ7CwjJW3P5j6PjlX1sS1LUVNCWZxhnbQa9MrENtXheJEwoVyjT6k+TpIQRbl
-         9ilGTpXCZyePsPgWivijVMT3P6FRrX7LfskcEEFqKxhuM8QkdYxRVb9fT2d/fjKHhzEr
-         2K75+N8ZE3mdWdeXQsq/GzErm4boW/sLd011pz9/LA0BhUojS87PQLvVgGx36AMgTd9f
-         yCUptBObKSIg6kaGcx6DxIQ+OVtnYkbPhdpEZafm5rtIdaozqskjOoeDffbBePQxwsqb
-         FFog==
-X-Gm-Message-State: AA+aEWbY2f4apKMWiucDSWfzd4vrKcP1D5YGzWooIv8j4HCIJrkPOrgE
-        mqzT8bovwJdjyrBXjtdLi6jHuA==
-X-Google-Smtp-Source: AFSGD/XuZ/RhGcUUn+KzOqHjiBD9fkgMbTRRiAhklDRhuB4O3PNrIqviIVc9qYQnxVWfUH5N4mDuPQ==
-X-Received: by 2002:a1c:f404:: with SMTP id z4mr19935873wma.68.1544103143229;
-        Thu, 06 Dec 2018 05:32:23 -0800 (PST)
-Received: from [192.168.0.40] (172.220.136.77.rev.sfr.net. [77.136.220.172])
-        by smtp.googlemail.com with ESMTPSA id d5sm788927wrx.22.2018.12.06.05.32.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 05:32:22 -0800 (PST)
-Subject: Re: [PATCH] thermal: stm32: read factory settings inside
- stm_thermal_prepare
-To:     David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1544102603-14899-1-git-send-email-david.hernandezsanchez@st.com>
- <1544102603-14899-2-git-send-email-david.hernandezsanchez@st.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <7999967d-6f6e-635c-4d43-c0e1cd58ec4b@linaro.org>
-Date:   Thu, 6 Dec 2018 14:32:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 6 Dec 2018 08:33:37 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15647 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728052AbeLFNdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:33:36 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9F28AB693523B;
+        Thu,  6 Dec 2018 21:33:28 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 6 Dec 2018 21:33:20 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>,
+        Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH v4 2/5] scsi: hisi_sas: Relocate some code to reduce complexity
+Date:   Thu, 6 Dec 2018 21:34:41 +0800
+Message-ID: <1544103284-100497-3-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
+References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1544102603-14899-2-git-send-email-david.hernandezsanchez@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 14:23, David HERNANDEZ SANCHEZ wrote:
-> Calling stm_thermal_read_factory_settings before clocking
-> internal peripheral causes bad register values and makes
-> temperature computation wrong.
-> 
-> Calling stm_thermal_read_factory_settings inside
-> stm_thermal_prepare fixes this problem as internal
-> peripheral is well clocked at this stage.
-> 
-> Signed-off-by: David Hernandez Sanchez <david.hernandezsanchez@st.com>
-> Fixes: 1d693155 ("thermal: add stm32 thermal driver")
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Same comment as the first patch.
+Relocate the codes related to dma_map/unmap in hisi_sas_task_prep()
+to reduce complexity, with a view to add DIF/DIX support.
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 146 +++++++++++++++++++++-------------
+ 1 file changed, 90 insertions(+), 56 deletions(-)
 
-
-> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-> index 47623da..daa1257 100644
-> --- a/drivers/thermal/st/stm_thermal.c
-> +++ b/drivers/thermal/st/stm_thermal.c
-> @@ -532,6 +532,10 @@ static int stm_thermal_prepare(struct stm_thermal_sensor *sensor)
->  	if (ret)
->  		return ret;
->  
-> +	ret = stm_thermal_read_factory_settings(sensor);
-> +	if (ret)
-> +		goto thermal_unprepare;
-> +
->  	ret = stm_thermal_calibration(sensor);
->  	if (ret)
->  		goto thermal_unprepare;
-> @@ -636,10 +640,6 @@ static int stm_thermal_probe(struct platform_device *pdev)
->  	/* Populate sensor */
->  	sensor->base = base;
->  
-> -	ret = stm_thermal_read_factory_settings(sensor);
-> -	if (ret)
-> -		return ret;
-> -
->  	sensor->clk = devm_clk_get(&pdev->dev, "pclk");
->  	if (IS_ERR(sensor->clk)) {
->  		dev_err(&pdev->dev, "%s: failed to fetch PCLK clock\n",
-> 
-
-
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index c39c91c..95350fd 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -296,6 +296,90 @@ static void hisi_sas_task_prep_abort(struct hisi_hba *hisi_hba,
+ 			device_id, abort_flag, tag_to_abort);
+ }
+ 
++static void hisi_sas_dma_unmap(struct hisi_hba *hisi_hba,
++			       struct sas_task *task, int n_elem,
++			       int n_elem_req, int n_elem_resp)
++{
++	struct device *dev = hisi_hba->dev;
++
++	if (!sas_protocol_ata(task->task_proto)) {
++		if (task->num_scatter) {
++			if (n_elem)
++				dma_unmap_sg(dev, task->scatter,
++					     task->num_scatter,
++					     task->data_dir);
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			if (n_elem_req)
++				dma_unmap_sg(dev, &task->smp_task.smp_req,
++					     1, DMA_TO_DEVICE);
++			if (n_elem_resp)
++				dma_unmap_sg(dev, &task->smp_task.smp_resp,
++					     1, DMA_FROM_DEVICE);
++		}
++	}
++}
++
++static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
++			    struct sas_task *task, int *n_elem,
++			    int *n_elem_req, int *n_elem_resp)
++{
++	struct device *dev = hisi_hba->dev;
++	int rc;
++
++	if (sas_protocol_ata(task->task_proto)) {
++		*n_elem = task->num_scatter;
++	} else {
++		unsigned int req_len, resp_len;
++
++		if (task->num_scatter) {
++			*n_elem = dma_map_sg(dev, task->scatter,
++					     task->num_scatter, task->data_dir);
++			if (!*n_elem) {
++				rc = -ENOMEM;
++				goto prep_out;
++			}
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			*n_elem_req = dma_map_sg(dev, &task->smp_task.smp_req,
++						 1, DMA_TO_DEVICE);
++			if (!*n_elem_req) {
++				rc = -ENOMEM;
++				goto prep_out;
++			}
++			req_len = sg_dma_len(&task->smp_task.smp_req);
++			if (req_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
++			*n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
++						  1, DMA_FROM_DEVICE);
++			if (!*n_elem_resp) {
++				rc = -ENOMEM;
++				goto err_out_dma_unmap;
++			}
++			resp_len = sg_dma_len(&task->smp_task.smp_resp);
++			if (resp_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
++		}
++	}
++
++	if (*n_elem > HISI_SAS_SGE_PAGE_CNT) {
++		dev_err(dev, "task prep: n_elem(%d) > HISI_SAS_SGE_PAGE_CNT",
++			*n_elem);
++		rc = -EINVAL;
++		goto err_out_dma_unmap;
++	}
++	return 0;
++
++err_out_dma_unmap:
++	/* It would be better to call dma_unmap_sg() here, but it's messy */
++	hisi_sas_dma_unmap(hisi_hba, task, *n_elem,
++			   *n_elem_req, *n_elem_resp);
++prep_out:
++	return rc;
++}
++
+ static int hisi_sas_task_prep(struct sas_task *task,
+ 			      struct hisi_sas_dq **dq_pointer,
+ 			      bool is_tmf, struct hisi_sas_tmf_task *tmf,
+@@ -338,49 +422,10 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ 		return -ECOMM;
+ 	}
+ 
+-	if (!sas_protocol_ata(task->task_proto)) {
+-		unsigned int req_len, resp_len;
+-
+-		if (task->num_scatter) {
+-			n_elem = dma_map_sg(dev, task->scatter,
+-					    task->num_scatter, task->data_dir);
+-			if (!n_elem) {
+-				rc = -ENOMEM;
+-				goto prep_out;
+-			}
+-		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
+-			n_elem_req = dma_map_sg(dev, &task->smp_task.smp_req,
+-						1, DMA_TO_DEVICE);
+-			if (!n_elem_req) {
+-				rc = -ENOMEM;
+-				goto prep_out;
+-			}
+-			req_len = sg_dma_len(&task->smp_task.smp_req);
+-			if (req_len & 0x3) {
+-				rc = -EINVAL;
+-				goto err_out_dma_unmap;
+-			}
+-			n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
+-						 1, DMA_FROM_DEVICE);
+-			if (!n_elem_resp) {
+-				rc = -ENOMEM;
+-				goto err_out_dma_unmap;
+-			}
+-			resp_len = sg_dma_len(&task->smp_task.smp_resp);
+-			if (resp_len & 0x3) {
+-				rc = -EINVAL;
+-				goto err_out_dma_unmap;
+-			}
+-		}
+-	} else
+-		n_elem = task->num_scatter;
+-
+-	if (n_elem > HISI_SAS_SGE_PAGE_CNT) {
+-		dev_err(dev, "task prep: n_elem(%d) > HISI_SAS_SGE_PAGE_CNT",
+-			n_elem);
+-		rc = -EINVAL;
+-		goto err_out_dma_unmap;
+-	}
++	rc = hisi_sas_dma_map(hisi_hba, task, &n_elem,
++			      &n_elem_req, &n_elem_resp);
++	if (rc < 0)
++		goto prep_out;
+ 
+ 	if (hisi_hba->hw->slot_index_alloc)
+ 		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device);
+@@ -465,19 +510,8 @@ static int hisi_sas_task_prep(struct sas_task *task,
+ err_out_tag:
+ 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
+ err_out_dma_unmap:
+-	if (!sas_protocol_ata(task->task_proto)) {
+-		if (task->num_scatter) {
+-			dma_unmap_sg(dev, task->scatter, task->num_scatter,
+-			     task->data_dir);
+-		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
+-			if (n_elem_req)
+-				dma_unmap_sg(dev, &task->smp_task.smp_req,
+-					     1, DMA_TO_DEVICE);
+-			if (n_elem_resp)
+-				dma_unmap_sg(dev, &task->smp_task.smp_resp,
+-					     1, DMA_FROM_DEVICE);
+-		}
+-	}
++	hisi_sas_dma_unmap(hisi_hba, task, n_elem,
++			   n_elem_req, n_elem_resp);
+ prep_out:
+ 	dev_err(dev, "task prep: failed[%d]!\n", rc);
+ 	return rc;
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+1.9.1
 
