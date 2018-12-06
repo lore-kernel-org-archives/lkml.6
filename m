@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7F4C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BC9C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14ECB20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ECC3208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:46:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GtAM0LDs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14ECB20892
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ci3teYyT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ECC3208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbeLFSqA (ORCPT
+        id S1726136AbeLFSqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:46:00 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46615 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbeLFSp7 (ORCPT
+        Thu, 6 Dec 2018 13:46:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34578 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbeLFSqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:45:59 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so585508pfe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:45:59 -0800 (PST)
+        Thu, 6 Dec 2018 13:46:06 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h3so611104pfg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 10:46:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h5UhrT1YkH+1fuPSdX416xfr8tjTg9v3qKT0L+zzi3Y=;
-        b=GtAM0LDsdPTIsrG1utyHA2ut2UsmQlYukn9jWXYhaKKHc0lfIu6/I0O0tGoeO/niEg
-         DRscOXQFU7Gq5sZUnV4ITLR5kHjdHBAAlNZvhQZsdDzpdJ92lWRO6rHdZZmguXeDHuio
-         EBtUXyn7TQZ+S8z4A7z3UMtfV92J8jBGiRf+0=
+        bh=CDAZThfGpZuCvBtSjM99jB2sfnJYtaXxMYYfeP3n/mU=;
+        b=Ci3teYyTngYMlJntSFhuhSTIrgEGfsKKgXUI4RKtan9vH4CZLOW45u2y38apsxnfAU
+         81Wkgfx9imebzudQlrwW4PZsVsdQF9xlbF1jesE8NWr6LWBuv39muSEdSyn2WY8q815s
+         W9IivUQAQf4pazXie/RsSxpnwX+nkX8TcHZ8g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=h5UhrT1YkH+1fuPSdX416xfr8tjTg9v3qKT0L+zzi3Y=;
-        b=eSGC0QJTxU1b9MEaafZbf8gbLdNhY81Va6dwGGvpAkUy6JT1F+3VQicZ5OCBWoJ654
-         AQt2uTmMeSdYtRdlJwdGmpH2YJKkkR2X1ibhuwbRTb8Cj+2oDnLJAW2Wl3uNb4OLGDTS
-         cMDe3Ov6yBN9n37Aw7Q4/YZfbUJHaEDxe5nBJnQOEtjYXvxRxLX3TCLKVcC/7cK8KKkL
-         TwSfR0cqvJoMKqk9WFtRGPF9npRL2EK+z2Map/FwvaA797MmDlTzIvYd0W2WyZIglsdz
-         ur4y2k5dc9nqwbFayqBhd7H6eWuXmdm+MjZjTv03Aogpl58Y90XSCvToeZ3PpflF2jtN
-         nZNQ==
-X-Gm-Message-State: AA+aEWbMFvtAGM19on4ePdwfjZxbglut3ABVRdfUp+R6JeH6uEacVQ4X
-        Q7N58aWQ7bAML25bhWK+LdrO+Q==
-X-Google-Smtp-Source: AFSGD/WBpuQEvdtJTvoC3/RCZ4vnHe/J72zpdu2BGq0MCab+H0XnTdVrK7iACA6XJe5z+lykbrel7A==
-X-Received: by 2002:a63:91c1:: with SMTP id l184mr25194557pge.29.1544121959034;
-        Thu, 06 Dec 2018 10:45:59 -0800 (PST)
+        bh=CDAZThfGpZuCvBtSjM99jB2sfnJYtaXxMYYfeP3n/mU=;
+        b=iblL0t7kC+BtuCAtQ+pwcBYNdXIsVPvK5U2z5O20vQ9oNghMgSdC6Z9dWsbmqEe1My
+         Z+AVpeOCyxxuPaHBksQYT4QJ1drdhQUlhlH6mbOFg7ovnfZY0XftqXhDyFCoLLgFRGop
+         Xwc5tnbmk1WLo19j2daHuickvJUW+tv3dhEO/fk5nVVwmujkHWP3X9MSxYwH+7PUfpIT
+         DYauv0XFA0XONSpha+TlJPNTl9ih5s5CX4oEP/l+QETcPFuDtxMcU0lkw+hzlKbZBZx7
+         BupoP4EECpTVPxz2/2yir54lXYMWNDOcAnrS8oG+4UDBz9NyxzpO83YPDNtet2ahDkz9
+         J6nA==
+X-Gm-Message-State: AA+aEWaJR2vLXUqaYIfznhcZXJtUzdTHWn3kh6BXldT9VwgiUrvduW71
+        k3hk8IhI8tJqiV5YPnMyLsT7hw==
+X-Google-Smtp-Source: AFSGD/Wiy/sPvVvGRIxBzaE1N9aYs6obd8R4g+LizYsET7doiqfA6shi/glWYP9sqCeHYR1KRGprkQ==
+X-Received: by 2002:a63:2ac9:: with SMTP id q192mr24947768pgq.58.1544121965512;
+        Thu, 06 Dec 2018 10:46:05 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id v89sm1458476pfk.12.2018.12.06.10.45.57
+        by smtp.gmail.com with ESMTPSA id v89sm1458476pfk.12.2018.12.06.10.46.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Dec 2018 10:45:58 -0800 (PST)
+        Thu, 06 Dec 2018 10:46:04 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -64,9 +64,9 @@ Cc:     Douglas Anderson <dianders@chromium.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 2/3] arm64: dts: qcom: sdm845: Add SD node
-Date:   Thu,  6 Dec 2018 10:45:21 -0800
-Message-Id: <20181206184522.118062-3-evgreen@chromium.org>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm845: Add SD nodes for sdm845-mtp
+Date:   Thu,  6 Dec 2018 10:45:22 -0800
+Message-Id: <20181206184522.118062-4-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181206184522.118062-1-evgreen@chromium.org>
 References: <20181206184522.118062-1-evgreen@chromium.org>
@@ -75,45 +75,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add one of the two SD controllers to SDM845.
+Enable support for one of the micro SD slots on the MTP.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v2:
- - Reworded commit message to note that there are multiple SD
- controllers.
+ - Fixed alphabetization of node placement in sdm845-mtp.dtsi (Doug)
+ - Fixed card detect name to match schematics (Doug).
+ - Moved comment about drive strength next to the drive-strength entry
+ (Doug)
+ - Removed drive-strength from card detect input pin (Doug).
+ - Consolidated tlmm nodes in MTP.
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 58 ++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 1419b0098cb38..bb8eacdf40910 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1078,6 +1078,21 @@
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index b3def03581775..cde76da42cbb7 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -7,6 +7,7 @@
  
-+		sdhc_2: sdhci@8804000 {
-+			compatible = "qcom,sdm845-sdhci", "qcom,sdhci-msm-v5";
-+			reg = <0x8804000 0x1000>;
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ #include "sdm845.dtsi"
+ 
+@@ -358,8 +359,16 @@
+ 	status = "okay";
+ };
+ 
+-&tlmm {
+-	gpio-reserved-ranges = <0 4>, <81 4>;
++&sdhc_2 {
++	status = "okay";
 +
-+			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdc2_clk &sdc2_cmd &sdc2_data &sd_card_det_n>;
 +
-+			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&gcc GCC_SDCC2_APPS_CLK>;
-+			clock-names = "iface", "core";
++	vmmc-supply = <&vreg_l21a_2p95>;
++	vqmmc-supply = <&vddpx_2>;
 +
-+			status = "disabled";
++	cd-gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
+ };
+ 
+ &uart9 {
+@@ -450,3 +459,48 @@
+ 		bias-pull-up;
+ 	};
+ };
++
++&tlmm {
++	gpio-reserved-ranges = <0 4>, <81 4>;
++
++	sdc2_clk: sdc2-clk {
++		pinconf {
++			pins = "sdc2_clk";
++			bias-disable;
++
++			/*
++			 * It seems that mmc_test reports errors if drive
++			 * strength is not 16 on clk, cmd, and data pins.
++			 */
++			drive-strength = <16>;
++		};
++	};
++
++	sdc2_cmd: sdc2-cmd {
++		pinconf {
++			pins = "sdc2_cmd";
++			bias-pull-up;
++			drive-strength = <16>;
++		};
++	};
++
++	sdc2_data: sdc2-data {
++		pinconf {
++			pins = "sdc2_data";
++			bias-pull-up;
++			drive-strength = <16>;
++		};
++	};
++
++	sd_card_det_n: sd-card-det-n {
++		pinmux {
++			pins = "gpio126";
++			function = "gpio";
 +		};
 +
- 		usb_1_hsphy: phy@88e2000 {
- 			compatible = "qcom,sdm845-qusb2-phy";
- 			reg = <0x88e2000 0x400>;
++		pinconf {
++			pins = "gpio126";
++			bias-pull-up;
++		};
++	};
++};
 -- 
 2.18.1
 
