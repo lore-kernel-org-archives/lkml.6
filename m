@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AA4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A42C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491E020850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A6520700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108387;
-	bh=yR67UHNOLLI3R3RDClTVIDAK/VNHiuPczGBzhcFy8Lc=;
+	s=default; t=1544108403;
+	bh=16/NLCUjNCfa7WW7VdRKNezTsBGzlvMXMLXY8O+j5bw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UpSZSNOIiCLTbdbhv6VLOl2QS71ol5Fvycv5FJHHek6Ykx9HqDw6sZJVWaUtg4iLc
-	 p05W9Hc3Jbu0LcVaePaIxMScTPMR1OUI+f9W8TqbHhdTF/nAcmV1S0QDB8snsrjmpw
-	 GRb7j/VeJmFtgKyWWL94ie7DdfOstMc5ouHctYSU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491E020850
+	b=XNPN2YkUGloN0uJMvgac8e2kNng5dyglG3O9Ho195ZRFFULyRrPoxwmjJbTvZBWDz
+	 3hLs8Q3OWNC+j6AHPlGBeYiqNvyRju9a4ccr/6mvpafEOl9R2GEC1I0Bc7rAdTUcR4
+	 mm83eJsIeFbDwwqeF5IgMEUXk727htcvTIGkwfug=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A6520700
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730191AbeLFOlR (ORCPT
+        id S1725999AbeLFPAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45458 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 10:00:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730167AbeLFOlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:41:14 -0500
+        id S1730120AbeLFOlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:41:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D799214C1;
-        Thu,  6 Dec 2018 14:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E536421527;
+        Thu,  6 Dec 2018 14:41:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107272;
-        bh=yR67UHNOLLI3R3RDClTVIDAK/VNHiuPczGBzhcFy8Lc=;
+        s=default; t=1544107262;
+        bh=16/NLCUjNCfa7WW7VdRKNezTsBGzlvMXMLXY8O+j5bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTZF/IhcmIPICkPTdlrAm0kWsfPD35a0RLfMaa1CRPmu3FuK2ca4nt4v10cYu1g3J
-         ieRaUDACCasDwE1g9frK6/fohjm35rVLGSI7UoDpuW6lqsisemAHjPuJmVE4SrDf7M
-         9oVnaL8YDDqGNmoQ6f1+rLMyA7jyxUtJEK6VgJYU=
+        b=S8qrPvuJZNfsBf5FUUbqWDvn07O/evdDj/iwgxywEThww6vPGL4J4tAw+qf6P9GUZ
+         8euhdjJEUzDZX9fNa/fzSnwuU8dJe+L8Ad/7mc/1wPLn1H4SnUNZJOYZ7XwWHzP3f7
+         t8zY4DmRJg1XxU+CZ6r1ghubeqc7i31bo0P8xa00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Hoff <christian_hoff@gmx.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 33/41] Input: matrix_keypad - check for errors from of_get_named_gpio()
-Date:   Thu,  6 Dec 2018 15:39:13 +0100
-Message-Id: <20181206142952.905396475@linuxfoundation.org>
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.19 07/41] arm64: ftrace: Fix to enable syscall events on arm64
+Date:   Thu,  6 Dec 2018 15:38:47 +0100
+Message-Id: <20181206142950.287729112@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -68,91 +70,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Hoff <christian_hoff@gmx.net>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit d55bda1b3e7c5a87f10da54fdda866a9a9cef30b upstream.
+commit 874bfc6e5422d2421f7e4d5ea318d30e91679dfe upstream.
 
-"of_get_named_gpio()" returns a negative error value if it fails
-and drivers should check for this. This missing check was now
-added to the matrix_keypad driver.
+Since commit 4378a7d4be30 ("arm64: implement syscall wrappers")
+introduced "__arm64_" prefix to all syscall wrapper symbols in
+sys_call_table, syscall tracer can not find corresponding
+metadata from syscall name. In the result, we have no syscall
+ftrace events on arm64 kernel, and some bpf testcases are failed
+on arm64.
 
-In my case "of_get_named_gpio()" returned -EPROBE_DEFER because
-the referenced GPIOs belong to an I/O expander, which was not yet
-probed at the point in time when the matrix_keypad driver was
-loading. Because the driver did not check for errors from the
-"of_get_named_gpio()" routine, it was assuming that "-EPROBE_DEFER"
-is actually a GPIO number and continued as usual, which led to further
-errors like this later on:
+To fix this issue, this introduces custom
+arch_syscall_match_sym_name() which skips first 8 bytes when
+comparing the syscall and symbol names.
 
-WARNING: CPU: 3 PID: 167 at drivers/gpio/gpiolib.c:114
-gpio_to_desc+0xc8/0xd0
-invalid GPIO -517
-
-Note that the "GPIO number" -517 in the error message above is
-actually "-EPROBE_DEFER".
-
-As part of the patch a misleading error message "no platform data defined"
-was also removed. This does not lead to information loss because the other
-error paths in matrix_keypad_parse_dt() already print an error.
-
-Signed-off-by: Christian Hoff <christian_hoff@gmx.net>
-Suggested-by: Sebastian Reichel <sre@kernel.org>
-Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Fixes: 4378a7d4be30 ("arm64: implement syscall wrappers")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/keyboard/matrix_keypad.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/ftrace.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -407,7 +407,7 @@ matrix_keypad_parse_dt(struct device *de
- 	struct matrix_keypad_platform_data *pdata;
- 	struct device_node *np = dev->of_node;
- 	unsigned int *gpios;
--	int i, nrow, ncol;
-+	int ret, i, nrow, ncol;
+--- a/arch/arm64/include/asm/ftrace.h
++++ b/arch/arm64/include/asm/ftrace.h
+@@ -56,6 +56,19 @@ static inline bool arch_trace_is_compat_
+ {
+ 	return is_compat_task();
+ }
++
++#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
++
++static inline bool arch_syscall_match_sym_name(const char *sym,
++					       const char *name)
++{
++	/*
++	 * Since all syscall functions have __arm64_ prefix, we must skip it.
++	 * However, as we described above, we decided to ignore compat
++	 * syscalls, so we don't care about __arm64_compat_ prefix here.
++	 */
++	return !strcmp(sym + 8, name);
++}
+ #endif /* ifndef __ASSEMBLY__ */
  
- 	if (!np) {
- 		dev_err(dev, "device lacks DT data\n");
-@@ -452,12 +452,19 @@ matrix_keypad_parse_dt(struct device *de
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	for (i = 0; i < pdata->num_row_gpios; i++)
--		gpios[i] = of_get_named_gpio(np, "row-gpios", i);
-+	for (i = 0; i < nrow; i++) {
-+		ret = of_get_named_gpio(np, "row-gpios", i);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+		gpios[i] = ret;
-+	}
- 
--	for (i = 0; i < pdata->num_col_gpios; i++)
--		gpios[pdata->num_row_gpios + i] =
--			of_get_named_gpio(np, "col-gpios", i);
-+	for (i = 0; i < ncol; i++) {
-+		ret = of_get_named_gpio(np, "col-gpios", i);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+		gpios[nrow + i] = ret;
-+	}
- 
- 	pdata->row_gpios = gpios;
- 	pdata->col_gpios = &gpios[pdata->num_row_gpios];
-@@ -484,10 +491,8 @@ static int matrix_keypad_probe(struct pl
- 	pdata = dev_get_platdata(&pdev->dev);
- 	if (!pdata) {
- 		pdata = matrix_keypad_parse_dt(&pdev->dev);
--		if (IS_ERR(pdata)) {
--			dev_err(&pdev->dev, "no platform data defined\n");
-+		if (IS_ERR(pdata))
- 			return PTR_ERR(pdata);
--		}
- 	} else if (!pdata->keymap_data) {
- 		dev_err(&pdev->dev, "no keymap data defined\n");
- 		return -EINVAL;
+ #endif /* __ASM_FTRACE_H */
 
 
