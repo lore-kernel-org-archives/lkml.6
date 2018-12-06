@@ -2,105 +2,124 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D699CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE93C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 919432146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:18:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TWoOsiPh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 919432146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BB1F20878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB1F20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbeLFXSf (ORCPT
+        id S1726236AbeLFX3d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:18:35 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45888 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbeLFXSf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:18:35 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so1633937lfa.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZWTrYGwFa0mrTz9Vke35lkbzRb1m/t7xeRXdbHsQz08=;
-        b=TWoOsiPhRlvJBZ/+1acTg8O4mEgEyRVMbf/pBv7e4NOv72HXrZ34rHB3G8NeHFns/r
-         Vg6XVfZyzc76ZTTRls+slcwxDbOwEzwmhOoPiqMIOdtH6TOkhEZvam+dQGEXhWs2erqF
-         8eFaDji9kdwiOUP4Vj2BdMKdoVSMz/NfpH4cxO5G7nUPK0lsk9a6BHv7et2/k2r9JhbJ
-         d12uEPo9FWZpReHtdJRFu/QeRz6vh1A6CCmmm1YvupUJxlzm89lYuxXNAPw4DZxNpmfl
-         U6P/aOAUEMy6s+h87IIkzGilr0HNO5TtZChMmFM32O9ymmf1rI8/fWTOXzgksTxRTe/g
-         kulw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZWTrYGwFa0mrTz9Vke35lkbzRb1m/t7xeRXdbHsQz08=;
-        b=U+4W1vcKGfKs0lLJPoQRep52XtvHD9alyAAS4ELii6NgkOW/Fc5ZIBz3FIt6Y3X0gY
-         xO71/Vf86g2IGftJVghbX8xrQmKFQcI6MY8pdZ9wzvcgSI1p4LwQaco+xBiqRPeo+ey0
-         chAXh+MC7Aq9OZccUux3rnLNk2ci2bIdip7NFNKXSu/bGj2x3biha8uVUEYTHqCql3IC
-         Ql5cUx6jNa0worrmpnIQ34sbbL5hyZEoMXCMxe0w1TIgwpeJHMjj6vh37GWREzET4yOi
-         c+eUrLrfvErZ9nqa96PxcEfoTf/hV96FetpOR2MA203uu09NxU3v09G1xVC+AuwudnKn
-         xfqQ==
-X-Gm-Message-State: AA+aEWbLT7RoOlDYf57aBa5MycytJzq+KXYijp3B0TWrTaQiaLqnhMt0
-        q7TaE/mTb8fEzJY48NGsk07Zts8gr8rRBKYLdp0=
-X-Google-Smtp-Source: AFSGD/WNAdOdn3TyV6hVtnHjSDSquoI55kDdKn8A+PO+Dl5XJFvZu/+xNs7ySTw5xcDvmmrp7B9f/TB4l45O7/h+fUI=
-X-Received: by 2002:a19:8fce:: with SMTP id s75mr17498766lfk.151.1544138312985;
- Thu, 06 Dec 2018 15:18:32 -0800 (PST)
+        Thu, 6 Dec 2018 18:29:33 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:47074 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeLFX3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:29:33 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gV34j-0006Wc-Cs; Thu, 06 Dec 2018 16:28:58 -0700
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+ <20181205021334.GB3045@redhat.com>
+ <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
+ <20181205175357.GG3536@redhat.com>
+ <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+ <20181206192050.GC3544@redhat.com>
+ <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
+ <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
+ <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
+ <20181206223935.GG3544@redhat.com>
+ <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
+Date:   Thu, 6 Dec 2018 16:28:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181205135247.7964-1-mans@mansr.com> <CANiq72=Xg--8vG0+JLsPykOUfXpo89R2H-pBLuMROnQjMui7qA@mail.gmail.com>
- <yw1xr2evkg8t.fsf@mansr.com> <CANiq72keqco3F=8YDHFqoeBRFsrs1Cbd1aF1owf90Hbncv40mA@mail.gmail.com>
- <05e86c46-8d31-f922-9a34-fd6690cc1f77@robertabel.eu>
-In-Reply-To: <05e86c46-8d31-f922-9a34-fd6690cc1f77@robertabel.eu>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 7 Dec 2018 00:18:21 +0100
-Message-ID: <CANiq72=mqVm4ruLTp3QAzap-6+bqf-b04bwQMOSX-hKGx+4afA@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: charlcd: fix x/y command parsing
-To:     Robert Abel <rabel@robertabel.eu>
-Cc:     =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Willy Tarreau <w@1wt.eu>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-acpi@vger.kernel.org, woodard@redhat.com, riel@surriel.com, aarcange@redhat.com, bskeggs@redhat.com, airlied@redhat.com, mgorman@techsingularity.net, vkini@nvidia.com, mhairgrove@nvidia.com, jonathan.cameron@huawei.com, mhocko@kernel.org, rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, bsingharora@gmail.com, haggaie@mellanox.com, dan.j.williams@intel.com, keith.busch@intel.com, ross.zwisler@linux.intel.com, willy@infradead.org, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, jglisse@redhat.com, dave.hansen@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
 
-On Fri, Dec 7, 2018 at 12:13 AM Robert Abel <rabel@robertabel.eu> wrote:
->
-> Hi Miguel,
->
-> On 05 Dec 2018 17:47, Miguel Ojeda wrote:> Hi Mans,
-> >
-> > [CC'ing a few people involved previously on this]
->
-> Thanks for CC'ing me!
->
-> On 06 Dec 2018 11:06, Miguel Ojeda wrote [to Mans Rullgard]:
-> > Are you able to test this?
->
-> It's unfortunate that my original comment got ignored back when the breaking patch was submitted.
-> Nevertheless, if somebody posts a patch, I'm happy to test.
 
-Which one? Do you mean the original 129957069e6a in 3.2-rc1? Or the
-more recent ones? At the time of 3.2-rc1 I couldn't be involved in
-kernel dev :-( If you mean in the recent ones, sorry if I failed to
-see some email or missed something -- it was not intended at all.
-Please feel free to nag me/everyone a bit more :-)
+On 2018-12-06 4:09 p.m., Dave Hansen wrote:
+> This looks great.  But, we don't _have_ this kind of information for any
+> system that I know about or any system available in the near future.
+> 
+> We basically have two different world views:
+> 1. The system is described point-to-point.  A connects to B @
+>    100GB/s.  B connects to C at 50GB/s.  Thus, C->A should be
+>    50GB/s.
+>    * Less information to convey
+>    * Potentially less precise if the properties are not perfectly
+>      additive.  If A->B=10ns and B->C=20ns, A->C might be >30ns.
+>    * Costs must be calculated instead of being explicitly specified
+> 2. The system is described endpoint-to-endpoint.  A->B @ 100GB/s
+>    B->C @ 50GB/s, A->C @ 50GB/s.
+>    * A *lot* more information to convey O(N^2)?
+>    * Potentially more precise.
+>    * Costs are explicitly specified, not calculated
+> 
+> These patches are really tied to world view #1.  But, the HMAT is really
+> tied to world view #1.
 
-If you are also able to test, that is wonderful as well!
+I didn't think this was meant to describe actual real world performance
+between all of the links. If that's the case all of this seems like a
+pipe dream to me.
 
-Cheers,
-Miguel
+Attributes like cache coherency, atomics, etc should fit well in world
+view #1... and, at best, some kind of flag saying whether or not to use
+a particular link if you care about transfer speed. -- But we don't need
+special "link" directories to describe the properties of existing buses.
+
+You're not *really* going to know bandwidth or latency for any of this
+unless you actually measure it on the system in question.
+
+Logan
