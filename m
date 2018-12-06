@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08872C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F62EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4EBF20661
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0474720661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107480;
-	bh=Zyoi7JbF08PwK4FCG56MoKWNGsQD2TvrT86LIZjNQYY=;
+	s=default; t=1544107484;
+	bh=Q0svDywYtmFKXaiFR/2oVOQ290M6aXZOtRf9vjQjNLg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zo/kgYBes9BaBOokWedXT6me7iH+cZ35+nw8xyOJW0DQLQMNuWhHW/UP+ZotWzuGU
-	 iLhdUZo8Rivu7nPOZVsxTax0H4PjA02a5smRsmpcxTZcLHuiAaYdVkFX5RmqqaioWL
-	 wC0ZODnDYIikfYL/Gm19IDfi8hkFLAukKDhxtazE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4EBF20661
+	b=0R3DeqJiP6yF4xyAoSa0PBiYWi3MdDDdc3kUGJl06dSJMLodLLqIr1I80ATts1FdX
+	 AK9B+edA04IFh7y9z1iB1xOwFghAEhBwE88jz/GHYoUyHKOTw7jtG9l3fzA0PRbMsM
+	 eIFJZoeC/pMBIL5DnQX1RWGLw3gcV9rVteX5oKz8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0474720661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbeLFOoi (ORCPT
+        id S1730918AbeLFOom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:44:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49192 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:44:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730866AbeLFOob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:31 -0500
+        id S1730906AbeLFOoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47D032146D;
-        Thu,  6 Dec 2018 14:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0492B2082B;
+        Thu,  6 Dec 2018 14:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107470;
-        bh=Zyoi7JbF08PwK4FCG56MoKWNGsQD2TvrT86LIZjNQYY=;
+        s=default; t=1544107478;
+        bh=Q0svDywYtmFKXaiFR/2oVOQ290M6aXZOtRf9vjQjNLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S0s0SK07mM/QrQz+sW+mdyFO5jjpenUY0M0HYHc5WxI32uKKMNMHnHnrisKHa8Q5V
-         uqKdPZpuDKSNmwPkJ50ZDhewwh4vz4r2DbcElnMAH4FXBUPrn1/WtFF3b2wGqn2dz7
-         Sw3WeUfyA8CRfoPEbft5LjXvDKBysYpvAHVM9dLU=
+        b=JhJJr8oF1Nb0S9spJBOn8pmd/CAroHXjwgWuHA8z17Pouokd2TDTWaTI5x1D2NinV
+         VJepv/tpNJyMmHQ+uKllHEjyHlcnmf6nidcfjtr2g2VPWDJjULtSgWhGYJi8Cgpx8s
+         CaGVGe/pwztIZK0DBaXl7FgoxrThz4FgEBJbPTuw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sergio Correia <sergio@correia.cc>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.9 019/101] drm: set is_master to 0 upon drm_new_set_master() failure
-Date:   Thu,  6 Dec 2018 15:38:18 +0100
-Message-Id: <20181206143012.730100754@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 021/101] ALSA: trident: Suppress gcc string warning
+Date:   Thu,  6 Dec 2018 15:38:20 +0100
+Message-Id: <20181206143012.828040303@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -68,107 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergio Correia <sergio@correia.cc>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 23a336b34258aba3b50ea6863cca4e81b5ef6384 upstream.
+commit d6b340d7cb33c816ef4abe8143764ec5ab14a5cc upstream.
 
-When drm_new_set_master() fails, set is_master to 0, to prevent a
-possible NULL pointer deref.
+The meddlesome gcc warns about the possible shortname string in
+trident driver code:
+  sound/pci/trident/trident.c: In function ‘snd_trident_probe’:
+  sound/pci/trident/trident.c:126:2: warning: ‘strcat’ accessing 17 or more bytes at offsets 36 and 20 may overlap 1 byte at offset 36 [-Wrestrict]
+  strcat(card->shortname, card->driver);
 
-Here is a problematic flow: we check is_master in drm_is_current_master(),
-then proceed to call drm_lease_owner() passing master. If we do not restore
-is_master status when drm_new_set_master() fails, we may have a situation
-in which is_master will be 1 and master itself, NULL, leading to the deref
-of a NULL pointer in drm_lease_owner().
+It happens since gcc calculates the possible string size from
+card->driver, but this can't be true since we did set the string just
+before that, and they are much shorter.
 
-This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
-kernel:
+For shutting it up, use the exactly same string set to card->driver
+for strcat() to card->shortname, too.
 
-[   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-[   97.807224] PGD 0 P4D 0
-[   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
-[   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
-[   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
-[   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-[   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-[   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-[   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-[   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-[   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-[   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-[   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-[   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-[   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-[   97.807224] Call Trace:
-[   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
-[   97.807224]  drm_master_release+0x3e/0x130 [drm]
-[   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
-[   97.807224]  drm_open+0x1ba/0x1e0 [drm]
-[   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
-[   97.807224]  chrdev_open+0xa3/0x1b0
-[   97.807224]  ? cdev_put.part.0+0x20/0x20
-[   97.807224]  do_dentry_open+0x132/0x340
-[   97.807224]  path_openat+0x2d1/0x14e0
-[   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
-[   97.807224]  do_filp_open+0x93/0x100
-[   97.807224]  ? __check_object_size+0x102/0x189
-[   97.807224]  ? _raw_spin_unlock+0x16/0x30
-[   97.807224]  do_sys_open+0x186/0x210
-[   97.807224]  do_syscall_64+0x5b/0x170
-[   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   97.807224] RIP: 0033:0x7f4147b07976
-[   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
-[   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-[   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
-[   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
-[   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
-[   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
-[   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
-[   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
-[   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
-[   98.040039] CR2: 0000000000000080
-[   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
-[   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-[   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-[   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-[   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-[   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-[   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-[   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-[   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-[   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-[   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-
-Signed-off-by: Sergio Correia <sergio@correia.cc>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181122053329.2692-1-sergio@correia.cc
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_auth.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/trident/trident.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_auth.c
-+++ b/drivers/gpu/drm/drm_auth.c
-@@ -133,6 +133,7 @@ static int drm_new_set_master(struct drm
+--- a/sound/pci/trident/trident.c
++++ b/sound/pci/trident/trident.c
+@@ -123,7 +123,7 @@ static int snd_trident_probe(struct pci_
+ 	} else {
+ 		strcpy(card->shortname, "Trident ");
+ 	}
+-	strcat(card->shortname, card->driver);
++	strcat(card->shortname, str);
+ 	sprintf(card->longname, "%s PCI Audio at 0x%lx, irq %d",
+ 		card->shortname, trident->port, trident->irq);
  
- 	lockdep_assert_held_once(&dev->master_mutex);
- 
-+	WARN_ON(fpriv->is_master);
- 	old_master = fpriv->master;
- 	fpriv->master = drm_master_create(dev);
- 	if (!fpriv->master) {
-@@ -161,6 +162,7 @@ out_err:
- 	/* drop references and restore old master on failure */
- 	drm_master_put(&fpriv->master);
- 	fpriv->master = old_master;
-+	fpriv->is_master = 0;
- 
- 	return ret;
- }
 
 
