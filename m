@@ -2,106 +2,99 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE8DC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF3EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911DD20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911DD20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 85380208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85380208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726095AbeLFSLF (ORCPT
+        id S1725966AbeLFSOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:11:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56488 "EHLO mx1.redhat.com"
+        Thu, 6 Dec 2018 13:14:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeLFSLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:11:05 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725901AbeLFSOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:14:21 -0500
+Received: from vmware.local.home (unknown [208.91.3.26])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F1248AE77;
-        Thu,  6 Dec 2018 18:11:04 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-106.ams2.redhat.com [10.36.116.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 005FE5C88D;
-        Thu,  6 Dec 2018 18:10:59 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc:     Joseph Myers <joseph@codesourcery.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        "open list\:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        libc-alpha@sourceware.org
-Subject: Re: [PATCH v3 0/6] mips: system call table generation support
-References: <1543481016-18500-1-git-send-email-firoz.khan@linaro.org>
-        <CALxhOnjSEp++W5T3Sf0eX+8hPt08ER22M817M-Vhd24_96a_EQ@mail.gmail.com>
-        <20181205063436.kzxgnvgexcgq572k@pburton-laptop>
-        <alpine.LFD.2.21.1812061209220.7193@eddie.linux-mips.org>
-        <alpine.DEB.2.21.1812061618110.12167@digraph.polyomino.org.uk>
-        <alpine.LFD.2.21.1812061659210.4294@eddie.linux-mips.org>
-        <alpine.DEB.2.21.1812061719180.12167@digraph.polyomino.org.uk>
-        <alpine.LFD.2.21.1812061729340.4294@eddie.linux-mips.org>
-Date:   Thu, 06 Dec 2018 19:10:57 +0100
-In-Reply-To: <alpine.LFD.2.21.1812061729340.4294@eddie.linux-mips.org> (Maciej
-        W. Rozycki's message of "Thu, 6 Dec 2018 17:43:27 +0000 (GMT)")
-Message-ID: <87mupiikzy.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FCC020868;
+        Thu,  6 Dec 2018 18:14:20 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 13:14:17 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     akpm@linux-foundation.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] kernel/kcov.c: mark func write_comp_data() as notrace
+Message-ID: <20181206131417.5019b1e8@vmware.local.home>
+In-Reply-To: <20181206143011.23719-1-anders.roxell@linaro.org>
+References: <20181206143011.23719-1-anders.roxell@linaro.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 06 Dec 2018 18:11:05 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Maciej W. Rozycki:
+On Thu,  6 Dec 2018 15:30:11 +0100
+Anders Roxell <anders.roxell@linaro.org> wrote:
 
-> On Thu, 6 Dec 2018, Joseph Myers wrote:
->
->> >  So how are `SYS_<name>' macros generated that land in <bits/syscall.h>?
->> 
->> By gen-syscall-h.awk, which generates #ifdef conditionals for each 
->> possible __NR_* name (as listed in syscall-names.list in glibc).
->
->  I seem to remember having to take extra care with how the three MIPS ABIs 
-> wire the syscalls to get it right in glibc, but I take it then this has 
-> been now addressed reliably enough for the glibc not to care how exactly
-> <asm/unistd.h> has been arranged.
+> Since __sanitizer_cov_trace_const_cmp4 is marked as notrace, the
+> function called from __sanitizer_cov_trace_const_cmp4 shouldn't be
+> traceable either.  ftrace_graph_caller() gets called every time func
+> write_comp_data() gets called if it isn't marked 'notrace'. This is the
+> backtrace from gdb:
+> 
+>  #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
+>  #1  0xffffff8010201920 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
+>  #2  0xffffff8010439714 in write_comp_data (type=5, arg1=0, arg2=0, ip=18446743524224276596) at ../kernel/kcov.c:116
+>  #3  0xffffff8010439894 in __sanitizer_cov_trace_const_cmp4 (arg1=<optimized out>, arg2=<optimized out>) at ../kernel/kcov.c:188
+>  #4  0xffffff8010201874 in prepare_ftrace_return (self_addr=18446743524226602768, parent=0xffffff801014b918, frame_pointer=18446743524223531344) at ./include/generated/atomic-instrumented.h:27
+>  #5  0xffffff801020194c in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
+> 
+> Rework so that write_comp_data() that are called from
+> __sanitizer_cov_trace_*_cmp*() are marked as 'notrace'.
+> 
+> Commit 903e8ff86753 ("kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace")
+> missed to mark write_comp_data() as 'notrace'. When that patch was
+> created gcc-7 was used. In lib/Kconfig.debug
+> config KCOV_ENABLE_COMPARISONS
+> 	depends on $(cc-option,-fsanitize-coverage=trace-cmp)
+> 
+> That code path isn't hit with gcc-7. However, it were that with gcc-8.
+> 
+> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-This is a fairly recent change (commit
-2dba5ce7b8115d6a2789bf279892263621088e74, "<bits/syscall.h>: Use an
-arch-independent system call list on Linux", first release with it is
-glibc 2.27).  This patch is quite backportable; we have put it into our
-2.17-derived glibc, and the upstream work was originally driven by
-downstream ordering requirements of kernel header and glibc builds.
-Glad to see it's useful elsewhere.
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-The test retains the old <asm/unistd.h>-based macro extraction for
-testing purposes, but it needs that only for the actual target
-architecture and only the *names*, so it's easy to implement.  Before
-that, the generation would have to carefully take into account multiple
-sub-targets (i386/x86-64/x32 is one of the more complicated scenarios).
-Presumably, you saw problem with that part.
+-- Steve
 
-Even if you introduce breakage here, it will only affect older glibc
-builds.  It's not something that application developers would see.
+> ---
+>  kernel/kcov.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 97959d7b77e2..c2277dbdbfb1 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -112,7 +112,7 @@ void notrace __sanitizer_cov_trace_pc(void)
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+>  
+>  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
+> -static void write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+> +static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>  {
+>  	struct task_struct *t;
+>  	u64 *area;
 
-Thanks,
-Florian
