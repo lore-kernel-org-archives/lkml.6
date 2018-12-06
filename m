@@ -5,45 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C4CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85062C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1C1C20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:22:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C1C20892
+	by mail.kernel.org (Postfix) with ESMTP id 3B63820892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B63820892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbeLFSWd (ORCPT
+        id S1725955AbeLFSZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:22:33 -0500
-Received: from mga09.intel.com ([134.134.136.24]:12203 "EHLO mga09.intel.com"
+        Thu, 6 Dec 2018 13:25:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:46620 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFSWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:22:33 -0500
+        id S1725901AbeLFSZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:25:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 10:22:32 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 10:25:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,323,1539673200"; 
-   d="scan'208";a="116596129"
+   d="scan'208";a="116596678"
 Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2018 10:22:32 -0800
-Subject: Re: [RFC PATCH 3/4] x86/traps: Attempt to fixup exceptions in vDSO
- before signaling
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>
-References: <20181205232012.28920-1-sean.j.christopherson@intel.com>
- <20181205232012.28920-4-sean.j.christopherson@intel.com>
+  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2018 10:25:08 -0800
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+References: <20181203233509.20671-1-jglisse@redhat.com>
+ <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
+ <20181205001544.GR2937@redhat.com>
+ <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
+ <20181205021334.GB3045@redhat.com>
+ <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
+ <20181205175357.GG3536@redhat.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -89,61 +112,28 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <22a86224-4d25-a679-5449-e88ea889d499@intel.com>
-Date:   Thu, 6 Dec 2018 10:22:32 -0800
+Message-ID: <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+Date:   Thu, 6 Dec 2018 10:25:08 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181205232012.28920-4-sean.j.christopherson@intel.com>
+In-Reply-To: <20181205175357.GG3536@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/5/18 3:20 PM, Sean Christopherson wrote:
-> @@ -223,6 +224,10 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
->  	tsk->thread.error_code = error_code;
->  	tsk->thread.trap_nr = trapnr;
->  
-> +	if (user_mode(regs) &&
-> +	    fixup_vdso_exception(regs, trapnr, error_code, 0))
-> +		return 0;
-> +
->  	return -1;
->  }
->  
-> @@ -563,6 +568,9 @@ do_general_protection(struct pt_regs *regs, long error_code)
->  	tsk->thread.error_code = error_code;
->  	tsk->thread.trap_nr = X86_TRAP_GP;
->  
-> +	if (fixup_vdso_exception(regs, X86_TRAP_GP, error_code, 0))
-> +		return;
-> +
->  	show_signal(tsk, SIGSEGV, "", desc, regs, error_code);
->  
->  	force_sig(SIGSEGV, tsk);
-> @@ -854,6 +862,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
->  	if (!si_code)
->  		return;
->  
-> +	if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-> +		return;
-> +
->  	force_sig_fault(SIGFPE, si_code,
->  			(void __user *)uprobe_get_trap_addr(regs), task);
->  }
-> -- 
+On 12/5/18 9:53 AM, Jerome Glisse wrote:
+> No so there is 2 kinds of applications:
+>     1) average one: i am using device {1, 3, 9} give me best memory for
+>        those devices
+...
+> 
+> For case 1 you can pre-parse stuff but this can be done by helper library
 
-Needs commenting, please.
-
-But, also, this seems really ad-hoc.  Probably, that's a result of our
-signal generation being really ad-hoc itself.  But, if this claims
-"Attempt to fixup exceptions in vDSO before signaling", how do we assure
-ourselves that we hit all the ad-hoc signal generation cases?  How do we
-know we didn't miss one or ten?
-
-I want to hear more of the story of how you picked these sites and also
-decided that this is a comprehensive-enough set of sites to patch.
+How would that work?  Would each user/container/whatever do this once?
+Where would they keep the pre-parsed stuff?  How do they manage their
+cache if the topology changes?
