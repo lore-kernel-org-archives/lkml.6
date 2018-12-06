@@ -2,146 +2,154 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC0CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132DFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A266920892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB60320892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:43:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T5PwOyCS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A266920892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h3gz2Ymj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB60320892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbeLFMlf (ORCPT
+        id S1729520AbeLFMn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:41:35 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:54244 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbeLFMle (ORCPT
+        Thu, 6 Dec 2018 07:43:58 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41255 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbeLFMn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:41:34 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6Cd6nm106248;
-        Thu, 6 Dec 2018 12:41:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=L4+uKWKf0GfoG4mbTgvZPP6iRW6WZ376ArCNhULER6s=;
- b=T5PwOyCSH8jB6SDuqC6YqsE0G/JUxIZz/MygYdf+0MQbvzkVsSyyIr9ANEty4NA/GjKY
- wCqiaiCgmGpSjyMP5IMk7oWr839hdn1ns40OBK8+mO6MhSxAD55v7MAtwQQdnS1614T/
- mX5Y8ukjqLoPI9+w9cZd/HhBqCFB1u9+xj04VwJyo6QGsX5eo2yvmDJb2JqyhP210F6m
- yNaH2UTWodDBxVpnRcCamSvySfc/JTr2kpDCVGyVDjdIER2W43euxXliKawtj9XxvAtt
- goK1UGHICHXm+uY8ldQ6mzq0Rkezgs6PMwHUvQrY2+6tatMRY6DxvIAbEwRgriiqQZ2S Yw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2p3ftfbx9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 12:41:02 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB6Cf1Xd007647
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 12:41:01 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6CewTE020412;
-        Thu, 6 Dec 2018 12:40:59 GMT
-Received: from unbuntlaptop (/197.157.0.47)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 04:40:58 -0800
-Date:   Thu, 6 Dec 2018 15:40:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Shreeya Patel <shreeya.patel23498@gmail.com>,
-        devel@driverdev.osuosl.org, lars@metafoo.de,
-        Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        pmeerw@pmeerw.net, knaack.h@gmx.de, jic23@kernel.org
-Subject: Re: [PATCH] Revert "Staging: iio: adt7316: Add an extra check for
- 'ret' equals to 0"
-Message-ID: <20181206124047.GH3095@unbuntlaptop>
-References: <20181205014900.4827-1-jeremyfertic@gmail.com>
- <fccdb26936a9cfcd5134c760cd918929ad3dfa19.camel@gmail.com>
- <20181205215953.GA2365@r2700x.localdomain>
+        Thu, 6 Dec 2018 07:43:58 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k15-v6so269593ljc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 04:43:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SDv0HoDn90Hhcjvzlh5UDnoYvUl54AC2kxpV/hX3q1s=;
+        b=h3gz2YmjkfF2i4kD1Fk9BcMKEspG1Rnxc3m38zChj8GoFron1eQqBerljxlO2mkh1I
+         OLThFKlbkQ08UJEC2w4K1AVDD1R7oQwn70RT3SjcqPPAr/igCp04F6GpYXwJLHjwrOMH
+         I4hvGVfc8NrvGaVi/yAYNT62aauLEKddIpZGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SDv0HoDn90Hhcjvzlh5UDnoYvUl54AC2kxpV/hX3q1s=;
+        b=eOton4IVjsyt0DXGT9O/GscPtq+MMXAZVSdHkn5ri1zbdVgo16lL5rTY2tiYtd2Y1I
+         za6QdFbObHx/BU6rs0hkxDUl+E6IC1zhCxaVofqTbUJvo8JphSPXWzBRSMvRPmc4qbw8
+         JsyTZ6RGX8estmwOWPcN/maDCk6bHTCQZhciNjUONARVh74iL4/xvRnTcxOgal5w2lVA
+         U7+WoZC/1nXid9uPAvUvVncRXIKBsZ4yQeVbyNAYpNfkL5BAAb/PfLiE7pyN+Ym1s5/S
+         uiyCGHRtAhYfruNRaj8djc8yVpd1cSR835hQEOQtXcMUsMNKbzcp4ZPp+pEYxwYcQjQf
+         6ERw==
+X-Gm-Message-State: AA+aEWaRG6u1UiLEPWe0zBpW1BTrKOtIDz4HSgy8kLTFPXu9+LZLHewa
+        rQyrCgdmzzSf+kykdVVd0WBjC9epob6tEA==
+X-Google-Smtp-Source: AFSGD/WbaqJcERNqzJoNGcn4mQWOxACLI7X68lXJOeJDzRuwyJ1fVtZVM83Gt0apNZgN91HUWJ30Aw==
+X-Received: by 2002:a2e:b00a:: with SMTP id y10-v6mr17479054ljk.109.1544100236344;
+        Thu, 06 Dec 2018 04:43:56 -0800 (PST)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id j25-v6sm44071lji.77.2018.12.06.04.43.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 04:43:55 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 00/15 v4] Regulator ena_gpiod fixups
+Date:   Thu,  6 Dec 2018 13:43:36 +0100
+Message-Id: <20181206124351.10155-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205215953.GA2365@r2700x.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060113
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 02:59:53PM -0700, Jeremy Fertic wrote:
-> On Thu, Dec 06, 2018 at 01:25:55AM +0530, Shreeya Patel wrote:
-> > On Tue, 2018-12-04 at 18:49 -0700, Jeremy Fertic wrote:
-> > > This reverts commit 00426e99789357dbff7e719a092ce36a3ce49d94.
-> > > 
-> > > i2c_smbus_read_byte() returns 0 when a byte with the value 0 is read
-> > > from
-> > > the device. This is a valid read so revert the check for 0.
-> > > 
-> > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-> > > ---
-> > 
-> > Hi Jeremy,
-> > 
-> > As per my understanding, 0 value indicates no error but no data read.
-> > Then how can this be a valid case?
-> > 
-> > Can you please make me understand that how can we consider this as a
-> > valid case even when no data has been read?
+Here is a fourth iteration of these fixups after fixing
+the (hopefullt last) bugs found in the v3 version.
 
-It's not reading no data.  It's reading one byte of data and returning
-it.
+Also available in git branch
+gpio-descriptors-regulator-fixup in the GPIO git tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=gpio-descriptors-regulator-fixup
 
-> > 
-> > 
-> > Thanks
-> 
-> I'm not sure I understand why the value 0 would indicate no data read.
-> Doesn't that just mean a byte was read with the value 0.
+I added two fixup item to the list: making the gpiod
+from of node respect nonexlusive flags and fixing the
+shared regulators in devm_gpiod_get*.
 
-Yes.  It does mean that.  Please don't ask rhetorical questions...  :(
-This list is full of people who can't resist answering every question.
+To make sure GPIO descriptors are never left dangling
+(as far as I can tell!) I use this stepwise approach:
 
-> For instance, if the input to the adc is 0V. Can you point me to where
-> you're seeing that this would indicate no data read?
+1. Fix the regulator_register() in the core to guarantee
+   that after calling this with a valid GPIO descriptor
+   in ena_gpiod it will be gpiod_put() if there is any
+   problem.
 
-drivers/i2c/i2c-core-smbus.c
-    88  /**
-    89   * i2c_smbus_read_byte - SMBus "receive byte" protocol
-    90   * @client: Handle to slave device
-    91   *
-    92   * This executes the SMBus "receive byte" protocol, returning negative errno
-    93   * else the byte received from the device.
-    94   */
-    95  s32 i2c_smbus_read_byte(const struct i2c_client *client)
-    96  {
-    97          union i2c_smbus_data data;
-    98          int status;
-    99  
-   100          status = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
-   101                                  I2C_SMBUS_READ, 0,
-   102                                  I2C_SMBUS_BYTE, &data);
-   103          return (status < 0) ? status : data.byte;
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   104  }
-   105  EXPORT_SYMBOL(i2c_smbus_read_byte);
+2. Fix up simple descriptor consumers to just gpiod_get()
+   and let the core take over the descriptor. Only handle
+   the errorpath up to this point.
 
-You are right.  Commit 00426e997893 ("Staging: iio: adt7316: Add an
-extra check for 'ret' equals to 0") needs to be reverted...
+3. Export gpiod_get_from_of_node() and let max77686
+   obtain a GPIO descriptor from the device tree without
+   any devres make-up in the DT parsing callback.
 
-regards,
-dan carpenter
+4. Make gpiod_get_from_of_node() respect the
+   GPIOD_FLAGS_BIT_NONEXCLUSIVE flag.
 
+5. Fix up devm_gpiod_get_* to respect the
+   GPIOD_FLAGS_BIT_NONEXCLUSIVE flag.
+
+6. Invent devm_gpiod_unhinge() that will remove the devres
+   monitoring of a devm_* allocated GPIO descriptor
+   right before handling it over to the regulator core,
+   and use this in the otherwise hairy max8973, da9211,
+   s5m8767, tps65090 and s2mps11 drivers.
+
+
+Linus Walleij (15):
+  regulator: core: Track dangling GPIO descriptors
+  regulator: fixed: Let core handle GPIO descriptor
+  regulator: lm363x: Let core handle GPIO descriptor
+  regulator: lp8788-ldo: Let core handle GPIO descriptor
+  regulator: max8952: Let core handle GPIO descriptor
+  gpio: Export gpiod_get_from_of_node()
+  regulator: max77686: Let core handle GPIO descriptor
+  gpio: Enable nonexclusive gpiods from DT nodes
+  gpio: devres: Handle nonexclusive GPIOs
+  gpio: Add devm_gpiod_unhinge()
+  regulator: max8973: Let core handle GPIO descriptor
+  regulator: da9211: Hand over GPIO to regulator core
+  regulator: s5m8767: Hand over GPIO to regulator core
+  regulator: tps65090: Hand over GPIO to regulator core
+  regulator: s2mps11: Hand over GPIO to regulator core
+
+ Documentation/driver-model/devres.txt  |  1 +
+ drivers/gpio/gpiolib-devres.c          | 80 ++++++++++++++++++++++----
+ drivers/gpio/gpiolib.c                 |  2 +
+ drivers/gpio/gpiolib.h                 |  6 --
+ drivers/regulator/core.c               | 55 ++++++++++++++----
+ drivers/regulator/da9211-regulator.c   |  6 ++
+ drivers/regulator/fixed.c              |  6 +-
+ drivers/regulator/lm363x-regulator.c   |  8 ++-
+ drivers/regulator/lp8788-ldo.c         |  8 ++-
+ drivers/regulator/max77686-regulator.c | 14 +++--
+ drivers/regulator/max8952.c            | 10 +++-
+ drivers/regulator/max8973-regulator.c  |  8 ++-
+ drivers/regulator/s2mps11.c            |  7 ++-
+ drivers/regulator/s5m8767.c            |  9 ++-
+ drivers/regulator/tps65090-regulator.c |  6 ++
+ include/linux/gpio/consumer.h          | 23 ++++++++
+ 16 files changed, 205 insertions(+), 44 deletions(-)
+
+-- 
+2.19.2
 
