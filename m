@@ -2,107 +2,103 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D056C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92445C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6ED20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:51:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6ED20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bananateam.nl
+	by mail.kernel.org (Postfix) with ESMTP id 43C1720868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:52:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IKGvhL4W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C1720868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeLFQvC (ORCPT
+        id S1725999AbeLFQwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:51:02 -0500
-Received: from mail.bananateam.nl ([213.125.76.250]:43428 "EHLO
-        mail.bananateam.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbeLFQvB (ORCPT
+        Thu, 6 Dec 2018 11:52:08 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:34632 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeLFQwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:51:01 -0500
-X-Greylist: delayed 480 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Dec 2018 11:51:00 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.bananateam.nl (Postfix) with ESMTP id C95D2334E625
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 17:42:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at bananateam.nl
-Received: from mail.bananateam.nl ([127.0.0.1])
-        by localhost (mail.bananateam.nl [127.0.0.1]) (amavisd-new, port 59111)
-        with ESMTP id JezrnmimSfXR for <linux-kernel@vger.kernel.org>;
-        Thu,  6 Dec 2018 17:42:37 +0100 (CET)
-Received: from bcld-builder3.citrus.local (unknown [171.33.224.226])
-        by mail.bananateam.nl (Postfix) with ESMTPSA id 65A48334E611
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Dec 2018 17:42:37 +0100 (CET)
-To:     linux-kernel@vger.kernel.org
-From:   Ferry van Steen <ferry@bananateam.nl>
-Subject: No screen on Mac 18,1 / A1418 since kernel 4.17.x
-Message-ID: <479de488-dc78-c58f-d31c-140aa7fc1c72@bananateam.nl>
-Date:   Thu, 6 Dec 2018 17:42:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 6 Dec 2018 11:52:07 -0500
+Received: by mail-yb1-f196.google.com with SMTP id a67-v6so955634ybg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4hudTdSDv5qNL7QepcQ/fJ5YR3De7dRNuAhTQWAm3iY=;
+        b=IKGvhL4WWfBQNY7mgvdg4cBcNoW47XDZDieadaurkmZSmxjqgmg1koAfM5lzaj7Nv+
+         seiBkgt7pRlEl1soYKPZPXglbPLJWkZnhP6Olngt4r/t+n39NyVnwBX8AIHuyRgdniN/
+         re8sjXhyLKf7zpTYNLeKHmnVw+ivnBnb87Zxg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4hudTdSDv5qNL7QepcQ/fJ5YR3De7dRNuAhTQWAm3iY=;
+        b=I3cRdf9Hgp8U4VwdaQ0XyhmqNkBIRZgmRrdXZeNUH9fjox/93UWvJrif356i+z0vV5
+         9O3nzLABMpGCHgk7vC5bAPQxQPVk5NC0Xb+pnNgxTJ+0ZYARh56oHAb3bEWPOzv4+PSX
+         qpN9f03llN0vJ4wKgxPzNehE17y2N6f00C9cPC4DZ7xw4z24wJ4QUxCi28s53+1BNpxc
+         RrgiJJ0cP9j0Rup4G/KkBgvkFEeodyxYeKSA2fB/2CWJKjBPjdPEk7S4vW//Hg8RS+dh
+         sPKvt0q44UajoapDGX3iwEe91UBN8cpoNKBBL9e9SUcez3G9C6ZB9DEBUfTEhCdyXVU0
+         MFlw==
+X-Gm-Message-State: AA+aEWY3MM3+Yx3c3yr6mwByeSUi0Dfq0cigd5QayKF+5mT31DhcCSAU
+        K1IVDL+YNNzGZGJseT2ly+//3wQ/Jb0=
+X-Google-Smtp-Source: AFSGD/VZ99xWN+t0fMJxGCpWZM3JJbl5bYz/uitbKorWpWylghDt6CBGo905NdUQYGyo3TwK6+17+g==
+X-Received: by 2002:a81:58c4:: with SMTP id m187mr28942878ywb.300.1544115126429;
+        Thu, 06 Dec 2018 08:52:06 -0800 (PST)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id b144sm359300ywa.33.2018.12.06.08.52.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 08:52:05 -0800 (PST)
+Received: by mail-yb1-f177.google.com with SMTP id j145so911005ybg.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:52:04 -0800 (PST)
+X-Received: by 2002:a25:a22a:: with SMTP id b39-v6mr28748348ybi.209.1544115124380;
+ Thu, 06 Dec 2018 08:52:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181206150156.28210-1-david.abdurachmanov@gmail.com> <20181206150156.28210-2-david.abdurachmanov@gmail.com>
+In-Reply-To: <20181206150156.28210-2-david.abdurachmanov@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 6 Dec 2018 08:51:53 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKfnE_RJL7aA5x-qqYdA9zoTTtKwahg0r5fyW5GqFLgdA@mail.gmail.com>
+Message-ID: <CAGXu5jKfnE_RJL7aA5x-qqYdA9zoTTtKwahg0r5fyW5GqFLgdA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] riscv: add support for SECCOMP incl. filters
+To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, green.hu@gmail.com,
+        deanbo422@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Dec 6, 2018 at 7:02 AM David Abdurachmanov
+<david.abdurachmanov@gmail.com> wrote:
+> The patch adds support for SECCOMP and SECCOMP_FILTER (BPF).
 
-we have received a Mac 18,1 (A1418), from a customer, on which we are 
-unable to get any screen since seemingly 4.17.x (tested with 4.17.16).
+Can you add support to tools/testing/selftests/seccomp/seccomp_bpf.c
+as well? That selftest finds a lot of weird corner-cases...
 
-4.16.16 works fine. Tried several 4.17, 4.18 and 4.19 releases (latest 
-4.19.4), none of these show any output on the screen after the bootloader.
+> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+> index 1c9cc8389928..1fd6e4130cab 100644
+> --- a/arch/riscv/include/asm/thread_info.h
+> +++ b/arch/riscv/include/asm/thread_info.h
+> @@ -81,6 +81,7 @@ struct thread_info {
+>  #define TIF_MEMDIE             5       /* is terminating due to OOM killer */
+>  #define TIF_SYSCALL_TRACEPOINT  6       /* syscall tracepoint instrumentation */
+>  #define TIF_SYSCALL_AUDIT      7       /* syscall auditing */
+> +#define TIF_SECCOMP                    8       /* syscall secure computing */
 
-We've tested mostly with Fedora 27/28/29 kernels, but also with Ubuntu 
-18.04 LTS (which uses 4.15.x and works fine and so does Fedora's 4.16.16 
-(fc28)).
+Nit: extra tab needs to be removed.
 
-Bit at a loss on how to proceed with this. First off, I'm not a 
-driver-/kernel developer. I can compile kernels and capture debug output 
-etc. No clue on how to capture the debug output on this machine however. 
-The machine has USB, but 'lspci -vv' doesn't show any debug capabilities 
-on the USB ports, if it did we would probably be able to acquire a 
-NET20DC for debugging, but I doubt it's possible if the capability isn't 
-listed (never done debugging via USB/NET20DC). There's no serial port 
-(not on the outside at least). We boot a somewhat modified version of 
-Fedora (most of the modification being that it runs entirely from RAM, 
-the initrd is the actual filesystem, no difference trying to boot it 
-from a USB stick / filesystem on a disk or NFS / stock Fedora with 
-kernels 4.17.x or higher).
-
-Sending stuff to netconsole doesn't seem possible either. One of the 
-first things it's supposed to do, if the kernels comes up, is acquiring 
-DHCP. No DHCP request can be captured with these kernels from the NIC, 
-kernel seems to get stuck way before then thus. We also have a script in 
-place that if a FAT32 formatted USB stick is inserted with in the root a 
-file with a certain name, it should dump the logs to the stick. This 
-doesn't happen either, which we presume is another indicator that the 
-kernel locks up / panics.
-
-As stated I'm not a developer. Applying patches, building kernels, 
-running them and probably debugging some stuff with perhaps (slight?) 
-hints are things I probably can do (quite sure on the first 3, done 
-those before many times :)). If there's anybody willing to help with 
-this, please let me know.
-
-Not sure how long we can borrow this hardware btw. Probably a couple of 
-weeks, but will be required to send it back to the customer eventually.
-
-As I have no clue on how to proceed due to the lack of screen / ability 
-to capture anything, I've gathered, from Ubuntu 18.04 live USB:
-
-lspci -vv
-dmidecode
-lsusb -vv
-dmesg
-journalctl
-
-Whom can be downloaded from https://freaky.bananateam.nl/mac-a1418.txz
-
-Thanks in advance and kind regards,
-
+-- 
+Kees Cook
