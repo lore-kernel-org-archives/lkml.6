@@ -3,124 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BAEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02481C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEFA620892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFA620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C4B8220892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 12:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B8220892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeLFMfE (ORCPT
+        id S1729627AbeLFMfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:35:04 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:42044 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729038AbeLFMfE (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 6 Dec 2018 07:35:04 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 13:35:01 +0100
-Received: from [192.168.1.132] (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 10:28:08 +0000
-Message-ID: <1544092087.5492.3.camel@suse.com>
-Subject: Re: [PATCH] Revert "firmware: dmi_scan: Use lowercase letters for
- UUID"
-From:   Jean Delvare <jdelvare@suse.com>
-To:     Peter Korsgaard <peter@korsgaard.com>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Thu, 06 Dec 2018 11:28:07 +0100
-In-Reply-To: <87a7ljyppx.fsf@dell.be.48ers.dk>
-References: <20181205211351.5309-1-peter@korsgaard.com>
-         <1544086444.5492.1.camel@suse.com> <87a7ljyppx.fsf@dell.be.48ers.dk>
-Organization: Suse Linux
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        Thu, 6 Dec 2018 07:35:13 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36766 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbeLFMfN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 07:35:13 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB6CXt9E038715;
+        Thu, 6 Dec 2018 06:33:55 -0600
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB6CXtQc093290
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 06:33:55 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 6
+ Dec 2018 06:33:55 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 6 Dec 2018 06:33:55 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB6CXlCP025926;
+        Thu, 6 Dec 2018 06:33:48 -0600
+Subject: Re: [PATCH v2 00/25] at24: remove
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-i2c@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <netdev@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181113140133.17385-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <e4f83c17-d033-22a4-aedc-08af9558fdf5@ti.com>
+Date:   Thu, 6 Dec 2018 18:03:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181113140133.17385-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-06 at 10:22 +0100, Peter Korsgaard wrote:
-> > > > > > "Jean" == Jean Delvare <jdelvare@suse.com> writes:
+On 13/11/18 7:31 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
->  > On Wed, 2018-12-05 at 22:13 +0100, Peter Korsgaard wrote:
->  >> This reverts commit 712ff25450bd01366301eef81c33e865d901e7b7.
->  >> 
->  >> The output of dmi_save_uuid() is exposed to user space as
->  >> /sys/devices/virtual/dmi/id/*_uuid, so this breaks backwards compatibility,
->  >> E.G.  I have systems that include the content of dmi/id/product_uuid as part
->  >> of the keyphrase for cryptsetup luksOpen.
->  >> 
->  >> As the change was purely cosmetical, revert it to fix such breakage.
+> Now that nvmem has gained support for defining cells from board files and
+> looking them up from relevant drivers[1], it's time for a respin of the
+> previous series[2] that aims at removing struct at24_platform_data from
+> the tree.
 > 
->  > The change is not "cosmetical". The change was done to comply with RFC
->  > 4122:
+> Since I took over maintainership of the at24 driver I've been working
+> towards removing at24_platform_data in favor for device properties.
 > 
->  > https://tools.ietf.org/html/rfc4122
+> DaVinci is the only platform that's still using it - all other users
+> have already been converted.
 > 
->  >   The hexadecimal values "a" through "f" are output as
->  >   lower case characters and are case insensitive on input.
+> One of the obstacles in case of DaVinci is removing the setup() callback
+> from the pdata struct, the only user of which are some davinci boards.
 > 
-> I get that - but it changes the content of sysfs entries, breaking real
-> systems - E.G. a user space ABI regression.
-
-I know it's very convenient to play the "user-space ABI regression"
-card whenever you want a change reverted. However the interface itself
-did not change. The sysfs file name did not change, the nature of its
-contents did not change. The only thing which changed is the exact
-contents details of the file. In my opinion that does not qualify as an
-"ABI regression".
-
-> It is a cosmetic code change in the sense that no known software was
-> broken with the upper case characters.
-
-It bothered someone enough to create a ticket asking me to fix it in
-dmidecode:
-https://savannah.nongnu.org/bugs/index.php?53569
-
-And it wouldn't make sense that the kernel uses a different format from
-dmidecode.
-
->  > If "cryptsetup luksOpen" does not lowercase digits before computing its
->  > key passphrase, then it's not RFC 4122-compliant and should be fixed.
+> First we add support for nvmem to MTD in a way previously discussed with
+> Boris Brezillon and Srinivas Kandagatla.
 > 
-> cryptsetup naturally doesn't know anything about RFC 4122. It just reads
-> a disk encryption keyphrase which happen to include the content of
-> id/product_uuid because of my scripts.
-
-OK, so basically your script infringes RFC 4122, and instead of fixing
-that, you ask me to stop respecting that RFC on my side.
-
-Out of curiosity, what's the purpose of your encryption strategy? That
-someone who would open your computer and steal only the disk (as
-opposed to stealing the whole computer) would be unable to read the
-disk's contents? Do thieves really do that?
-
->  > Nak. This is too late. Changing it again would just add confusion.
+> Then, since most boards use the EEPROM to store the MAC address, we register
+> relevant cells for all users, implement a function that allows to read
+> the MAC address from nvmem (and also replaces the previous DT-specific
+> variant) and make davinci_emac aware of it.
 > 
-> Please reconsider. 4.17 is from June, and 4.19 has only recently become
-> LTS.
+> Next we switch all davinci users to using at24 device properties instead
+> of platform data. While we're at it: we remove all other traces of the
+> setup callback and platform data from davinci.
+> 
+> Finally we remove the at24 platform data structure.
+> 
+> I kept the review tags in patches that haven't changed from the last
+> submission.
+> 
+> As far as merging of this series goes: I'd like to avoid dragging it over
+> four releases. The series is logically split into five groups:
+> 
+> patches 1-2: nvmem and mtd changes
+> patches 3-9: davinci arch-specific changes
 
-I can't see how this is related with kernel 4.19 becoming LTS.
+Applied patches 3-9 to davinci tree for v4.21
 
-My patch has been public since April 8th, 2018. It has been in 3
-official kernel versions already. I did not hear any complaint about
-that change in 8 months. You are the first one to complain, and that's
-about a custom script that's not RFC-compliant and that you could fix
-with a one-liner.
+> patches 10-13: networking changes
+> patches 14-24: davinci specific again
+> patch 25: final at24 change
+> 
+> With that I believe we can do the following: Greg KH could pick up the
+> first two patches into his char-misc tree. Sekhar would take the second
+> group and the third would go through the networking tree since the first
+> three sets are not linked in any way. This would be merged for 4.21. Then
+> for the next release Sekhar would pick up 14-24, provide an immutable
+> branch for me and I'd merge the final patch for at24 and send it upstream
+> through Wolfram's i2c tree (maybe we could even delay the i2c PR in the
+> merge window to avoid the immutable branch altogether).
+> 
+> [1] https://lkml.org/lkml/2018/9/21/293
+> [2] https://lkml.org/lkml/2018/8/8/528
 
-Look, you can imagine that I was perfectly aware of what I was doing
-when I made that change, and that I pondered the decision carefully at
-that time. And my decision was that the change should be made. As far
-as I'm concerned, this ship has sailed already, sorry.
-
--- 
-Jean Delvare
-SUSE L3 Support
+Thanks,
+Sekhar
