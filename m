@@ -2,100 +2,159 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2138CC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED112C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBCB3213A2
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:02:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCB3213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id AD9E0214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:02:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCQLr7Pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9E0214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbeLFDCB (ORCPT
+        id S1728905AbeLFDCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 22:02:01 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39347 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727794AbeLFDCB (ORCPT
+        Wed, 5 Dec 2018 22:02:36 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:42117 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728827AbeLFDCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 22:02:01 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so18806262edt.6;
-        Wed, 05 Dec 2018 19:02:00 -0800 (PST)
+        Wed, 5 Dec 2018 22:02:35 -0500
+Received: by mail-it1-f202.google.com with SMTP id g7so18798065itg.7
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 19:02:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tgeoai6qROX/FycIiL2qS00+BtuAbpq6RoiZsk3K9oU=;
+        b=YCQLr7PqopA8tHRGeAQutUuoq6u8FT+YsKGe2SnaTG7CVWtKPD3behiT4zOmPlH0Hb
+         UA8lxYK/A8dR5ALbYlVp/n+2/VtwQdte43IXtB+rg5q9ywVMogDxqj21TJWCrC46mEQj
+         zyW8qPdN4DFJCG47vyKfLf4Ms4OY2e/ByeqMXjYp18Fpgz/xEErqL+dUOKL5npl64eoN
+         Xpk3hEVxj+5biE06YPi+kkW4IJ/OE7gfXl734pd21Oz0vpTOqw7DuMTVBLtO55Kf/55S
+         nO+DUunRGWy47W01sO8VZlcSOt9sxdIVQeoff2Yec8MlOGAUw4vRLsx7P5vLvmuUT1In
+         uK9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8vChUQErCySB5pPQauDNCeDK4RanyGb3OBR/VfuVN84=;
-        b=BXgX9AKQi8wdg52HdG3Rq+GmETOWCWxIP6wRhvJAo8gJVQ1Au0MfljYXqpYpf8FKGd
-         rok1wmXYznQ7aQkvCYSgUoxhZBsfODn3hnTjwBHHqFnpvpgeO/cReQYmN7HnPWANv2Rj
-         pad/tNyQXK9HzHB7kILVpxMp8P1x3n7SDR2S8NvHvjzx0OhuLy0EpRBF4Tq6abk0Sk1o
-         fhhqswbW1iNNglzdui8Iw4kqS0yZ57Ye2TEf/RqCvv9Z4/rlJ5BXcjjxDv4qkxOk5cdD
-         Y1aQs3qIGeypjvCigLZFHgBfpwoGD6yiQxK8wEWCxOS9bwWnGQZmosSzEohuX124npfm
-         qlnA==
-X-Gm-Message-State: AA+aEWbMCNPRIPMkOeghCwibtT+vX2ECrZXXl43+nVjhHlzDBh2irIV2
-        TzS27NNFRbL4CWBuzDIEwOuR0e+ob60=
-X-Google-Smtp-Source: AFSGD/WJkGGdpLPudEBp2KakK8E43bDQ3bNbIE70ZqiiqaXQgfqqckCDnQtBzlRJbfORFDilmXvOlg==
-X-Received: by 2002:a50:ae8f:: with SMTP id e15mr23708029edd.250.1544065319632;
-        Wed, 05 Dec 2018 19:01:59 -0800 (PST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id 24sm5910432eds.97.2018.12.05.19.01.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 19:01:59 -0800 (PST)
-Received: by mail-wm1-f51.google.com with SMTP id a18so14964174wmj.1;
-        Wed, 05 Dec 2018 19:01:59 -0800 (PST)
-X-Received: by 2002:a1c:91d1:: with SMTP id t200mr17777709wmd.111.1544065318756;
- Wed, 05 Dec 2018 19:01:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20181203101547.16835-1-jagan@amarulasolutions.com>
- <20181203101547.16835-5-jagan@amarulasolutions.com> <CAGb2v67ocaKL05yt68F+juBeAq8BRQ49mB4uoHWijGRy8duamw@mail.gmail.com>
- <CAMty3ZAd9eZRkBM2Pitp_B+kVLsGjufL6ALMCJ=f7iUL=7SfsQ@mail.gmail.com>
-In-Reply-To: <CAMty3ZAd9eZRkBM2Pitp_B+kVLsGjufL6ALMCJ=f7iUL=7SfsQ@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 6 Dec 2018 11:01:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66kEStHyg1apCsDcAEVk6Gr5xiJ4tV50+0TL2k+CZwtjQ@mail.gmail.com>
-Message-ID: <CAGb2v66kEStHyg1apCsDcAEVk6Gr5xiJ4tV50+0TL2k+CZwtjQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] dt-bindings: input: touchscreen: goodix: Document
- vcc-supply property
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tgeoai6qROX/FycIiL2qS00+BtuAbpq6RoiZsk3K9oU=;
+        b=bHFL2rD5WEeACNlIf9yv9rRiUPoGpeBYO8TcxZiIBVyQ4cOuiktA2ti432sO1dEwJl
+         LZyJ6WgVA4CJPHR6nBa5rseuqp4Bo4wA0jsPR9ifTwFErHvDaPX3+vwrA3NTGN6+//ld
+         2M0l9wdq6n7FnxOy77aQ/BRQDAANeKGVql+mfDbhy/ndLCqucnWjEXzlqbNtjTN3DxzY
+         fe04i0zQJB/VbBfygY9bz+85h75UeiT/KIpE87iFKd+bK+8BMUAaWFT9waR9aFFUt9wp
+         Ythc7lVnVN8wG2ZmyChqKisVm3B2sHEaglWTgA/hD1O7raTzPO8DqO1NtFw18QwOBWtt
+         BtZw==
+X-Gm-Message-State: AA+aEWZE1OthyH0HiDVdqBhhyXqAeZmiP5/j3+S2pQ/rCnis9FMlhAOb
+        kNJMEkvzVtgKTUwfO7ZYKJvjd1UNEQ3e
+X-Google-Smtp-Source: AFSGD/Ww592CVXXfU+pAo96L+/WmomUZ80os/hvomtYHsLrhIYP8ZwtGp3yYlp44Ocjd3WrsXgG+HiEDe+dJ
+X-Received: by 2002:a24:134b:: with SMTP id 72mr14549680itz.15.1544065354711;
+ Wed, 05 Dec 2018 19:02:34 -0800 (PST)
+Date:   Thu,  6 Dec 2018 11:02:27 +0800
+Message-Id: <20181206030227.9507-1-kyletso@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
+Subject: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO selection
+From:   Kyle Tso <kyletso@google.com>
+To:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc:     badhri@google.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kyle Tso <kyletso@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 3:56 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Mon, Dec 3, 2018 at 4:11 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > On Mon, Dec 3, 2018 at 6:16 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > vcc-supply property is need for some Goodix CTP controller like GT5663
-> > > where 3.3V external pull-up regulator connected via controller VCC pin.
-> >
-> > "External pull-up regulator" sounds fishy. Chips have power supply
-> > pins, either combined, or separate rails for analog, digital, and I/O.
-> > For Goodix chips these are AVDD28, AVDD22, DVDD12, amd VDDIO. The name
-> > and description you provide match none of these.
->
-> We have vcc pin in the connector to supply vcc-ctp, but indeed it is
-> AVDD28 supply as per the reference schematic design[1] Page 23.  Host
-> interface has AVDD pin which is connected to ADVDD28 on goodix chip,
-> so I can name this as avdd28-supply. is that OK?
+Current matching rules ensure that the voltage range of selected Source
+Capability is entirely within the range defined in one of the Sink
+Capabilities. This is reasonable but not practical because Sink may not
+support wide range of voltage when sinking power while Source could
+advertise its capabilities in raletively wider range. For example, a
+Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed Nominal Voltage)
+will not be selected if the Sink requires 5V-12V@3A PPS power. However,
+the Sink could work well if the requested voltage range in RDOs is
+5V-11V@3A.
 
-Yeah. That's better. It's always best to be precise with hardware
-descriptions. If you simplify it, the reason should be given in
-detail. And it should be a good one.
+To improve the usability, change the matching rules to what listed
+below:
+a. The Source PDO is selectable if any portion of the voltage range
+   overlaps one of the Sink PDO's voltage range.
+b. The maximum operational voltage will be the lower one between the
+   selected Source PDO and the matching Sink PDO.
+c. The maximum power will be the maximum operational voltage times the
+   maximum current defined in the selected Source PDO
+d. Select the Source PDO with the highest maximum power
 
-ChenYu
+Signed-off-by: Kyle Tso <kyletso@google.com>
+---
+ drivers/usb/typec/tcpm/tcpm.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 3620efee2688..3001df7bd602 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -2213,7 +2213,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+ 	unsigned int i, j, max_mw = 0, max_mv = 0;
+ 	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
+ 	unsigned int min_snk_mv, max_snk_mv;
+-	u32 pdo;
++	unsigned int max_op_mv;
++	u32 pdo, src, snk;
+ 	unsigned int src_pdo = 0, snk_pdo = 0;
+ 
+ 	/*
+@@ -2263,16 +2264,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+ 					continue;
+ 				}
+ 
+-				if (max_src_mv <= max_snk_mv &&
+-				    min_src_mv >= min_snk_mv) {
++				if (min_src_mv <= max_snk_mv &&
++				    max_src_mv >= min_snk_mv) {
++					max_op_mv = min(max_src_mv, max_snk_mv);
++					src_mw = (max_op_mv * src_ma) / 1000;
+ 					/* Prefer higher voltages if available */
+ 					if ((src_mw == max_mw &&
+-					     min_src_mv > max_mv) ||
++					     max_op_mv > max_mv) ||
+ 					    src_mw > max_mw) {
+ 						src_pdo = i;
+ 						snk_pdo = j;
+ 						max_mw = src_mw;
+-						max_mv = max_src_mv;
++						max_mv = max_op_mv;
+ 					}
+ 				}
+ 			}
+@@ -2285,14 +2288,16 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+ 	}
+ 
+ 	if (src_pdo) {
+-		pdo = port->source_caps[src_pdo];
+-
+-		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
+-		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
+-		port->pps_data.max_curr =
+-			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
++		src = port->source_caps[src_pdo];
++		snk = port->snk_pdo[snk_pdo];
++
++		port->pps_data.min_volt = max(pdo_pps_apdo_min_voltage(src),
++					      pdo_pps_apdo_min_voltage(snk));
++		port->pps_data.max_volt = min(pdo_pps_apdo_max_voltage(src),
++					      pdo_pps_apdo_max_voltage(snk));
++		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
+ 		port->pps_data.out_volt =
+-			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
++			min(port->pps_data.max_volt, port->pps_data.out_volt);
+ 		port->pps_data.op_curr =
+ 			min(port->pps_data.max_curr, port->pps_data.op_curr);
+ 	}
+-- 
+2.20.0.rc2.403.gdbc3b29805-goog
+
