@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27910C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C840EC67839
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3ECA20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F30D20850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107984;
-	bh=cfkpbOvBPA4wCmjcrxwBmqwnvgw7ncL3RuTK1eNMXlg=;
+	s=default; t=1544107987;
+	bh=V5Mr+OZBTfCvt8IXkHREPJB8FZkVG45+TYrCGr6dlms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZW++c0dCToPLUZsN4//ISeZXDwIAuXpIdbteFKfDNF32NIOPgpnkNzU++rM2dDIKo
-	 wac6twNVS6t41KEtGHBo1hmW1HEGV4bawbUw+Z4cn0n0W/LDyk/MFXhZUct9lptvAD
-	 6ebDtzHAmoSHosfVC2u5xqED/S6F1kAQSPCYknV4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3ECA20850
+	b=hOcqsHIMnIEm1wAhMuPLdxZfZuu26AoH0NmJ8JBKoMH7GlWcSOTpUOf7OHdffvDoK
+	 qgZ0imAolt2vbswLoMk4vzvdZ0hmuZIRfQPcKkJ6YcBF55aJV7P550+ubnKUUPuoM5
+	 y3tE4uKyT39wOKDq3JqT7Png4z456JWXIIpJb7UI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F30D20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbeLFOpp (ORCPT
+        id S1726628AbeLFOxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:45:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50286 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:53:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731094AbeLFOph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:45:37 -0500
+        id S1731124AbeLFOpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:45:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB01520661;
-        Thu,  6 Dec 2018 14:45:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C181420661;
+        Thu,  6 Dec 2018 14:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107536;
-        bh=cfkpbOvBPA4wCmjcrxwBmqwnvgw7ncL3RuTK1eNMXlg=;
+        s=default; t=1544107544;
+        bh=V5Mr+OZBTfCvt8IXkHREPJB8FZkVG45+TYrCGr6dlms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHdJbSW6j8AYej6kAO9D+ty5ZJqum2AojATO16zfhNeMImAFfA54NziR4A2HRDcxm
-         dFS+qAr7bI2eqwkYqm47kF43agzOk2nLL6Ixao6vSReX9SFv+ELsEq0YUb/rvLUnWz
-         8jquVvkswwxOH4KPEsY703wZMtshTz6tWCD/aoKw=
+        b=FLjXlOuNckLOk8+ig6OtNPs0dQgEtpATtlchad2vxEqY/ENMoUS03qYNrM6Hj0X3I
+         CyGSlBt3Pib0VbAfNOt3JuHCKgLWrwS5v/TCe85NknccUGAE3ydfPrvVHb3+Vh2HnL
+         NlLOFwCnWaA3w1u/YO/MNAGApmQCLcgJkCcztn4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Cupertino Miranda <cmiranda@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 036/101] arc: [devboards] Add support of NFSv3 ACL
-Date:   Thu,  6 Dec 2018 15:38:35 +0100
-Message-Id: <20181206143013.618904215@linuxfoundation.org>
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 047/101] tipc: use destination length for copy string
+Date:   Thu,  6 Dec 2018 15:38:46 +0100
+Message-Id: <20181206143014.276285423@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
 References: <20181206143011.174892052@linuxfoundation.org>
@@ -69,122 +69,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-commit 6b04114f6fae5e84d33404c2970b1949c032546e upstream.
+commit 29e270fc32192e7729057963ae7120663856c93e upstream.
 
-By default NFSv3 doesn't support ACL (Access Control Lists)
-which might be quite convenient to have so that
-mounted NFS behaves exactly as any other local file-system.
+Got below warning with gcc 8.2 compiler.
 
-In particular missing support of ACL makes umask useless.
-This among other thigs fixes Glibc's "nptl/tst-umask1".
+net/tipc/topsrv.c: In function ‘tipc_topsrv_start’:
+net/tipc/topsrv.c:660:2: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
+  strncpy(srv->name, name, strlen(name) + 1);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+net/tipc/topsrv.c:660:27: note: length computed here
+  strncpy(srv->name, name, strlen(name) + 1);
+                           ^~~~~~~~~~~~
+So change it to correct length and use strscpy.
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Cupertino Miranda <cmiranda@synopsys.com>
-Cc: stable@vger.kernel.org	#4.14+
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/configs/axs101_defconfig          |    1 +
- arch/arc/configs/axs103_defconfig          |    1 +
- arch/arc/configs/axs103_smp_defconfig      |    1 +
- arch/arc/configs/nps_defconfig             |    1 +
- arch/arc/configs/nsimosci_defconfig        |    1 +
- arch/arc/configs/nsimosci_hs_defconfig     |    1 +
- arch/arc/configs/nsimosci_hs_smp_defconfig |    1 +
- arch/arc/configs/vdk_hs38_defconfig        |    1 +
- arch/arc/configs/vdk_hs38_smp_defconfig    |    1 +
- 9 files changed, 9 insertions(+)
+ net/tipc/subscr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -97,6 +97,7 @@ CONFIG_VFAT_FS=y
- CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -97,6 +97,7 @@ CONFIG_VFAT_FS=y
- CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -98,6 +98,7 @@ CONFIG_VFAT_FS=y
- CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/nps_defconfig
-+++ b/arch/arc/configs/nps_defconfig
-@@ -76,6 +76,7 @@ CONFIG_PROC_KCORE=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_ROOT_NFS=y
- CONFIG_DEBUG_INFO=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/nsimosci_defconfig
-+++ b/arch/arc/configs/nsimosci_defconfig
-@@ -71,5 +71,6 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
---- a/arch/arc/configs/nsimosci_hs_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_defconfig
-@@ -69,5 +69,6 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
---- a/arch/arc/configs/nsimosci_hs_smp_defconfig
-+++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
-@@ -80,6 +80,7 @@ CONFIG_EXT2_FS_XATTR=y
- CONFIG_TMPFS=y
- # CONFIG_MISC_FILESYSTEMS is not set
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
- CONFIG_FTRACE=y
---- a/arch/arc/configs/vdk_hs38_defconfig
-+++ b/arch/arc/configs/vdk_hs38_defconfig
-@@ -88,6 +88,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
---- a/arch/arc/configs/vdk_hs38_smp_defconfig
-+++ b/arch/arc/configs/vdk_hs38_smp_defconfig
-@@ -87,6 +87,7 @@ CONFIG_NTFS_FS=y
- CONFIG_TMPFS=y
- CONFIG_JFFS2_FS=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/net/tipc/subscr.c
++++ b/net/tipc/subscr.c
+@@ -389,7 +389,7 @@ int tipc_topsrv_start(struct net *net)
+ 	topsrv->tipc_conn_new		= tipc_subscrb_connect_cb;
+ 	topsrv->tipc_conn_release	= tipc_subscrb_release_cb;
+ 
+-	strncpy(topsrv->name, name, strlen(name) + 1);
++	strscpy(topsrv->name, name, sizeof(topsrv->name));
+ 	tn->topsrv = topsrv;
+ 	atomic_set(&tn->subscription_count, 0);
+ 
 
 
