@@ -2,113 +2,113 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2171DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA893C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45E420878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E35F20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:56:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EjgA4tia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C45E420878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDgbDAfC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E35F20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbeLFW4D (ORCPT
+        id S1726191AbeLFW4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:56:03 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38958 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbeLFW4D (ORCPT
+        Thu, 6 Dec 2018 17:56:25 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46480 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeLFW4Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:56:03 -0500
-Received: by mail-yw1-f66.google.com with SMTP id j6so288503ywj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:56:01 -0800 (PST)
+        Thu, 6 Dec 2018 17:56:25 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so882061pfe.13;
+        Thu, 06 Dec 2018 14:56:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JW5CivxuM5IQiF1ypLDdmu+2GGtRJqXw6EH7cbr+0Do=;
-        b=EjgA4tiapHVa1rfADWDddNLowb/tmklLw78VSGIAC/j+WKcCwqTJaV5/VaLUy+xWYS
-         cB/5CNJrDGX0sObMm7AVX8bSnfpZeClHo5lNdXLsx39jHqOemSg4EjiPi1zIWA85f8ZI
-         H993ZexSjGYyw2YAaO7XINnaPsAwTgFFuPPe8=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OPPFxnkhul+WXmB0ai4sAKLoMT/TZYvfs1nrdfg58HE=;
+        b=cDgbDAfCjhDtZ+GxQaIr09IJywcBp0MEo0tG6utd61H+BNv66/97lhWAq9qArJ2Nab
+         vLBCrpP0fMXBclaU3yIdc9MtDl6rrrPXjbPPiPBHt+qdkHWLYKMyUdI3CC40xQL0jI/Z
+         y2rZMYYM4YhFJU3EfUVy+2w5V2KSmz+ZlC9+/oFdeult4lHtEa/oZPMEirCET0OUoZCm
+         Dum+mJZqfgHQSrnqstToZVUEQk8n9gCmRk5XSXKrmfvWkNyMpDDF3cE3nakOewgPunEL
+         3TodOp8IVJ9cbaXNweKs9HsRPZ+865Ul197Jl27+bMtNgOEYorpgrhJCeG2eIuGCzP6q
+         W3wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JW5CivxuM5IQiF1ypLDdmu+2GGtRJqXw6EH7cbr+0Do=;
-        b=EXSw+QHXixjVEdeli/qaJ3lhqphGA7t76TAy5xeieoW4a/hAls7vysQLgD3kUArnDL
-         JkU/+KJuB6t4srnw+wZkAeIJ0uftIVO2NXiv9jxzA8BUcvmJXmbGY+LcJbKZ8jabF2W/
-         vS6JaArH4HnJnMiuYwdCT9T11AXZ49+C6Yz3FQ9ZAcJvqq7NacsjBwjmGKlG5nPwoSbV
-         QVxxLrT2CAeXlyPACuKxYK6r078RUCkzkvgGA8RpPpId7d7Q3pNYo6yyyCiuYkIbetNw
-         2dTcvLH120a2YRJe/d/Hq9rCigXC+956wmlc9DM1bL6QfEmU/gys6yjEQM6vyfwllzQs
-         P5wQ==
-X-Gm-Message-State: AA+aEWYssHtm6CzDqHXFbYyA7Gto11KBg1POwpbGoaV2vNPoeeirXhVB
-        D5OPNhhQEHw1dzsZ+V384s6C1SvC2Xg=
-X-Google-Smtp-Source: AFSGD/XX6k7PSBRUceWpp/i4iJmQSnKW1SLqTA/BIV6xxreKx9QfIs1ckI2ZKEkCs4zwHHqB8p4KeQ==
-X-Received: by 2002:a0d:f603:: with SMTP id g3mr30177748ywf.75.1544136961084;
-        Thu, 06 Dec 2018 14:56:01 -0800 (PST)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id w2sm1392455ywl.10.2018.12.06.14.55.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 14:55:59 -0800 (PST)
-Received: by mail-yb1-f180.google.com with SMTP id c15so1555395ybf.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:55:58 -0800 (PST)
-X-Received: by 2002:a25:2347:: with SMTP id j68mr21247092ybj.137.1544136958487;
- Thu, 06 Dec 2018 14:55:58 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OPPFxnkhul+WXmB0ai4sAKLoMT/TZYvfs1nrdfg58HE=;
+        b=sbcD4mnUojCz2nj5xQVEGtTxlySWYX2TYu7/RJ2emvlmZIxF46B1iFHpzu0UurQ+mb
+         D5yFqiJa0YYib9phh8SK0l9paGahIdYjHqXtDtDySCuP1g+nkw77jTJaOhek7nporhco
+         H1tdAjLooBEvkxEW9Zedahtw9Zv9ZvG1BhVaT1CdQrmOFZXHIP24dpmD9VvZ4S6vzuK4
+         ogj/AddvMOxsNWod3yWEL8PH3JVF1CtltKt+kizDPQPAfRp60kb5w9YrnUaz4AhrGDI5
+         qi9qcCEg9oPNaQ5Zty+EcrfAUIGnhS4+OZ3f7cf9KQMjdCOE8WtzzglqlY5W9TgUR4tp
+         KfXg==
+X-Gm-Message-State: AA+aEWbluObQRqBaDf28LMTkeLpISu5NTqzwBi/lO6sDPgj03xI41TOl
+        RbbJRmC9rkIrJ18igJrH3gA=
+X-Google-Smtp-Source: AFSGD/W6yrie/j7NnS8q5O1IEBtNAdl/88ZbRk/dV72Slloju1JyPHxxKslbCXeJovGkLReC0GgYCg==
+X-Received: by 2002:a63:ef04:: with SMTP id u4mr26144849pgh.197.1544136982600;
+        Thu, 06 Dec 2018 14:56:22 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id g15sm6006539pfj.131.2018.12.06.14.56.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 14:56:21 -0800 (PST)
+Date:   Thu, 6 Dec 2018 14:56:19 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Peter Hutterer <peter.hutterer@who-t.net>
+Cc:     Benjamin Tissoires <benjamin.tissoires@gmail.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: restore EV_ABS ABS_RESERVED
+Message-ID: <20181206225619.GA34001@dtor-ws>
+References: <20181205230336.GA23462@jelly>
+ <82d624a7-349b-c706-cda9-81a22f2473e0@ginzinger.com>
+ <CAN+gG=FVvUFcYYcBnaOaj-YRQCgu4-FYFuJGccHhK+u31EjuvQ@mail.gmail.com>
+ <20181206224605.GA27899@jelly>
 MIME-Version: 1.0
-References: <20181112192443.GL3645@cisco> <20181127232126.GA23658@cisco>
- <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
- <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
- <87zhtthkuy.fsf@xmission.com> <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
- <87k1ktqoe5.fsf@xmission.com> <CAGXu5jJgFrWajK5m8ev72DV9ueznLnbGV2-UGECnz0iZ_EFDUg@mail.gmail.com>
- <87r2euiuql.fsf@xmission.com> <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
- <20181206192059.GD10086@cisco> <87lg528io7.fsf@xmission.com>
- <CAGXu5jLUXCP1UWpiFRJ=jM8jwrnS1v2By8c4ywRPhAdOPAUMtA@mail.gmail.com> <87tvjq2s55.fsf@xmission.com>
-In-Reply-To: <87tvjq2s55.fsf@xmission.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 6 Dec 2018 14:55:45 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+a3kuS38gfB5tswYiLvnpLT3ZYzDdxMX5+F9Y-XG6r0g@mail.gmail.com>
-Message-ID: <CAGXu5j+a3kuS38gfB5tswYiLvnpLT3ZYzDdxMX5+F9Y-XG6r0g@mail.gmail.com>
-Subject: Re: siginfo pid not populated from ptrace?
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206224605.GA27899@jelly>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 2:43 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Kees Cook <keescook@chromium.org> writes:
-> > What should we do for v4.20? I need to have the selftests actually
-> > passing. :)
->
-> For v4.20 we need to do one of two things.
-> 1) Present a plausible case that someone will could care about,
->    we document it in the commit we can perform my earlier partial revert.
+On Fri, Dec 07, 2018 at 08:46:05AM +1000, Peter Hutterer wrote:
+> On Thu, Dec 06, 2018 at 10:24:11AM +0100, Benjamin Tissoires wrote:
+> > On Thu, Dec 6, 2018 at 9:36 AM Martin Kepplinger
+> > <martin.kepplinger@ginzinger.com> wrote:
+> > >
+> > > On 06.12.18 00:03, Peter Hutterer wrote:
+> > > > ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
+> > > > ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
+> > > >
+> > > > Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+> > >
+> > > Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > 
+> > Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > 
+> > Dmitry, I do not think this one will conflict with the high res wheel
+> > patches, so I think it should be safe to take it through your tree.
+> > If you think it'll be an issue, I can also take it through the HID one.
+> 
+> fwiw, patch was made on top of v4.20-rc5, so it shouldn't conflict.
 
-If SIGSTOP si_pid can't be used to determine who sent the signal
-reliably even before, then I'm guessing we'll never see a real-world
-case where this matters.
+My tree is behind that ;) so I would actually prefer if Benjamin/Jiri
+would take it through their tree with my:
 
-> 2) Remove the sanity check seccomp_bpf.c
->
-> I really just want to ensure we have clear reasoning here.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I'll remove it for now and add a link to this conversation, in case
-anyone else goes looking.
-
--Kees
+Thanks.
 
 -- 
-Kees Cook
+Dmitry
