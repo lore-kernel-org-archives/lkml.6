@@ -2,90 +2,111 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F0FC67838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCBEC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A379E20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB3921479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:45:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="p1lNo44i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A379E20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mKV5ebHo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB3921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbeLFJnu (ORCPT
+        id S1729312AbeLFJpY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:43:50 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:32794 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeLFJnu (ORCPT
+        Thu, 6 Dec 2018 04:45:24 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46828 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFJpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:43:50 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p6so232580eds.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 01:43:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7cGrXL3/HboMoDAghURaQXrc5M31gPRjVll6TID/Nlk=;
-        b=p1lNo44ib+tgfWEYWLdDXyhjR6IBy2FSkkAPlH66z8igVkPuwF39U3ODMiyF3JI+hF
-         DBPAdh/C77gpA6qHsPB0RwGUdp3UQJeL3qWatIU99tzVppUsYdOMC/NZsQTcICc2QPX8
-         X7x/1uD9F2dLdwuth/QXoiVAurfetFcXz5MMTlaQMo5QqnkQDSYQQjbIY9RQOdbDCsjy
-         Ds34+mRupiYdxO8+HZe2z7DQkbjMAr3mhLXV3BOb0UxmevUHim9tyj1EOqiMn2AEur6P
-         XR5f1W/zZBLVwDEruot9KsTDt9hTLns0kSEoerfXY44UQGBcXPHxZr8R6UXeokI7uwCV
-         fPFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7cGrXL3/HboMoDAghURaQXrc5M31gPRjVll6TID/Nlk=;
-        b=CU1H4vNiOmyDsbAjZjb57lkr8VEFrds8zEdYJQ/v9dS4LNPCRXAZS96gWJ1q6Lb8w9
-         SgwzaJ4f86QTOb5gqE4ccPfqvgBqnbbld8/FjFGCjjmKlxEi5lQ3RvTDMe8drRh0zPBw
-         PC1uv8/1gmRBetdx4DOWWEhyJ0Boix72w5h6AlBhbudxAZF//H9fH7IxD2E+RsfBcB7q
-         y5gKeKu1Qz/n+ibMHYJ9xTDG3qKSiILhZC3wXTl8xwqfWTuk7woZPpGKpxIJYC88qcyL
-         MoXJHvsxLmro8GER0tYUhQ6zN4m/9XbQCaGi5cjK1bTQ5D0LGANPxL0MyCs6kipGfS/j
-         AB8g==
-X-Gm-Message-State: AA+aEWa/07lXhlJkPAQKfH33UcVgd7Jw6zpfiiMFe+LegEx6od3rvh1N
-        3W0znLdQtjfCWFPJguLJjkjlUrZjryo=
-X-Google-Smtp-Source: AFSGD/WAczMABk/T+f1Fc3v0qr4oUldeiinZZZ8MxiHJNBuQX4jrmG232gVLwl+6Wf4uH2KjvMD08g==
-X-Received: by 2002:a50:b205:: with SMTP id o5mr23507303edd.245.1544089427800;
-        Thu, 06 Dec 2018 01:43:47 -0800 (PST)
-Received: from [192.168.192.38] ([80.111.179.123])
-        by smtp.gmail.com with ESMTPSA id u33sm45773edm.88.2018.12.06.01.43.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 01:43:47 -0800 (PST)
-Subject: Re: [PATCH 2/2] staging: greybus: Added space between string
- concatenated
-To:     Sicilia Cristian <sicilia.cristian@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1543956271.git.sicilia.cristian@gmail.com>
- <5b215b50d4da9a7730450a83fb5e3a167b65e03a.1543956271.git.sicilia.cristian@gmail.com>
- <42632636-9b08-bd75-b789-88ef82f52c2c@nexus-software.ie>
- <20181205210034.GA24054@peano>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Message-ID: <e7902148-4f80-2d9c-7f51-d6bd21bf9eff@nexus-software.ie>
-Date:   Thu, 6 Dec 2018 09:43:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 6 Dec 2018 04:45:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+Oc9aPprVL/I8aoLjV3ntWcij0NK7R/RtAEC+ha4tto=; b=mKV5ebHo5lV4y9zyrU2euNCRc
+        wuSf9414bTPHTvA0KSNa5woZt/SBWRuEZyfuEzhbp9A1B1mWu2RWw4tSN9VU73LBfne/gpJ3TpiyY
+        SArF2D2WKFTw130pW9wTagCc4W4cr/qWcJPOFaBKmTD7VAQpVTbTfSnZz6tQnGTZjwqv4sYLyruZx
+        5GAxh2v7hI1SY7jTcslSXpM5uH/a7Yz+J1qqLJ2scxlQyzjWgsfSSbr1wePV2XmsNrIE0RDxOHk/L
+        8PRep4ct6P3rgzIaMLvn8ev+0AG0u7JzJ/MdZAgB1MLEM4DJukpyhRvgOHcioleL/dHuJFvVkDtUi
+        UGEa04UWQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUqDG-0005JO-A1; Thu, 06 Dec 2018 09:44:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9054E2029F4C1; Thu,  6 Dec 2018 10:44:51 +0100 (CET)
+Date:   Thu, 6 Dec 2018 10:44:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+Message-ID: <20181206094451.GC13538@hirez.programming.kicks-ass.net>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205210034.GA24054@peano>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/12/2018 21:00, Sicilia Cristian wrote:
-> It doesn't change the result string
+On Wed, Dec 05, 2018 at 03:13:56PM -0800, Andy Lutomirski wrote:
 
-So why do it then ?
+> > +       if (op == WR_MEMCPY)
+> > +               memcpy((void *)wr_poking_addr, (void *)src, len);
+> > +       else if (op == WR_MEMSET)
+> > +               memset((u8 *)wr_poking_addr, (u8)src, len);
+> > +       else if (op == WR_RCU_ASSIGN_PTR)
+> > +               /* generic version of rcu_assign_pointer */
+> > +               smp_store_release((void **)wr_poking_addr,
+> > +                                 RCU_INITIALIZER((void **)src));
+> > +       kasan_enable_current();
+> 
+> Hmm.  I suspect this will explode quite badly on sane architectures
+> like s390.  (In my book, despite how weird s390 is, it has a vastly
+> nicer model of "user" memory than any other architecture I know
+> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
+> entirely sure what the best smp_store_release() replacement is.
+> Making this change may also mean you can get rid of the
+> kasan_disable_current().
+
+If you make the MEMCPY one guarantee single-copy atomicity for native
+words then you're basically done.
+
+smp_store_release() can be implemented with:
+
+	smp_mb();
+	WRITE_ONCE();
+
+So if we make MEMCPY provide the WRITE_ONCE(), all we need is that
+barrier, which we can easily place at the call site and not overly
+complicate our interface with this.
+
+Because performance is down the drain already, an additional full
+memory barrier is peanuts here (and in fact already implied by the x86
+CR3 munging).
