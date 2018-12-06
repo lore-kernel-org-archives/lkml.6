@@ -2,104 +2,120 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6CFC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790CAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A2C20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A2C20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 15F1B2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 05:25:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p/bRv4dV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F1B2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbeLFFWn convert rfc822-to-8bit (ORCPT
+        id S1729011AbeLFFZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 00:22:43 -0500
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:48137 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbeLFFWn (ORCPT
+        Thu, 6 Dec 2018 00:25:32 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54251 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbeLFFZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 00:22:43 -0500
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wB65MPNd002833
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 6 Dec 2018 14:22:25 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB65MP2i006101;
-        Thu, 6 Dec 2018 14:22:25 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wB65KqZi027049;
-        Thu, 6 Dec 2018 14:22:25 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-393006; Thu, 6 Dec 2018 14:21:39 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Thu, 6
- Dec 2018 14:21:38 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Oscar Salvador <OSalvador@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        "Pavel Tatashin" <pasha.tatashin@soleen.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages to
- be offlined
-Thread-Topic: [RFC PATCH] hwpoison, memory_hotplug: allow hwpoisoned pages
- to be offlined
-Thread-Index: AQHUiu9tY5+24nB+PkGyMm7atS1YiqVvf4kAgABK3wCAAM/4gA==
-Date:   Thu, 6 Dec 2018 05:21:38 +0000
-Message-ID: <20181206052137.GA28595@hori1.linux.bs1.fc.nec.co.jp>
-References: <20181203100309.14784-1-mhocko@kernel.org>
- <20181205122918.GL1286@dhcp22.suse.cz> <20181205165716.GS1286@dhcp22.suse.cz>
-In-Reply-To: <20181205165716.GS1286@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.82]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <D4B2E35E61EDEC49BA3DEE4D2EF58E40@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Dec 2018 00:25:32 -0500
+Received: by mail-it1-f195.google.com with SMTP id g85so25319073ita.3;
+        Wed, 05 Dec 2018 21:25:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TvJlEDqqd0kl7auh37IuRFvQbjHwkz0wJzn0om8j0qY=;
+        b=p/bRv4dVdy4hioMO2mXeMNN6rZQee/yI3fH6aZfFHT7INIEzHvkrjGtFafTrqmr1+9
+         m3Xyptf+RV+CcS0AhgcUJzE22+EhBg8g30Tyw0bds8LVdh9ToEUN8k6uID4D40s7OdMn
+         04uyqnaEgIC4n///axqKfLykvywIkSy+HSM1egR6le3OM6e3r8Inr/uiok62grnv67wf
+         mhivvfKfUnlYrcvsuIiwSUW6hJgocCZbnYukSQcnaS/3wxGYxJcYzfHvSqc5GtUn+nRE
+         vKeZefq0I9d3wmLVJF5476aRhyWN1nggfY0gBss+L9bcIJDSjqjqF7nbWpKpW2bT/loz
+         SqaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TvJlEDqqd0kl7auh37IuRFvQbjHwkz0wJzn0om8j0qY=;
+        b=Z16yIfjxTBn7yWGGwmIQ9SNbWGhhxuV7fC0pdErJ3XYbWqvX/NtZHEh1u6/gO1sqfR
+         sZWckDhKf8Agsnskl66rOeuKUyAdbUtxPCPNhL3geemD77i4d+FWN4a/RfvR9S5gpL+7
+         PV9J+9YPAiN+hxD4t8TBPv2h9s/14CTr9yBZpLGowvy1XA2/47lGRd/m7jpxBVn7moyc
+         rXs+3gp+QBY2lZ4eQztmQFxpuNSUqyAucKfK7YDlAQuRzW0S2cXuI/1grrhMFdxWE2q0
+         YsDNIVju3WMcI0QNt8sxHTdH6OUSQrYotQd0birVVGdaXWSUC637d0FFkiQU+l03Ymf0
+         5qSQ==
+X-Gm-Message-State: AA+aEWZFs61OIy8gy7wa0JOUmhaQbeslZ8+cjHxTk9tagQ4r+b75u8hC
+        EFGxtvYgAr8IFzQXUl2zth3m4TDIfd3U5YkURgo=
+X-Google-Smtp-Source: AFSGD/Uh63Cl0kP4bBXQ0SjSXuMkA+HsO5ka8QXCU0Uc3R5q4zKRpb3nRv8iLteEB0VvavmlH9HgSC6KwR4Uw5RsudE=
+X-Received: by 2002:a02:7a58:: with SMTP id z24mr25472227jad.22.1544073930895;
+ Wed, 05 Dec 2018 21:25:30 -0800 (PST)
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+References: <20181205195050.4759-20-robh@kernel.org>
+In-Reply-To: <20181205195050.4759-20-robh@kernel.org>
+From:   Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Wed, 5 Dec 2018 21:25:17 -0800
+Message-ID: <CA+Ln22Gj=1PovdRT9HCun4vkZmHfGh2t6ouOTrFqSZHiNvK1Zw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Use of_node_name_eq for node name comparisons
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
+        <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:57:16PM +0100, Michal Hocko wrote:
-> On Wed 05-12-18 13:29:18, Michal Hocko wrote:
-> [...]
-> > After some more thinking I am not really sure the above reasoning is
-> > still true with the current upstream kernel. Maybe I just managed to
-> > confuse myself so please hold off on this patch for now. Testing by
-> > Oscar has shown this patch is helping but the changelog might need to be
-> > updated.
-> 
-> OK, so Oscar has nailed it down and it seems that 4.4 kernel we have
-> been debugging on behaves slightly different. The underlying problem is
-> the same though. So I have reworded the changelog and added "just in
-> case" PageLRU handling. Naoya, maybe you have an argument that would
-> make this void for current upstream kernels.
+2018=E5=B9=B412=E6=9C=885=E6=97=A5(=E6=B0=B4) 11:51 Rob Herring <robh@kerne=
+l.org>:
+>
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
+samsung/pinctrl-samsung.c
+> index ee6ee2338606..de0477bb469d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1071,7 +1071,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl=
+_drv_data *d,
+>                         continue;
+>                 bank =3D d->pin_banks;
+>                 for (i =3D 0; i < d->nr_banks; ++i, ++bank) {
+> -                       if (!strcmp(bank->name, np->name)) {
+> +                       if (of_node_name_eq(np, bank->name)) {
+>                                 bank->of_node =3D np;
+>                                 break;
+>                         }
+> --
+> 2.19.1
+>
 
-The following commit (not in 4.4.x stable tree) might explain the
-difference you experienced:
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-  commit 286c469a988fbaf68e3a97ddf1e6c245c1446968                          
-  Author: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>                      
-  Date:   Wed May 3 14:56:22 2017 -0700                                    
-                                                                           
-      mm: hwpoison: call shake_page() after try_to_unmap() for mlocked page
-
-This commit adds shake_page() for mlocked pages to make sure that the target
-page is flushed out from LRU cache. Without this shake_page(), subsequent
-delete_from_lru_cache() (from me_pagecache_clean()) fails to isolate it and
-the page will finally return back to LRU list.  So this scenario leads to
-"hwpoisoned by still linked to LRU list" page.
-
-Thanks,
-Naoya Horiguchi
-
+Best regards,
+Tomasz
