@@ -2,54 +2,57 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B25C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B1EC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D6C2082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF43120661
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107256;
-	bh=xQ5KrvsG+MGk6tWUAFWpsGACp0x53xISV3bDcMTd4Kk=;
+	s=default; t=1544107253;
+	bh=NmrluGN++YiEVBbX3BYHqRPc9fIUmYPyX/5aH717/fE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HlHU57n2WBB5yEd9B2McJQ/ZjYA2mKCkItl1T+nNd3J8+XABXbkqgM56mQxtPki8X
-	 SOIjM6tQ/vGjKSYjs1SUxwRkV2+YidL7O/v3Ju+ZTY732y3fjbZNPaWrSzKdi3iehZ
-	 OyjC6pyXpYpQ/Sd2Bt9UsXdWm7VU73FYkE/XKGKU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D6C2082B
+	b=t830kdzhUhwVujhIj9aPlgPasPYTFkFy9pFaex+IDd5G7eGkE8Y+u7GwO0xQSepIp
+	 d2oib0KyifRHtomEhCYfYAv4PzlO/wRbkNmEtxe0TLHhTG/2OQX5GW1xI0ifVf6NmS
+	 nNRQmOiav+Mk8Cudgh3jCyvNS+YnsFGhWOqe126Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF43120661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbeLFOkz (ORCPT
+        id S1730069AbeLFOkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:40:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45046 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730064AbeLFOkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:53 -0500
+        id S1730027AbeLFOku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BFCC20672;
-        Thu,  6 Dec 2018 14:40:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED4C220661;
+        Thu,  6 Dec 2018 14:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107252;
-        bh=xQ5KrvsG+MGk6tWUAFWpsGACp0x53xISV3bDcMTd4Kk=;
+        s=default; t=1544107249;
+        bh=NmrluGN++YiEVBbX3BYHqRPc9fIUmYPyX/5aH717/fE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K6/Oc1oBT39EvFGN5XbcScS8EYy4XvjRJQyaWzyIidoityKbYGXhflzuAg0L6UDVM
-         K3paY3rFOiGHhqQM9SCqmLF6nYC5PRj5bAgpyqwQXRCikabD4fWOJN27DcA9wIHUhp
-         tIbjZ9u+70S4d80j3UbG27vTQRj2yjvQBhSzEXsY=
+        b=RCHPVOPED6qLngmnS8P2/wePQdRtoxki5Z2gsHFBt+cyi3PiSfcNN7scWilVDFxyQ
+         2UjZDB/qSoNitWuTUeVjM2mKdy+7QCUak4FoW5v7i4IkoGAN0UFPNOtdASJIXGRh+L
+         8zND+lbZAKiIvrLLLJL1FmmRLIFW+EyHE35cthWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 31/41] Input: xpad - quirk all PDP Xbox One gamepads
-Date:   Thu,  6 Dec 2018 15:39:11 +0100
-Message-Id: <20181206142952.715381429@linuxfoundation.org>
+        stable@vger.kernel.org, David Bond <dbond@suse.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Hannes Reinecke <hare@suse.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 30/41] scsi: lpfc: fix block guard enablement on SLI3 adapters
+Date:   Thu,  6 Dec 2018 15:39:10 +0100
+Message-Id: <20181206142952.490759327@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -68,70 +71,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cameron Gutman <aicommander@gmail.com>
+From: Martin Wilck <mwilck@suse.com>
 
-commit a6754fae1e66e9a40fed406290d7ca3f2b4d227c upstream.
+commit dfb7513374c1f8e7cd595106fbdba3fd07ebaf30 upstream.
 
-Since we continue to find tons of new variants [0,1,2,3,4,5,6] that
-need the PDP quirk, let's just quirk all devices from PDP.
+Since f44ac12f1dcc, BG enablement is tracked with the LPFC_SLI3_BG_ENABLED
+bit, which is set in lpfc_get_cfgparam before lpfc_sli_config_sli_port() is
+called. The bit shouldn't be cleared before checking the feature.  Based on
+problem analysis by David Bond.
 
-[0]: https://github.com/paroj/xpad/pull/104
-[1]: https://github.com/paroj/xpad/pull/105
-[2]: https://github.com/paroj/xpad/pull/108
-[3]: https://github.com/paroj/xpad/pull/109
-[4]: https://github.com/paroj/xpad/pull/112
-[5]: https://github.com/paroj/xpad/pull/115
-[6]: https://github.com/paroj/xpad/pull/116
-
-Fixes: e5c9c6a885fa ("Input: xpad - add support for PDP Xbox One controllers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Cameron Gutman <aicommander@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: f44ac12f1dcc "scsi: lpfc: Memory allocation error during driver start-up on power8"
+Tested-by: David Bond <dbond@suse.com>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Cc: stable@vger.kernel.org # 4.17.x
+Cc: stable@vger.kernel.org # 4.18.x
+Cc: stable@vger.kernel.org # 4.19.x
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Acked-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/xpad.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c |    6 +++++-
+ drivers/scsi/lpfc/lpfc_sli.c  |    1 -
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -480,18 +480,18 @@ static const u8 xboxone_hori_init[] = {
- };
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -167,7 +167,11 @@ lpfc_config_port_prep(struct lpfc_hba *p
+ 		       sizeof(phba->wwpn));
+ 	}
  
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init1[] = {
- 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
- };
+-	phba->sli3_options = 0x0;
++	/*
++	 * Clear all option bits except LPFC_SLI3_BG_ENABLED,
++	 * which was already set in lpfc_get_cfgparam()
++	 */
++	phba->sli3_options &= (uint32_t)LPFC_SLI3_BG_ENABLED;
  
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init2[] = {
- 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
-@@ -527,12 +527,8 @@ static const struct xboxone_init_packet
- 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init1),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init2),
- 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
+ 	/* Setup and issue mailbox READ REV command */
+ 	lpfc_read_rev(phba, pmb);
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -4969,7 +4969,6 @@ lpfc_sli_config_port(struct lpfc_hba *ph
+ 		phba->sli3_options &= ~(LPFC_SLI3_NPIV_ENABLED |
+ 					LPFC_SLI3_HBQ_ENABLED |
+ 					LPFC_SLI3_CRP_ENABLED |
+-					LPFC_SLI3_BG_ENABLED |
+ 					LPFC_SLI3_DSS_ENABLED);
+ 		if (rc != MBX_SUCCESS) {
+ 			lpfc_printf_log(phba, KERN_ERR, LOG_INIT,
 
 
