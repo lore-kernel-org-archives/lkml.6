@@ -2,78 +2,113 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80B5C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA82C65BAF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BEB208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BEB208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 722D7208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:18:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722D7208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbeLFTSb (ORCPT
+        id S1726069AbeLFTSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:18:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:59094 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbeLFTSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:18:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63072EBD;
-        Thu,  6 Dec 2018 11:18:30 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 33C293F59C;
-        Thu,  6 Dec 2018 11:18:30 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 56E061AE0BAD; Thu,  6 Dec 2018 19:18:51 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 19:18:51 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Alexander Van Brunt <avanbrunt@nvidia.com>
-Cc:     Ashish Mhetre <amhetre@nvidia.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Sachin Nikam <Snikam@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
-Message-ID: <20181206191850.GC20796@arm.com>
-References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
- <20181029105515.GD14127@arm.com>
- <BN7PR12MB2708B742FD3448589AD0F259CFF30@BN7PR12MB2708.namprd12.prod.outlook.com>
- <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BYAPR12MB27129A4EE7BBF57B1CAB5094CFAE0@BYAPR12MB2712.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 6 Dec 2018 14:18:42 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:57033 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbeLFTSl (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 6 Dec 2018 14:18:41 -0500
+Received: from linux-r8p5.suse.de (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 12:18:30 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     acme@kernel.org
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, dave@stgolabs.net
+Subject: [PATCH v2 -tip 0/7] tools/perf: Update rbtree implementation and optimize users
+Date:   Thu,  6 Dec 2018 11:18:12 -0800
+Message-Id: <20181206191819.30182-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Hi,
 
-Thanks for running these tests and providing the in-depth analysis.
+Per acme's request, this is a rebase (and basically rewrite) of v1.
 
-On Mon, Dec 03, 2018 at 09:20:25PM +0000, Alexander Van Brunt wrote:
-> > If we roll a TLB invalidation routine without the trailing DSB, what sort of
-> > performance does that get you?
-> 
-> It is not as good. In some cases, it is really bad. Skipping the invalidate was
-> the most consistent and fast implementation.
+The following optimizes the rb_first() lookups in perf tooling such that we
+can avoid walking down the tree finding the first element. Tree traversals
+(and overall computing the first node in the tree) is a surprisingly common
+operation. On a Xeon E5-2450 @ 2.10GHz, the cost of an rb_first() was ~60 cycles
+for 100 nodes, and ~75 cycles with 1000 nodes.
 
-My problem with that is it's not really much different to just skipping the
-page table update entirely. Skipping the DSB is closer to what is done on
-x86, where we bound the stale entry time to the next context-switch.
+The first patch adds the updated implementation of rbtrees, including the
+cached interfaces, taken from the kernel. The rest of the patches make use
+of this for the users I thought might care the most.
 
-Given that I already queued the version without the DSB, we have the choice
-to either continue with that or to revert it and go back to the previous
-behaviour. Which would you prefer?
+With these patches I am able to build and use perf without anything going wrong
+(but needs more testing no doubt, as changes while redundant can be a little tricky
+depending on if the user get smart about the trees). I'm sorry if some patches
+seem too big, I've tried to split them the best I could.
 
-Will
+Applies on today's -tip tree. Please consider for v4.21.
+
+Thanks!
+
+Davidlohr Bueso (7):
+  tools/perf: Update rbtree implementation
+  perf machine: Use cached rbtrees
+  perf callchain: Use cached rbtrees
+  perf util: Use cached rbtree for rblists
+  perf symbols: Use cached rbtrees
+  perf hist: Use cached rbtrees
+  perf sched: Use cached rbtrees
+
+ tools/include/linux/rbtree.h           |  52 ++++++++-
+ tools/include/linux/rbtree_augmented.h |  60 ++++++++--
+ tools/lib/rbtree.c                     | 178 ++++++++++++++++++++++-------
+ tools/perf/builtin-annotate.c          |   4 +-
+ tools/perf/builtin-c2c.c               |   6 +-
+ tools/perf/builtin-diff.c              |  10 +-
+ tools/perf/builtin-report.c            |   3 +-
+ tools/perf/builtin-sched.c             |  45 ++++----
+ tools/perf/builtin-top.c               |   2 +-
+ tools/perf/tests/hists_common.c        |   8 +-
+ tools/perf/tests/hists_cumulate.c      |  14 +--
+ tools/perf/tests/hists_link.c          |   8 +-
+ tools/perf/tests/hists_output.c        |  32 +++---
+ tools/perf/ui/browsers/hists.c         |   6 +-
+ tools/perf/ui/gtk/hists.c              |   4 +-
+ tools/perf/ui/stdio/hist.c             |   3 +-
+ tools/perf/util/build-id.c             |  12 +-
+ tools/perf/util/dso.c                  |   8 +-
+ tools/perf/util/dso.h                  |  10 +-
+ tools/perf/util/hist.c                 | 199 +++++++++++++++++++--------------
+ tools/perf/util/hist.h                 |  10 +-
+ tools/perf/util/intlist.h              |   2 +-
+ tools/perf/util/machine.c              |  53 +++++----
+ tools/perf/util/machine.h              |  12 +-
+ tools/perf/util/map.c                  |   8 +-
+ tools/perf/util/metricgroup.c          |   2 +-
+ tools/perf/util/probe-event.c          |   3 +-
+ tools/perf/util/rb_resort.h            |   8 +-
+ tools/perf/util/rblist.c               |  28 +++--
+ tools/perf/util/rblist.h               |   2 +-
+ tools/perf/util/sort.h                 |   4 +-
+ tools/perf/util/srcline.c              |  43 ++++---
+ tools/perf/util/srcline.h              |  13 ++-
+ tools/perf/util/stat-shadow.c          |   2 +-
+ tools/perf/util/strlist.h              |   2 +-
+ tools/perf/util/symbol.c               |  87 +++++++-------
+ tools/perf/util/symbol.h               |  13 ++-
+ tools/perf/util/symbol_fprintf.c       |   2 +-
+ 38 files changed, 598 insertions(+), 360 deletions(-)
+
+-- 
+2.16.4
+
