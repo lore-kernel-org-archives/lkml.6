@@ -2,162 +2,168 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24330C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E489C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8495208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0dF37mAa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8495208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F1AB20868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:41:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1AB20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sedsystems.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbeLFVio (ORCPT
+        id S1726007AbeLFVlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:38:44 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35848 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLFVio (ORCPT
+        Thu, 6 Dec 2018 16:41:05 -0500
+Received: from sed198n136.SEDSystems.ca ([198.169.180.136]:48949 "EHLO
+        sed198n136.sedsystems.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeLFVlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:38:44 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYKm7154595;
-        Thu, 6 Dec 2018 21:38:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=1H0cnsYb2pjvphtDltxS9gQX0MswaFUiXZebE1P4KR4=;
- b=0dF37mAay/rc0PDEvMrd1SdgDHjo1ngzAekrs4L+mTKv4Mxoxi76sacOuHnLCevFGPFB
- yy5zQxs1VA7k9RERRiOTUwuUyOUX7SjE8E+Hl0nzsXgR8qeVz5FcNigkfJcpHyHzt67D
- BaNtJuThIU/gyCVt4SuBMeBCphFgKdIWQII9JKJ/PoJQaAVkvxphqbZ83RQuf5tJYWbs
- anRPmneNp9w6JzxA/Gji4ONz3sMNpfKlayJm/BqS4uuUYle8xLO95n7R7AW7FrXNB8nM
- YvIKL0w2CnIzgWzCj/JGO/u9b58hueqb/GjUoC60gM8Xfs7kRaOcoH3qWCpumxmwFOZq NQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2p3jxrtmdx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:38:21 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcJC7007299
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:38:20 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcIie001102;
-        Thu, 6 Dec 2018 21:38:19 GMT
-Received: from ca-dev63.us.oracle.com (/10.211.8.221)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 21:38:18 +0000
-From:   Steve Sistare <steven.sistare@oracle.com>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        quentin.perret@arm.com, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 05/10] sched/fair: Hoist idle_stamp up from idle_balance
-Date:   Thu,  6 Dec 2018 13:28:11 -0800
-Message-Id: <1544131696-2888-6-git-send-email-steven.sistare@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060181
+        Thu, 6 Dec 2018 16:41:04 -0500
+Received: from barney.sedsystems.ca (barney [198.169.180.121])
+        by sed198n136.sedsystems.ca  with ESMTP id wB6Lf3oN002874
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Dec 2018 15:41:03 -0600 (CST)
+Received: from eng1n65.eng.sedsystems.ca (eng1n65.eng.sedsystems.ca [172.21.1.65])
+        by barney.sedsystems.ca (8.14.7/8.14.4) with ESMTP id wB6Lf2h2022293
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 6 Dec 2018 15:41:02 -0600
+Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
+From:   Robert Hancock <hancock@sedsystems.ca>
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pci@vger.kernel.org, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, bhelgaas@google.com,
+        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
+        Trent Piepho <tpiepho@impinj.com>
+References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+ <87o99zjcsc.fsf@tkos.co.il>
+ <5a3543f2-fe58-221d-694f-0f98a643edfc@sedsystems.ca>
+ <1544111431.3709.70.camel@pengutronix.de>
+ <ff33ed91-431d-9620-da75-216298a58667@sedsystems.ca>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hancock@sedsystems.ca; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SED Systems
+Message-ID: <6ead613a-295b-3efc-4865-0bed7e4fe3f4@sedsystems.ca>
+Date:   Thu, 6 Dec 2018 15:41:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <ff33ed91-431d-9620-da75-216298a58667@sedsystems.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.64 on 198.169.180.136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the update of idle_stamp from idle_balance to the call site in
-pick_next_task_fair, to prepare for a future patch that adds work to
-pick_next_task_fair which must be included in the idle_stamp interval.
-No functional change.
+On 2018-12-06 10:10 a.m., Robert Hancock wrote:
+> On 2018-12-06 9:50 a.m., Lucas Stach wrote:
+>> Am Donnerstag, den 06.12.2018, 09:45 -0600 schrieb Robert Hancock:
+>>> On 2018-12-06 2:10 a.m., Baruch Siach wrote:
+>>>> Hi Andrey,
+>>>>
+>>>> Adding Robert Hancock who reported[1] on a PCIe MSI issue with i.MX6.
+>>>>
+>>>> Andrey Smirnov writes:
+>>>>
+>>>>> Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+>>>>> produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+>>>>> to pcieport driver. This, in turn, results in a PCIE bus that is
+>>>>> capable of enumerating attached PCIE device, but lacks functional
+>>>>> interrupt support.
+>>>>
+>>>> Robert, does that fix your issue?
+>>>
+>>> Unfortunately, no.. in fact the situation on my setup is even worse with
+>>> CONFIG_PCIEPORTBUS enabled: Not only does MSI still not function, but
+>>> now INTx interrupts are somehow broken as well - no interrupts are
+>>> received. The IRQ information shown in /proc/interrupts is correct, but
+>>> the count remains stubbornly at 0.
+>>
+>> That's expected. The port services will use an MSI IRQ when available
+>> and due to a design issue with the DWC PCIe it will not forward any
+>> legacy IRQs if any MSI is in use. If any of the PCIe devices in your
+>> system are unable to work with MSI IRQs, you must boot with "nomsi" on
+>> the kernel command line set.
+> 
+> That seems like an unfortunate design choice on their part.. well that
+> would probably argue against adding this as a hard dependency then, if
+> non-MSI-supporting PCIe devices can't work with default boot options
+> with that set.
+> 
+> I'm looking into testing with an NXP Smart Devices board and some PCIe
+> cards to see if I can verify whether MSI works on those or not, since we
+> currently don't have a way to independently verify that the MSI
+> implementation in our FPGA is working or whether another PCIe device
+> works with MSI (the FPGA is integrated on the system board).
 
-Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
----
- kernel/sched/fair.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
+I've now done some tests with a NXP SabreSD reference board and an Intel
+wireless card:
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 4e105db..8a33ad9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3725,6 +3725,16 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
- 	rq->misfit_task_load = task_h_load(p);
- }
- 
-+static inline void rq_idle_stamp_update(struct rq *rq)
-+{
-+	rq->idle_stamp = rq_clock(rq);
-+}
-+
-+static inline void rq_idle_stamp_clear(struct rq *rq)
-+{
-+	rq->idle_stamp = 0;
-+}
-+
- static void overload_clear(struct rq *rq)
- {
- 	struct sparsemask *overload_cpus;
-@@ -3770,6 +3780,8 @@ static inline int idle_balance(struct rq *rq, struct rq_flags *rf)
- 	return 0;
- }
- 
-+static inline void rq_idle_stamp_update(struct rq *rq) {}
-+static inline void rq_idle_stamp_clear(struct rq *rq) {}
- static inline void overload_clear(struct rq *rq) {}
- static inline void overload_set(struct rq *rq) {}
- 
-@@ -6764,8 +6776,18 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 
- idle:
- 	update_misfit_status(NULL, rq);
-+
-+	/*
-+	 * We must set idle_stamp _before_ calling idle_balance(), such that we
-+	 * measure the duration of idle_balance() as idle time.
-+	 */
-+	rq_idle_stamp_update(rq);
-+
- 	new_tasks = idle_balance(rq, rf);
- 
-+	if (new_tasks)
-+		rq_idle_stamp_clear(rq);
-+
- 	/*
- 	 * Because idle_balance() releases (and re-acquires) rq->lock, it is
- 	 * possible for any higher priority task to appear. In that case we
-@@ -9611,12 +9633,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 	u64 curr_cost = 0;
- 
- 	/*
--	 * We must set idle_stamp _before_ calling idle_balance(), such that we
--	 * measure the duration of idle_balance() as idle time.
--	 */
--	this_rq->idle_stamp = rq_clock(this_rq);
--
--	/*
- 	 * Do not pull tasks towards !active CPUs...
- 	 */
- 	if (!cpu_active(this_cpu))
-@@ -9707,9 +9723,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 	if (this_rq->nr_running != this_rq->cfs.h_nr_running)
- 		pulled_task = -1;
- 
--	if (pulled_task)
--		this_rq->idle_stamp = 0;
--
- 	rq_repin_lock(this_rq, rf);
- 
- 	return pulled_task;
+-With the standard imx_v6_v7 defconfig, MSI does not work, INTx works
+
+-With CONFIG_PCIEPORTBUS=y, MSI does work
+
+So it seems like enabling PCIEPORTBUS should fix our MSI issue on the
+CPU side, and our remaining problem is likely on the FPGA device side.
+However, there's still the issue that enabling that option breaks INTx
+support - I don't have a PCIe card handy that the kernel doesn't enable
+MSI for in order to test that on the Sabre board, but based on Lucas's
+comment and my results on our board, it definitely seems to be an issue.
+I would hope there must be a way to handle that..
+
 -- 
-1.8.3.1
-
+Robert Hancock
+Senior Software Developer
+SED Systems
+Email: hancock@sedsystems.ca
