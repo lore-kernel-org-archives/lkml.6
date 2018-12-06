@@ -2,203 +2,73 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E06C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D08DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A18214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 07:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC2FE20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EI6ju/LY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A18214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dtcGTzsg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2FE20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbeLFH6Q (ORCPT
+        id S1729237AbeLFIJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:58:16 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42517 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729062AbeLFH6P (ORCPT
+        Thu, 6 Dec 2018 03:09:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46436 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729062AbeLFIJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 02:58:15 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so10275394pga.9;
-        Wed, 05 Dec 2018 23:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RGv8FHMp1VwIj8CLwNbx7fGxgdyYRFIVWoB9fwDfvdA=;
-        b=EI6ju/LYOY4VaJYPtxLCR+55z2LfvuXPu+GsktgaVuBBDRrU5G+bbpm77zUQmssq9W
-         GJbwEg0scTRHpC3HB7Sfg04t9zQgRwGPFvynUvErz8zbYeQrvvnLVh7BQOOI8u/biftm
-         H6rN51fFOgcAwFjldz4J2WfXh1cgwgDnqWH6DCbSbaVX58IWUO9r1BEI80zl3c+AHtqC
-         zhJB+KysLyr/FFlB5wP2blFdIG6TqRhJKzyG7xhsaCyuD6B4lTnVo7x9DaKQ6C9f/pG3
-         Kw0PnDULuRtMdZBLjDJg1RjDmokVIvtFToUqD6C3uh7B+agWs8StqNU9ZCPLHZymlfFa
-         pILw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RGv8FHMp1VwIj8CLwNbx7fGxgdyYRFIVWoB9fwDfvdA=;
-        b=aL+yDJfhT20xOXPoKanifVNPQR6SlcDt6cOjxWpIhD4EFgyJGMipgAdudh5vRdibzf
-         3T/xRklNOmRvUh1ssZveoIHUH58RcCQMF5bNo9yVrzvaTZxsE2P5hRY12Gx8k5OSZ6vu
-         zKDEU2qgk/FEKnvpl9/vMGFUCkIiozAe8No4b3GlQvRUhi9zuvHrN2J/MVWWQV0WcLkd
-         2oapKRGR7gks2mFiqQv/7ro+6KwA5TTAtAuLsfg3sDfsLlfzStM8PufQ6a1AC2MsikoA
-         UvucLDPtihUtpBgsurtmkZJsrbWaC+YdzaRm4ULDMk5PO+DN+4Z/3FMxCzvg3Back15K
-         0miA==
-X-Gm-Message-State: AA+aEWZXAj+hIm0ojn4hFyyZ33rrs2QV8n3+aWqgJMqQxgyRmJ2PeZ6G
-        rsj8gwvQ0ixEyao2EbnhMwE1NIyP
-X-Google-Smtp-Source: AFSGD/XxmHinmPF9f8vF9W3bacToStb78sJgswNDWAYRZUnX2SncK9Fqyc3qAlxWivpz6utxNJKKtw==
-X-Received: by 2002:a62:47d9:: with SMTP id p86mr26969354pfi.95.1544083094266;
-        Wed, 05 Dec 2018 23:58:14 -0800 (PST)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id g190sm26372993pgc.28.2018.12.05.23.58.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Dec 2018 23:58:13 -0800 (PST)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH] KVM: MMU: Introduce single thread to zap collapsible sptes
-Date:   Thu,  6 Dec 2018 15:58:09 +0800
-Message-Id: <1544083089-13000-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 6 Dec 2018 03:09:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JNEAmdDrNcWc/uAt+U0m6dMHO9FyfybsEeJj+/UVvsw=; b=dtcGTzsgDfoFfsS3A8faPr/7K
+        c88rHbxnSS6PBql1fhqXo4iAXcQdFnnXHp+aFW+jAHom5uRcS6jJbU0bh3oN/prR29TlyrdbcSRf9
+        ba2CYdut8vwA+pvqYCM/X5CriE8PgfvkXwXU6P6i7fd0Tcd6ugvg3UHHmuQ0dSkH9ddzACxhdJmxS
+        pQu60feKY8QuSbsJjuRutKYuAG1PNZ3TwKvJHFOgNRUS78MxRoqF+qfYGAc7KJt4n/c2NX3gckGPd
+        u8OH597pS6HlWjV0u8nM6khzxN4bA1iceizJ/Y6Qmuc9B3IOMs1EID0f/xK2Nwfy0+52RdIrXg80k
+        Qw5DcvJbw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gUoie-0004f4-Pa; Thu, 06 Dec 2018 08:09:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 87D852029F883; Thu,  6 Dec 2018 09:09:10 +0100 (CET)
+Date:   Thu, 6 Dec 2018 09:09:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
+        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181206080910.GD4234@hirez.programming.kicks-ass.net>
+References: <20181205160509.1168-1-jolsa@kernel.org>
+ <20181205160509.1168-2-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205160509.1168-2-jolsa@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Wed, Dec 05, 2018 at 05:05:02PM +0100, Jiri Olsa wrote:
+> Adding support to specify 'block' bool in struct perf_event_attr
 
-Last year guys from huawei reported that the call of memory_global_dirty_log_start/stop() 
-takes 13s for 4T memory and cause guest freeze too long which increases the unacceptable 
-migration downtime. [1] [2]
-
-Guangrong pointed out:
-
-| collapsible_sptes zaps 4k mappings to make memory-read happy, it is not
-| required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
-| urgent for vCPU's running, it could be done in a separate thread and use
-| lock-break technology.
-
-[1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
-[2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
-
-Several TB memory guest is common now after NVDIMM is deployed in cloud environment.
-This patch utilizes worker thread to zap collapsible sptes in order to lazy collapse 
-small sptes into large sptes during roll-back after live migration fails.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/mmu.c              | 37 ++++++++++++++++++++++++++++++++-----
- arch/x86/kvm/x86.c              |  4 ++++
- 3 files changed, 39 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index fbda5a9..dde32f9 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -892,6 +892,8 @@ struct kvm_arch {
- 	u64 master_cycle_now;
- 	struct delayed_work kvmclock_update_work;
- 	struct delayed_work kvmclock_sync_work;
-+	struct delayed_work kvm_mmu_zap_collapsible_sptes_work;
-+	bool zap_in_progress;
- 
- 	struct kvm_xen_hvm_config xen_hvm_config;
- 
-@@ -1247,6 +1249,7 @@ void kvm_mmu_zap_all(struct kvm *kvm);
- void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, struct kvm_memslots *slots);
- unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
- void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
-+void zap_collapsible_sptes_fn(struct work_struct *work);
- 
- int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
- bool pdptrs_changed(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 7c03c0f..fe87dd3 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
- 	return need_tlb_flush;
- }
- 
-+void zap_collapsible_sptes_fn(struct work_struct *work)
-+{
-+	struct kvm_memory_slot *memslot;
-+	struct kvm_memslots *slots;
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
-+					   kvm_mmu_zap_collapsible_sptes_work);
-+	struct kvm *kvm = container_of(ka, struct kvm, arch);
-+	int i;
-+
-+	mutex_lock(&kvm->slots_lock);
-+	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-+		spin_lock(&kvm->mmu_lock);
-+		slots = __kvm_memslots(kvm, i);
-+		kvm_for_each_memslot(memslot, slots) {
-+			slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
-+				kvm_mmu_zap_collapsible_spte, true);
-+			if (need_resched() || spin_needbreak(&kvm->mmu_lock))
-+				cond_resched_lock(&kvm->mmu_lock);
-+		}
-+		spin_unlock(&kvm->mmu_lock);
-+	}
-+	kvm->arch.zap_in_progress = false;
-+	mutex_unlock(&kvm->slots_lock);
-+}
-+
-+#define KVM_MMU_ZAP_DELAYED (60 * HZ)
- void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 				   const struct kvm_memory_slot *memslot)
- {
--	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
--	spin_lock(&kvm->mmu_lock);
--	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
--			 kvm_mmu_zap_collapsible_spte, true);
--	spin_unlock(&kvm->mmu_lock);
-+	if (!kvm->arch.zap_in_progress) {
-+		kvm->arch.zap_in_progress = true;
-+		schedule_delayed_work(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
-+			KVM_MMU_ZAP_DELAYED);
-+	}
- }
- 
- void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d029377..c2af289 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9019,6 +9019,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 
- 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_update_fn);
- 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_fn);
-+	INIT_DELAYED_WORK(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
-+			zap_collapsible_sptes_fn);
-+	kvm->arch.zap_in_progress = false;
- 
- 	kvm_hv_init_vm(kvm);
- 	kvm_page_track_init(kvm);
-@@ -9064,6 +9067,7 @@ void kvm_arch_sync_events(struct kvm *kvm)
- {
- 	cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
- 	cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
-+	cancel_delayed_work_sync(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work);
- 	kvm_free_pit(kvm);
- }
- 
--- 
-2.7.4
-
+NAK for having _Bool in structures.
