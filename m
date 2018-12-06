@@ -2,96 +2,92 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FD8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588DBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0625C208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0625C208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DD94214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:20:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD94214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbeLFNTr (ORCPT
+        id S1729680AbeLFNUc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:19:47 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50280 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728346AbeLFNTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:19:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1026EA78;
-        Thu,  6 Dec 2018 05:19:47 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D47853F575;
-        Thu,  6 Dec 2018 05:19:46 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E7AB51AE0BAD; Thu,  6 Dec 2018 13:20:07 +0000 (GMT)
-Date:   Thu, 6 Dec 2018 13:20:07 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        keescook@chromium.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 2/2] arm64: ftrace: Set FTRACE_SCHEDULABLE before
- ftrace_modify_all_code()
-Message-ID: <20181206132007.GB27744@arm.com>
-References: <20181205174852.435233070@goodmis.org>
- <20181205183304.000714627@goodmis.org>
+        Thu, 6 Dec 2018 08:20:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38284 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728953AbeLFNUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 08:20:32 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7050190C78;
+        Thu,  6 Dec 2018 13:20:31 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B9D101001F54;
+        Thu,  6 Dec 2018 13:20:23 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     =?utf-8?Q?J=C3=BCrg?= Billeter <j@bitron.ch>
+Cc:     Christian Brauner <christian@brauner.io>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, ebiederm@xmission.com,
+        serge@hallyn.com, jannh@google.com, akpm@linux-foundation.org,
+        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, dancol@google.com,
+        timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+References: <20181206121858.12215-1-christian@brauner.io>
+        <87h8fq7s84.fsf@oldenburg2.str.redhat.com>
+        <b0e946bcac12358841c9a99017da819b00794d9c.camel@bitron.ch>
+        <87pnue6bp2.fsf@oldenburg2.str.redhat.com>
+        <89a6b3a24412d385a816d7d981c60cb1e1bbc0ca.camel@bitron.ch>
+Date:   Thu, 06 Dec 2018 14:20:21 +0100
+In-Reply-To: <89a6b3a24412d385a816d7d981c60cb1e1bbc0ca.camel@bitron.ch>
+ (=?utf-8?Q?=22J=C3=BCrg?=
+        Billeter"'s message of "Thu, 06 Dec 2018 14:18:36 +0100")
+Message-ID: <87efau6bca.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205183304.000714627@goodmis.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 06 Dec 2018 13:20:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 12:48:54PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> It has been reported that ftrace_replace_code() which is called by
-> ftrace_modify_all_code() can cause a soft lockup warning for an
-> allmodconfig kernel. This is because all the debug options enabled
-> causes the loop in ftrace_replace_code() (which loops over all the
-> functions being enabled where there can be 10s of thousands), is too
-> slow, and never schedules out.
-> 
-> To solve this, setting FTRACE_SCHEDULABLE to the command passed into
-> ftrace_replace_code() will make it call cond_resched() in the loop,
-> which prevents the soft lockup warning from triggering.
-> 
-> Link: http://lkml.kernel.org/r/20181204192903.8193-1-anders.roxell@linaro.org
-> 
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  arch/arm64/kernel/ftrace.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
-> index 57e962290df3..9a8de0a79f97 100644
-> --- a/arch/arm64/kernel/ftrace.c
-> +++ b/arch/arm64/kernel/ftrace.c
-> @@ -193,6 +193,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
->  
->  void arch_ftrace_update_code(int command)
->  {
-> +	command |= FTRACE_SCHEDULABLE;
->  	ftrace_modify_all_code(command);
->  }
+* Jürg Billeter:
 
-Bikeshed: I'd probably go for FTRACE_MAY_SLEEP, but I'm not going to die
-on that hill so...
+> On Thu, 2018-12-06 at 14:12 +0100, Florian Weimer wrote:
+>> * Jürg Billeter:
+>> 
+>> > On Thu, 2018-12-06 at 13:30 +0100, Florian Weimer wrote:
+>> > > * Christian Brauner:
+>> > > 
+>> > > > /* zombies */
+>> > > > Zombies can be signaled just as any other process. No special error will be
+>> > > > reported since a zombie state is an unreliable state (cf. [3]).
+>> > > 
+>> > > I still disagree with this analysis.  If I know that the target process
+>> > > is still alive, and it is not, this is a persistent error condition
+>> > > which can be reliably reported.  Given that someone might send SIGKILL
+>> > > to the process behind my back, detecting this error condition could be
+>> > > useful.
+>> > 
+>> > As I understand it, kill() behaves the same way. I think it's good that
+>> > this new syscall keeps the behavior as close as possible to kill().
+>> 
+>> No, kill does not behave in this way because the PID can be reused.
+>> The error condition is not stable there.
+>
+> The PID can't be reused as long as it's a zombie. It can only be reused
+> when it has been wait()ed for. Or am I misunderstanding something?
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Hmm, that's a fair point.  So the original interface is just broken.
 
-Thanks, Steve!
-
-Will
+Florian
