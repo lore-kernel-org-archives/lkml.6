@@ -2,123 +2,198 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1308C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C47C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A9921479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3147421479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:08:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fL4X30ox"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A9921479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aV8VZGLv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A0sN6HL+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3147421479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbeLFWIC (ORCPT
+        id S1726165AbeLFWIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:08:02 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44360 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeLFWIC (ORCPT
+        Thu, 6 Dec 2018 17:08:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57292 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeLFWIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:08:02 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so834876pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 14:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Jc4+r1+KRNg5ApN7yRaVR3YMPcB24dDfcf2dtVWpBg4=;
-        b=fL4X30oxB9nzFzEsZ47WWvxj2ZUlOeCT3FnenxMkNAK4GnydAizWg9Tft8RwsYKRnH
-         XGoafSPTW2oQytSHRjeBS8r9XYjrTq9NhkIYCBfU1HvDE3pMb97IlNBb3ziO/xHJjUia
-         t4mOP5lOF4spj/B0hDqxehjdjZjWEU5t3KL4/BZRT+Gpa+rl5yT8mGQsYmivPmp69ChW
-         P9r5uJV+JVGjoa22ieGStlKRsigyyLg3u3oOYc/cLiVLNqadVwSvSn1kcy4s0blSCt5B
-         pxQagb1RTy+r2X4qJu3jiUYDNLgjQhoU/jOPMYNmorP96jTY0L/vs18OIQR88x/Cl56v
-         +xMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Jc4+r1+KRNg5ApN7yRaVR3YMPcB24dDfcf2dtVWpBg4=;
-        b=CK+ZYH3QUgk68mtnRIYLfjNxXmNx+5nf4Dfv9yGvGWFG9i0oNI9RkO4nYfxmoWchEd
-         J6mxdRvmz7p9McxGEp1yxO9b54YiwD0PiI+W9plMCRFEX+OSWFx4bmbPslZR2wfR+Iu3
-         8pJMdN+w54adsazwBKgoCdDZCh8mLITwd5FoF+IBfLmCrk5IVuwrht6c4763U8iERBN4
-         HGSVukrTBeu4S1DPSX0Ty+3KuYrp1JTeIOaquuS8MabYEuVOz3uUP1pcquu5Sdt/uQ2o
-         dtTcOHw1xnZpkAGQdo6AZbFZvC3s74xWAiLRpZ1DRUYN8AutjjK1Sk6oMkOj/WP7Kmjk
-         tcDA==
-X-Gm-Message-State: AA+aEWYPnO54K0GgexWGLNPTdamdZexQPD1Ngsr4TmX09fEPfg5SVqLt
-        Lfr/cqpop0sA8NKU7O8UzCct43LJFvo=
-X-Google-Smtp-Source: AFSGD/VkifSFyr0IeDsv/q59Uxn/vzSFwvkRER2tW3Irc4RidDF8f+aLTpKDaCExQ6I2Hcq7BNA3ng==
-X-Received: by 2002:a62:16d6:: with SMTP id 205mr30154729pfw.256.1544134080922;
-        Thu, 06 Dec 2018 14:08:00 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id 85sm1759798pfw.17.2018.12.06.14.07.59
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 06 Dec 2018 14:08:00 -0800 (PST)
-Date:   Thu, 6 Dec 2018 14:07:51 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Andrea Arcangeli <aarcange@redhat.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Jann Horn <jannh@google.com>, Peter Xu <peterx@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH 1/1] userfaultfd: check VM_MAYWRITE was set after verifying
- the uffd is registered
-In-Reply-To: <20181206212028.18726-2-aarcange@redhat.com>
-Message-ID: <alpine.LSU.2.11.1812061406300.1616@eggly.anvils>
-References: <20181206212028.18726-1-aarcange@redhat.com> <20181206212028.18726-2-aarcange@redhat.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Thu, 6 Dec 2018 17:08:09 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 62D17616D6; Thu,  6 Dec 2018 22:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544134088;
+        bh=oxUE6oTeSELGXzu6IsKLsX14JbJ6dn8xZAFYCWdFlJw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aV8VZGLvGxz6aGKP4Ri7Y4Qhv0Tnw1Xa8eaoeWZlX1FhDuFLjOkabJKdnfe4YWcpb
+         01eIIrWOvMPsHOPiN2BSyEkCxtHHAmC9Rw8eNT1XR2D4fdEfWbW1k8OUFrssG2qmup
+         rk9/as2Y9LdV56z2t9h5eMjtdtOGCUDbw93Rz2Xs=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A5A9616A0;
+        Thu,  6 Dec 2018 22:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544134087;
+        bh=oxUE6oTeSELGXzu6IsKLsX14JbJ6dn8xZAFYCWdFlJw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=A0sN6HL+9HRNOglpSz3gzOGMfzlWW0Y5hBOxLetRenk/GWUXrDLST8QZfVJqHCMmB
+         mBV/YVwGRCNV4SnLkth8YcL16a/KHEPnjIP0Ao4r1bxDK/ABbwXVNgDtc0e93JHtC8
+         0/9rOmGzcghRJ6YToe3as3p4GbWEC5zKEC+VfK1o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A5A9616A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
+To:     Stephen Boyd <sboyd@kernel.org>, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
+ <154413331679.88331.15909045605070653326@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <05485272-a117-b8e5-e7c5-d0dd8cc8fef4@codeaurora.org>
+Date:   Thu, 6 Dec 2018 15:08:05 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <154413331679.88331.15909045605070653326@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018, Andrea Arcangeli wrote:
-
-> Calling UFFDIO_UNREGISTER on virtual ranges not yet registered in uffd
-> could trigger an harmless false positive WARN_ON. Check the vma is
-> already registered before checking VM_MAYWRITE to shut off the
-> false positive warning.
+On 12/6/2018 2:55 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2018-12-06 13:11:06)
+>> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+>> for clients to vote on.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>>   drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+>>   3 files changed, 69 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>> index 87b4949..16c4293 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+>> @@ -17,6 +17,7 @@ Required properties :
+>>                          "qcom,rpmcc-apq8064", "qcom,rpmcc"
+>>                          "qcom,rpmcc-msm8996", "qcom,rpmcc"
+>>                          "qcom,rpmcc-qcs404", "qcom,rpmcc"
+>> +                       "qcom,rpmcc-msm8998", "qcom,rpmcc"
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 29ec90660d68 ("userfaultfd: shmem/hugetlbfs: only allow to register VM_MAYWRITE vmas")
-> Reported-by: syzbot+06c7092e7d71218a2c16@syzkaller.appspotmail.com
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> Can you keep this sorted on the first compatible?
 
-Acked-by: Hugh Dickins <hughd@google.com>
+No problem, that's a quick fix.  Same with the ordering nit below.
 
-> ---
->  fs/userfaultfd.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index cd58939dc977..7a85e609fc27 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1566,7 +1566,6 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		cond_resched();
->  
->  		BUG_ON(!vma_can_userfault(vma));
-> -		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
->  
->  		/*
->  		 * Nothing to do: this vma is already registered into this
-> @@ -1575,6 +1574,8 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		if (!vma->vm_userfaultfd_ctx.ctx)
->  			goto skip;
->  
-> +		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-> +
->  		if (vma->vm_start > start)
->  			start = vma->vm_start;
->  		vma_end = min(end, vma->vm_end);
+>>   
+>>   - #clock-cells : shall contain 1
+>>   
 > 
+> Rob may prefer this file is split from the driver part into a different
+> patch.
+> 
+>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+>> index d3aadae..269304e 100644
+>> --- a/drivers/clk/qcom/clk-smd-rpm.c
+>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+>> @@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
+>>          .num_clks = ARRAY_SIZE(qcs404_clks),
+>>   };
+>>   
+>> +/* msm8998 */
+>> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+>> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+>> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
+>> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
+>> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
+>> +                  QCOM_SMD_RPM_MMAXI_CLK, 0);
+>> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+>> +                  QCOM_SMD_RPM_AGGR_CLK, 1);
+>> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
+>> +                  QCOM_SMD_RPM_AGGR_CLK, 2);
+>> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
+>> +                       QCOM_SMD_RPM_MISC_CLK, 1);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
+>> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
+>> +static struct clk_smd_rpm *msm8998_clks[] = {
+>> +       [RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
+>> +       [RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
+>> +       [RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
+>> +       [RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
+>> +       [RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
+>> +       [RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
+>> +       [RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
+>> +       [RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
+>> +       [RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
+>> +       [RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
+>> +       [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
+>> +       [RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
+>> +       [RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
+>> +       [RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
+>> +       [RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
+>> +       [RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
+>> +       [RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
+>> +       [RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
+>> +       [RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
+>> +       [RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
+>> +       [RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
+>> +       [RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
+>> +       [RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
+>> +       [RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
+>> +       [RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
+>> +       [RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
+>> +       [RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
+>> +       [RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
+>> +       [RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
+>> +       [RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
+>> +       [RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
+>> +       [RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
+>> +};
+>> +
+>> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
+>> +       .clks = msm8998_clks,
+>> +       .num_clks = ARRAY_SIZE(msm8998_clks),
+>> +};
+>> +
+>>   static const struct of_device_id rpm_smd_clk_match_table[] = {
+>>          { .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+>>          { .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+>>          { .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+>>          { .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
+>> +       { .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
+> 
+> And this sorted too.
+> 
+>>          { }
+>>   };
+>>   MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
