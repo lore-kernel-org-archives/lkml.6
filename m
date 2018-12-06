@@ -2,138 +2,104 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDEAC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE65C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2FEC2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C053F2146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 01:12:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C31YpJ5Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2FEC2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DH68Crua"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C053F2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbeLFBL6 (ORCPT
+        id S1728793AbeLFBMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:11:58 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:47256 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFBL6 (ORCPT
+        Wed, 5 Dec 2018 20:12:45 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46988 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727712AbeLFBMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 20:11:58 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB619Pur001212;
-        Thu, 6 Dec 2018 01:11:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=VZkgXeIEZ3W6cCdhF/Is7OQcrhENZCkkmF7DPwBBxMA=;
- b=C31YpJ5Zpepp+vNFioW4Xc4BS+hZvsK7l7N94B1rfjRM9XAH5XfhQMfm7LdUMDyZ6xMQ
- R1/jMgTL3bh9eu1Cegq263dAWyZPr7zOmW20DLn28vstpIy9/JG9uX0xQk3bFaINkC5r
- t41NU71fFhtHc/Nhh1DtDmeZ4+zVu6cCqF4NEijwE0WwGXG36P/mTCsVrpiNXBVj7GNT
- MyTX2El4B6Y/0ODmAxkIdZa/TagG9Z/knVM8ncHqiJcsmEAy3ZLawRMytnoDooFjUOHJ
- FD6CvTBYeFNpwy4XYjlM6Ps7VBImh3qLCLDX/yMBUsz7dLJi37Q9ngr/nUjTWL9Szra7 Kw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftf9kgr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 01:11:54 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB61BrxD007589
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 01:11:53 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB61Bq2l021192;
-        Thu, 6 Dec 2018 01:11:53 GMT
-Received: from [10.182.71.8] (/10.182.71.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 17:11:52 -0800
-Subject: Re: [PATCH V9 2/4] blk-mq: refactor the code of issue request
- directly
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1543995842-20704-1-git-send-email-jianchao.w.wang@oracle.com>
- <1543995842-20704-3-git-send-email-jianchao.w.wang@oracle.com>
- <d46af0a7-62f3-4988-2b1c-857378282356@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <f1f368b7-fb2f-5ef4-4179-6086a0d91c35@oracle.com>
-Date:   Thu, 6 Dec 2018 09:12:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 5 Dec 2018 20:12:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c73so10871794pfe.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Dec 2018 17:12:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xc1DcH3Ccdt7Hjtu4AOtF7sgap6z8qY7r0DkdlQf02Q=;
+        b=DH68Crua34XImI/EB+WV3DPl0eNCgXN0ZmZih8+939mNhFjN5T4tATswlOwaUzPQM8
+         SabJP3OrtEkWNgjSukwyG9YmU5FNhlFQ4JwjviSHt6tzYTQcwBvYoJ266S2VNFG5g+TV
+         gBfhhVrRZr/VMWcukf+6QqTVvc49e8RQlwlec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xc1DcH3Ccdt7Hjtu4AOtF7sgap6z8qY7r0DkdlQf02Q=;
+        b=XAUzJc79CC9cmM1epAgxoHo7UE4DMffYUG8lzgMALGruIXi2/PNdb9jHwMPYNofF1R
+         tdc1MvlSwk7PKttSiiEJr8RZbtwVdyKOwI2VQEG0aNzIwANYFEVqrkJkIL9wlMVUSuzk
+         FUtHH/tcSog9l0nJzB/CsO0sYEsLmalwjDuPwPmbDrUAgKGHrVB/wNaKYNSNEU0R1G3Y
+         U1TX7+txz715pccF4OAbAlTHT9YdGhyQxO8AVzLIuCMJhxej6tozqqdZvLZ0VpNb7ldE
+         2Fc+BkMc0WiqzyLOtZiJolhYSkLMseXorgKl3Plw/TBoKjVvjJK47kSZCAP1QQnO4CJx
+         sxYw==
+X-Gm-Message-State: AA+aEWYBi4pXFPDvOu+7Ix4FLX7s1Yh28uv1b+c4ZW9nqzj1WPvsXiUv
+        8pW8yr5/m6E3EEWEZQ0XBMf5XQ==
+X-Google-Smtp-Source: AFSGD/X2m+iq2XcJF7bJpbVAh0eAlCrOhLIhPbfYf6YHdOBGsADCjuvdN/1Ts8KWnuyE2uU5GfQROw==
+X-Received: by 2002:a63:8ac4:: with SMTP id y187mr22552911pgd.446.1544058764302;
+        Wed, 05 Dec 2018 17:12:44 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h10sm24859653pgn.11.2018.12.05.17.12.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 17:12:43 -0800 (PST)
+Date:   Wed, 5 Dec 2018 17:10:45 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Ohad Ben Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4 0/4] Add support of STM32 hwspinlock
+Message-ID: <20181206011045.GA23336@builder>
+References: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+ <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d46af0a7-62f3-4988-2b1c-857378282356@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060007
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 30 Nov 06:45 PST 2018, Benjamin Gaignard wrote:
 
-
-On 12/6/18 12:27 AM, Jens Axboe wrote:
-> On 12/5/18 12:44 AM, Jianchao Wang wrote:
->> Merge blk_mq_try_issue_directly and __blk_mq_try_issue_directly
->> into one interface to unify the interfaces to issue requests
->> directly. The merged interface takes over the requests totally,
->> it could insert, end or do nothing based on the return value of
->> .queue_rq and 'bypass' parameter. Then caller needn't any other
->> handling any more and then code could be cleaned up.
->>
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->> ---
->>  block/blk-mq.c | 116 +++++++++++++++++++++++++++------------------------------
->>  1 file changed, 54 insertions(+), 62 deletions(-)
->>
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 153af90..fe92e52 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1815,93 +1815,85 @@ static bool blk_rq_can_direct_dispatch(struct request *rq)
->>  	return req_op(rq) == REQ_OP_READ || req_op(rq) == REQ_OP_WRITE;
->>  }
->>  
->> -static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
->> +static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
->>  						struct request *rq,
->>  						blk_qc_t *cookie,
->> -						bool bypass_insert, bool last)
->> +						bool bypass, bool last)
->>  {
->>  	struct request_queue *q = rq->q;
->>  	bool run_queue = true;
->> +	blk_status_t ret = BLK_STS_RESOURCE;
->> +	int srcu_idx;
->>  	bool force = false;
->>  
->> +	if (!blk_rq_can_direct_dispatch(rq)) {
->> +		/*
->> +		 * Insert request to hctx dispatch list for 'bypass == true'
->> +		 * case, otherwise, the caller will fail forever.
->> +		 */
->> +		if (bypass)
->> +			force = true;
->> +		goto out;
->> +	}
+> Le mer. 14 nov. 2018 à 10:00, Benjamin Gaignard
+> <benjamin.gaignard@linaro.org> a écrit :
+> >
+> > This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
+> >
+> > version 4:
+> > - add Linaro SoB
 > 
-> Same here, of course.
-
-Yes, I will change it next version.
-
-> 
-> Otherwise looks fine.
+> Gentle ping on this series
 > 
 
-Thanks
-Jianchao
+Sorry about that Benjamin, I was convinced that I picked your patches
+already. Applied first two patches to hwspinlock tree.
+
+I expect the dts update to go through the ST tree, and I guess the
+complaint from 0day tells us they already are?
+
+Regards,
+Bjorn
