@@ -2,119 +2,136 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCD6C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685B0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E7B20878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:02:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFRZ9mb0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E7B20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2867520878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544105049;
+	bh=SGerwtpmtZiO+5sxx3VaYA63hAK1V/lMic2Vc1uwm8g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oPCwcP4q7LugqYmGKrKP+I15a9D9gwUkhNqyy4EQsYL7tYLc+NL5tHeBjvcChLQ11
+	 tvg8st+n2xC457hSecFlKoDBIm4fhO3SBs9/dyU2BD6yG1RQRmFQisYGiwmofj3rjx
+	 q1qDWF6xhXAJZluyLDKZfAxGZ1CDBQVqeQE+24cQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2867520878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeLFOCa (ORCPT
+        id S1729525AbeLFOEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:02:30 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38212 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbeLFOC2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:02:28 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so606654wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 06:02:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kB34XZmDHLwF0IkhTK5ZXKAQOuz+S8TT+1tfCKZPkSc=;
-        b=IFRZ9mb0Wxl8Z6ggml7mwYPy6K4sQoFDoJ0/OdE7UykjbdD8OTArJrvIhQKl+JrBdm
-         LatQcEdeJAZW/9O11w054sLYlBoWuiQxCYFpCl4OoeMMGDCyA1at1WJ5Dr0fGXZDaJG1
-         rtFOCM/Y1B09un9jQE6oImJ0S16hEwroz9RtY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kB34XZmDHLwF0IkhTK5ZXKAQOuz+S8TT+1tfCKZPkSc=;
-        b=sUKAC+8t1vU+Cuz4Lb1M2zvxA15laBDmNm4EiHg9LcKxtCuZPlSHH4VW8zTBENy4zy
-         E8rAVef76tfT5Wcoa7CNsZjry5XwXo6ZZBUkryhbG0l462EDvDW0+/PL/3YUFxqJLGWk
-         UUVqLoQtZCQoARmX5ed98MpxYOBVmE4xcDgaKarPyRMHp6Bgaj0ZPy73tlqve3ArNpu0
-         +jpcn8fZCkqFI3kqncvFUVupuMFRBqXEZApxxw36dVBUHyn6A9RmidAf/AkV+oztRo7g
-         CwsZRbFmwTlkslw7ICuNCOs9dcoitP6wiSQvFM86ChTEn2dLDl6utJYtyeL31pV8APAN
-         PObg==
-X-Gm-Message-State: AA+aEWZDjtBK7m+b3VNRUnkDbAEkvs9MOqA44loHRa7ccX1NsrWZ/ye5
-        5bMUlU+9/X/JU83W/vdEaL5mag==
-X-Google-Smtp-Source: AFSGD/UuECKYw45OZoeGvaPb9lG3cYE2ulfKpHQu0XiLlkxsMq0XmrviFGKa6fMWdY+6CFmnnjFBTQ==
-X-Received: by 2002:a5d:4586:: with SMTP id p6mr24687403wrq.69.1544104946035;
-        Thu, 06 Dec 2018 06:02:26 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id k19sm805331wre.5.2018.12.06.06.02.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 06:02:23 -0800 (PST)
-Date:   Thu, 6 Dec 2018 14:02:21 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH] video/backlight: Use of_node_name_eq for node name
- comparisons
-Message-ID: <20181206140221.rq4zp74olghzipxu@holly.lan>
-References: <20181205195050.4759-28-robh@kernel.org>
+        Thu, 6 Dec 2018 09:04:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727737AbeLFOEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:04:07 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 444D220672;
+        Thu,  6 Dec 2018 14:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544105045;
+        bh=SGerwtpmtZiO+5sxx3VaYA63hAK1V/lMic2Vc1uwm8g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KhI4TJH2TFtX2UQM1OtG+YPWxesoMGaV8oI8V3+lQn01v3eldlFK8vxQfDdAzXKF1
+         nT0qRtEwEBwR21zvE8j+wcQTrc4kN5WCjI5uT6ilo7WeedbLKWMDhPt+FoEvcVjTYq
+         TVGmfKWzAltlM4G0Oj9G/fPJ56QnRJXVwHJKkRII=
+Date:   Thu, 6 Dec 2018 15:04:03 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     tkjos@android.com, maco@android.com, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, kilobyte@angband.pl,
+        darrick.wong@oracle.com, chouryzhou@tencent.com,
+        david@fromorbit.com, arve@android.com, joel@joelfernandes.org,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH] binder: implement binderfs
+Message-ID: <20181206140403.GA18947@kroah.com>
+References: <20181204131239.15158-1-christian@brauner.io>
+ <20181205200145.GA25230@kroah.com>
+ <20181205214203.cwcvsqe6ndu4e3vv@brauner.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205195050.4759-28-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181205214203.cwcvsqe6ndu4e3vv@brauner.io>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 01:50:44PM -0600, Rob Herring wrote:
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
+On Wed, Dec 05, 2018 at 10:42:06PM +0100, Christian Brauner wrote:
+> On Wed, Dec 05, 2018 at 09:01:45PM +0100, Greg KH wrote:
+> > > /* binder-control */
+> > > Each new binderfs instance comes with a binder-control device. No other
+> > > devices will be present at first. The binder-control device can be used to
+> > > dynamically allocate binder devices. All requests operate on the binderfs
+> > > mount the binder-control device resides in:
+> > > - BINDER_CTL_ADD
+> > >   Allocate a new binder device.
+> > > Assuming a new instance of binderfs has been mounted at /dev/binderfs via
+> > > mount -t binderfs binderfs /dev/binderfs. Then a request to create a new
+> > > binder device can be made via:
+> > > 
+> > > struct binderfs_device device = {0};
+> > > int fd = open("/dev/binderfs/binder-control", O_RDWR);
+> > > ioctl(fd, BINDER_CTL_ADD, &device);
+> > > 
+> > > The struct binderfs_device will be used to return the major and minor
+> > > number, as well as the index used as the new name for the device.
+> > > Binderfs devices can simply be removed via unlink().
+> > 
+> > I think you should provide a name in the BINDER_CTL_ADD command.  That
+> > way you can easily emulate the existing binder queues, and it saves you
+> > a create/rename sequence that you will be forced to do otherwise.  Why
+> > not do it just in a single command?
 > 
-> For instances using of_node_cmp, this has the side effect of now using
-> case sensitive comparisons. This should not matter for any FDT based
-> system which this is.
+> Sounds reasonable. How do you feel about capping the name length at 255
+> bytes aka the standard Linux file name length (e.g. xfs, ext4 etc.)?
 > 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> #define BINDERFS_NAME_MAX 255
+> 
+> struct binderfs_device {
+>         char name[BINDERFS_NAME_MAX + 1];
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+__u8 is the proper type to cross the user/kernel boundry :)
 
-[this is FAO Lee J. rather than recommending you take it via you tree]
+> 	__u32 major;
+> 	__u32 minor;
+> }
 
-> ---
->  drivers/video/backlight/88pm860x_bl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, limiting it to 255 is fine with me.
+
+> > That way also you don't need to care about the major/minor number at
+> > all.  Userspace should never need to worry about that, use a name,
+> > that's the best thing.  Also, it allows you to drop the use of the idr,
+> > making the kernel code simpler overall.
+> > 
+> > > /* Implementation details */
+> > > - When binderfs is registered as a new filesystem it will dynamically
+> > >   allocate a new major number. The allocated major number will be returned
+> > >   in struct binderfs_device when a new binder device is allocated.
+> > 
+> > Why does userspace care about major/minor numbers at all?  You should
 > 
-> diff --git a/drivers/video/backlight/88pm860x_bl.c b/drivers/video/backlight/88pm860x_bl.c
-> index 6d8dc2c77520..51e0c4be08df 100644
-> --- a/drivers/video/backlight/88pm860x_bl.c
-> +++ b/drivers/video/backlight/88pm860x_bl.c
-> @@ -174,7 +174,7 @@ static int pm860x_backlight_dt_init(struct platform_device *pdev,
->  		return -ENODEV;
->  	}
->  	for_each_child_of_node(nproot, np) {
-> -		if (!of_node_cmp(np->name, name)) {
-> +		if (of_node_name_eq(np, name)) {
->  			of_property_read_u32(np, "marvell,88pm860x-iset",
->  					     &iset);
->  			data->iset = PM8606_WLED_CURRENT(iset);
-> -- 
-> 2.19.1
-> 
+> Userspace cares for the sake of the devices cgroup which operates on
+> device numnbers to restrict access to devices. Since binderfs doesn't
+> have a static major number returning that information is helpful.
+
+Ugh, ok, that makes sense.  If we really want to make the kernel
+interface simpler, drop the major/minor and then have userspace do the
+stat(2) to see what the major/minor number they care about is.
+
+But yeah, keeping it here makes everyone's life simpler, the kernel
+already knows this, and it's trivial to pass it back to userspace this
+way.
+
+Care to make this change and resend?
+
+thanks,
+
+greg k-h
