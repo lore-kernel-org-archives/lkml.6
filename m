@@ -2,130 +2,126 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FD6C65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05062C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D80AF21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544129207;
-	bh=amuUvMxpJWV46hx0oiukiUlpBnZDBmSr6eXs853GzVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=10nUXu7txInJLDsPGALMP1vJ3H2dA/KuChi6iJIczht8U+zB5a1bBMmn+agL6ykgw
-	 b3XxexH+SbevZQhXnW7vG7Ib0z37HjABI903+suPk4LeAEy8efYIW7NBfukFerUFQW
-	 snKJI2kJ81cKJsddS0VLJKw00w9HZAzwN64R7564=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80AF21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9CC2E2082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 20:50:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r0R4F5Lr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC2E2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725978AbeLFUqp (ORCPT
+        id S1725981AbeLFUu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:46:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbeLFUqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:46:45 -0500
-Received: from localhost (unknown [66.115.192.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75E7821479;
-        Thu,  6 Dec 2018 20:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544129204;
-        bh=amuUvMxpJWV46hx0oiukiUlpBnZDBmSr6eXs853GzVg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H3hEujkW70nJoe5C0++vV53fdvjZdg+ijB1YbB/hrVKCG5sJDr90b2lh5Yx70Bev7
-         p0xxBbDooWvuN6bsr3h6hejGy+IzgiAzOM062isJUjddpdIRzSdp1jp+FJ660+9vKg
-         6J5vBKuTdWq1+bqB6IjTVh4hnnATlMXSy5FTm6TI=
-Date:   Thu, 6 Dec 2018 14:46:43 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] PCI/P2PDMA: Match interface changes to
- devm_memremap_pages()
-Message-ID: <20181206204643.GC247703@google.com>
-References: <20181130225911.2900-1-logang@deltatee.com>
+        Thu, 6 Dec 2018 15:50:27 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46920 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbeLFUu1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:50:27 -0500
+Received: by mail-io1-f65.google.com with SMTP id v10so1472157ios.13;
+        Thu, 06 Dec 2018 12:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MxkfNPeZcrG8EjRvaPrQ+4BMehoT7MX1k7wo0sIAPv4=;
+        b=r0R4F5LrmXFDW5CH/dXCUHQKjmWyXPq2bFsse/o84D63gjkNAELkP37HI2STm2DqK7
+         HSScYwYOSC+oIoi0eQr3V5GQjYA97gfdUsE92tOfY4Ch8PVU15EPIZHbUePs/l4yfT/U
+         18SZheUwRA36aIFPJcpCa33MotK+oMsmU4OfVcZlbwXbpMXD29Yueml0bdzzxPAPZU69
+         8HlouKw8TZGIqFq7VRtOkvoD/YJVAYpE8xCRSP/0u8yNwc/YZCY6MNHZeWifBAE1gnN+
+         Kb3hIvKsZDDCg+zVvfWAIndgtGnJvcpEUpluowKT6sohb0G5X84MPVvjnvcKLwBcSjId
+         rnuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MxkfNPeZcrG8EjRvaPrQ+4BMehoT7MX1k7wo0sIAPv4=;
+        b=MKMFmj6hnHIXWFPJ/ipdknltK40AM/BkZQrkfSvEMroxju/qEfh6r8StAwERgeuG0d
+         x3rCXjFGv9lQYZWZRkQn98x/0PzqcybH2dgaNCTPYsGSUtMCYPqF16g6Y2bfa1V7+x22
+         5Xfvpn9C57VWt8kpgTLXekmUGDi+5bKOgX02YkK4m7c0pKybaEtQ+Nt12uEBt5ty5H2U
+         h9Dw2UpyVhyyPFy5zsSaz2xMVdfPhp58CMaddsRZh5MC6EbE1GfysW2BmmTCwT//PK6J
+         Jal0+vuaEvCAmA6Ibhf+TXSQ1e8Ld2CEmNwEnK7zKMXXbGZP0JgxpIF+GYJEDzvFI1Y3
+         TwfA==
+X-Gm-Message-State: AA+aEWbqJhxfvdBotVa4Inoxy1uBycFUM1rqfxA5ZipDSZoNGKggSGgY
+        XmdrTI3CGq6iS0js5QET7d1QqQ1YijQ0czAFtKJazA==
+X-Google-Smtp-Source: AFSGD/Urq3dddLWB7mI/R6BaIw5WKhTWrjl4n1H3cZckfVtVUWJjwLjRX/2YfiwpB/pZWwupwpwZQe/4CL5nLdx1Fh0=
+X-Received: by 2002:a6b:d318:: with SMTP id s24mr25690628iob.6.1544129425994;
+ Thu, 06 Dec 2018 12:50:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130225911.2900-1-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181201160711.GA21373@ycd-dell-ltp> <20181206204407.GB247703@google.com>
+In-Reply-To: <20181206204407.GB247703@google.com>
+From:   Benjamin Young <youngcdev@gmail.com>
+Date:   Thu, 6 Dec 2018 12:50:14 -0800
+Message-ID: <CAKDnngEo9Yo8j9pNrJNEdzK2du3bzWA87+rqBX+T1OaTNZ_cDA@mail.gmail.com>
+Subject: Re: [PATCH] pcie: portdrv: Fix Unnecessary space before function
+ pointer arguments
+To:     helgaas@kernel.org
+Cc:     linux-pci@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 03:59:11PM -0700, Logan Gunthorpe wrote:
-> "mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch" in the
-> mm tree breaks p2pdma. The patch was written and reviewed before p2pdma
-> was merged so the necessary changes were not done to the call site in
-> that code.
-> 
-> Without this patch, all drivers will fail to register P2P resources
-> because devm_memremap_pages() will return -EINVAL due to the 'kill'
-> member of the pagemap structure not yet being set.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
+Thanks, I will do that next time :)
 
-Applied with Dan's reviewed-by to pci/peer-to-peer for v4.21, thanks!
-
-If the mm patch you mention gets merged for v4.20, let me know and I can
-promote this to for-linus so v4.20 doesn't end up broken.
-
-> ---
-> 
-> Ideally this patch should be squashed with the one mentioned above to
-> avoid a bisect regression point.
-> 
-> drivers/pci/p2pdma.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index ae3c5b25dcc7..a2eb25271c96 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -82,10 +82,8 @@ static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
->  	complete_all(&p2p->devmap_ref_done);
->  }
-> 
-> -static void pci_p2pdma_percpu_kill(void *data)
-> +static void pci_p2pdma_percpu_kill(struct percpu_ref *ref)
->  {
-> -	struct percpu_ref *ref = data;
-> -
->  	/*
->  	 * pci_p2pdma_add_resource() may be called multiple times
->  	 * by a driver and may register the percpu_kill devm action multiple
-> @@ -198,6 +196,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
->  	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
->  	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
->  		pci_resource_start(pdev, bar);
-> +	pgmap->kill = pci_p2pdma_percpu_kill;
-> 
->  	addr = devm_memremap_pages(&pdev->dev, pgmap);
->  	if (IS_ERR(addr)) {
-> @@ -211,11 +210,6 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
->  	if (error)
->  		goto pgmap_free;
-> 
-> -	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_percpu_kill,
-> -					  &pdev->p2pdma->devmap_ref);
-> -	if (error)
-> -		goto pgmap_free;
-> -
->  	pci_info(pdev, "added peer-to-peer DMA memory %pR\n",
->  		 &pgmap->res);
-> 
-> --
-> 2.19.0
+On Thu, Dec 6, 2018 at 12:44 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> On Sat, Dec 01, 2018 at 08:07:11AM -0800, Benjamin Young wrote:
+> > Made spacing more consistent in the code for function pointer
+> > declarations based on checkpatch.pl
+> >
+> > Signed-off-by: Benjamin Young <youngcdev@gmail.com>
+>
+> Applied to pci/misc for v4.21, thanks!
+>
+> I also made similar changes to include/linux/pci.h.  For trivial changes
+> like this I like to fix similar issues in all of PCI at the same time.
+>
+> > ---
+> >  drivers/pci/pcie/portdrv.h | 16 ++++++++--------
+> >  1 file changed, 8 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+> > index e495f04..fbbf00b0 100644
+> > --- a/drivers/pci/pcie/portdrv.h
+> > +++ b/drivers/pci/pcie/portdrv.h
+> > @@ -71,19 +71,19 @@ static inline void *get_service_data(struct pcie_device *dev)
+> >
+> >  struct pcie_port_service_driver {
+> >       const char *name;
+> > -     int (*probe) (struct pcie_device *dev);
+> > -     void (*remove) (struct pcie_device *dev);
+> > -     int (*suspend) (struct pcie_device *dev);
+> > -     int (*resume_noirq) (struct pcie_device *dev);
+> > -     int (*resume) (struct pcie_device *dev);
+> > -     int (*runtime_suspend) (struct pcie_device *dev);
+> > -     int (*runtime_resume) (struct pcie_device *dev);
+> > +     int (*probe)(struct pcie_device *dev);
+> > +     void (*remove)(struct pcie_device *dev);
+> > +     int (*suspend)(struct pcie_device *dev);
+> > +     int (*resume_noirq)(struct pcie_device *dev);
+> > +     int (*resume)(struct pcie_device *dev);
+> > +     int (*runtime_suspend)(struct pcie_device *dev);
+> > +     int (*runtime_resume)(struct pcie_device *dev);
+> >
+> >       /* Device driver may resume normal operations */
+> >       void (*error_resume)(struct pci_dev *dev);
+> >
+> >       /* Link Reset Capability - AER service driver specific */
+> > -     pci_ers_result_t (*reset_link) (struct pci_dev *dev);
+> > +     pci_ers_result_t (*reset_link)(struct pci_dev *dev);
+> >
+> >       int port_type;  /* Type of the port this driver can handle */
+> >       u32 service;    /* Port service this device represents */
+> > --
+> > 2.5.0
+> >
