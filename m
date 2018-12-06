@@ -3,109 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C76C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98FAC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D36220868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D36220868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 8B77E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 13:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B77E208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbeLFNT2 (ORCPT
+        id S1729653AbeLFNTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 08:19:28 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:28106 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728346AbeLFNT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 08:19:27 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id D4173234A907709FA5C5;
-        Thu,  6 Dec 2018 21:19:24 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wB6DJJ62089930;
-        Thu, 6 Dec 2018 21:19:19 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from LIN-A6CB96A0603.zte.intra ([10.90.106.118])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018120621195244-15154913 ;
-          Thu, 6 Dec 2018 21:19:52 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     Hannes Reinecke <hare@suse.com>, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH v2] scsi: aic7xxx: Use kmemdup instead of duplicating its function
-Date:   Thu, 6 Dec 2018 21:19:18 +0800
-Message-Id: <20181206131918.37433-1-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-06 21:19:52,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-06 21:19:08
-Content-Transfer-Encoding: quoted-printable
-X-MAIL: mse01.zte.com.cn wB6DJJ62089930
+        Thu, 6 Dec 2018 08:19:36 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:52218 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728346AbeLFNTf (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 6 Dec 2018 08:19:35 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Dec 2018 14:19:33 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Thu, 06 Dec 2018 13:19:23 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     catalin.marinas@arm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm, kmemleak: Little optimization while scanning
+Date:   Thu,  6 Dec 2018 14:19:18 +0100
+Message-Id: <20181206131918.25099-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmemdup has implemented the function that kmalloc() + memcpy().
-We prefer to kmemdup rather than code opened implementation.
+kmemleak_scan() goes through all online nodes and tries
+to scan all used pages.
+We can do better and use pfn_to_online_page(), so in case we have
+CONFIG_MEMORY_HOTPLUG, offlined pages will be skiped automatically.
+For boxes where CONFIG_MEMORY_HOTPLUG is not present, pfn_to_online_page()
+will fallback to pfn_valid().
 
-This issue was detected with the help of coccinelle.
+Another little optimization is to check if the page belongs to the node
+we are currently checking, so in case we have nodes interleaved we will
+not check the same pfn multiple times.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Hannes Reinecke <hare@suse.com>
-CC: "James E.J. Bottomley" <jejb@linux.ibm.com>
-CC: "Martin K. Petersen" <martin.petersen@oracle.com>
-CC: linux-scsi@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
+I ran some tests:
+
+Add some memory to node1 and node2 making it interleaved:
+
+(qemu) object_add memory-backend-ram,id=ram0,size=1G
+(qemu) device_add pc-dimm,id=dimm0,memdev=ram0,node=1
+(qemu) object_add memory-backend-ram,id=ram1,size=1G
+(qemu) device_add pc-dimm,id=dimm1,memdev=ram1,node=2
+(qemu) object_add memory-backend-ram,id=ram2,size=1G
+(qemu) device_add pc-dimm,id=dimm2,memdev=ram2,node=1
+
+Then, we offline that memory:
+ # for i in {32..39} ; do echo "offline" > /sys/devices/system/node/node1/memory$i/state;done
+ # for i in {48..55} ; do echo "offline" > /sys/devices/system/node/node1/memory$i/state;don
+ # for i in {40..47} ; do echo "offline" > /sys/devices/system/node/node2/memory$i/state;done
+
+And we run kmemleak_scan:
+
+ # echo "scan" > /sys/kernel/debug/kmemleak
+
+before the patch:
+
+kmemleak: time spend: 41596 us
+
+after the patch:
+
+kmemleak: time spend: 34899 us
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- drivers/scsi/aic7xxx/aic79xx=5Fcore.c | 4 ++--
- drivers/scsi/aic7xxx/aic7xxx=5Fcore.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ mm/kmemleak.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c b/drivers/scsi/aic7xxx/a=
-ic79xx=5Fcore.c
-index 9ee75c9a9aa1..3e72fac6d248 100644
---- a/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
-+++ b/drivers/scsi/aic7xxx/aic79xx=5Fcore.c
-@@ -9438,10 +9438,10 @@ ahd=5Floadseq(struct ahd=5Fsoftc *ahd)
- 	if (cs=5Fcount !=3D 0) {
-=20
- 		cs=5Fcount *=3D sizeof(struct cs);
--		ahd->critical=5Fsections =3D kmalloc(cs=5Fcount, GFP=5FATOMIC);
-+		ahd->critical=5Fsections =3D kmemdup(cs=5Ftable, cs=5Fcount,
-+						GFP=5FATOMIC);
- 		if (ahd->critical=5Fsections =3D=3D NULL)
- 			panic("ahd=5Floadseq: Could not malloc");
--		memcpy(ahd->critical=5Fsections, cs=5Ftable, cs=5Fcount);
- 	}
- 	ahd=5Foutb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
-=20
-diff --git a/drivers/scsi/aic7xxx/aic7xxx=5Fcore.c b/drivers/scsi/aic7xxx/a=
-ic7xxx=5Fcore.c
-index f3362f4ab16e..8ea055a81ee8 100644
---- a/drivers/scsi/aic7xxx/aic7xxx=5Fcore.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx=5Fcore.c
-@@ -6901,10 +6901,10 @@ ahc=5Floadseq(struct ahc=5Fsoftc *ahc)
- 	if (cs=5Fcount !=3D 0) {
-=20
- 		cs=5Fcount *=3D sizeof(struct cs);
--		ahc->critical=5Fsections =3D kmalloc(cs=5Fcount, GFP=5FATOMIC);
-+		ahc->critical=5Fsections =3D kmemdup(cs=5Ftable, cs=5Fcount,
-+						GFP=5FATOMIC);
- 		if (ahc->critical=5Fsections =3D=3D NULL)
- 			panic("ahc=5Floadseq: Could not malloc");
--		memcpy(ahc->critical=5Fsections, cs=5Ftable, cs=5Fcount);
- 	}
- 	ahc=5Foutb(ahc, SEQCTL, PERRORDIS|FAILDIS|FASTMODE);
-=20
---=20
-2.19.1
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 877de4fa0720..5ce1e6a46d77 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -113,6 +113,7 @@
+ #include <linux/kmemleak.h>
+ #include <linux/memory_hotplug.h>
+ 
++
+ /*
+  * Kmemleak configuration and common defines.
+  */
+@@ -1547,11 +1548,14 @@ static void kmemleak_scan(void)
+ 		unsigned long pfn;
+ 
+ 		for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+-			struct page *page;
++			struct page *page = pfn_to_online_page(pfn);
++
++			if (!page)
++				continue;
+ 
+-			if (!pfn_valid(pfn))
++			/* only scan pages belonging to this node */
++			if (page_to_nid(page) != i)
+ 				continue;
+-			page = pfn_to_page(pfn);
+ 			/* only scan if page is in use */
+ 			if (page_count(page) == 0)
+ 				continue;
+-- 
+2.13.7
 
