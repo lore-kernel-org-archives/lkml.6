@@ -2,421 +2,190 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61048C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E2FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1127208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95B1D20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="COdN/r7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1127208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q3JIwRZc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TXW55RvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95B1D20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbeLFVIH (ORCPT
+        id S1725981AbeLFVL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:08:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60914 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeLFVIH (ORCPT
+        Thu, 6 Dec 2018 16:11:27 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41402 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeLFVL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:08:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bbKrBZfPM+E4Jjz0nA9r3UDIMW++WZicIi1RTJiZzEA=; b=COdN/r7f+tuKn7+BRK/RdA7UV
-        PQBofwA5ErVGLwh4uUkOanYDEUVN7ajKj/9+jKNTxS/3cd/74k+7B/wXx+ZO5yKqdpPgzXJIKnTqN
-        xkqkuQ7yERiHMHAylb6AGkkdJo2kBXk0ncnZF7GA+kDn1CLW0iRIiYiox5vi+RqY0tpWPquuS+UKb
-        hImET7nnwIhfJoYucz5w6ouYPmf03aIjWNxsxVC7Dv7F8PVcdX9DYO2Nu+BW8L22kkLDCUxe+TfSF
-        juKarWrWY7FVl+DjJHLyDTGWjEpkxJNHysoms4zJZODdU5TzfcTYXD4cmbUHsWufZdjwKienAjziI
-        9IxXNbZmA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gV0sL-0004oS-Lt; Thu, 06 Dec 2018 21:08:01 +0000
-Date:   Thu, 6 Dec 2018 13:08:01 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] aio: Convert ioctx_table to XArray
-Message-ID: <20181206210801.GA12675@bombadil.infradead.org>
-References: <20181128183531.5139-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128183531.5139-1-willy@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 6 Dec 2018 16:11:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4701860B1E; Thu,  6 Dec 2018 21:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544130685;
+        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q3JIwRZcWEFRYvbe4kYW0gpiBm2zHMIbwiJWfqd+8paGWlXZyMx/NT99I0gQlTOjU
+         edZZZcMo8cE1fkODBpnWWmGwXYDckVcM3upXdTQI+eD4tq9jkkt7sdpdlly6tdqRye
+         RcnjFboliEjHUZbFg/arIF7KBQBhKuHzw5I9+OcY=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 293E860792;
+        Thu,  6 Dec 2018 21:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544130684;
+        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TXW55RvLYI4bXdy1DO5Oy3RASjKtUwxUv2jOq0A89B26JiJMM87WmW/WOzxQtNdt/
+         jPBIAcJj2JymbRjigvGNegqys/Km3RnSDqnPdQiITBcsbUyVDjtVW/KDhUSRiZs8MN
+         XVT47t4+i9Du4V4xKCM+O6MWTSnfHw/CwbcwuZBI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 293E860792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
+Date:   Thu,  6 Dec 2018 14:11:06 -0700
+Message-Id: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping
+Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+for clients to vote on.
 
-On Wed, Nov 28, 2018 at 10:35:31AM -0800, Matthew Wilcox wrote:
-> This custom resizing array was vulnerable to a Spectre attack (speculating
-> off the end of an array to a user-controlled offset).  The XArray is
-> not vulnerable to Spectre as it always masks its lookups to be within
-> the bounds of the array.
-> 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  fs/aio.c                 | 182 ++++++++++++++-------------------------
->  include/linux/mm_types.h |   5 +-
->  kernel/fork.c            |   3 +-
->  mm/debug.c               |   6 --
->  4 files changed, 67 insertions(+), 129 deletions(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 301e6314183b..51ba7446a24f 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -71,12 +71,6 @@ struct aio_ring {
->  
->  #define AIO_RING_PAGES	8
->  
-> -struct kioctx_table {
-> -	struct rcu_head		rcu;
-> -	unsigned		nr;
-> -	struct kioctx __rcu	*table[];
-> -};
-> -
->  struct kioctx_cpu {
->  	unsigned		reqs_available;
->  };
-> @@ -313,27 +307,22 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
->  {
->  	struct file *file = vma->vm_file;
->  	struct mm_struct *mm = vma->vm_mm;
-> -	struct kioctx_table *table;
-> -	int i, res = -EINVAL;
-> +	struct kioctx *ctx;
-> +	unsigned long index;
-> +	int res = -EINVAL;
->  
-> -	spin_lock(&mm->ioctx_lock);
-> -	rcu_read_lock();
-> -	table = rcu_dereference(mm->ioctx_table);
-> -	for (i = 0; i < table->nr; i++) {
-> -		struct kioctx *ctx;
-> -
-> -		ctx = rcu_dereference(table->table[i]);
-> -		if (ctx && ctx->aio_ring_file == file) {
-> -			if (!atomic_read(&ctx->dead)) {
-> -				ctx->user_id = ctx->mmap_base = vma->vm_start;
-> -				res = 0;
-> -			}
-> -			break;
-> +	xa_lock(&mm->ioctx);
-> +	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
-> +		if (ctx->aio_ring_file != file)
-> +			continue;
-> +		if (!atomic_read(&ctx->dead)) {
-> +			ctx->user_id = ctx->mmap_base = vma->vm_start;
-> +			res = 0;
->  		}
-> +		break;
->  	}
-> +	xa_unlock(&mm->ioctx);
->  
-> -	rcu_read_unlock();
-> -	spin_unlock(&mm->ioctx_lock);
->  	return res;
->  }
->  
-> @@ -617,57 +606,21 @@ static void free_ioctx_users(struct percpu_ref *ref)
->  
->  static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
->  {
-> -	unsigned i, new_nr;
-> -	struct kioctx_table *table, *old;
->  	struct aio_ring *ring;
-> +	int err;
->  
-> -	spin_lock(&mm->ioctx_lock);
-> -	table = rcu_dereference_raw(mm->ioctx_table);
-> -
-> -	while (1) {
-> -		if (table)
-> -			for (i = 0; i < table->nr; i++)
-> -				if (!rcu_access_pointer(table->table[i])) {
-> -					ctx->id = i;
-> -					rcu_assign_pointer(table->table[i], ctx);
-> -					spin_unlock(&mm->ioctx_lock);
-> -
-> -					/* While kioctx setup is in progress,
-> -					 * we are protected from page migration
-> -					 * changes ring_pages by ->ring_lock.
-> -					 */
-> -					ring = kmap_atomic(ctx->ring_pages[0]);
-> -					ring->id = ctx->id;
-> -					kunmap_atomic(ring);
-> -					return 0;
-> -				}
-> -
-> -		new_nr = (table ? table->nr : 1) * 4;
-> -		spin_unlock(&mm->ioctx_lock);
-> -
-> -		table = kzalloc(sizeof(*table) + sizeof(struct kioctx *) *
-> -				new_nr, GFP_KERNEL);
-> -		if (!table)
-> -			return -ENOMEM;
-> -
-> -		table->nr = new_nr;
-> -
-> -		spin_lock(&mm->ioctx_lock);
-> -		old = rcu_dereference_raw(mm->ioctx_table);
-> -
-> -		if (!old) {
-> -			rcu_assign_pointer(mm->ioctx_table, table);
-> -		} else if (table->nr > old->nr) {
-> -			memcpy(table->table, old->table,
-> -			       old->nr * sizeof(struct kioctx *));
-> +	err = xa_alloc(&mm->ioctx, &ctx->id, UINT_MAX, ctx, GFP_KERNEL);
-> +	if (err)
-> +		return err;
->  
-> -			rcu_assign_pointer(mm->ioctx_table, table);
-> -			kfree_rcu(old, rcu);
-> -		} else {
-> -			kfree(table);
-> -			table = old;
-> -		}
-> -	}
-> +	/*
-> +	 * While kioctx setup is in progress, we are protected from
-> +	 * page migration changing ring_pages by ->ring_lock.
-> +	 */
-> +	ring = kmap_atomic(ctx->ring_pages[0]);
-> +	ring->id = ctx->id;
-> +	kunmap_atomic(ring);
-> +	return 0;
->  }
->  
->  static void aio_nr_sub(unsigned nr)
-> @@ -793,27 +746,8 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
->  	return ERR_PTR(err);
->  }
->  
-> -/* kill_ioctx
-> - *	Cancels all outstanding aio requests on an aio context.  Used
-> - *	when the processes owning a context have all exited to encourage
-> - *	the rapid destruction of the kioctx.
-> - */
-> -static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
-> -		      struct ctx_rq_wait *wait)
-> +static void __kill_ioctx(struct kioctx *ctx, struct ctx_rq_wait *wait)
->  {
-> -	struct kioctx_table *table;
-> -
-> -	spin_lock(&mm->ioctx_lock);
-> -	if (atomic_xchg(&ctx->dead, 1)) {
-> -		spin_unlock(&mm->ioctx_lock);
-> -		return -EINVAL;
-> -	}
-> -
-> -	table = rcu_dereference_raw(mm->ioctx_table);
-> -	WARN_ON(ctx != rcu_access_pointer(table->table[ctx->id]));
-> -	RCU_INIT_POINTER(table->table[ctx->id], NULL);
-> -	spin_unlock(&mm->ioctx_lock);
-> -
->  	/* free_ioctx_reqs() will do the necessary RCU synchronization */
->  	wake_up_all(&ctx->wait);
->  
-> @@ -831,6 +765,30 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
->  
->  	ctx->rq_wait = wait;
->  	percpu_ref_kill(&ctx->users);
-> +}
-> +
-> +/* kill_ioctx
-> + *	Cancels all outstanding aio requests on an aio context.  Used
-> + *	when the processes owning a context have all exited to encourage
-> + *	the rapid destruction of the kioctx.
-> + */
-> +static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
-> +		      struct ctx_rq_wait *wait)
-> +{
-> +	struct kioctx *old;
-> +
-> +	/* I don't understand what this lock is protecting against */
-> +	xa_lock(&mm->ioctx);
-> +	if (atomic_xchg(&ctx->dead, 1)) {
-> +		xa_unlock(&mm->ioctx);
-> +		return -EINVAL;
-> +	}
-> +
-> +	old = __xa_erase(&mm->ioctx, ctx->id);
-> +	WARN_ON(old != ctx);
-> +	xa_unlock(&mm->ioctx);
-> +
-> +	__kill_ioctx(ctx, wait);
->  	return 0;
->  }
->  
-> @@ -844,26 +802,21 @@ static int kill_ioctx(struct mm_struct *mm, struct kioctx *ctx,
->   */
->  void exit_aio(struct mm_struct *mm)
->  {
-> -	struct kioctx_table *table = rcu_dereference_raw(mm->ioctx_table);
-> +	struct kioctx *ctx;
->  	struct ctx_rq_wait wait;
-> -	int i, skipped;
-> +	unsigned long index;
->  
-> -	if (!table)
-> +	if (xa_empty(&mm->ioctx))
->  		return;
->  
-> -	atomic_set(&wait.count, table->nr);
-> +	/*
-> +	 * Prevent count from getting to 0 until we're ready for it
-> +	 */
-> +	atomic_set(&wait.count, 1);
->  	init_completion(&wait.comp);
->  
-> -	skipped = 0;
-> -	for (i = 0; i < table->nr; ++i) {
-> -		struct kioctx *ctx =
-> -			rcu_dereference_protected(table->table[i], true);
-> -
-> -		if (!ctx) {
-> -			skipped++;
-> -			continue;
-> -		}
-> -
-> +	xa_lock(&mm->ioctx);
-> +	xa_for_each(&mm->ioctx, ctx, index, ULONG_MAX, XA_PRESENT) {
->  		/*
->  		 * We don't need to bother with munmap() here - exit_mmap(mm)
->  		 * is coming and it'll unmap everything. And we simply can't,
-> @@ -872,16 +825,16 @@ void exit_aio(struct mm_struct *mm)
->  		 * that it needs to unmap the area, just set it to 0.
->  		 */
->  		ctx->mmap_size = 0;
-> -		kill_ioctx(mm, ctx, &wait);
-> +		atomic_inc(&wait.count);
-> +		__xa_erase(&mm->ioctx, ctx->id);
-> +		__kill_ioctx(ctx, &wait);
->  	}
-> +	xa_unlock(&mm->ioctx);
->  
-> -	if (!atomic_sub_and_test(skipped, &wait.count)) {
-> +	if (!atomic_sub_and_test(1, &wait.count)) {
->  		/* Wait until all IO for the context are done. */
->  		wait_for_completion(&wait.comp);
->  	}
-> -
-> -	RCU_INIT_POINTER(mm->ioctx_table, NULL);
-> -	kfree(table);
->  }
->  
->  static void put_reqs_available(struct kioctx *ctx, unsigned nr)
-> @@ -1026,24 +979,17 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
->  	struct aio_ring __user *ring  = (void __user *)ctx_id;
->  	struct mm_struct *mm = current->mm;
->  	struct kioctx *ctx, *ret = NULL;
-> -	struct kioctx_table *table;
->  	unsigned id;
->  
->  	if (get_user(id, &ring->id))
->  		return NULL;
->  
->  	rcu_read_lock();
-> -	table = rcu_dereference(mm->ioctx_table);
-> -
-> -	if (!table || id >= table->nr)
-> -		goto out;
-> -
-> -	ctx = rcu_dereference(table->table[id]);
-> +	ctx = xa_load(&mm->ioctx, id);
->  	if (ctx && ctx->user_id == ctx_id) {
->  		if (percpu_ref_tryget_live(&ctx->users))
->  			ret = ctx;
->  	}
-> -out:
->  	rcu_read_unlock();
->  	return ret;
->  }
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 5ed8f6292a53..1a95bb27f5a7 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -14,6 +14,7 @@
->  #include <linux/uprobes.h>
->  #include <linux/page-flags-layout.h>
->  #include <linux/workqueue.h>
-> +#include <linux/xarray.h>
->  
->  #include <asm/mmu.h>
->  
-> @@ -336,7 +337,6 @@ struct core_state {
->  	struct completion startup;
->  };
->  
-> -struct kioctx_table;
->  struct mm_struct {
->  	struct {
->  		struct vm_area_struct *mmap;		/* list of VMAs */
-> @@ -431,8 +431,7 @@ struct mm_struct {
->  		atomic_t membarrier_state;
->  #endif
->  #ifdef CONFIG_AIO
-> -		spinlock_t			ioctx_lock;
-> -		struct kioctx_table __rcu	*ioctx_table;
-> +		struct xarray ioctx;
->  #endif
->  #ifdef CONFIG_MEMCG
->  		/*
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff89c7b..acb775f9592d 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -946,8 +946,7 @@ __setup("coredump_filter=", coredump_filter_setup);
->  static void mm_init_aio(struct mm_struct *mm)
->  {
->  #ifdef CONFIG_AIO
-> -	spin_lock_init(&mm->ioctx_lock);
-> -	mm->ioctx_table = NULL;
-> +	xa_init_flags(&mm->ioctx, XA_FLAGS_ALLOC);
->  #endif
->  }
->  
-> diff --git a/mm/debug.c b/mm/debug.c
-> index cdacba12e09a..d45ec63aed8c 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -127,9 +127,6 @@ void dump_mm(const struct mm_struct *mm)
->  		"start_brk %lx brk %lx start_stack %lx\n"
->  		"arg_start %lx arg_end %lx env_start %lx env_end %lx\n"
->  		"binfmt %px flags %lx core_state %px\n"
-> -#ifdef CONFIG_AIO
-> -		"ioctx_table %px\n"
-> -#endif
->  #ifdef CONFIG_MEMCG
->  		"owner %px "
->  #endif
-> @@ -158,9 +155,6 @@ void dump_mm(const struct mm_struct *mm)
->  		mm->start_brk, mm->brk, mm->start_stack,
->  		mm->arg_start, mm->arg_end, mm->env_start, mm->env_end,
->  		mm->binfmt, mm->flags, mm->core_state,
-> -#ifdef CONFIG_AIO
-> -		mm->ioctx_table,
-> -#endif
->  #ifdef CONFIG_MEMCG
->  		mm->owner,
->  #endif
-> -- 
-> 2.19.1
-> 
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+ 3 files changed, 69 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 87b4949..16c4293 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -17,6 +17,7 @@ Required properties :
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+ 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
++			"qcom,rpmcc-msm8998", "qcom,rpmcc"
+ 
+ - #clock-cells : shall contain 1
+ 
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index d3aadae..269304e 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
+ 	.num_clks = ARRAY_SIZE(qcs404_clks),
+ };
+ 
++/* msm8998 */
++DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
++DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
++DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
++		   QCOM_SMD_RPM_MMAXI_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
++		   QCOM_SMD_RPM_AGGR_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
++		   QCOM_SMD_RPM_AGGR_CLK, 2);
++DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
++			QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
++static struct clk_smd_rpm *msm8998_clks[] = {
++	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
++	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
++	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
++	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
++	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
++	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
++	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
++	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
++	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
++	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
++	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
++	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
++	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
++	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
++	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
++	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
++	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
++	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
++	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
++	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
++	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
++	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
++	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
++	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
++	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
++	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
++	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
++	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
++	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
++	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
++	.clks = msm8998_clks,
++	.num_clks = ARRAY_SIZE(msm8998_clks),
++};
++
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+ 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
++	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index 3658b0c..81dbd1f 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -127,5 +127,11 @@
+ #define RPM_SMD_BIMC_GPU_A_CLK			77
+ #define RPM_SMD_QPIC_CLK			78
+ #define RPM_SMD_QPIC_CLK_A			79
++#define RPM_SMD_BB_CLK3_PIN			80
++#define RPM_SMD_BB_CLK3_A_PIN			81
++#define RPM_SMD_RF_CLK3				82
++#define RPM_SMD_RF_CLK3_A			83
++#define RPM_SMD_RF_CLK3_PIN			84
++#define RPM_SMD_RF_CLK3_A_PIN			85
+ 
+ #endif
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
