@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344E5C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2BDC04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED22621479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87382082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107445;
-	bh=+V486H4UhO2IaZ2YLiLvw1tPzHTS0aFcfSvN05iXr+g=;
+	s=default; t=1544107449;
+	bh=tN9s3rO3hJIZPU3zYjWeCebcgQfHfyUb7pwWtc3Pu7g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ly/ypNBcxNAbCul2t9TP6uIzGGB1jThuwPPXE5kBowgA1SOIItHEViZYgqPR7fup
-	 MuOkcEkg2EyNeUlUKQsDB1xaQqCXWwgO7mlD7Z2wTeW8ayhNRcAAq1lHWkBBrwIsRt
-	 d3tu2O72tNDcFnfc8PnQA/2JG4CH2Nhlm7eTagBs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED22621479
+	b=HOeBjwJjVD3qMQX/rd/A87lbhImhv96CzpjQ18tDwRq3rKD/auZLc3E5yEXKPWiMF
+	 1q5o6DjhlrWxZ6N+4qft4vrntxZYyGHXQJkBdnm5GiupsOFRgRfKKplxuC0+p2hw92
+	 9aIiD7IIacUZgmbnkzvRLqJo01JADtFjRzhdV1JI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87382082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbeLFOoD (ORCPT
+        id S1730817AbeLFOoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:44:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48542 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730330AbeLFOoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:00 -0500
+        id S1730209AbeLFOoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 898A620661;
-        Thu,  6 Dec 2018 14:43:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2171820661;
+        Thu,  6 Dec 2018 14:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107440;
-        bh=+V486H4UhO2IaZ2YLiLvw1tPzHTS0aFcfSvN05iXr+g=;
+        s=default; t=1544107442;
+        bh=tN9s3rO3hJIZPU3zYjWeCebcgQfHfyUb7pwWtc3Pu7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTF9qcxWVbTXXrTQ+nv8P5XRS9iJdsMSP3QIDfpVi8NJkIYm+SAknJjrDuBH9vJeT
-         FLzM5VtA+JcHp//pSC34KTtyJ894fdemEW4YyFg4hu+Vut5tRMVm+mCAhB7NangswI
-         U2w5WuUpGxu8rgsbbojeYGCz7Fw3qcWU7FDxEyvI=
+        b=nRrFxhhTI+JO+3EcLgNww6egthvefisJ7czojl+br7lAVbkuuM80ARB0f2/ODkXpA
+         aqsT99xTpVlhXMYDKSkLR83UZgMhXOwxlQFNFo2x5eP8bX1QNq9HJKd/HjWPsWTmPr
+         q4rdVOiAzpgJv+qqh0Qh0T+ETDEuuwaArO16AXlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        Ying Xue <ying.xue@windriver.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 55/55] tipc: use destination length for copy string
-Date:   Thu,  6 Dec 2018 15:39:29 +0100
-Message-Id: <20181206143004.709207942@linuxfoundation.org>
+Subject: [PATCH 4.14 54/55] net: qed: use correct strncpy() size
+Date:   Thu,  6 Dec 2018 15:39:28 +0100
+Message-Id: <20181206143004.650713862@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206143001.749982936@linuxfoundation.org>
 References: <20181206143001.749982936@linuxfoundation.org>
@@ -68,40 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 29e270fc32192e7729057963ae7120663856c93e upstream.
+commit 11f711081af0eb54190dc0de96ba4a9cd494666b upstream.
 
-Got below warning with gcc 8.2 compiler.
+passing the strlen() of the source string as the destination
+length is pointless, and gcc-8 now warns about it:
 
-net/tipc/topsrv.c: In function ‘tipc_topsrv_start’:
-net/tipc/topsrv.c:660:2: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-  strncpy(srv->name, name, strlen(name) + 1);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/tipc/topsrv.c:660:27: note: length computed here
-  strncpy(srv->name, name, strlen(name) + 1);
-                           ^~~~~~~~~~~~
-So change it to correct length and use strscpy.
+drivers/net/ethernet/qlogic/qed/qed_debug.c: In function 'qed_grc_dump':
+include/linux/string.h:253: error: 'strncpy' specified bound depends on the length of the source argument [-Werror=stringop-overflow=]
 
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Acked-by: Ying Xue <ying.xue@windriver.com>
+This changes qed_grc_dump_big_ram() to instead uses the length of
+the destination buffer, and use strscpy() to guarantee nul-termination.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/subscr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_debug.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/net/tipc/subscr.c
-+++ b/net/tipc/subscr.c
-@@ -375,7 +375,7 @@ int tipc_topsrv_start(struct net *net)
- 	topsrv->tipc_conn_new		= tipc_subscrb_connect_cb;
- 	topsrv->tipc_conn_release	= tipc_subscrb_release_cb;
+--- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+@@ -3590,10 +3590,8 @@ static u32 qed_grc_dump_big_ram(struct q
+ 	total_blocks = big_ram->num_of_blocks[dev_data->chip_id];
+ 	ram_size = total_blocks * BIG_RAM_BLOCK_SIZE_DWORDS;
  
--	strncpy(topsrv->name, name, strlen(name) + 1);
-+	strscpy(topsrv->name, name, sizeof(topsrv->name));
- 	tn->topsrv = topsrv;
- 	atomic_set(&tn->subscription_count, 0);
+-	strncpy(type_name, big_ram->instance_name,
+-		strlen(big_ram->instance_name));
+-	strncpy(mem_name, big_ram->instance_name,
+-		strlen(big_ram->instance_name));
++	strscpy(type_name, big_ram->instance_name, sizeof(type_name));
++	strscpy(mem_name, big_ram->instance_name, sizeof(mem_name));
  
+ 	/* Dump memory header */
+ 	offset += qed_grc_dump_mem_hdr(p_hwfn,
 
 
