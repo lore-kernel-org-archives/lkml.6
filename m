@@ -5,121 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE93C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD9DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB1F20878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB1F20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id CCE8320878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:30:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE8320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbeLFX3d (ORCPT
+        id S1726275AbeLFXav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:29:33 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:47074 "EHLO ale.deltatee.com"
+        Thu, 6 Dec 2018 18:30:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56294 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbeLFX3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:29:33 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gV34j-0006Wc-Cs; Thu, 06 Dec 2018 16:28:58 -0700
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-References: <20181205001544.GR2937@redhat.com>
- <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
- <20181205021334.GB3045@redhat.com>
- <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
- <20181205175357.GG3536@redhat.com>
- <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
- <20181206192050.GC3544@redhat.com>
- <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
- <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
- <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
- <20181206223935.GG3544@redhat.com>
- <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
-Date:   Thu, 6 Dec 2018 16:28:44 -0700
+        id S1726069AbeLFXav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 18:30:51 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFC3D3002DAD;
+        Thu,  6 Dec 2018 23:30:50 +0000 (UTC)
+Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05B7A1001F5B;
+        Thu,  6 Dec 2018 23:30:45 +0000 (UTC)
+Subject: Re: [PATCH v8 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org, jgross@suse.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        jpoimboe@redhat.com, kirill.shutemov@linux.intel.com, bp@suse.de,
+        thomas.lendacky@amd.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com, rdunlap@infradead.org
+References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+ <1544076257-21792-1-git-send-email-maran.wilson@oracle.com>
+ <d532f023-85f9-62b9-ca56-53a619fdcd1e@redhat.com>
+ <3b4fdddd-67d8-30d3-2a5d-c4d07b6f31c9@oracle.com>
+ <e76da394-c721-87ae-c721-1f6efdc93a50@redhat.com>
+ <becd5f82-0cca-f74b-93bd-6b4f13bc8bf0@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cef985c3-a687-c1af-83ac-2c71af45a366@redhat.com>
+Date:   Fri, 7 Dec 2018 00:30:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
+In-Reply-To: <becd5f82-0cca-f74b-93bd-6b4f13bc8bf0@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-acpi@vger.kernel.org, woodard@redhat.com, riel@surriel.com, aarcange@redhat.com, bskeggs@redhat.com, airlied@redhat.com, mgorman@techsingularity.net, vkini@nvidia.com, mhairgrove@nvidia.com, jonathan.cameron@huawei.com, mhocko@kernel.org, rcampbell@nvidia.com, jhubbard@nvidia.com, Paul.Blinzer@amd.com, christian.koenig@amd.com, Philip.Yang@amd.com, felix.kuehling@amd.com, benh@kernel.crashing.org, aneesh.kumar@linux.ibm.com, bsingharora@gmail.com, haggaie@mellanox.com, dan.j.williams@intel.com, keith.busch@intel.com, ross.zwisler@linux.intel.com, willy@infradead.org, rafael@kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, jglisse@redhat.com, dave.hansen@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Dec 2018 23:30:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-12-06 4:09 p.m., Dave Hansen wrote:
-> This looks great.  But, we don't _have_ this kind of information for any
-> system that I know about or any system available in the near future.
+On 07/12/18 00:11, Boris Ostrovsky wrote:
+> On 12/6/18 5:49 PM, Paolo Bonzini wrote:
+>> On 06/12/18 23:34, Boris Ostrovsky wrote:
+>>> On 12/6/18 5:11 PM, Paolo Bonzini wrote:
+>>>
+>>>> and also
+>>>>
+>>>> 	depends on !EFI
+>>>>
+>>>> because even though in principle it would be possible to write a PVH
+>>>> loader for UEFI, PVH's start info does not support the EFI handover
+>>>> protocol.
+>>> But we should be able to build the binary with both EFI and PVH?
+>> Can you?  It's a completely different binary format, the EFI handover
+>> protocol is invoked via a special entry point and needs the Linux header
+>> format, not ELF.
 > 
-> We basically have two different world views:
-> 1. The system is described point-to-point.  A connects to B @
->    100GB/s.  B connects to C at 50GB/s.  Thus, C->A should be
->    50GB/s.
->    * Less information to convey
->    * Potentially less precise if the properties are not perfectly
->      additive.  If A->B=10ns and B->C=20ns, A->C might be >30ns.
->    * Costs must be calculated instead of being explicitly specified
-> 2. The system is described endpoint-to-endpoint.  A->B @ 100GB/s
->    B->C @ 50GB/s, A->C @ 50GB/s.
->    * A *lot* more information to convey O(N^2)?
->    * Potentially more precise.
->    * Costs are explicitly specified, not calculated
-> 
-> These patches are really tied to world view #1.  But, the HMAT is really
-> tied to world view #1.
+> Right, but I think it is desirable to be able to build both from the
+> same config file.
 
-I didn't think this was meant to describe actual real world performance
-between all of the links. If that's the case all of this seems like a
-pipe dream to me.
+Ah, "make bzImage" and use the vmlinux for PVH, because PVH fetches the
+entry point from the special note.  That's clever. :)
 
-Attributes like cache coherency, atomics, etc should fit well in world
-view #1... and, at best, some kind of flag saying whether or not to use
-a particular link if you care about transfer speed. -- But we don't need
-special "link" directories to describe the properties of existing buses.
+I don't see why it should not work, and if so the "depends on !EFI" is
+indeed unnecessary.
 
-You're not *really* going to know bandwidth or latency for any of this
-unless you actually measure it on the system in question.
+Paolo
 
-Logan
