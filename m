@@ -2,60 +2,61 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_RHS_DOB,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9BCC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB9EC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277152082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA9D221479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107227;
-	bh=lvRvlbmU6XrNzyFm2WuTvsw6Puy1hwa4kYs7N/5Sj7s=;
+	s=default; t=1544107230;
+	bh=iIwC2MaONLKlL3BuwsxdeHHWQHf6BbfCy1rUd8Sj3Xk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XHzUj4NaNPjMDYlnFBeK04wZVCCJuK1mqOAUDsaH3D7aV1SzZF/C9gyEvcejdGyiY
-	 WpwXChRA7lGAVYo05CIKM8sV48Itf/jdCpbQzdSt75EUC0hFShNMRqB3HDKuyvoi97
-	 jYjV2Sabir/Ca2eN3jCKMCYQ/MRmphmJijnsUA5c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277152082B
+	b=O+DwPB3zi3O/tMfuY63xLVFiypbsSpQYGZn2H7DXslHCT/82CWPSXhwVmCEfeXG4I
+	 +tsCKFcVeUX8QGvvYQhZrOprTRbexstEuRTW5zX9Bkw+2/idao+F7Pk+Q8FacmNc2F
+	 RBCrME6jfB3+5e8vokyF5AuE7X6vp9dyN6dj8LSU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA9D221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbeLFOk0 (ORCPT
+        id S1729962AbeLFOk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:40:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729367AbeLFOkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:23 -0500
+        id S1729367AbeLFOk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F157520672;
-        Thu,  6 Dec 2018 14:40:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB73020661;
+        Thu,  6 Dec 2018 14:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107221;
-        bh=lvRvlbmU6XrNzyFm2WuTvsw6Puy1hwa4kYs7N/5Sj7s=;
+        s=default; t=1544107226;
+        bh=iIwC2MaONLKlL3BuwsxdeHHWQHf6BbfCy1rUd8Sj3Xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a7twKtmsfDswwNZ6ZdDtJoPmGqi+t44NTWUHVTKAA54UtwwR5kMTHYHvPsVfwK4Re
-         qAIcReMSDpQDU0x9PoUds7iQjO98PF99EgK6R0XkvO3TswgvAMf0J7p1yHXSdp2lO4
-         53k0dvYNDcQmgQn1Cv1mQrQNKwWZPYG6KZerIp7w=
+        b=NtPLmcfCDUw5PAnfWJVFZR1rvwA2QDxSAWDkFfHRIzUMPJTUoeTuQskNjPvQ35Fv3
+         14lenm9XoOA2DdNGcS+oKSbs1V5yfUlVxvXjE43hG2mBqXeqSdTwQb7gTK/EMu71He
+         4DjC+ACLYT1fCIN+cMeWPQ1IRtgadRzEu14LQ2iM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.19 20/41] drm/meson: Fix OOB memory accesses in meson_viu_set_osd_lut()
-Date:   Thu,  6 Dec 2018 15:39:00 +0100
-Message-Id: <20181206142951.442912428@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 22/41] userfaultfd: shmem: allocate anonymous memory for MAP_PRIVATE shmem
+Date:   Thu,  6 Dec 2018 15:39:02 +0100
+Message-Id: <20181206142951.633608581@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -74,138 +75,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-commit 97b2a3180a559a33852ac0cd77904166069484fd upstream.
+commit 5b51072e97d587186c2f5390c8c9c1fb7e179505 upstream.
 
-Currently on driver bringup with KASAN enabled, meson triggers an OOB
-memory access as shown below:
+Userfaultfd did not create private memory when UFFDIO_COPY was invoked
+on a MAP_PRIVATE shmem mapping.  Instead it wrote to the shmem file,
+even when that had not been opened for writing.  Though, fortunately,
+that could only happen where there was a hole in the file.
 
-[  117.904528] ==================================================================
-[  117.904560] BUG: KASAN: global-out-of-bounds in meson_viu_set_osd_lut+0x7a0/0x890
-[  117.904588] Read of size 4 at addr ffff20000a63ce24 by task systemd-udevd/498
-[  117.904601]
-[  118.083372] CPU: 4 PID: 498 Comm: systemd-udevd Not tainted 4.20.0-rc3Lyude-Test+ #20
-[  118.091143] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
-[  118.099768] Call trace:
-[  118.102181]  dump_backtrace+0x0/0x3e8
-[  118.105796]  show_stack+0x14/0x20
-[  118.109083]  dump_stack+0x130/0x1c4
-[  118.112539]  print_address_description+0x60/0x25c
-[  118.117214]  kasan_report+0x1b4/0x368
-[  118.120851]  __asan_report_load4_noabort+0x18/0x20
-[  118.125566]  meson_viu_set_osd_lut+0x7a0/0x890
-[  118.129953]  meson_viu_init+0x10c/0x290
-[  118.133741]  meson_drv_bind_master+0x474/0x748
-[  118.138141]  meson_drv_bind+0x10/0x18
-[  118.141760]  try_to_bring_up_master+0x3d8/0x768
-[  118.146249]  component_add+0x214/0x570
-[  118.149978]  meson_dw_hdmi_probe+0x18/0x20 [meson_dw_hdmi]
-[  118.155404]  platform_drv_probe+0x98/0x138
-[  118.159455]  really_probe+0x2a0/0xa70
-[  118.163070]  driver_probe_device+0x1b4/0x2d8
-[  118.167299]  __driver_attach+0x200/0x280
-[  118.171189]  bus_for_each_dev+0x10c/0x1a8
-[  118.175144]  driver_attach+0x38/0x50
-[  118.178681]  bus_add_driver+0x330/0x608
-[  118.182471]  driver_register+0x140/0x388
-[  118.186361]  __platform_driver_register+0xc8/0x108
-[  118.191117]  meson_dw_hdmi_platform_driver_init+0x1c/0x1000 [meson_dw_hdmi]
-[  118.198022]  do_one_initcall+0x12c/0x3bc
-[  118.201883]  do_init_module+0x1fc/0x638
-[  118.205673]  load_module+0x4b4c/0x6808
-[  118.209387]  __se_sys_init_module+0x2e8/0x3c0
-[  118.213699]  __arm64_sys_init_module+0x68/0x98
-[  118.218100]  el0_svc_common+0x104/0x210
-[  118.221893]  el0_svc_handler+0x48/0xb8
-[  118.225594]  el0_svc+0x8/0xc
-[  118.228429]
-[  118.229887] The buggy address belongs to the variable:
-[  118.235007]  eotf_33_linear_mapping+0x84/0xc0
-[  118.239301]
-[  118.240752] Memory state around the buggy address:
-[  118.245522]  ffff20000a63cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.252695]  ffff20000a63cd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.259850] >ffff20000a63ce00: 00 00 00 00 04 fa fa fa fa fa fa fa 00 00 00 00
-[  118.267000]                                ^
-[  118.271222]  ffff20000a63ce80: 00 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
-[  118.278393]  ffff20000a63cf00: 00 00 00 00 00 00 00 00 00 00 00 00 04 fa fa fa
-[  118.285542] ==================================================================
-[  118.292699] Disabling lock debugging due to kernel taint
+Fix the shmem-backed implementation of UFFDIO_COPY to create private
+memory for MAP_PRIVATE mappings.  The hugetlbfs-backed implementation
+was already correct.
 
-It seems that when looping through the OSD EOTF LUT maps, we use the
-same max iterator for OETF: 20. This is wrong though, since 20*2 is 40,
-which means that we'll stop out of bounds on the EOTF maps.
+This change is visible to userland, if userfaultfd has been used in
+unintended ways: so it introduces a small risk of incompatibility, but
+is necessary in order to respect file permissions.
 
-But, this whole thing is already confusing enough to read through as-is,
-so let's just replace all of the hardcoded sizes with
-OSD_(OETF/EOTF)_LUT_SIZE / 2.
+An app that uses UFFDIO_COPY for anything like postcopy live migration
+won't notice the difference, and in fact it'll run faster because there
+will be no copy-on-write and memory waste in the tmpfs pagecache
+anymore.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: <stable@vger.kernel.org> # v4.10+
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181125012117.31915-1-lyude@redhat.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Userfaults on MAP_PRIVATE shmem keep triggering only on file holes like
+before.
+
+The real zeropage can also be built on a MAP_PRIVATE shmem mapping
+through UFFDIO_ZEROPAGE and that's safe because the zeropage pte is
+never dirty, in turn even an mprotect upgrading the vma permission from
+PROT_READ to PROT_READ|PROT_WRITE won't make the zeropage pte writable.
+
+Link: http://lkml.kernel.org/r/20181126173452.26955-3-aarcange@redhat.com
+Fixes: 4c27fe4c4c84 ("userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/meson/meson_viu.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ mm/userfaultfd.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/meson/meson_viu.c
-+++ b/drivers/gpu/drm/meson/meson_viu.c
-@@ -184,18 +184,18 @@ void meson_viu_set_osd_lut(struct meson_
- 	if (lut_sel == VIU_LUT_OSD_OETF) {
- 		writel(0, priv->io_base + _REG(addr_port));
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -381,7 +381,17 @@ static __always_inline ssize_t mfill_ato
+ {
+ 	ssize_t err;
  
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
+-	if (vma_is_anonymous(dst_vma)) {
++	/*
++	 * The normal page fault path for a shmem will invoke the
++	 * fault, fill the hole in the file and COW it right away. The
++	 * result generates plain anonymous memory. So when we are
++	 * asked to fill an hole in a MAP_PRIVATE shmem mapping, we'll
++	 * generate anonymous memory directly without actually filling
++	 * the hole. For the MAP_PRIVATE case the robustness check
++	 * only happens in the pagetable (to verify it's still none)
++	 * and not in the radix tree.
++	 */
++	if (!(dst_vma->vm_flags & VM_SHARED)) {
+ 		if (!zeropage)
+ 			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+ 					       dst_addr, src_addr, page);
+@@ -486,7 +496,8 @@ retry:
+ 	 * dst_vma.
+ 	 */
+ 	err = -ENOMEM;
+-	if (vma_is_anonymous(dst_vma) && unlikely(anon_vma_prepare(dst_vma)))
++	if (!(dst_vma->vm_flags & VM_SHARED) &&
++	    unlikely(anon_vma_prepare(dst_vma)))
+ 		goto out_unlock;
  
- 		writel(r_map[OSD_OETF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
-@@ -211,18 +211,18 @@ void meson_viu_set_osd_lut(struct meson_
- 	} else if (lut_sel == VIU_LUT_OSD_EOTF) {
- 		writel(0, priv->io_base + _REG(addr_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
- 		writel(r_map[OSD_EOTF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
+ 	while (src_addr < src_start + len) {
 
 
