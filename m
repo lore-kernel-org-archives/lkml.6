@@ -2,73 +2,116 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD04FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E4CC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3AD120892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3AD120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FC5320892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544117789;
+	bh=isQkKi+0poTy0HrhEO1/V0MEhuYKBhPdzi+LFXWdkqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uPDrJezsqm04phT4Uoa82WDQhDB6V8bQYP3NZYTvMTkjN3JZxwTYBgvpntH+O428q
+	 midE/NzuSiD1CM8a08nMjFxFoWFUcgJ2A/g/bu4e/OxZ7DcwS126ESIMPijeXPCBOq
+	 pdyFFXEUGfUOvDguRffj1924bjTWCGkhOZZPrKxw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC5320892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbeLFRgG convert rfc822-to-8bit (ORCPT
+        id S1726008AbeLFRg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:36:06 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3205 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbeLFRgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:36:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 09:36:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,323,1539673200"; 
-   d="scan'208";a="105420068"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 09:36:04 -0800
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.166]) by
- ORSMSX107.amr.corp.intel.com ([169.254.1.232]) with mapi id 14.03.0415.000;
- Thu, 6 Dec 2018 09:36:04 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: RE: [PATCH] x86/mce: Streamline MCE subsystem's naming
-Thread-Topic: [PATCH] x86/mce: Streamline MCE subsystem's naming
-Thread-Index: AQHUjKTFLPWViI0DbkicQSjlsyYtrqVw3IeAgAAIPQCAABFJAIAAEU+AgAFmgYD//4zYsA==
-Date:   Thu, 6 Dec 2018 17:36:03 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D47B665@ORSMSX110.amr.corp.intel.com>
-References: <20181205141323.14995-1-bp@alien8.de>
- <20181205163037.GC109259@gmail.com> <20181205170006.GK29510@zn.tnic>
- <20181205180158.GA64770@gmail.com> <20181205190355.GP29510@zn.tnic>
- <20181206162703.GA119163@gmail.com>
-In-Reply-To: <20181206162703.GA119163@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjAxMmNjYzctOTM5YS00ZTkyLTg4NmQtMDJmOWU3MWJiZTMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNGkyMkJjUVF3WGRxSUxURVFDdVN1UTY1a29ZWEVlQlJKZTRwYU1tYnk1Vm1hOG1uMG96RGtuaXgwUWZjaXJqWCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Dec 2018 12:36:27 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55019 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeLFRg1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 12:36:27 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z18so1807935wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 09:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RipILcQUpcH8GUSH9/CuTptFulrcCQEOXLwS1tPYpEc=;
+        b=IfwL/StQPm7N8olcHNWcUOamvmzRs9EXsPcINNOPtIa5ele76oSjmmaGLSQFcVnPY5
+         8VsoK4m8RJh88xr1cjgHELc+g66OsTqnTrF+/PxWCYI5hCuCK/ffv3eQZT6FPOWApZdy
+         lIVis1h/sNwvweZnzoyqRoX4QlowgcZZvjy/yhoXTrUaCfwmgdumoaZiAJOdUQtv3Tuq
+         d94qZRdvKNVE/t7mKNH9SnzWKFKBhqCpfwSPdCQfNclF3A0dxUecJWrIjploBW1u2y79
+         7pDM/N6xIAwqN6iChwoKGvOqzQgpOv1Q3n4j0R3b/Ty8c5nXbl1nYPgsYtIl/ulh0fTG
+         cuyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=RipILcQUpcH8GUSH9/CuTptFulrcCQEOXLwS1tPYpEc=;
+        b=ldqk5DJthMHjHQOPBIx3fxPJLl4SoOgl2plOTnCQaNGI+hqV+oiUmzhykCFkTDugun
+         JRBdL17AgYIulU2WSZiGegHFs7Igl7DYADXWRRw7Zk+IxJXINEZOysCpm4Lo9hMmYkpe
+         Kv4Z696Tb2o59LHDwFzvOcz4o6DOkr3q2fdTIgNladKG7jLkXMjmGPvfZ7rVBtvFt8C3
+         xp8HaD86jGbCUBUAF/di3TF+6cQFlY15j2Y1FwGDZMNI6nRO95NoigtCPZxK2T7Beqbu
+         Jagp6az4LZ/VzPd86zGSrZ3eUsc/XLTS/ZSjiMEOS6DWaDsmuSB260L9qIxMG4F4uP2X
+         1ytQ==
+X-Gm-Message-State: AA+aEWbiHAMBNiKf64I+Y2yQGndOTWHQpExTkTXk+nAP5+WRt4NXNHRO
+        54N/6rNDpxvNA3PnPrS4IveLySsu
+X-Google-Smtp-Source: AFSGD/WMHBu6ooyZ1FYMOl1cAYUcG9Cb9bmy64dX/8RmpOHGDpqt9fzCfvh3gPeDCyK87vO+FxKBSA==
+X-Received: by 2002:a1c:2501:: with SMTP id l1mr7082223wml.102.1544117784797;
+        Thu, 06 Dec 2018 09:36:24 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h127sm2076839wmd.31.2018.12.06.09.36.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 09:36:24 -0800 (PST)
+Date:   Thu, 6 Dec 2018 18:36:21 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: Re: [PATCH] x86/mm/fault: Streamline the fault error_code decoder
+ some more
+Message-ID: <20181206173621.GA31884@gmail.com>
+References: <20181205163624.1842-1-sean.j.christopherson@intel.com>
+ <20181206073409.GA64887@gmail.com>
+ <20181206155336.GC31263@linux.intel.com>
+ <C1F7477E-70B1-4F26-9457-EA6D825501A6@amacapital.net>
+ <20181206164710.GA119529@gmail.com>
+ <EF7E7857-B4DF-4C14-85F5-114B03D5295D@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <EF7E7857-B4DF-4C14-85F5-114B03D5295D@amacapital.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> So the real question is, is there a signifcant class of MCE events that 
-> are not tied to the reporting channel which is per CPU (-ish ...) MCA 
-> banks?
 
-Perhaps QPI/UPI interconnect errors?
+* Andy Lutomirski <luto@amacapital.net> wrote:
 
--Tony
+> That’s why I suggested “read,” in lowercase, for reads.  Other than 
+> that, most of the unset bits are uninteresting. An OOPS is so likely to 
+> be a kernel fault that it’s barely worth mentioning, and I even added a 
+> whole separate diagnostic for user oopses.  Similarly, I don’t think we 
+> need to remind the reader that an oops wasn’t an SGX error or that it 
+> wasn’t a PK error.  So I think my idea highlights the interesting bits 
+> and avoids distraction from the uninteresting bits.
+
+Ok - all good points.
+
+Thanks,
+
+	Ingo
