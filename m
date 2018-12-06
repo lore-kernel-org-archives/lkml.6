@@ -2,187 +2,92 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3183C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25CCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62D3B20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:13:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KgSuak+z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D3B20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id A8684208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:23:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8684208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbeLFLNr (ORCPT
+        id S1729477AbeLFLXK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:13:47 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52140 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729404AbeLFLNq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:13:46 -0500
-Received: by mail-it1-f195.google.com with SMTP id x19so734700itl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vj32qMVVqi6/ofzNPokT7fWYP1x6Tmk73xihbhtsudQ=;
-        b=KgSuak+zZgxr7hdXV1+3diY6BhdW5gsTRaxv+gsfhbKvDkOiYfEYQOyIQzl8buSXRy
-         UE8rXZtvTA+T0Dj2BneSITTCCGRV9KOUHrzgIkA1gBIc/Tdm4tTnGKRxU86JdRx86Kyn
-         gxMhKl7Kl1xHKZ/wWQ1eOVgJwNCAbhmQmmwgM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vj32qMVVqi6/ofzNPokT7fWYP1x6Tmk73xihbhtsudQ=;
-        b=QtVQQ9sKfMDbx0uLLL+vZ4Y2yQ//YEviiBVwdgPTfrPJbC+O89Rkgf8RbkWNhwNBDH
-         J6lfmkQWma865M1EJ7ZpAfiCcJFqTcX6KvOJedGVhZDazLPc+WyIjwXnSZyXOYV0Kcgw
-         1QJ3HiSD7Cvsy3dziYInwK82uc01FpXYgz/bxpLRN3N8j0baF1V0wN18xcjkU4HF95aF
-         pWXbJtj/FGehFW3Hly6U1qoHqM/p44ilSFJ0CUommw3sCFcuDRfPOFyqp6Ch+ky6T+1X
-         4SrW5/q7uZ08RqVTD1LKSILIRyRgzN7WtY62bkKPYW/LbnqX/Hg9IvLkJgnI5Pd07yfj
-         pKLA==
-X-Gm-Message-State: AA+aEWbZ88aob8j4eQDXaPtNfGTV+iaNMLm7xiL1+L+HN+0apBZfk2sa
-        LsOHPCYYRnuau/0/4iOkugCekhl+SGxBJuUFItRdlQ==
-X-Google-Smtp-Source: AFSGD/UbozYhj6vuPIK1+h81UN1S1mC9snecLkVi502yTqbuUoxEhdW+jH8hMe4nWVSGcSOrqCWf4bqyyzewScHfs0I=
-X-Received: by 2002:a24:4f07:: with SMTP id c7mr1364648itb.107.1544094824912;
- Thu, 06 Dec 2018 03:13:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20181203100747.16442-1-jagan@amarulasolutions.com>
- <20181203100747.16442-6-jagan@amarulasolutions.com> <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
-In-Reply-To: <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 6 Dec 2018 16:43:33 +0530
-Message-ID: <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64-amarula-relic: Add OV5640
- camera node
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Dec 2018 06:23:10 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:52416 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727763AbeLFLXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 06:23:10 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A66421A0054;
+        Thu,  6 Dec 2018 12:23:08 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2841E1A00C2;
+        Thu,  6 Dec 2018 12:23:04 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 39122402CA;
+        Thu,  6 Dec 2018 19:22:58 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org, shawnguo@kernel.org
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peng Ma <peng.ma@nxp.com>,
+        Wen He <wen.he_1@nxp.com>
+Subject: [v12 1/3] arm: dts: ls1021a: add qdma device tree nodes
+Date:   Thu,  6 Dec 2018 19:18:21 +0800
+Message-Id: <20181206111823.45985-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 3:55 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > Amarula A64-Relic board by default bound with OV5640 camera,
-> > so add support for it with below pin information.
-> >
-> > - PE13, PE12 via i2c-gpio bitbanging
-> > - CLK_CSI_MCLK as external clock
-> > - PE1 as external clock pin muxing
-> > - DLDO3 as vcc-csi supply
-> > - DLDO3 as AVDD supply
-> > - ALDO1 as DOVDD supply
-> > - ELDO3 as DVDD supply
-> > - PE14 gpio for reset pin
-> > - PE15 gpio for powerdown pin
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
-> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  5 ++
-> >  2 files changed, 59 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > index 6cb2b7f0c817..9ac6d773188b 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > @@ -22,6 +22,41 @@
-> >                 stdout-path = "serial0:115200n8";
-> >         };
-> >
-> > +       i2c-csi {
-> > +               compatible = "i2c-gpio";
-> > +               sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-> > +               scl-gpios = <&pio 4 12 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
->
-> FYI our hardware doesn't do open drain.
+add the qDMA device tree nodes for LS1021A devices.
 
-True, but the kernel is enforcing it seems, from the change from [1].
-does that mean Linux use open drain even though hardware doens't have?
-or did I miss anything?
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
+---
+change in v12:
+	- no 
 
-[    3.659235] gpio-141 (sda): enforced open drain please flag it
-properly in DT/ACPI DSDT/board file
-[    3.679954] gpio-140 (scl): enforced open drain please flag it
-properly in DT/ACPI DSDT/board file
-[    3.814878] i2c-gpio i2c-csi: using lines 141 (SDA) and 140 (SCL)
+ arch/arm/boot/dts/ls1021a.dtsi |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
 
->
-> > +               i2c-gpio,delay-us = <5>;
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +
-> > +               ov5640: camera@3c {
-> > +                       compatible = "ovti,ov5640";
-> > +                       reg = <0x3c>;
-> > +                       pinctrl-names = "default";
-> > +                       pinctrl-0 = <&csi_mclk_pin>;
-> > +                       clocks = <&ccu CLK_CSI_MCLK>;
-> > +                       clock-names = "xclk";
-> > +
-> > +                       AVDD-supply = <&reg_dldo3>;
-> > +                       DOVDD-supply = <&reg_aldo1>;
->
-> DOVDD is the supply for I/O. You say it is ALDO1 here.
->
-> > +                       DVDD-supply = <&reg_eldo3>;
-> > +                       reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* CSI-RST-R: PE14 */
-> > +                       powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* CSI-STBY-R: PE15 */
-> > +
-> > +                       port {
-> > +                               ov5640_ep: endpoint {
-> > +                                       remote-endpoint = <&csi_ep>;
-> > +                                       bus-width = <8>;
-> > +                                       hsync-active = <1>; /* Active high */
-> > +                                       vsync-active = <0>; /* Active low */
-> > +                                       data-active = <1>;  /* Active high */
-> > +                                       pclk-sample = <1>;  /* Rising */
-> > +                               };
-> > +                       };
-> > +               };
-> > +       };
-> > +
-> >         wifi_pwrseq: wifi-pwrseq {
-> >                 compatible = "mmc-pwrseq-simple";
-> >                 clocks = <&rtc 1>;
-> > @@ -30,6 +65,25 @@
-> >         };
-> >  };
-> >
-> > +&csi {
-> > +       vcc-csi-supply = <&reg_dldo3>;
->
-> But here you say the SoC-side pins are driven from DLDO3.
->
-> This is a somewhat odd mismatch.
->
-> Regardless, the ov5640 driver enables all three regulators at probe time.
-> Shouldn't that be enough to get the I2C bus working? The pin voltage
-> supply does not belong here.
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index bdd6e66..b3d7807 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -812,5 +812,25 @@
+ 			#size-cells = <1>;
+ 			ranges = <0x0 0x0 0x10010000 0x10000>;
+ 		};
++
++		qdma: dma-controller@8390000 {
++			compatible = "fsl,ls1021a-qdma";
++			reg = <0x0 0x8388000 0x0 0x1000>, /* Controller regs */
++			      <0x0 0x8389000 0x0 0x1000>, /* Status regs */
++			      <0x0 0x838a000 0x0 0x2000>; /* Block regs */
++			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "qdma-error",
++				"qdma-queue0", "qdma-queue1";
++			dma-channels = <8>;
++			block-number = <1>;
++			block-offset = <0x1000>;
++			fsl,dma-queues = <2>;
++			status-sizes = <64>;
++			queue-sizes = <64 64>;
++			big-endian;
++		};
++
+ 	};
+ };
+-- 
+1.7.1
 
-It is working w/o supplying PE group, but I think that may be reason
-of supplying similar regulator via DOVDD on sensor side. But we need
-to make sure the pin-group must be powered right like DSI, HDMI? if
-yes may be we do something via power-domain driver like other SoC's
-does or do we have any other option.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpio/gpiolib.c?id=f926dfc112bc6cf41d7068ee5e3f261e13a5bec8
