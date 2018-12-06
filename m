@@ -2,136 +2,238 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EADBC67838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC4CC67838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ECE820892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544108049;
-	bh=r6cq+FbqMDiU4mdKnP4W2IRrXinrx92qm3jdB4nH+H0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gsf1M3yNUwZTb0xQHyaL6YrsIjBug1sCej9mEnY1LWtB0qDcSERh0CTb4BASlLaRW
-	 iIH3SCDk/d98w3v3TMUNrENi4bIBZonqoeoHlmQwxjLXDi5/qu7h2FxXVeaI4N7qt2
-	 lBYkloC3M4b1Fw8XYcLn9HKDdTgFNBrsa85JPEzM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ECE820892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 824E420878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:54:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="L0SB4FIi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824E420878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeLFOyI (ORCPT
+        id S1726904AbeLFOyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:54:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49678 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730967AbeLFOo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:44:58 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD23D21479;
-        Thu,  6 Dec 2018 14:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107497;
-        bh=r6cq+FbqMDiU4mdKnP4W2IRrXinrx92qm3jdB4nH+H0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z78NMmhz+RtkfNGdyfXq4Y5lbEj1t9fgBuVuhAfa+G4r2gDg/S4YHnj/+fAJjfb2H
-         LOCqzRPSUseh3VmXffHC+jnNUk8ihJFlSyBrsHJjl45VS2HRXqJIk6dgqXqzyfHM3P
-         vCZ1UpW8iBm2LsU6RG89olBruj1V+DoRrZO3A03o=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cameron Gutman <aicommander@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 028/101] Input: xpad - quirk all PDP Xbox One gamepads
-Date:   Thu,  6 Dec 2018 15:38:27 +0100
-Message-Id: <20181206143013.194415822@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
-References: <20181206143011.174892052@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 6 Dec 2018 09:54:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46573 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730941AbeLFOow (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:44:52 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so695620wrt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 06:44:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=ld4hbY7lsJjA1Sx0peaBnIruK6hz1flRyJPy66q+Esw=;
+        b=L0SB4FIiF3CBimVE8oVU9fUwzUL/5ZoG44I3LAsU68rLj7hm9vHUpr+1wYGj0WWHyd
+         9aHiVyoodAN2qvjIg7NSmOblQEiLuUMHDlZ3A5bJQb5qI3sb9ctonyJM/zs6ew0iLX7F
+         934vKa5wbqGsC0Rr7gSR57Lx/fbxComKe3Mk5JNiHp2XCUlLXfpOx33recGjCbXV3ZC7
+         Iyn6VwyhzyHwuFzFgAZObrkNd/dOnO0jdSb7rAda++fuP5ofQvdzRiMu5FT9uEKoTs+i
+         5bTVB6zrDjP7Krrjte/ORaAEjx8ivZiPOTQyElM0XwlTjRiecc1Ep7tC4DmtKUbjbD66
+         TIuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
+        bh=ld4hbY7lsJjA1Sx0peaBnIruK6hz1flRyJPy66q+Esw=;
+        b=Lzwjw9+U3gAf4YxgirzY+Ysf/7DBXJCDxzLBoy/nmZoWZff2CKsx5KZJMEeGEeI7BU
+         AkouUafI2aN0MNamrA2iwiWKfr780oXwCtzgWD9EHsP2EW5/2K3LQXtkms2R3xE3D0UW
+         Y7Gcib8U5IlYbjL4l081PW48uUA3dc0kbzeRJUFsE1/WIQ8sWWaKdz2NJxNndvTtxoZz
+         GBBiGvbR4nyjrmeCXc4B89uYw+rClnj8F+JkvuO/pNSMmEVYyTq5TnyB6Ea7pjGlGTKK
+         rmZSnXE4IZjyn9KQAtLoEENwfce0Zy3hzOcyzH0RGYFxp/HTJmbye3D4iWRfZ0/622q+
+         Ro0Q==
+X-Gm-Message-State: AA+aEWYL6RdBK5UGO11xl9xpvINIXAC4IuBT37TerEzXQZ/smC0Y7AkZ
+        2mRwShKL7xDVhmgjZ31lOMIeou1SgA9ocg==
+X-Google-Smtp-Source: AFSGD/UcByvKHZxerrZqI9s6cZ2SxM2pIwocHzWUsR8qwvlYqC6pB6rcwko2VtHOWGBPIoAJMxj37Q==
+X-Received: by 2002:a5d:4c8a:: with SMTP id z10mr24884002wrs.75.1544107490652;
+        Thu, 06 Dec 2018 06:44:50 -0800 (PST)
+Received: from [173.194.76.108] ([149.199.62.129])
+        by smtp.gmail.com with ESMTPSA id z9sm839217wrs.63.2018.12.06.06.44.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 06:44:49 -0800 (PST)
+Reply-To: monstr@monstr.eu
+Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot
+ images
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>
+References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Michal Simek <monstr@monstr.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
+ 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
+ RmzhqoTJlA==
+Message-ID: <19c7bdab-8df8-f7c6-7921-9a4d43dbca64@monstr.eu>
+Date:   Thu, 6 Dec 2018 15:44:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="UP8ZW8Nv7kiW1DZP44Zi1z8HAdOAL0H6o"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--UP8ZW8Nv7kiW1DZP44Zi1z8HAdOAL0H6o
+Content-Type: multipart/mixed; boundary="lV6F0GdKRGkgCXZZwIqBeKMUFRsl7PH7E";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Michal Simek <michal.simek@xilinx.com>
+Message-ID: <19c7bdab-8df8-f7c6-7921-9a4d43dbca64@monstr.eu>
+Subject: Re: [PATCH 0/7] microblaze: fix various problems in building boot
+ images
+References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
 
-------------------
+--lV6F0GdKRGkgCXZZwIqBeKMUFRsl7PH7E
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-From: Cameron Gutman <aicommander@gmail.com>
+On 03. 12. 18 8:50, Masahiro Yamada wrote:
+> This patch set fixes various issues in microblaze Makefiles.
+>=20
+> BTW, "simpleImage.<dt>" works like a phony target to generate the
+> following four images, where the first three are just aliases.
+>=20
+>  - arch/microblaze/boot/simpleImage.<dt>:
+>          identical to arch/microblaze/boot/linux.bin
+>=20
+>  - arch/microblaze/boot/simpleImage.<dt>.unstrip:
+>          identical to vmlinux
+>=20
+>  - arch/microblaze/boot/simpleImage.<dt>.ub:
+>          identical to arch/microblaze/boot/linux.bin.ub
+>=20
+>  - arch/microblaze/boot/simpleImage.<dt>.strip:
+>          stripped vmlinux
+>=20
+> I am not sure how much useful those copies are,
+> but, I tried my best to keep the same behavior.
+>=20
+> IMHO, I guess DTB=3D<dt> would be more sensible,
+> but it is up to Michal.
+>=20
+>=20
+>=20
+> Masahiro Yamada (7):
+>   microblaze: fix cleaning of boot images
+>   microblaze: adjust the help to the real behavior
+>   microblaze: move "... is ready" message to arch/microblaze/Makefile
+>   microblaze: fix multiple bugs in arch/microblaze/boot/Makefile
+>   microblaze: add linux.bin* and simpleImage.* to PHONY
+>   microblaze: fix race condition in building boot images
+>   microblaze: remove the unneeded code just in case file copy fails
+>=20
+>  arch/microblaze/Makefile          | 14 +++++++++-----
+>  arch/microblaze/boot/Makefile     | 33 +++++++++++++++++--------------=
+--
+>  arch/microblaze/boot/dts/Makefile |  5 +----
+>  3 files changed, 27 insertions(+), 25 deletions(-)
+>=20
 
-commit a6754fae1e66e9a40fed406290d7ca3f2b4d227c upstream.
+One more thing I have in my mind for a while is that will be good to
+configure kernel build flags from DT and completely get rid of these
+symbols.
 
-Since we continue to find tons of new variants [0,1,2,3,4,5,6] that
-need the PDP quirk, let's just quirk all devices from PDP.
+XILINX_MICROBLAZE0_USE_MSR_INSTR
+XILINX_MICROBLAZE0_USE_PCMP_INSTR
+XILINX_MICROBLAZE0_USE_BARREL
+XILINX_MICROBLAZE0_USE_DIV
+XILINX_MICROBLAZE0_USE_HW_MUL
+XILINX_MICROBLAZE0_USE_FPU
 
-[0]: https://github.com/paroj/xpad/pull/104
-[1]: https://github.com/paroj/xpad/pull/105
-[2]: https://github.com/paroj/xpad/pull/108
-[3]: https://github.com/paroj/xpad/pull/109
-[4]: https://github.com/paroj/xpad/pull/112
-[5]: https://github.com/paroj/xpad/pull/115
-[6]: https://github.com/paroj/xpad/pull/116
+It means setup CPUFLAGS based on extracting that values from DT that it
+all the time match the hardware.
+It will also simplify all the CPUFLAGS logic which is in
+arch/microblaze/Makefile.
 
-Fixes: e5c9c6a885fa ("Input: xpad - add support for PDP Xbox One controllers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Cameron Gutman <aicommander@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Do you have any idea how this can be done?
 
----
- drivers/input/joystick/xpad.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+(I have the same issue in U-Boot too)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -483,18 +483,18 @@ static const u8 xboxone_hori_init[] = {
- };
- 
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init1[] = {
- 	0x0a, 0x20, 0x00, 0x03, 0x00, 0x01, 0x14
- };
- 
- /*
-- * This packet is required for some of the PDP pads to start
-+ * This packet is required for most (all?) of the PDP pads to start
-  * sending input reports. These pads include: (0x0e6f:0x02ab),
-- * (0x0e6f:0x02a4).
-+ * (0x0e6f:0x02a4), (0x0e6f:0x02a6).
-  */
- static const u8 xboxone_pdp_init2[] = {
- 	0x06, 0x20, 0x00, 0x02, 0x01, 0x00
-@@ -530,12 +530,8 @@ static const struct xboxone_init_packet
- 	XBOXONE_INIT_PKT(0x0e6f, 0x0165, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0f0d, 0x0067, xboxone_hori_init),
- 	XBOXONE_INIT_PKT(0x0000, 0x0000, xboxone_fw2015_init),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
--	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init1),
-+	XBOXONE_INIT_PKT(0x0e6f, 0x0000, xboxone_pdp_init2),
- 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
- 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
+Thanks,
+Michal
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
 
 
+
+--lV6F0GdKRGkgCXZZwIqBeKMUFRsl7PH7E--
+
+--UP8ZW8Nv7kiW1DZP44Zi1z8HAdOAL0H6o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlwJNdsACgkQykllyylKDCGXHwCeMRhtfvZHX8Izhg7CVUrZYzSs
+3hkAoJrNgHbAe/LP7naopXGcHGixk/HB
+=yW57
+-----END PGP SIGNATURE-----
+
+--UP8ZW8Nv7kiW1DZP44Zi1z8HAdOAL0H6o--
