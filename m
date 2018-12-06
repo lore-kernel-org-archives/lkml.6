@@ -2,192 +2,128 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B2EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA872C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0412082B
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:12:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oEY9v1Bn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YEVrlh7x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0412082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A750A21731
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:14:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A750A21731
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeLFWMJ (ORCPT
+        id S1726086AbeLFWOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:12:09 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48578 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbeLFWMI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:12:08 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3E263622D4; Thu,  6 Dec 2018 22:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544134327;
-        bh=dEyS9MqaYPf06z3hcjl+By9bE6kjiRUW2fE2plW76G8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oEY9v1BnFi2rCld2oTzORA4yN4i0OQRR0HvEEUA+ylHTo+C9kbMqgH7KhvlssITgd
-         lMngamcrCcv0t0eGJkG+0Tm1QlBYZf+sXysXix4MsiI+/WCV0vSJRmj1wvN0ZIuZzV
-         KehjbpX4WgZDeAoY0DwqI4IpWmIIsur2snlTU8R4=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Thu, 6 Dec 2018 17:14:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeLFWOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:14:46 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A0AD76229E;
-        Thu,  6 Dec 2018 22:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544134322;
-        bh=dEyS9MqaYPf06z3hcjl+By9bE6kjiRUW2fE2plW76G8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YEVrlh7xqFleRtHy+Mfi2cRPY8c+I1YU/wmmlIB9mfzaWn53d/zHKSckIS3r9dEmQ
-         vpTt5554x8t7Qb7laWl0q54mChbGm2oQEBp/9DKu4N36Rsoub3kjHMqytJwQMuWs8J
-         tj6bpHlxfoJaT3pSErXEZDT+j16lhEl0wfUpq8xQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0AD76229E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
-Date:   Thu,  6 Dec 2018 15:11:50 -0700
-Message-Id: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E1D47BDC6;
+        Thu,  6 Dec 2018 22:14:45 +0000 (UTC)
+Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A121F100190E;
+        Thu,  6 Dec 2018 22:14:36 +0000 (UTC)
+Subject: Re: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jgross@suse.com, bp@suse.de,
+        dave.hansen@linux.intel.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
+        roger.pau@citrix.com, rkrcmar@redhat.com
+References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
+ <e8ed34e7-f82a-2314-9919-185d48510715@redhat.com>
+ <20181206213752.GL3986@zn.tnic>
+ <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <63756df6-6f0b-fdfa-932e-b53d173da5be@redhat.com>
+Date:   Thu, 6 Dec 2018 23:14:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <147cc043-b0af-74e9-5259-8c7854f82d8b@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 06 Dec 2018 22:14:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
-for clients to vote on.
+On 06/12/18 22:58, Boris Ostrovsky wrote:
+> On 12/6/18 4:37 PM, Borislav Petkov wrote:
+>> On Thu, Dec 06, 2018 at 10:21:12PM +0100, Paolo Bonzini wrote:
+>>> Thanks!  I should be able to post a Tested-by next Monday.  Boris, are
+>>> you going to pick it up for 4.21?
+>> Boris me or Boris O.?
+>>
+>> :-)
+>>
+> 
+> O. ;-)
+> 
+> There are some minor changes in non-xen x86 code so it would be good to
+> get x86 maintainers' ack.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
-v2
--fix compatible ordering nits per Stephen
+It's not really code, only Kconfig (and I remarked on it just now), but
+it doesn't hurt of course.
 
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
- 3 files changed, 69 insertions(+)
+> And as far as qemu/qboot changes, should we assume that the general
+> approach is acceptable? I understand that the patches will probably need
+> to go through some iterations but I want to make sure we have a path
+> forward there.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87b4949..944719b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -16,6 +16,7 @@ Required properties :
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8998", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index d3aadae..b1f95a9 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -655,10 +655,72 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
- 	.num_clks = ARRAY_SIZE(qcs404_clks),
- };
- 
-+/* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
-+DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
-+DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-+		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
-+			QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
-+static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
-+	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
-+	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
-+	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
-+	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
-+	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
-+	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
-+	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
-+	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
-+	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
-+	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
-+	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
-+	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
-+	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
-+	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
-+	.clks = msm8998_clks,
-+	.num_clks = ARRAY_SIZE(msm8998_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
-+	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ }
- };
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 3658b0c..81dbd1f 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -127,5 +127,11 @@
- #define RPM_SMD_BIMC_GPU_A_CLK			77
- #define RPM_SMD_QPIC_CLK			78
- #define RPM_SMD_QPIC_CLK_A			79
-+#define RPM_SMD_BB_CLK3_PIN			80
-+#define RPM_SMD_BB_CLK3_A_PIN			81
-+#define RPM_SMD_RF_CLK3				82
-+#define RPM_SMD_RF_CLK3_A			83
-+#define RPM_SMD_RF_CLK3_PIN			84
-+#define RPM_SMD_RF_CLK3_A_PIN			85
- 
- #endif
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Yes, the general approach is fine.  I have already reviewed the qboot
+parts, I guess we will also want an option ROM similar to
+linuxboot/multiboot for SeaBIOS support but that's simple matter of
+programming. :)
 
+Paolo
