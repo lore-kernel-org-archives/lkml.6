@@ -2,97 +2,92 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E5CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293CCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1792E20868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:20:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1792E20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F077E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:21:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F077E208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeLFSUy (ORCPT
+        id S1726101AbeLFSVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:20:54 -0500
-Received: from mga01.intel.com ([192.55.52.88]:46142 "EHLO mga01.intel.com"
+        Thu, 6 Dec 2018 13:21:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:57838 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFSUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:20:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 10:20:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,323,1539673200"; 
-   d="scan'208";a="96706897"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga007.jf.intel.com with ESMTP; 06 Dec 2018 10:20:53 -0800
-Date:   Thu, 6 Dec 2018 10:20:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [RFC PATCH 2/4] x86/fault: Attempt to fixup unhandled #PF in
- vDSO before signaling
-Message-ID: <20181206182053.GG31263@linux.intel.com>
-References: <20181205232012.28920-1-sean.j.christopherson@intel.com>
- <20181205232012.28920-3-sean.j.christopherson@intel.com>
- <7a2f8782-9599-1554-aaaf-b3bd12e00778@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a2f8782-9599-1554-aaaf-b3bd12e00778@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1725916AbeLFSVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:21:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FFF81596;
+        Thu,  6 Dec 2018 10:21:15 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7098C3F908;
+        Thu,  6 Dec 2018 10:21:15 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 841DA1AE0BE1; Thu,  6 Dec 2018 18:21:36 +0000 (GMT)
+From:   Will Deacon <will.deacon@arm.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
+        mhocko@suse.com, sean.j.christopherson@intel.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RESEND PATCH v4 2/5] arm64: mmu: Drop pXd_present() checks from pXd_free_pYd_table()
+Date:   Thu,  6 Dec 2018 18:21:32 +0000
+Message-Id: <1544120495-17438-3-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1544120495-17438-1-git-send-email-will.deacon@arm.com>
+References: <1544120495-17438-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 10:17:34AM -0800, Dave Hansen wrote:
-> >  #define CREATE_TRACE_POINTS
-> >  #include <asm/trace/exceptions.h>
-> > @@ -928,6 +929,9 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
-> >  		if (address >= TASK_SIZE_MAX)
-> >  			error_code |= X86_PF_PROT;
-> >  
-> > +		if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-> > +			return;
-> > +
-> >  		if (likely(show_unhandled_signals))
-> >  			show_signal_msg(regs, error_code, address, tsk);
-> 
-> I'd preferably like to get this plugged into the page fault code before
-> we get to the "bad_area" handling.  This plugs it in near the erratum
-> handling which seems really late to me.
-> 
-> > @@ -1045,6 +1049,9 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
-> >  	if (is_prefetch(regs, error_code, address))
-> >  		return;
-> >  
-> > +	if (fixup_vdso_exception(regs, X86_TRAP_PF, error_code, address))
-> > +		return;
-> > +
-> >  	set_signal_archinfo(address, error_code);
-> >  
-> >  #ifdef CONFIG_MEMORY_FAILURE
-> 
-> This *seems* really late to me.  We've already called into the mm fault
-> handling code to try and handle the fault and they told us it was
-> VM_FAULT_SIGBUS.  Shouldn't we have just detected that it was in the
-> vDSO first and not even called the handling code?
+The core code already has a check for pXd_none(), so remove it from the
+architecture implementation.
 
-Not sure if Andy had other use cases in mind, but for SGX we only want
-to invoke the fixup in lieu of a signal.  E.g. #PFs to fault in an EPC
-page need to be handled in the kernel.
+Cc: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Toshi Kani <toshi.kani@hpe.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/mm/mmu.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index d1d6601b385d..786cfa6355be 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -989,10 +989,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+ 
+ 	pmd = READ_ONCE(*pmdp);
+ 
+-	if (!pmd_present(pmd))
+-		return 1;
+ 	if (!pmd_table(pmd)) {
+-		VM_WARN_ON(!pmd_table(pmd));
++		VM_WARN_ON(1);
+ 		return 1;
+ 	}
+ 
+@@ -1012,10 +1010,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 
+ 	pud = READ_ONCE(*pudp);
+ 
+-	if (!pud_present(pud))
+-		return 1;
+ 	if (!pud_table(pud)) {
+-		VM_WARN_ON(!pud_table(pud));
++		VM_WARN_ON(1);
+ 		return 1;
+ 	}
+ 
+-- 
+2.1.4
+
