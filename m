@@ -2,100 +2,115 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E532C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EB0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E30020878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:53:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E30020878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 137D020878
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 11:55:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ChxAtTP7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137D020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbeLFLxa (ORCPT
+        id S1729388AbeLFLzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 06:53:30 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:43146 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727832AbeLFLxa (ORCPT
+        Thu, 6 Dec 2018 06:55:07 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34272 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFLzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 06:53:30 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB6BrN5F018397;
-        Thu, 6 Dec 2018 05:53:23 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2p3rk7hd0x-1;
-        Thu, 06 Dec 2018 05:53:23 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 00CC7611E121;
-        Thu,  6 Dec 2018 05:53:23 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 6 Dec 2018
- 11:53:22 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wB6BrLVf010939; Thu,
- 6 Dec 2018 11:53:21 GMT
-Date:   Thu, 6 Dec 2018 11:53:21 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 06/15 v3] regulator: max8973: Let core handle GPIO
- descriptor
-Message-ID: <20181206115321.GI16508@imbe.wolfsonmicro.main>
-References: <20181205124721.26624-1-linus.walleij@linaro.org>
- <20181205124721.26624-7-linus.walleij@linaro.org>
- <20181205134345.GF16508@imbe.wolfsonmicro.main>
- <CACRpkdbJsTc2tAyTriz33a75d-1tJdcvdock0fxi7HdJ+EH_Dw@mail.gmail.com>
- <20181205153331.GG16508@imbe.wolfsonmicro.main>
- <CACRpkdaSuU+v1yZm-GXBH693JbVZysXm6_1939ct50arKJn2qw@mail.gmail.com>
- <20181206103430.GH16508@imbe.wolfsonmicro.main>
- <CACRpkdaO6-ak74zudmNy1G5rXC0G6UVxOJ8Du82X6bZTPoJhpA@mail.gmail.com>
+        Thu, 6 Dec 2018 06:55:06 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u6-v6so178270ljd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 03:55:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rBexcS4B7txLbvWKUeWQD5WxUUP+D2GevPZ089eJMQc=;
+        b=ChxAtTP7bs8u8Rzf0vPr4V2IHY0mxHIKLll2gd22eGue5wadbXUmXOgggDF8q/NrIp
+         MJAUaHVi78b2PqS6WlHbnjMeYE6TeBY5bEIQ8G98kfEAi0tIUtNXExqodssDDf0NUm8S
+         PVTeXVhiWflESPGzPNUoMPif6D13hPDRWI72A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rBexcS4B7txLbvWKUeWQD5WxUUP+D2GevPZ089eJMQc=;
+        b=fbAb4C/VOKrU/4rLYcP+GwroHW4kGePyFxY5GlACcnVMTMbzXRfCgA2CjoBCgwKtTU
+         iuh2pT5rlgq2aPBfb4f/72CPn1Qfzk+bnJDZBZZK1pdtWr1Dr7DO90UNtpE4vQ2AHt0s
+         Iu18OUNdnSnMvgkDcYNTIF+5LzX942E1pDJpNNWzPXuQUQOUygGQl37yXR5diaeC66HV
+         l3dQ3DnM7tmdSXWKcjnRbP2TCu9WwaGrT2E+vZnlP2OKxZMvT5uGzU8JSPcxF/+sTcdv
+         1kFxo1oQ0yADu0ZgMp8dXrC6hZrcwzLRthf+uOtvh6JexZsx36by07FjMHy1kZKRgFnM
+         2LVQ==
+X-Gm-Message-State: AA+aEWYR5d6Xx4qPTIySoG6loMTHeq4iTvo2dDJNvp8TvQMbG9XtQSLp
+        xL+J6i3WCKyIhz88BdBwa14h708q+ZNXF7hWcmoUqw==
+X-Google-Smtp-Source: AFSGD/WIHUeGJ3d9gNuryIeeXfoJLSKkjMggMy1P5JPoFFWO5r98u6viooh9OwRR7Dc0vNxiKxv4DsQX5CNdWUEa/0g=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr18106803ljc.97.1544097304378;
+ Thu, 06 Dec 2018 03:55:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaO6-ak74zudmNy1G5rXC0G6UVxOJ8Du82X6bZTPoJhpA@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=603 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812060107
+References: <1544089549-23629-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1544089549-23629-1-git-send-email-krzk@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Dec 2018 12:54:52 +0100
+Message-ID: <CACRpkda9UAGxMrP27qYe-ZC=3RehesAPsUAnt71Jx5Dd+rpSqQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Fix return value of gpio_to_desc() stub if !GPIOLIB
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 12:47:46PM +0100, Linus Walleij wrote:
-> On Thu, Dec 6, 2018 at 11:34 AM Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> > On Thu, Dec 06, 2018 at 09:58:30AM +0100, Linus Walleij wrote:
-> > > On Wed, Dec 5, 2018 at 4:33 PM Charles Keepax
-> > > <ckeepax@opensource.cirrus.com> wrote:
-> > > > On Wed, Dec 05, 2018 at 03:42:06PM +0100, Linus Walleij wrote:
-> > > > > On Wed, Dec 5, 2018 at 2:43 PM Charles Keepax
-> > > > > <ckeepax@opensource.cirrus.com> wrote:
-> > > > > > On Wed, Dec 05, 2018 at 01:47:12PM +0100, Linus Walleij wrote:
-> > You shouldn't really need to use unhinge, you can just use devm
-> > on the path that doesn't pass it to the core and not on the
-> > one that does. You just need to update the error case below it to
-> > use config->ena_gpiod rather than gpiod.
-> 
-> Indeed I just think it will be confusing when people read the code.
-> 
-> It's better consistency if its just devm_* and the  we unhinge the
-> one we pass to the regulator core IMO.
-> 
+On Thu, Dec 6, 2018 at 10:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-That's ok no objections from my if you prefer it that way.
+> If CONFIG_GPOILIB is not set, the stub of gpio_to_desc() should return
+> the same type of error as regular version: NULL.  All the callers
+> compare the return value of gpio_to_desc() against NULL, so returned
+> ERR_PTR would be treated as non-error case leading to dereferencing of
+> error value.
+>
+> Fixes: 79a9becda894 ("gpiolib: export descriptor-based GPIO interface")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/linux/gpio/consumer.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index ed070512b40e..3b01fbcafc94 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -505,7 +505,7 @@ static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
+>
+>  static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
+>  {
+> -       return ERR_PTR(-EINVAL);
+> +       return NULL;
 
-Thanks,
-Charles
+I suppose this is consistent with comitt:
+22c403676dbbb7c6f186099527af7f065498ef45
+"gpio: return NULL from gpiod_get_optional when GPIOLIB is disabled"
+
+So in that way it should be fine.
+
+I'm just wondering where you see this problem, because IMO
+a driver that is using GPIO should either
+depends on GPIOLIB or
+select GPIOLIB
+it is extremely uncommon for a GPIO line to actually be optional at
+compile time (as opposed to optional at runtime) so I would very
+much like to look closer at this.
+
+Yours,
+Linus Walleij
