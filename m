@@ -2,100 +2,205 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DA8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E188C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D025420868
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:47:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D025420868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id E0FE2223CB
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FE2223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbeLFVrI (ORCPT
+        id S1725988AbeLFVvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:47:08 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:55062 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeLFVrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:47:08 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gV1U9-0007R4-K9; Thu, 06 Dec 2018 14:47:05 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gV1U8-0007rG-U8; Thu, 06 Dec 2018 14:47:05 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
-        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org
-References: <20181206121858.12215-1-christian@brauner.io>
-        <87sgzahf7k.fsf@xmission.com>
-        <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
-        <875zw6bh2z.fsf@xmission.com>
-        <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
-        <871s6u9z6u.fsf@xmission.com>
-        <20181206213152.gvci7ijr3dokew7w@brauner.io>
-Date:   Thu, 06 Dec 2018 15:46:53 -0600
-In-Reply-To: <20181206213152.gvci7ijr3dokew7w@brauner.io> (Christian Brauner's
-        message of "Thu, 6 Dec 2018 22:31:57 +0100")
-Message-ID: <87o99y72gi.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 6 Dec 2018 16:51:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbeLFVvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:51:21 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 45A80307EA9F;
+        Thu,  6 Dec 2018 21:51:20 +0000 (UTC)
+Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C8781608C4;
+        Thu,  6 Dec 2018 21:51:17 +0000 (UTC)
+Date:   Thu, 6 Dec 2018 16:51:16 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 3/3] mm/mmu_notifier: contextual information for event
+ triggering invalidation
+Message-ID: <20181206215115.GF3544@redhat.com>
+References: <20181203201817.10759-4-jglisse@redhat.com>
+ <201812070514.QdWdUWIj%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gV1U8-0007rG-U8;;;mid=<87o99y72gi.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX197I2lOQZMKRcTAyanx2Fb6HkXUcekaDDY=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <201812070514.QdWdUWIj%fengguang.wu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 06 Dec 2018 21:51:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
+Should be all fixed in v2 i built with and without mmu notifier and
+did not had any issue in v2.
 
->> Your intention is to add the thread case to support pthreads once the
->> process case is sorted out.  So this is something that needs to be made
->> clear.  Did I miss how you plan to handle threads?
->
-> Yeah, maybe you missed it in the commit message [2] which is based on a
-> discussion with Andy [3] and Arnd [4]:
+On Fri, Dec 07, 2018 at 05:19:21AM +0800, kbuild test robot wrote:
+> Hi Jérôme,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.20-rc5]
+> [cannot apply to next-20181206]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/jglisse-redhat-com/mmu-notifier-contextual-informations/20181207-031930
+> config: x86_64-randconfig-x017-201848 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    fs///proc/task_mmu.c: In function 'clear_refs_write':
+>    fs///proc/task_mmu.c:1099:29: error: storage size of 'range' isn't known
+>       struct mmu_notifier_range range;
+>                                 ^~~~~
+> >> fs///proc/task_mmu.c:1147:18: error: 'MMU_NOTIFY_SOFT_DIRTY' undeclared (first use in this function); did you mean 'CLEAR_REFS_SOFT_DIRTY'?
+>        range.event = MMU_NOTIFY_SOFT_DIRTY;
+>                      ^~~~~~~~~~~~~~~~~~~~~
+>                      CLEAR_REFS_SOFT_DIRTY
+>    fs///proc/task_mmu.c:1147:18: note: each undeclared identifier is reported only once for each function it appears in
+>    fs///proc/task_mmu.c:1099:29: warning: unused variable 'range' [-Wunused-variable]
+>       struct mmu_notifier_range range;
+>                                 ^~~~~
+> 
+> vim +1147 fs///proc/task_mmu.c
+> 
+>   1069	
+>   1070	static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+>   1071					size_t count, loff_t *ppos)
+>   1072	{
+>   1073		struct task_struct *task;
+>   1074		char buffer[PROC_NUMBUF];
+>   1075		struct mm_struct *mm;
+>   1076		struct vm_area_struct *vma;
+>   1077		enum clear_refs_types type;
+>   1078		struct mmu_gather tlb;
+>   1079		int itype;
+>   1080		int rv;
+>   1081	
+>   1082		memset(buffer, 0, sizeof(buffer));
+>   1083		if (count > sizeof(buffer) - 1)
+>   1084			count = sizeof(buffer) - 1;
+>   1085		if (copy_from_user(buffer, buf, count))
+>   1086			return -EFAULT;
+>   1087		rv = kstrtoint(strstrip(buffer), 10, &itype);
+>   1088		if (rv < 0)
+>   1089			return rv;
+>   1090		type = (enum clear_refs_types)itype;
+>   1091		if (type < CLEAR_REFS_ALL || type >= CLEAR_REFS_LAST)
+>   1092			return -EINVAL;
+>   1093	
+>   1094		task = get_proc_task(file_inode(file));
+>   1095		if (!task)
+>   1096			return -ESRCH;
+>   1097		mm = get_task_mm(task);
+>   1098		if (mm) {
+> > 1099			struct mmu_notifier_range range;
+>   1100			struct clear_refs_private cp = {
+>   1101				.type = type,
+>   1102			};
+>   1103			struct mm_walk clear_refs_walk = {
+>   1104				.pmd_entry = clear_refs_pte_range,
+>   1105				.test_walk = clear_refs_test_walk,
+>   1106				.mm = mm,
+>   1107				.private = &cp,
+>   1108			};
+>   1109	
+>   1110			if (type == CLEAR_REFS_MM_HIWATER_RSS) {
+>   1111				if (down_write_killable(&mm->mmap_sem)) {
+>   1112					count = -EINTR;
+>   1113					goto out_mm;
+>   1114				}
+>   1115	
+>   1116				/*
+>   1117				 * Writing 5 to /proc/pid/clear_refs resets the peak
+>   1118				 * resident set size to this mm's current rss value.
+>   1119				 */
+>   1120				reset_mm_hiwater_rss(mm);
+>   1121				up_write(&mm->mmap_sem);
+>   1122				goto out_mm;
+>   1123			}
+>   1124	
+>   1125			down_read(&mm->mmap_sem);
+>   1126			tlb_gather_mmu(&tlb, mm, 0, -1);
+>   1127			if (type == CLEAR_REFS_SOFT_DIRTY) {
+>   1128				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+>   1129					if (!(vma->vm_flags & VM_SOFTDIRTY))
+>   1130						continue;
+>   1131					up_read(&mm->mmap_sem);
+>   1132					if (down_write_killable(&mm->mmap_sem)) {
+>   1133						count = -EINTR;
+>   1134						goto out_mm;
+>   1135					}
+>   1136					for (vma = mm->mmap; vma; vma = vma->vm_next) {
+>   1137						vma->vm_flags &= ~VM_SOFTDIRTY;
+>   1138						vma_set_page_prot(vma);
+>   1139					}
+>   1140					downgrade_write(&mm->mmap_sem);
+>   1141					break;
+>   1142				}
+>   1143	
+>   1144				range.start = 0;
+>   1145				range.end = -1UL;
+>   1146				range.mm = mm;
+> > 1147				range.event = MMU_NOTIFY_SOFT_DIRTY;
+>   1148				mmu_notifier_invalidate_range_start(&range);
+>   1149			}
+>   1150			walk_page_range(0, mm->highest_vm_end, &clear_refs_walk);
+>   1151			if (type == CLEAR_REFS_SOFT_DIRTY)
+>   1152				mmu_notifier_invalidate_range_end(&range);
+>   1153			tlb_finish_mmu(&tlb, 0, -1);
+>   1154			up_read(&mm->mmap_sem);
+>   1155	out_mm:
+>   1156			mmput(mm);
+>   1157		}
+>   1158		put_task_struct(task);
+>   1159	
+>   1160		return count;
+>   1161	}
+>   1162	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Looking at your references I haven't missed it.  You are not deciding
-anything as of yet to keep it simple.  Except you are returning
-EOPNOTSUPP.  You are very much intending to do something.
 
-Decide.  Do you use the flags parameter or is the width of the
-target depending on the flags.
-
-That is fundamental to how the system call and it's extensions work.
-That is fundamental to my review.
-
-Until that is decided.
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-There are a lot of fundamental maintenance issues and you can very easily
-get them wrong if you are not clear on the job of the file descriptor
-and the job of the flags argument.
-
-I want don't want new crap that we have to abandon that has a nasty set
-of bugs because no one wanted to think through the system call all of
-the way and understand the corner cases.
-
-Eric
