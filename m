@@ -2,88 +2,70 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FA2C04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 818A1C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07CA20850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:23:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07CA20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5003620850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 09:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5003620850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbeLFJXo (ORCPT
+        id S1729381AbeLFJYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 04:23:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54770 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727783AbeLFJXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:23:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6548AAF41;
-        Thu,  6 Dec 2018 09:23:42 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 10:23:40 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing registration
- step
-In-Reply-To: <20181206082814.uyzjw2q4avknhswd@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1812061019500.17628@pobox.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com> <20181129094431.7801-6-pmladek@suse.com> <20181205193253.mhlqj37r4o6ukkhp@redhat.com> <20181206082814.uyzjw2q4avknhswd@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 6 Dec 2018 04:24:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:34518 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbeLFJYO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 04:24:14 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gUptE-00033n-59; Thu, 06 Dec 2018 09:24:12 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mmc: sdhci-of-esdhc: fix spelling mistake "upsupported" -> "unsupported"
+Date:   Thu,  6 Dec 2018 09:24:11 +0000
+Message-Id: <20181206092411.12152-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018, Petr Mladek wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Wed 2018-12-05 14:32:53, Joe Lawrence wrote:
-> > > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > > index 972520144713..e01dfa3b58d2 100644
-> > > --- a/kernel/livepatch/core.c
-> > > +++ b/kernel/livepatch/core.c
-> > > @@ -45,7 +45,7 @@
-> > >   */
-> > >  DEFINE_MUTEX(klp_mutex);
-> > >  
-> > > -/* Registered patches */
-> > > +/* Actively used patches. */
-> > >  LIST_HEAD(klp_patches);
-> > 
-> > By itself, this comment makes me wonder if there are un-active and/or
-> > un-used patches that I need to worry about.  After this patchset,
-> > klp_patches will include patches that have been enabled and those that
-> > have been replaced, but the replacement transition is still in progress.  
-> > 
-> > If that sounds accurate, how about adding to the comment:
-> > 
-> > /* Actively used patches: enabled or replaced and awaiting transition */
-> 
-> The replaced patches are not in the list. This is why I used the word
-> "actively".
+There is a spelling mistake in a pr_warn message, fix it.
 
-The replaced patches are removed in klp_discard_replaced_patches(), which 
-is called from klp_complete_transition(). Joe is right. The patches are in 
-the list if a transition is still in progress.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mmc/host/sdhci-of-esdhc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Miroslav
- 
-> /*
->  * Actively used patches: enabled or in transition. Note that replaced
->  * or disabled patches are not listed even though the related kernel
->  * module still can be loaded.
->  */
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 856e809f38b7..e21e90f81bbd 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -597,7 +597,7 @@ static void esdhc_of_set_clock(struct sdhci_host *host, unsigned int clock)
+ 			pre_div = 4;
+ 			div = 3;
+ 		} else {
+-			pr_warn("%s: using upsupported clock division.\n",
++			pr_warn("%s: using unsupported clock division.\n",
+ 				mmc_hostname(host->mmc));
+ 		}
+ 	}
+-- 
+2.19.1
 
