@@ -2,224 +2,166 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EEEC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF65DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D484B21479
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D484B21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 95BF921479
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:21:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="KHgU5odY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BF921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLFTU5 (ORCPT
+        id S1726083AbeLFTVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:20:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35938 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbeLFTU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:20:57 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 990593001E59;
-        Thu,  6 Dec 2018 19:20:56 +0000 (UTC)
-Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D9BF06012C;
-        Thu,  6 Dec 2018 19:20:52 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 14:20:51 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Philip Yang <Philip.Yang@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Paul Blinzer <Paul.Blinzer@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Vivek Kini <vkini@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
-Message-ID: <20181206192050.GC3544@redhat.com>
-References: <20181203233509.20671-1-jglisse@redhat.com>
- <6e2a1dba-80a8-42bf-127c-2f5c2441c248@intel.com>
- <20181205001544.GR2937@redhat.com>
- <42006749-7912-1e97-8ccd-945e82cebdde@intel.com>
- <20181205021334.GB3045@redhat.com>
- <b3122fdf-02c3-2e9c-1da6-fb873b824d59@intel.com>
- <20181205175357.GG3536@redhat.com>
- <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+        Thu, 6 Dec 2018 14:21:04 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38782 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbeLFTVD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 14:21:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so615034plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 11:21:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rSaC9SU7NUaenLJEgGrswjOsUz6t3vRpatML8fByTlw=;
+        b=KHgU5odYFw+qbiHlw7MuLqOS54Yf+Y1iZD9SoKPZQ0BYoC5CPqdIoTLH8O7+AoTlHk
+         KPSH1vZVOa5FzbKUd5VjgPd9xDlMEwem0N1Ovp/y4yFBxuBFmITvRTd5rf9Dp1ElXn80
+         Cg5VvHxroWc5v2s7GQAWmdo0KIok2AIG2C7gkjE0hOnta8ovSw261FkJgp9ZEUAZzL0O
+         ifuEZHHPmQfq8cKGS5Y6+f9HOOHSK2A3HnLztcg/0iO2khr0eEahgaWFiBWwQg5kmKfn
+         u5U+VCIfaMNi/8n94N2kJ/mzU4KrHho894owtwaO8yFfkfaxhWF9dpu64iTZ0P+Zl8Pt
+         9Q2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rSaC9SU7NUaenLJEgGrswjOsUz6t3vRpatML8fByTlw=;
+        b=c3AWjcstS2kewD270oRBxleHD8FJDuFVO+XemLGEN/zy9B7wxuHSWAb9UswvMqUEsY
+         oBzJ4CrvY/vnVSjSv2oTY/M2iHiUZnjj4kXpIPqZi8Ez9p8AiS9JlEL9bM/MstQuTKq2
+         pNO5yTBUpd9bvmeBVIereoVQV7Qqr8vAp40fiDgUjIlNjUNIKudnkAl37i3TGb0Q6SnX
+         Cjl2SDGCSUKtC6Py196zidME+fyUBGMHxnlEFRSspzA45T46TXVERmLoMYjifa05Qlca
+         HpJL9oFPv1m2J/riNYaa6mtIXhg7REXPg/PCpj1SkJOeSxbCWPh/ce3QZReeLUWNKopM
+         lOGQ==
+X-Gm-Message-State: AA+aEWYzkhJECUvwg/M56Qj0A7HEnfoZcKdmvjJWDSXdvdirD81FI28z
+        70KvvrtVwzz2yLtFVZrRnDPQGg==
+X-Google-Smtp-Source: AFSGD/XW0EacISQ0ly2bYPQ6Rnkb3PqegQr3A5dF+VgFQoE9ZA2YPi5wPyVaJ2KaGpd6rWhJfwUMgA==
+X-Received: by 2002:a17:902:b40d:: with SMTP id x13mr30002325plr.237.1544124062854;
+        Thu, 06 Dec 2018 11:21:02 -0800 (PST)
+Received: from cisco ([128.107.241.180])
+        by smtp.gmail.com with ESMTPSA id 125sm1939817pfx.159.2018.12.06.11.21.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 11:21:02 -0800 (PST)
+Date:   Thu, 6 Dec 2018 12:20:59 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: siginfo pid not populated from ptrace?
+Message-ID: <20181206192059.GD10086@cisco>
+References: <20181112192443.GL3645@cisco>
+ <20181127232126.GA23658@cisco>
+ <CAGXu5jLw0m8pG16u3huThNM2fYGjKoB2-5baUmg_FH6Z=L2SAg@mail.gmail.com>
+ <CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com>
+ <87zhtthkuy.fsf@xmission.com>
+ <CAGXu5jJv+TG8hovHi3Z5kTccz+Cx-keu=KZf032mCz2VRpc=Og@mail.gmail.com>
+ <87k1ktqoe5.fsf@xmission.com>
+ <CAGXu5jJgFrWajK5m8ev72DV9ueznLnbGV2-UGECnz0iZ_EFDUg@mail.gmail.com>
+ <87r2euiuql.fsf@xmission.com>
+ <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b8fab9a7-62ed-5d8d-3cb1-aea6aacf77fe@intel.com>
+In-Reply-To: <CAHk-=wjTzjOqEhWJskx7ToHL2d1KUxsNOZ2V0=v_R6VJYtOm7Q@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 06 Dec 2018 19:20:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 10:25:08AM -0800, Dave Hansen wrote:
-> On 12/5/18 9:53 AM, Jerome Glisse wrote:
-> > No so there is 2 kinds of applications:
-> >     1) average one: i am using device {1, 3, 9} give me best memory for
-> >        those devices
-> ...
-> > 
-> > For case 1 you can pre-parse stuff but this can be done by helper library
+On Thu, Dec 06, 2018 at 10:48:39AM -0800, Linus Torvalds wrote:
+> On Thu, Dec 6, 2018 at 6:40 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > We have in the past had ptrace users that weren't just about debugging
+> > so I don't know that it is fair to just dismiss it as debugging
+> > infrastructure.
 > 
-> How would that work?  Would each user/container/whatever do this once?
-> Where would they keep the pre-parsed stuff?  How do they manage their
-> cache if the topology changes?
+> Absolutely.
+> 
+> Some uses are more than just debug. People occasionally use ptrace
+> because it's the only way to do what they want, so you'll find people
+> who do it for sandboxing, for example. It's not necessarily designed
+> for that, or particularly fast or well-suited for it, but I've
+> definitely seen it used that way.
+> 
+> So I don't think the behavioral test breakage like this is necessarily
+> a huge deal, and until some "real use" actually shows that it cares it
+> might be something we dismiss as "just test", but it very much has the
+> potential to hit real uses.
+> 
+> The fact that a behavioral test broke is definitely interesting.
+> 
+> And maybe some of the siginfo allocations could depend on whether the
+> signal is actually ever caught or not.
+> 
+> For example, a terminal signal (or one that is ignored) might not need
+> siginfo. But if the process is ptraced, maybe that terminal signal
+> isn't actually terminal? So we might have situations where we want to
+> simply check "is the signal target being ptraced"..
 
-Short answer i don't expect a cache, i expect that each program will have
-a init function that query the topology and update the application codes
-accordingly. This is what people do today, query all available devices,
-decide which one to use and how, create context for each selected ones,
-define a memory migration job/memory policy for each part of the program
-so that memory is migrated/have proper policy in place when the code that
-run on some device is executed.
+Yes, something like this, I suppose? It works for me.
 
-
-Long answer:
-
-I can not dictate how user folks do their program saddly :) I expect that
-many application will do it once during start up. Then you will have all
-those containers folks or VM folks that will get presure to react to hot-
-plug. For instance if you upgrade your instance with your cloud provider
-to have more GPUs or more TPUs ... It is likely to appear as an hotplug
-from the VM/container point of view and thus as an hotplug from the
-application point of view. So far demonstration i have seen do that by
-relaunching the application ... More on that through the live re-patching
-issues below.
-
-Oh and i expect application will crash if you hot-unplug anything it is
-using (this is what happens i believe now in most API). Again i expect
-that some pressure from cloud user and provider will force programmer
-to be a bit more reactive to this kind of event.
+Tycho
 
 
-Live re-patching application code can be difficult i am told. Let say you
-have:
+From 3bcaadd56ebb532ab4d481556fcc0826d65efc43 Mon Sep 17 00:00:00 2001
+From: Tycho Andersen <tycho@tycho.ws>
+Date: Thu, 6 Dec 2018 12:15:22 -0700
+Subject: [PATCH] signal: allocate siginfo when a traced task gets SIGSTOP
 
-void compute_serious0_stuff(accelerator_t *accelerator, void *inputA,
-                            size_t sinputA, void *inputB, size_t sinputB,
-                            void *outputA, size_t soutputA)
-{
-    ...
+Tracers can view SIGSTOP:
 
-    // Migrate the inputA to the accelerator memory
-    api_migrate_memory_to_accelerator(accelerator, inputA, sinputA);
+https://lore.kernel.org/lkml/87zhtthkuy.fsf@xmission.com/T/#u
 
-    // The inputB buffer is fine in its default placement
+so let's allocate a siginfo for SIGSTOP when a task is traced.
 
-    // The output is assume to be empty vma ie no page allocated yet
-    // so set a policy to direct all allocation due to page fault to
-    // use the accelerator memory
-    api_set_memory_policy_to_accelerator(accelerator, outputA, soutputA);
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ kernel/signal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-    ...
-    for_parallel<accelerator> (i = 0; i < THEYAREAMILLIONSITEMS; ++i) {
-        // Do something serious
-    }
-    ...
-}
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9a32bc2088c9..ab4ba00119f4 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1056,11 +1056,14 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+ 		goto ret;
+ 
+ 	result = TRACE_SIGNAL_DELIVERED;
++
+ 	/*
+-	 * Skip useless siginfo allocation for SIGKILL SIGSTOP,
+-	 * and kernel threads.
++	 * Skip useless siginfo allocation for SIGKILL and kernel threads.
++	 * SIGSTOP is visible to tracers, so only skip allocation when the task
++	 * is not traced.
+ 	 */
+-	if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
++	if ((sig == SIGKILL) || (!task_is_traced(t) && sig == SIGSTOP) ||
++	    (t->flags & PF_KTHREAD))
+ 		goto out_set;
+ 
+ 	/*
+-- 
+2.19.1
 
-void serious0_orchestrator(topology topology, void *inputA,
-                           void *inputB, void *outputA)
-{
-    static accelerator_t **selected = NULL;
-    static serious0_job_partition *partition;
-    ...
-    if (selected == NULL) {
-        serious0_select_and_partition(topology, &selected, &partition,
-                                      inputA, inputB, outputA)
-    }
-    ...
-    for(i = 0; i < nselected; ++) {
-        ...
-        compute_serious0_stuff(selected[i],
-                               inputA + partition[i].inputA_offset,
-                               partition[i].inputA_size,
-                               inputB + partition[i].inputB_offset,
-                               partition[i].inputB_size,
-                               outputA + partition[i].outputB_offset,
-                               partition[i].outputA_size);
-        ...
-    }
-    ...
-    for(i = 0; i < nselected; ++) {
-        accelerator_wait_finish(selected[i]);
-    }
-    ...
-    // outputA is ready to be use by the next function in the program
-}
-
-If you start without a GPU/TPU your for_parallel will use the CPU and
-with the code the compiler have emitted at built time. For GPU/TPU at
-build time you compile your for_parallel loop to some intermediate
-representation (a virtual ISA) then at runtime during the application
-initialization that intermediate representation get lowered down to
-all the available GPU/TPU on your system and each for_parallel loop
-is patched to be turn into a call to:
-
-void dispatch_accelerator_function(accelerator_t *accelerator,
-                                   void *function, ...)
-{
-}
-
-So in the above example the for_parallel loop becomes:
-dispatch_accelerator_function(accelerator, i_compute_serious_stuff,
-                              inputA, inputB, outputA);
-
-This hot patching of code is easy to do when no CPU thread is running
-the code. However when CPU threads are running it can be problematic,
-i am sure you can do trickery like delay the patching only to the next
-time the function get call by doing clever thing at build time like
-prepending each for_parallel section with enough nop that would allow
-you to replace it to a call to the dispatch function and a jump over
-the normal CPU code.
-
-
-I think compiler people want to solve the static case first ie during
-application initializations decide what devices are gonna be use and
-then update the application accordingly. But i expect it will grow
-to support hotplug as relaunching the application is not that user
-friendly even in this day an age where people starts millions of
-container with one mouse click.
-
-
-Anyway above example is how it looks today and accelerator can turn
-up to be just regular CPU core if you do not have any devices. The
-idea is that we would like a common API that cover both CPU thread
-and device thread. Same for the migration/policy functions if it
-happens that the accelerator is just plain old CPU then you want to
-migrate memory to the CPU node and set memory policy to that node too.
-
-Cheers,
-Jérôme
