@@ -2,54 +2,60 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678DAC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9AEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2324A2146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0422082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:33:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131994;
-	bh=1c2XsEvQHI3Os1TZfRuAsYYZIDxOa42XH9Eh6B/8JaY=;
+	s=default; t=1544132025;
+	bh=g4STd/9RWn0kIFnkjhKrDNzZr4KxNKgionqRHtoUDxg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X7zm/EOhD+bsBD27dX5N9RMziciq91y+M/grhOLVDs/7K77agtSvLRDQQ5HtyweTs
-	 8xNxUEjKoTTL+ypVz9X3U1bG5+Y4XsT1dnzFBSKjRWuOHFDnYfQp9yZM7f6Z8v9hiF
-	 u5HNOU+yJNNHGMtiqhjBbuFGNoaJOuMGu3XSkMko=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2324A2146D
+	b=XZgTtuqqz8HlNVdZNeHUauP61Ja/d8WWTJQoWRYeIfiQ/RZWyl6o/h57HpVmld+Pf
+	 0mJn4HjY5+txP+DIOFAeug3mwjQ7XbrkY8H0VbFkF/TQoHNNcdvIOBrMX4jYAiGNow
+	 2c+fokPa3ZqA8DRWEE6NVhHZiALAeEaLn5jUB6bc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0422082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbeLFVcu (ORCPT
+        id S1726424AbeLFV2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:32:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48066 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:28:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeLFV3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:29:32 -0500
+        id S1726014AbeLFV2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:28:37 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44B49208E7;
-        Thu,  6 Dec 2018 21:29:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD563208E7;
+        Thu,  6 Dec 2018 21:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131770;
-        bh=1c2XsEvQHI3Os1TZfRuAsYYZIDxOa42XH9Eh6B/8JaY=;
+        s=default; t=1544131714;
+        bh=g4STd/9RWn0kIFnkjhKrDNzZr4KxNKgionqRHtoUDxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Blp5FNOxzz0kfUdHnuh9TlhAACkuXI+JH/usDyUNfawcTsOmsPdRIV1t+wlK5HHnk
-         2G6d1f1ToZGUtTsh4mYTTteMtq9Kv25LZ/glI0IqIN1SQ6Wux7Ua4PlL//2XHl3VYt
-         1XjIVZyNeydeMiUIhCB7T7LLDFfzCjHd3nINTli8=
+        b=irwehHVq3pmxjbw44Kcoa59fSslp61T7bvt8MO8i1pJOYdr54EbcjEEINSdGx4ouH
+         UXiC6D0bR0ztTn7Mn78Lm0baOZyuSbJTr6eCtYT1ndodo1NlAchUagYaY6DC02MiCI
+         QRl6Evw+PZFyVEQuRFX85bHCafFYh0JVZW2vtFuQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        linux-perf-users@vger.kernel.org,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 45/75] perf tools: Support 'srccode' output
-Date:   Thu,  6 Dec 2018 18:25:32 -0300
-Message-Id: <20181206212602.20474-46-acme@kernel.org>
+Subject: [PATCH 30/75] tools lib traceevent, perf tools: Rename 'struct tep_event_format' to 'struct tep_event'
+Date:   Thu,  6 Dec 2018 18:25:17 -0300
+Message-Id: <20181206212602.20474-31-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
@@ -60,663 +66,1623 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 
-When looking at PT or brstackinsn traces with 'perf script' it can be
-very useful to see the source code. This adds a simple facility to print
-them with 'perf script', if the information is available through dwarf
+In order to make libtraceevent into a proper library, variables, data
+structures and functions require a unique prefix to prevent name space
+conflicts.
 
-  % perf record ...
-  % perf script -F insn,ip,sym,srccode
-  ...
+This renames 'struct tep_event_format' to 'struct tep_event', which
+describes more closely the purpose of the struct.
 
-            4004c6 main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004c6 main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004b3 main
-  6                       v++;
-
-  % perf record -b ...
-  % perf script -F insn,ip,sym,srccode,brstackinsn
-
-  ...
-         main+22:
-          0000000000400543        insn: e8 ca ff ff ff            # PRED
-  |18                     f1();
-          f1:
-          0000000000400512        insn: 55
-  |10       {
-          0000000000400513        insn: 48 89 e5
-          0000000000400516        insn: b8 00 00 00 00
-  |11             f2();
-          000000000040051b        insn: e8 d6 ff ff ff            # PRED
-          f2:
-          00000000004004f6        insn: 55
-  |5        {
-          00000000004004f7        insn: 48 89 e5
-          00000000004004fa        insn: 8b 05 2c 0b 20 00
-  |6              c = a / b;
-          0000000000400500        insn: 8b 0d 2a 0b 20 00
-          0000000000400506        insn: 99
-          0000000000400507        insn: f7 f9
-          0000000000400509        insn: 89 05 29 0b 20 00
-          000000000040050f        insn: 90
-  |7        }
-          0000000000400510        insn: 5d
-          0000000000400511        insn: c3                        # PRED
-          f1+14:
-          0000000000400520        insn: b8 00 00 00 00
-  |12             f2();
-          0000000000400525        insn: e8 cc ff ff ff            # PRED
-          f2:
-          00000000004004f6        insn: 55
-  |5        {
-          00000000004004f7        insn: 48 89 e5
-          00000000004004fa        insn: 8b 05 2c 0b 20 00
-  |6              c = a / b;
-
-Not supported for callchains currently, would need some layout changes
-there.
-
-Committer notes:
-
-Fixed the build on Alpine Linux (3.4 .. 3.8) by addressing this
-warning:
-
-  In file included from util/srccode.c:19:0:
-  /usr/include/sys/fcntl.h:1:2: error: #warning redirecting incorrect #include <sys/fcntl.h> to <fcntl.h> [-Werror=cpp]
-   #warning redirecting incorrect #include <sys/fcntl.h> to <fcntl.h>
-    ^~~~~~~
-  cc1: all warnings being treated as errors
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181204001848.24769-1-andi@firstfloor.org
+Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20181130154647.436403995@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[ Fixup conflict with 6e33c250a88f ("tools lib traceevent: Fix compile warnings in tools/lib/traceevent/event-parse.c") ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-script.txt |   2 +-
- tools/perf/builtin-script.c              |  47 +++++-
- tools/perf/util/Build                    |   1 +
- tools/perf/util/evsel_fprintf.c          |   1 +
- tools/perf/util/map.c                    |  49 ++++++
- tools/perf/util/map.h                    |  16 ++
- tools/perf/util/srccode.c                | 186 +++++++++++++++++++++++
- tools/perf/util/srccode.h                |   7 +
- tools/perf/util/srcline.c                |  28 ++++
- tools/perf/util/srcline.h                |   1 +
- tools/perf/util/thread.c                 |   2 +
- tools/perf/util/thread.h                 |   2 +
- 12 files changed, 339 insertions(+), 3 deletions(-)
- create mode 100644 tools/perf/util/srccode.c
- create mode 100644 tools/perf/util/srccode.h
+ tools/lib/traceevent/event-parse-api.c        |   2 +-
+ tools/lib/traceevent/event-parse-local.h      |   6 +-
+ tools/lib/traceevent/event-parse.c            | 188 +++++++++---------
+ tools/lib/traceevent/event-parse.h            |  62 +++---
+ tools/lib/traceevent/parse-filter.c           |  42 ++--
+ tools/lib/traceevent/plugin_function.c        |   2 +-
+ tools/lib/traceevent/plugin_hrtimer.c         |   4 +-
+ tools/lib/traceevent/plugin_kmem.c            |   2 +-
+ tools/lib/traceevent/plugin_kvm.c             |  14 +-
+ tools/lib/traceevent/plugin_mac80211.c        |   4 +-
+ tools/lib/traceevent/plugin_sched_switch.c    |   4 +-
+ tools/perf/builtin-trace.c                    |   2 +-
+ tools/perf/util/evsel.h                       |   4 +-
+ tools/perf/util/header.c                      |   2 +-
+ tools/perf/util/python.c                      |   4 +-
+ .../util/scripting-engines/trace-event-perl.c |   6 +-
+ .../scripting-engines/trace-event-python.c    |   8 +-
+ tools/perf/util/trace-event-parse.c           |  16 +-
+ tools/perf/util/trace-event.c                 |   8 +-
+ tools/perf/util/trace-event.h                 |  16 +-
+ 20 files changed, 198 insertions(+), 198 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index a2b37ce48094..9e4def08d569 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -117,7 +117,7 @@ OPTIONS
-         Comma separated list of fields to print. Options are:
-         comm, tid, pid, time, cpu, event, trace, ip, sym, dso, addr, symoff,
-         srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output, brstackinsn,
--        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc.
-+        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc, srccode.
-         Field list can be prepended with the type, trace, sw or hw,
-         to indicate to which event type the field list applies.
-         e.g., -F sw:comm,tid,time,ip,sym  and -F trace:time,cpu,trace
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 3ea98fe72f7f..3728b50e52e2 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -96,6 +96,7 @@ enum perf_output_field {
- 	PERF_OUTPUT_UREGS	    = 1U << 27,
- 	PERF_OUTPUT_METRIC	    = 1U << 28,
- 	PERF_OUTPUT_MISC            = 1U << 29,
-+	PERF_OUTPUT_SRCCODE	    = 1U << 30,
- };
- 
- struct output_option {
-@@ -132,6 +133,7 @@ struct output_option {
- 	{.str = "phys_addr", .field = PERF_OUTPUT_PHYS_ADDR},
- 	{.str = "metric", .field = PERF_OUTPUT_METRIC},
- 	{.str = "misc", .field = PERF_OUTPUT_MISC},
-+	{.str = "srccode", .field = PERF_OUTPUT_SRCCODE},
- };
- 
- enum {
-@@ -424,7 +426,7 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 		pr_err("Display of DSO requested but no address to convert.\n");
- 		return -EINVAL;
- 	}
--	if (PRINT_FIELD(SRCLINE) && !PRINT_FIELD(IP)) {
-+	if ((PRINT_FIELD(SRCLINE) || PRINT_FIELD(SRCCODE)) && !PRINT_FIELD(IP)) {
- 		pr_err("Display of source line number requested but sample IP is not\n"
- 		       "selected. Hence, no address to lookup the source line number.\n");
- 		return -EINVAL;
-@@ -907,6 +909,22 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
- 	return len;
- }
- 
-+static int print_srccode(struct thread *thread, u8 cpumode, uint64_t addr)
-+{
-+	struct addr_location al;
-+	int ret = 0;
-+
-+	memset(&al, 0, sizeof(al));
-+	thread__find_map(thread, cpumode, addr, &al);
-+	if (!al.map)
-+		return 0;
-+	ret = map__fprintf_srccode(al.map, al.addr, stdout,
-+		    &thread->srccode_state);
-+	if (ret)
-+		ret += printf("\n");
-+	return ret;
-+}
-+
- static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
- 			    struct perf_insn *x, u8 *inbuf, int len,
- 			    int insn, FILE *fp, int *total_cycles)
-@@ -998,6 +1016,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 					   x.cpumode, x.cpu, &lastsym, attr, fp);
- 		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
- 					    &x, buffer, len, 0, fp, &total_cycles);
-+		if (PRINT_FIELD(SRCCODE))
-+			printed += print_srccode(thread, x.cpumode, br->entries[nr - 1].from);
- 	}
- 
- 	/* Print all blocks */
-@@ -1027,12 +1047,16 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 			if (ip == end) {
- 				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
- 							    &total_cycles);
-+				if (PRINT_FIELD(SRCCODE))
-+					printed += print_srccode(thread, x.cpumode, ip);
- 				break;
- 			} else {
- 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
- 						   dump_insn(&x, ip, buffer + off, len - off, &ilen));
- 				if (ilen == 0)
- 					break;
-+				if (PRINT_FIELD(SRCCODE))
-+					print_srccode(thread, x.cpumode, ip);
- 				insn++;
- 			}
- 		}
-@@ -1063,6 +1087,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 
- 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", sample->ip,
- 			dump_insn(&x, sample->ip, buffer, len, NULL));
-+		if (PRINT_FIELD(SRCCODE))
-+			print_srccode(thread, x.cpumode, sample->ip);
- 		goto out;
- 	}
- 	for (off = 0; off <= end - start; off += ilen) {
-@@ -1070,6 +1096,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
- 		if (ilen == 0)
- 			break;
-+		if (PRINT_FIELD(SRCCODE))
-+			print_srccode(thread, x.cpumode, start + off);
- 	}
- out:
- 	return printed;
-@@ -1252,7 +1280,16 @@ static int perf_sample__fprintf_bts(struct perf_sample *sample,
- 		printed += map__fprintf_srcline(al->map, al->addr, "\n  ", fp);
- 
- 	printed += perf_sample__fprintf_insn(sample, attr, thread, machine, fp);
--	return printed + fprintf(fp, "\n");
-+	printed += fprintf(fp, "\n");
-+	if (PRINT_FIELD(SRCCODE)) {
-+		int ret = map__fprintf_srccode(al->map, al->addr, stdout,
-+					 &thread->srccode_state);
-+		if (ret) {
-+			printed += ret;
-+			printed += printf("\n");
-+		}
-+	}
-+	return printed;
- }
- 
- static struct {
-@@ -1792,6 +1829,12 @@ static void process_event(struct perf_script *script,
- 		fprintf(fp, "%16" PRIx64, sample->phys_addr);
- 	fprintf(fp, "\n");
- 
-+	if (PRINT_FIELD(SRCCODE)) {
-+		if (map__fprintf_srccode(al->map, al->addr, stdout,
-+					 &thread->srccode_state))
-+			printf("\n");
-+	}
-+
- 	if (PRINT_FIELD(METRIC))
- 		perf_sample__fprint_metric(script, thread, evsel, sample, fp);
- 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index b7bf201fe8a8..af72be7f5b3b 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -77,6 +77,7 @@ libperf-y += stat-shadow.o
- libperf-y += stat-display.o
- libperf-y += record.o
- libperf-y += srcline.o
-+libperf-y += srccode.o
- libperf-y += data.o
- libperf-y += tsc.o
- libperf-y += cloexec.o
-diff --git a/tools/perf/util/evsel_fprintf.c b/tools/perf/util/evsel_fprintf.c
-index 0d0a4c6f368b..95ea147f9e18 100644
---- a/tools/perf/util/evsel_fprintf.c
-+++ b/tools/perf/util/evsel_fprintf.c
-@@ -173,6 +173,7 @@ int sample__fprintf_callchain(struct perf_sample *sample, int left_alignment,
- 			if (!print_oneline)
- 				printed += fprintf(fp, "\n");
- 
-+			/* Add srccode here too? */
- 			if (symbol_conf.bt_stop_list &&
- 			    node->sym &&
- 			    strlist__has_entry(symbol_conf.bt_stop_list,
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index a0d58b4d9c32..6751301a755c 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -19,6 +19,7 @@
- #include "srcline.h"
- #include "namespaces.h"
- #include "unwind.h"
-+#include "srccode.h"
- 
- static void __maps__insert(struct maps *maps, struct map *map);
- static void __maps__insert_name(struct maps *maps, struct map *map);
-@@ -421,6 +422,54 @@ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 	return ret;
- }
- 
-+int map__fprintf_srccode(struct map *map, u64 addr,
-+			 FILE *fp,
-+			 struct srccode_state *state)
-+{
-+	char *srcfile;
-+	int ret = 0;
-+	unsigned line;
-+	int len;
-+	char *srccode;
-+
-+	if (!map || !map->dso)
-+		return 0;
-+	srcfile = get_srcline_split(map->dso,
-+				    map__rip_2objdump(map, addr),
-+				    &line);
-+	if (!srcfile)
-+		return 0;
-+
-+	/* Avoid redundant printing */
-+	if (state &&
-+	    state->srcfile &&
-+	    !strcmp(state->srcfile, srcfile) &&
-+	    state->line == line) {
-+		free(srcfile);
-+		return 0;
-+	}
-+
-+	srccode = find_sourceline(srcfile, line, &len);
-+	if (!srccode)
-+		goto out_free_line;
-+
-+	ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
-+	state->srcfile = srcfile;
-+	state->line = line;
-+	return ret;
-+
-+out_free_line:
-+	free(srcfile);
-+	return ret;
-+}
-+
-+
-+void srccode_state_free(struct srccode_state *state)
-+{
-+	zfree(&state->srcfile);
-+	state->line = 0;
-+}
-+
- /**
-  * map__rip_2objdump - convert symbol start address to objdump address.
-  * @map: memory map
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 5c792c90fc4c..09282aa45c80 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -174,6 +174,22 @@ char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
- int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 			 FILE *fp);
- 
-+struct srccode_state {
-+	char *srcfile;
-+	unsigned line;
-+};
-+
-+static inline void srccode_state_init(struct srccode_state *state)
-+{
-+	state->srcfile = NULL;
-+	state->line = 0;
-+}
-+
-+void srccode_state_free(struct srccode_state *state);
-+
-+int map__fprintf_srccode(struct map *map, u64 addr,
-+			 FILE *fp, struct srccode_state *state);
-+
- int map__load(struct map *map);
- struct symbol *map__find_symbol(struct map *map, u64 addr);
- struct symbol *map__find_symbol_by_name(struct map *map, const char *name);
-diff --git a/tools/perf/util/srccode.c b/tools/perf/util/srccode.c
-new file mode 100644
-index 000000000000..fcc8630f6dff
---- /dev/null
-+++ b/tools/perf/util/srccode.c
-@@ -0,0 +1,186 @@
-+/*
-+ * Manage printing of source lines
-+ * Copyright (c) 2017, Intel Corporation.
-+ * Author: Andi Kleen
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+#include "linux/list.h"
-+#include <stdlib.h>
-+#include <sys/mman.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <assert.h>
-+#include <string.h>
-+#include "srccode.h"
-+#include "debug.h"
-+#include "util.h"
-+
-+#define MAXSRCCACHE (32*1024*1024)
-+#define MAXSRCFILES     64
-+#define SRC_HTAB_SZ	64
-+
-+struct srcfile {
-+	struct hlist_node hash_nd;
-+	struct list_head nd;
-+	char *fn;
-+	char **lines;
-+	char *map;
-+	unsigned numlines;
-+	size_t maplen;
-+};
-+
-+static struct hlist_head srcfile_htab[SRC_HTAB_SZ];
-+static LIST_HEAD(srcfile_list);
-+static long map_total_sz;
-+static int num_srcfiles;
-+
-+static unsigned shash(unsigned char *s)
-+{
-+	unsigned h = 0;
-+	while (*s)
-+		h = 65599 * h + *s++;
-+	return h ^ (h >> 16);
-+}
-+
-+static int countlines(char *map, int maplen)
-+{
-+	int numl;
-+	char *end = map + maplen;
-+	char *p = map;
-+
-+	if (maplen == 0)
-+		return 0;
-+	numl = 0;
-+	while (p < end && (p = memchr(p, '\n', end - p)) != NULL) {
-+		numl++;
-+		p++;
-+	}
-+	if (p < end)
-+		numl++;
-+	return numl;
-+}
-+
-+static void fill_lines(char **lines, int maxline, char *map, int maplen)
-+{
-+	int l;
-+	char *end = map + maplen;
-+	char *p = map;
-+
-+	if (maplen == 0 || maxline == 0)
-+		return;
-+	l = 0;
-+	lines[l++] = map;
-+	while (p < end && (p = memchr(p, '\n', end - p)) != NULL) {
-+		if (l >= maxline)
-+			return;
-+		lines[l++] = ++p;
-+	}
-+	if (p < end)
-+		lines[l] = p;
-+}
-+
-+static void free_srcfile(struct srcfile *sf)
-+{
-+	list_del(&sf->nd);
-+	hlist_del(&sf->hash_nd);
-+	map_total_sz -= sf->maplen;
-+	munmap(sf->map, sf->maplen);
-+	free(sf->lines);
-+	free(sf->fn);
-+	free(sf);
-+	num_srcfiles--;
-+}
-+
-+static struct srcfile *find_srcfile(char *fn)
-+{
-+	struct stat st;
-+	struct srcfile *h;
-+	int fd;
-+	unsigned long sz;
-+	unsigned hval = shash((unsigned char *)fn) % SRC_HTAB_SZ;
-+
-+	hlist_for_each_entry (h, &srcfile_htab[hval], hash_nd) {
-+		if (!strcmp(fn, h->fn)) {
-+			/* Move to front */
-+			list_del(&h->nd);
-+			list_add(&h->nd, &srcfile_list);
-+			return h;
-+		}
-+	}
-+
-+	/* Only prune if there is more than one entry */
-+	while ((num_srcfiles > MAXSRCFILES || map_total_sz > MAXSRCCACHE) &&
-+	       srcfile_list.next != &srcfile_list) {
-+		assert(!list_empty(&srcfile_list));
-+		h = list_entry(srcfile_list.prev, struct srcfile, nd);
-+		free_srcfile(h);
-+	}
-+
-+	fd = open(fn, O_RDONLY);
-+	if (fd < 0 || fstat(fd, &st) < 0) {
-+		pr_debug("cannot open source file %s\n", fn);
-+		return NULL;
-+	}
-+
-+	h = malloc(sizeof(struct srcfile));
-+	if (!h)
-+		return NULL;
-+
-+	h->fn = strdup(fn);
-+	if (!h->fn)
-+		goto out_h;
-+
-+	h->maplen = st.st_size;
-+	sz = (h->maplen + page_size - 1) & ~(page_size - 1);
-+	h->map = mmap(NULL, sz, PROT_READ, MAP_SHARED, fd, 0);
-+	close(fd);
-+	if (h->map == (char *)-1) {
-+		pr_debug("cannot mmap source file %s\n", fn);
-+		goto out_fn;
-+	}
-+	h->numlines = countlines(h->map, h->maplen);
-+	h->lines = calloc(h->numlines, sizeof(char *));
-+	if (!h->lines)
-+		goto out_map;
-+	fill_lines(h->lines, h->numlines, h->map, h->maplen);
-+	list_add(&h->nd, &srcfile_list);
-+	hlist_add_head(&h->hash_nd, &srcfile_htab[hval]);
-+	map_total_sz += h->maplen;
-+	num_srcfiles++;
-+	return h;
-+
-+out_map:
-+	munmap(h->map, sz);
-+out_fn:
-+	free(h->fn);
-+out_h:
-+	free(h);
-+	return NULL;
-+}
-+
-+/* Result is not 0 terminated */
-+char *find_sourceline(char *fn, unsigned line, int *lenp)
-+{
-+	char *l, *p;
-+	struct srcfile *sf = find_srcfile(fn);
-+	if (!sf)
-+		return NULL;
-+	line--;
-+	if (line >= sf->numlines)
-+		return NULL;
-+	l = sf->lines[line];
-+	if (!l)
-+		return NULL;
-+	p = memchr(l, '\n', sf->map + sf->maplen - l);
-+	*lenp = p - l;
-+	return l;
-+}
-diff --git a/tools/perf/util/srccode.h b/tools/perf/util/srccode.h
-new file mode 100644
-index 000000000000..e500a746d5f1
---- /dev/null
-+++ b/tools/perf/util/srccode.h
-@@ -0,0 +1,7 @@
-+#ifndef SRCCODE_H
-+#define SRCCODE_H 1
-+
-+/* Result is not 0 terminated */
-+char *find_sourceline(char *fn, unsigned line, int *lenp);
-+
-+#endif
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index e767c4a9d4d2..dc86597d0cc4 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -548,6 +548,34 @@ char *__get_srcline(struct dso *dso, u64 addr, struct symbol *sym,
- 	return srcline;
- }
- 
-+/* Returns filename and fills in line number in line */
-+char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line)
-+{
-+	char *file = NULL;
-+	const char *dso_name;
-+
-+	if (!dso->has_srcline)
-+		goto out;
-+
-+	dso_name = dso__name(dso);
-+	if (dso_name == NULL)
-+		goto out;
-+
-+	if (!addr2line(dso_name, addr, &file, line, dso, true, NULL, NULL))
-+		goto out;
-+
-+	dso->a2l_fails = 0;
-+	return file;
-+
-+out:
-+	if (dso->a2l_fails && ++dso->a2l_fails > A2L_FAIL_LIMIT) {
-+		dso->has_srcline = 0;
-+		dso__free_a2l(dso);
-+	}
-+
-+	return NULL;
-+}
-+
- void free_srcline(char *srcline)
+diff --git a/tools/lib/traceevent/event-parse-api.c b/tools/lib/traceevent/event-parse-api.c
+index 61f7149085ee..0dc011154ee9 100644
+--- a/tools/lib/traceevent/event-parse-api.c
++++ b/tools/lib/traceevent/event-parse-api.c
+@@ -15,7 +15,7 @@
+  * This returns pointer to the first element of the events array
+  * If @tep is NULL, NULL is returned.
+  */
+-struct tep_event_format *tep_get_first_event(struct tep_handle *tep)
++struct tep_event *tep_get_first_event(struct tep_handle *tep)
  {
- 	if (srcline && strcmp(srcline, SRCLINE_UNKNOWN) != 0)
-diff --git a/tools/perf/util/srcline.h b/tools/perf/util/srcline.h
-index b2bb5502fd62..5762212dc342 100644
---- a/tools/perf/util/srcline.h
-+++ b/tools/perf/util/srcline.h
-@@ -16,6 +16,7 @@ char *__get_srcline(struct dso *dso, u64 addr, struct symbol *sym,
- 		  bool show_sym, bool show_addr, bool unwind_inlines,
- 		  u64 ip);
- void free_srcline(char *srcline);
-+char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line);
+ 	if (tep && tep->events)
+ 		return tep->events[0];
+diff --git a/tools/lib/traceevent/event-parse-local.h b/tools/lib/traceevent/event-parse-local.h
+index b9bddde577f8..94746efef433 100644
+--- a/tools/lib/traceevent/event-parse-local.h
++++ b/tools/lib/traceevent/event-parse-local.h
+@@ -50,9 +50,9 @@ struct tep_handle {
+ 	unsigned int printk_count;
  
- /* insert the srcline into the DSO, which will take ownership */
- void srcline__tree_insert(struct rb_root *tree, u64 addr, char *srcline);
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 3d9ed7d0e281..c83372329f89 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -64,6 +64,7 @@ struct thread *thread__new(pid_t pid, pid_t tid)
- 		RB_CLEAR_NODE(&thread->rb_node);
- 		/* Thread holds first ref to nsdata. */
- 		thread->nsinfo = nsinfo__new(pid);
-+		srccode_state_init(&thread->srccode_state);
+ 
+-	struct tep_event_format **events;
++	struct tep_event **events;
+ 	int nr_events;
+-	struct tep_event_format **sort_events;
++	struct tep_event **sort_events;
+ 	enum tep_event_sort_type last_type;
+ 
+ 	int type_offset;
+@@ -84,7 +84,7 @@ struct tep_handle {
+ 	struct tep_function_handler *func_handlers;
+ 
+ 	/* cache */
+-	struct tep_event_format *last_event;
++	struct tep_event *last_event;
+ 
+ 	char *trace_clock;
+ };
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index d1e6ee3d43cf..047be5f700b5 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -96,7 +96,7 @@ struct tep_function_handler {
+ 
+ static unsigned long long
+ process_defined_func(struct trace_seq *s, void *data, int size,
+-		     struct tep_event_format *event, struct tep_print_arg *arg);
++		     struct tep_event *event, struct tep_print_arg *arg);
+ 
+ static void free_func_handle(struct tep_function_handler *func);
+ 
+@@ -739,16 +739,16 @@ void tep_print_printk(struct tep_handle *pevent)
  	}
+ }
  
- 	return thread;
-@@ -103,6 +104,7 @@ void thread__delete(struct thread *thread)
+-static struct tep_event_format *alloc_event(void)
++static struct tep_event *alloc_event(void)
+ {
+-	return calloc(1, sizeof(struct tep_event_format));
++	return calloc(1, sizeof(struct tep_event));
+ }
  
- 	unwind__finish_access(thread);
- 	nsinfo__zput(thread->nsinfo);
-+	srccode_state_free(&thread->srccode_state);
+-static int add_event(struct tep_handle *pevent, struct tep_event_format *event)
++static int add_event(struct tep_handle *pevent, struct tep_event *event)
+ {
+ 	int i;
+-	struct tep_event_format **events = realloc(pevent->events, sizeof(event) *
+-						  (pevent->nr_events + 1));
++	struct tep_event **events = realloc(pevent->events, sizeof(event) *
++					    (pevent->nr_events + 1));
+ 	if (!events)
+ 		return -1;
  
- 	exit_rwsem(&thread->namespaces_lock);
- 	exit_rwsem(&thread->comm_lock);
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 5920c3bb8ffe..712dd48cc0ca 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <sys/types.h>
- #include "symbol.h"
-+#include "map.h"
- #include <strlist.h>
- #include <intlist.h>
- #include "rwsem.h"
-@@ -38,6 +39,7 @@ struct thread {
+@@ -1355,7 +1355,7 @@ static unsigned int type_size(const char *name)
+ 	return 0;
+ }
+ 
+-static int event_read_fields(struct tep_event_format *event, struct tep_format_field **fields)
++static int event_read_fields(struct tep_event *event, struct tep_format_field **fields)
+ {
+ 	struct tep_format_field *field = NULL;
+ 	enum tep_event_type type;
+@@ -1642,7 +1642,7 @@ static int event_read_fields(struct tep_event_format *event, struct tep_format_f
+ 	return -1;
+ }
+ 
+-static int event_read_format(struct tep_event_format *event)
++static int event_read_format(struct tep_event *event)
+ {
+ 	char *token;
+ 	int ret;
+@@ -1675,11 +1675,11 @@ static int event_read_format(struct tep_event_format *event)
+ }
+ 
+ static enum tep_event_type
+-process_arg_token(struct tep_event_format *event, struct tep_print_arg *arg,
++process_arg_token(struct tep_event *event, struct tep_print_arg *arg,
+ 		  char **tok, enum tep_event_type type);
+ 
+ static enum tep_event_type
+-process_arg(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_arg(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	enum tep_event_type type;
+ 	char *token;
+@@ -1691,14 +1691,14 @@ process_arg(struct tep_event_format *event, struct tep_print_arg *arg, char **to
+ }
+ 
+ static enum tep_event_type
+-process_op(struct tep_event_format *event, struct tep_print_arg *arg, char **tok);
++process_op(struct tep_event *event, struct tep_print_arg *arg, char **tok);
+ 
+ /*
+  * For __print_symbolic() and __print_flags, we need to completely
+  * evaluate the first argument, which defines what to print next.
+  */
+ static enum tep_event_type
+-process_field_arg(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_field_arg(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	enum tep_event_type type;
+ 
+@@ -1712,7 +1712,7 @@ process_field_arg(struct tep_event_format *event, struct tep_print_arg *arg, cha
+ }
+ 
+ static enum tep_event_type
+-process_cond(struct tep_event_format *event, struct tep_print_arg *top, char **tok)
++process_cond(struct tep_event *event, struct tep_print_arg *top, char **tok)
+ {
+ 	struct tep_print_arg *arg, *left, *right;
+ 	enum tep_event_type type;
+@@ -1768,7 +1768,7 @@ process_cond(struct tep_event_format *event, struct tep_print_arg *top, char **t
+ }
+ 
+ static enum tep_event_type
+-process_array(struct tep_event_format *event, struct tep_print_arg *top, char **tok)
++process_array(struct tep_event *event, struct tep_print_arg *top, char **tok)
+ {
+ 	struct tep_print_arg *arg;
+ 	enum tep_event_type type;
+@@ -1870,7 +1870,7 @@ static int set_op_prio(struct tep_print_arg *arg)
+ 
+ /* Note, *tok does not get freed, but will most likely be saved */
+ static enum tep_event_type
+-process_op(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_op(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_print_arg *left, *right = NULL;
+ 	enum tep_event_type type;
+@@ -2071,7 +2071,7 @@ process_op(struct tep_event_format *event, struct tep_print_arg *arg, char **tok
+ }
+ 
+ static enum tep_event_type
+-process_entry(struct tep_event_format *event __maybe_unused, struct tep_print_arg *arg,
++process_entry(struct tep_event *event __maybe_unused, struct tep_print_arg *arg,
+ 	      char **tok)
+ {
+ 	enum tep_event_type type;
+@@ -2110,7 +2110,7 @@ process_entry(struct tep_event_format *event __maybe_unused, struct tep_print_ar
+ 	return TEP_EVENT_ERROR;
+ }
+ 
+-static int alloc_and_process_delim(struct tep_event_format *event, char *next_token,
++static int alloc_and_process_delim(struct tep_event *event, char *next_token,
+ 				   struct tep_print_arg **print_arg)
+ {
+ 	struct tep_print_arg *field;
+@@ -2445,7 +2445,7 @@ static char *arg_eval (struct tep_print_arg *arg)
+ }
+ 
+ static enum tep_event_type
+-process_fields(struct tep_event_format *event, struct tep_print_flag_sym **list, char **tok)
++process_fields(struct tep_event *event, struct tep_print_flag_sym **list, char **tok)
+ {
+ 	enum tep_event_type type;
+ 	struct tep_print_arg *arg = NULL;
+@@ -2526,7 +2526,7 @@ process_fields(struct tep_event_format *event, struct tep_print_flag_sym **list,
+ }
+ 
+ static enum tep_event_type
+-process_flags(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_flags(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_print_arg *field;
+ 	enum tep_event_type type;
+@@ -2579,7 +2579,7 @@ process_flags(struct tep_event_format *event, struct tep_print_arg *arg, char **
+ }
+ 
+ static enum tep_event_type
+-process_symbols(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_symbols(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_print_arg *field;
+ 	enum tep_event_type type;
+@@ -2618,7 +2618,7 @@ process_symbols(struct tep_event_format *event, struct tep_print_arg *arg, char
+ }
+ 
+ static enum tep_event_type
+-process_hex_common(struct tep_event_format *event, struct tep_print_arg *arg,
++process_hex_common(struct tep_event *event, struct tep_print_arg *arg,
+ 		   char **tok, enum tep_print_arg_type type)
+ {
+ 	memset(arg, 0, sizeof(*arg));
+@@ -2641,20 +2641,20 @@ process_hex_common(struct tep_event_format *event, struct tep_print_arg *arg,
+ }
+ 
+ static enum tep_event_type
+-process_hex(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_hex(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	return process_hex_common(event, arg, tok, TEP_PRINT_HEX);
+ }
+ 
+ static enum tep_event_type
+-process_hex_str(struct tep_event_format *event, struct tep_print_arg *arg,
++process_hex_str(struct tep_event *event, struct tep_print_arg *arg,
+ 		char **tok)
+ {
+ 	return process_hex_common(event, arg, tok, TEP_PRINT_HEX_STR);
+ }
+ 
+ static enum tep_event_type
+-process_int_array(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_int_array(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	memset(arg, 0, sizeof(*arg));
+ 	arg->type = TEP_PRINT_INT_ARRAY;
+@@ -2682,7 +2682,7 @@ process_int_array(struct tep_event_format *event, struct tep_print_arg *arg, cha
+ }
+ 
+ static enum tep_event_type
+-process_dynamic_array(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_dynamic_array(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_format_field *field;
+ 	enum tep_event_type type;
+@@ -2746,7 +2746,7 @@ process_dynamic_array(struct tep_event_format *event, struct tep_print_arg *arg,
+ }
+ 
+ static enum tep_event_type
+-process_dynamic_array_len(struct tep_event_format *event, struct tep_print_arg *arg,
++process_dynamic_array_len(struct tep_event *event, struct tep_print_arg *arg,
+ 			  char **tok)
+ {
+ 	struct tep_format_field *field;
+@@ -2782,7 +2782,7 @@ process_dynamic_array_len(struct tep_event_format *event, struct tep_print_arg *
+ }
+ 
+ static enum tep_event_type
+-process_paren(struct tep_event_format *event, struct tep_print_arg *arg, char **tok)
++process_paren(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_print_arg *item_arg;
+ 	enum tep_event_type type;
+@@ -2845,7 +2845,7 @@ process_paren(struct tep_event_format *event, struct tep_print_arg *arg, char **
+ 
+ 
+ static enum tep_event_type
+-process_str(struct tep_event_format *event __maybe_unused, struct tep_print_arg *arg,
++process_str(struct tep_event *event __maybe_unused, struct tep_print_arg *arg,
+ 	    char **tok)
+ {
+ 	enum tep_event_type type;
+@@ -2874,7 +2874,7 @@ process_str(struct tep_event_format *event __maybe_unused, struct tep_print_arg
+ }
+ 
+ static enum tep_event_type
+-process_bitmask(struct tep_event_format *event __maybe_unused, struct tep_print_arg *arg,
++process_bitmask(struct tep_event *event __maybe_unused, struct tep_print_arg *arg,
+ 		char **tok)
+ {
+ 	enum tep_event_type type;
+@@ -2935,7 +2935,7 @@ static void remove_func_handler(struct tep_handle *pevent, char *func_name)
+ }
+ 
+ static enum tep_event_type
+-process_func_handler(struct tep_event_format *event, struct tep_function_handler *func,
++process_func_handler(struct tep_event *event, struct tep_function_handler *func,
+ 		     struct tep_print_arg *arg, char **tok)
+ {
+ 	struct tep_print_arg **next_arg;
+@@ -2993,7 +2993,7 @@ process_func_handler(struct tep_event_format *event, struct tep_function_handler
+ }
+ 
+ static enum tep_event_type
+-process_function(struct tep_event_format *event, struct tep_print_arg *arg,
++process_function(struct tep_event *event, struct tep_print_arg *arg,
+ 		 char *token, char **tok)
+ {
+ 	struct tep_function_handler *func;
+@@ -3049,7 +3049,7 @@ process_function(struct tep_event_format *event, struct tep_print_arg *arg,
+ }
+ 
+ static enum tep_event_type
+-process_arg_token(struct tep_event_format *event, struct tep_print_arg *arg,
++process_arg_token(struct tep_event *event, struct tep_print_arg *arg,
+ 		  char **tok, enum tep_event_type type)
+ {
+ 	char *token;
+@@ -3137,7 +3137,7 @@ process_arg_token(struct tep_event_format *event, struct tep_print_arg *arg,
+ 	return type;
+ }
+ 
+-static int event_read_print_args(struct tep_event_format *event, struct tep_print_arg **list)
++static int event_read_print_args(struct tep_event *event, struct tep_print_arg **list)
+ {
+ 	enum tep_event_type type = TEP_EVENT_ERROR;
+ 	struct tep_print_arg *arg;
+@@ -3195,7 +3195,7 @@ static int event_read_print_args(struct tep_event_format *event, struct tep_prin
+ 	return args;
+ }
+ 
+-static int event_read_print(struct tep_event_format *event)
++static int event_read_print(struct tep_event *event)
+ {
+ 	enum tep_event_type type;
+ 	char *token;
+@@ -3261,7 +3261,7 @@ static int event_read_print(struct tep_event_format *event)
+  * This only searchs the common fields and not all field.
+  */
+ struct tep_format_field *
+-tep_find_common_field(struct tep_event_format *event, const char *name)
++tep_find_common_field(struct tep_event *event, const char *name)
+ {
+ 	struct tep_format_field *format;
+ 
+@@ -3283,7 +3283,7 @@ tep_find_common_field(struct tep_event_format *event, const char *name)
+  * This does not search common fields.
+  */
+ struct tep_format_field *
+-tep_find_field(struct tep_event_format *event, const char *name)
++tep_find_field(struct tep_event *event, const char *name)
+ {
+ 	struct tep_format_field *format;
+ 
+@@ -3306,7 +3306,7 @@ tep_find_field(struct tep_event_format *event, const char *name)
+  * the non-common ones if a common one was not found.
+  */
+ struct tep_format_field *
+-tep_find_any_field(struct tep_event_format *event, const char *name)
++tep_find_any_field(struct tep_event *event, const char *name)
+ {
+ 	struct tep_format_field *format;
+ 
+@@ -3375,7 +3375,7 @@ int tep_read_number_field(struct tep_format_field *field, const void *data,
+ static int get_common_info(struct tep_handle *pevent,
+ 			   const char *type, int *offset, int *size)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct tep_format_field *field;
+ 
+ 	/*
+@@ -3462,11 +3462,11 @@ static int events_id_cmp(const void *a, const void *b);
+  *
+  * Returns an event that has a given @id.
+  */
+-struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id)
++struct tep_event *tep_find_event(struct tep_handle *pevent, int id)
+ {
+-	struct tep_event_format **eventptr;
+-	struct tep_event_format key;
+-	struct tep_event_format *pkey = &key;
++	struct tep_event **eventptr;
++	struct tep_event key;
++	struct tep_event *pkey = &key;
+ 
+ 	/* Check cache first */
+ 	if (pevent->last_event && pevent->last_event->id == id)
+@@ -3494,11 +3494,11 @@ struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id)
+  * This returns an event with a given @name and under the system
+  * @sys. If @sys is NULL the first event with @name is returned.
+  */
+-struct tep_event_format *
++struct tep_event *
+ tep_find_event_by_name(struct tep_handle *pevent,
+ 		       const char *sys, const char *name)
+ {
+-	struct tep_event_format *event = NULL;
++	struct tep_event *event = NULL;
+ 	int i;
+ 
+ 	if (pevent->last_event &&
+@@ -3523,7 +3523,7 @@ tep_find_event_by_name(struct tep_handle *pevent,
+ }
+ 
+ static unsigned long long
+-eval_num_arg(void *data, int size, struct tep_event_format *event, struct tep_print_arg *arg)
++eval_num_arg(void *data, int size, struct tep_event *event, struct tep_print_arg *arg)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long val = 0;
+@@ -3863,7 +3863,7 @@ static void print_bitmask_to_seq(struct tep_handle *pevent,
+ }
+ 
+ static void print_str_arg(struct trace_seq *s, void *data, int size,
+-			  struct tep_event_format *event, const char *format,
++			  struct tep_event *event, const char *format,
+ 			  int len_arg, struct tep_print_arg *arg)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+@@ -4118,7 +4118,7 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
+ 
+ static unsigned long long
+ process_defined_func(struct trace_seq *s, void *data, int size,
+-		     struct tep_event_format *event, struct tep_print_arg *arg)
++		     struct tep_event *event, struct tep_print_arg *arg)
+ {
+ 	struct tep_function_handler *func_handle = arg->func.func;
+ 	struct func_params *param;
+@@ -4213,7 +4213,7 @@ static void free_args(struct tep_print_arg *args)
+ 	}
+ }
+ 
+-static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, struct tep_event_format *event)
++static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, struct tep_event *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	struct tep_format_field *field, *ip_field;
+@@ -4390,7 +4390,7 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
+ 
+ static char *
+ get_bprint_format(void *data, int size __maybe_unused,
+-		  struct tep_event_format *event)
++		  struct tep_event *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long addr;
+@@ -4425,7 +4425,7 @@ get_bprint_format(void *data, int size __maybe_unused,
+ }
+ 
+ static void print_mac_arg(struct trace_seq *s, int mac, void *data, int size,
+-			  struct tep_event_format *event, struct tep_print_arg *arg)
++			  struct tep_event *event, struct tep_print_arg *arg)
+ {
+ 	unsigned char *buf;
+ 	const char *fmt = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x";
+@@ -4578,7 +4578,7 @@ static void print_ip6_addr(struct trace_seq *s, char i, unsigned char *buf)
+  * %pISpc print an IP address based on sockaddr; p adds port.
+  */
+ static int print_ipv4_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct tep_event_format *event,
++			  void *data, int size, struct tep_event *event,
+ 			  struct tep_print_arg *arg)
+ {
+ 	unsigned char *buf;
+@@ -4615,7 +4615,7 @@ static int print_ipv4_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ipv6_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct tep_event_format *event,
++			  void *data, int size, struct tep_event *event,
+ 			  struct tep_print_arg *arg)
+ {
+ 	char have_c = 0;
+@@ -4665,7 +4665,7 @@ static int print_ipv6_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ipsa_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct tep_event_format *event,
++			  void *data, int size, struct tep_event *event,
+ 			  struct tep_print_arg *arg)
+ {
+ 	char have_c = 0, have_p = 0;
+@@ -4747,7 +4747,7 @@ static int print_ipsa_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ip_arg(struct trace_seq *s, const char *ptr,
+-			void *data, int size, struct tep_event_format *event,
++			void *data, int size, struct tep_event *event,
+ 			struct tep_print_arg *arg)
+ {
+ 	char i = *ptr;  /* 'i' or 'I' */
+@@ -4854,7 +4854,7 @@ void tep_print_field(struct trace_seq *s, void *data,
+ }
+ 
+ void tep_print_fields(struct trace_seq *s, void *data,
+-		      int size __maybe_unused, struct tep_event_format *event)
++		      int size __maybe_unused, struct tep_event *event)
+ {
+ 	struct tep_format_field *field;
+ 
+@@ -4866,7 +4866,7 @@ void tep_print_fields(struct trace_seq *s, void *data,
+ 	}
+ }
+ 
+-static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_event_format *event)
++static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_event *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	struct tep_print_fmt *print_fmt = &event->print_fmt;
+@@ -5229,7 +5229,7 @@ int tep_data_type(struct tep_handle *pevent, struct tep_record *rec)
+  *
+  * This returns the event form a given @type;
+  */
+-struct tep_event_format *tep_data_event_from_type(struct tep_handle *pevent, int type)
++struct tep_event *tep_data_event_from_type(struct tep_handle *pevent, int type)
+ {
+ 	return tep_find_event(pevent, type);
+ }
+@@ -5387,7 +5387,7 @@ int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline)
+  * This parses the raw @data using the given @event information and
+  * writes the print format into the trace_seq.
+  */
+-void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
++void tep_event_info(struct trace_seq *s, struct tep_event *event,
+ 		    struct tep_record *record)
+ {
+ 	int print_pretty = 1;
+@@ -5428,7 +5428,7 @@ static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
+  * Returns the associated event for a given record, or NULL if non is
+  * is found.
+  */
+-struct tep_event_format *
++struct tep_event *
+ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
+ {
+ 	int type;
+@@ -5453,7 +5453,7 @@ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
+  * Writes the tasks comm, pid and CPU to @s.
+  */
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record)
+ {
+ 	void *data = record->data;
+@@ -5481,7 +5481,7 @@ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+  * Writes the timestamp of the record into @s.
+  */
+ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record,
+ 			  bool use_trace_clock)
+ {
+@@ -5531,7 +5531,7 @@ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+  * Writes the parsing of the record's data to @s.
+  */
+ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record)
+ {
+ 	static const char *spaces = "                    "; /* 20 spaces */
+@@ -5550,7 +5550,7 @@ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 		     struct tep_record *record, bool use_trace_clock)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 
+ 	event = tep_find_event_by_record(pevent, record);
+ 	if (!event) {
+@@ -5572,8 +5572,8 @@ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 
+ static int events_id_cmp(const void *a, const void *b)
+ {
+-	struct tep_event_format * const * ea = a;
+-	struct tep_event_format * const * eb = b;
++	struct tep_event * const * ea = a;
++	struct tep_event * const * eb = b;
+ 
+ 	if ((*ea)->id < (*eb)->id)
+ 		return -1;
+@@ -5586,8 +5586,8 @@ static int events_id_cmp(const void *a, const void *b)
+ 
+ static int events_name_cmp(const void *a, const void *b)
+ {
+-	struct tep_event_format * const * ea = a;
+-	struct tep_event_format * const * eb = b;
++	struct tep_event * const * ea = a;
++	struct tep_event * const * eb = b;
+ 	int res;
+ 
+ 	res = strcmp((*ea)->name, (*eb)->name);
+@@ -5603,8 +5603,8 @@ static int events_name_cmp(const void *a, const void *b)
+ 
+ static int events_system_cmp(const void *a, const void *b)
+ {
+-	struct tep_event_format * const * ea = a;
+-	struct tep_event_format * const * eb = b;
++	struct tep_event * const * ea = a;
++	struct tep_event * const * eb = b;
+ 	int res;
+ 
+ 	res = strcmp((*ea)->system, (*eb)->system);
+@@ -5618,9 +5618,9 @@ static int events_system_cmp(const void *a, const void *b)
+ 	return events_id_cmp(a, b);
+ }
+ 
+-struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum tep_event_sort_type sort_type)
++struct tep_event **tep_list_events(struct tep_handle *pevent, enum tep_event_sort_type sort_type)
+ {
+-	struct tep_event_format **events;
++	struct tep_event **events;
+ 	int (*sort)(const void *a, const void *b);
+ 
+ 	events = pevent->sort_events;
+@@ -5703,7 +5703,7 @@ get_event_fields(const char *type, const char *name,
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
+  */
+-struct tep_format_field **tep_event_common_fields(struct tep_event_format *event)
++struct tep_format_field **tep_event_common_fields(struct tep_event *event)
+ {
+ 	return get_event_fields("common", event->name,
+ 				event->format.nr_common,
+@@ -5717,7 +5717,7 @@ struct tep_format_field **tep_event_common_fields(struct tep_event_format *event
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
+  */
+-struct tep_format_field **tep_event_fields(struct tep_event_format *event)
++struct tep_format_field **tep_event_fields(struct tep_event *event)
+ {
+ 	return get_event_fields("event", event->name,
+ 				event->format.nr_fields,
+@@ -5959,7 +5959,7 @@ int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long si
+ 	return 0;
+ }
+ 
+-static int event_matches(struct tep_event_format *event,
++static int event_matches(struct tep_event *event,
+ 			 int id, const char *sys_name,
+ 			 const char *event_name)
+ {
+@@ -5982,7 +5982,7 @@ static void free_handler(struct event_handler *handle)
+ 	free(handle);
+ }
+ 
+-static int find_event_handle(struct tep_handle *pevent, struct tep_event_format *event)
++static int find_event_handle(struct tep_handle *pevent, struct tep_event *event)
+ {
+ 	struct event_handler *handle, **next;
+ 
+@@ -6023,11 +6023,11 @@ static int find_event_handle(struct tep_handle *pevent, struct tep_event_format
+  *
+  * /sys/kernel/debug/tracing/events/.../.../format
+  */
+-enum tep_errno __tep_parse_format(struct tep_event_format **eventp,
++enum tep_errno __tep_parse_format(struct tep_event **eventp,
+ 				  struct tep_handle *pevent, const char *buf,
+ 				  unsigned long size, const char *sys)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	int ret;
+ 
+ 	init_input_buf(buf, size);
+@@ -6132,12 +6132,12 @@ enum tep_errno __tep_parse_format(struct tep_event_format **eventp,
+ 
+ static enum tep_errno
+ __parse_event(struct tep_handle *pevent,
+-	      struct tep_event_format **eventp,
++	      struct tep_event **eventp,
+ 	      const char *buf, unsigned long size,
+ 	      const char *sys)
+ {
+ 	int ret = __tep_parse_format(eventp, pevent, buf, size, sys);
+-	struct tep_event_format *event = *eventp;
++	struct tep_event *event = *eventp;
+ 
+ 	if (event == NULL)
+ 		return ret;
+@@ -6174,7 +6174,7 @@ __parse_event(struct tep_handle *pevent,
+  * /sys/kernel/debug/tracing/events/.../.../format
+  */
+ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+-				struct tep_event_format **eventp,
++				struct tep_event **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys)
+ {
+@@ -6198,7 +6198,7 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+ enum tep_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
+ 			       unsigned long size, const char *sys)
+ {
+-	struct tep_event_format *event = NULL;
++	struct tep_event *event = NULL;
+ 	return __parse_event(pevent, &event, buf, size, sys);
+ }
+ 
+@@ -6235,7 +6235,7 @@ int get_field_val(struct trace_seq *s, struct tep_format_field *field,
+  *
+  * On failure, it returns NULL.
+  */
+-void *tep_get_field_raw(struct trace_seq *s, struct tep_event_format *event,
++void *tep_get_field_raw(struct trace_seq *s, struct tep_event *event,
+ 			const char *name, struct tep_record *record,
+ 			int *len, int err)
+ {
+@@ -6282,7 +6282,7 @@ void *tep_get_field_raw(struct trace_seq *s, struct tep_event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_field_val(struct trace_seq *s, struct tep_event *event,
+ 		      const char *name, struct tep_record *record,
+ 		      unsigned long long *val, int err)
+ {
+@@ -6307,7 +6307,7 @@ int tep_get_field_val(struct trace_seq *s, struct tep_event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_common_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_common_field_val(struct trace_seq *s, struct tep_event *event,
+ 			     const char *name, struct tep_record *record,
+ 			     unsigned long long *val, int err)
+ {
+@@ -6332,7 +6332,7 @@ int tep_get_common_field_val(struct trace_seq *s, struct tep_event_format *event
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_any_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_any_field_val(struct trace_seq *s, struct tep_event *event,
+ 			  const char *name, struct tep_record *record,
+ 			  unsigned long long *val, int err)
+ {
+@@ -6358,7 +6358,7 @@ int tep_get_any_field_val(struct trace_seq *s, struct tep_event_format *event,
+  * Returns: 0 on success, -1 field not found, or 1 if buffer is full.
+  */
+ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+-			struct tep_event_format *event, const char *name,
++			struct tep_event *event, const char *name,
+ 			struct tep_record *record, int err)
+ {
+ 	struct tep_format_field *field = tep_find_field(event, name);
+@@ -6390,7 +6390,7 @@ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+  * Returns: 0 on success, -1 field not found, or 1 if buffer is full.
+  */
+ int tep_print_func_field(struct trace_seq *s, const char *fmt,
+-			 struct tep_event_format *event, const char *name,
++			 struct tep_event *event, const char *name,
+ 			 struct tep_record *record, int err)
+ {
+ 	struct tep_format_field *field = tep_find_field(event, name);
+@@ -6550,11 +6550,11 @@ int tep_unregister_print_function(struct tep_handle *pevent,
+ 	return -1;
+ }
+ 
+-static struct tep_event_format *search_event(struct tep_handle *pevent, int id,
+-					 const char *sys_name,
+-					 const char *event_name)
++static struct tep_event *search_event(struct tep_handle *pevent, int id,
++				      const char *sys_name,
++				      const char *event_name)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 
+ 	if (id >= 0) {
+ 		/* search by id */
+@@ -6594,7 +6594,7 @@ int tep_register_event_handler(struct tep_handle *pevent, int id,
+ 			       const char *sys_name, const char *event_name,
+ 			       tep_event_handler_func func, void *context)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct event_handler *handle;
+ 
+ 	event = search_event(pevent, id, sys_name, event_name);
+@@ -6678,7 +6678,7 @@ int tep_unregister_event_handler(struct tep_handle *pevent, int id,
+ 				 const char *sys_name, const char *event_name,
+ 				 tep_event_handler_func func, void *context)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct event_handler *handle;
+ 	struct event_handler **next;
+ 
+@@ -6763,7 +6763,7 @@ static void free_formats(struct tep_format *format)
+ 	free_format_fields(format->fields);
+ }
+ 
+-void tep_free_format(struct tep_event_format *event)
++void tep_free_format(struct tep_event *event)
+ {
+ 	free(event->name);
+ 	free(event->system);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 44ec26c72c2e..2a1a644c5ec8 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -57,11 +57,11 @@ struct tep_record {
+ /* ----------------------- tep ----------------------- */
+ 
+ struct tep_handle;
+-struct tep_event_format;
++struct tep_event;
+ 
+ typedef int (*tep_event_handler_func)(struct trace_seq *s,
+ 				      struct tep_record *record,
+-				      struct tep_event_format *event,
++				      struct tep_event *event,
+ 				      void *context);
+ 
+ typedef int (*tep_plugin_load_func)(struct tep_handle *pevent);
+@@ -143,7 +143,7 @@ enum tep_format_flags {
+ 
+ struct tep_format_field {
+ 	struct tep_format_field	*next;
+-	struct tep_event_format	*event;
++	struct tep_event	*event;
+ 	char			*type;
+ 	char			*name;
+ 	char			*alias;
+@@ -277,7 +277,7 @@ struct tep_print_fmt {
+ 	struct tep_print_arg	*args;
+ };
+ 
+-struct tep_event_format {
++struct tep_event {
+ 	struct tep_handle	*pevent;
+ 	char			*name;
+ 	int			id;
+@@ -454,14 +454,14 @@ int tep_register_print_string(struct tep_handle *pevent, const char *fmt,
+ int tep_pid_is_registered(struct tep_handle *pevent, int pid);
+ 
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record);
+ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record,
+ 			  bool use_trace_clock);
+ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct tep_event_format *event,
++			  struct tep_event *event,
+ 			  struct tep_record *record);
+ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 		     struct tep_record *record, bool use_trace_clock);
+@@ -472,32 +472,32 @@ int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long si
+ enum tep_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
+ 			       unsigned long size, const char *sys);
+ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+-				struct tep_event_format **eventp,
++				struct tep_event **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys);
+-void tep_free_format(struct tep_event_format *event);
++void tep_free_format(struct tep_event *event);
+ void tep_free_format_field(struct tep_format_field *field);
+ 
+-void *tep_get_field_raw(struct trace_seq *s, struct tep_event_format *event,
++void *tep_get_field_raw(struct trace_seq *s, struct tep_event *event,
+ 			const char *name, struct tep_record *record,
+ 			int *len, int err);
+ 
+-int tep_get_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_field_val(struct trace_seq *s, struct tep_event *event,
+ 		      const char *name, struct tep_record *record,
+ 		      unsigned long long *val, int err);
+-int tep_get_common_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_common_field_val(struct trace_seq *s, struct tep_event *event,
+ 			     const char *name, struct tep_record *record,
+ 			     unsigned long long *val, int err);
+-int tep_get_any_field_val(struct trace_seq *s, struct tep_event_format *event,
++int tep_get_any_field_val(struct trace_seq *s, struct tep_event *event,
+ 			  const char *name, struct tep_record *record,
+ 			  unsigned long long *val, int err);
+ 
+ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+-			struct tep_event_format *event, const char *name,
++			struct tep_event *event, const char *name,
+ 			struct tep_record *record, int err);
+ 
+ int tep_print_func_field(struct trace_seq *s, const char *fmt,
+-			 struct tep_event_format *event, const char *name,
++			 struct tep_event *event, const char *name,
+ 			 struct tep_record *record, int err);
+ 
+ int tep_register_event_handler(struct tep_handle *pevent, int id,
+@@ -513,9 +513,9 @@ int tep_register_print_function(struct tep_handle *pevent,
+ int tep_unregister_print_function(struct tep_handle *pevent,
+ 				  tep_func_handler func, char *name);
+ 
+-struct tep_format_field *tep_find_common_field(struct tep_event_format *event, const char *name);
+-struct tep_format_field *tep_find_field(struct tep_event_format *event, const char *name);
+-struct tep_format_field *tep_find_any_field(struct tep_event_format *event, const char *name);
++struct tep_format_field *tep_find_common_field(struct tep_event *event, const char *name);
++struct tep_format_field *tep_find_field(struct tep_event *event, const char *name);
++struct tep_format_field *tep_find_any_field(struct tep_event *event, const char *name);
+ 
+ const char *tep_find_function(struct tep_handle *pevent, unsigned long long addr);
+ unsigned long long
+@@ -524,19 +524,19 @@ unsigned long long tep_read_number(struct tep_handle *pevent, const void *ptr, i
+ int tep_read_number_field(struct tep_format_field *field, const void *data,
+ 			  unsigned long long *value);
+ 
+-struct tep_event_format *tep_get_first_event(struct tep_handle *tep);
++struct tep_event *tep_get_first_event(struct tep_handle *tep);
+ int tep_get_events_count(struct tep_handle *tep);
+-struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id);
++struct tep_event *tep_find_event(struct tep_handle *pevent, int id);
+ 
+-struct tep_event_format *
++struct tep_event *
+ tep_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
+-struct tep_event_format *
++struct tep_event *
+ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
+ 
+ void tep_data_lat_fmt(struct tep_handle *pevent,
+ 		      struct trace_seq *s, struct tep_record *record);
+ int tep_data_type(struct tep_handle *pevent, struct tep_record *rec);
+-struct tep_event_format *tep_data_event_from_type(struct tep_handle *pevent, int type);
++struct tep_event *tep_data_event_from_type(struct tep_handle *pevent, int type);
+ int tep_data_pid(struct tep_handle *pevent, struct tep_record *rec);
+ int tep_data_preempt_count(struct tep_handle *pevent, struct tep_record *rec);
+ int tep_data_flags(struct tep_handle *pevent, struct tep_record *rec);
+@@ -549,15 +549,15 @@ int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline);
+ void tep_print_field(struct trace_seq *s, void *data,
+ 		     struct tep_format_field *field);
+ void tep_print_fields(struct trace_seq *s, void *data,
+-		      int size __maybe_unused, struct tep_event_format *event);
+-void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
+-		       struct tep_record *record);
++		      int size __maybe_unused, struct tep_event *event);
++void tep_event_info(struct trace_seq *s, struct tep_event *event,
++		    struct tep_record *record);
+ int tep_strerror(struct tep_handle *pevent, enum tep_errno errnum,
+-		    char *buf, size_t buflen);
++		 char *buf, size_t buflen);
+ 
+-struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum tep_event_sort_type);
+-struct tep_format_field **tep_event_common_fields(struct tep_event_format *event);
+-struct tep_format_field **tep_event_fields(struct tep_event_format *event);
++struct tep_event **tep_list_events(struct tep_handle *pevent, enum tep_event_sort_type);
++struct tep_format_field **tep_event_common_fields(struct tep_event *event);
++struct tep_format_field **tep_event_fields(struct tep_event *event);
+ 
+ enum tep_endian {
+         TEP_LITTLE_ENDIAN = 0,
+@@ -713,7 +713,7 @@ struct tep_filter_arg {
+ 
+ struct tep_filter_type {
+ 	int			event_id;
+-	struct tep_event_format	*event;
++	struct tep_event	*event;
+ 	struct tep_filter_arg	*filter;
+ };
+ 
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index ed87cb56713d..cb5ce66dab6e 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -27,7 +27,7 @@ static struct tep_format_field cpu = {
+ 
+ struct event_list {
+ 	struct event_list	*next;
+-	struct tep_event_format	*event;
++	struct tep_event	*event;
+ };
+ 
+ static void show_error(char *error_buf, const char *fmt, ...)
+@@ -229,7 +229,7 @@ static void free_arg(struct tep_filter_arg *arg)
+ }
+ 
+ static int add_event(struct event_list **events,
+-		     struct tep_event_format *event)
++		     struct tep_event *event)
+ {
+ 	struct event_list *list;
+ 
+@@ -243,7 +243,7 @@ static int add_event(struct event_list **events,
+ 	return 0;
+ }
+ 
+-static int event_match(struct tep_event_format *event,
++static int event_match(struct tep_event *event,
+ 		       regex_t *sreg, regex_t *ereg)
+ {
+ 	if (sreg) {
+@@ -259,7 +259,7 @@ static enum tep_errno
+ find_event(struct tep_handle *pevent, struct event_list **events,
+ 	   char *sys_name, char *event_name)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	regex_t ereg;
+ 	regex_t sreg;
+ 	int match = 0;
+@@ -334,7 +334,7 @@ static void free_events(struct event_list *events)
+ }
+ 
+ static enum tep_errno
+-create_arg_item(struct tep_event_format *event, const char *token,
++create_arg_item(struct tep_event *event, const char *token,
+ 		enum tep_event_type type, struct tep_filter_arg **parg, char *error_str)
+ {
+ 	struct tep_format_field *field;
+@@ -940,7 +940,7 @@ static int collapse_tree(struct tep_filter_arg *arg,
+ }
+ 
+ static enum tep_errno
+-process_filter(struct tep_event_format *event, struct tep_filter_arg **parg,
++process_filter(struct tep_event *event, struct tep_filter_arg **parg,
+ 	       char *error_str, int not)
+ {
+ 	enum tep_event_type type;
+@@ -1180,7 +1180,7 @@ process_filter(struct tep_event_format *event, struct tep_filter_arg **parg,
+ }
+ 
+ static enum tep_errno
+-process_event(struct tep_event_format *event, const char *filter_str,
++process_event(struct tep_event *event, const char *filter_str,
+ 	      struct tep_filter_arg **parg, char *error_str)
+ {
+ 	int ret;
+@@ -1205,7 +1205,7 @@ process_event(struct tep_event_format *event, const char *filter_str,
+ }
+ 
+ static enum tep_errno
+-filter_event(struct tep_event_filter *filter, struct tep_event_format *event,
++filter_event(struct tep_event_filter *filter, struct tep_event *event,
+ 	     const char *filter_str, char *error_str)
+ {
+ 	struct tep_filter_type *filter_type;
+@@ -1457,7 +1457,7 @@ static int copy_filter_type(struct tep_event_filter *filter,
+ 			    struct tep_filter_type *filter_type)
+ {
+ 	struct tep_filter_arg *arg;
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	const char *sys;
+ 	const char *name;
+ 	char *str;
+@@ -1539,7 +1539,7 @@ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *s
+ {
+ 	struct tep_handle *src_pevent;
+ 	struct tep_handle *dest_pevent;
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct tep_filter_type *filter_type;
+ 	struct tep_filter_arg *arg;
+ 	char *str;
+@@ -1683,11 +1683,11 @@ int tep_filter_event_has_trivial(struct tep_event_filter *filter,
+ 	}
+ }
+ 
+-static int test_filter(struct tep_event_format *event, struct tep_filter_arg *arg,
++static int test_filter(struct tep_event *event, struct tep_filter_arg *arg,
+ 		       struct tep_record *record, enum tep_errno *err);
+ 
+ static const char *
+-get_comm(struct tep_event_format *event, struct tep_record *record)
++get_comm(struct tep_event *event, struct tep_record *record)
+ {
+ 	const char *comm;
+ 	int pid;
+@@ -1698,7 +1698,7 @@ get_comm(struct tep_event_format *event, struct tep_record *record)
+ }
+ 
+ static unsigned long long
+-get_value(struct tep_event_format *event,
++get_value(struct tep_event *event,
+ 	  struct tep_format_field *field, struct tep_record *record)
+ {
+ 	unsigned long long val;
+@@ -1734,11 +1734,11 @@ get_value(struct tep_event_format *event,
+ }
+ 
+ static unsigned long long
+-get_arg_value(struct tep_event_format *event, struct tep_filter_arg *arg,
++get_arg_value(struct tep_event *event, struct tep_filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err);
+ 
+ static unsigned long long
+-get_exp_value(struct tep_event_format *event, struct tep_filter_arg *arg,
++get_exp_value(struct tep_event *event, struct tep_filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err)
+ {
+ 	unsigned long long lval, rval;
+@@ -1793,7 +1793,7 @@ get_exp_value(struct tep_event_format *event, struct tep_filter_arg *arg,
+ }
+ 
+ static unsigned long long
+-get_arg_value(struct tep_event_format *event, struct tep_filter_arg *arg,
++get_arg_value(struct tep_event *event, struct tep_filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err)
+ {
+ 	switch (arg->type) {
+@@ -1817,7 +1817,7 @@ get_arg_value(struct tep_event_format *event, struct tep_filter_arg *arg,
+ 	return 0;
+ }
+ 
+-static int test_num(struct tep_event_format *event, struct tep_filter_arg *arg,
++static int test_num(struct tep_event *event, struct tep_filter_arg *arg,
+ 		    struct tep_record *record, enum tep_errno *err)
+ {
+ 	unsigned long long lval, rval;
+@@ -1860,7 +1860,7 @@ static int test_num(struct tep_event_format *event, struct tep_filter_arg *arg,
+ 
+ static const char *get_field_str(struct tep_filter_arg *arg, struct tep_record *record)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct tep_handle *pevent;
+ 	unsigned long long addr;
+ 	const char *val = NULL;
+@@ -1908,7 +1908,7 @@ static const char *get_field_str(struct tep_filter_arg *arg, struct tep_record *
+ 	return val;
+ }
+ 
+-static int test_str(struct tep_event_format *event, struct tep_filter_arg *arg,
++static int test_str(struct tep_event *event, struct tep_filter_arg *arg,
+ 		    struct tep_record *record, enum tep_errno *err)
+ {
+ 	const char *val;
+@@ -1939,7 +1939,7 @@ static int test_str(struct tep_event_format *event, struct tep_filter_arg *arg,
+ 	}
+ }
+ 
+-static int test_op(struct tep_event_format *event, struct tep_filter_arg *arg,
++static int test_op(struct tep_event *event, struct tep_filter_arg *arg,
+ 		   struct tep_record *record, enum tep_errno *err)
+ {
+ 	switch (arg->op.type) {
+@@ -1961,7 +1961,7 @@ static int test_op(struct tep_event_format *event, struct tep_filter_arg *arg,
+ 	}
+ }
+ 
+-static int test_filter(struct tep_event_format *event, struct tep_filter_arg *arg,
++static int test_filter(struct tep_event *event, struct tep_filter_arg *arg,
+ 		       struct tep_record *record, enum tep_errno *err)
+ {
+ 	if (*err) {
+diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
+index 528acc75d81a..a73eca34a8f9 100644
+--- a/tools/lib/traceevent/plugin_function.c
++++ b/tools/lib/traceevent/plugin_function.c
+@@ -124,7 +124,7 @@ static int add_and_get_index(const char *parent, const char *child, int cpu)
+ }
+ 
+ static int function_handler(struct trace_seq *s, struct tep_record *record,
+-			    struct tep_event_format *event, void *context)
++			    struct tep_event *event, void *context)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long function;
+diff --git a/tools/lib/traceevent/plugin_hrtimer.c b/tools/lib/traceevent/plugin_hrtimer.c
+index 9aa05b4ca811..5db5e401275f 100644
+--- a/tools/lib/traceevent/plugin_hrtimer.c
++++ b/tools/lib/traceevent/plugin_hrtimer.c
+@@ -27,7 +27,7 @@
+ 
+ static int timer_expire_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct tep_event_format *event, void *context)
++				struct tep_event *event, void *context)
+ {
+ 	trace_seq_printf(s, "hrtimer=");
+ 
+@@ -47,7 +47,7 @@ static int timer_expire_handler(struct trace_seq *s,
+ 
+ static int timer_start_handler(struct trace_seq *s,
+ 			       struct tep_record *record,
+-			       struct tep_event_format *event, void *context)
++			       struct tep_event *event, void *context)
+ {
+ 	trace_seq_printf(s, "hrtimer=");
+ 
+diff --git a/tools/lib/traceevent/plugin_kmem.c b/tools/lib/traceevent/plugin_kmem.c
+index 1beb4eaddfdf..0e3c601f9ed1 100644
+--- a/tools/lib/traceevent/plugin_kmem.c
++++ b/tools/lib/traceevent/plugin_kmem.c
+@@ -25,7 +25,7 @@
+ #include "trace-seq.h"
+ 
+ static int call_site_handler(struct trace_seq *s, struct tep_record *record,
+-			     struct tep_event_format *event, void *context)
++			     struct tep_event *event, void *context)
+ {
+ 	struct tep_format_field *field;
+ 	unsigned long long val, addr;
+diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
+index d13c22846fa9..637be7c18476 100644
+--- a/tools/lib/traceevent/plugin_kvm.c
++++ b/tools/lib/traceevent/plugin_kvm.c
+@@ -249,7 +249,7 @@ static const char *find_exit_reason(unsigned isa, int val)
+ }
+ 
+ static int print_exit_reason(struct trace_seq *s, struct tep_record *record,
+-			     struct tep_event_format *event, const char *field)
++			     struct tep_event *event, const char *field)
+ {
+ 	unsigned long long isa;
+ 	unsigned long long val;
+@@ -270,7 +270,7 @@ static int print_exit_reason(struct trace_seq *s, struct tep_record *record,
+ }
+ 
+ static int kvm_exit_handler(struct trace_seq *s, struct tep_record *record,
+-			    struct tep_event_format *event, void *context)
++			    struct tep_event *event, void *context)
+ {
+ 	unsigned long long info1 = 0, info2 = 0;
+ 
+@@ -293,7 +293,7 @@ static int kvm_exit_handler(struct trace_seq *s, struct tep_record *record,
+ 
+ static int kvm_emulate_insn_handler(struct trace_seq *s,
+ 				    struct tep_record *record,
+-				    struct tep_event_format *event, void *context)
++				    struct tep_event *event, void *context)
+ {
+ 	unsigned long long rip, csbase, len, flags, failed;
+ 	int llen;
+@@ -332,7 +332,7 @@ static int kvm_emulate_insn_handler(struct trace_seq *s,
+ 
+ 
+ static int kvm_nested_vmexit_inject_handler(struct trace_seq *s, struct tep_record *record,
+-					    struct tep_event_format *event, void *context)
++					    struct tep_event *event, void *context)
+ {
+ 	if (print_exit_reason(s, record, event, "exit_code") < 0)
+ 		return -1;
+@@ -346,7 +346,7 @@ static int kvm_nested_vmexit_inject_handler(struct trace_seq *s, struct tep_reco
+ }
+ 
+ static int kvm_nested_vmexit_handler(struct trace_seq *s, struct tep_record *record,
+-				     struct tep_event_format *event, void *context)
++				     struct tep_event *event, void *context)
+ {
+ 	tep_print_num_field(s, "rip %llx ", event, "rip", record, 1);
+ 
+@@ -372,7 +372,7 @@ union kvm_mmu_page_role {
+ };
+ 
+ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+-			      struct tep_event_format *event, void *context)
++			      struct tep_event *event, void *context)
+ {
+ 	unsigned long long val;
+ 	static const char *access_str[] = {
+@@ -419,7 +419,7 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 
+ static int kvm_mmu_get_page_handler(struct trace_seq *s,
+ 				    struct tep_record *record,
+-				    struct tep_event_format *event, void *context)
++				    struct tep_event *event, void *context)
+ {
+ 	unsigned long long val;
+ 
+diff --git a/tools/lib/traceevent/plugin_mac80211.c b/tools/lib/traceevent/plugin_mac80211.c
+index da3855e7b86f..e38b9477aad2 100644
+--- a/tools/lib/traceevent/plugin_mac80211.c
++++ b/tools/lib/traceevent/plugin_mac80211.c
+@@ -26,7 +26,7 @@
+ 
+ #define INDENT 65
+ 
+-static void print_string(struct trace_seq *s, struct tep_event_format *event,
++static void print_string(struct trace_seq *s, struct tep_event *event,
+ 			 const char *name, const void *data)
+ {
+ 	struct tep_format_field *f = tep_find_field(event, name);
+@@ -60,7 +60,7 @@ static void print_string(struct trace_seq *s, struct tep_event_format *event,
+ 
+ static int drv_bss_info_changed(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct tep_event_format *event, void *context)
++				struct tep_event *event, void *context)
+ {
+ 	void *data = record->data;
+ 
+diff --git a/tools/lib/traceevent/plugin_sched_switch.c b/tools/lib/traceevent/plugin_sched_switch.c
+index 77882272672f..834c9e378ff8 100644
+--- a/tools/lib/traceevent/plugin_sched_switch.c
++++ b/tools/lib/traceevent/plugin_sched_switch.c
+@@ -67,7 +67,7 @@ static void write_and_save_comm(struct tep_format_field *field,
+ 
+ static int sched_wakeup_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct tep_event_format *event, void *context)
++				struct tep_event *event, void *context)
+ {
+ 	struct tep_format_field *field;
+ 	unsigned long long val;
+@@ -96,7 +96,7 @@ static int sched_wakeup_handler(struct trace_seq *s,
+ 
+ static int sched_switch_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct tep_event_format *event, void *context)
++				struct tep_event *event, void *context)
+ {
+ 	struct tep_format_field *field;
+ 	unsigned long long val;
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 8e3c3f74a3a4..a57a9ae1fd4b 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -885,7 +885,7 @@ static struct syscall_fmt *syscall_fmt__find_by_alias(const char *alias)
+  * args_size: sum of the sizes of the syscall arguments, anything after that is augmented stuff: pathname for openat, etc.
+  */
+ struct syscall {
+-	struct tep_event_format *tp_format;
++	struct tep_event    *tp_format;
+ 	int		    nr_args;
+ 	int		    args_size;
+ 	bool		    is_exit;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 3147ca76c6fc..82a289ce8b0c 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -106,7 +106,7 @@ struct perf_evsel {
+ 	char			*name;
+ 	double			scale;
+ 	const char		*unit;
+-	struct tep_event_format	*tp_format;
++	struct tep_event	*tp_format;
+ 	off_t			id_offset;
+ 	struct perf_stat_evsel  *stats;
  	void			*priv;
- 	struct thread_stack	*ts;
- 	struct nsinfo		*nsinfo;
-+	struct srccode_state	srccode_state;
- #ifdef HAVE_LIBUNWIND_SUPPORT
- 	void				*addr_space;
- 	struct unwind_libunwind_ops	*unwind_libunwind_ops;
+@@ -216,7 +216,7 @@ static inline struct perf_evsel *perf_evsel__newtp(const char *sys, const char *
+ 
+ struct perf_evsel *perf_evsel__new_cycles(bool precise);
+ 
+-struct tep_event_format *event_format__new(const char *sys, const char *name);
++struct tep_event *event_format__new(const char *sys, const char *name);
+ 
+ void perf_evsel__init(struct perf_evsel *evsel,
+ 		      struct perf_event_attr *attr, int idx);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index e31f52845e77..9cc81d48a908 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3268,7 +3268,7 @@ static int read_attr(int fd, struct perf_header *ph,
+ static int perf_evsel__prepare_tracepoint_event(struct perf_evsel *evsel,
+ 						struct tep_handle *pevent)
+ {
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	char bf[128];
+ 
+ 	/* already prepared */
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 50150dfc0cdf..47628e85c5eb 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -386,7 +386,7 @@ get_tracepoint_field(struct pyrf_event *pevent, PyObject *attr_name)
+ 	struct tep_format_field *field;
+ 
+ 	if (!evsel->tp_format) {
+-		struct tep_event_format *tp_format;
++		struct tep_event *tp_format;
+ 
+ 		tp_format = trace_event__tp_format_id(evsel->attr.config);
+ 		if (!tp_format)
+@@ -1240,7 +1240,7 @@ static struct {
+ static PyObject *pyrf__tracepoint(struct pyrf_evsel *pevsel,
+ 				  PyObject *args, PyObject *kwargs)
+ {
+-	struct tep_event_format *tp_format;
++	struct tep_event *tp_format;
+ 	static char *kwlist[] = { "sys", "name", NULL };
+ 	char *sys  = NULL;
+ 	char *name = NULL;
+diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
+index 89cb887648f9..b93f36b887b5 100644
+--- a/tools/perf/util/scripting-engines/trace-event-perl.c
++++ b/tools/perf/util/scripting-engines/trace-event-perl.c
+@@ -189,7 +189,7 @@ static void define_flag_field(const char *ev_name,
+ 	LEAVE;
+ }
+ 
+-static void define_event_symbols(struct tep_event_format *event,
++static void define_event_symbols(struct tep_event *event,
+ 				 const char *ev_name,
+ 				 struct tep_print_arg *args)
+ {
+@@ -338,7 +338,7 @@ static void perl_process_tracepoint(struct perf_sample *sample,
+ 				    struct addr_location *al)
+ {
+ 	struct thread *thread = al->thread;
+-	struct tep_event_format *event = evsel->tp_format;
++	struct tep_event *event = evsel->tp_format;
+ 	struct tep_format_field *field;
+ 	static char handler[256];
+ 	unsigned long long val;
+@@ -537,7 +537,7 @@ static int perl_stop_script(void)
+ 
+ static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
+ {
+-	struct tep_event_format *event = NULL;
++	struct tep_event *event = NULL;
+ 	struct tep_format_field *f;
+ 	char fname[PATH_MAX];
+ 	int not_first, count;
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 0c4b050f6fc2..87ef16a1b17e 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -264,7 +264,7 @@ static void define_field(enum tep_print_arg_type field_type,
+ 	Py_DECREF(t);
+ }
+ 
+-static void define_event_symbols(struct tep_event_format *event,
++static void define_event_symbols(struct tep_event *event,
+ 				 const char *ev_name,
+ 				 struct tep_print_arg *args)
+ {
+@@ -332,7 +332,7 @@ static void define_event_symbols(struct tep_event_format *event,
+ 		define_event_symbols(event, ev_name, args->next);
+ }
+ 
+-static PyObject *get_field_numeric_entry(struct tep_event_format *event,
++static PyObject *get_field_numeric_entry(struct tep_event *event,
+ 		struct tep_format_field *field, void *data)
+ {
+ 	bool is_array = field->flags & TEP_FIELD_IS_ARRAY;
+@@ -790,7 +790,7 @@ static void python_process_tracepoint(struct perf_sample *sample,
+ 				      struct perf_evsel *evsel,
+ 				      struct addr_location *al)
+ {
+-	struct tep_event_format *event = evsel->tp_format;
++	struct tep_event *event = evsel->tp_format;
+ 	PyObject *handler, *context, *t, *obj = NULL, *callchain;
+ 	PyObject *dict = NULL, *all_entries_dict = NULL;
+ 	static char handler_name[256];
+@@ -1590,7 +1590,7 @@ static int python_stop_script(void)
+ 
+ static int python_generate_script(struct tep_handle *pevent, const char *outfile)
+ {
+-	struct tep_event_format *event = NULL;
++	struct tep_event *event = NULL;
+ 	struct tep_format_field *f;
+ 	char fname[PATH_MAX];
+ 	int not_first, count;
+diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+index 32e558a65af3..ad74be1f0e42 100644
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -33,7 +33,7 @@ static int get_common_field(struct scripting_context *context,
+ 			    int *offset, int *size, const char *type)
+ {
+ 	struct tep_handle *pevent = context->pevent;
+-	struct tep_event_format *event;
++	struct tep_event *event;
+ 	struct tep_format_field *field;
+ 
+ 	if (!*size) {
+@@ -95,7 +95,7 @@ int common_pc(struct scripting_context *context)
+ }
+ 
+ unsigned long long
+-raw_field_value(struct tep_event_format *event, const char *name, void *data)
++raw_field_value(struct tep_event *event, const char *name, void *data)
+ {
+ 	struct tep_format_field *field;
+ 	unsigned long long val;
+@@ -109,12 +109,12 @@ raw_field_value(struct tep_event_format *event, const char *name, void *data)
+ 	return val;
+ }
+ 
+-unsigned long long read_size(struct tep_event_format *event, void *ptr, int size)
++unsigned long long read_size(struct tep_event *event, void *ptr, int size)
+ {
+ 	return tep_read_number(event->pevent, ptr, size);
+ }
+ 
+-void event_format__fprintf(struct tep_event_format *event,
++void event_format__fprintf(struct tep_event *event,
+ 			   int cpu, void *data, int size, FILE *fp)
+ {
+ 	struct tep_record record;
+@@ -131,7 +131,7 @@ void event_format__fprintf(struct tep_event_format *event,
+ 	trace_seq_destroy(&s);
+ }
+ 
+-void event_format__print(struct tep_event_format *event,
++void event_format__print(struct tep_event *event,
+ 			 int cpu, void *data, int size)
+ {
+ 	return event_format__fprintf(event, cpu, data, size, stdout);
+@@ -190,12 +190,12 @@ int parse_event_file(struct tep_handle *pevent,
+ 	return tep_parse_event(pevent, buf, size, sys);
+ }
+ 
+-struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
+-					       struct tep_event_format *event)
++struct tep_event *trace_find_next_event(struct tep_handle *pevent,
++					struct tep_event *event)
+ {
+ 	static int idx;
+ 	int events_count;
+-	struct tep_event_format *all_events;
++	struct tep_event *all_events;
+ 
+ 	all_events = tep_get_first_event(pevent);
+ 	events_count = tep_get_events_count(pevent);
+diff --git a/tools/perf/util/trace-event.c b/tools/perf/util/trace-event.c
+index 95664b2f771e..cbe0dd758e3a 100644
+--- a/tools/perf/util/trace-event.c
++++ b/tools/perf/util/trace-event.c
+@@ -72,12 +72,12 @@ void trace_event__cleanup(struct trace_event *t)
+ /*
+  * Returns pointer with encoded error via <linux/err.h> interface.
+  */
+-static struct tep_event_format*
++static struct tep_event*
+ tp_format(const char *sys, const char *name)
+ {
+ 	char *tp_dir = get_events_file(sys);
+ 	struct tep_handle *pevent = tevent.pevent;
+-	struct tep_event_format *event = NULL;
++	struct tep_event *event = NULL;
+ 	char path[PATH_MAX];
+ 	size_t size;
+ 	char *data;
+@@ -102,7 +102,7 @@ tp_format(const char *sys, const char *name)
+ /*
+  * Returns pointer with encoded error via <linux/err.h> interface.
+  */
+-struct tep_event_format*
++struct tep_event*
+ trace_event__tp_format(const char *sys, const char *name)
+ {
+ 	if (!tevent_initialized && trace_event__init2())
+@@ -111,7 +111,7 @@ trace_event__tp_format(const char *sys, const char *name)
+ 	return tp_format(sys, name);
+ }
+ 
+-struct tep_event_format *trace_event__tp_format_id(int id)
++struct tep_event *trace_event__tp_format_id(int id)
+ {
+ 	if (!tevent_initialized && trace_event__init2())
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+index f024d73bfc40..d9b0a942090a 100644
+--- a/tools/perf/util/trace-event.h
++++ b/tools/perf/util/trace-event.h
+@@ -22,17 +22,17 @@ int trace_event__init(struct trace_event *t);
+ void trace_event__cleanup(struct trace_event *t);
+ int trace_event__register_resolver(struct machine *machine,
+ 				   tep_func_resolver_t *func);
+-struct tep_event_format*
++struct tep_event*
+ trace_event__tp_format(const char *sys, const char *name);
+ 
+-struct tep_event_format *trace_event__tp_format_id(int id);
++struct tep_event *trace_event__tp_format_id(int id);
+ 
+ int bigendian(void);
+ 
+-void event_format__fprintf(struct tep_event_format *event,
++void event_format__fprintf(struct tep_event *event,
+ 			   int cpu, void *data, int size, FILE *fp);
+ 
+-void event_format__print(struct tep_event_format *event,
++void event_format__print(struct tep_event *event,
+ 			 int cpu, void *data, int size);
+ 
+ int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
+@@ -40,7 +40,7 @@ int parse_event_file(struct tep_handle *pevent,
+ 		     char *buf, unsigned long size, char *sys);
+ 
+ unsigned long long
+-raw_field_value(struct tep_event_format *event, const char *name, void *data);
++raw_field_value(struct tep_event *event, const char *name, void *data);
+ 
+ void parse_proc_kallsyms(struct tep_handle *pevent, char *file, unsigned int size);
+ void parse_ftrace_printk(struct tep_handle *pevent, char *file, unsigned int size);
+@@ -48,9 +48,9 @@ void parse_saved_cmdline(struct tep_handle *pevent, char *file, unsigned int siz
+ 
+ ssize_t trace_report(int fd, struct trace_event *tevent, bool repipe);
+ 
+-struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
+-					       struct tep_event_format *event);
+-unsigned long long read_size(struct tep_event_format *event, void *ptr, int size);
++struct tep_event *trace_find_next_event(struct tep_handle *pevent,
++					struct tep_event *event);
++unsigned long long read_size(struct tep_event *event, void *ptr, int size);
+ unsigned long long eval_flag(const char *flag);
+ 
+ int read_tracing_data(int fd, struct list_head *pattrs);
 -- 
 2.19.2
 
