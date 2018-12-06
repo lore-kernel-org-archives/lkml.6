@@ -2,120 +2,228 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77F6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B093C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FE220700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 426D320700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 16:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="V/zng8ND"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FE220700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Uly1QzyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 426D320700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725871AbeLFQLM (ORCPT
+        id S1726105AbeLFQMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:11:12 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45593 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeLFQLL (ORCPT
+        Thu, 6 Dec 2018 11:12:23 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51216 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbeLFQMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:11:11 -0500
-Received: by mail-yb1-f195.google.com with SMTP id f6-v6so780045ybg.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 08:11:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZVjFzdeUXTgNLHquDUo2XfcnHZOoJYMKCPXqPHJz1VI=;
-        b=V/zng8NDTWO6WD+6iHM/Axl91eOWwwSI4dEmF4BltI8NuPxlKavDf1MKd9NaXsCtti
-         VOGTeAJMS1SsLNpsHNNAuZhiSo9hM4/bV0P3ln2Mn+84yN11ExNpvWPEnJZwXyUsgOD5
-         w+4WKrcyl5Vjn8NAJ5ytlhUAXLhjcA+ict9qmQjcYxe87Y8KiaNC4Sbc32ojXQeSQ8Sg
-         4bNLcFg9hGSBmGPYdsyB3o1suEuaPw1cLcY/fYVww8SV+8mAR/5C4UbIAZ+UIghTS2th
-         NYCzm/y9Eft+byzzZuFobkwKvx6NJeYVBNdqjFieD6wAJEfhiT0gfBr50rX9E9is9lfu
-         vYyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZVjFzdeUXTgNLHquDUo2XfcnHZOoJYMKCPXqPHJz1VI=;
-        b=AAV8Twr9qpHheBHLJ7ES73hbvksZyzGToSNmiWtMv4qGXwDs0A1OHORsrcPc8FDmDs
-         P6FsPOjsj5e+ldYgsH4duJ6VI7pj2O0tASctbOJL9WtkcTXAgQu0VnDL0kDP6wM+K2tQ
-         DF+nLdzlW5jHhp3Q74szA2DUdMM6CwlHrSWw3tk7/JARmtCeghi76atICsUJKgKCPzSv
-         ZKEXhtAgQdi8+JVGkBWFdddk24lT4qUR3yekf7ymXY77l24wrE7/lYcX21d8f0ZC0NNw
-         +HipaHwLSfv97n1qLOFO+rSlj+ODKLVBvqyUaoCaLChUUW667PvrXHdtCG3MwLxTkx5t
-         F1qw==
-X-Gm-Message-State: AA+aEWbJwdpbpbUxgnwPs9304+FNMU+Xr6QG2Fi5JX8nEBNQaiWSfWoJ
-        Cvb4Cg3dLN8m5iKnevnwue5FCw==
-X-Google-Smtp-Source: AFSGD/UV6OpVfPHxzGnzN6KuYpCNk9FVX/jgAax/OQZ611dlTV5O4cypCT77XN6+hN9udU8ZI90kOA==
-X-Received: by 2002:a25:cd04:: with SMTP id d4-v6mr27377060ybf.189.1544112670926;
-        Thu, 06 Dec 2018 08:11:10 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id x9sm530671ywc.8.2018.12.06.08.11.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 08:11:09 -0800 (PST)
-Date:   Thu, 6 Dec 2018 11:11:09 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Jayant Shekhar <jshekhar@codeaurora.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-Subject: Re: [DPU =?iso-8859-1?Q?PATCH=A0?= =?iso-8859-1?Q?=5D?= drm/msm/dpu:
- Fix clock issue after bind failure
-Message-ID: <20181206161109.GZ154160@art_vandelay>
-References: <1544026907-24267-1-git-send-email-jshekhar@codeaurora.org>
+        Thu, 6 Dec 2018 11:12:22 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6GAAIK088066;
+        Thu, 6 Dec 2018 16:12:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=JKpDRoF13vRK0kRuu1xAPyd1lI2nDNemsInl5pztJRs=;
+ b=Uly1QzyGOHuZhkaV/ZNgeftJdaTWwfoCqvHk6WyBoTg7nYUqTm1oCGXnbz6uRdR0s5EQ
+ 9NBRndTLSd7WiyrhMYrOdiiN/dNU6uGT4koaQUOf8+0VydoToyHjR3mMQfE1ikWufGAP
+ 8D/2Bta/DNghwED1YSie0PRdrcZG7wx4DkwqfrRmLv3r60cHR0uwj7HHapu7/Y0nwM02
+ nKrpq96gafOeYv0SO9hPRtEx6Z3mWFNmYA13hxmjRJNI0fNfV+7i18yOMZtJGERmLkfo
+ StOe6GkAIQLzXM6wQD5b+tNlOU9/jVHmNeqvQE0e57J45Zk/9HJLJVx2smXgV78lKgqi BQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2p3jxrs35n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Dec 2018 16:12:12 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6GC6CG022492
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Dec 2018 16:12:06 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6GC5w1014292;
+        Thu, 6 Dec 2018 16:12:05 GMT
+Received: from [10.211.46.123] (/10.211.46.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Dec 2018 08:12:05 -0800
+Subject: Re: [PATCH RFC 1/1] swiotlb: add debugfs to track swiotlb buffer
+ usage
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com
+References: <1544068785-20399-1-git-send-email-dongli.zhang@oracle.com>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <da16ecce-4e25-d246-3e0d-389e8e9e413e@oracle.com>
+Date:   Thu, 6 Dec 2018 08:12:02 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544026907-24267-1-git-send-email-jshekhar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1544068785-20399-1-git-send-email-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812060138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:51:47PM +0530, Jayant Shekhar wrote:
-> In case of msm drm bind failure, pm runtime put sync
-> is called from dsi driver which issues an asynchronous
-> put on mdss device. Subsequently when dpu_mdss_destroy
-> is triggered the change will make sure to put the mdss
-> device in suspend and clearing pending work if not
-> scheduled.
+Hi Dongli,
+
+Maybe move d_swiotlb_usage declare into swiotlb_create_debugfs():
+
+void swiotlb_create_debugfs(void)
+{
+#ifdef CONFIG_DEBUG_FS
+	static struct dentry *d_swiotlb_usage = NULL;
+
+	if (d_swiotlb_usage)
+		return;
+
+	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+
+	if (!d_swiotlb_usage)
+		return;
+
+	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+			    NULL, &swiotlb_usage_fops);
+#endif
+}
+
+And for io_tlb_used, possible add a check at the begin of swiotlb_tbl_map_single(),
+if there were not any free slots or not enough slots, return fail directly?
+
+Thanks,
+Joe
+On 12/5/18 7:59 PM, Dongli Zhang wrote:
+> The device driver will not be able to do dma operations once swiotlb buffer
+> is full, either because the driver is using so many IO TLB blocks inflight,
+> or because there is memory leak issue in device driver. To export the
+> swiotlb buffer usage via debugfs would help the user estimate the size of
+> swiotlb buffer to pre-allocate or analyze device driver memory leak issue.
 > 
-> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
-
-Thanks for sending this, pushed to dpu-staging/for-next
-
-Sean
-
+> As the swiotlb can be initialized at very early stage when debugfs cannot
+> register successfully, this patch creates the debugfs entry on demand.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 1 +
->  1 file changed, 1 insertion(+)
+>  kernel/dma/swiotlb.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> index 2d66025..030229a 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> @@ -191,6 +191,7 @@ static void dpu_mdss_destroy(struct drm_device *dev)
->  	struct dss_module_power *mp = &dpu_mdss->mp;
->  	int i;
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 045930e..d3c8aa4 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -35,6 +35,9 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/mem_encrypt.h>
+>  #include <linux/set_memory.h>
+> +#ifdef CONFIG_DEBUG_FS
+> +#include <linux/debugfs.h>
+> +#endif
 >  
-> +	pm_runtime_suspend(dev->dev);
->  	pm_runtime_disable(dev->dev);
->  	_dpu_mdss_irq_domain_fini(dpu_mdss);
->  	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>  #include <asm/io.h>
+>  #include <asm/dma.h>
+> @@ -73,6 +76,13 @@ static phys_addr_t io_tlb_start, io_tlb_end;
+>   */
+>  static unsigned long io_tlb_nslabs;
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +/*
+> + * The number of used IO TLB block
+> + */
+> +static unsigned long io_tlb_used;
+> +#endif
+> +
+>  /*
+>   * This is a free list describing the number of free entries available from
+>   * each index
+> @@ -100,6 +110,41 @@ static DEFINE_SPINLOCK(io_tlb_lock);
+>  
+>  static int late_alloc;
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +
+> +static struct dentry *d_swiotlb_usage;
+> +
+> +static int swiotlb_usage_show(struct seq_file *m, void *v)
+> +{
+> +	seq_printf(m, "%lu\n%lu\n", io_tlb_used, io_tlb_nslabs);
+> +	return 0;
+> +}
+> +
+> +static int swiotlb_usage_open(struct inode *inode, struct file *filp)
+> +{
+> +	return single_open(filp, swiotlb_usage_show, NULL);
+> +}
+> +
+> +static const struct file_operations swiotlb_usage_fops = {
+> +	.open           = swiotlb_usage_open,
+> +	.read           = seq_read,
+> +	.llseek         = seq_lseek,
+> +	.release        = single_release,
+> +};
+> +
+> +void swiotlb_create_debugfs(void)
+> +{
+> +	d_swiotlb_usage = debugfs_create_dir("swiotlb", NULL);
+> +
+> +	if (!d_swiotlb_usage)
+> +		return;
+> +
+> +	debugfs_create_file("usage", 0600, d_swiotlb_usage,
+> +			    NULL, &swiotlb_usage_fops);
+> +}
+> +
+> +#endif
+> +
+>  static int __init
+>  setup_io_tlb_npages(char *str)
+>  {
+> @@ -449,6 +494,11 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  		pr_warn_once("%s is active and system is using DMA bounce buffers\n",
+>  			     sme_active() ? "SME" : "SEV");
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +	if (unlikely(!d_swiotlb_usage))
+> +		swiotlb_create_debugfs();
+> +#endif
+> +
+>  	mask = dma_get_seg_boundary(hwdev);
+>  
+>  	tbl_dma_addr &= mask;
+> @@ -528,6 +578,9 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+>  		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+>  	return SWIOTLB_MAP_ERROR;
+>  found:
+> +#ifdef CONFIG_DEBUG_FS
+> +	io_tlb_used += nslots;
+> +#endif
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  
+>  	/*
+> @@ -588,6 +641,10 @@ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+>  		 */
+>  		for (i = index - 1; (OFFSET(i, IO_TLB_SEGSIZE) != IO_TLB_SEGSIZE -1) && io_tlb_list[i]; i--)
+>  			io_tlb_list[i] = ++count;
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +		io_tlb_used -= nslots;
+> +#endif
+>  	}
+>  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  }
 > 
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+
