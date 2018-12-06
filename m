@@ -2,113 +2,186 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F08BC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF81C04EB9
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FFE2082D
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C742082D
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 03:15:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C7+OurDT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FFE2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qmi6vsLa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C742082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeLFDPU (ORCPT
+        id S1728933AbeLFDPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 5 Dec 2018 22:15:20 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:37382 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeLFDPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Dec 2018 22:15:19 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB63EIjQ080465;
-        Thu, 6 Dec 2018 03:15:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=eBqrN2H71fZCLDJb+yzJXB+6upH38HGyB0Z+LqIl9P8=;
- b=C7+OurDTFa8EPH0EeYKuitRxnKPV6Nc51wicRqCe1xwLI84zOk5yI/dkyjFdLfXuQTlR
- AIFWJ63T+YVjXcelKiFgG65Z/EV7x4tShJ312/0AkbvIV5xZ2Jz9tZH6ExXN+WMXgbB0
- neFKKFbqcnb0nEk7diY5kjU+RXRK+0mteG3VSombbQKOgaK7PmRG+sGtDFd0cSALli8u
- v06X6PlALkBGpkQE20K2sg1InFRk9MPhLz7oQ9zAFwzUTtDmow4l8svc6VmFWIZSHxJW
- MimZjMfcoMgUVNzI1bD3omi+aYfNZRDg6b82fsg4OzIxSfPAtB2E7bKsrfDZ7yqQL7oN DA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2p3ftf9ujm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 03:15:14 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB63FDeh025820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 03:15:13 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB63FCrY007548;
-        Thu, 6 Dec 2018 03:15:13 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Dec 2018 19:15:12 -0800
-To:     Evan Green <evgreen@chromium.org>
-Cc:     ming.lei@redhat.com, axboe@kernel.dk,
-        Gwendal Grignou <gwendal@chromium.org>, asavery@chromium.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20181030230624.61834-1-evgreen@chromium.org>
-        <20181030230624.61834-3-evgreen@chromium.org>
-        <20181128012624.GB11128@ming.t460p>
-        <CAE=gft7Fyq+Jb3ZG3PSTR=C0Wjt3uu57+H2bshM6Gu=_0W0YQw@mail.gmail.com>
-        <20181205011059.GA17845@ming.t460p>
-        <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
-Date:   Wed, 05 Dec 2018 22:15:10 -0500
-In-Reply-To: <CAE=gft7K2OrN93c8TQ5ozOpXzXf5ZD-PNnVHWP9SbZXZqp2dHw@mail.gmail.com>
-        (Evan Green's message of "Wed, 5 Dec 2018 11:35:57 -0800")
-Message-ID: <yq1va47pcqp.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 5 Dec 2018 22:15:54 -0500
+Received: from mail-eopbgr50072.outbound.protection.outlook.com ([40.107.5.72]:6400
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727514AbeLFDPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Dec 2018 22:15:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WzW3x7nOr37PKTIA8/6JnMeJ9W02uKApG0A+azLa08k=;
+ b=qmi6vsLaUBuC2KNujqFfpQSYzHzndR6PuhliXrQMV+4YQDpXdrh2vvRwMmkYWjd2jmkHh7N2PRXRfKPQFmZa4bywn6JpxqlPFBWjJAZEYuJYLHRSTHaqNjNPWDcE3I3znhTB6G/m3MB3HuW5ccK6C2aQZhwdo/rjUDxq7qEyPSE=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3802.eurprd04.prod.outlook.com (52.134.71.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.22; Thu, 6 Dec 2018 03:15:48 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1382.023; Thu, 6 Dec 2018
+ 03:15:48 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] iio: light: isl29018: add optional vcc regulator operation
+ support
+Thread-Topic: [PATCH] iio: light: isl29018: add optional vcc regulator
+ operation support
+Thread-Index: AQHUjRH8CfSZy5OH8ESc4x40JN2bLA==
+Date:   Thu, 6 Dec 2018 03:15:48 +0000
+Message-ID: <1544065798-4465-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0066.apcprd03.prod.outlook.com
+ (2603:1096:203:52::30) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3802;6:jTSiKxhVFLoHkbEYlhNmJL0v9oyhEF7zglN4zZq6jTUUhQluW/IVHJcOtcsOwLUevDHg2BTKDa8zTMJxFX676PjDplCpOmQtnvbTWIhrU04iF5QrD332S7FNwrbXvo6YkIDVYiESpUQCXPLYetdPw5nInWaA9845kR+uXSILb3vTronQOgQeJ85aylZo9qDAOXp0fxsnjiivxFUhQOChdNHjYlIOuhMcf2L+cnJrSfd+QySzi48AHezGTT83tGjgyXRMf+698WYPdai3MpWrAIl0gg/5Yi2betB9ZpdHBbCpeuIuZn5to8p2y1wjQ6c9+OZc44oLr/4QbVMYjWALXTasC0vcM9qVvWD0zr73htDAsHjUJwG8RpIQm0GA3A/w/ISt1N7ZcpV1mnXwCiMl58zKOWOv0PNyLFS7I46fXlt5MBQAuLrohZo1/UqReQHuR9H8UKzm62SVKPqfvGRKOA==;5:k/pngTcP5uUD25POHgm8QwUs0wcca2hO1VUI8EH2ykQPNbQmiWwysyMov0VmeI0C5CEHjkFwIpnwHQvatFFHrFuM+waxusGdrGFdQK5PW/eW3L7SMu6/7hIeei58ln9BT+34HECyVjXVL6etMLcMlVbfcyodnN8O6GIaqEIOMu0=;7:qXbnwVZwptFODwKTPVckhEIeJCQPwnOiS+vES0sX7lw7oyXFGilg6f041A4hGSPINl9/tpBDuWnr682w33FbeVegNEs3B+2fWkRRtNvTUx322aeBekhtwOPfJHForPj/j46Of4XmoWodfnSh0MQWZg==
+x-ms-office365-filtering-correlation-id: ec8c6f82-d50c-4b89-061c-08d65b291e71
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3802;
+x-ms-traffictypediagnostic: DB3PR0402MB3802:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-microsoft-antispam-prvs: <DB3PR0402MB380284ABE98DE2F019781D00F5A90@DB3PR0402MB3802.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3802;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3802;
+x-forefront-prvs: 087894CD3C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39850400004)(376002)(136003)(346002)(189003)(199004)(99286004)(26005)(106356001)(6116002)(6486002)(52116002)(97736004)(386003)(6436002)(25786009)(6506007)(102836004)(5660300001)(68736007)(110136005)(105586002)(186003)(3846002)(71200400001)(53936002)(14454004)(256004)(6512007)(71190400001)(8936002)(86362001)(14444005)(4326008)(66066001)(2906002)(36756003)(316002)(8676002)(81156014)(81166006)(305945005)(476003)(7736002)(2616005)(50226002)(486006)(2501003)(478600001)(2201001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3802;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1D/3SLyDLMe1KnQS5v0fQp4+6sXLH6IpIVBpv5XR+qJLegNGh+osVYNHXopCfVPMKEhdQKbqOwhzL0Xtrt1KuCAlEp9KL0EXT0nfBO3nrQchrCSaBTG7FP2135ELcvk1Gt3bGtmnHgElezWTM4Aq8HR/lLtqqx6DoCBvcTa+CWzjOL72xADWBxmlvbZddCfLy9LttbDvVH1ZDsG5cAnuKbD9erppxQTwKD7qZskidGVFCXeqAxR7DUhzcm7CGc4QnnJQhLkKJ06AoZSF8WRhF3DuvryChQMGbl92CbnodGAX19Snof9qrx+zSpAKSzmDTchX+1GaSHangag3pHqq6bYkfpBLlAvaN30KScjnOfU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9098 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812060027
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec8c6f82-d50c-4b89-061c-08d65b291e71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 03:15:48.5476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3802
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The light sensor's power supply could be controlled by regulator
+on some platforms, such as i.MX6Q-SABRESD board, the light sensor
+isl29023's power supply is controlled by a GPIO fixed regulator,
+need to make sure the regulator is enabled before any operation of
+sensor, this patch adds optional vcc regulator operation support.
 
-Evan,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/iio/light/isl29018.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> Ah, I see. But I think it's useful to reflect max_discard_sectors,
-> max_write_zeroes_sectors, discard_granularity, and discard_alignment
-> from the block device to the loop device. With the exception of
-> discard_alignment, these parameters are visible via sysfs,
+diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
+index b45400f..47a55c8 100644
+--- a/drivers/iio/light/isl29018.c
++++ b/drivers/iio/light/isl29018.c
+@@ -23,6 +23,7 @@
+ #include <linux/mutex.h>
+ #include <linux/delay.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+@@ -95,6 +96,7 @@ struct isl29018_chip {
+ 	struct isl29018_scale	scale;
+ 	int			prox_scheme;
+ 	bool			suspended;
++	struct regulator	*vcc_reg;
+ };
+=20
+ static int isl29018_set_integration_time(struct isl29018_chip *chip,
+@@ -735,6 +737,15 @@ static int isl29018_probe(struct i2c_client *client,
+=20
+ 	mutex_init(&chip->lock);
+=20
++	chip->vcc_reg =3D devm_regulator_get_optional(&client->dev, "vcc");
++	if (!IS_ERR(chip->vcc_reg)) {
++		err =3D regulator_enable(chip->vcc_reg);
++		if (err) {
++			dev_err(&client->dev, "failed to enable VDD regulator\n");
++			return err;
++		}
++	}
++
+ 	chip->type =3D dev_id;
+ 	chip->calibscale =3D 1;
+ 	chip->ucalibscale =3D 0;
+@@ -768,6 +779,7 @@ static int isl29018_probe(struct i2c_client *client,
+ static int isl29018_suspend(struct device *dev)
+ {
+ 	struct isl29018_chip *chip =3D iio_priv(dev_get_drvdata(dev));
++	int ret;
+=20
+ 	mutex_lock(&chip->lock);
+=20
+@@ -777,6 +789,14 @@ static int isl29018_suspend(struct device *dev)
+ 	 * So we do not have much to do here.
+ 	 */
+ 	chip->suspended =3D true;
++	if (!IS_ERR(chip->vcc_reg)) {
++		ret =3D regulator_disable(chip->vcc_reg);
++		if (ret) {
++			dev_err(dev, "failed to disable VDD regulator\n");
++			mutex_unlock(&chip->lock);
++			return ret;
++		}
++	}
+=20
+ 	mutex_unlock(&chip->lock);
+=20
+@@ -790,6 +810,15 @@ static int isl29018_resume(struct device *dev)
+=20
+ 	mutex_lock(&chip->lock);
+=20
++	if (!IS_ERR(chip->vcc_reg)) {
++		err =3D regulator_enable(chip->vcc_reg);
++		if (err) {
++			dev_err(dev, "failed to enable VDD regulator\n");
++			mutex_unlock(&chip->lock);
++			return err;
++		}
++	}
++
+ 	err =3D isl29018_chip_init(chip);
+ 	if (!err)
+ 		chip->suspended =3D false;
+--=20
+2.7.4
 
-discard_alignment is visible in sysfs, just not in the queue directory
-since alignment can be different on a per-partition basis. So there is
-one discard_alignment at the root of each /sys/block/foo directory and
-one for each partition subdirectory. This mirrors the alignment_offset
-variable which indicates a partitions alignment wrt. the underlying
-physical block size.
-
-That said, there are not many devices that actually report a non-zero
-discard alignment so it's not as useful as the device manufacturers
-(that were looking for an implementation shortcut) envisioned.
-
-> I'm not totally sure about discard_alignment, that seems to be useful
-> in cases of merging blk requests. So I can stop mirroring that one if
-> it's harmful or not helpful. But unless it's a nak, I'd really love to
-> keep most of the mirroring. In which case the bool doesn't do a whole
-> lot of simplifying.
-
-I think it's fine to export these. The block device topology was
-explicitly designed to be stackable like this.
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
