@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A85C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5144C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FD9D20892
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E5D20892
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 14:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544107209;
-	bh=VhRq2Z9THU9FQ3yfYUb/mSj1XQ9YCaWRLzxtVVvLvgU=;
+	s=default; t=1544107212;
+	bh=JePAK1qHet7dSe/5HYcKJi5wMOqoq/V9Io+cIAH2HcU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RNJMmFvE2/FKNGPFqeO+M3QGUkyXapC5S1Pe48D1TDlkynsxvD+Dvli8RoakcoITC
-	 uyLBFoa+GBc3F6jJftwgyrAc36XLVHfqGqfdDrwOQQspFWStC86Hf98b8UrxpNYwmo
-	 aTf2ykUdEJco2YVz7qdpj07BVioHyohEyIZiORls=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD9D20892
+	b=qrt0MwV86ZjBuBWTb3kvydj1D3TMdTehFVP0K0t7aIWnT+p5Y7cQX2RsqZSVOYKNp
+	 8KACBxJc2JF32TYf2hztlE7ltyjxJ6PR6GPCqKh7Kyxfzia1QEeq5dJ/lb7OhPYARJ
+	 xSm+p4F1Aixxfg9zXwDZ4tmB685DS6OOFphUW2/w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E5D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbeLFOkI (ORCPT
+        id S1729848AbeLFOkL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:40:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44102 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 09:40:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729797AbeLFOkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:40:05 -0500
+        id S1729816AbeLFOkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 09:40:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC75520892;
-        Thu,  6 Dec 2018 14:40:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DB83208E7;
+        Thu,  6 Dec 2018 14:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544107205;
-        bh=VhRq2Z9THU9FQ3yfYUb/mSj1XQ9YCaWRLzxtVVvLvgU=;
+        s=default; t=1544107207;
+        bh=JePAK1qHet7dSe/5HYcKJi5wMOqoq/V9Io+cIAH2HcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rHBMhRubSjqI6VolNDndOWw58e3Rk6qZ6mAZK1WTsi/Ma32Xg5hBqd2zST3ow3uBE
-         z6mLt5UflMre8nTK2C4LW7GB4DpfOh1V7SUvZtT6T/0UnwLqeVwKn9mD/P/ea8AzD2
-         dIwyIka2WnCzklGox6qTbHHFxHEf8RE1qdYyDfiw=
+        b=OSdI5kWkD5hHQjWdhd1L0KfQ6cskmpPPsG44Ke42OXMWqqYeGepHOvUt1tNq9biQy
+         DlqEANQur6jKVgXWycNO2PWmtojTGXc4vIztnlBt70Qv0UhCso/DNH1bFK8noHZGFo
+         LVujtojRt8DZCoZm0nLrVUpCPGIV23+yc3CR2vpk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
         "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.19 15/41] drm/amd/dm: Dont forget to attach MST encoders
-Date:   Thu,  6 Dec 2018 15:38:55 +0100
-Message-Id: <20181206142951.034168427@linuxfoundation.org>
+Subject: [PATCH 4.19 16/41] drm/amd/dm: Understand why attaching path/tile properties are needed
+Date:   Thu,  6 Dec 2018 15:38:56 +0100
+Message-Id: <20181206142951.111277959@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206142949.757402551@linuxfoundation.org>
 References: <20181206142949.757402551@linuxfoundation.org>
@@ -71,22 +71,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lyude Paul <lyude@redhat.com>
 
-commit c9e0ab86b2e03154bb898cd2f851827783224727 upstream.
+commit 04ac4b0ed412f65230b456fcd9aa07e13befff89 upstream.
 
-The change fixed huge delay in SST daisy chain and S3 soft hang
-observed in 4.19 kernel rebase.
-
-Regression point in drm:
-drm/fb-helper: Eliminate the .best_encoder() usage
-
-The aux sequence is altered due to the failure in
-drm_connector_for_each_possible_encoder(). The failure is
-caused by missing attached encoder in the process of adding
-MST connector.
- 
-drm_dp_send_enum_path_resources() aux transaction is pushed after
-mode probe, which causes conflict to drm_dp_mst_i2c_xfer(),
-leading to the transaction timeout.
+Path property is used for userspace to know what MST connector goes to what actual DRM DisplayPort connector, the tiling property is for tiling configurations. Not sure what else there is to figure out.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
@@ -95,19 +82,20 @@ Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
 --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
 +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -374,6 +374,8 @@ dm_dp_add_mst_connector(struct drm_dp_ms
- 		master->connector_id);
+@@ -377,9 +377,6 @@ dm_dp_add_mst_connector(struct drm_dp_ms
+ 	drm_connector_attach_encoder(&aconnector->base,
+ 				     &aconnector->mst_encoder->base);
  
- 	aconnector->mst_encoder = dm_dp_create_fake_mst_encoder(master);
-+	drm_connector_attach_encoder(&aconnector->base,
-+				     &aconnector->mst_encoder->base);
- 
- 	/*
- 	 * TODO: understand why this one is needed
+-	/*
+-	 * TODO: understand why this one is needed
+-	 */
+ 	drm_object_attach_property(
+ 		&connector->base,
+ 		dev->mode_config.path_property,
 
 
