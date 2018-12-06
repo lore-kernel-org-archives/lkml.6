@@ -3,67 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20382C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A8FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF4920989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:15:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF4920989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 252C32082B
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 22:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 252C32082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbeLFWPZ (ORCPT
+        id S1726097AbeLFWRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 17:15:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 17:17:04 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:46458 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbeLFWPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:15:25 -0500
-Received: from vmware.local.home (unknown [208.91.3.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 791EB20868;
-        Thu,  6 Dec 2018 22:15:24 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 17:15:21 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [GIT PULL] Uprobes: Fix kernel oops with
- delayed_uprobe_remove()
-Message-ID: <20181206171521.6bcc3622@vmware.local.home>
-In-Reply-To: <20181206135457.d934354e6c1fb5ab4f5c81cc@linux-foundation.org>
-References: <20181206124719.1fa76d92@vmware.local.home>
-        <20181206135457.d934354e6c1fb5ab4f5c81cc@linux-foundation.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725958AbeLFWRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 17:17:03 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gV1x7-0005U1-Hk; Thu, 06 Dec 2018 15:17:03 -0700
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181130225911.2900-1-logang@deltatee.com>
+ <20181206204643.GC247703@google.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c226426d-e88c-da18-f643-f3faaf1c0dbd@deltatee.com>
+Date:   Thu, 6 Dec 2018 15:17:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181206204643.GC247703@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: dan.j.williams@intel.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH] PCI/P2PDMA: Match interface changes to
+ devm_memremap_pages()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 13:54:57 -0800
-Andrew Morton <akpm@linux-foundation.org> wrote:
 
-	  
-> >     Acked-by: Oleg Nesterov <oleg@redhat.com>
-> >     Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> >     Reported-by: syzbot+cb1fb754b771caca0a88@syzkaller.appspotmail.com
-> >     Fixes: 1cc33161a83d ("uprobes: Support SDT markers having reference count (semaphore)")
-> >     Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> >     Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> >   
+
+On 2018-12-06 1:46 p.m., Bjorn Helgaas wrote:
+> On Fri, Nov 30, 2018 at 03:59:11PM -0700, Logan Gunthorpe wrote:
+>> "mm-hmm-mark-hmm_devmem_add-add_resource-export_symbol_gpl.patch" in the
+>> mm tree breaks p2pdma. The patch was written and reviewed before p2pdma
+>> was merged so the necessary changes were not done to the call site in
+>> that code.
+>>
+>> Without this patch, all drivers will fail to register P2P resources
+>> because devm_memremap_pages() will return -EINVAL due to the 'kill'
+>> member of the pagemap structure not yet being set.
+>>
+>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> No cc:stable?
+> Applied with Dan's reviewed-by to pci/peer-to-peer for v4.21, thanks!
+> 
+> If the mm patch you mention gets merged for v4.20, let me know and I can
+> promote this to for-linus so v4.20 doesn't end up broken.
 
-Fixes is still in this -rc release.
+Thanks Bjorn, but I think Andrew has also picked it up in the mm tree
+with the patch in question. My hope is that he squashes the two but I'm
+not sure what his intentions are. I mostly copied you for  information
+purposes as this patch shouldn't even compile without Dan's patch.
 
--- Steve
+Though, I guess we'll find out what goes in after the merge window --
+you may not need to do anything.
+
+Logan
+
