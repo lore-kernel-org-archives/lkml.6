@@ -6,84 +6,79 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51DCCC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2241C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218A620878
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 17:59:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218A620878
+	by mail.kernel.org (Postfix) with ESMTP id 9091B208E7
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:00:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9091B208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbeLFR7x (ORCPT
+        id S1726100AbeLFSAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:59:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:57404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbeLFR7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:59:53 -0500
+        Thu, 6 Dec 2018 13:00:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57412 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbeLFSAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:00:02 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0867E80D;
-        Thu,  6 Dec 2018 09:59:53 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66B7E80D;
+        Thu,  6 Dec 2018 10:00:02 -0800 (PST)
 Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECD213F5AF;
-        Thu,  6 Dec 2018 09:59:51 -0800 (PST)
-Date:   Thu, 6 Dec 2018 17:59:49 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33F853F5AF;
+        Thu,  6 Dec 2018 10:00:01 -0800 (PST)
+Date:   Thu, 6 Dec 2018 17:59:58 +0000
 From:   Catalin Marinas <catalin.marinas@arm.com>
 To:     Qian Cai <cai@gmx.us>
-Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] drivers/base: kmemleak ignore a known leak
-Message-ID: <20181206175949.GR54495@arrakis.emea.arm.com>
-References: <1543504357-4873-1-git-send-email-cai@gmx.us>
- <20181206160751.36211-1-cai@gmx.us>
+Cc:     akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] efi: let kmemleak ignore false positives
+Message-ID: <20181206175958.GS54495@arrakis.emea.arm.com>
+References: <1543517152-23969-1-git-send-email-cai@gmx.us>
+ <20181206161633.36292-1-cai@gmx.us>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181206160751.36211-1-cai@gmx.us>
+In-Reply-To: <20181206161633.36292-1-cai@gmx.us>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 11:07:51AM -0500, Qian Cai wrote:
-> unreferenced object 0xffff808ec6dc5a80 (size 128):
->   comm "swapper/0", pid 1, jiffies 4294938063 (age 2560.530s)
+On Thu, Dec 06, 2018 at 11:16:33AM -0500, Qian Cai wrote:
+> unreferenced object 0xffff8096c1acf580 (size 128):
+>   comm "swapper/63", pid 0, jiffies 4294937418 (age 1201.230s)
 >   hex dump (first 32 bytes):
->     ff ff ff ff 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
->     6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
+>     80 87 b5 c1 96 00 00 00 00 00 cc c2 16 00 00 00  ................
+>     00 00 01 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
 >   backtrace:
->     [<00000000476dcf8c>] kmem_cache_alloc_trace+0x430/0x500
->     [<000000004f708d37>] platform_device_register_full+0xbc/0x1e8
->     [<000000006c2a7ec7>] acpi_create_platform_device+0x370/0x450
->     [<00000000ef135642>] acpi_default_enumeration+0x34/0x78
->     [<000000003bd9a052>] acpi_bus_attach+0x2dc/0x3e0
->     [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
->     [<000000003cf4f7f2>] acpi_bus_attach+0x108/0x3e0
->     [<000000002968643e>] acpi_bus_scan+0xb0/0x110
->     [<0000000010dd0bd7>] acpi_scan_init+0x1a8/0x410
->     [<00000000965b3c5a>] acpi_init+0x408/0x49c
->     [<00000000ed4b9fe2>] do_one_initcall+0x178/0x7f4
->     [<00000000a5ac5a74>] kernel_init_freeable+0x9d4/0xa9c
->     [<0000000070ea6c15>] kernel_init+0x18/0x138
->     [<00000000fb8fff06>] ret_from_fork+0x10/0x1c
->     [<0000000041273a0d>] 0xffffffffffffffff
+>     [<000000001d2549ba>] kmem_cache_alloc_trace+0x430/0x500
+>     [<0000000093a6dfab>] efi_mem_reserve_persistent+0x50/0xf8
+>     [<000000000a730828>] its_cpu_init_lpis+0x394/0x4b8
+>     [<00000000edf04e07>] its_cpu_init+0x104/0x150
+>     [<000000004d0342c5>] gic_starting_cpu+0x34/0x40
+>     [<000000005d9da772>] cpuhp_invoke_callback+0x228/0x1d68
+>     [<0000000061eace9b>] notify_cpu_starting+0xc0/0x118
+>     [<0000000048bc2dc5>] secondary_start_kernel+0x23c/0x3b0
+>     [<0000000015137d6a>] 0xffffffffffffffff
 > 
-> Then, faddr2line pointed out this line,
+> efi_mem_reserve_persistent+0x50/0xf8:
+> kmalloc at include/linux/slab.h:546
+> (inlined by) efi_mem_reserve_persistent at drivers/firmware/efi/efi.c:979
 > 
-> /*
->  * This memory isn't freed when the device is put,
->  * I don't have a nice idea for that though.  Conceptually
->  * dma_mask in struct device should not be a pointer.
->  * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
->  */
-> pdev->dev.dma_mask =
-> 	kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+> This line,
 > 
-> Since this leak has been existed for more than 8-year now and it does not
-> reference other part of the memory, let kmemleak ignore it, so users don't
-> need to waste time reporting this in the future.
+> rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
+> 
+> Kmemleak has a known limitation that can only track pointers in the kernel
+> virtual space. Hence, it will report false positives due to "rsv" will only
+> reference to other physical addresses,
+> 
+> rsv->next = efi_memreserve_root->next;
+> efi_memreserve_root->next = __pa(rsv);
 > 
 > Signed-off-by: Qian Cai <cai@gmx.us>
 
