@@ -2,95 +2,133 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855C0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABABC64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41893214C1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD81214C1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="j/edk3+M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41893214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="QXeEsZbV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD81214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeLFPt3 (ORCPT
+        id S1726143AbeLFPtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:49:29 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:52058 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeLFPt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:49:29 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8699D24E159A;
-        Thu,  6 Dec 2018 07:49:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544111368; bh=odzpPPKiuVTqR2w81OR3KgSjBLmyCv7yj0xzyY/JA6s=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=j/edk3+MWvIvzdf6Ryg2UAAlmCP1gLLxRMyntFeMAPh8VU0bcXX/2cv1hDEeBNrse
-         2nNsJuGCuQrGS10+GJHmt6xVsgw775B6ymH6VG9D7eVde//Now7rZTYiZJ0tkLuAml
-         IFxdlgRVfk83VlAVlWYkQEcuBlfX+EHpizKgvRXFwPpFSY3FZtluiwk/kJ5KCLYiRM
-         ZMyw+wg8QyarD4d++qrRVdob+JBhWQ+UubWFYTngLtvmXe28/O2B9soxfpU0tjVImr
-         gcAvVFnIqfycrahJal0rNL95zB5macOPNzbQZKbUp85RWv7oIxgI9Nd9E218hf7x2s
-         uqnNEBgdEjTHw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 36BA63854;
-        Thu,  6 Dec 2018 07:49:28 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 6 Dec 2018 07:49:28 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
- 6 Dec 2018 16:49:25 +0100
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "Vineet Gupta" <vineet.gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>
-Subject: Re: [PATCH 4/5] ARC: perf: fix description comment
-Thread-Topic: [PATCH 4/5] ARC: perf: fix description comment
-Thread-Index: AQHUjLzl2R5qGFvvF0WRDfbjpfig2aVxzEgA
-Date:   Thu, 6 Dec 2018 15:49:25 +0000
-Message-ID: <1544111364.31297.23.camel@synopsys.com>
-References: <20181205170609.18690-1-Eugeniy.Paltsev@synopsys.com>
-         <20181205170609.18690-5-Eugeniy.Paltsev@synopsys.com>
-         <C2D7FE5348E1B147BCA15975FBA23075014641B8F6@US01WEMBX2.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014641B8F6@US01WEMBX2.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.66]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B4BA0654C06DF844BDCA572074AC1DD8@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 10:49:40 -0500
+Received: from mail.servus.at ([193.170.194.20]:49700 "EHLO mail.servus.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbeLFPtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:49:40 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.servus.at (Postfix) with ESMTP id 4E7EA3000692;
+        Thu,  6 Dec 2018 16:49:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
+        content-transfer-encoding:content-type:content-type:in-reply-to
+        :mime-version:user-agent:date:date:message-id:organization:from
+        :from:references:subject:subject:received:received; s=main; t=
+        1544111373; x=1545925774; bh=ZSzkmWWOQLURqbSfsEvLnhhC4Hh/fxO/fEv
+        /oKaxCyA=; b=QXeEsZbVdEHVc8g9zzZMTPood5lkUjympvBJ7RmuOWy19A3F6sa
+        MpQzSMdch4bMxN3HfkoxfoU+TfryF7x4dDSKITv6dfMRwFfslz/F4u68/NEe0m7q
+        3X4EfyCsXWU2fQOwV4Zfm4gJCdcUh3Fp/qKM5Lp0r8732bvlGE5LDBIA=
+X-Virus-Scanned: amavisd-new at servus.at
+Received: from mail.servus.at ([127.0.0.1])
+        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MQe4eUr4ETuZ; Thu,  6 Dec 2018 16:49:33 +0100 (CET)
+Received: from [192.168.216.53] (unknown [81.10.228.128])
+        (Authenticated sender: oh_markus)
+        by mail.servus.at (Postfix) with ESMTPSA id 24CC1300069A;
+        Thu,  6 Dec 2018 16:49:27 +0100 (CET)
+Subject: Re: [PATCH 1/8] lib/lzo: tidy-up ifdefs
+To:     Dave Rodgman <dave.rodgman@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+References: <20181130142600.13782-1-dave.rodgman@arm.com>
+ <20181130142600.13782-2-dave.rodgman@arm.com>
+Cc:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "sonnyrao@google.com" <sonnyrao@google.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Organization: oberhumer.com
+Message-ID: <5C094506.7040501@oberhumer.com>
+Date:   Thu, 6 Dec 2018 16:49:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181130142600.13782-2-dave.rodgman@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTEyLTA1IGF0IDE3OjEzICswMDAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
-IE9uIDEyLzUvMTggOTowNiBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3RlOg0KPiA+IEZpeCBkZXNj
-cmlwdGlvbiBjb21tZW50IGFzIHRoaXMgY29kZSBkb2Vzbid0IGJlbG9uZyBvbmx5IHRvDQo+ID4g
-QVJDNzAwIGFueW1vcmUuDQo+ID4gDQo+ID4gQWxzbyB3aGlsZSBJJ20gYXQgaXQsIHVzZSBTUERY
-IExpY2Vuc2UgSWRlbnRpZmllci4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5IFBh
-bHRzZXYgPEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+IA0KPiBNYXliZSBzcXVhc2gg
-dGhpcyBpbnRvIHRyaXZpYWwgY2xlYW51cHMgMS81ID8NCg0KSSBzcGxpdCBjbGVhbnVwIGZvciBz
-ZXZlcmFsIHBhdGNoZXMgdG8gbWFrZSByZXZpZXcgZWFzaWVyLg0KSSBjYW4gc3F1YXNoIHRoZW0g
-aW50byBzaW5nbGUgcGF0Y2ggaW4gdjIgaWYgeW91IHdhbnQgaXQuDQoNCg0KPiBBY2tlZC1ieTog
-VmluZWV0IEd1cHRhIDx2Z3VwdGFAc3lub3BzeXMuY29tPg0KPiANCj4gVGh4LA0KPiAtVmluZWV0
-DQotLSANCiBFdWdlbml5IFBhbHRzZXY=
+Acked-by: Markus F.X.J. Oberhumer <markus@oberhumer.com>
+
+
+On 2018-11-30 15:26, Dave Rodgman wrote:
+> Modify the ifdefs in lzodefs.h to be more consistent with normal kernel
+> macros (e.g., change __aarch64__ to CONFIG_ARM64).
+> 
+> Signed-off-by: Dave Rodgman <dave.rodgman@arm.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Nitin Gupta <nitingupta910@gmail.com>
+> Cc: Richard Purdie <rpurdie@openedhand.com>
+> Cc: Markus F.X.J. Oberhumer <markus@oberhumer.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> Cc: Sonny Rao <sonnyrao@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Matt Sealey <matt.sealey@arm.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  lib/lzo/lzodefs.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
+> index 4edefd2f540c..497f9c9f03a8 100644
+> --- a/lib/lzo/lzodefs.h
+> +++ b/lib/lzo/lzodefs.h
+> @@ -15,7 +15,7 @@
+>  
+>  #define COPY4(dst, src)	\
+>  		put_unaligned(get_unaligned((const u32 *)(src)), (u32 *)(dst))
+> -#if defined(__x86_64__)
+> +#if defined(CONFIG_X86_64)
+>  #define COPY8(dst, src)	\
+>  		put_unaligned(get_unaligned((const u64 *)(src)), (u64 *)(dst))
+>  #else
+> @@ -25,12 +25,12 @@
+>  
+>  #if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN)
+>  #error "conflicting endian definitions"
+> -#elif defined(__x86_64__)
+> +#elif defined(CONFIG_X86_64)
+>  #define LZO_USE_CTZ64	1
+>  #define LZO_USE_CTZ32	1
+> -#elif defined(__i386__) || defined(__powerpc__)
+> +#elif defined(CONFIG_X86) || defined(CONFIG_PPC)
+>  #define LZO_USE_CTZ32	1
+> -#elif defined(__arm__) && (__LINUX_ARM_ARCH__ >= 5)
+> +#elif defined(CONFIG_ARM) && (__LINUX_ARM_ARCH__ >= 5)
+>  #define LZO_USE_CTZ32	1
+>  #endif
+>  
+> 
+
+-- 
+Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
