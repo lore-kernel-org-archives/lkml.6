@@ -2,96 +2,165 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1089CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 736DAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB86A214DA
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B291214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 19:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyFlBB0P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB86A214DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAoJscDs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B291214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725967AbeLFT0m (ORCPT
+        id S1726015AbeLFT0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 14:26:42 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:34712 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeLFT0m (ORCPT
+        Thu, 6 Dec 2018 14:26:46 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52496 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbeLFT0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 14:26:42 -0500
-Received: by mail-io1-f54.google.com with SMTP id r9so1337972ioa.1;
-        Thu, 06 Dec 2018 11:26:41 -0800 (PST)
+        Thu, 6 Dec 2018 14:26:43 -0500
+Received: by mail-it1-f196.google.com with SMTP id g76so3228704itg.2;
+        Thu, 06 Dec 2018 11:26:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=m8imhs22SmIzY3rNUM8Frbs3fLrqVk9MWhC/MbfN4CI=;
-        b=CyFlBB0PTUVfsgPV0wf6YDF+c5Tcjb+WtTXvn8fUmzck6Q8FOSK8ejJGIJ3u/K9ZzH
-         RnuhtlUMYE9yT1nSEIPK4wWez2cR2fa5u+HFhpm+n4S95Kf2ljaZFy4kUe0n0j23C3Wb
-         CZKXmhTllM7bzwuspSQk5Q4QAUmcSb2Gx7iC8mrbk2c+83xhKMADnbhWoDbhH2Utd0pQ
-         DCzGOU6naotvPU9iKX6v2yVZdnOQuo83gP4w2JrWBS2NTE43nnvhJQJy9SS5Dbu2hLIu
-         15JDXA/UGGtVKqwdJah51aSKDfxxVyNaPjn8yxs4GsV6zMI55Ku1hrfD4qfUVJTCEUq/
-         bd9g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=aLyL+5ccPVaEmYknKvT34wn/q013LqFPculhkOfivZQ=;
+        b=jAoJscDsvhLQOO8H0eFnEauzPxPD/TLaTltM6aw/iS5MZihj9tvkp9WL4i6tzf7ysj
+         JQZGF9oj3ARF9XSWHahZ4Qt7Piq7E9M6iPfVTmrl/HYLsw+Wyk43xc9uItME/KU+hv/+
+         AM50iKwRsR/zJJSmMEgVF6U1tc2+SQ7+KtGqYH08o6xTzGx+KTTdlPwpeGJh2+/UnzPH
+         Dmwx4lOy9U6oV+z87u7H06xEuohGi/40b9b8EOkhPnEhtMgNqeZKf18U5Bz2s92A6+Nh
+         /Tk41LhsbYeVpvfgvG05sURItlMqKPGnYMCRzcR8Pvv4aKDHlrlBZh4Lx2aolN5WMHQ/
+         fKvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=m8imhs22SmIzY3rNUM8Frbs3fLrqVk9MWhC/MbfN4CI=;
-        b=odvspuxTZuhxAQfrjEWSeQV765jikOuILQy64xIhzu7Swo0ojifmO415Qb2mZyWxo/
-         YubYuLKFSMj141U4wQfVN2qoymhK6wh0U+k9EqVJ+Pw0A8Zy6bZzIXgtjF32mQ5ytHsJ
-         DyNd4F+WL0AB/ZqTh/3Wl+89Wq95OW9vwZcqQypwFxIi1m8g8kZH/w9lTF4CzrUhr6/v
-         TKvODg8yD3vWgXvRwyk0OPwmBfUegaD4lDMiDPJXCzQdYLmT5uZi9RuComzXq9p8GGkx
-         +SbDmMKiMlG0gKa4XrnLBfMAP3d5493PN1zVbrhW96rSTouQj+jaGE0SHA6IBMf5g3kv
-         Ef0w==
-X-Gm-Message-State: AA+aEWadZrOWyD3eBNmYQP6ZQoFQaWwW2uBGvinf+y0Wekrphxamf+6l
-        44k8rhOCeih/SwmGW5IZ+CM=
-X-Google-Smtp-Source: AFSGD/W6JaC6tXLZg6jqi6a+k0YQdEVxqyE010qx8ij0eFcBwBVaxVx9Z6sIDjCH0FKb7EYqarmOPw==
-X-Received: by 2002:a6b:91d4:: with SMTP id t203mr26025660iod.267.1544124401333;
-        Thu, 06 Dec 2018 11:26:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=aLyL+5ccPVaEmYknKvT34wn/q013LqFPculhkOfivZQ=;
+        b=ChZncL9TCoqBtUlBS7qytYKXp0YM5EO+PCrxzcy60uOtG9I1r6aYxgr8AnZZ4orLMQ
+         Fj47I4HMDWFBx4oM3z7GMwRkKRyZxlqFYeVX52ChZ/nCw3ZpmaBgGgCeqUqVFikQ7MSZ
+         Imad3HKWqXqOIRQQGoh+sQTWl48URNEbLccXJxW0JtNo7Nc9+tddvLI2Huik1HiX1j+6
+         Jmjkv9rWh5j8D8IIgbgnjwkDFLbef+pN2fPMWzNqCAAQjpiu2kr67DDYWv5G4C2XCMxu
+         xoMqwYhing6nfd88uNjFAXVPG0Lnvi81bBk3ZkvkEcY//lPWMFmFYrslILbGPPiCiJVb
+         6REQ==
+X-Gm-Message-State: AA+aEWZcQ9BUKaPP8Fy9UunCP7klUI7pR/HVOGH9xwz+hsMBzrMSVs/p
+        ifZnOJYa0BvbyYks75sD3DE=
+X-Google-Smtp-Source: AFSGD/WThs2FvFARw1yJNeYtscFh87kLRfRdj04KqhVGrHv1zx68Av0VX+FHjDGSqwl2oSpAY/fg5w==
+X-Received: by 2002:a24:fe06:: with SMTP id w6mr20161335ith.108.1544124402281;
+        Thu, 06 Dec 2018 11:26:42 -0800 (PST)
 Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id 195sm819524itm.2.2018.12.06.11.26.40
+        by smtp.gmail.com with ESMTPSA id 195sm819524itm.2.2018.12.06.11.26.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Dec 2018 11:26:40 -0800 (PST)
+        Thu, 06 Dec 2018 11:26:41 -0800 (PST)
 From:   Sven Van Asbroeck <thesven73@gmail.com>
 X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
 To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v3 0/3] bus: imx-weim
-Date:   Thu,  6 Dec 2018 14:26:30 -0500
-Message-Id: <20181206192633.25319-1-TheSven73@googlemail.com>
+Subject: [PATCH v3 1/3] bus: imx-weim: support multiple address ranges per child node
+Date:   Thu,  6 Dec 2018 14:26:31 -0500
+Message-Id: <20181206192633.25319-2-TheSven73@googlemail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181206192633.25319-1-TheSven73@googlemail.com>
+References: <20181206192633.25319-1-TheSven73@googlemail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support multiple address ranges per child node on imx-weim.
-While we're at it, insert some code which guards against common config
-conflicts.
+Ensure that timing values for the child node are applied to
+all chip selects in the child's address ranges.
 
-v3:
-	added devicetree binding docs
+Note that this does not support multiple timing settings per
+child; this can be added in the future if required.
 
-v2:
-	corrected acme@... in commit message example
+Example:
+&weim {
+	acme@0 {
+		compatible = "acme,whatever";
+		reg = <0 0 0x100>, <0 0x400000 0x800>,
+				<1 0x400000 0x800>;
+		fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
+				0x00000000 0xa0000240 0x00000000>;
+	};
+};
 
-Sven Van Asbroeck (3):
-  bus: imx-weim: support multiple address ranges per child node
-  dt-bindings: bus: imx-weim: document multiple address ranges per child
-    node
-  bus: imx-weim: guard against timing configuration conflicts
+Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+---
+ drivers/bus/imx-weim.c | 36 +++++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
- .../devicetree/bindings/bus/imx-weim.txt      | 32 ++++++++-
- drivers/bus/imx-weim.c                        | 69 +++++++++++++++----
- 2 files changed, 84 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
+index d84996a4528e..5452d22d1bd8 100644
+--- a/drivers/bus/imx-weim.c
++++ b/drivers/bus/imx-weim.c
+@@ -46,6 +46,7 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
+ };
+ 
+ #define MAX_CS_REGS_COUNT	6
++#define OF_REG_SIZE		3
+ 
+ static const struct of_device_id weim_id_table[] = {
+ 	/* i.MX1/21 */
+@@ -115,27 +116,40 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
+ 				    const struct imx_weim_devtype *devtype)
+ {
+ 	u32 cs_idx, value[MAX_CS_REGS_COUNT];
+-	int i, ret;
++	int i, ret, reg_idx, num_regs;
+ 
+ 	if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
+ 		return -EINVAL;
+ 
+-	/* get the CS index from this child node's "reg" property. */
+-	ret = of_property_read_u32(np, "reg", &cs_idx);
++	ret = of_property_read_u32_array(np, "fsl,weim-cs-timing",
++					 value, devtype->cs_regs_count);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (cs_idx >= devtype->cs_count)
++	/*
++	 * the child node's "reg" property may contain multiple address ranges,
++	 * extract the chip select for each.
++	 */
++	num_regs = of_property_count_elems_of_size(np, "reg", OF_REG_SIZE);
++	if (num_regs < 0)
++		return num_regs;
++	if (!num_regs)
+ 		return -EINVAL;
++	for (reg_idx = 0; reg_idx < num_regs; reg_idx++) {
++		/* get the CS index from this child node's "reg" property. */
++		ret = of_property_read_u32_index(np, "reg",
++					reg_idx*OF_REG_SIZE, &cs_idx);
++		if (ret)
++			break;
+ 
+-	ret = of_property_read_u32_array(np, "fsl,weim-cs-timing",
+-					 value, devtype->cs_regs_count);
+-	if (ret)
+-		return ret;
++		if (cs_idx >= devtype->cs_count)
++			return -EINVAL;
+ 
+-	/* set the timing for WEIM */
+-	for (i = 0; i < devtype->cs_regs_count; i++)
+-		writel(value[i], base + cs_idx * devtype->cs_stride + i * 4);
++		/* set the timing for WEIM */
++		for (i = 0; i < devtype->cs_regs_count; i++)
++			writel(value[i],
++				base + cs_idx * devtype->cs_stride + i * 4);
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
