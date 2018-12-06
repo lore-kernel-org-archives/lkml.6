@@ -2,155 +2,98 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AEAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D16AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E52D20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544086368;
-	bh=BzFWBREUrqO0isvyc2ns3PaHQJ2GaGecFlGc9XK0XHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QvQoPcApLH16sC9BeAprt2nD+456zm2VTP3WWJW3lMXzrPGGG2HhPxwc0ZPxMJGit
-	 auYcFIQZzRgUsI+VA6Kp4/eVWxHNIFLXvflej/ys1M2deOopz18ProIbPzX3YIL4Jp
-	 Y6Yz1jZxFr5e1eSrZtMYlQ/HGt6pU2RAZBU5zJXU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E52D20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D24B320989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 08:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24B320989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeLFIwq (ORCPT
+        id S1729037AbeLFIyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:52:46 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43322 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFIwq (ORCPT
+        Thu, 6 Dec 2018 03:54:12 -0500
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:43095 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFIyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:52:46 -0500
-Received: by mail-pg1-f196.google.com with SMTP id v28so10335307pgk.10;
-        Thu, 06 Dec 2018 00:52:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rdBsaVY95wa4qiacnYzRDofddx6W9Q6XiFfXLWmnB4Q=;
-        b=sJOrGBScWd8KGWpw3qgRbiyvgSgHEjKhm6vLILqzqwmnrr9lTXZjrtIXGZNEawwAuq
-         IVNcddiDwIE/XJriTTsBzxIc4WlVzJ9w4Twto4fAorblKWKFPhQYZfCz6DH1LV/z4Eaj
-         1zN8JNI7v/JJDFDIa1sRsr5oN1NQV7+QU/4mGU/JXwVG82OsLX/BRw5XMa3GOcIKMyeP
-         IWg6FozLX7vVC3sJxppW2BaNl18xO9KiySKhIWeYFNulKo/vZZ9zmfxKYuFrbUtiYUdn
-         kikuxb0gHfb4c0c34eGQUDxYV+zEIxkrsv7nWKpm0ZRp5I/KrydPgeq2SkkMU8KG0Nuh
-         av0Q==
-X-Gm-Message-State: AA+aEWaGNzi6VpdE9es5kcmBXAp8RDV1Usr2sWMOgakyGD8IrtPd8ljg
-        3Y+8Bt5aJ/aFmUKKS5EgCyc=
-X-Google-Smtp-Source: AFSGD/XZMbhKXsBaF3Mc3Z1M8TMVH9oGTv7eJKSgZElPRw9Bg4MrFlYiARRFOFfeeMF2FAYI6sio7Q==
-X-Received: by 2002:a63:5122:: with SMTP id f34mr22435124pgb.218.1544086365322;
-        Thu, 06 Dec 2018 00:52:45 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id t2sm38212844pfm.32.2018.12.06.00.52.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 00:52:44 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 06 Dec 2018 00:52:42 -0800
-Date:   Thu, 6 Dec 2018 00:52:42 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Cheng Lin <cheng.lin130@zte.com.cn>, akpm@linux-foundation.org
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        wang.yi59@zte.com.cn, Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: Re: [PATCH] proc/sysctl: fix return error for proc_doulongvec_minmax
-Message-ID: <20181206085242.GG28501@garbanzo.do-not-panic.com>
-References: <1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn>
+        Thu, 6 Dec 2018 03:54:12 -0500
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.51 with ESMTP; 6 Dec 2018 17:54:09 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO WMRRD11NA101CK) (10.178.30.142)
+        by 156.147.1.125 with ESMTP; 6 Dec 2018 17:54:09 +0900
+X-Original-SENDERIP: 10.178.30.142
+X-Original-MAILFROM: chanho.min@lge.com
+From:   "Chanho Min" <chanho.min@lge.com>
+To:     "'Oleg Nesterov'" <oleg@redhat.com>,
+        "'Ingo Molnar'" <mingo@kernel.org>
+Cc:     "'Linus Torvalds'" <torvalds@linux-foundation.org>,
+        "'Linux List Kernel Mailing'" <linux-kernel@vger.kernel.org>,
+        "'Rafael J. Wysocki'" <rafael.j.wysocki@intel.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Peter Zijlstra'" <a.p.zijlstra@chello.nl>,
+        "'Pavel Machek'" <pavel@ucw.cz>,
+        "'Michal Hocko'" <mhocko@suse.com>, <seungho1.park@lge.com>
+References: <CAHk-=wgdsXyCaLsFEpyUpAeRqVS69u=xo4rzEN+cS=xwz2gajg@mail.gmail.com> <20181203074700.GA21240@gmail.com> <20181203115601.GA31795@redhat.com> <20181204091736.GD73770@gmail.com> <20181205143618.GA9535@redhat.com>
+In-Reply-To: <20181205143618.GA9535@redhat.com>
+Subject: RE: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux 4.20-rc4)
+Date:   Thu, 6 Dec 2018 17:54:09 +0900
+Message-ID: <02a901d48d41$40aff110$c20fd330$@lge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQIyDiMBIRrrGJHCkbd/uAm7qO0xxAFZXsAJAsWB798CKEutVQITr4gzpHOHoRA=
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:36:15PM +0800, Cheng Lin wrote:
-> If the number of input parameters is less than the total
-> parameters, an EINVAL error will be returned.
+> From: Oleg Nesterov [mailto:oleg@redhat.com]
+> Sent: Wednesday, December 05, 2018 11:36 PM
+> To: Ingo Molnar
+> Cc: Linus Torvalds; Linux List Kernel Mailing; Rafael J. Wysocki; Chanho Min;
+> Thomas Gleixner; Peter Zijlstra; Pavel Machek; Michal Hocko
+> Subject: Re: [PATCH] Revert "exec: make de_thread() freezable (was: Re: Linux
+> 4.20-rc4)
 > 
-> e.g.
-> We use proc_doulongvec_minmax to pass up to two parameters
-> with kern_table.
+> Ingo, et al,
 > 
-> {
-> 	.procname       = "monitor_signals",
-> 	.data           = &monitor_sigs,
-> 	.maxlen         = 2*sizeof(unsigned long),
-> 	.mode           = 0644,
-> 	.proc_handler   = proc_doulongvec_minmax,
-> },
+> Sorry, I am sick and can't participate this discussion right now,
 > 
-> Reproduce:
-> When passing two parameters, it's work normal. But passing
-> only one parameter, an error "Invalid argument"(EINVAL) is
-> returned.
+> On 12/04, Ingo Molnar wrote:
+> >
+> > * Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > > we really need to narrow the (huge) scope of ->cred_guard_mutex in exec
+> paths.
+> > >
+> > > my attempt to fix this was nacked, and nobody suggested a better solution
+> so far.
+> >
+> > Any link to your patch and the NAK?
 > 
-> [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-> [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> 1       2
-> [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-> -bash: echo: write error: Invalid argument
-> [root@cl150 ~]# echo $?
-> 1
-> [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> 3       2
-> [root@cl150 ~]#
+> See https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
 > 
-> The following is the result after apply this patch. No error
-> is returned when the number of input parameters is less than
-> the total parameters.
+> No questions, the patch wasn't pretty. And imo we need to rework the security
+> hooks in the long term.
 > 
-> [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-> [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> 1       2
-> [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-> [root@cl150 ~]# echo $?
-> 0
-> [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-> 3       2
-> [root@cl150 ~]#
-> 
-> There are three processing functions dealing with digital parameters,
-> __do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-> 
-> This patch deals with __do_proc_doulongvec_minmax, just as
-> __do_proc_dointvec does, adding a check for parameters 'left'. In
-> __do_proc_douintvec, its code implementation explicitly does not
-> support multiple inputs.
-> 
-> static int __do_proc_douintvec(...){
->          ...
->          /*
->           * Arrays are not supported, keep this simple. *Do not* add
->           * support for them.
->           */
->          if (vleft != 1) {
->                  *lenp = 0;
->                  return -EINVAL;
->          }
->          ...
-> }
-> 
-> So, just __do_proc_doulongvec_minmax has the problem. And most use of
-> proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-> parameter.
-> 
-> Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+> Oleg.
 
-Thanks for fixing up the commit log.
+I am sorry for the reverting this patch. It's also my fault that
+I didn't check lockdep. But, We decided to keep this patch in our product.
+Freeze fail is a real problem we've had for the last two years,
+whereas lockdep's notice is not a real problem.
+We hope this issue will be resolved soon.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Special thanks to Oleg,
+Chanho
 
-I think we can live with this outside of stable. So stable is not
-needed. But I would not be surprised if autosel algorithm will end
-up picking it up. And if so.. well, it cannot hurt.
-
-  Luis
