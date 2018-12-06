@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C94FC64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFF9C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE51120700
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 464CA20700
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c0UunkNy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE51120700
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rx29F5om"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464CA20700
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeLFVi6 (ORCPT
+        id S1726119AbeLFViv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:38:58 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36086 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeLFViy (ORCPT
+        Thu, 6 Dec 2018 16:38:51 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33740 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbeLFVip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:38:54 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYMuY154629;
-        Thu, 6 Dec 2018 21:38:26 GMT
+        Thu, 6 Dec 2018 16:38:45 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB6LYiJh159474;
+        Thu, 6 Dec 2018 21:38:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=yqZBtTRoXwILOEt1ZFfSigJQGM5yxS0rVjeLXGYyMkw=;
- b=c0UunkNybG6brUD5gYI9qdVs+bdUGns4vbTzMiMFN3Axr68+AByP6lc6MpSHZISXuKLr
- 2KqAsww6pJFFQlj2L8OD0hUVbbPdiH3JPqgmWxZ9/cCiF+p+SjPyskTmp9ycnq+Kq77F
- 2Dtk92xEYvoOYi5Six7CQS47eMQVgkcehiXaQWKdWg6jnbKIrLVKZ8TIBa2Q1TpApTe4
- /gpxUHX0iWFAT44k9mPuLaW0CkA5pRUgoNtmb4ewulSWsOawrRkPppms87ZJV4vjyc2P
- OAl30TAsf4IVLY/lxGLxVjnhEelEyO3OJNKlxaOyYMURjKq/8JfuwaiV4oju+tK5EijV 3A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2p3jxrtme6-1
+ bh=Q92XsM559slBxkunNq5q8saE7LteeOstRPtlDtl+k4g=;
+ b=rx29F5om0uUK7q2Fpinp6be8Han7DhVVPpd1N1ffmy3VScO/Vmi8Br4xN+jU+Xzc/Dcv
+ gGlUQyvRrGnm+M6rmUazysbD9xVddAm6V7exZQ8rBljGehEYJTELVs1EIUwwNiv+t9d/
+ kxfek3kYfzLYOVoZ83/bW8Pa1A7mvH3GY6F9BXbLtZu7s2pCWlmS0K0CaCE4CPeaR/iX
+ lzCe53jmCrOyB/3WW+4y/dX/9DWi/ukZMZRuIXaxCLnKfcYm7aa+jEFKFGpN1BiE2uT3
+ ORWKWWHSu0BpWM4XKrc5aqg6Xcf15+b37gCrADjA9l0pcmr+UfQJh787CuFr1gZJmqdI yw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2p3ftfenfw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Dec 2018 21:38:26 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcKPd015491
+        Thu, 06 Dec 2018 21:38:18 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcI2d007204
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Dec 2018 21:38:20 GMT
+        Thu, 6 Dec 2018 21:38:18 GMT
 Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB6LcKwq021709;
-        Thu, 6 Dec 2018 21:38:20 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wB6LcHEj001035;
+        Thu, 6 Dec 2018 21:38:17 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Dec 2018 21:38:20 +0000
+        with ESMTP ; Thu, 06 Dec 2018 21:38:17 +0000
 From:   Steve Sistare <steven.sistare@oracle.com>
 To:     mingo@redhat.com, peterz@infradead.org
 Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
@@ -60,15 +60,15 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         valentin.schneider@arm.com, vincent.guittot@linaro.org,
         quentin.perret@arm.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 07/10] sched/fair: Provide can_migrate_task_llc
-Date:   Thu,  6 Dec 2018 13:28:13 -0800
-Message-Id: <1544131696-2888-8-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH v4 03/10] sched/topology: Provide cfs_overload_cpus bitmap
+Date:   Thu,  6 Dec 2018 13:28:09 -0800
+Message-Id: <1544131696-2888-4-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=996
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=988
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1812060181
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,54 +76,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define a simpler version of can_migrate_task called can_migrate_task_llc
-which does not require a struct lb_env argument, and judges whether a
-migration from one CPU to another within the same LLC should be allowed.
+From: Steve Sistare <steve.sistare@oracle.com>
+
+Define and initialize a sparse bitmap of overloaded CPUs, per
+last-level-cache scheduling domain, for use by the CFS scheduling class.
+Save a pointer to cfs_overload_cpus in the rq for efficient access.
 
 Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- kernel/sched/fair.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ include/linux/sched/topology.h |  1 +
+ kernel/sched/sched.h           |  2 ++
+ kernel/sched/topology.c        | 25 +++++++++++++++++++++++--
+ 3 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9b7c85b..3804156 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7207,6 +7207,34 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 6b99761..b173a77 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -72,6 +72,7 @@ struct sched_domain_shared {
+ 	atomic_t	ref;
+ 	atomic_t	nr_busy_cpus;
+ 	int		has_idle_cores;
++	struct sparsemask *cfs_overload_cpus;
+ };
+ 
+ struct sched_domain {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 618577f..eacf5db 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -81,6 +81,7 @@
+ 
+ struct rq;
+ struct cpuidle_state;
++struct sparsemask;
+ 
+ /* task_struct::on_rq states: */
+ #define TASK_ON_RQ_QUEUED	1
+@@ -812,6 +813,7 @@ struct rq {
+ 	struct cfs_rq		cfs;
+ 	struct rt_rq		rt;
+ 	struct dl_rq		dl;
++	struct sparsemask	*cfs_overload_cpus;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	/* list of leaf cfs_rq on this CPU: */
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 3e72ce0..89a78ce 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -3,6 +3,7 @@
+  * Scheduler topology setup/handling methods
+  */
+ #include "sched.h"
++#include "sparsemask.h"
+ 
+ DEFINE_MUTEX(sched_domains_mutex);
+ 
+@@ -410,7 +411,9 @@ static void destroy_sched_domains(struct sched_domain *sd)
+ 
+ static void update_top_cache_domain(int cpu)
+ {
++	struct sparsemask *cfs_overload_cpus = NULL;
+ 	struct sched_domain_shared *sds = NULL;
++	struct rq *rq = cpu_rq(cpu);
+ 	struct sched_domain *sd;
+ 	int id = cpu;
+ 	int size = 1;
+@@ -420,8 +423,10 @@ static void update_top_cache_domain(int cpu)
+ 		id = cpumask_first(sched_domain_span(sd));
+ 		size = cpumask_weight(sched_domain_span(sd));
+ 		sds = sd->shared;
++		cfs_overload_cpus = sds->cfs_overload_cpus;
+ 	}
+ 
++	rcu_assign_pointer(rq->cfs_overload_cpus, cfs_overload_cpus);
+ 	rcu_assign_pointer(per_cpu(sd_llc, cpu), sd);
+ 	per_cpu(sd_llc_size, cpu) = size;
+ 	per_cpu(sd_llc_id, cpu) = id;
+@@ -1621,7 +1626,22 @@ static void __sdt_free(const struct cpumask *cpu_map)
+ 
+ static int sd_llc_alloc(struct sched_domain *sd)
+ {
+-	/* Allocate sd->shared data here. Empty for now. */
++	struct sched_domain_shared *sds = sd->shared;
++	struct cpumask *span = sched_domain_span(sd);
++	int nid = cpu_to_node(cpumask_first(span));
++	int flags = __GFP_ZERO | GFP_KERNEL;
++	struct sparsemask *mask;
++
++	/*
++	 * Allocate the bitmap if not already allocated.  This is called for
++	 * every CPU in the LLC but only allocates once per sd_llc_shared.
++	 */
++	if (!sds->cfs_overload_cpus) {
++		mask = sparsemask_alloc_node(nr_cpu_ids, 3, flags, nid);
++		if (!mask)
++			return 1;
++		sds->cfs_overload_cpus = mask;
++	}
+ 
+ 	return 0;
+ }
+@@ -1633,7 +1653,8 @@ static void sd_llc_free(struct sched_domain *sd)
+ 	if (!sds)
+ 		return;
+ 
+-	/* Free data here. Empty for now. */
++	sparsemask_free(sds->cfs_overload_cpus);
++	sds->cfs_overload_cpus = NULL;
  }
  
- /*
-+ * Return true if task @p can migrate from @rq to @dst_rq in the same LLC.
-+ * No need to test for co-locality, and no need to test task_hot(), as sharing
-+ * LLC provides cache warmth at that level.
-+ */
-+static bool
-+can_migrate_task_llc(struct task_struct *p, struct rq *rq, struct rq *dst_rq)
-+{
-+	int dst_cpu = dst_rq->cpu;
-+
-+	lockdep_assert_held(&rq->lock);
-+
-+	if (throttled_lb_pair(task_group(p), cpu_of(rq), dst_cpu))
-+		return false;
-+
-+	if (!cpumask_test_cpu(dst_cpu, &p->cpus_allowed)) {
-+		schedstat_inc(p->se.statistics.nr_failed_migrations_affine);
-+		return false;
-+	}
-+
-+	if (task_running(rq, p)) {
-+		schedstat_inc(p->se.statistics.nr_failed_migrations_running);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-  * detach_task() -- detach the task for the migration from @src_rq to @dst_cpu.
-  */
- static void detach_task(struct task_struct *p, struct rq *src_rq, int dst_cpu)
+ static int sd_llc_alloc_all(const struct cpumask *cpu_map, struct s_data *d)
 -- 
 1.8.3.1
 
