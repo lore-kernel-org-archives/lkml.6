@@ -2,117 +2,123 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75940C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95FEC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3984220838
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A008520838
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XwoLGFMs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3984220838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X3UQWZ+r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A008520838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbeLFKcD (ORCPT
+        id S1729448AbeLFKcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:32:03 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47346 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729054AbeLFKcB (ORCPT
+        Thu, 6 Dec 2018 05:32:04 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38174 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729416AbeLFKcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:32:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DGYQk7vI3DnBFbptreoayds/ya7DdrjWY71T0XCzcPI=; b=XwoLGFMstNUyf1MdeanKQJJRp
-        CDWnpm70n6Tnv8Kjvv+Z3iLLpIo/yZdLKg8dyhMP+XK4EdTLzpxkTuA8VO1o3g/Z2j3T6gdaPxWh5
-        BWlZAcfCGJ6ZSkgDB8/veHcj67iUOhOCDxjjcVYi72S10vs5IQP51+7PZSzMu/P7tncjhLSLzYROQ
-        /daki4SZdhx/8zHgC9A4mnHKbD0+XtAkAHFmvurXc43drF1CCsxYN5Rl2sjN8Q1dQDEy70cGelPwC
-        IzRbjbHhQko7ekOciEKw8TGZ9q0CFOO+jvU3J1xINaeSD5L1xRYZTBHYcF15hpoXjnIr5CFheZIE9
-        MSjUDQ1hQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUqwi-0005aC-CO; Thu, 06 Dec 2018 10:31:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1D4FE200F9F91; Thu,  6 Dec 2018 11:31:51 +0100 (CET)
-Date:   Thu, 6 Dec 2018 11:31:51 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181206103151.GH13538@hirez.programming.kicks-ass.net>
-References: <20181205160509.1168-1-jolsa@kernel.org>
- <20181205160509.1168-2-jolsa@kernel.org>
- <20181206081028.GE4234@hirez.programming.kicks-ass.net>
- <20181206082455.GA22061@krava>
+        Thu, 6 Dec 2018 05:32:03 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB6AW07M127564;
+        Thu, 6 Dec 2018 04:32:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544092320;
+        bh=6x5VWLjeQA1gjTaM50q94BzWmPrwklajqxf2QM2CFc4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=X3UQWZ+ro4LlOOaRUtsP8zFSz64gg6DZ9qOt5icqBW5n+zVFE/LV4SHQwb9nsdIPd
+         rtilZsesLtRa6R1abXaXY4v5X41WHROChfjII/w2OhQOLHz7fjv8YkHby9f5wxlhF1
+         BoSCaDILD20vQ7ENQJPEbROu8NPYoeZmTNvetkGI=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB6AW0FT102753
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 04:32:00 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 6
+ Dec 2018 04:32:00 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 6 Dec 2018 04:32:00 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB6AVuF5030397;
+        Thu, 6 Dec 2018 04:31:57 -0600
+Subject: Re: [PATCH 2/3] dt-bindings: usb: keystone-usb: Add ti,am654-dwc3
+ support
+To:     Roger Quadros <rogerq@ti.com>
+CC:     <balbi@kernel.org>, <tony@atomide.com>, <robh+dt@kernel.org>,
+        <nsekhar@ti.com>, <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+References: <1544023171-5796-1-git-send-email-rogerq@ti.com>
+ <1544023171-5796-3-git-send-email-rogerq@ti.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <ec72e316-46c1-69f6-ae5b-0fbf297a9327@ti.com>
+Date:   Thu, 6 Dec 2018 16:02:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206082455.GA22061@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1544023171-5796-3-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 09:24:55AM +0100, Jiri Olsa wrote:
-> On Thu, Dec 06, 2018 at 09:10:28AM +0100, Peter Zijlstra wrote:
-> > On Wed, Dec 05, 2018 at 05:05:02PM +0100, Jiri Olsa wrote:
-> > > +static void trace_block_syscall(struct pt_regs *regs, bool enter)
-> > > +{
-> > > +	current->perf_blocked = true;
-> > > +
-> > > +	do {
-> > > +		schedule_timeout(100 * HZ);
-> > > +		current->perf_blocked_cnt = 0;
-> > > +
-> > > +		if (enter) {
-> > > +			/* perf syscalls:* enter */
-> > > +			perf_trace_syscall_enter(regs);
-> > > +
-> > > +			/* perf raw_syscalls:* enter */
-> > > +			perf_trace_sys_enter(&event_sys_enter, regs, regs->orig_ax);
-> > > +		} else {
-> > > +			/* perf syscalls:* enter */
-> > > +			perf_trace_syscall_exit(regs);
-> > > +
-> > > +			/* perf raw_syscalls:* enter */
-> > > +			perf_trace_sys_exit(&event_sys_exit, regs, regs->ax);
-> > > +		}
-> > > +	} while (current->perf_blocked_cnt);
-> > > +
-> > > +	current->perf_blocked = false;
-> > > +}
-> > 
-> > I don't understand this.. why are we using schedule_timeout() and all
-> > that?
+Hi Roger,
+
+On 05/12/18 8:49 PM, Roger Quadros wrote:
+> The AM654 SoC from TI contains a DWC3 controller. Add
+> support for it.
 > 
-> the idea is to block the process and try to deliver the event later
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  Documentation/devicetree/bindings/usb/keystone-usb.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> the ring buffer space is freed by user space process moving the tail
-> pointer, so I can't see doing this other way than polling
+> diff --git a/Documentation/devicetree/bindings/usb/keystone-usb.txt b/Documentation/devicetree/bindings/usb/keystone-usb.txt
+> index f96e09f..fa29ff8 100644
+> --- a/Documentation/devicetree/bindings/usb/keystone-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/keystone-usb.txt
+> @@ -3,7 +3,7 @@ TI Keystone Soc USB Controller
+>  DWC3 GLUE
+>  
+>  Required properties:
+> - - compatible: should be "ti,keystone-dwc3".
+> + - compatible: should be "ti,keystone-dwc3" or "ti,am654-dwc3".
 
-Right, figured that out.
+Convention is to have one compatible per line:
+ compatible: Should be
+	"ti,am654-dwc3" for AM654 SoCs
+	"ti,keystone-dwc3" for K2 SoCs
 
-I really really hate this stuff. poll-waiting fundamentally stinks, but
-also perf is designed to not/minimally interfere with the observed
-tasks, as is ftrace.
 
-And bolting, as it really doesn't fit in the fundamental design, this
-fugly thing on top for this special case.. urgh.
+
+>   - #address-cells, #size-cells : should be '1' if the device has sub-nodes
+>     with 'reg' property.
+>   - reg : Address and length of the register set for the USB subsystem on
+> @@ -21,7 +21,7 @@ SoCs only:
+>  - clock-names:		Must be "usb".
+>  
+>  
+> -The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+> +The following are mandatory properties for 66AK2G and AM654:
+>  
+>  - power-domains:	Should contain a phandle to a PM domain provider node
+>  			and an args specifier containing the USB device id
+> 
+
+-- 
+Regards
+Vignesh
