@@ -4,44 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66925C64EB1
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9847C64EB1
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DC72146F
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6767D2146F
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 21:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544131697;
-	bh=gTf3UgD10ikyQcGkhHAFw5FukzgFdTaqmYpOi7WZ16I=;
+	s=default; t=1544131699;
+	bh=Eie9UfIJK4OFmMTHTo04zMBOWM+BTwAXKMV1coEAtJw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QS5amRPj2BBAM8f5v9mAUOeezLP06idpRd9vFKxZvC1Ur1qKX3F4BYRm6Who952/Z
-	 O5WzNDp3G2acoNYZ+rldJU339gN9ZLKgseMFeFjm1e7aCS9z582hvAZFfJQAIetQyt
-	 iTi2eNodEcxqJY2fgOCsNmjM3NrbwnN1eANBVrm0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DC72146F
+	b=z1Fr9YPi/Ha1W+1rnivTbj/H4BjUFcOCA5i6SVJ1DAWxJvFKzWgq88dpHJ1zd/D8F
+	 YANIZVFGaCpuaKAw8d39cRB/wxQ0hb+7oJFvNKgYXLiYgGB60TkJ2SAmkMsx+cwzi8
+	 GVQj4K/MNzbjCNzGzEF6jhnUtCBebp3dKPai1IXA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6767D2146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbeLFV2P (ORCPT
+        id S1726371AbeLFV2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:28:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46900 "EHLO mail.kernel.org"
+        Thu, 6 Dec 2018 16:28:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeLFV2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:28:06 -0500
+        id S1726349AbeLFV2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:28:15 -0500
 Received: from quaco.ghostprotocols.net (179.187.13.223.dynamic.adsl.gvt.net.br [179.187.13.223])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C1D6208E7;
-        Thu,  6 Dec 2018 21:28:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DA5020989;
+        Thu,  6 Dec 2018 21:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544131685;
-        bh=gTf3UgD10ikyQcGkhHAFw5FukzgFdTaqmYpOi7WZ16I=;
+        s=default; t=1544131693;
+        bh=Eie9UfIJK4OFmMTHTo04zMBOWM+BTwAXKMV1coEAtJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gK+JBnq6YXUD4p+e7Ac4+WAMPNlXtYckX5hkE7eGzTKYtkJWHAgAKMNsSvxfkiLP9
-         +zE/OlamUNsWxFp06YqhM80hUV9T/nBY4wBnSRmnkpVxVareZ5i1RwGOH5gTXikN9R
-         LWeB88CyM957xLUuUGZJamy73Ofk8RG8V042aYc0=
+        b=CCLsAhxT15/YNovNr6x+WZKYnnnR7k8Z9e91xVcYQg0ajxoyZ5ldHS6JRrG5pNJc8
+         xyhDv/q5xlBWixR1yPsPqo7W2Q0QdB9qAXrmcNhzzJr7VcNo2M+sdPFk75N5lZ2Kun
+         b7/wb2zq8g4dRdUtixvA+fu3lJRCw5Tt2MPokMCQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -52,14 +51,13 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Kan Liang <kan.liang@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 23/75] perf annotate: Compute average IPC and IPC coverage per symbol
-Date:   Thu,  6 Dec 2018 18:25:10 -0300
-Message-Id: <20181206212602.20474-24-acme@kernel.org>
+Subject: [PATCH 25/75] perf report: Display average IPC and IPC coverage per symbol
+Date:   Thu,  6 Dec 2018 18:25:12 -0300
+Message-Id: <20181206212602.20474-26-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181206212602.20474-1-acme@kernel.org>
 References: <20181206212602.20474-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -68,53 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jin Yao <yao.jin@linux.intel.com>
 
-Add support to 'perf report' annotate view or 'perf annotate --stdio2'
-to aggregate the IPC derived from timed LBRs per symbol. We compute the
-average IPC and the IPC coverage percentage.
+Support displaying the average IPC and IPC coverage per symbol in 'perf
+report' --tui and --stdio modes.
 
-For example:
+For example,
 
-  $ perf annotate --stdio2
+ $ perf record -b ...
+ $ perf report -s symbol
 
-  Percent  IPC Cycle (Average IPC: 2.30, IPC Coverage: 54.8%)
+ Overhead  Symbol                           IPC   [IPC Coverage]
+   39.60%  [.] __random                     2.30  [ 54.8%]
+   18.02%  [.] main                         0.43  [ 54.3%]
+   14.21%  [.] compute_flag                 2.29  [100.0%]
+   14.16%  [.] rand                         0.36  [100.0%]
+    7.06%  [.] __random_r                   2.57  [ 70.5%]
+    6.85%  [.] rand@plt                     0.00  [  0.0%]
 
-                          Disassembly of section .text:
+Jiri Olsa <jolsa@redhat.com> provided the patch to support the --stdio
+mode. I merged Jiri's code in this patch.
 
-                          000000000003aac0 <random@@GLIBC_2.2.5>:
-    8.32  3.28              sub    $0x18,%rsp
-          3.28              mov    $0x1,%esi
-          3.28              xor    %eax,%eax
-          3.28              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
-   11.57  3.28     1      ↓ je     20
-                            lock   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
-                          ↓ jne    29
-                          ↓ jmp    43
-   11.57  1.10        20:   cmpxchg %esi,__abort_msg@@GLIBC_PRIVATE+0x8a0
-    0.00  1.10     1      ↓ je     43
-                      29:   lea    __abort_msg@@GLIBC_PRIVATE+0x8a0,%rdi
-                            sub    $0x80,%rsp
-                          → callq  __lll_lock_wait_private
-                            add    $0x80,%rsp
-    0.00  3.00        43:   lea    __ctype_b@GLIBC_2.2.5+0x38,%rdi
-          3.00              lea    0xc(%rsp),%rsi
-    8.49  3.00     1      → callq  __random_r
-    7.91  1.94              cmpl   $0x0,argp_program_version_hook@@GLIBC_2.2.5+0x1e0
-    0.00  1.94     1      ↓ je     68
-                            lock   decl   __abort_msg@@GLIBC_PRIVATE+0x8a0
-                          ↓ jne    70
-                          ↓ jmp    8a
-    0.00  2.00        68:   decl   __abort_msg@@GLIBC_PRIVATE+0x8a0
-   21.56  2.00     1      ↓ je     8a
-                      70:   lea    __abort_msg@@GLIBC_PRIVATE+0x8a0,%rdi
-                            sub    $0x80,%rsp
-                          → callq  __lll_unlock_wake_private
-                            add    $0x80,%rsp
-   21.56  2.90        8a:   movslq 0xc(%rsp),%rax
-          2.90              add    $0x18,%rsp
-    9.03  2.90     1      ← retq
+  $ perf report -s symbol --stdio
 
-It shows for this symbol the average IPC is 2.30 and the IPC coverage is
-54.8%.
+    # Overhead  Symbol                       IPC   [IPC Coverage]
+    # ........  ...........................  ....................
+    #
+      39.60%  [.] __random                   2.30  [ 54.8%]
+      18.02%  [.] main                       0.43  [ 54.3%]
+      14.21%  [.] compute_flag               2.29  [100.0%]
+      14.16%  [.] rand                       0.36  [100.0%]
+       7.06%  [.] __random_r                 2.57  [ 70.5%]
+       6.85%  [.] rand@plt                   0.00  [  0.0%]
+       0.02%  [k] run_timer_softirq          1.60  [ 57.2%]
+
+The columns "IPC" and "[IPC Coverage]" are automatically enabled when
+the sort-key "symbol" is specified. If the perf.data file doesn't
+contain timed LBR information, columns are filled with "-".
+
+For example,
+
+  # Overhead  Symbol                       IPC   [IPC Coverage]
+  # ........  ...........................  ....................
+  #
+      46.57%  [.] main                     -      -
+      17.60%  [.] rand                     -      -
+      15.84%  [.] __random_r               -      -
+      11.90%  [.] __random                 -      -
+       6.50%  [.] compute_flag             -      -
+       1.59%  [.] rand@plt                 -      -
+       0.00%  [.] _dl_relocate_object      -      -
+       0.00%  [k] tlb_flush_mmu            -      -
+       0.00%  [k] perf_event_mmap          -      -
+       0.00%  [k] native_sched_clock       -      -
+       0.00%  [k] intel_pmu_handle_irq_v4  -      -
+       0.00%  [k] native_write_msr         -      -
+
+ v3:
+ ---
+ Removed the sortkey 'ipc' from command-line. The columns "IPC"
+ and "[IPC Coverage]" are automatically enabled when "symbol"
+ is specified.
+
+ v2:
+ ---
+ Merge in Jiri's patch to support stdio mode
 
 Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
 Reviewed-by: Ingo Molnar <mingo@kernel.org>
@@ -123,70 +137,135 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1543586097-27632-2-git-send-email-yao.jin@linux.intel.com
+Link: http://lkml.kernel.org/r/1543586097-27632-4-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 41 +++++++++++++++++++++++++++++++++++---
- tools/perf/util/annotate.h |  5 +++++
- 2 files changed, 43 insertions(+), 3 deletions(-)
+ tools/perf/builtin-report.c | 26 ++++++++++++++--
+ tools/perf/util/hist.h      |  1 +
+ tools/perf/util/sort.c      | 61 +++++++++++++++++++++++++++++++++++++
+ tools/perf/util/sort.h      |  2 ++
+ 4 files changed, 87 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 6936daf89ddd..4b2b1b09b8f1 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1000,6 +1000,7 @@ static unsigned annotation__count_insn(struct annotation *notes, u64 start, u64
- static void annotation__count_and_fill(struct annotation *notes, u64 start, u64 end, struct cyc_hist *ch)
- {
- 	unsigned n_insn;
-+	unsigned int cover_insn = 0;
- 	u64 offset;
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 257c9c18cb7e..4958095be4fc 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -85,6 +85,7 @@ struct report {
+ 	int			socket_filter;
+ 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
+ 	struct branch_type_stat	brtype_stat;
++	bool			symbol_ipc;
+ };
  
- 	n_insn = annotation__count_insn(notes, start, end);
-@@ -1013,21 +1014,34 @@ static void annotation__count_and_fill(struct annotation *notes, u64 start, u64
- 		for (offset = start; offset <= end; offset++) {
- 			struct annotation_line *al = notes->offsets[offset];
+ static int report__config(const char *var, const char *value, void *cb)
+@@ -129,7 +130,7 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+ 	struct mem_info *mi;
+ 	struct branch_info *bi;
  
--			if (al)
-+			if (al && al->ipc == 0.0) {
- 				al->ipc = ipc;
-+				cover_insn++;
-+			}
+-	if (!ui__has_annotation())
++	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+ 	hist__account_cycles(sample->branch_stack, al, sample,
+@@ -174,7 +175,7 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 	struct perf_evsel *evsel = iter->evsel;
+ 	int err;
+ 
+-	if (!ui__has_annotation())
++	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+ 	hist__account_cycles(sample->branch_stack, al, sample,
+@@ -1133,6 +1134,7 @@ int cmd_report(int argc, const char **argv)
+ 		.mode  = PERF_DATA_MODE_READ,
+ 	};
+ 	int ret = hists__init();
++	char sort_tmp[128];
+ 
+ 	if (ret < 0)
+ 		return ret;
+@@ -1284,6 +1286,24 @@ int cmd_report(int argc, const char **argv)
+ 	else
+ 		use_browser = 0;
+ 
++	if (sort_order && strstr(sort_order, "ipc")) {
++		parse_options_usage(report_usage, options, "s", 1);
++		goto error;
++	}
++
++	if (sort_order && strstr(sort_order, "symbol")) {
++		if (sort__mode == SORT_MODE__BRANCH) {
++			snprintf(sort_tmp, sizeof(sort_tmp), "%s,%s",
++				 sort_order, "ipc_lbr");
++			report.symbol_ipc = true;
++		} else {
++			snprintf(sort_tmp, sizeof(sort_tmp), "%s,%s",
++				 sort_order, "ipc_null");
 +		}
 +
-+		if (cover_insn) {
-+			notes->hit_cycles += ch->cycles;
-+			notes->hit_insn += n_insn * ch->num;
-+			notes->cover_insn += cover_insn;
- 		}
- 	}
- }
- 
- void annotation__compute_ipc(struct annotation *notes, size_t size)
- {
--	u64 offset;
-+	s64 offset;
- 
- 	if (!notes->src || !notes->src->cycles_hist)
- 		return;
- 
-+	notes->total_insn = annotation__count_insn(notes, 0, size - 1);
-+	notes->hit_cycles = 0;
-+	notes->hit_insn = 0;
-+	notes->cover_insn = 0;
++		sort_order = sort_tmp;
++	}
 +
- 	pthread_mutex_lock(&notes->lock);
--	for (offset = 0; offset < size; ++offset) {
-+	for (offset = size - 1; offset >= 0; --offset) {
- 		struct cyc_hist *ch;
+ 	if (setup_sorting(session->evlist) < 0) {
+ 		if (sort_order)
+ 			parse_options_usage(report_usage, options, "s", 1);
+@@ -1311,7 +1331,7 @@ int cmd_report(int argc, const char **argv)
+ 	 * so don't allocate extra space that won't be used in the stdio
+ 	 * implementation.
+ 	 */
+-	if (ui__has_annotation()) {
++	if (ui__has_annotation() || report.symbol_ipc) {
+ 		ret = symbol__annotation_init();
+ 		if (ret < 0)
+ 			goto error;
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 3badd7f1e1b8..664b5eda8d51 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -62,6 +62,7 @@ enum hist_column {
+ 	HISTC_TRACE,
+ 	HISTC_SYM_SIZE,
+ 	HISTC_DSO_SIZE,
++	HISTC_SYMBOL_IPC,
+ 	HISTC_NR_COLS, /* Last entry */
+ };
  
- 		ch = &notes->src->cycles_hist[offset];
-@@ -2563,6 +2577,22 @@ static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
- 	disasm_line__scnprintf(dl, bf, size, !notes->options->use_offset);
- }
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index f96c005b3c41..047793528919 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -13,6 +13,7 @@
+ #include "strlist.h"
+ #include <traceevent/event-parse.h>
+ #include "mem-events.h"
++#include "annotate.h"
+ #include <linux/kernel.h>
  
-+static void ipc_coverage_string(char *bf, int size, struct annotation *notes)
+ regex_t		parent_regex;
+@@ -422,6 +423,64 @@ struct sort_entry sort_srcline_to = {
+ 	.se_width_idx	= HISTC_SRCLINE_TO,
+ };
+ 
++static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
++					size_t size, unsigned int width)
 +{
++
++	struct symbol *sym = he->ms.sym;
++	struct map *map = he->ms.map;
++	struct perf_evsel *evsel = hists_to_evsel(he->hists);
++	struct annotation *notes;
 +	double ipc = 0.0, coverage = 0.0;
++	char tmp[64];
++
++	if (!sym)
++		return repsep_snprintf(bf, size, "%-*s", width, "-");
++
++	if (!sym->annotate2 && symbol__annotate2(sym, map, evsel,
++		&annotation__default_options, NULL) < 0) {
++		return 0;
++	}
++
++	notes = symbol__annotation(sym);
 +
 +	if (notes->hit_cycles)
 +		ipc = notes->hit_insn / ((double)notes->hit_cycles);
@@ -196,48 +275,74 @@ index 6936daf89ddd..4b2b1b09b8f1 100644
 +			((double)notes->total_insn);
 +	}
 +
-+	scnprintf(bf, size, "(Average IPC: %.2f, IPC Coverage: %.1f%%)",
-+		  ipc, coverage);
++	snprintf(tmp, sizeof(tmp), "%-5.2f [%5.1f%%]", ipc, coverage);
++	return repsep_snprintf(bf, size, "%-*s", width, tmp);
 +}
 +
- static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
- 				     bool first_line, bool current_entry, bool change_color, int width,
- 				     void *obj, unsigned int percent_type,
-@@ -2658,6 +2688,11 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
- 					    ANNOTATION__MINMAX_CYCLES_WIDTH - 1,
- 					    "Cycle(min/max)");
- 		}
++struct sort_entry sort_sym_ipc = {
++	.se_header	= "IPC   [IPC Coverage]",
++	.se_cmp		= sort__sym_cmp,
++	.se_snprintf	= hist_entry__sym_ipc_snprintf,
++	.se_width_idx	= HISTC_SYMBOL_IPC,
++};
 +
-+		if (show_title && !*al->line) {
-+			ipc_coverage_string(bf, sizeof(bf), notes);
-+			obj__printf(obj, "%*s", ANNOTATION__AVG_IPC_WIDTH, bf);
-+		}
- 	}
++static int hist_entry__sym_ipc_null_snprintf(struct hist_entry *he
++					     __maybe_unused,
++					     char *bf, size_t size,
++					     unsigned int width)
++{
++	char tmp[64];
++
++	snprintf(tmp, sizeof(tmp), "%-5s %2s", "-", "-");
++	return repsep_snprintf(bf, size, "%-*s", width, tmp);
++}
++
++struct sort_entry sort_sym_ipc_null = {
++	.se_header	= "IPC   [IPC Coverage]",
++	.se_cmp		= sort__sym_cmp,
++	.se_snprintf	= hist_entry__sym_ipc_null_snprintf,
++	.se_width_idx	= HISTC_SYMBOL_IPC,
++};
++
+ /* --sort srcfile */
  
- 	obj__printf(obj, " ");
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 5399ba2321bb..fb6463730ba4 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -64,6 +64,7 @@ bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2);
- #define ANNOTATION__IPC_WIDTH 6
- #define ANNOTATION__CYCLES_WIDTH 6
- #define ANNOTATION__MINMAX_CYCLES_WIDTH 19
-+#define ANNOTATION__AVG_IPC_WIDTH 36
+ static char no_srcfile[1];
+@@ -1574,6 +1633,7 @@ static struct sort_dimension common_sort_dimensions[] = {
+ 	DIM(SORT_SYM_SIZE, "symbol_size", sort_sym_size),
+ 	DIM(SORT_DSO_SIZE, "dso_size", sort_dso_size),
+ 	DIM(SORT_CGROUP_ID, "cgroup_id", sort_cgroup_id),
++	DIM(SORT_SYM_IPC_NULL, "ipc_null", sort_sym_ipc_null),
+ };
  
- struct annotation_options {
- 	bool hide_src_code,
-@@ -262,6 +263,10 @@ struct annotation {
- 	pthread_mutex_t		lock;
- 	u64			max_coverage;
- 	u64			start;
-+	u64			hit_cycles;
-+	u64			hit_insn;
-+	unsigned int		total_insn;
-+	unsigned int		cover_insn;
- 	struct annotation_options *options;
- 	struct annotation_line	**offsets;
- 	int			nr_events;
+ #undef DIM
+@@ -1591,6 +1651,7 @@ static struct sort_dimension bstack_sort_dimensions[] = {
+ 	DIM(SORT_CYCLES, "cycles", sort_cycles),
+ 	DIM(SORT_SRCLINE_FROM, "srcline_from", sort_srcline_from),
+ 	DIM(SORT_SRCLINE_TO, "srcline_to", sort_srcline_to),
++	DIM(SORT_SYM_IPC, "ipc_lbr", sort_sym_ipc),
+ };
+ 
+ #undef DIM
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index a97cf8e6be86..130fe37fe2df 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -229,6 +229,7 @@ enum sort_type {
+ 	SORT_SYM_SIZE,
+ 	SORT_DSO_SIZE,
+ 	SORT_CGROUP_ID,
++	SORT_SYM_IPC_NULL,
+ 
+ 	/* branch stack specific sort keys */
+ 	__SORT_BRANCH_STACK,
+@@ -242,6 +243,7 @@ enum sort_type {
+ 	SORT_CYCLES,
+ 	SORT_SRCLINE_FROM,
+ 	SORT_SRCLINE_TO,
++	SORT_SYM_IPC,
+ 
+ 	/* memory mode specific sort keys */
+ 	__SORT_MEMORY_MODE,
 -- 
 2.19.2
 
