@@ -2,137 +2,120 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BB1C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B13C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A356420989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A356420989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 57B3320868
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 15:22:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B3320868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cybernetics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeLFPVV (ORCPT
+        id S1726062AbeLFPWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 10:21:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56876 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725879AbeLFPVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:21:20 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68284CA369;
-        Thu,  6 Dec 2018 15:21:20 +0000 (UTC)
-Received: from redhat.com (ovpn-122-74.rdu2.redhat.com [10.10.122.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0354D608C4;
-        Thu,  6 Dec 2018 15:21:18 +0000 (UTC)
-Date:   Thu, 6 Dec 2018 10:21:17 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        =?iso-8859-1?Q?St=E9phane?= Marchesin <marcheu@chromium.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] dma-buf: fix debugfs versus rcu and fence dumping
-Message-ID: <20181206152116.GA3544@redhat.com>
-References: <20181206014103.1364-1-jglisse@redhat.com>
- <b520e7b6-a8f6-da49-fc7d-460823eabf47@amd.com>
+        Thu, 6 Dec 2018 10:22:19 -0500
+Received: from mail.cybernetics.com ([173.71.130.66]:43336 "EHLO
+        mail.cybernetics.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLFPWT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:22:19 -0500
+X-Greylist: delayed 617 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Dec 2018 10:22:19 EST
+X-ASG-Debug-ID: 1544109118-0fb3b01fb3c5a6c0002-xx1T2L
+Received: from cybernetics.com ([10.157.1.126]) by mail.cybernetics.com with ESMTP id up9TucNETYmhGcU7 (version=SSLv3 cipher=DES-CBC3-SHA bits=112 verify=NO); Thu, 06 Dec 2018 10:11:58 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-ASG-Whitelist: Client
+Received: from [10.157.2.224] (account tonyb HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate Pro SMTP 5.1.14)
+  with ESMTPSA id 8569752; Thu, 06 Dec 2018 10:11:58 -0500
+Subject: Re: dmapool regression in next
+To:     Krzysztof Kozlowski <krzk@kernel.org>, tony@atomide.com
+X-ASG-Orig-Subj: Re: dmapool regression in next
+Cc:     akpm@linux-foundation.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        andy.shevchenko@gmail.com, hch@lst.de, john.garry@huawei.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+References: <20181206013054.GI6707@atomide.com>
+ <CAJKOXPcoK5SsXfXjdAWPHLX2KZRCqOv61HVf2DK9wm4_m+vJ0w@mail.gmail.com>
+From:   Tony Battersby <tonyb@cybernetics.com>
+Message-ID: <09e73d24-467a-52bb-0433-a9596d4d6f02@cybernetics.com>
+Date:   Thu, 6 Dec 2018 10:11:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAJKOXPcoK5SsXfXjdAWPHLX2KZRCqOv61HVf2DK9wm4_m+vJ0w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b520e7b6-a8f6-da49-fc7d-460823eabf47@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 06 Dec 2018 15:21:20 +0000 (UTC)
+Content-Language: en-US
+X-Barracuda-Connect: UNKNOWN[10.157.1.126]
+X-Barracuda-Start-Time: 1544109118
+X-Barracuda-Encrypted: DES-CBC3-SHA
+X-Barracuda-URL: https://10.157.1.122:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 2200
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 08:09:28AM +0000, Koenig, Christian wrote:
-> Am 06.12.18 um 02:41 schrieb jglisse@redhat.com:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> >
-> > The debugfs take reference on fence without dropping them. Also the
-> > rcu section are not well balance. Fix all that ...
-> >
-> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Christian König <christian.koenig@amd.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> > Cc: linux-media@vger.kernel.org
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linaro-mm-sig@lists.linaro.org
-> > Cc: Stéphane Marchesin <marcheu@chromium.org>
-> > Cc: stable@vger.kernel.org
-> 
-> Well NAK, you are now taking the RCU lock twice and dropping the RCU and 
-> still accessing fobj has a huge potential for accessing freed up memory.
-> 
-> The only correct thing I can see here is to grab a reference to the 
-> fence before printing any info on it,
-> Christian.
+On 12/6/18 4:25 AM, Krzysztof Kozlowski wrote:
+> On Thu, 6 Dec 2018 at 02:31, Tony Lindgren <tony@atomide.com> wrote:
+>> Hi,
+>>
+>> Looks like with commit 26abe88e830d ("mm/dmapool.c: improve scalability
+>> of dma_pool_free()") I'm now getting spammed with lots of "(bad vaddr)"
+>> on at least omap4 pandaboard, see below.
+>>
+>> Any ideas what might be going wrong?
+>>
+>> Regards,
+>>
+>> Tony
+>>
+>> 8< ---------------------
+>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe800000
+>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe80001c
+>> omap-dma-engine 4a056000.dma-controller: dma_pool_free 4a056000.dma-controller, (ptrval) (bad vaddr)/0xbe800038
+>> ...
+> I see it as well on all my Exynos boards, since yesterday's next. In
+> my case it is the USB EHCI driver:
+> exynos-ehci 12110000.usb: dma_pool_free ehci_qtd, (ptrval) (bad
+> vaddr)/0xb8844180
+> Full log here:
+> https://krzk.eu/#/builders/1/builds/2937/steps/12/logs/serial0
+>
+> Best regards,
+> Krzysztof
+>
+Here is the prototype:
 
-Hu ? That is exactly what i am doing, take reference under rcu,
-rcu_unlock print the fence info, drop the fence reference, rcu
-lock rinse and repeat ...
+void dma_pool_free(struct dma_pool *pool, void *vaddr, dma_addr_t dma);
 
-Note that the fobj in _existing_ code is access outside the rcu
-end that there is an rcu imbalance in that code ie a lonlely
-rcu_unlock after the for loop.
+With the old code, the 'dma' value had to be correct for use with
+pool_find_page(), or else you would get an error.Â  If the 'vaddr' value
+was incorrect, it would corrupt the dmapool freelist, but you wouldn't
+get an error unless DMAPOOL_DEBUG was enabled.
 
-So that the existing code is broken.
+With my patch applied, 'vaddr' has to be correct for virt_to_page().Â  My
+code also checks that 'dma' is consistent with 'vaddr' even if
+DMAPOOL_DEBUG is disabled, since the check is fast and it will prevent
+problems like this in the future.
 
-> 
-> > ---
-> >   drivers/dma-buf/dma-buf.c | 11 +++++++++--
-> >   1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > index 13884474d158..f6f4de42ac49 100644
-> > --- a/drivers/dma-buf/dma-buf.c
-> > +++ b/drivers/dma-buf/dma-buf.c
-> > @@ -1051,24 +1051,31 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
-> >   			fobj = rcu_dereference(robj->fence);
-> >   			shared_count = fobj ? fobj->shared_count : 0;
-> >   			fence = rcu_dereference(robj->fence_excl);
-> > +			fence = dma_fence_get_rcu(fence);
-> >   			if (!read_seqcount_retry(&robj->seq, seq))
-> >   				break;
-> >   			rcu_read_unlock();
-> >   		}
-> > -
-> > -		if (fence)
-> > +		if (fence) {
-> >   			seq_printf(s, "\tExclusive fence: %s %s %ssignalled\n",
-> >   				   fence->ops->get_driver_name(fence),
-> >   				   fence->ops->get_timeline_name(fence),
-> >   				   dma_fence_is_signaled(fence) ? "" : "un");
-> > +			dma_fence_put(fence);
-> > +		}
-> > +
-> > +		rcu_read_lock();
-> >   		for (i = 0; i < shared_count; i++) {
-> >   			fence = rcu_dereference(fobj->shared[i]);
-> >   			if (!dma_fence_get_rcu(fence))
-> >   				continue;
-> > +			rcu_read_unlock();
-> >   			seq_printf(s, "\tShared fence: %s %s %ssignalled\n",
-> >   				   fence->ops->get_driver_name(fence),
-> >   				   fence->ops->get_timeline_name(fence),
-> >   				   dma_fence_is_signaled(fence) ? "" : "un");
-> > +			dma_fence_put(fence);
-> > +			rcu_read_lock();
-> >   		}
-> >   		rcu_read_unlock();
-> >   
-> 
+So if a buggy driver passes in a good value for 'dma' but a bad value
+for 'vaddr', then it may have appeared to work previously (but with
+possible data corruption, depending on the circumstances), but my patch
+will expose the problem.Â  You can confirm by reverting my dmapool
+patches and enabling DMAPOOL_DEBUG, which is at the top of mm/dmapool.c:
+
+#if defined(CONFIG_DEBUG_SLAB) || defined(CONFIG_SLUB_DEBUG_ON)
+#define DMAPOOL_DEBUG 1
+#endif
+
+Tony Battersby
+
+
