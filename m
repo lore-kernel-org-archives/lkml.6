@@ -2,86 +2,115 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B2EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F881C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26C320850
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:10:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26C320850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 674F620850
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 18:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 674F620850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbeLFSKB (ORCPT
+        id S1726063AbeLFSKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:10:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32803 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725898AbeLFSKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:10:00 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id A25A1B8E11A92;
-        Thu,  6 Dec 2018 18:09:56 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Dec
- 2018 18:09:48 +0000
-Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-8-roberto.sassu@huawei.com>
- <20181205001417.GF1233@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <63ac9e36-34ac-6a1d-553d-dac5cab98d43@huawei.com>
-Date:   Thu, 6 Dec 2018 19:09:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 6 Dec 2018 13:10:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:7651 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725930AbeLFSKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:10:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 10:10:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,323,1539673200"; 
+   d="scan'208";a="105427579"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 10:10:12 -0800
+Received: from [10.252.23.157] (rjmoreno-mobl.amr.corp.intel.com [10.252.23.157])
+        by linux.intel.com (Postfix) with ESMTP id BBA175804F9;
+        Thu,  6 Dec 2018 10:10:09 -0800 (PST)
+Subject: Re: [PATCH v1] perf record: fix memory leak on AIO objects
+ deallocation
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <e5d3154e-1583-83bb-9527-28ddbc6dbf9d@linux.intel.com>
+ <20181206170535.GK19069@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <9a917681-2c90-632a-471d-024e725860e0@linux.intel.com>
+Date:   Thu, 6 Dec 2018 21:10:09 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181205001417.GF1233@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20181206170535.GK19069@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/5/2018 1:14 AM, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
->> The new tpm_bank_list structure has been preferred to the tpm_digest
->> structure, to let the caller specify the size of the digest (which may be
->> unknown to the TPM driver).
+On 06.12.2018 20:05, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Dec 05, 2018 at 08:19:41PM +0300, Alexey Budankov escreveu:
+>>
+>> Sending a part which was missed between v12 and v13 of the patch set
+>> introducing AIO trace streaming for perf record mode. 
+>>
+>> The part is essential to avoid memory leakage during deallocation
+>> of AIO related trace data buffers.
+>>
+>> It is applied on top of acme perf/core repo.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>> tools/perf/util/mmap.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+>> index ab30555d2afc..169d02973757 100644
+>> --- a/tools/perf/util/mmap.c
+>> +++ b/tools/perf/util/mmap.c
+>> @@ -207,8 +207,18 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>>  
+>>  static void perf_mmap__aio_munmap(struct perf_mmap *map)
+>>  {
+>> +	int i;
+>> +
+>> +	for (i = 0; i < map->aio.nr_cblocks; ++i) {
+>> +		if (map->aio.data[i])
+>> +			zfree(&map->aio.data[i]);
+>> +	}
+>>  	if (map->aio.data)
+>>  		zfree(&map->aio.data);
+>> +	if (map->aio.cblocks)
+>> +		zfree(&map->aio.cblocks);
+>> +	if (map->aio.aiocb)
+>> +		zfree(&map->aio.aiocb);
 > 
-> Why is that? Didn't previous commit query these?
+> There is no need to check for NULL before calling zfree(), as it is just
+> a wrapper for free that sets that variable to NULL after calling it.
 > 
->> +struct tpm_bank_list {
->> +	u16 alg_id;
->> +	u16 extend_size;
->> +	const u8 *extend_array;
->> +};
+> And free(NULL) is valid, just a noop to avoid having all those tests
+> before each call to free(). I'm making those plain zfree() and later
+> will do a sweep at removing other cases.
+
+Thank you.
+-Alexey
+
 > 
-> Naming is not good here. If this only for extending shouldn't that
-> be in the structs name?
-
-tpm_extend_input?
-
-Roberto
-
-
-> /Jarkko
+>>  }
+>>  
+>>  int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
 > 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
