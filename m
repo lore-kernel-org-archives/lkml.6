@@ -2,99 +2,131 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450B0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D446C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA43A20989
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:13:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA43A20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=robertabel.eu
+	by mail.kernel.org (Postfix) with ESMTP id E42BE20989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 23:17:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="QiL8Kc/s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42BE20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbeLFXNV (ORCPT
+        id S1726225AbeLFXR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 18:13:21 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:46455 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbeLFXNV (ORCPT
+        Thu, 6 Dec 2018 18:17:57 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44088 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeLFXR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 18:13:21 -0500
-Received: from [192.168.178.21] (unknown [5.63.58.132])
-        by mxf98a.netcup.net (Postfix) with ESMTPSA id 5A0DF140EED;
-        Fri,  7 Dec 2018 00:13:18 +0100 (CET)
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 5.63.58.132) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Received-SPF: pass (mxf98a: connection is authenticated)
-Subject: Re: [PATCH] auxdisplay: charlcd: fix x/y command parsing
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Willy Tarreau <w@1wt.eu>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20181205135247.7964-1-mans@mansr.com>
- <CANiq72=Xg--8vG0+JLsPykOUfXpo89R2H-pBLuMROnQjMui7qA@mail.gmail.com>
- <yw1xr2evkg8t.fsf@mansr.com>
- <CANiq72keqco3F=8YDHFqoeBRFsrs1Cbd1aF1owf90Hbncv40mA@mail.gmail.com>
-From:   Robert Abel <rabel@robertabel.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rabel@robertabel.eu; prefer-encrypt=mutual; keydata=
- xsBNBFuld24BCACo/2iGEWd0080a1KqLfB2AYsRzA/86Yx64XNOynZWKk+ToSzDxmEtgUq3u
- By7wZNpIRVeijJ/DvV2Bk2PVAyUMQrQx85rOX+uLW9+WmXgyiO5o+KN6GZDamJu2nDTnvn4z
- Nqowt/tlXMzt+QSL5ypa76AIh8o7QmoV0JpfnxD9NlLX/ysiYXZD1mFi0B8Ef9i22XIE+kuj
- hx03vmNvmKKjr6ajAN3lX3o6ftC2J3BMXl6BiISeO+FkKKbHfMwP4fz70ezrNhD5EdKJZFHe
- FyVQSThR5D1Yxhw4xWy/bQFqlJ96ulfXx5wYNdVck1Vftf5LnvRzrZgKNZU0zzIhMfvBABEB
- AAHNIVJvYmVydCBBYmVsIDxyYWJlbEByb2JlcnRhYmVsLmV1PsLAlAQTAQgAPhYhBAPU/UOS
- MYeSZeDf9jncurJ4JrbIBQJbpXduAhsDBQkDwmcABQsJCAcCBhUICQoLAgQWAgMBAh4BAheA
- AAoJEDncurJ4JrbI2oIIAIpEXpKW3L3lfZ71QxRp4XiXh+s3QqnMIYlXMNbd/A/ZU+70ulDs
- MnnNUeyzjbx4glUDIfAQ/x3tAJyl3Gr6GJcfCumJG/cVu5XYv48CO52qGLVtJsuc75D+Qu41
- pt6r6jdD0y2bVmTRT2bUtZR1kh0gKy/dL+4INiG38JDkLl/JemErLt9GOTfgJGFSdxjMjsuP
- wZmSPVoc8o+xOUBmUxrEICanaK5Hh2imctpAPkqCCWQKOGF9wW/DfdKdQWER4BT4Y/afq1rC
- Z74g/BN3sKnPSoemfvxP6I+PHJn+nXVm9RX7qcHv2Yg3x2MO5Fz1dZ18Rg0w51pVmjBwaCtx
- R5nOwE0EW6V3bgEIAKgY410eN1ERCBNf3j6Kzpm+OiZCELJf8pXGMxe+hJWZjDZd9gsk5PgX
- H4CTk3fBM+Q3ke1XbqhXvf08ynM/hIvl4mkvSHT0G6tHbKcm1jSantj4gloZd5sjcnire2Gs
- bFt6u9BJdh+qJki981O3YqppYGPuXx770NkP6AL9buAxRqMtPv55dHii4LOKUIrOLn6Z427c
- 9lzZAVtG6a5HREtDg+M35QwkGkubB1onn9mRBB2Dr/2sr73htU8cRQCQ6kZPILuV3nHMmlUr
- XaEdHyvufv1YEAWQdg08+Pig1ZK57zlGO4WwWUAUuT/9iQm1qzMLP2683OoWbCihbjtYGskA
- EQEAAcLAfAQYAQgAJhYhBAPU/UOSMYeSZeDf9jncurJ4JrbIBQJbpXduAhsMBQkDwmcAAAoJ
- EDncurJ4JrbI/boH/2AzoE6EfGEwkMHMTjH5lmarhDTkg9EQNwi3orH2836RYPlO1geOrItm
- rM9b/lX5OXrE/K24lvxviVV8EaMN9EhEuCyoo6tnv+pUni3U2qWu3WUfAIMtkKlZspa4sO4Z
- slCvBwZtNTb2Al6Rs/knPXnV8mcQ/gMnd99feaIRL7FvsDvlCqIh+B0785igWYQ9VsGUuDXr
- Dmhm/j1LMoAQS4+31+lARM4sX7pdBnlSp0OGHj7vzTMirAjGAAr/Kh7BgcfRtin7n9rAMenu
- 9h1RQsQoayamC18CP2SQIZHbbiquUttmrvj7tkJAI2Y7bWqgfmBHHhNsVslYkpd4wYV62uc=
-Message-ID: <05e86c46-8d31-f922-9a34-fd6690cc1f77@robertabel.eu>
-Date:   Fri, 7 Dec 2018 00:13:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 6 Dec 2018 18:17:56 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so913372pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 15:17:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7PMWavZbLNzKGrSvcCIxdUykqi3Rc8HSIZluMpdm7ig=;
+        b=QiL8Kc/s4ryVBg/laEHpgX4Y5pSROL1RhPmujbfG0gsXSSzduG9+4oM2gIPmwbg+Lt
+         V4xutEe7J88+mD6wurQqGkXKYOwwzzXeRBaCW6m+t7+p8wA3C/EVAqzP61tiSs7RLPlE
+         1qnNu0MhiABJpRaa7WWKWAtmrT3cy2GJghDMOFhUiIOoQF9IrS21It16vFDSbCC4Wnt5
+         qqyKhYrXs4otukqna6wPd4shlT7x1wE6Z3NJBT0oXzY9n2tzLmmLFDx1NZEFepbaICWg
+         SzWT3jMcp1bU6xGXexO5gmIOVjo8Q4GZaUpXSgoHppKD+a5ZquK2bLmsW42RowwLiICg
+         tTHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7PMWavZbLNzKGrSvcCIxdUykqi3Rc8HSIZluMpdm7ig=;
+        b=XJaMyqvXl+tfgyzH2CbV3ZWJJjtWbKQWzqg/5qoVZRH26npRZ4oiFOMYtmxBY9+jm9
+         1zlCR/cgoi1HrpMiFd/gRePDlNIcAk9sNAppDnGOs+7GgStIl5YQg4RUpV9pmNCIne4J
+         nhyqGh8M/i8ONezfIiGcaVW3XPC2rbNerL3Khc71h9aVGn25vN1Z03df776ivM4Iq+It
+         ev+KkecSjpvl3NJH+QaiVMcVAcvs1JN7xnfDKpeEG8Gt+8My+lh35rOZ04yo0/3sGpNu
+         BUqDEoNDE4kMykaEwR+TfULmO2zjGwi0MR0FSxSGk5wuFuVGJhOKxorn1YkkX2xFnZKp
+         CKVw==
+X-Gm-Message-State: AA+aEWZUQRuThRZFqge+WAuEMBPH48qVgDkfNuN72vogdOEfbBjQ5hEu
+        l37V6ozdqUgpbdQTY3QnKiIHPw==
+X-Google-Smtp-Source: AFSGD/VdEgu/6mmIHPmxwI6i3Wrs8Tru3jy2BYn/XOmH6SFeSM1phw1Atj1ySzxTPrE7IumCTWhwsA==
+X-Received: by 2002:a62:68c5:: with SMTP id d188mr31585464pfc.194.1544138275526;
+        Thu, 06 Dec 2018 15:17:55 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:b824:a031:b50e:f401])
+        by smtp.gmail.com with ESMTPSA id s4sm1353483pgp.13.2018.12.06.15.17.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Dec 2018 15:17:54 -0800 (PST)
+Date:   Fri, 7 Dec 2018 00:17:45 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luto@kernel.org, arnd@arndb.de, serge@hallyn.com, jannh@google.com,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        keescook@chromium.org, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+Message-ID: <20181206231742.xxi4ghn24z4h2qki@brauner.io>
+References: <20181206121858.12215-1-christian@brauner.io>
+ <87sgzahf7k.fsf@xmission.com>
+ <D372C766-572C-4897-8F02-2FD0E72CCFAC@brauner.io>
+ <875zw6bh2z.fsf@xmission.com>
+ <20181206193017.wpxls5p3zgjd6rv2@brauner.io>
+ <871s6u9z6u.fsf@xmission.com>
+ <20181206213152.gvci7ijr3dokew7w@brauner.io>
+ <87o99y72gi.fsf@xmission.com>
+ <20181206223948.gyfdtkgbhtozmpsp@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <CANiq72keqco3F=8YDHFqoeBRFsrs1Cbd1aF1owf90Hbncv40mA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <20181206231318.8608.94999@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+Content-Disposition: inline
+In-Reply-To: <20181206223948.gyfdtkgbhtozmpsp@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miguel,
+On Thu, Dec 06, 2018 at 11:39:48PM +0100, Christian Brauner wrote:
+> On Thu, Dec 06, 2018 at 03:46:53PM -0600, Eric W. Biederman wrote:
+> > Christian Brauner <christian@brauner.io> writes:
+> > 
+> > >> Your intention is to add the thread case to support pthreads once the
+> > >> process case is sorted out.  So this is something that needs to be made
+> > >> clear.  Did I miss how you plan to handle threads?
+> > >
+> > > Yeah, maybe you missed it in the commit message [2] which is based on a
+> > > discussion with Andy [3] and Arnd [4]:
+> > 
+> > Looking at your references I haven't missed it.  You are not deciding
+> > anything as of yet to keep it simple.  Except you are returning
+> > EOPNOTSUPP.  You are very much intending to do something.
+> 
+> That was clear all along and was pointed at every occassion in the
+> threads. I even went through the hazzle to give you all of the
+> references when there's lore.kernel.org.
+> 
+> > 
+> > Decide.  Do you use the flags parameter or is the width of the
+> > target depending on the flags.
 
-On 05 Dec 2018 17:47, Miguel Ojeda wrote:> Hi Mans,
->
-> [CC'ing a few people involved previously on this]
+Ok, let's try to be constructive. I understand the general concern for
+the future so let's put a contract into the commit message stating that
+the width of the target aka *what is signaled* will be based on a flag
+parameter if we ever extend it:
 
-Thanks for CC'ing me!
+taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PGID);
+taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_TID);
 
-On 06 Dec 2018 11:06, Miguel Ojeda wrote [to Mans Rullgard]:
-> Are you able to test this?
+with the current default being
 
-It's unfortunate that my original comment got ignored back when the breaking patch was submitted.
-Nevertheless, if somebody posts a patch, I'm happy to test.
+taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PID);
 
-Regards,
+This seems to me the cleanest solution as we only use one type of file
+descriptor. Can everyone be on board with this? If so I'm going to send
+out a new version of the patch.
 
-Robert
+Christian
