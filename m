@@ -2,130 +2,326 @@ Return-Path: <SRS0=GRxD=OP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDAFC04EB9
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9127C04EB8
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C70208E7
-	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975A820989
+	for <linux-kernel@archiver.kernel.org>; Thu,  6 Dec 2018 10:36:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="lbEovu95"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C70208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QzPbT1HU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975A820989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbeLFKfe (ORCPT
+        id S1729452AbeLFKgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:35:34 -0500
-Received: from mail-eopbgr30092.outbound.protection.outlook.com ([40.107.3.92]:18887
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728482AbeLFKfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:35:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jlWZ7/z5dGMbEHNWERKebWWOrSs0JhyAOkIy7C7D9A0=;
- b=lbEovu95FcbW/f/jjRrqgYMT0P5ct4F9gppS68XXM2KIji9mqfZ2bGjBx8NLK3qXG1cQU2JBbZWGhIiAS7uTp0RotJYzrbBaqCJbcq2inidOgZP1jjvWO8GgUEQYPNLaY6BA+jB/X/tGUz/78i4WdWnOaQulCUw43xlagHkZ6dI=
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
- VI1PR02MB4653.eurprd02.prod.outlook.com (20.178.12.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Thu, 6 Dec 2018 10:35:30 +0000
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39]) by VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::b:49a6:411a:6a39%3]) with mapi id 15.20.1361.022; Thu, 6 Dec 2018
- 10:35:30 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] dt-bindings: i2c: use correct vendor prefix for atmel's
- at24 EEPROMs
-Thread-Topic: [PATCH] dt-bindings: i2c: use correct vendor prefix for atmel's
- at24 EEPROMs
-Thread-Index: AQHUjUh8sEh+YGuiLU+VL8wgfhsF36VxhDyA
-Date:   Thu, 6 Dec 2018 10:35:30 +0000
-Message-ID: <1007451d-fc3c-fdc6-f814-014673e7f1f4@axentia.se>
-References: <20181206094550.18082-1-brgl@bgdev.pl>
-In-Reply-To: <20181206094550.18082-1-brgl@bgdev.pl>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR06CA0140.eurprd06.prod.outlook.com
- (2603:10a6:7:16::27) To VI1PR02MB5119.eurprd02.prod.outlook.com
- (2603:10a6:803:b7::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR02MB4653;6:tiGTrn4NK2Nx8LQuRq+SPneDxsDMe9AA4otEzwk8c8/+mHJNT492AH3HLpGeP/Kw+p5wEHbYd7ggMdIg9WjkM2LJG0R2oD38WOemf0GPc9lmSUuH/2GbapIYUgTmg22UGZmFrmOhZesHHWAzu/MFb2gaUjPGmeU7LAvIjAkOf+8H2n54cNtrZ0LJ+UkdmRAf+gWlQbg97EkbsJucMbMDxyM4sRCW+DKb6B4Wt/LVXb/+s7wkh7BOff09h6j3+7pHiWOdSCfxAa3g51n2lUQq0FuWeepLFZ9ik1yjGXIXr3nuQPAnAxQzmBKc+gw3TJmTCNrsZ7SMPv2y+PrYoNVMJ2S+eBS7xNcXGSGRwxlJrbHgg4XPWAREWZl5DlsvpCIlXFU3T8kZdCHUtOvAmAPusR4HwJXzr6N0FvBtRnsl+OVGQBqoZkmWJtFNUtkVjYw5mJ4wLKV0/CB5u+YzeOpE5w==;5:5sKE1tfF0jkcDgCT72gmpvkUqXPgS5Bu9/gCICYX9uIL5W2KV7skXcDAZ9/Jt4FjzjNdzvwi1s5b70XbaSnC//q+hQFTQXcwdy+SCeRNByCqJqC1B7EuCanyYc/0VerzObjAAvU3y8j8yQ2gfj8aawiyPVvBBlrYR9Lkrw9CFU8=;7:0Z2GepbATF+JqCct5O6aEPLWCHHlRUWtlxD3va6l3gmfXzEGC1OvyOHaPXZM+zBk1KhwSA7SYEaOjCFf6T2QdorjR7izZmXqth/qca87+uh2yNPXF2k0W2KTXuK+TuCm0dR/IPaRR6+HKOg6TjG+RQ==
-x-ms-office365-filtering-correlation-id: 103a7cfe-2668-4baa-c418-08d65b668b51
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB4653;
-x-ms-traffictypediagnostic: VI1PR02MB4653:
-x-microsoft-antispam-prvs: <VI1PR02MB4653ECA434D2099F27662C16BCA90@VI1PR02MB4653.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB4653;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB4653;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(366004)(346002)(136003)(376002)(396003)(199004)(189003)(97736004)(14454004)(6436002)(31696002)(5660300001)(229853002)(508600001)(6486002)(4326008)(65826007)(476003)(71200400001)(68736007)(86362001)(39060400002)(25786009)(54906003)(6246003)(2616005)(8676002)(71190400001)(58126008)(99286004)(110136005)(2906002)(53936002)(31686004)(11346002)(3846002)(446003)(6512007)(6116002)(256004)(305945005)(7736002)(76176011)(106356001)(386003)(6506007)(53546011)(65956001)(65806001)(66066001)(486006)(81166006)(36756003)(81156014)(52116002)(186003)(8936002)(26005)(102836004)(105586002)(316002)(74482002)(64126003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4653;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Yn+jG3Gk6/jMGBIxQcjD1FFC4vYm6DuyciMxwQLLl4FScytbwrbC3l+TO0qNM8IE00Shw3V26rmr3m+eT4wEOUMyUwclso7jwr6zqolfQVtjkvgpBa3JQDrH5WZNc/beF6AhKW3ZYzhf/M32N9VsBz/9suczrO9pe40WknNs39K+sbsKRkY+zw0LkrVh6/QTqawQWvga0BtpTlNv0bMVfqlN1kguaZ2lcvbc3dLYmjmaI45geNtuSZiK/Diy+mULdQEFC0ax/vmrcCKtA/ks8WYbHovnFaLGDANy/pCDWV4hPWWarYnqOqdyltIe1mtmXeaBeHBfi4iot+YVrDoJca+vY6eUuDvgxhEFXUcEWJI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F27C24BDDB32A04FA22DE18D12612688@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 05:36:24 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39891 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728842AbeLFKgX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 05:36:23 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h78so13979552vsi.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 02:36:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/YVN9DysgTqQ8iTepFkgqBGgAfx/B8fWmKdpkXm5J5g=;
+        b=QzPbT1HUgnGxjwx0oS4e7ehyqOJM/J245EgbXZvlvIWX1wLYkpSyWukssnM7dzPw+b
+         YHuH39u2x6kYiw9/XPXbBfBD9sZHKT+Lfb4vOUYj2BmtCvOI2hBjp/FRHUANWAZZ9lMg
+         WryAVjbjEb+v3RJMmspdJbcx7Fd2GdAelUzFgKfqCcF4kV/1BS2+JZ4uf9skguW/lfAN
+         LAMYdivZuJtSmLnFxLVuEpWhvhvcaEHVnURODeIWbfIxwANSpWiIiGseiVXfWRu+a79r
+         wRxtrbZxol7DuznivOS/XaLZooJKY92VpchzNC41p3m02NpnBB7t6uz8MUVsrta48cKi
+         NF/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/YVN9DysgTqQ8iTepFkgqBGgAfx/B8fWmKdpkXm5J5g=;
+        b=cKHDTyKVio0s3gM1ZBSSw7GUR7jtFXAT+P+OB6wSmWJi45LWPqLhC1sHHsl39IBAK5
+         UxncOtF1hW608B3YC9y9tq6FuIYRX3zfvCFWsqSZLF1P7Y35fgoE+8TaTYvz/3g1N89j
+         vI3MsyycsdyRXHPntmaJpEXor1ZNT8sDaq1zaJvfvlWj7uNEK7ua4Uvohtbp2hsikCxN
+         vFv/ahJ6wrtoSZqT/F/kHSvdoZuRkd5tdxRY1jk9eOSbKAsynWSYBTYib7+DJQdKz+Uv
+         f/kO07Vb8XchpO6ZY0ffFyW7FR4jsdLgELbuQxxO7QwcJEKof26jxevQ0h8Ns2GRVZAS
+         fetA==
+X-Gm-Message-State: AA+aEWZ7lJxU3UXnLjwakw1Oti+lzqS7EOPiY0ofkFKsugF4IMdfW5DD
+        75T3rXzvUu1RXd7y5MHXebZsR82AN177JRm7xnr7kzsPbuCRag==
+X-Google-Smtp-Source: AFSGD/UW0Dbv6hJz0jmF+sQAn+EHNBxdbYxnSkW2oKZgRGr6oFkC7cZ1aooVVHltd/dBNmXjw/YVZIGZ7pmsGcU7kI4=
+X-Received: by 2002:a67:44dc:: with SMTP id y89mr12103637vsf.4.1544092581349;
+ Thu, 06 Dec 2018 02:36:21 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 103a7cfe-2668-4baa-c418-08d65b668b51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 10:35:30.4139
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4653
+References: <000000000000311344057c4b6cc3@google.com>
+In-Reply-To: <000000000000311344057c4b6cc3@google.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 6 Dec 2018 11:36:08 +0100
+Message-ID: <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
+Subject: Re: KMSAN: kernel-infoleak in sctp_getsockopt
+To:     syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+Cc:     David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Networking <netdev@vger.kernel.org>, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: multipart/mixed; boundary="000000000000d08802057c581192"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMi0wNiAxMDo0NSwgQmFydG9zeiBHb2xhc3pld3NraSB3cm90ZToNCj4gVGhpcyBp
-cyBhIGZvbGxvdy11cCB0byBUaGllcnJ5J3MgcGF0Y2ggd2hpY2ggbWlzc2VkIGEgZmV3IG9jY3Vy
-ZW5jZXMuDQo+IA0KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNv
-bT4NCj4gU2lnbmVkLW9mZi1ieTogQmFydG9zeiBHb2xhc3pld3NraSA8YnJnbEBiZ2Rldi5wbD4N
-Cg0KQWNrZWQtYnk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+DQoNCldvbGZyYW0sIHlv
-dSBjYW4gdGFrZSB0aGlzIG9uZSBhcyB3ZWxsLCBvZiBjb3Vyc2UuDQoNCkNoZWVycywNClBldGVy
-DQoNCj4gLS0tDQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1h
-dDkxLnR4dCAgICAgICAgfCAyICstDQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvaTJjL2kyYy1tdXgtbHRjNDMwNi50eHQgfCAyICstDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDIg
-aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1hdDkxLnR4dCBiL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLWF0OTEudHh0DQo+IGluZGV4IGVmOTczYTAz
-NDNjNy4uYjdjZWMxN2MzZGFmIDEwMDY0NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvaTJjL2kyYy1hdDkxLnR4dA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1hdDkxLnR4dA0KPiBAQCAtMzMsNyArMzMsNyBAQCBpMmMw
-OiBpMmNAZmZmODQwMDAgew0KPiAgCWNsb2NrLWZyZXF1ZW5jeSA9IDw0MDAwMDA+Ow0KPiAgDQo+
-ICAJMjRjNTEyQDUwIHsNCj4gLQkJY29tcGF0aWJsZSA9ICIyNGM1MTIiOw0KPiArCQljb21wYXRp
-YmxlID0gImF0bWVsLDI0YzUxMiI7DQo+ICAJCXJlZyA9IDwweDUwPjsNCj4gIAkJcGFnZXNpemUg
-PSA8MTI4PjsNCj4gIAl9DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvaTJjL2kyYy1tdXgtbHRjNDMwNi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvaTJjL2kyYy1tdXgtbHRjNDMwNi50eHQNCj4gaW5kZXggYzY2MWI5MDgzZWM2
-Li44YjFlNDljZGNlM2YgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9pMmMvaTJjLW11eC1sdGM0MzA2LnR4dA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1tdXgtbHRjNDMwNi50eHQNCj4gQEAgLTU0LDcgKzU0
-LDcgQEAgRXhhbXBsZToNCj4gIAkJCXJlZyA9IDwxPjsNCj4gIA0KPiAgCQkJZWVwcm9tQDUwIHsN
-Cj4gLQkJCQljb21wYXRpYmxlID0gImF0LDI0YzAyIjsNCj4gKwkJCQljb21wYXRpYmxlID0gImF0
-bWVsLDI0YzAyIjsNCj4gIAkJCQlyZWcgPSA8MHg1MD47DQo+ICAJCQl9Ow0KPiAgCQl9Ow0KPiAN
-Cg0K
+--000000000000d08802057c581192
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Dec 5, 2018 at 8:31 PM syzbot
+<syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC_CSUM =
+o..
+> git tree:       https://github.com/google/kmsan.git/master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e84a4740000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D56b48b46dafe4=
+516
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dad5d327e6936a2e=
+284be
+> compiler:       clang version 8.0.0 (trunk 343298)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D103cd225400=
+000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit=
+:
+> Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+>
+> 8021q: adding VLAN 0 to HW filter on device team0
+> 8021q: adding VLAN 0 to HW filter on device team0
+> 8021q: adding VLAN 0 to HW filter on device team0
+> 8021q: adding VLAN 0 to HW filter on device team0
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:3=
+3
+> CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x32d/0x480 lib/dump_stack.c:113
+>   kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+>   kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+>   kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+>   _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+>   copy_to_user include/linux/uaccess.h:183 [inline]
+>   sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+>   sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+>   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+>   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+>   __do_sys_getsockopt net/socket.c:1950 [inline]
+>   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+>   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+>   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> RIP: 0033:0x457569
+> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f=
+7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
+> RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
+> RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
+> R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
+> R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
+>
+> Uninit was stored to memory at:
+>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+>   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+>   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+>   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+>   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+>   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+>   sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
+>   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+>   sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
+>   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+>   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+>   __do_sys_getsockopt net/socket.c:1950 [inline]
+>   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+>   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+>   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>
+> Uninit was stored to memory at:
+>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+>   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+>   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+>   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+>   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+>   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+>   sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
+>   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
+>   sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
+>   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+>   __sys_getsockopt+0x489/0x550 net/socket.c:1939
+>   __do_sys_getsockopt net/socket.c:1950 [inline]
+>   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+>   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+>   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>
+> Uninit was created at:
+>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+>   kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
+>   kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
+>   __kmalloc+0x14c/0x4d0 mm/slub.c:3825
+>   kmalloc include/linux/slab.h:551 [inline]
+>   sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
+>   notifier_call_chain kernel/notifier.c:93 [inline]
+>   __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
+>   atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
+>   inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:107
+>   ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
+>   inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
+>   inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
+>   rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
+>   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+>   rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+>   netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+>   netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+>   sock_sendmsg_nosec net/socket.c:621 [inline]
+>   sock_sendmsg net/socket.c:631 [inline]
+>   ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+>   __sys_sendmsg net/socket.c:2154 [inline]
+>   __do_sys_sendmsg net/socket.c:2163 [inline]
+>   __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+>   __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+>   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+>
+> Bytes 32-35 of 2100 are uninitialized
+> Memory access of size 2100 starts at ffff888185d8b000
+> Data copied to user address 0000000020001108
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+When a network device goes up and sctp_inetaddr_event() is called, it
+allocates a partially initialized struct sctp_sockaddr_entry to hold
+the newly created address.
+The attached reproducer can be then used to read up to 8 uninit bytes
+for each of the local addresses.
+I guess the devices aren't created so often that this can pose any
+security risk, but we probably still need to allocate this structure
+with __GFP_ZERO.
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/000000000000311344057c4b6cc3%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
+
+
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
+
+--000000000000d08802057c581192
+Content-Type: text/x-chdr; charset="US-ASCII"; name="dump_buf.h"
+Content-Disposition: attachment; filename="dump_buf.h"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jpcgtlxx0>
+X-Attachment-Id: f_jpcgtlxx0
+
+I2lmbmRlZiBEVU1QX0JVRl9ICiNkZWZpbmUgRFVNUF9CVUZfSAoKI2lmbmRlZiBEVU1QX01JTl9T
+VFJMRU4KI2RlZmluZSBEVU1QX01JTl9TVFJMRU4gMQojZW5kaWYKCiNpZm5kZWYgRFVNUF9QQVJB
+TExFTAojZGVmaW5lIERVTVBfUEFSQUxMRUwgMAojZW5kaWYKCiNpZm5kZWYgRFVNUF9QUklOVF9C
+VUZfQUREUgojZGVmaW5lIERVTVBfUFJJTlRfQlVGX0FERFIgMAojZW5kaWYKCiNpZm5kZWYgRFVN
+UF9QUklOVF9IRVgKI2RlZmluZSBEVU1QX1BSSU5UX0hFWCAwCiNlbmRpZgoKI2lmbmRlZiBEVU1Q
+X1BSSU5UX1NUUklORwojZGVmaW5lIERVTVBfUFJJTlRfU1RSSU5HIDAKI2VuZGlmCgojaWYgRFVN
+UF9QQVJBTExFTApwdGhyZWFkX211dGV4X3Qgb3V0X211dGV4ID0gUFRIUkVBRF9NVVRFWF9JTklU
+SUFMSVpFUjsKI2VuZGlmCgp2b2lkIGR1bXBfYnVmKHVuc2lnbmVkIGNoYXIgKmJ1ZiwgaW50IGxl
+bikgewogIGludCBpLCBueiA9IDA7CiAgZm9yIChpID0gMDsgaSA8IGxlbjsgaSsrKSB7CiAgICBp
+ZiAoYnVmW2ldKSB7CiAgICAgIG56ID0gMTsKICAgICAgYnJlYWs7CiAgICB9CiAgfQogIGlmICgh
+bnopIHsKICAgIC8vIFRoZSBidWZmZXIgaXMgZW1wdHkuCiAgICByZXR1cm47CiAgfSBlbHNlIHsK
+I2lmIERVTVBfUEFSQUxMRUwKICAgIHB0aHJlYWRfbXV0ZXhfbG9jaygmb3V0X211dGV4KTsKI2Vu
+ZGlmCiNpZiBEVU1QX1BSSU5UX0JVRl9BRERSCiAgICBmcHJpbnRmKHN0ZGVyciwgIm5vbmVtcHR5
+IGJ1ZmZlciBhdCAlcFxuIiwgYnVmKTsKI2VuZGlmCiNpZiBEVU1QX1BSSU5UX0hFWAogICAgZm9y
+IChpPTA7IGkgPCBsZW47IGkrKykgewogICAgICBpZiAoYnVmW2ldKSB7CiAgICAgICAgZnByaW50
+ZihzdGRlcnIsICJidWZbJWRdOiAleCAoJXApXG4iLCBpLCBidWZbaV0sICoodm9pZCoqKSZidWZb
+aV0pOwogICAgICB9CiAgICB9CiNlbmRpZiAvLyBEVU1QX1BSSU5UX0hFWAojaWYgRFVNUF9QQVJB
+TExFTAogICAgcHRocmVhZF9tdXRleF91bmxvY2soJm91dF9tdXRleCk7CiNlbmRpZgogIH0KI2lm
+IERVTVBfUEFSQUxMRUwKICBwdGhyZWFkX211dGV4X2xvY2soJm91dF9tdXRleCk7CiNlbmRpZgoj
+aWYgRFVNUF9QUklOVF9TVFJJTkcKICBmb3IgKGkgPSAwOyBpIDwgbGVuOyBpKyspIHsKICAgIGlm
+IChidWZbaV0pIHsKICAgICAgaW50IHN0cl9sZW4gPSBzdHJsZW4oJmJ1ZltpXSk7CiAgICAgIC8v
+IFNob3J0IHN0cmluZyBwaWVjZXMgYXJlIHRvbyBib3JpbmcuCiAgICAgIGlmIChzdHJfbGVuID49
+IERVTVBfTUlOX1NUUkxFTikgewogICAgICAgIHVuc2lnbmVkIGNoYXIgKmM7CiAgICAgICAgZm9y
+IChjID0gJmJ1ZltpXTsgYyA8ICZidWZbaSArIHN0cl9sZW5dOyBjKyspIHsKICAgICAgICAgIGlm
+ICgoKmMgPiAxMjcpIHx8ICgoKmMgPCAzMikgJiYgKCpjICE9IDEwKSAmJiAoKmMgIT0gMTMpKSkg
+IHsKICAgICAgICAgICAgKmMgPSAnICc7CiAgICAgICAgICAgIGNvbnRpbnVlOwogICAgICAgICAg
+fQogICAgICAgIH0KICAgICAgICAvLyBEdW1wIHRoZSBidWZmZXIuCiAgICAgICAgZnByaW50Zihz
+dGRlcnIsICIlc1xuIiwgJmJ1ZltpXSk7CiAgICAgIH0KICAgICAgaSArPSBzdHJfbGVuOwogICAg
+fQogIH0KI2VuZGlmIC8vIERVTVBfUFJJTlRfU1RSSU5HCiNpZiBEVU1QX1BBUkFMTEVMCiAgcHRo
+cmVhZF9tdXRleF91bmxvY2soJm91dF9tdXRleCk7CiNlbmRpZgp9CgojZW5kaWYK
+--000000000000d08802057c581192
+Content-Type: text/x-csrc; charset="US-ASCII"; name="getsockopt.c"
+Content-Disposition: attachment; filename="getsockopt.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jpcgttur1>
+X-Attachment-Id: f_jpcgttur1
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxwdGhyZWFkLmg+CiNpbmNsdWRlIDxzeXMvdHlw
+ZXMuaD4gICAgICAgICAgLyogU2VlIE5PVEVTICovCiNpbmNsdWRlIDxzeXMvc29ja2V0Lmg+CiNp
+bmNsdWRlIDx1bmlzdGQuaD4KCiNkZWZpbmUgRFVNUF9QQVJBTExFTCAxCiNkZWZpbmUgRFVNUF9Q
+UklOVF9CVUZfQUREUiAxCiNkZWZpbmUgRFVNUF9QUklOVF9TVFJJTkcgMQojZGVmaW5lIERVTVBf
+UFJJTlRfSEVYIDEKI2luY2x1ZGUgImR1bXBfYnVmLmgiCgp2b2lkICpzZXRzb2Nrb3B0X2ZuKHZv
+aWQgKmFyZykgewogIGludCBzb2NrID0gKGludClhcmc7CiAgc3RydWN0IHNvY2thZGRyIGFkZHI7
+CiAgbWVtc2V0KCZhZGRyLCAwLCBzaXplb2YoYWRkcikpOwogIGFkZHIuc2FfZmFtaWx5ID0gMjsK
+ICBhZGRyLnNhX2RhdGFbMl0gPSAweGFjOwogIGFkZHIuc2FfZGF0YVszXSA9IDB4MTQ7CiAgYWRk
+ci5zYV9kYXRhWzRdID0gMHgxNDsKICBzZXRzb2Nrb3B0KHNvY2ssIDB4ODQsIDB4NmUsICZhZGRy
+LCAweDEwKTsKfQoKI2RlZmluZSBCVUZMRU4gKDB4MmMyKQp2b2lkICpnZXRzb2Nrb3B0X2ZuKHZv
+aWQgKmFyZykgewogIGludCBzb2NrID0gKGludClhcmc7CiAgY2hhciBidWZbQlVGTEVOXTsKICBt
+ZW1zZXQoYnVmLCAwLCBCVUZMRU4pOwogIGludCBzb2NrbGVuID0gQlVGTEVOOwogIGdldHNvY2tv
+cHQoc29jaywgMHg4NCwgLypTQ1RQX0dFVF9MT0NBTF9BRERSUyovMHg2ZCwgYnVmLCAmc29ja2xl
+bik7CiAgZHVtcF9idWYoJihidWZbOF0pLCAzMik7Cn0KCnZvaWQgZG9fd29yayhpbnQgc29jaykg
+ewogIHB0aHJlYWRfdCB0MSwgdDI7CiAgZm9yIChpbnQgaSA9IDA7IGkgPCAxMDsgaSsrKSB7CiAg
+ICBwdGhyZWFkX2NyZWF0ZSgmdDEsIE5VTEwsIGdldHNvY2tvcHRfZm4sICh2b2lkKilzb2NrKTsK
+ICAgIHB0aHJlYWRfY3JlYXRlKCZ0MiwgTlVMTCwgc2V0c29ja29wdF9mbiwgKHZvaWQqKXNvY2sp
+OwogICAgdXNsZWVwKDEwMCk7CiAgfQp9CgppbnQgbWFpbihpbnQgYXJnYywgY2hhciAqYXJndltd
+KSB7CiAgaW50IHJlczsKICBpbnQgcGlkID0gZm9yaygpOwogIGlmIChwaWQgPT0gMCkgewogICAg
+aW50IHNvY2sgPSBzb2NrZXQoMHgyLCAweDEsIDB4ODQpOwogICAgZG9fd29yayhzb2NrKTsKICB9
+CiAgc2xlZXAoMTApOwogIHJldHVybiAwOwp9Cg==
+--000000000000d08802057c581192--
