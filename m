@@ -2,101 +2,99 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E408C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054C6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D149120837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544225857;
-	bh=QPWxlUqIFKil7uRgi7iwOcxWfYELahr2nEgxqn7nMns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DoFaf4zm0IVytqZmtkb2IY/kgJkUgkEeSHHgw9+Fsg6lwVAEEcqLuvBG5E9CJ29jO
-	 rDk5xYqhIDx1q7vSpJPLofgMHlgj6bmDGdYRSvtHrZWPj7YjwVa1m8bkfQskNMSqDe
-	 g6Ol1N7XbH75rgq9IE10F1nSU0i8CbSwZrNo7TiM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D149120837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BC81E20837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:38:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rLz8kWiM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC81E20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbeLGXhg (ORCPT
+        id S1726153AbeLGXiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:37:36 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45961 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeLGXhg (ORCPT
+        Fri, 7 Dec 2018 18:38:12 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35988 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbeLGXiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:37:36 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y1so2979232oie.12;
-        Fri, 07 Dec 2018 15:37:35 -0800 (PST)
+        Fri, 7 Dec 2018 18:38:12 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so2502349plo.3;
+        Fri, 07 Dec 2018 15:38:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SiXxp0h6CEld/uvb8BvcRVxTXYK178nEP3kg12UX8Ps=;
+        b=rLz8kWiMWSjiEBcZw4gk1njS+E14bGtgF3ObyMNN1hFFnkgaGEaXqQ0xx/Sg1siSo7
+         an+BFrbCKp4fXJDcJVT+0kAIYFJxsffTpFA2o89I70SCsgJTnrKGDGLShMDU0hSNjg4+
+         ZmKWiYjB3+CWd9ObKV5/wS8PPDnfnUv56y7hmJEZU8Jkbu1NKal5FaTB6fdw5bu+U6H1
+         KEnoVPfEmH1owMsC72L7k3osgElq5gKtHA9QE8rNmcAwJJerM1Rote7yGPQh53p+6rm1
+         fzoZZiKKwxGOVNTg8027fmzReF4kfB6GtJIko45I4pDDqEwqzeYpCi08dnyrenyJXpRa
+         LaQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Rrd7MDVTnaV4Z0GM+C9S5z4a3W+VtssK9ylligjK7Ck=;
-        b=PNRsFkR3vAjBLN0Ts4tQNM8pPbdtVUWiGwWw1Q3RgC9FPPZvj0JI43ARshFyySSThl
-         SIlFNMiZ2r+W9h0XdhgPPnhfXuI9Vcn0CpM+GGd5K2n5HjuGPN/J14b678FHsqfUBhu8
-         GAyQKTH8xTwg5eQ3C/lJ9nw2kMA1V4sMS5kOhthkJduRlMBnLGiUri4Cx+wzGBsGW5G9
-         Pxk9IX1xE9amIekEABV2jQQYoBVre3LMq8C/eRQgb+z+d4/jz2D5MyL2Rs49jUeiFFx4
-         1YVhuUh1PmCzzxjD4JE481xsdc3OyqK0rYbkdgAdyhu81fW3kwRQpBqxjJLIh/D5wu83
-         i+zQ==
-X-Gm-Message-State: AA+aEWZ7g8FLN/P8URD8fF4DBE1++u6lKz+qiZVxXFuTs+jZ/96hn4aW
-        7eYWwA+3cYHUPPXAH/wlLQ==
-X-Google-Smtp-Source: AFSGD/VxWSy0obDKSoJESNkwqfc0jgIAk85MGT+AMYk+elUSh1k4SvPZB5iLvA2t7xFW+8mMysEkpg==
-X-Received: by 2002:aca:aa81:: with SMTP id t123mr2567075oie.218.1544225854073;
-        Fri, 07 Dec 2018 15:37:34 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t201sm2264800oie.37.2018.12.07.15.37.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 15:37:33 -0800 (PST)
-Date:   Fri, 7 Dec 2018 17:37:32 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com, afaerber@suse.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        amit.kucheria@linaro.org, linus.walleij@linaro.org,
-        zhao_steven@263.net, overseas.sales@unisoc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 02/15] dt-bindings: arm: Document RDA8810PL and
- reference boards
-Message-ID: <20181207233732.GA12638@bogus>
-References: <20181128135106.9255-1-manivannan.sadhasivam@linaro.org>
- <20181128135106.9255-3-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SiXxp0h6CEld/uvb8BvcRVxTXYK178nEP3kg12UX8Ps=;
+        b=OT2VnzVedf0sm8ITPrsO93YI+8cOQLkhkWyHwVONp3Nr++xs6k1yKh6JeacHKFA7NI
+         NkDNNqoCPlhqB1IqIqB3cyE+1cOg1stogzOds3z8INbDZpo10PlEdOZm3r3PFo5BKZU3
+         J290BEzTFEVO+pvSlFQnJA45OtnBvXBrdARrbHKMkOtctCahZT3eBPPslJ0+u5o5QDol
+         IGJVsqk+vZofheDwgKSB8jp3tcpGWaeRLD+Im5BYd0cbMxEcWCeeZFKorCnq8zaHsH7Q
+         KDswTzHwTcj74rk6YPuMiNj15Ofmd+lvCzk0j7Rm/tqZPN0sd7P8u9q1XwmPYTuBu0Q/
+         rUXg==
+X-Gm-Message-State: AA+aEWZcMCV9X/ZY9BF27LkrNAZ2iSKYMYXoV5y20d5p+h3wCGGRXLTD
+        5Z4EWpt8M00i8I65PF93XA8=
+X-Google-Smtp-Source: AFSGD/VB/LmAgi++y3m7WZw9Ue1c/+CXS1Wpera2noRTiQCTm6TywOTskvgxqrBAKRTHZiLSA0t3Iw==
+X-Received: by 2002:a17:902:45:: with SMTP id 63mr3806171pla.272.1544225890754;
+        Fri, 07 Dec 2018 15:38:10 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h128sm4697717pgc.15.2018.12.07.15.38.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 15:38:09 -0800 (PST)
+Date:   Fri, 7 Dec 2018 15:38:08 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+Message-ID: <20181207233808.GA30285@roeck-us.net>
+References: <20181206143011.174892052@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181128135106.9255-3-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Nov 2018 19:20:53 +0530, Manivannan Sadhasivam wrote:
-> From: Andreas Färber <afaerber@suse.de>
+On Thu, Dec 06, 2018 at 03:37:59PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.144 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Add bindings for RDA Micro RDA8810PL SoC and below reference boards:
-> 
-> 1. Orange Pi 2G-IoT - http://www.orangepi.org/OrangePi2GIOT/
-> 2. Orange Pi i96 - https://www.96boards.org/product/orangepi-i96/
-> 
-> Cc: overseas.sales@unisoc.com
-> Cc: zhao_steven@263.net
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/rda.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/rda.txt
+> Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+> Anything received after that time might be too late.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+For v4.9.143-103-g2eb2c353eec4:
+
+Build results:
+	total: 171 pass: 171 fail: 0
+Qemu test results:
+	total: 311 pass: 311 fail: 0
+
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
