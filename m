@@ -2,288 +2,127 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BF0C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC1C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A023A20645
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A023A20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id A282920989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gQxdlhTK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A282920989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbeLGKB5 (ORCPT
+        id S1726081AbeLGKCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:01:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39799 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLGKB4 (ORCPT
+        Fri, 7 Dec 2018 05:02:16 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:21801 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbeLGKCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:01:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n18so2585124lfh.6;
-        Fri, 07 Dec 2018 02:01:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=o8k2273110BnODQykBaLlzXPM5poh1m/c+9LrfSR9gE=;
-        b=A4FIp9OEGCfNlSHCHY2IiAoEV2w5lJHW3pGsJxJmKjtZ38h9iiWXMmdQHZdU/6BWP/
-         xpT5J132gqKhLwaAalykXbCV4dqI6L1W/2hTTTCNEFHMHPXaTeyR+GebjQxgq/9tzWyE
-         nt7TQjE8WMAIW127SFNTBzzgsTjwbCElBlmQD1/HUxdSin11buM8w+5ijaueIOPiL+13
-         1LWFyNgHtICS8gnJSF4S7h5ab6oBqXhv5xxoArZ02iNIg2wqvPLlEEq9SoKAbOkN6qM1
-         jxmF7eUrfACUOUoZSaqiouy42zEkm2tppv7oUvKFq2dZ7Mk4onzP5+/G+rsqbUaI0vQ3
-         5WcA==
-X-Gm-Message-State: AA+aEWYVL61oWlit20Ohz+uWsdKvcvYpenj2Mvu8Y8vX+kyUdu+qPDMA
-        sMfeH6rrW4WOb4bmbEciXmU=
-X-Google-Smtp-Source: AFSGD/VTx01TJSSUwqGrVCigO7kAUDBjrUMEZxGq8/itfgfEJeufOKZWL+FwlNQrk98PwaxHzte2TQ==
-X-Received: by 2002:a19:2755:: with SMTP id n82mr881359lfn.94.1544176913879;
-        Fri, 07 Dec 2018 02:01:53 -0800 (PST)
-Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm489589ljh.59.2018.12.07.02.01.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 02:01:53 -0800 (PST)
-Date:   Fri, 7 Dec 2018 12:01:44 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v7] clk: bd718x7: Initial support for ROHM bd71837/bd71847
- PMIC clock
-Message-ID: <20181207100144.GA21411@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 7 Dec 2018 05:02:16 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181207100212epoutp0238fe060b13e7c9a710e2a1541cddbe8f~uBL0M4Wa-0948309483epoutp02D;
+        Fri,  7 Dec 2018 10:02:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181207100212epoutp0238fe060b13e7c9a710e2a1541cddbe8f~uBL0M4Wa-0948309483epoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1544176932;
+        bh=rZKQ1M5S5j5L6GvVcrpiuC9wN7ZRU6c8T9VTe4VUg1I=;
+        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=gQxdlhTKYqRzr//2ucTW1HBT3na4fFwDJUUAsJQVt4cLuNNM9L19HFe95P3UhYzy+
+         y2I2weMZdEtOIvmAyBz7mMOfQWbvSbfOhBwR9j0hEJOmPcj63j3XIBL1RvMK1XYUIn
+         cLBOl9n0rhhBBE5bJm1QH0NF7pMTWTThTvi6bzhQ=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181207100211epcas1p3e38405e80fb4cf89f5ede22dbcd24ff5~uBLz5eL5C1074310743epcas1p3D;
+        Fri,  7 Dec 2018 10:02:11 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        ED.C3.04058.3254A0C5; Fri,  7 Dec 2018 19:02:11 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181207100211epcas1p2caa3a1da5152bd7c1476d795e788e776~uBLzoQwSg2495024950epcas1p2F;
+        Fri,  7 Dec 2018 10:02:11 +0000 (GMT)
+X-AuditID: b6c32a35-e37ff70000000fda-e4-5c0a4523b456
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 85.65.03601.3254A0C5; Fri,  7 Dec
+        2018 19:02:11 +0900 (KST)
+Received: from [106.116.147.40] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PJD009RX2JI0B40@mmp2.samsung.com>; Fri, 07 Dec 2018 19:02:11 +0900 (KST)
+Subject: Re: [PATCH v2] media: Use of_node_name_eq for node name comparisons
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benoit Parrot <bparrot@ti.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <63971417-f761-e891-f410-9efa26dd2c6d@samsung.com>
+Date:   Fri, 07 Dec 2018 11:02:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
+MIME-version: 1.0
+In-reply-to: <20181206193519.13367-1-robh@kernel.org>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7bCmrq6yK1eMwZkXphbf+ltZLOYfOcdq
+        Mbm1i82i//FrZovz5zewW5xtesNu0TlxCbvFpsfXWC0u75rDZtGzYSurxYzz+5gslm36w2Tx
+        7mWExf89O9gd+Dxmd8xk9di0qpPNY/OSeo++LasYPY7f2M7k8XmTnMfez79ZAtijuGxSUnMy
+        y1KL9O0SuDLOf9jKXnCbueLMmr1sDYy9zF2MnBwSAiYSb4/tYu1i5OIQEtjBKPHs+1QmCOc7
+        o0Tfo2dMMFVr9v9lh0hsYJS4Oa+VEcK5zyhxrvk6G0iVsICPxL5591hAbBEBRYnfbdPA5jIL
+        vGaWuNr3gR0kwSZgKNF7tI8RxOYVsJN4OPMB0CEcHCwCqhIbHySChEUFIiQ67q9mgygRlPgx
+        GWImp4CpxNarT8AuYhbQlHjxZRILhC0ucez+TUYIW15i85q3zCB7JQT62SWe3IPYKyHgInG5
+        9w2ULSzx6vgWdpC9EgLSEpeO2kKEqyV2be+G6u1glGi5sB0aSNYSh49fZIVYwCfx7msPK0Qv
+        r0RHmxBEiYfEkpuPoYEC1Hvxw37GCYyys5D8MAvJ3bOQ3D0Lyd0LGFlWMYqlFhTnpqcWGxYY
+        6hUn5haX5qXrJefnbmIEJyUt0x2MU875HGIU4GBU4uG94MQZI8SaWFZcmXuIUYKDWUmEV8mW
+        K0aINyWxsiq1KD++qDQntfgQozQHi5I47xOpudFCAumJJanZqakFqUUwWSYOTqkGxsh32Ufr
+        bh1b45zBknKY+6z2/V0HKmwWze1d47jHsHe2iM9/geLjxUn7UpJd2H5f+bdgjvTJ6WL8amla
+        Tn/X/j9VWDN1Z7r7v7dSMp17MsvTg3/c8przN/PRcztvo71Hfm659HRL9/mjuReO9rZNOWF4
+        INblwCYGzTzb0qrlM1O3n57scZyrJlSJpTgj0VCLuag4EQDyp+TERgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsVy+t9jQV1lV64Yg1VbZC2+9beyWMw/co7V
+        YnJrF5tF/+PXzBbnz29gtzjb9IbdonPiEnaLTY+vsVpc3jWHzaJnw1ZWixnn9zFZLNv0h8ni
+        3csIi/97drA78HnM7pjJ6rFpVSebx+Yl9R59W1Yxehy/sZ3J4/MmOY+9n3+zBLBHcdmkpOZk
+        lqUW6dslcGWc/7CVveA2c8WZNXvZGhh7mbsYOTkkBEwk1uz/y97FyMUhJLCOUWL9vF5WCOch
+        o8TO91eYQKqEBXwk9s27xwJiiwgoSvxumwZWxCzwllli0umzbCAJIaBRq98/A7PZBAwleo/2
+        MYLYvAJ2Eg9nPgBax8HBIqAqsfFBIkhYVCBC4uzLdVAlghI/JkPM5xQwldh69QkTSDmzgLrE
+        lCm5IGFmAXGJY/dvMkLY8hKb17xlnsAoMAtJ9yyEjllIOmYh6VjAyLKKUTK1oDg3PbfYqMAw
+        L7Vcrzgxt7g0L10vOT93EyMwsrYd1urbwXh/SfwhRgEORiUe3goHzhgh1sSy4srcQ4wSHMxK
+        IrxKtlwxQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2LFBJITyxJzU5NLUgtgskycXBKNTC2
+        XNx9qv/ZrP0v1fk4Lzw78f7slJU6+kyFZ+u2vQ62WtVwaa98GNcd9hvWqdaLU+JUPFMW+0lO
+        MvPU9Qy7o7k8I+z7rS2zjh7ZWn//S1bcrb4LWzMCRB8fj87tiWKtZdWqfT3rZBRbUnXlUaGT
+        pvsWZkTVaso8n8n/+2+k+crnJ/r/7Fj76JWhEktxRqKhFnNRcSIAjSqNMqgCAAA=
+X-CMS-MailID: 20181207100211epcas1p2caa3a1da5152bd7c1476d795e788e776
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20181207100211epcas1p2caa3a1da5152bd7c1476d795e788e776
+References: <20181206193519.13367-1-robh@kernel.org>
+        <CGME20181207100211epcas1p2caa3a1da5152bd7c1476d795e788e776@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM bd71837 and bd71847 contain 32768Hz clock gate. Support the clock
-using generic clock framework. Note, only bd71837 is tested but bd71847
-should be identical what comes to clk parts.
+On 12/6/18 20:35, Rob Herring wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Reviewed-by: Benoit Parrot <bparrot@ti.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> v2:
+> - Also convert tabs to spaces between the 'if' and '('
 
-This is a split from series
-https://lore.kernel.org/linux-clk/20181204114527.GC31204@localhost.localdomain/T/#t
-
-Change history:
-
-v7: (kept the series version number)
- - Patches 2, 3, 6, 7, 8 and 9 from v6 were already applied.
- - Patches 1, 4, and 5 will be provided as own series touching only clkdev
-   lookups.
- - the (already obsoleted) file name was removed from clk-bd718x7 driver
- - clkdev lookup registration was removed from clk-bd718x7 driver
-
-Changelog (for the whole series) v6
-- Drop 'devm_of_clk_add_parent_hw_provider'. Change
-  'devm_of_clk_add_hw_provider' to look the parent device node for
-  provider information if device's own node does not contain
-  #clock-cells - property.
-- Add kerneldoc in own patch.
-- Remove NULL checks from devres match function for clkdev releasing
-- Clean styling issues from clkdev.c
-
-Changelog (for the whole series) v5
-- Split v4 patch 1. Place clkdev stuff to patch 1 and clk provider to patch 2
-- Remove devm_clk_release_clkdev from devres.txt
-- Added kerneldoc for managed provider registrations.
-- Cleaned styling issues.
-
-Changelog (for whole series) v4
-- Add support for ROHM bd718x7 PMIC clock gate. Included in this patch
-  series because it depends on managed interfaces added in patch 1.
-
-Changelog (for whole series) v3
-Address issues spotted by Krzysztof Kozlowski
-- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
-- Fix indentiation for clk-max77686
-- Rest  of the patches are unchanged.
-
-Changelog (for whole series) v2
-Issue spotted by 0-Day test suite
-- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
-- patches 2-8 are unchanged.
-
-This patch series is based on clk-next
-
- drivers/clk/Kconfig       |   7 +++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd718x7.c | 123 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 drivers/clk/clk-bd718x7.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 81cdb4eaca07..2dc12bf75b1b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -283,6 +283,13 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD718XX
-+	tristate "Clock driver for ROHM BD718x7 PMIC"
-+	depends on MFD_ROHM_BD718XX
-+	help
-+	  This driver supports ROHM BD71837 and ROHM BD71847
-+	  PMICs clock gates.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 72be7a38cff1..a47430b387db 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-new file mode 100644
-index 000000000000..60422c72d142
---- /dev/null
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -0,0 +1,123 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/regmap.h>
-+
-+struct bd718xx_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	struct platform_device *pdev;
-+	struct bd718xx *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	int rval;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+
-+	if (rval)
-+		return rval;
-+
-+	return enabled & c->mask;
-+}
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd718xx_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd718xx *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd718xx-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	init.num_parents = 1;
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (!parent_clk) {
-+		dev_err(&pdev->dev, "No parent clk found\n");
-+		return -EINVAL;
-+	}
-+
-+	c->reg = BD718XX_REG_OUT32K;
-+	c->mask = BD718XX_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+				      "clock-output-names", 0, &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (rval) {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+		return rval;
-+	}
-+	rval = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get,
-+					   &c->hw);
-+	if (rval)
-+		dev_err(&pdev->dev, "adding clk provider failed\n");
-+
-+	return rval;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd718xx-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
-
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
