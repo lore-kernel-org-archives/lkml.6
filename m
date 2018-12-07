@@ -2,155 +2,165 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE6CC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA28C04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951AD2064D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB5092083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 02:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="REWLg46I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951AD2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQt8PwvR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5092083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbeLGCux (ORCPT
+        id S1725996AbeLGC5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 21:50:53 -0500
-Received: from mail-eopbgr80042.outbound.protection.outlook.com ([40.107.8.42]:26304
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726061AbeLGCun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 21:50:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e5Hb5h9V94px7odogKjNdwED38EDbw3OCPMR1IfFi8I=;
- b=REWLg46IHBzHMzuwiVQngTc8+t1islorFjLnJSJs166kVXAwRzzVe+lyTOTZ3xz5FU2cF4TfZ5rCefCqv6+FwF4JgYjBK//EoOR7F18Apev0AWnruSa3YkpeII+pVmA1owHo8t3DS+jhWqA9PjE72Bt8lLL2uXPM1lq6FW44PJQ=
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com (20.177.34.88) by
- AM6PR04MB4072.eurprd04.prod.outlook.com (52.135.167.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Fri, 7 Dec 2018 02:50:39 +0000
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::c518:be51:28b2:24c3]) by AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::c518:be51:28b2:24c3%5]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
- 02:50:39 +0000
-From:   Clark Wang <xiaoning.wang@nxp.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Clark Wang <xiaoning.wang@nxp.com>
-Subject: [PATCH V3 3/4] spi: lpspi: Let watermark change with send data length
-Thread-Topic: [PATCH V3 3/4] spi: lpspi: Let watermark change with send data
- length
-Thread-Index: AQHUjdeiAOXMLGxdRE6nL28AyZObZw==
-Date:   Fri, 7 Dec 2018 02:50:38 +0000
-Message-ID: <20181207024924.6315-4-xiaoning.wang@nxp.com>
-References: <20181207024924.6315-1-xiaoning.wang@nxp.com>
-In-Reply-To: <20181207024924.6315-1-xiaoning.wang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR0601CA0011.apcprd06.prod.outlook.com (2603:1096:3::21)
- To AM6PR04MB5016.eurprd04.prod.outlook.com (2603:10a6:20b:9::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaoning.wang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4072;6:mWdb8UAuygd5nAv4xAaIHq8bzvL5Mc4tUmKoDbUGnatCKtf9aE0pj5Y/7AXLEP+LbsTLeAFu4son4eFogycrpYZdARzYxXBuDMZ7qB2v+zeBjD8cTtuc/8ZH6x5wWoEbJ8SH9AWDypEWO3R0ZTXUtXbvOVplZQ1NugEwodTGrdf6NzL5olEe/zP8kTQm62EJ5SLUgnH2Vng8ktzSr/yf77ronRPLEIZQJtjVCLh3lCTiPfCTVpWR7n6Dk10OVcG3ZzKGJ4+ePM9vEavzPQhomxGpWd5MOfpZjfv7XfKdiY9hRMvb2e1huSsPBfKuhrnwQc3uWM1qxosDlkI7/a+9ZPLD8M2qQGbOJXQKd4rWMz7frHL/8guOd0xNw14h94OTNyyAYRr09fOV1Ic4WPkgncpvElYlIzv4K/qs7TwizRJzZcoqO4rdr9bhPxsWD2P/RJR0YiPx/z22doWNltLWBA==;5:L1sIUZmhRbfNOALB/4nekeJFS54HBMGuE5JcirB77yhFBZpXUkKbNN4oWPiNAROMtKGC/PLijO7suHhMyL6cnCboC7OsyP8NRc5y/h/nGXpHcZ8ki5SWU8pxw2uBLALuHaJsH5/vRtVfHRIXDwZc7nRqlAEKyN93eX0uN3vSoRE=;7:lOg22rLyE6vFbVo68dZ21ilsOB88PI24+XsbJHyzsDtYXD/89rSh3FbIWwpmHkwVWg/SnUgu3WmF3JCFfCpsZZTE16iGC1EFvasMJkQfVoR3lO9XSt6vXW9Kjw9bksaQ/O6f93r5lqzpqHOIYwks/A==
-x-ms-office365-filtering-correlation-id: bba12499-7812-44aa-4b5a-08d65beec521
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4072;
-x-ms-traffictypediagnostic: AM6PR04MB4072:
-x-microsoft-antispam-prvs: <AM6PR04MB4072450D84E09D2D7B6F5D63F3AA0@AM6PR04MB4072.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4072;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4072;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(376002)(39860400002)(396003)(189003)(54534003)(199004)(6486002)(1076002)(8676002)(316002)(76176011)(1730700003)(81156014)(81166006)(97736004)(54906003)(52116002)(2906002)(5640700003)(99286004)(68736007)(5660300001)(25786009)(66066001)(478600001)(106356001)(2351001)(3846002)(6916009)(105586002)(6116002)(6436002)(7736002)(11346002)(2616005)(476003)(446003)(305945005)(8936002)(486006)(26005)(4326008)(36756003)(53936002)(71190400001)(71200400001)(86362001)(256004)(6512007)(14454004)(186003)(102836004)(2501003)(386003)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4072;H:AM6PR04MB5016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xSsW1M8HR5saPfnQNyiSb4cfRebmhfAYhVBgNUo5P9tuWLlYP3pMXwStIz98jYAcArBAkwuXS5CANjkcbOe2qELcgNGE1QmqD3IuIJqOrh8zZODpDBpId+1w3b1yC4bODRSGOFXqL0/W6OO5Af3MGuL/vf9uVZUc3Du88m+FuS7zeF3qWCF5ZI6BJECWXRirGWBRlXdwFq531aTjCYSOugaTDvTCxIdsa8U1bL/ekh+ObS7XtbBoPk8Nzks9rt4C0KcXuDZNW4RV3IUIOW8+YcysL6QHDwk2IM27jxWk0f8xLBhNRgUfGsgjg+AHo6mx8y0rRWSi95ycWDrRtg/Av5t9oXo3Gi0zRAyfPiFRaTE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 6 Dec 2018 21:57:06 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43379 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLGC5G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 21:57:06 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so2501206eds.10
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 18:57:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TrMVb01cMJC6LzGuY4FwPTJac0sY3J83+QzgLObCMAE=;
+        b=KQt8PwvRcVOAG8sDx2kBWIPR4LBeRy8jenXgr4lD/qYSSKj42dy7apRNF4MYnDvdeL
+         Nq+5Lc9oAdLKhR7B2BmzbpCQc74lZqwCT1/8Aj4PcBKk2z+2d8041QFZBH4M8gJD7JCy
+         r58mrhAhhM3LMMMUC0fCBGw1WoQqJp/vWr++P7gVxkaypneTbi3Lim++VmqPJ5MFbKoT
+         q/AtssSOdpFd1SbCE3uDe5i3pxejqJEKzT0i7CT5VXDhFjxZm+sKxh3w9vhEN+06KM4q
+         mEYMMdbpyfnDKDHg/mcdaNpc0rFVrkqt4XzvzheJiSSZnCk7Npzcdqe/hK4ob9XaUVOj
+         Vgdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TrMVb01cMJC6LzGuY4FwPTJac0sY3J83+QzgLObCMAE=;
+        b=IUL0MVVDXZVfeThNx7uK0VK53Y8EOvE4JDulFmnN/UyHrM/vuaK1UFE/nJxMp/K40L
+         /ZdyAO7v7JNTbkvkLrMxOJJ+yLWE0GQ9ZI2ZIRdJCbKtfn6sGsEvUrv0qzofmmZpYL8G
+         1urtwU+f90Otu+n5Z2VVG7QGvfby8A1BJod2uIjwON41EhS31VG5kN4fOvtVAm0KYFEt
+         GGHPZLcolSIliYBP1q+O/v94ezkkMZFJE044x+xhhCeIWXPdlPbWJ1jsg4iQQjc2q3Ah
+         JlPGMgwOvh+DEpIGc3Y1qifur0Tkjw8UnmzBrnQToCH7NTBByqFEz6yxbS++cQUSk/ia
+         KXhg==
+X-Gm-Message-State: AA+aEWaWB6jshXVdPuSGsAp10LLmSOn8CYdh3L90E9l7GpYh84mzlqLl
+        wrgKozgy+HGbM3doQzCk8WsrtRTRttZISp4Rpw==
+X-Google-Smtp-Source: AFSGD/VBUwY78QY2hxG7tKm58RexXRY05XJ/tOwqutHBuaVlnA3J3Wr474/MYsoOmvyL4bQ7WjEfIk1rhjCWucqQ72o=
+X-Received: by 2002:a50:d2d6:: with SMTP id q22mr668893edg.121.1544151423509;
+ Thu, 06 Dec 2018 18:57:03 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bba12499-7812-44aa-4b5a-08d65beec521
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 02:50:38.9763
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4072
+References: <CAFgQCTv56drDBx-sTr6KdeQNKJnojG3g_a-k8wKe_q2y9w9NtA@mail.gmail.com>
+ <20181204085601.GC1286@dhcp22.suse.cz> <CAFgQCTuyKBZdwWG=fOECE6J8DbZJsErJOyXTrLT0Kog3ec7vhw@mail.gmail.com>
+ <20181205092148.GA1286@dhcp22.suse.cz> <CAFgQCTtj4m637tAzConCfeWQXSrWeNY-DLD5=f9-ZSmJMRe31Q@mail.gmail.com>
+ <186b1804-3b1e-340e-f73b-f3c7e69649f5@suse.cz> <CAFgQCTv5-jeqwRVkJuDHvv0vq6uCzfdV2ZmVAU3eUzn2w2ReEQ@mail.gmail.com>
+ <20181206082806.GB1286@dhcp22.suse.cz> <CAFgQCTsMdQSRFruZRGBuo30TjfiQ=sbrf9kUJAGgwN6uw+LsBw@mail.gmail.com>
+ <CAFgQCTv7ADVW3WvB0tuqpL1U2MFGADA113MUm6ZmVcgvqyBfTA@mail.gmail.com> <20181206121152.GH1286@dhcp22.suse.cz>
+In-Reply-To: <20181206121152.GH1286@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Fri, 7 Dec 2018 10:56:51 +0800
+Message-ID: <CAFgQCTuqn32_pZrLBDNvC_0Aepv2F7KF7rk2nAbxmYF45KfT2w@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     mhocko@kernel.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Configure watermark to change with the length of the sent data.
-Support LPSPI sending message shorter than tx/rxfifosize.
+On Thu, Dec 6, 2018 at 8:11 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 06-12-18 18:44:03, Pingfan Liu wrote:
+> > On Thu, Dec 6, 2018 at 6:03 PM Pingfan Liu <kernelfans@gmail.com> wrote:
+> [...]
+> > > Which commit is this patch applied on? I can not apply it on latest linux tree.
+> > >
+> > I applied it by manual, will see the test result. I think it should
+> > work since you instance all the node.
+> > But there are two things worth to consider:
+> > -1st. why x86 do not bring up all nodes by default, apparently it will
+> > be more simple by that way
+>
+> What do you mean? Why it didn't bring up before? Or do you see some
 
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
----
-Change log:
-V2/V3:
- - No change.
----
- drivers/spi/spi-fsl-lpspi.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Yes, this is what I mean. But maybe the author does not consider about
+the nr_cpus, otherwise, using:
++       for_each_node(node)
++               if (!node_online(node))
++                       init_memory_less_node(node);
+in init_cpu_to_node() is more simple.
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index cbf165e7bd17..08dcc3c22e88 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -89,6 +89,7 @@ struct fsl_lpspi_data {
- 	void (*rx)(struct fsl_lpspi_data *);
-=20
- 	u32 remain;
-+	u8 watermark;
- 	u8 txfifosize;
- 	u8 rxfifosize;
-=20
-@@ -235,7 +236,7 @@ static void fsl_lpspi_set_watermark(struct fsl_lpspi_da=
-ta *fsl_lpspi)
+> nodes not being brought up after this patch?
+>
+> > -2nd. there are other archs, do they obey the rules?
+>
+> I am afraid that each arch does its own initialization.
+
+Then it is arguable whether to fix this issue in memory core or let
+each archs to fix this issue. I check the powerpc code, it should also
+need a fix, it maybe the same in arm and mips ..
+ BTW, your patch can not work for normal bootup, and the kernel hang
+without any kernel message.
+I think it is due to the bug in the patch:
+                alloc_node_data(nid);
++               if (!end)
++                       init_memory_less_node(nid); //which calls
+alloc_node_data(nid) also.
+How about the following:
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index 1308f54..4dc497d 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -754,18 +754,23 @@ void __init init_cpu_to_node(void)
  {
- 	u32 temp;
-=20
--	temp =3D fsl_lpspi->txfifosize >> 1 | (fsl_lpspi->rxfifosize >> 1) << 16;
-+	temp =3D fsl_lpspi->watermark >> 1 | (fsl_lpspi->watermark >> 1) << 16;
-=20
- 	writel(temp, fsl_lpspi->base + IMX7ULP_FCR);
-=20
-@@ -261,7 +262,8 @@ static int fsl_lpspi_set_bitrate(struct fsl_lpspi_data =
-*fsl_lpspi)
- 	if (prescale =3D=3D 8 && scldiv >=3D 256)
- 		return -EINVAL;
-=20
--	writel(scldiv, fsl_lpspi->base + IMX7ULP_CCR);
-+	writel(scldiv | (scldiv << 8) | ((scldiv >> 1) << 16),
-+					fsl_lpspi->base + IMX7ULP_CCR);
-=20
- 	dev_dbg(fsl_lpspi->dev, "perclk=3D%d, speed=3D%d, prescale =3D%d, scldiv=
-=3D%d\n",
- 		perclk_rate, config.speed_hz, prescale, scldiv);
-@@ -329,6 +331,11 @@ static void fsl_lpspi_setup_transfer(struct spi_device=
- *spi,
- 		fsl_lpspi->tx =3D fsl_lpspi_buf_tx_u32;
- 	}
-=20
-+	if (t->len <=3D fsl_lpspi->txfifosize)
-+		fsl_lpspi->watermark =3D t->len;
-+	else
-+		fsl_lpspi->watermark =3D fsl_lpspi->txfifosize;
-+
- 	fsl_lpspi_config(fsl_lpspi);
- }
-=20
---=20
-2.17.1
+        int cpu;
+        u16 *cpu_to_apicid = early_per_cpu_ptr(x86_cpu_to_apicid);
++       int node, nr;
 
+        BUG_ON(cpu_to_apicid == NULL);
++       nr = cpumask_weight(cpu_possible_mask);
++
++       /* bring up all possible node, since dev->numa_node */
++       //should check acpi works for node possible,
++       for_each_node(node)
++               if (!node_online(node))
++                       init_memory_less_node(node);
+
+        for_each_possible_cpu(cpu) {
+-               int node = numa_cpu_node(cpu);
++               node = numa_cpu_node(cpu);
+
+                if (node == NUMA_NO_NODE)
+                        continue;
+
+-               if (!node_online(node))
+-                       init_memory_less_node(node);
+-
+                numa_set_node(cpu, node);
+        }
+ }
+
+Although it works, I hesitate about the idea, due to the semantic of
+online-node, does the online-node require either cpu or memory inside
+the node to be online?
+In a short word, the fix method should consider about the two factors:
+semantic of online-node and the effect on all archs
+
+Thanks,
+Pingfan
+
+> --
+> Michal Hocko
+> SUSE Labs
