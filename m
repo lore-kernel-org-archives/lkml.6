@@ -2,162 +2,86 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1BBC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B033C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 897742083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897742083D
+	by mail.kernel.org (Postfix) with ESMTP id 04AA42083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 11:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AA42083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbeLGLBm (ORCPT
+        id S1726065AbeLGLDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:01:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39870 "EHLO mx1.suse.de"
+        Fri, 7 Dec 2018 06:03:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40112 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725989AbeLGLBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:01:42 -0500
+        id S1725997AbeLGLDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 06:03:19 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6264EAFF8;
-        Fri,  7 Dec 2018 11:01:39 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 53C4BB004;
+        Fri,  7 Dec 2018 11:03:17 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 93DCD1E0D9D; Fri,  7 Dec 2018 12:01:38 +0100 (CET)
-Date:   Fri, 7 Dec 2018 12:01:38 +0100
+        id 0EF641E0D9D; Fri,  7 Dec 2018 12:03:17 +0100 (CET)
+Date:   Fri, 7 Dec 2018 12:03:17 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+Cc:     Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
+        david@fromorbit.com, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
-Subject: Re: [PATCH 3/4] filemap: drop the mmap_sem for all blocking
- operations
-Message-ID: <20181207110138.GE13008@quack2.suse.cz>
+Subject: Re: [PATCH 4/4] mm: use the cached page for filemap_fault
+Message-ID: <20181207110317.GF13008@quack2.suse.cz>
 References: <20181130195812.19536-1-josef@toxicpanda.com>
- <20181130195812.19536-4-josef@toxicpanda.com>
+ <20181130195812.19536-5-josef@toxicpanda.com>
+ <20181204145034.4b69bdea36506be45946f8c9@linux-foundation.org>
+ <20181205145808.kzsro4a7vqaxx3cu@MacBook-Pro-91.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181130195812.19536-4-josef@toxicpanda.com>
+In-Reply-To: <20181205145808.kzsro4a7vqaxx3cu@MacBook-Pro-91.local>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 30-11-18 14:58:11, Josef Bacik wrote:
-> Currently we only drop the mmap_sem if there is contention on the page
-> lock.  The idea is that we issue readahead and then go to lock the page
-> while it is under IO and we want to not hold the mmap_sem during the IO.
+On Wed 05-12-18 09:58:10, Josef Bacik wrote:
+> On Tue, Dec 04, 2018 at 02:50:34PM -0800, Andrew Morton wrote:
+> > On Fri, 30 Nov 2018 14:58:12 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
+> > 
+> > > If we drop the mmap_sem we have to redo the vma lookup which requires
+> > > redoing the fault handler.  Chances are we will just come back to the
+> > > same page, so save this page in our vmf->cached_page and reuse it in the
+> > > next loop through the fault handler.
+> > > 
+> > 
+> > Is this really worthwhile?  Rerunning the fault handler is rare (we
+> > hope) and a single pagecache lookup is fast.
+> > 
+> > Some performance testing results would be helpful here.  It's
+> > practically obligatory when claiming a performance improvement.
+> > 
+> > 
 > 
-> The problem with this is the assumption that the readahead does
-> anything.  In the case that the box is under extreme memory or IO
-> pressure we may end up not reading anything at all for readahead, which
-> means we will end up reading in the page under the mmap_sem.
+> Honestly the big thing is just not doing IO under the mmap_sem.  I had this
+> infrastructure originally for the mkwrite portion of these patches that I
+> dropped, because I was worried about the page being messed with after we did all
+> the mkwrite work.  However since I'm not doing that anymore there's less of a
+> need for it.  I have no performance numbers for this, just seemed like a good
+> idea since we are likely to just have the page again, and this keeps us from
+> evicting the page right away and causing more thrashing.
 > 
-> Instead rework filemap fault path to drop the mmap sem at any point that
-> we may do IO or block for an extended period of time.  This includes
-> while issuing readahead, locking the page, or needing to call ->readpage
-> because readahead did not occur.  Then once we have a fully uptodate
-> page we can return with VM_FAULT_RETRY and come back again to find our
-> nicely in-cache page that was gotten outside of the mmap_sem.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  mm/filemap.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 93 insertions(+), 20 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index f068712c2525..5e76b24b2a0f 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2304,28 +2304,44 @@ EXPORT_SYMBOL(generic_file_read_iter);
->  
->  #ifdef CONFIG_MMU
->  #define MMAP_LOTSAMISS  (100)
-> +static struct file *maybe_unlock_mmap_for_io(struct file *fpin,
-> +					     struct vm_area_struct *vma,
-> +					     int flags)
-> +{
-> +	if (fpin)
-> +		return fpin;
-> +	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
-> +	    FAULT_FLAG_ALLOW_RETRY) {
-> +		fpin = get_file(vma->vm_file);
-> +		up_read(&vma->vm_mm->mmap_sem);
-> +	}
-> +	return fpin;
-> +}
->  
->  /*
->   * Synchronous readahead happens when we don't even find
->   * a page in the page cache at all.
->   */
-> -static void do_sync_mmap_readahead(struct vm_area_struct *vma,
-> -				   struct file_ra_state *ra,
-> -				   struct file *file,
-> -				   pgoff_t offset)
-> +static struct file *do_sync_mmap_readahead(struct vm_area_struct *vma,
-> +					   struct file_ra_state *ra,
-> +					   struct file *file,
-> +					   pgoff_t offset,
-> +					   int flags)
->  {
+> I'll try and set something up to see if there's a difference.  If there's no
+> difference do you want me to drop this?  Thanks,
 
-IMO it would be nicer to pass vmf here at this point. Everything this
-function needs is there and the number of arguments is already quite big.
-But I don't insist.
-
->  /*
->   * Asynchronous readahead happens when we find the page and PG_readahead,
->   * so we want to possibly extend the readahead further..
->   */
-> -static void do_async_mmap_readahead(struct vm_area_struct *vma,
-> -				    struct file_ra_state *ra,
-> -				    struct file *file,
-> -				    struct page *page,
-> -				    pgoff_t offset)
-> +static struct file *do_async_mmap_readahead(struct vm_area_struct *vma,
-> +					    struct file_ra_state *ra,
-> +					    struct file *file,
-> +					    struct page *page,
-> +					    pgoff_t offset, int flags)
->  {
-
-The same here (except for 'page' which needs to be kept).
-
-> @@ -2433,9 +2458,32 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  			return vmf_error(-ENOMEM);
->  	}
->  
-> -	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
-> -		put_page(page);
-> -		return ret | VM_FAULT_RETRY;
-> +	/*
-> +	 * We are open-coding lock_page_or_retry here because we want to do the
-> +	 * readpage if necessary while the mmap_sem is dropped.  If there
-> +	 * happens to be a lock on the page but it wasn't being faulted in we'd
-> +	 * come back around without ALLOW_RETRY set and then have to do the IO
-> +	 * under the mmap_sem, which would be a bummer.
-> +	 */
-
-Hum, lock_page_or_retry() has two callers and you've just killed one. I
-think it would be better to modify the function to suit both callers rather
-than opencoding? Maybe something like lock_page_maybe_drop_mmap() which
-would unconditionally acquire the lock and return whether it has dropped
-mmap sem or not? Callers can then decide what to do.
-
-BTW I'm not sure this complication is really worth it. The "drop mmap_sem
-for IO" is never going to be 100% thing if nothing else because only one
-retry is allowed in do_user_addr_fault(). So the second time we get to
-filemap_fault(), we will not have FAULT_FLAG_ALLOW_RETRY set and thus do
-blocking locking. So I think your code needs to catch common cases you
-observe in practice but not those super-rare corner cases...
+If there's no difference, I'd like to drop this as well. It just
+complicates the fault state handling which is already complex enough.
 
 								Honza
 -- 
