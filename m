@@ -2,82 +2,97 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A68C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89187C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0190E20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:59:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0190E20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 46DBD20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Q9GsWmYc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DBD20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbeLGT70 (ORCPT
+        id S1726303AbeLGT7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:59:26 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43204 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeLGT7Z (ORCPT
+        Fri, 7 Dec 2018 14:59:34 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34229 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbeLGT7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:59:25 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0002BAF;
-        Fri,  7 Dec 2018 19:56:27 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 11:56:26 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 2/2] mm/sparse: add common helper to mark all memblocks
- present
-Message-Id: <20181207115626.dd578402f407e3df798aad0c@linux-foundation.org>
-In-Reply-To: <71168447-7470-d2ba-d30e-200ff6202b35@deltatee.com>
-References: <20181107173859.24096-1-logang@deltatee.com>
-        <20181107173859.24096-3-logang@deltatee.com>
-        <20181107121207.62cb37cf58484b7cc80a8fd8@linux-foundation.org>
-        <71168447-7470-d2ba-d30e-200ff6202b35@deltatee.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Dec 2018 14:59:33 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r14so5881997qtp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 11:59:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=mBbPSj085jzCFMMqKG3CT4/VTT3TFX+DDXRHOtHVaWU=;
+        b=Q9GsWmYcI3O+PhWImwaT32H2r1YYtZPVZM466MMuEjCf6DTvcH3P+v6r1eyJMUoWDc
+         ep50z0whA8SaoDzCxMhGx38gSune3ESInpFAl+rMpC0CJx6P2W88B4hZTVZVqETI7m7x
+         5wu868OKK34EZLmED9vkVDs0byHpKVMgPM6Z/i4lNZ2IDPSVP7IOXXA+xJqf4Al2aIx5
+         rB3jcCCNXAWOtfCRgW4eGfIfGebMkMNScVVAD7ZSOoqkCidC8Ec2JMSweuYxicN0TJkX
+         HaMu6QR3ElEQBxI5QbhaToSff7HYVhcUfDxsB/gDA9x+9ts08oaCDqJ6H+5YA+0ADIJE
+         kL0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mBbPSj085jzCFMMqKG3CT4/VTT3TFX+DDXRHOtHVaWU=;
+        b=sHtR6yGtQNI2IJbiZJrTEK6Ej/LS2FlddXyXUr5NrtyDQHyhqStg6Y2u7/rEaP0DuR
+         SXGxOA9AoiWf042nLnOaJiWxrEfP0lMU+CcHqDNo2SziOdZZe8XsYED+4uYZNSW055hc
+         fQEkGmmSLi7FrBBOy0G8hcgcDOhn9PEkkvnIAdE9KrQ2uAX2L+KE6VRkt6XAyyBl7D5e
+         5vrUv1GCFev7Ow6WZYynGDX+/Lq1vpIUVqkK0htU08cLXYnnO4QgB6Hb/ZwiOii/T5dM
+         jlzgLNyJBwarWh4Kgdv3qS0f4V46Z0Oz+gxmjb5vB4HcZY8Dc2Ar6AoFbFIN71/0N+RZ
+         e8fg==
+X-Gm-Message-State: AA+aEWaO2qq5kNi5KjkW0LgyAu7aa8rrvw+LUkO5iA8y0ABS446EuxIH
+        1YfhDNaWd2MJcXEGMFWD/knVmiBBmDI=
+X-Google-Smtp-Source: AFSGD/UnyczyPvm6WWEmLJNKZWXSRRB38iVLAhWVJBjOuAwTJxANZ5ZqX3M4yHKdZ9X5CkR9Z+OVQw==
+X-Received: by 2002:a0c:8d8d:: with SMTP id t13mr3352829qvb.242.1544212772666;
+        Fri, 07 Dec 2018 11:59:32 -0800 (PST)
+Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id v10sm2165277qkb.57.2018.12.07.11.59.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 11:59:32 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] checkstack.pl: fix for aarch64
+Date:   Fri,  7 Dec 2018 14:58:43 -0500
+Message-Id: <20181207195843.38528-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Dec 2018 10:40:31 -0700 Logan Gunthorpe <logang@deltatee.com> wrote:
+There is actually a space after "sp," like this,
 
-> Hey Andrew,
-> 
-> On 2018-11-07 1:12 p.m., Andrew Morton wrote:
-> > Acked-by: Andrew Morton <akpm@linux-foundation.org>
-> > 
-> > I can grab both patches and shall sneak them into 4.20-rcX, but feel
-> > free to merge them into some git tree if you'd prefer.  If I see them
-> > turn up in linux-next I shall drop my copy.
-> 
-> Just wanted to check if you are still planning to get these patches into
-> 4.20-rcX. It would really help us if you can do this seeing we then
-> won't have to delay a cycle and can target the riscv sparsemem code for
-> 4.21.
-> 
+ffff2000080813c8:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
 
-Ah, OK, I assumed that it would be merged via an arm tree.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ scripts/checkstack.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I moved 
+diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+index 8081b6cf67d2..34414c6efad6 100755
+--- a/scripts/checkstack.pl
++++ b/scripts/checkstack.pl
+@@ -47,8 +47,8 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+ 	$xs	= "[0-9a-f ]";	# hex character or space
+ 	$funcre = qr/^$x* <(.*)>:$/;
+ 	if ($arch eq 'aarch64') {
+-		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp,#-80]!
+-		$re = qr/^.*stp.*sp,\#-([0-9]{1,8})\]\!/o;
++		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
++		$re = qr/^.*stp.*sp, \#-([0-9]{1,8})\]\!/o;
+ 	} elsif ($arch eq 'arm') {
+ 		#c0008ffc:	e24dd064	sub	sp, sp, #100	; 0x64
+ 		$re = qr/.*sub.*sp, sp, #(([0-9]{2}|[3-9])[0-9]{2})/o;
+-- 
+2.17.2 (Apple Git-113)
 
-mm-introduce-common-struct_page_max_shift-define.patch
-mm-sparse-add-common-helper-to-mark-all-memblocks-present.patch
-
-to head-of-queue.  Shall send to Linus next week.
