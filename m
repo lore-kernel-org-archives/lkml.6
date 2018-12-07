@@ -2,95 +2,147 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20EFC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FB8C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74068208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74068208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 5736E208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:11:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LmCipauO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5736E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLGNLM (ORCPT
+        id S1726187AbeLGNLU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:11:12 -0500
-Received: from sauhun.de ([88.99.104.3]:36284 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbeLGNLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:11:12 -0500
-Received: from localhost (p54B335DA.dip0.t-ipconnect.de [84.179.53.218])
-        by pokefinder.org (Postfix) with ESMTPSA id 7CB893E409C;
-        Fri,  7 Dec 2018 14:11:09 +0100 (CET)
-Date:   Fri, 7 Dec 2018 14:11:08 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter Rosin <peda@axentia.se>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: i2c: Use correct vendor prefix for Atmel
-Message-ID: <20181207131108.GA2462@kunai>
-References: <20181123121009.17213-1-thierry.reding@gmail.com>
- <20181123125138.22489-1-thierry.reding@gmail.com>
- <20181127125050.GO1107@kunai>
- <CAL_JsqJZJVMvd0aQJ8eDXBqiZ=quLrNGr3hhqePm8fCushHxxQ@mail.gmail.com>
- <20181203210035.GA4611@kunai>
+        Fri, 7 Dec 2018 08:11:20 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33860 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeLGNLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:11:18 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so3011409lfc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 05:11:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EFj9X/innvkpACYNCTtZcY37pslKCk2J0+kVrFHIYOI=;
+        b=LmCipauOb1yLA1CNjfxYn4Q7iy7tl70uGlFvAgMt74FNEpfLA2CjVMLuKDLmyxf9P9
+         vaVmbpOIrI+S6dfKTq9sX/snFic79x2CqMlbxsMCJI1hHSf+subIIkVQuOXv2+B+LXjn
+         xa+GDgGu0JMtiGoaSGSsjQTHibBTehXtos3U8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EFj9X/innvkpACYNCTtZcY37pslKCk2J0+kVrFHIYOI=;
+        b=GzxNNhp6JmvzPBVUyQqzoOqDpvESU3tO6FJv5hCZ+vLaotQ9Tbr5N8jwCR03HOPjRG
+         c23SkSjh5U5/DNkU2K0yFHLDV5GZwoVJCMWRMFSGsC5/aLs/SAzaYXx2ZcYuC9S408fC
+         8fVoQv0Qoi1YgXs4q+wCjQh/epZm61StWMkIL26htSP7HrJU8p1R8/h9udep9Nw+PLqu
+         qZaNdL6A37AZUKjUr6NAPzoat9+qORvuaIFSwAnJNNwm2W4wnMZhA3wsysceY8SGiYxt
+         RF5mMsXeWUHlKSzi2zxQwMT/VTnguCpeBHy0pOYehLhUs3sm1cMCGvyuW0WO7wJtgqSq
+         wnEQ==
+X-Gm-Message-State: AA+aEWa4E8FF1sTjnfiFBqnWKF/vAw4CrbfQqBVvdfs+81vjRJxIj4PI
+        Jl3leFHQMxJWyfjfRCN/gQ02xQ==
+X-Google-Smtp-Source: AFSGD/WYjfEugWJ/CiebXU8yXokboCL047BVIH5KUpU6vVPMwFkDZfarIwmrnaQbyupeZioH9F/HOg==
+X-Received: by 2002:a19:8f45:: with SMTP id r66mr1413285lfd.9.1544188276612;
+        Fri, 07 Dec 2018 05:11:16 -0800 (PST)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id i143sm604609lfg.74.2018.12.07.05.11.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 05:11:15 -0800 (PST)
+Date:   Fri, 7 Dec 2018 14:11:13 +0100
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: controller: dwc: Make PCI_IMX6 depend on PCIEPORTBUS
+Message-ID: <20181207131113.GA427@centauri.lan>
+References: <20181206074555.19579-1-andrew.smirnov@gmail.com>
+ <1544092136.3709.57.camel@pengutronix.de>
+ <CAHQ1cqFeJtxnpfzqWVQ3T9Sv=gfw+cvZZw-uKnZV7pxJg_S+EA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181203210035.GA4611@kunai>
+In-Reply-To: <CAHQ1cqFeJtxnpfzqWVQ3T9Sv=gfw+cvZZw-uKnZV7pxJg_S+EA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 06, 2018 at 08:55:13PM -0800, Andrey Smirnov wrote:
+> On Thu, Dec 6, 2018 at 2:28 AM Lucas Stach <l.stach@pengutronix.de> wrote:
+> >
+> > Am Mittwoch, den 05.12.2018, 23:45 -0800 schrieb Andrey Smirnov:
+> > > Building a kernel with CONFIG_PCI_IMX6=y, but CONFIG_PCIEPORTBUS=n
+> > > produces a system where built-in PCIE bridge (16c3:abcd) isn't bound
+> > > to pcieport driver. This, in turn, results in a PCIE bus that is
+> > > capable of enumerating attached PCIE device, but lacks functional
+> > > interrupt support.
+> >
+> > This is odd. AFAIK PCI port services are a totally optional thing and
+> > them being absent should not lead to a non-functional PCI bus. So I
+> > would really like to see some deeper analysis what is going on here.
+> >
+> 
+> AFAICT, this is due to pcieport driver enabling MSI of the bridge
+> device (16c3:abcd) via pcie_port_device_register() ->
+> pcie_init_service_irqs() -> pcie_port_enable_irq_vec() -> etc.
+> 
+> I did an experiment on a i.MX8MQ/PCIE -> i210 setup I have: I disabled
+> CONFIG_PCIEPORTBUS and hacked igb_main.c enough to make the i210
+> driver believe it should fall back onto legacy interrupts. Even
+> without pcieport present in the system, i210 worked as expected via
+> legacy interrupts, which seems to collaborate my conjecture above.
+> 
+> Thanks,
+> Andrey Smirnov
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+IIUC PCIEPORTBUS should not be needed for MSIs to work,
+it is only needed if you want e.g. PME or AER.
 
-On Mon, Dec 03, 2018 at 10:00:35PM +0100, Wolfram Sang wrote:
->=20
-> > Didn't we agree that I take trivial devices changes? Normally, it
-> > doesn't really matter, but I'll have to delay landing the json-schema
-> > conversion because this will conflict.
->=20
-> Oh, sorry, I missed that! I haven't send my pull request to Linus, so I
-> can easily drop this patch again and apply a version not touching
-> trivial-devices instead.
-
-For the record, I really dropped this patch from my for-current queue
-and will apply it to my for-next queue without the 'trivial-devices'
-change once we agreed how to handle Bartosz' incremental patch on top of
-it. I hope this fits your needs.
+The difference is that if PCIEPORTBUS is enabled, a MSI irq vector will be
+allocated for the Root Complex itself, so that it can send an irq when
+e.g. AER has detected an error.
 
 
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
+If we disregard that MSI handling is currently broken on DWC PCIe:
+https://marc.info/?l=linux-pci&m=154214986924244&w=2
+It is very possible to have MSIs on dragonboard 820c, which also
+uses the DWC PCIe controller, without having PCIEPORTBUS selected:
 
------BEGIN PGP SIGNATURE-----
+# zcat /proc/config.gz | grep -E "PCIE_QCOM|PCIEPORTBUS"
+# CONFIG_PCIEPORTBUS is not set
+CONFIG_PCIE_QCOM=y
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwKcWwACgkQFA3kzBSg
-KbbcTg//cRhHyl6Oi7w349QnGL0ZEFb47wqcFPYWmaCPzkAJMKlWbf9IQw7c4a4O
-DV2HUjGT2Nu6YU3aGr5wM2LXjO3AiGnoeGyX1glKIcjvaN/r26A77tSX0zzzEU90
-4S9C9PV/GmoO7H4BDerJ/d5BBGeu2X6DqIEoC3Qp/gn3kSrxvWAXvALmX+30sKdj
-vWuETZKm1G7vYPL1bQG1wrOauZAEwpPgpHwLIWdj2uCmxlEJ00UsQumJEz82sxc5
-lYfRjzelW5tg43eqDWV+hn+7pUxz/KL990hHKfAg9NxUszOUdOPOfKX1wb21IXa3
-7Yu0qPfAIGVAswbateYTWXqhmgUJPzaoVesmqpLao5SscxXYFSUOff4fdcBFq/Oo
-nhe0dgzwajL/O1L4RgV9qh1/mSOCLSO5M79c9QxPTKNEZ0/Hw5mbMZs8aM/T+L/h
-l/iduLMSkI4hl4YnBGU+rGQym+oFhPHZXt+TqCB3rjCibXfHMIUIlufIJK3yM+bj
-Nkl+enGbyJfZvJ9D5955ziyF/cAliy3v7vx7c0OMyvZOfimMvlycA9RtWRkE8Ioq
-c1DTsJHqkJs+6aOZBJu7ImRxmU8rUZU8hqLUigAiat/p/AgqSicpQ7aleb4E0I7m
-WBz2fciAP6b09TmiKBzVpk6USInEGvtcRm9OCdKjwQjAt68B2Ws=
-=xul7
------END PGP SIGNATURE-----
 
---PNTmBPCT7hxwcZjr--
+# lspci -v -s 0000:00:00.0
+0000:00:00.0 PCI bridge: Qualcomm Device 0104 (prog-if 00 [Normal decode])
+	...
+        Capabilities: [50] MSI: Enable- Count=1/32 Maskable+ 64bit+
+
+# lspci -v -s 0000:01:00.0
+0000:01:00.0 Network controller: Qualcomm Atheros QCA6174 802.11ac Wireless Network Adapter (rev 32)
+	...
+        Capabilities: [50] MSI: Enable+ Count=1/8 Maskable+ 64bit-
+
+
+# cat /proc/interrupts | grep MSI
+ 70:       5620          0          0          0   PCI-MSI 524288 Edge      ath10k_pci
+
+So perhaps this is a bug specific to imx6?
+
+
+Kind regards,
+Niklas
