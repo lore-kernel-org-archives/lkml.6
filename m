@@ -2,179 +2,195 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFE5C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24193C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FF92082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:02:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W009ofsd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FF92082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CCCEB2082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:04:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCEB2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rempel-privat.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726257AbeLGSCG (ORCPT
+        id S1726192AbeLGSEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:02:06 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38108 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeLGSCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:02:06 -0500
-Received: by mail-it1-f195.google.com with SMTP id h65so8375816ith.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:02:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/jLwhnJ9d6Xz2ShK5DOagGRCfl4SzyAXVWDXMe+WzfQ=;
-        b=W009ofsd7ZSHOS0m+3RJea5qOVeeH/ewv5Vma0UNZSbYlShdM+JZXBjwlhlIxeEt59
-         fW+Go3u54wK6O+JpRT9ccDKfWAp7tiGj/hKPhRJG2v258lrcQaraLUdGkDG1kKlRark5
-         4zS4Y7pJEXFTCnTPpvY0EAlyxwDlBRAxK2cZY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/jLwhnJ9d6Xz2ShK5DOagGRCfl4SzyAXVWDXMe+WzfQ=;
-        b=YvkI3fHjqe2TXE12nXFyCrCM0NqRyQZ5EKOMlFaKhEMoXXk823o9oLu3h/s+uw2ivz
-         Lpw31v+a7L5N5wGyGI8jiSXYGh31TTJiIgPpWnXPCsLJVETCKpUZRP+qG3b+/H2CUNWd
-         ryGdTLM3ZfDRxXATPNcZGuwj/EP7bzZB2wFjeQZ23lC4GXg0I3guRnOuV+HMv0rHP/RE
-         Xlx1zWjhGsIVOiAogk/Yk0qkjaVn6l8uQC0fze/8dCN5WWc606VfnsS0BO8c9eZXfjAr
-         UEki92QofKRQgzBxyRB6rWX01hM+YR58PExXBc31StXaAzDMnlubMkgGH+OQRi+bDzJP
-         fJgA==
-X-Gm-Message-State: AA+aEWaEmsKzpNoLJ1njvxFhDl6rvcW+/A09Qmc9rFTLEvDwa+vpu0lT
-        K3EcA8mmxF3gzHP+l+/xd7XgNv46GiEcu1gRq2vKsQ==
-X-Google-Smtp-Source: AFSGD/WVOH6Tg65ui5G6TRAlopud6iFIzGU0JIdovz3BOxWNXXYsjHSISs1ytke3ijqu4Jbs9vWagScXKzgBu9CVXM8=
-X-Received: by 2002:a02:4c9:: with SMTP id 192mr2673415jab.2.1544205724188;
- Fri, 07 Dec 2018 10:02:04 -0800 (PST)
+        Fri, 7 Dec 2018 13:04:46 -0500
+Received: from mout.gmx.net ([212.227.17.20]:51937 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbeLGSEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:04:46 -0500
+Received: from [192.168.1.241] ([31.18.251.131]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Mh6lB-1grejD2ELJ-00MK0u; Fri, 07
+ Dec 2018 19:04:42 +0100
+Subject: Re: [PATCH][misc-next] misc: cardreader: fix spelling mistake
+ "invailid" -> "invalid"
+To:     Colin King <colin.king@canonical.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181206091936.11871-1-colin.king@canonical.com>
+From:   Oleksij Rempel <linux@rempel-privat.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=linux@rempel-privat.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <6ea8c539-1b81-f19b-608a-ce9ead1d6fb5@rempel-privat.de>
+Date:   Fri, 7 Dec 2018 19:04:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206155739.20229-1-ard.biesheuvel@linaro.org> <20181207175326.GB11430@edgewater-inn.cambridge.arm.com>
-In-Reply-To: <20181207175326.GB11430@edgewater-inn.cambridge.arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 7 Dec 2018 19:01:52 +0100
-Message-ID: <CAKv+Gu9LJzMm_xGQOZ=wS6Wr=W1hN7cS+GsVAS0mPUFJ3NT0ng@mail.gmail.com>
-Subject: Re: [PATCH 0/5] arm64: assorted fixes for dcache_by_line_op
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181206091936.11871-1-colin.king@canonical.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="zIYITDqYwnnCBmikaZfeWZ1QHyl07uTFU"
+X-Provags-ID: V03:K1:1IYnDnaj90yncY/cM36ksqv/Qh1Uxj4rETbN32BZuPpC0iJKlpR
+ V4QFxlOUQWbixWZip5Q5HJkSh/9S4U+ax/FkQ2NHMEkimilJe/uKafXxvHstwGyzVMlnktP
+ tFaroQZnrt4IJ8dzaMX56W/DzquLL0RjUfdeMds6h0Yhgx+SiqJvx88N0wmUYzRCil2kl6X
+ 4qx5skKlYaDWTIBJreyCA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PTT4M1gHfzE=:fmz+WG+RY8Q+8Mjj+krhnt
+ azFN1Iitowt2YGvOytGfdp1sG4cNSKyL9KGf3GINQgYvywyC9f864CeABLRDVX4+QSxJkPfbt
+ vsVixpqoVnp9vQAplEVWmRT1Sz0c1uC+RkxMFWe2wIxdx/6VcAYkvRHOrZmZzkwrt5SFV8DLo
+ 94svtHhCNR9OeZks65K+92IMVZ0mJiaDmSYKD/n/gWLLSUvS8wYgZ+TZlbpHdBCirlUXw4/Ob
+ Nsy5GaehAah18EfT6SKr9ICYUBpNm55daozQeT+Y5fLRdPmc9lD9WODv0NT9l229q8HPT8CXJ
+ pZbnYLOvIV422rHQd8DwrFdj4BT1IVDsMoFVe7Q6qQQnaqomUrcptMM6JczShZ/OeYiOMicc6
+ SDkGT3bPddm9BeqmeCRQW2m+n7FM0O/nYe8Wt4XFElmvDTQgaJYF9VzGexJ726V6OBxdZM1G8
+ MhiJTtG84MAWgd8KOfudv/qnXxv/P+4/HVZpAsrDRz7Z2GWnsgAE6xOtMNAylP4vTFt36iAPz
+ fC7WR0MZey/l54iCj5BpJ1XnCKwaF6j/dvQGxFRIMGSeIEsfO8+w7w6nsl/C3IpCD7znVrhYZ
+ Wmiy5iyt/wbkKxaq777nXJTC71rDQeT3Hb2Kl27LGpkjq1Jm4YoC6yhaj6IiC93MSg0Z+W7mZ
+ xW2HOwWMrsFEI1D2knQTzYvOk1Y1mSe48TyU8hxwMnwB4QZn3+jef5DBi3tzRUAsdRs7LSHQ6
+ WvW3uGSctY5My0BteL1C1FN84EgKbC3qK7VbLmLqoBwppqqH0bL4ub6TJAmSvr86PwDgEUNQa
+ RHMMZEhbiimrirXJycgJuuTAeukoezaSmQm9rz5PD2kjOqIVjlRCjYJ53WdDB+jTTXmKMPsku
+ s9O7gFjaBTMbTybZEoHYPlDygFNo0kDSA7N+cz3PcPXvPvo8XPay+xuP9g61dp
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 7 Dec 2018 at 18:53, Will Deacon <will.deacon@arm.com> wrote:
->
-> Hi Ard,
->
-> Cheers for looking at this.
->
-> On Thu, Dec 06, 2018 at 04:57:34PM +0100, Ard Biesheuvel wrote:
-> > This fixes two issues in dcache_by_line_op: patch #4 fixes the logic
-> > that is applied when patching DC CVAP instructions, and patch #5 gets
-> > rid of some unintended undefined symbols resulting from incorrect use
-> > of conditional GAS directives.
-> >
-> > Patches #1 to #3 are groundwork for #4.
-> >
-> > Cc: Robin Murphy <robin.murphy@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > Cc: Suzuki Poulose <suzuki.poulose@arm.com>
-> > Cc: Dave Martin <Dave.Martin@arm.com>
-> >
-> > Ard Biesheuvel (5):
-> >   arm64/alternative_cb: move callback reference into replacements
-> >     section
-> >   arm64/alternative_cb: add nr_alts parameter to callback handlers
-> >   arm64/alternative_cb: add support for alternative sequences
-> >   arm64/assembler: use callback to 3-way alt-patch DC CVAP instructions
-> >   arm64/mm: use string comparisons in dcache_by_line_op
-> >
-> >  arch/arm64/include/asm/alternative.h | 54 +++++++++++---------
-> >  arch/arm64/include/asm/assembler.h   | 17 +++---
-> >  arch/arm64/include/asm/kvm_mmu.h     |  4 +-
-> >  arch/arm64/kernel/alternative.c      | 22 +++++---
-> >  arch/arm64/kernel/cpu_errata.c       | 24 ++++++---
-> >  arch/arm64/kvm/va_layout.c           |  8 +--
-> >  6 files changed, 79 insertions(+), 50 deletions(-)
->
-> Whilst I can see that this solves the problem, I do wonder whether the
-> additional infrastructure is really worth it. Couldn't we just do something
-> really simple like the diff below instead?
->
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--zIYITDqYwnnCBmikaZfeWZ1QHyl07uTFU
+Content-Type: multipart/mixed; boundary="cTP1uIVH3BeszxpHWKz2jT13hojFzjLwR";
+ protected-headers="v1"
+From: Oleksij Rempel <linux@rempel-privat.de>
+To: Colin King <colin.king@canonical.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <6ea8c539-1b81-f19b-608a-ce9ead1d6fb5@rempel-privat.de>
+Subject: Re: [PATCH][misc-next] misc: cardreader: fix spelling mistake
+ "invailid" -> "invalid"
+References: <20181206091936.11871-1-colin.king@canonical.com>
+In-Reply-To: <20181206091936.11871-1-colin.king@canonical.com>
 
-That looks fine to me, although not as elegant :-) You are in a better
-position to assess if the additional infrastructure may see other uses
-in the near future.
+--cTP1uIVH3BeszxpHWKz2jT13hojFzjLwR
+Content-Type: text/plain; charset=utf-8
+Content-Language: ru
+Content-Transfer-Encoding: quoted-printable
 
-In any case, I don't feel strongly about it, so pick whatever you feel
-is most suitable. (I just spotted the undefined symbols when I was
-playing with lld.)
+Am 06.12.18 um 10:19 schrieb Colin King:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There are spelling mistakes in a couple of dev_dbg messages, fix these.=
+
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Oleksij Rempel <linux@rempel-privat.de>
+
+thanks!
+
+> ---
+>  drivers/misc/cardreader/alcor_pci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardrea=
+der/alcor_pci.c
+> index 6872b8e29b4d..bcb10fa4bc3a 100644
+> --- a/drivers/misc/cardreader/alcor_pci.c
+> +++ b/drivers/misc/cardreader/alcor_pci.c
+> @@ -105,7 +105,7 @@ static int alcor_pci_find_cap_offset(struct alcor_p=
+ci_priv *priv,
+>  	while (1) {
+>  		pci_read_config_dword(pci, where, &val32);
+>  		if (val32 =3D=3D 0xffffffff) {
+> -			dev_dbg(priv->dev, "find_cap_offset invailid value %x.\n",
+> +			dev_dbg(priv->dev, "find_cap_offset invalid value %x.\n",
+>  				val32);
+>  			return 0;
+>  		}
+> @@ -116,7 +116,7 @@ static int alcor_pci_find_cap_offset(struct alcor_p=
+ci_priv *priv,
+>  		}
+> =20
+>  		if ((val32 & 0xff00) =3D=3D 0x00) {
+> -			dev_dbg(priv->dev, "pci_find_cap_offset invailid value %x.\n",
+> +			dev_dbg(priv->dev, "pci_find_cap_offset invalid value %x.\n",
+>  				val32);
+>  			break;
+>  		}
+>=20
 
 
-> --->8
->
-> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-> index 953208267252..8dea015b6599 100644
-> --- a/arch/arm64/include/asm/assembler.h
-> +++ b/arch/arm64/include/asm/assembler.h
-> @@ -390,27 +390,38 @@ alternative_endif
->   *     size:           size of the region
->   *     Corrupts:       kaddr, size, tmp1, tmp2
->   */
-> +       .macro __dcache_op_workaround_clean_cache, op, kaddr
-> +alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
-> +       dc      \op, \kaddr
-> +alternative_else
-> +       dc      civac, \kaddr
-> +alternative_endif
-> +       .endm
-> +
->         .macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
->         dcache_line_size \tmp1, \tmp2
->         add     \size, \kaddr, \size
->         sub     \tmp2, \tmp1, #1
->         bic     \kaddr, \kaddr, \tmp2
->  9998:
-> -       .if     (\op == cvau || \op == cvac)
-> -alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
-> -       dc      \op, \kaddr
-> -alternative_else
-> -       dc      civac, \kaddr
-> -alternative_endif
-> -       .elseif (\op == cvap)
-> +       .ifc    \op, cvau
-> +       __dcache_op_workaround_clean_cache \op, \kaddr
-> +       .else
-> +       .ifc    \op, cvac
-> +       __dcache_op_workaround_clean_cache \op, \kaddr
-> +       .else
-> +       .ifc    \op, cvap
->  alternative_if ARM64_HAS_DCPOP
->         sys 3, c7, c12, 1, \kaddr       // dc cvap
-> -alternative_else
-> -       dc      cvac, \kaddr
-> -alternative_endif
-> +       b       9996f
-> +alternative_else_nop_endif
-> +       __dcache_op_workaround_clean_cache cvac, \kaddr
-> +9996:
->         .else
->         dc      \op, \kaddr
->         .endif
-> +       .endif
-> +       .endif
->         add     \kaddr, \kaddr, \tmp1
->         cmp     \kaddr, \size
->         b.lo    9998b
+--=20
+Regards,
+Oleksij
+
+
+--cTP1uIVH3BeszxpHWKz2jT13hojFzjLwR--
+
+--zIYITDqYwnnCBmikaZfeWZ1QHyl07uTFU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlwKtjgACgkQdQOiSHVI
+77QXvQf/fFdltk96GQCgEQ7tqwC01EsNV7/sQBAVjziMYGONzpEzoWP/9vusHRdD
+r520x4oubWbog8tFtzj8kj4E78+X3CbA504RlAzd5pc53voZdCpx0d3nGDxVDiAt
+hgJtjBRpsx4A3mgK27R0CFAaxd9iCvG+JjzXmNbLyDJvaK57Xc1bXgCd9l/Etjxf
+M1C3bwMn79a8SxgLSDfXoyHflHVsYam3qKaZdmdRoSzTo0C3/PlsofkUcQA7Dx2M
+UnAYRHsPYFrId506VgiW91SHbS5G6pzWOx2YyX3uBhZRN2FkXyJ27bwnBW8DdpiP
+GTABtMpQ8Eap4IMalb650noU7LMjBA==
+=NA+o
+-----END PGP SIGNATURE-----
+
+--zIYITDqYwnnCBmikaZfeWZ1QHyl07uTFU--
