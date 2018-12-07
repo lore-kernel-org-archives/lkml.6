@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23B2C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F31AC64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C04C82064D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C04C82064D
+	by mail.kernel.org (Postfix) with ESMTP id 0BDCC2064D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDCC2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbeLGSkd (ORCPT
+        id S1726393AbeLGSki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:40:33 -0500
-Received: from foss.arm.com ([217.140.101.70]:52098 "EHLO foss.arm.com"
+        Fri, 7 Dec 2018 13:40:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:52128 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbeLGSkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:40:32 -0500
+        id S1726077AbeLGSkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:40:36 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34D6B15AD;
-        Fri,  7 Dec 2018 10:40:32 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22BD8EBD;
+        Fri,  7 Dec 2018 10:40:36 -0800 (PST)
 Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CEC43F5AF;
-        Fri,  7 Dec 2018 10:40:28 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0989E3F5AF;
+        Fri,  7 Dec 2018 10:40:32 -0800 (PST)
 From:   Kristina Martsenko <kristina.martsenko@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Adam Wallis <awallis@codeaurora.org>,
@@ -47,9 +47,9 @@ Cc:     Adam Wallis <awallis@codeaurora.org>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 08/13] arm64: expose user PAC bit positions via ptrace
-Date:   Fri,  7 Dec 2018 18:39:26 +0000
-Message-Id: <20181207183931.4285-9-kristina.martsenko@arm.com>
+Subject: [PATCH v6 09/13] arm64: perf: strip PAC when unwinding userspace
+Date:   Fri,  7 Dec 2018 18:39:27 +0000
+Message-Id: <20181207183931.4285-10-kristina.martsenko@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181207183931.4285-1-kristina.martsenko@arm.com>
 References: <20181207183931.4285-1-kristina.martsenko@arm.com>
@@ -60,25 +60,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mark Rutland <mark.rutland@arm.com>
 
-When pointer authentication is in use, data/instruction pointers have a
-number of PAC bits inserted into them. The number and position of these
-bits depends on the configured TCR_ELx.TxSZ and whether tagging is
-enabled. ARMv8.3 allows tagging to differ for instruction and data
-pointers.
+When the kernel is unwinding userspace callchains, we can't expect that
+the userspace consumer of these callchains has the data necessary to
+strip the PAC from the stored LR.
 
-For userspace debuggers to unwind the stack and/or to follow pointer
-chains, they need to be able to remove the PAC bits before attempting to
-use a pointer.
+This patch has the kernel strip the PAC from user stackframes when the
+in-kernel unwinder is used. This only affects the LR value, and not the
+FP.
 
-This patch adds a new structure with masks describing the location of
-the PAC bits in userspace instruction and data pointers (i.e. those
-addressable via TTBR0), which userspace can query via PTRACE_GETREGSET.
-By clearing these bits from pointers (and replacing them with the value
-of bit 55), userspace can acquire the PAC-less versions.
-
-This new regset is exposed when the kernel is built with (user) pointer
-authentication support, and the address authentication feature is
-enabled. Otherwise, the regset is hidden.
+This only affects the in-kernel unwinder. When userspace performs
+unwinding, it is up to userspace to strip PACs as necessary (which can
+be determined from DWARF information).
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
@@ -86,141 +78,66 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/pointer_auth.h |  8 ++++++++
- arch/arm64/include/uapi/asm/ptrace.h  |  7 +++++++
- arch/arm64/kernel/ptrace.c            | 38 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/elf.h              |  1 +
- 4 files changed, 54 insertions(+)
+ arch/arm64/include/asm/pointer_auth.h | 7 +++++++
+ arch/arm64/kernel/perf_callchain.c    | 6 +++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-index fc7ffe8e326f..5721228836c1 100644
+index 5721228836c1..89190d93c850 100644
 --- a/arch/arm64/include/asm/pointer_auth.h
 +++ b/arch/arm64/include/asm/pointer_auth.h
-@@ -2,9 +2,11 @@
- #ifndef __ASM_POINTER_AUTH_H
- #define __ASM_POINTER_AUTH_H
+@@ -65,6 +65,12 @@ static inline void ptrauth_keys_switch(struct ptrauth_keys *keys)
+  */
+ #define ptrauth_pac_mask() 	GENMASK(54, VA_BITS)
  
-+#include <linux/bitops.h>
- #include <linux/random.h>
- 
- #include <asm/cpufeature.h>
-+#include <asm/memory.h>
- #include <asm/sysreg.h>
- 
- #ifdef CONFIG_ARM64_PTR_AUTH
-@@ -57,6 +59,12 @@ static inline void ptrauth_keys_switch(struct ptrauth_keys *keys)
- 		__ptrauth_key_install(APGA, keys->apga);
- }
- 
-+/*
-+ * The EL0 pointer bits used by a pointer authentication code.
-+ * This is dependent on TBI0 being enabled, or bits 63:56 would also apply.
-+ */
-+#define ptrauth_pac_mask() 	GENMASK(54, VA_BITS)
++/* Only valid for EL0 TTBR0 instruction pointers */
++static inline unsigned long ptrauth_strip_insn_pac(unsigned long ptr)
++{
++	return ptr & ~ptrauth_pac_mask();
++}
 +
  #define ptrauth_thread_init_user(tsk)					\
  do {									\
  	struct task_struct *__ptiu_tsk = (tsk);				\
-diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-index a36227fdb084..c2f249bcd829 100644
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -229,6 +229,13 @@ struct user_sve_header {
- 		  SVE_PT_SVE_OFFSET + SVE_PT_SVE_SIZE(vq, flags)	\
- 		: SVE_PT_FPSIMD_OFFSET + SVE_PT_FPSIMD_SIZE(vq, flags))
+@@ -76,6 +82,7 @@ do {									\
+ 	ptrauth_keys_switch(&(tsk)->thread_info.keys_user)
  
-+/* pointer authentication masks (NT_ARM_PAC_MASK) */
-+
-+struct user_pac_mask {
-+	__u64		data_mask;
-+	__u64		insn_mask;
-+};
-+
- #endif /* __ASSEMBLY__ */
+ #else /* CONFIG_ARM64_PTR_AUTH */
++#define ptrauth_strip_insn_pac(lr)	(lr)
+ #define ptrauth_thread_init_user(tsk)
+ #define ptrauth_thread_switch(tsk)
+ #endif /* CONFIG_ARM64_PTR_AUTH */
+diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
+index bcafd7dcfe8b..94754f07f67a 100644
+--- a/arch/arm64/kernel/perf_callchain.c
++++ b/arch/arm64/kernel/perf_callchain.c
+@@ -18,6 +18,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/uaccess.h>
  
- #endif /* _UAPI__ASM_PTRACE_H */
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 1710a2d01669..6c1f63cb6c4e 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -46,6 +46,7 @@
- #include <asm/debug-monitors.h>
- #include <asm/fpsimd.h>
- #include <asm/pgtable.h>
 +#include <asm/pointer_auth.h>
  #include <asm/stacktrace.h>
- #include <asm/syscall.h>
- #include <asm/traps.h>
-@@ -956,6 +957,30 @@ static int sve_set(struct task_struct *target,
  
- #endif /* CONFIG_ARM64_SVE */
+ struct frame_tail {
+@@ -35,6 +36,7 @@ user_backtrace(struct frame_tail __user *tail,
+ {
+ 	struct frame_tail buftail;
+ 	unsigned long err;
++	unsigned long lr;
  
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+static int pac_mask_get(struct task_struct *target,
-+			const struct user_regset *regset,
-+			unsigned int pos, unsigned int count,
-+			void *kbuf, void __user *ubuf)
-+{
-+	/*
-+	 * The PAC bits can differ across data and instruction pointers
-+	 * depending on TCR_EL1.TBID*, which we may make use of in future, so
-+	 * we expose separate masks.
-+	 */
-+	unsigned long mask = ptrauth_pac_mask();
-+	struct user_pac_mask uregs = {
-+		.data_mask = mask,
-+		.insn_mask = mask,
-+	};
+ 	/* Also check accessibility of one struct frame_tail beyond */
+ 	if (!access_ok(VERIFY_READ, tail, sizeof(buftail)))
+@@ -47,7 +49,9 @@ user_backtrace(struct frame_tail __user *tail,
+ 	if (err)
+ 		return NULL;
+ 
+-	perf_callchain_store(entry, buftail.lr);
++	lr = ptrauth_strip_insn_pac(buftail.lr);
 +
-+	if (!system_supports_address_auth())
-+		return -EINVAL;
-+
-+	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &uregs, 0, -1);
-+}
-+#endif /* CONFIG_ARM64_PTR_AUTH */
-+
- enum aarch64_regset {
- 	REGSET_GPR,
- 	REGSET_FPR,
-@@ -968,6 +993,9 @@ enum aarch64_regset {
- #ifdef CONFIG_ARM64_SVE
- 	REGSET_SVE,
- #endif
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+	REGSET_PAC_MASK,
-+#endif
- };
++	perf_callchain_store(entry, lr);
  
- static const struct user_regset aarch64_regsets[] = {
-@@ -1037,6 +1065,16 @@ static const struct user_regset aarch64_regsets[] = {
- 		.get_size = sve_get_size,
- 	},
- #endif
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+	[REGSET_PAC_MASK] = {
-+		.core_note_type = NT_ARM_PAC_MASK,
-+		.n = sizeof(struct user_pac_mask) / sizeof(u64),
-+		.size = sizeof(u64),
-+		.align = sizeof(u64),
-+		.get = pac_mask_get,
-+		/* this cannot be set dynamically */
-+	},
-+#endif
- };
- 
- static const struct user_regset_view user_aarch64_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index c5358e0ae7c5..3f23273d690c 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -420,6 +420,7 @@ typedef struct elf64_shdr {
- #define NT_ARM_HW_WATCH	0x403		/* ARM hardware watchpoint registers */
- #define NT_ARM_SYSTEM_CALL	0x404	/* ARM system call number */
- #define NT_ARM_SVE	0x405		/* ARM Scalable Vector Extension registers */
-+#define NT_ARM_PAC_MASK		0x406	/* ARM pointer authentication code masks */
- #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
- #define NT_VMCOREDD	0x700		/* Vmcore Device Dump Note */
- #define NT_MIPS_DSP	0x800		/* MIPS DSP ASE registers */
+ 	/*
+ 	 * Frame pointers should strictly progress back up the stack
 -- 
 2.11.0
 
