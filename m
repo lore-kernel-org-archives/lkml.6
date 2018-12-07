@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62965C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E57C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B27B2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B27B2082D
+	by mail.kernel.org (Postfix) with ESMTP id 05A86214DB
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 21:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A86214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbeLGVKa (ORCPT
+        id S1726485AbeLGVKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 16:10:30 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16089 "EHLO huawei.com"
+        Fri, 7 Dec 2018 16:10:42 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56850 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726149AbeLGVJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:09:53 -0500
+        id S1726135AbeLGVJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 16:09:48 -0500
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A230EE79086DE;
-        Sat,  8 Dec 2018 05:09:49 +0800 (CST)
+        by Forcepoint Email with ESMTP id 50C5E7F25426A;
+        Sat,  8 Dec 2018 05:09:45 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 8 Dec 2018 05:09:44 +0800
+ 14.3.408.0; Sat, 8 Dec 2018 05:09:36 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
-Subject: [PATCH net-next 12/14] net: hns3: handle hw errors of PPU(RCB)
-Date:   Fri, 7 Dec 2018 21:08:09 +0000
-Message-ID: <20181207210811.23844-13-salil.mehta@huawei.com>
+Subject: [PATCH net-next 09/14] net: hns3: add handling of hw errors reported through MSIX
+Date:   Fri, 7 Dec 2018 21:08:06 +0000
+Message-ID: <20181207210811.23844-10-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181207210811.23844-1-salil.mehta@huawei.com>
 References: <20181207210811.23844-1-salil.mehta@huawei.com>
@@ -49,270 +49,270 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shiju Jose <shiju.jose@huawei.com>
+This patch adds handling for HNS3 hardware errors(non-standard)
+which are reported through MSIX interrupts and not through
+PCIe AER channel.
 
-This patch enables and handles hw RAS and MSIx errors of PPU(RCB).
+These MSIX reported hardware errors are handled using common
+misc. interrupt handler. Hardware error related registers
+cannot be cleared in context to the interrupt received as
+they require *heavy* access to hardware using IMP(Integrated
+Mangement Processor) commands. Hence, we defer the clearing
+of such error events till later time.
 
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Since, we have defered exact identification of errors we
+will have to defer the level of receovery/reset which
+might be required. Hence, a new reset type UNKNOWN reset
+has been introduced which effectively defers the assertion
+of the reset till we get hold of kind of errors at later
+time.
+
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   3 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 162 +++++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  15 ++
- 3 files changed, 180 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  3 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 93 ++++++++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  5 ++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 39 ++++++++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  1 +
+ 6 files changed, 140 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 46af567..0223e83 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -217,6 +217,9 @@ enum hclge_opcode_type {
- 	/* Error INT commands */
- 	HCLGE_MAC_COMMON_INT_EN		= 0x030E,
- 	HCLGE_TM_SCH_ECC_INT_EN		= 0x0829,
-+	HCLGE_PPU_MPF_ECC_INT_CMD	= 0x0B40,
-+	HCLGE_PPU_MPF_OTHER_INT_CMD	= 0x0B41,
-+	HCLGE_PPU_PF_OTHER_INT_CMD	= 0x0B42,
- 	HCLGE_COMMON_ECC_INT_CFG	= 0x1505,
- 	HCLGE_QUERY_RAS_INT_STS_BD_NUM	= 0x1510,
- 	HCLGE_QUERY_CLEAR_MPF_RAS_INT	= 0x1511,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index e82ef4f..00086ce 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -222,6 +222,47 @@ static const struct hclge_hw_error hclge_mac_afifo_tnl_int[] = {
- 	{ /* sentinel */ }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 9d9f4f9..294e725 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -136,6 +136,7 @@ enum hnae3_reset_type {
+ 	HNAE3_CORE_RESET,
+ 	HNAE3_GLOBAL_RESET,
+ 	HNAE3_IMP_RESET,
++	HNAE3_UNKNOWN_RESET,
+ 	HNAE3_NONE_RESET,
  };
  
-+static const struct hclge_hw_error hclge_ppu_mpf_abnormal_int_st2[] = {
-+	{ .int_msk = BIT(13), .msg = "rpu_rx_pkt_bit32_ecc_mbit_err" },
-+	{ .int_msk = BIT(14), .msg = "rpu_rx_pkt_bit33_ecc_mbit_err" },
-+	{ .int_msk = BIT(15), .msg = "rpu_rx_pkt_bit34_ecc_mbit_err" },
-+	{ .int_msk = BIT(16), .msg = "rpu_rx_pkt_bit35_ecc_mbit_err" },
-+	{ .int_msk = BIT(17), .msg = "rcb_tx_ring_ecc_mbit_err" },
-+	{ .int_msk = BIT(18), .msg = "rcb_rx_ring_ecc_mbit_err" },
-+	{ .int_msk = BIT(19), .msg = "rcb_tx_fbd_ecc_mbit_err" },
-+	{ .int_msk = BIT(20), .msg = "rcb_rx_ebd_ecc_mbit_err" },
-+	{ .int_msk = BIT(21), .msg = "rcb_tso_info_ecc_mbit_err" },
-+	{ .int_msk = BIT(22), .msg = "rcb_tx_int_info_ecc_mbit_err" },
-+	{ .int_msk = BIT(23), .msg = "rcb_rx_int_info_ecc_mbit_err" },
-+	{ .int_msk = BIT(24), .msg = "tpu_tx_pkt_0_ecc_mbit_err" },
-+	{ .int_msk = BIT(25), .msg = "tpu_tx_pkt_1_ecc_mbit_err" },
-+	{ .int_msk = BIT(26), .msg = "rd_bus_err" },
-+	{ .int_msk = BIT(27), .msg = "wr_bus_err" },
-+	{ .int_msk = BIT(28), .msg = "reg_search_miss" },
-+	{ .int_msk = BIT(29), .msg = "rx_q_search_miss" },
-+	{ .int_msk = BIT(30), .msg = "ooo_ecc_err_detect" },
-+	{ .int_msk = BIT(31), .msg = "ooo_ecc_err_multpl" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_ppu_mpf_abnormal_int_st3[] = {
-+	{ .int_msk = BIT(4), .msg = "gro_bd_ecc_mbit_err" },
-+	{ .int_msk = BIT(5), .msg = "gro_context_ecc_mbit_err" },
-+	{ .int_msk = BIT(6), .msg = "rx_stash_cfg_ecc_mbit_err" },
-+	{ .int_msk = BIT(7), .msg = "axi_rd_fbd_ecc_mbit_err" },
-+	{ /* sentinel */ }
-+};
-+
-+static const struct hclge_hw_error hclge_ppu_pf_abnormal_int[] = {
-+	{ .int_msk = BIT(0), .msg = "over_8bd_no_fe" },
-+	{ .int_msk = BIT(1), .msg = "tso_mss_cmp_min_err" },
-+	{ .int_msk = BIT(2), .msg = "tso_mss_cmp_max_err" },
-+	{ .int_msk = BIT(3), .msg = "tx_rd_fbd_poison" },
-+	{ .int_msk = BIT(4), .msg = "rx_rd_ebd_poison" },
-+	{ .int_msk = BIT(5), .msg = "buf_wait_timeout" },
-+	{ /* sentinel */ }
-+};
-+
- static void hclge_log_error(struct device *dev, char *reg,
- 			    const struct hclge_hw_error *err,
- 			    u32 err_sts)
-@@ -489,6 +530,82 @@ static int hclge_config_mac_err_int(struct hclge_dev *hdev, bool en)
- 	return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index 0a0eb6c..08d02b9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -220,6 +220,9 @@ enum hclge_opcode_type {
+ 	HCLGE_QUERY_RAS_INT_STS_BD_NUM	= 0x1510,
+ 	HCLGE_QUERY_CLEAR_MPF_RAS_INT	= 0x1511,
+ 	HCLGE_QUERY_CLEAR_PF_RAS_INT	= 0x1512,
++	HCLGE_QUERY_MSIX_INT_STS_BD_NUM	= 0x1513,
++	HCLGE_QUERY_CLEAR_ALL_MPF_MSIX_INT	= 0x1514,
++	HCLGE_QUERY_CLEAR_ALL_PF_MSIX_INT	= 0x1515,
+ 	HCLGE_IGU_EGU_TNL_INT_EN	= 0x1803,
+ 	HCLGE_IGU_COMMON_INT_EN		= 0x1806,
+ 	HCLGE_TM_QCN_MEM_INT_CFG	= 0x1A14,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+index 7371ae4..0676670 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+@@ -727,3 +727,96 @@ pci_ers_result_t hclge_handle_hw_ras_error(struct hnae3_ae_dev *ae_dev)
+ 
+ 	return PCI_ERS_RESULT_RECOVERED;
  }
- 
-+static int hclge_config_ppu_error_interrupts(struct hclge_dev *hdev, u32 cmd,
-+					     bool en)
++
++int hclge_handle_hw_msix_error(struct hclge_dev *hdev,
++			       unsigned long *reset_requests)
 +{
 +	struct device *dev = &hdev->pdev->dev;
-+	struct hclge_desc desc[2];
-+	int num = 1;
-+	int ret;
++	u32 mpf_bd_num, pf_bd_num, bd_num;
++	struct hclge_desc desc_bd;
++	struct hclge_desc *desc;
++	int ret = 0;
 +
-+	/* configure PPU error interrupts */
-+	if (cmd == HCLGE_PPU_MPF_ECC_INT_CMD) {
-+		hclge_cmd_setup_basic_desc(&desc[0], cmd, false);
-+		desc[0].flag |= HCLGE_CMD_FLAG_NEXT;
-+		hclge_cmd_setup_basic_desc(&desc[1], cmd, false);
-+		if (en) {
-+			desc[0].data[0] = HCLGE_PPU_MPF_ABNORMAL_INT0_EN;
-+			desc[0].data[1] = HCLGE_PPU_MPF_ABNORMAL_INT1_EN;
-+			desc[1].data[3] = HCLGE_PPU_MPF_ABNORMAL_INT3_EN;
-+			desc[1].data[4] = HCLGE_PPU_MPF_ABNORMAL_INT2_EN;
-+		}
++	/* set default handling */
++	set_bit(HNAE3_FUNC_RESET, reset_requests);
 +
-+		desc[1].data[0] = HCLGE_PPU_MPF_ABNORMAL_INT0_EN_MASK;
-+		desc[1].data[1] = HCLGE_PPU_MPF_ABNORMAL_INT1_EN_MASK;
-+		desc[1].data[2] = HCLGE_PPU_MPF_ABNORMAL_INT2_EN_MASK;
-+		desc[1].data[3] |= HCLGE_PPU_MPF_ABNORMAL_INT3_EN_MASK;
-+		num = 2;
-+	} else if (cmd == HCLGE_PPU_MPF_OTHER_INT_CMD) {
-+		hclge_cmd_setup_basic_desc(&desc[0], cmd, false);
-+		if (en)
-+			desc[0].data[0] = HCLGE_PPU_MPF_ABNORMAL_INT2_EN2;
-+
-+		desc[0].data[2] = HCLGE_PPU_MPF_ABNORMAL_INT2_EN2_MASK;
-+	} else if (cmd == HCLGE_PPU_PF_OTHER_INT_CMD) {
-+		hclge_cmd_setup_basic_desc(&desc[0], cmd, false);
-+		if (en)
-+			desc[0].data[0] = HCLGE_PPU_PF_ABNORMAL_INT_EN;
-+
-+		desc[0].data[2] = HCLGE_PPU_PF_ABNORMAL_INT_EN_MASK;
-+	} else {
-+		dev_err(dev, "Invalid cmd to configure PPU error interrupts\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc[0], num);
-+
-+	return ret;
-+}
-+
-+static int hclge_config_ppu_hw_err_int(struct hclge_dev *hdev, bool en)
-+{
-+	struct device *dev = &hdev->pdev->dev;
-+	int ret;
-+
-+	ret = hclge_config_ppu_error_interrupts(hdev, HCLGE_PPU_MPF_ECC_INT_CMD,
-+						en);
++	/* query the number of bds for the MSIx int status */
++	hclge_cmd_setup_basic_desc(&desc_bd, HCLGE_QUERY_MSIX_INT_STS_BD_NUM,
++				   true);
++	ret = hclge_cmd_send(&hdev->hw, &desc_bd, 1);
 +	if (ret) {
-+		dev_err(dev, "fail(%d) to configure PPU MPF ECC error intr\n",
++		dev_err(dev, "fail(%d) to query msix int status bd num\n",
 +			ret);
++		/* reset everything for now */
++		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
 +		return ret;
 +	}
 +
-+	ret = hclge_config_ppu_error_interrupts(hdev,
-+						HCLGE_PPU_MPF_OTHER_INT_CMD,
-+						en);
++	mpf_bd_num = le32_to_cpu(desc_bd.data[0]);
++	pf_bd_num = le32_to_cpu(desc_bd.data[1]);
++	bd_num = max_t(u32, mpf_bd_num, pf_bd_num);
++
++	desc = kcalloc(bd_num, sizeof(struct hclge_desc), GFP_KERNEL);
++	if (!desc)
++		goto out;
++
++	/* query all main PF MSIx errors */
++	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_QUERY_CLEAR_ALL_MPF_MSIX_INT,
++				   true);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], mpf_bd_num);
 +	if (ret) {
-+		dev_err(dev, "fail(%d) to configure PPU MPF other intr\n", ret);
-+		return ret;
++		dev_err(dev, "query all mpf msix int cmd failed (%d)\n",
++			ret);
++		/* reset everything for now */
++		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
++		goto msi_error;
 +	}
 +
-+	ret = hclge_config_ppu_error_interrupts(hdev,
-+						HCLGE_PPU_PF_OTHER_INT_CMD, en);
-+	if (ret)
-+		dev_err(dev, "fail(%d) to configure PPU PF error interrupts\n",
++	/* clear all main PF MSIx errors */
++	hclge_cmd_reuse_desc(&desc[0], false);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], mpf_bd_num);
++	if (ret) {
++		dev_err(dev, "clear all mpf msix int cmd failed (%d)\n",
 +			ret);
++		/* reset everything for now */
++		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
++		goto msi_error;
++	}
++
++	/* query all PF MSIx errors */
++	memset(desc, 0, bd_num * sizeof(struct hclge_desc));
++	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_QUERY_CLEAR_ALL_PF_MSIX_INT,
++				   true);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], pf_bd_num);
++	if (ret) {
++		dev_err(dev, "query all pf msix int cmd failed (%d)\n",
++			ret);
++		/* reset everything for now */
++		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
++		goto msi_error;
++	}
++
++	/* clear all PF MSIx errors */
++	hclge_cmd_reuse_desc(&desc[0], false);
++	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc[0], pf_bd_num);
++	if (ret) {
++		dev_err(dev, "clear all pf msix int cmd failed (%d)\n",
++			ret);
++		/* reset everything for now */
++		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
++	}
++
++msi_error:
++	kfree(desc);
++out:
 +	return ret;
 +}
 +
- #define HCLGE_SET_DEFAULT_RESET_REQUEST(reset_type) \
- 	do { \
- 		if (ae_dev->ops->set_default_reset_request) \
-@@ -578,6 +695,29 @@ static int hclge_handle_mpf_ras_error(struct hclge_dev *hdev,
- 		hclge_log_error(dev, "PPP_MPF_ABNORMAL_INT_ST3",
- 				&hclge_ppp_mpf_abnormal_int_st3[0], status);
- 
-+	/* log PPU(RCB) errors */
-+	desc_data = (__le32 *)&desc[5];
-+	status = le32_to_cpu(*(desc_data + 1));
-+	if (status) {
-+		dev_warn(dev, "PPU_MPF_ABNORMAL_INT_ST1 %s found\n",
-+			 "rpu_rx_pkt_ecc_mbit_err");
-+		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
-+	}
-+
-+	status = le32_to_cpu(*(desc_data + 2));
-+	if (status) {
-+		hclge_log_error(dev, "PPU_MPF_ABNORMAL_INT_ST2",
-+				&hclge_ppu_mpf_abnormal_int_st2[0], status);
-+		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
-+	}
-+
-+	status = le32_to_cpu(*(desc_data + 3)) & HCLGE_PPU_MPF_INT_ST3_MASK;
-+	if (status) {
-+		hclge_log_error(dev, "PPU_MPF_ABNORMAL_INT_ST3",
-+				&hclge_ppu_mpf_abnormal_int_st3[0], status);
-+		HCLGE_SET_DEFAULT_RESET_REQUEST(HNAE3_CORE_RESET);
-+	}
-+
- 	/* log TM(Traffic Manager) errors */
- 	desc_data = (__le32 *)&desc[6];
- 	status = le32_to_cpu(*desc_data);
-@@ -718,6 +858,10 @@ static const struct hclge_hw_blk hw_blk[] = {
- 	  .config_err_int = hclge_config_ppp_hw_err_int,
- 	},
- 	{
-+	  .msk = BIT(3), .name = "PPU",
-+	  .config_err_int = hclge_config_ppu_hw_err_int,
-+	},
-+	{
- 	  .msk = BIT(4), .name = "TM",
- 	  .config_err_int = hclge_config_tm_hw_err_int,
- 	},
-@@ -826,6 +970,17 @@ int hclge_handle_hw_msix_error(struct hclge_dev *hdev,
- 		set_bit(HNAE3_GLOBAL_RESET, reset_requests);
- 	}
- 
-+	/* log PPU(RCB) errors */
-+	desc_data = (__le32 *)&desc[5];
-+	status = le32_to_cpu(*(desc_data + 2)) &
-+			HCLGE_PPU_MPF_INT_ST2_MSIX_MASK;
-+	if (status) {
-+		dev_warn(dev,
-+			 "PPU_MPF_ABNORMAL_INT_ST2[28:29], err_status(0x%x)\n",
-+			 status);
-+		set_bit(HNAE3_CORE_RESET, reset_requests);
-+	}
-+
- 	/* clear all main PF MSIx errors */
- 	hclge_cmd_reuse_desc(&desc[0], false);
- 	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-@@ -861,6 +1016,13 @@ int hclge_handle_hw_msix_error(struct hclge_dev *hdev,
- 		hclge_log_error(dev, "PPP_PF_ABNORMAL_INT_ST0",
- 				&hclge_ppp_pf_abnormal_int[0], status);
- 
-+	/* PPU(RCB) PF errors */
-+	desc_data = (__le32 *)&desc[3];
-+	status = le32_to_cpu(*desc_data) & HCLGE_PPU_PF_INT_MSIX_MASK;
-+	if (status)
-+		hclge_log_error(dev, "PPU_PF_ABNORMAL_INT_ST",
-+				&hclge_ppu_pf_abnormal_int[0], status);
-+
- 	/* clear all PF MSIx errors */
- 	hclge_cmd_reuse_desc(&desc[0], false);
- 	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-index 8e7d151..970d356 100644
+index 809e698..05adccb 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-@@ -46,10 +46,25 @@
- #define HCLGE_NCSI_ERR_INT_TYPE	0x9
- #define HCLGE_MAC_COMMON_ERR_INT_EN		GENMASK(7, 0)
- #define HCLGE_MAC_COMMON_ERR_INT_EN_MASK	GENMASK(7, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT0_EN		GENMASK(31, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT0_EN_MASK	GENMASK(31, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT1_EN		GENMASK(31, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT1_EN_MASK	GENMASK(31, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT2_EN		0x3FFF3FFF
-+#define HCLGE_PPU_MPF_ABNORMAL_INT2_EN_MASK	0x3FFF3FFF
-+#define HCLGE_PPU_MPF_ABNORMAL_INT2_EN2		0xB
-+#define HCLGE_PPU_MPF_ABNORMAL_INT2_EN2_MASK	0xB
-+#define HCLGE_PPU_MPF_ABNORMAL_INT3_EN		GENMASK(7, 0)
-+#define HCLGE_PPU_MPF_ABNORMAL_INT3_EN_MASK	GENMASK(23, 16)
-+#define HCLGE_PPU_PF_ABNORMAL_INT_EN		GENMASK(5, 0)
-+#define HCLGE_PPU_PF_ABNORMAL_INT_EN_MASK	GENMASK(5, 0)
+@@ -9,6 +9,9 @@
+ #define HCLGE_RAS_PF_OTHER_INT_STS_REG   0x20B00
+ #define HCLGE_RAS_REG_NFE_MASK   0xFF00
  
- #define HCLGE_IGU_INT_MASK		GENMASK(3, 0)
- #define HCLGE_IGU_EGU_TNL_INT_MASK	GENMASK(5, 0)
- #define HCLGE_PPP_MPF_INT_ST3_MASK	GENMASK(5, 0)
-+#define HCLGE_PPU_MPF_INT_ST3_MASK	GENMASK(7, 0)
-+#define HCLGE_PPU_MPF_INT_ST2_MSIX_MASK	GENMASK(29, 28)
-+#define HCLGE_PPU_PF_INT_MSIX_MASK	0x27
- #define HCLGE_QCN_FIFO_INT_MASK		GENMASK(17, 0)
- #define HCLGE_QCN_ECC_INT_MASK		GENMASK(21, 0)
- #define HCLGE_NCSI_ECC_INT_MASK		GENMASK(1, 0)
++#define HCLGE_VECTOR0_PF_OTHER_INT_STS_REG   0x20800
++#define HCLGE_VECTOR0_REG_MSIX_MASK   0x1FF00
++
+ #define HCLGE_IMP_TCM_ECC_ERR_INT_EN	0xFFFF0000
+ #define HCLGE_IMP_TCM_ECC_ERR_INT_EN_MASK	0xFFFF0000
+ #define HCLGE_IMP_ITCM4_ECC_ERR_INT_EN	0x300
+@@ -69,4 +72,6 @@ struct hclge_hw_error {
+ 
+ int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state);
+ pci_ers_result_t hclge_handle_hw_ras_error(struct hnae3_ae_dev *ae_dev);
++int hclge_handle_hw_msix_error(struct hclge_dev *hdev,
++			       unsigned long *reset_requests);
+ #endif
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 354ac5f..2238020 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2200,12 +2200,13 @@ static void hclge_service_complete(struct hclge_dev *hdev)
+ 
+ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ {
+-	u32 rst_src_reg;
+-	u32 cmdq_src_reg;
++	u32 rst_src_reg, cmdq_src_reg, msix_src_reg;
+ 
+ 	/* fetch the events from their corresponding regs */
+ 	rst_src_reg = hclge_read_dev(&hdev->hw, HCLGE_MISC_VECTOR_INT_STS);
+ 	cmdq_src_reg = hclge_read_dev(&hdev->hw, HCLGE_VECTOR0_CMDQ_SRC_REG);
++	msix_src_reg = hclge_read_dev(&hdev->hw,
++				      HCLGE_VECTOR0_PF_OTHER_INT_STS_REG);
+ 
+ 	/* Assumption: If by any chance reset and mailbox events are reported
+ 	 * together then we will only process reset event in this go and will
+@@ -2239,6 +2240,10 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 		return HCLGE_VECTOR0_EVENT_RST;
+ 	}
+ 
++	/* check for vector0 msix event source */
++	if (msix_src_reg & HCLGE_VECTOR0_REG_MSIX_MASK)
++		return HCLGE_VECTOR0_EVENT_ERR;
++
+ 	/* check for vector0 mailbox(=CMDQ RX) event source */
+ 	if (BIT(HCLGE_VECTOR0_RX_CMDQ_INT_B) & cmdq_src_reg) {
+ 		cmdq_src_reg &= ~BIT(HCLGE_VECTOR0_RX_CMDQ_INT_B);
+@@ -2289,6 +2294,19 @@ static irqreturn_t hclge_misc_irq_handle(int irq, void *data)
+ 
+ 	/* vector 0 interrupt is shared with reset and mailbox source events.*/
+ 	switch (event_cause) {
++	case HCLGE_VECTOR0_EVENT_ERR:
++		/* we do not know what type of reset is required now. This could
++		 * only be decided after we fetch the type of errors which
++		 * caused this event. Therefore, we will do below for now:
++		 * 1. Assert HNAE3_UNKNOWN_RESET type of reset. This means we
++		 *    have defered type of reset to be used.
++		 * 2. Schedule the reset serivce task.
++		 * 3. When service task receives  HNAE3_UNKNOWN_RESET type it
++		 *    will fetch the correct type of reset.  This would be done
++		 *    by first decoding the types of errors.
++		 */
++		set_bit(HNAE3_UNKNOWN_RESET, &hdev->reset_request);
++		/* fall through */
+ 	case HCLGE_VECTOR0_EVENT_RST:
+ 		hclge_reset_task_schedule(hdev);
+ 		break;
+@@ -2593,6 +2611,23 @@ static enum hnae3_reset_type hclge_get_reset_level(struct hclge_dev *hdev,
+ {
+ 	enum hnae3_reset_type rst_level = HNAE3_NONE_RESET;
+ 
++	/* first, resolve any unknown reset type to the known type(s) */
++	if (test_bit(HNAE3_UNKNOWN_RESET, addr)) {
++		/* we will intentionally ignore any errors from this function
++		 *  as we will end up in *some* reset request in any case
++		 */
++		hclge_handle_hw_msix_error(hdev, addr);
++		clear_bit(HNAE3_UNKNOWN_RESET, addr);
++		/* We defered the clearing of the error event which caused
++		 * interrupt since it was not posssible to do that in
++		 * interrupt context (and this is the reason we introduced
++		 * new UNKNOWN reset type). Now, the errors have been
++		 * handled and cleared in hardware we can safely enable
++		 * interrupts. This is an exception to the norm.
++		 */
++		hclge_enable_vector(&hdev->misc_vector, true);
++	}
++
+ 	/* return the highest priority reset level amongst all */
+ 	if (test_bit(HNAE3_IMP_RESET, addr)) {
+ 		rst_level = HNAE3_IMP_RESET;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index ee60242..106fce1 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -205,6 +205,7 @@ enum HCLGE_DEV_STATE {
+ enum hclge_evt_cause {
+ 	HCLGE_VECTOR0_EVENT_RST,
+ 	HCLGE_VECTOR0_EVENT_MBX,
++	HCLGE_VECTOR0_EVENT_ERR,
+ 	HCLGE_VECTOR0_EVENT_OTHER,
+ };
+ 
 -- 
 2.7.4
 
