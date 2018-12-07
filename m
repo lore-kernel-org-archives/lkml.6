@@ -2,86 +2,125 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1C1C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56933C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9052020989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSLpxFfy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9052020989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1839620989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 12:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1839620989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbeLGMa3 (ORCPT
+        id S1726081AbeLGMcn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:30:29 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35785 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbeLGMa2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:30:28 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so3420618ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 04:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7/os7eFrdjZAa8Lq9Ha1NGHegsNC2tJAUi1QBzjgVMQ=;
-        b=SSLpxFfyZYwuHYHP7p2Ut2Ty0LIsEi2IOaquypyrl11wWADZI5DTskb1yEnwosmu3F
-         QbuaZcnzjsIZ48O/a+3qY3rmAlHrYo/SAVokD6v2CHjIgYsM5viEGzMT/kF1oUCHWnuE
-         t8/5HrEp5FGlYzCHYbj+ff8E+Rejt00fJHjvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7/os7eFrdjZAa8Lq9Ha1NGHegsNC2tJAUi1QBzjgVMQ=;
-        b=Uv7KWlHpslwieG15Li0+9AY18hL4hyc0KsUXVs3uEsiO3ekv3LRQX6wYeiKs2onOfl
-         VHp8bohlRtLcU7g1yInDmldH5IlzUPLH3iDBwag1GkpSxd6r6qZJ6IWixI/kkbt6OWiM
-         RhAk8e+gX+2RXsLimtEhZKovfZUIc+BqmE146HUOYpU3QAPjkPcV/rIM3mXKn5gJOoqF
-         1pCFJlNzmr41rNFQxaXFqi0yrfXmYe39TuTpm7xt2X+zoz7a84VbglY1pPDKNSXFc+eN
-         lJOJNmEeAUdU0O4nhBz+tI21ifAmO+5WV4r98VLCKNUbyV3Gf8wJl/piU0JhSLVkY5ll
-         Lx8g==
-X-Gm-Message-State: AA+aEWYvW1HCXKPnZ7tsx3chZY6Dh7bEVKkdkQgKSZGxCFODQVSGwpDX
-        7iiYzRo8Q0G4zqM2z5Gy6aHuSJSXyVJRMId4w4gCQQ==
-X-Google-Smtp-Source: AFSGD/WIGfniGElDiivYNO8T1H7qXLY6BOgDe33KqinRMAlSPWQOurZ6BCja9DW032eHL0yw8rctBq1I6VWBugDcKZY=
-X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr1090584ljj.120.1544185826433;
- Fri, 07 Dec 2018 04:30:26 -0800 (PST)
+        Fri, 7 Dec 2018 07:32:43 -0500
+Received: from mout.gmx.net ([212.227.15.18]:45871 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbeLGMcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 07:32:43 -0500
+Received: from [71.184.117.43] ([71.184.117.43]) by
+ msvc-mesg-gmx023.server.lan (via HTTP); Fri, 7 Dec 2018 13:32:40 +0100
 MIME-Version: 1.0
-References: <20181203154100.4280-1-wens@csie.org>
-In-Reply-To: <20181203154100.4280-1-wens@csie.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 7 Dec 2018 13:30:14 +0100
-Message-ID: <CACRpkdYbdDfN93oXEkSmoFAEdrQwzk7mTCreOgem6RTJPWVj5A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: sunxi: a64: Drop numeral from csi0/ts0
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        jagan@amarulasolutions.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <trinity-73766f32-cf87-4bcd-a655-9eaa40b9ee9c-1544185959983@msvc-mesg-gmx023>
+From:   "Qian Cai" <cai@gmx.us>
+To:     "Ard Biesheuvel" <ard.biesheuvel@linaro.org>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        "Catalin Marinas" <catalin.marinas@arm.com>
+Subject: Re: [RESEND PATCH] efi: let kmemleak ignore false positives
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 7 Dec 2018 13:32:40 +0100
+In-Reply-To: <CAKv+Gu9ugNxoST=cc9utWNtoYFdPng0FgNfV-Mw0UWyJiKqOLw@mail.gmail.com>
+References: <1543517152-23969-1-git-send-email-cai@gmx.us>
+ <20181206161633.36292-1-cai@gmx.us>
+ <20181206175958.GS54495@arrakis.emea.arm.com>
+ <CAKv+Gu97MU5kU878gF=KBLxQ5GjZatAbJ-LVdKv-QMgdPh3kZQ@mail.gmail.com>
+ <1544119499.12945.48.camel@gmx.us>
+ <CAKv+Gu9ugNxoST=cc9utWNtoYFdPng0FgNfV-Mw0UWyJiKqOLw@mail.gmail.com>
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:I+BmsAiDbNTCEKOEFTpsXQRKcKTAjcJ7IwIEA5sjIbIlPOdZA2xpA5Hy7xagLt1UeKC0i
+ R8fqyi99yO65X+sEDTMtEgD+DtLHsiOsG6hJ7qpTLZANBJKYWpgCj8NHpCDSOPhyiXZghTv/OhKo
+ BOQXHmitLJMDEW50aoEwg8nKnrStMwnwcWgtu7Jv6P2eSeogNO2ShRpWZrZlhE2ufEOPmnd2JYeK
+ 3SGEzwLNtjcSwRjgQddWGjZT5c/fyySRiCK3WZfssB3smQlXJLaMtuhxZFdFspHQlKHtqgG8haJE
+ 3Jt6hT1ESkskA3r/wl/S1so
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qSHSn5Xw4nc=:jbS+xP2pwLy48NmVB2vgag
+ boNR7TiUp/ea2JVIgdqrHItYU960qe6IPUNHUsH5YVi+hSdW6Jw/0Y1T3pGTt5YJIy4FzNWWC
+ fYvhZB7Y+JadZ793h+XjGZBIOqFn9rK6SyGsvZVpiKdi7FwvYd/bPxCEpJZ79HcQ/56vFjtN3
+ x+mnRIcwGkciFoCXTdJJ55TTw7PF6vEQBoW4f470sjX1WuynODYuCGmAbOwgngAYTQSwN6JTu
+ UpUblZ7tAsFaY4c3X+WUMaMQy81Au8rHmqvOKHhaXEIQgj6qlov2R3xTYAGzLEgGmDi8FofrD
+ 3HyS9m/wpKCkYLNDKVHhXJ0Jt/0zKsaRXqmw1QXCiIbUC19ikvTs56L6bS9XkEvb3quyt1Bjr
+ q1W9YqMt94A8QmKbvJU7pSEEc7AzblG1mLrsOF9U+FdPbqjq+c3XSLRVH4t2LFoGh0xkpj55t
+ uamK1lQpd1avt0KSnGQj15ibXRWBLVa+pDGhUFANZ5+yBzS3LSLR54Gz2wRZhyrvvuJdm7ZL1
+ 5qaW039/Z7IaRm0Dav3tIXl3v/Cp6c8OEQOiKIcVOSadS63JoexuFTT+OLBdZs7TByd/HI90Z
+ mLX0slhXR1+iOkXmN3aAik5J0CvVzewWcZ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 4:41 PM Chen-Yu Tsai <wens@csie.org> wrote:
 
-> This small series renames the csi0 and ts0 pin function names to csi and
-> ts. This makes the names match the datasheet. As there are only one of
-> each type of controller, having a numeral suffix doesn't make sense.
->
-> I'd like to do the rename now while we don't have users nor support for
-> these two controllers. I planned to send this together with CSI support
-> for the A64, but Jagan beat me to it, so here it is.
+On 12/7/18 at 6:28 AM, Ard Biesheuvel wrote:
 
-Patch applied with Maxime's ACK.
+> On Thu, 6 Dec 2018 at 19:05, Qian Cai <cai@gmx.us> wrote:
+> >
+> > On Thu, 2018-12-06 at 19:01 +0100, Ard Biesheuvel wrote:
+> > > On Thu, 6 Dec 2018 at 19:00, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > >
+> > > > On Thu, Dec 06, 2018 at 11:16:33AM -0500, Qian Cai wrote:
+> > > > > unreferenced object 0xffff8096c1acf580 (size 128):
+> > > > >   comm "swapper/63", pid 0, jiffies 4294937418 (age 1201.230s)
+> > > > >   hex dump (first 32 bytes):
+> > > > >     80 87 b5 c1 96 00 00 00 00 00 cc c2 16 00 00 00  ................
+> > > > >     00 00 01 00 00 00 00 00 6b 6b 6b 6b 6b 6b 6b 6b  ........kkkkkkkk
+> > > > >   backtrace:
+> > > > >     [<000000001d2549ba>] kmem_cache_alloc_trace+0x430/0x500
+> > > > >     [<0000000093a6dfab>] efi_mem_reserve_persistent+0x50/0xf8
+> > > > >     [<000000000a730828>] its_cpu_init_lpis+0x394/0x4b8
+> > > > >     [<00000000edf04e07>] its_cpu_init+0x104/0x150
+> > > > >     [<000000004d0342c5>] gic_starting_cpu+0x34/0x40
+> > > > >     [<000000005d9da772>] cpuhp_invoke_callback+0x228/0x1d68
+> > > > >     [<0000000061eace9b>] notify_cpu_starting+0xc0/0x118
+> > > > >     [<0000000048bc2dc5>] secondary_start_kernel+0x23c/0x3b0
+> > > > >     [<0000000015137d6a>] 0xffffffffffffffff
+> > > > >
+> > > > > efi_mem_reserve_persistent+0x50/0xf8:
+> > > > > kmalloc at include/linux/slab.h:546
+> > > > > (inlined by) efi_mem_reserve_persistent at drivers/firmware/efi/efi.c:979
+> > > > >
+> > > > > This line,
+> > > > >
+> > > > > rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
+> > > > >
+> > > > > Kmemleak has a known limitation that can only track pointers in the kernel
+> > > > > virtual space. Hence, it will report false positives due to "rsv" will
+> > > > > only
+> > > > > reference to other physical addresses,
+> > > > >
+> > > > > rsv->next = efi_memreserve_root->next;
+> > > > > efi_memreserve_root->next = __pa(rsv);
+> > > > >
+> > > > > Signed-off-by: Qian Cai <cai@gmx.us>
+> > > >
+> > > > Acked-by: Catalin Marinas <catalin.marinas@arm.com>\
+> > >
+> > > I don't see the patch and I wasn't cc'ed
+> >
+> > That is strange. Please see,
+> >
+> > https://lore.kernel.org/lkml/1543517152-23969-1-git-send-email-cai@gmx.us/
+> 
+> OK, I found it in my spam folder, apologies for that.
+> 
+> This kmalloc() will be replaced in the next merge window by a call to
+> __get_free_page(). Does kmemleak still require the kmemleak_ignore()
+> for that case? Or is it only for kmalloc()?
 
-Yours,
-Linus Walleij
+Looks like kmemleak won’t be able to track page
+allocation, so it should be fine then without 
+kmemleak_ignore().
