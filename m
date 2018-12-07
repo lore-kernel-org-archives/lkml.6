@@ -2,207 +2,157 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5428AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44082C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA5BA2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072D82081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="KehiMgAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5BA2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q+G7N6R9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072D82081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbeLGUZ1 (ORCPT
+        id S1726178AbeLGU02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:25:27 -0500
-Received: from mail-eopbgr710079.outbound.protection.outlook.com ([40.107.71.79]:41441
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726008AbeLGUZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:25:27 -0500
+        Fri, 7 Dec 2018 15:26:28 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39808 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeLGU02 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:26:28 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so9008782itl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 12:26:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pSlwvoC7ypodGxKLQRGZakhxkbW3M7B7M75uyDnI1AU=;
- b=KehiMgAlEj43vudupjPVn6PYMyqkGrkx70q1nNst2erAtC75Dkkki3zO1FLLKbbRQerDjLQsyMbod2nTXJ2/oRwSKK2mZxVr3fDNw7/adex0QlhdgRM3yHwIrc4BzePyZ1enpN4KO1Crjt+P6qReFKSuee7SF5X8Atcq8qKv6Zs=
-Received: from BN7PR03MB3572.namprd03.prod.outlook.com (20.176.20.139) by
- BN7PR03MB3700.namprd03.prod.outlook.com (20.176.23.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Fri, 7 Dec 2018 20:24:45 +0000
-Received: from BN7PR03MB3572.namprd03.prod.outlook.com
- ([fe80::4d32:687b:8d17:23b6]) by BN7PR03MB3572.namprd03.prod.outlook.com
- ([fe80::4d32:687b:8d17:23b6%3]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
- 20:24:44 +0000
-From:   "Hennerich, Michael" <Michael.Hennerich@analog.com>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 02/18] mfd: adp5520: Make it explicitly non-modular
-Thread-Topic: [PATCH 02/18] mfd: adp5520: Make it explicitly non-modular
-Thread-Index: AQHUjmlWTJGhmqBj20qEZ2E27ijP9qVzuKCA
-Date:   Fri, 7 Dec 2018 20:24:44 +0000
-Message-ID: <BN7PR03MB3572AA2446C348BF7B57F49D8EAA0@BN7PR03MB3572.namprd03.prod.outlook.com>
-References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
- <1544213465-16259-3-git-send-email-paul.gortmaker@windriver.com>
-In-Reply-To: <1544213465-16259-3-git-send-email-paul.gortmaker@windriver.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.Hennerich@analog.com; 
-x-originating-ip: [2001:16b8:2dbd:ff00:10f9:445d:ab57:4f9a]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR03MB3700;6:HZjTwTaBJYxx8mKt38eQqYuOYjxXXsCZ9KAG3UCQkv1J3XTrpBzUnT5jpZ2rMec74t/MXBCh2liWMOQzGBukVN1qDrotdftVbw7GMRqoEc8jBn+/fpkAGi4qHKaq8HE0NRK+vddBjxLoOI+hMSO80bOqcvUjY01nXnPYmGcE52aNJ+aHzd3YlfVVGLPGU5DHqnmo7XSu0jdGSpzvL/lCTpt8W492tOhlQqU6Y0nn4Ledk7sccoNpjGKLA+5ox7KlmuuyMlh6OA6KNkW/sYc/MI9KrJ6r223pyhZUTI0kXlvcKUS6jPSmolTl2GhRhFxPKA9K/UILyHdBVYd+kelWaUM9LCKO3RfmSVScoN9TUaLYd/C0AJjTT6joMo5q2P3QNilUqmSqEF86Ycvdi8boNOGGToDmQTyYoX9mrQw23eGki3ml/Spo1XlNQQKs0LuK46W/pIgrk+MA7SxXesSX3g==;5:Ytfo9ps3Raz6PD544BFi/lk7QMz8iU8SVfU8WEIOKEm5FSaDX6PSAT/PUIslccjQcdsibpOzK+dzaTg9KJx4K9dn0yTyNQ57whFp8H/OFBFyCvNcM7b+XGqwUwvLhJNAzTxy9+J53uGxn0YlOA8vYhVqF/hk04lduEtMSh5Y9NI=;7:UHfVJEmi51Fv79zHoHegC9ht7PY0Ngz0vXA5IyFe8d7bqMVpGvFIvRwJm2TR3YLep4QBRcjdmQtdM8yIcyZhKtpbADrvYzeZDoovOEoLChjo8ZaPx9OZo9eQoCMDt/GLnP+fSEJ3iLawCsv/7lPszQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7d3f4732-aef4-431c-a227-08d65c8206d6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR03MB3700;
-x-ms-traffictypediagnostic: BN7PR03MB3700:
-x-microsoft-antispam-prvs: <BN7PR03MB37004D5D710E3CE6D1F964348EAA0@BN7PR03MB3700.namprd03.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN7PR03MB3700;BCL:0;PCL:0;RULEID:;SRVR:BN7PR03MB3700;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(366004)(396003)(376002)(189003)(199004)(52314003)(13464003)(74316002)(7736002)(53546011)(6506007)(97736004)(2906002)(102836004)(105586002)(6436002)(6246003)(46003)(305945005)(186003)(55016002)(7696005)(99286004)(14444005)(6116002)(86362001)(256004)(76176011)(53936002)(9686003)(71200400001)(71190400001)(25786009)(33656002)(4326008)(68736007)(72206003)(229853002)(446003)(486006)(476003)(8676002)(5660300001)(110136005)(11346002)(14454004)(81156014)(316002)(81166006)(478600001)(8936002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3700;H:BN7PR03MB3572.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: analog.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9XaqY/ha89NNluIZZO+8lpnpKPpnUokMw5YO9SkkSV0vRBBwLnh07Q+8t3WNjthfFXw4FA7EpesAPZH9LTyur20f8GlTgK3Xae/f85jbVH9YGYVJpfyRxst6ril5uGYZZ51bc8tygv8iXuIv29lo7GEbW80BtlZIEKaiUjVAqx2vXulkh7QeTwrzJYt+2YZTEpFvT1Y/CEDpfrgab5f5uVF0zNMqbniomvatzi1FVHku/4Dm/xpg4K8HYSqZIKRRst4HLZVh6mBHDHs54hdtFQIhehTqwYDLTW/V/HGN5BpShr2tWFtxHP/oC3cOj7jUjirAnIEO19Ezkg8PPtlPtI9goGL9SajR94MhADInHHo=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KLYwNXnzoVvepzSuxQ5p4veFSZuSN5QPAisGoFQq+eo=;
+        b=Q+G7N6R9cNmw2rFHSHCBK/LyjNfFNjK6oJlQ9JyHKZBsMx0HxymipERlO49GeMH+20
+         KhxyCMfcVstVMdHpB0rtXG0FadSe+4UM6hpo8dZy0naiJ49nd9djvcPExigmA9q6YjPE
+         X9GOzFNFMdixUDbASur84eKVfqpCpgVQbFM6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KLYwNXnzoVvepzSuxQ5p4veFSZuSN5QPAisGoFQq+eo=;
+        b=VxiLC2pMthIDmporrV+yxODTgfW0W55YK2znHMdVtopOT9FkhICR8Fsukjh/Nnc5Hz
+         xgnItmgElsM8J4L8xADWjdvoDZoOrjsl9/jGU8BiRV732Zb6doUh62a4aKCx0idiPBXk
+         u+53fUwtAhnXAY+dY63+uvmnZ5ayes1kkeNySzjq2mLDl6TZCLDx9+uY0Ic9dfKeSTgk
+         NS8D/9PttxKEQio/bnpS67v29WWV4JTo1QNOt4qmkaWkFM+rMWs546DVIuEMHlz9PI3q
+         vXsoxqeyzo1D4rv5a09q3QlB8Nnliq+E/AsjReZZpqNQv7IF6VkiF25WRDwS79Iuswd3
+         uHLQ==
+X-Gm-Message-State: AA+aEWbPaLNHgTZ2Sdo2dteiXiACmJeQ2VT+HGpXYkzf1Kr/CMz2A0Oh
+        xzh1UApTgfFo8efFoadwJ7f6sX+KCrKzvEfJZKDtmA==
+X-Google-Smtp-Source: AFSGD/WzF2x0t8jZwsZm4obvUhsaa6Fi7Yqlyol6bPbkz5Lun5YOwVmvPE6dYEWnDi+4QFfBf7aB2CPX1N+FCwV1vMI=
+X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr3437505itk.71.1544214387289;
+ Fri, 07 Dec 2018 12:26:27 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d3f4732-aef4-431c-a227-08d65c8206d6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 20:24:44.9487
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3700
+References: <20181207173309.82A0E6D165@po14163vm.idsi0.si.c-s.fr>
+In-Reply-To: <20181207173309.82A0E6D165@po14163vm.idsi0.si.c-s.fr>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 7 Dec 2018 21:26:15 +0100
+Message-ID: <CAKv+Gu9gz0h2CFNPe9bgrSBzRe7iTVOMxiEEb6OXb75Acv7HUQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto/testmgr: fix skcipher test with CONFIG_VMAP_STACK
+To:     christophe.leroy@c-s.fr
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Paul Gortmaker [mailto:paul.gortmaker@windriver.com]
-> Sent: Freitag, 7. Dezember 2018 21:11
-> To: Lee Jones <lee.jones@linaro.org>
-> Cc: linux-kernel@vger.kernel.org; Paul Gortmaker <paul.gortmaker@windrive=
-r.com>; Hennerich, Michael
-> <Michael.Hennerich@analog.com>
-> Subject: [PATCH 02/18] mfd: adp5520: Make it explicitly non-modular
->=20
-> The Makefile/Kconfig currently controlling compilation of this code is:
->=20
-> drivers/mfd/Makefile:obj-$(CONFIG_PMIC_ADP5520) +=3D adp5520.o
-> drivers/mfd/Kconfig:config PMIC_ADP5520
-> drivers/mfd/Kconfig:    bool "Analog Devices ADP5520/01 MFD PMIC Core Sup=
-port"
->=20
-> ...meaning that it currently is not being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->=20
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
->=20
-> Since module_i2c_driver() uses the same init level priority as
-> builtin_i2c_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->=20
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->=20
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+On Fri, 7 Dec 2018 at 18:33, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>
+> [    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
+> [    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
+> [    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
+> [    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+> [    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
+> [    2.406669]
+> [    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
+> [    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
+> [    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
+> [    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
+> [    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
+> [    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
+> [    2.451762] Call Trace:
+> [    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
+> [    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
+> [    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
+> [    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
+> [    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
+> [    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
+> [    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
+> [    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
+> [    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
+> [    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
+> [    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+> [    2.515532] Instruction dump:
+> [    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
+> [    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
+> [    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
+> [    2.539123] talitos ff020000.crypto: master data transfer error
+> [    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
+> [    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
+>
+> IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
+> cannot be DMA mapped anymore.
+>
+> This patch allocates it with kmalloc()
+>
 
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+This looks like a driver bug to me. Other accelerators in
+drivers/crypto all take a copy of the IV before mapping it for DMA, so
+it would be better if talitos did the same.
 
+> Fixes: da7f033ddc9f ("crypto: cryptomgr - Add test infrastructure")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > ---
->  drivers/mfd/adp5520.c | 30 +++++++-----------------------
->  1 file changed, 7 insertions(+), 23 deletions(-)
->=20
-> diff --git a/drivers/mfd/adp5520.c b/drivers/mfd/adp5520.c
-> index be0497b96720..2cdd39cb8a18 100644
-> --- a/drivers/mfd/adp5520.c
-> +++ b/drivers/mfd/adp5520.c
-> @@ -7,6 +7,8 @@
->   *
->   * Copyright 2009 Analog Devices Inc.
->   *
-> + * Author: Michael Hennerich <michael.hennerich@analog.com>
-> + *
->   * Derived from da903x:
->   * Copyright (C) 2008 Compulab, Ltd.
->   *	Mike Rapoport <mike@compulab.co.il>
-> @@ -18,7 +20,7 @@
->   */
->=20
->  #include <linux/kernel.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/interrupt.h>
-> @@ -304,18 +306,6 @@ static int adp5520_probe(struct i2c_client *client,
->  	return ret;
+>  crypto/testmgr.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+> index b1f79c6bf409..eea498f9030d 100644
+> --- a/crypto/testmgr.c
+> +++ b/crypto/testmgr.c
+> @@ -1112,12 +1112,16 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
+>         struct crypto_wait wait;
+>         const char *input, *result;
+>         void *data;
+> -       char iv[MAX_IVLEN];
+> +       char *iv;
+>         char *xbuf[XBUFSIZE];
+>         char *xoutbuf[XBUFSIZE];
+>         int ret = -ENOMEM;
+>         unsigned int ivsize = crypto_skcipher_ivsize(tfm);
+>
+> +       iv = kmalloc(MAX_IVLEN, GFP_KERNEL | GFP_DMA);
+> +       if (!iv)
+> +               goto out_noiv;
+> +
+>         if (testmgr_alloc_buf(xbuf))
+>                 goto out_nobuf;
+>
+> @@ -1339,6 +1343,8 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
+>  out_nooutbuf:
+>         testmgr_free_buf(xbuf);
+>  out_nobuf:
+> +       kfree(iv);
+> +out_noiv:
+>         return ret;
 >  }
->=20
-> -static int adp5520_remove(struct i2c_client *client)
-> -{
-> -	struct adp5520_chip *chip =3D dev_get_drvdata(&client->dev);
-> -
-> -	if (chip->irq)
-> -		free_irq(chip->irq, chip);
-> -
-> -	adp5520_remove_subdevs(chip);
-> -	adp5520_write(chip->dev, ADP5520_MODE_STATUS, 0);
-> -	return 0;
-> -}
-> -
->  #ifdef CONFIG_PM_SLEEP
->  static int adp5520_suspend(struct device *dev)
->  {
-> @@ -346,20 +336,14 @@ static const struct i2c_device_id adp5520_id[] =3D =
-{
->  	{ "pmic-adp5501", ID_ADP5501 },
->  	{ }
->  };
-> -MODULE_DEVICE_TABLE(i2c, adp5520_id);
->=20
->  static struct i2c_driver adp5520_driver =3D {
->  	.driver =3D {
-> -		.name	=3D "adp5520",
-> -		.pm	=3D &adp5520_pm,
-> +		.name			=3D "adp5520",
-> +		.pm			=3D &adp5520_pm,
-> +		.suppress_bind_attrs	=3D true,
->  	},
->  	.probe		=3D adp5520_probe,
-> -	.remove		=3D adp5520_remove,
->  	.id_table	=3D adp5520_id,
->  };
-> -
-> -module_i2c_driver(adp5520_driver);
-> -
-> -MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
-> -MODULE_DESCRIPTION("ADP5520(01) PMIC-MFD Driver");
-> -MODULE_LICENSE("GPL");
-> +builtin_i2c_driver(adp5520_driver);
+>
 > --
-> 2.7.4
->=20
-
+> 2.13.3
+>
