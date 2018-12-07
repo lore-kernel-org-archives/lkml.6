@@ -2,105 +2,107 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE818C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A106C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC8D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC8D2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CBFB2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="JNS0B13O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBFB2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbeLGKSV convert rfc822-to-8bit (ORCPT
+        id S1726084AbeLGKSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:18:21 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50384 "EHLO mail.bootlin.com"
+        Fri, 7 Dec 2018 05:18:25 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47304 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbeLGKSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:18:21 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2026920CC5; Fri,  7 Dec 2018 11:18:19 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B4FA72073D;
-        Fri,  7 Dec 2018 11:18:08 +0100 (CET)
-Date:   Fri, 7 Dec 2018 11:18:08 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Christophe Kerello <christophe.kerello@st.com>
-Cc:     <boris.brezillon@bootlin.com>, <richard@nod.at>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [ v3 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash
- controller driver
-Message-ID: <20181207111808.144fc3f0@xps13>
-In-Reply-To: <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
-References: <1543509663-26128-1-git-send-email-christophe.kerello@st.com>
-        <1543509663-26128-3-git-send-email-christophe.kerello@st.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726050AbeLGKSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:18:23 -0500
+Received: from zn.tnic (p200300EC2BCEC90030FF5A381F5D9977.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:c900:30ff:5a38:1f5d:9977])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1B5FF1EC0B1A;
+        Fri,  7 Dec 2018 11:18:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544177902;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QafImu+or5tPA0Me+BXmiWDEE7v3OvjesYfrEGPW9pc=;
+        b=JNS0B13OvagkV7qve1yZ19cO5edMomvctD15a2Ry/r1d9negOXQQ47DWEkUISmd0c2Z92w
+        Gvaw3BlL+XM+xobWHiO4JYmGJZIfh2DyMJBwBR9GYWFuhLi9lFTqhe6CA6OtaHRg4sXGiH
+        JtDW6nUTn6+YGrEhrVEVAWxIzvntZKY=
+Date:   Fri, 7 Dec 2018 11:18:14 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     ndesaulniers@google.com
+Cc:     luto@kernel.org, Fangrui Song <maskray@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Dmitry Golovin <dima@golovin.in>,
+        Bill Wendling <morbo@google.com>, Rui Ueyama <ruiu@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/vdso: drop implicit common-page-size linker flag
+Message-ID: <20181207101814.GA9385@zn.tnic>
+References: <20181206191231.192355-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181206191231.192355-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
-
-Christophe Kerello <christophe.kerello@st.com> wrote on Thu, 29 Nov
-2018 17:41:02 +0100:
-
-> The driver adds the support for the STMicroelectronics FMC2 NAND
-> Controller found on STM32MP SOCs.
+On Thu, Dec 06, 2018 at 11:12:31AM -0800, ndesaulniers@google.com wrote:
+> These are implied by the target architecture and for x86_64 match the
+> max-page-size. The default for non-NaCl x86_64 is 0x1000 (4096).
 > 
-> This patch is based on FMC2 command sequencer.
-> The purpose of the command sequencer is to facilitate the programming
-> and the reading of NAND flash pages with the ECC and to free the CPU
-> of sequencing tasks.
-> It requires one DMA channel for write and two DMA channels for read
-> operations.
+> In bfd the common page size is defined as 0x1000 (4096) for non-NaCl
+
+Sodium Chloride?
+
+> x86_64 targets:
 > 
-> Only NAND_ECC_HW mode is actually supported.
-> The driver supports a maximum 8k page size.
-> The following ECC strength and step size are currently supported:
->  - nand-ecc-strength = <8>, nand-ecc-step-size = <512> (BCH8)
->  - nand-ecc-strength = <4>, nand-ecc-step-size = <512> (BCH4)
->  - nand-ecc-strength = <1>, nand-ecc-step-size = <512> (Extended ECC
->    based on Hamming)
+> bfd/elf64-x86-64.c:
+> 4998:#define ELF_COMMONPAGESIZE             0x1000
 > 
-> This patch has been tested on Micron MT29F8G08ABACAH4 and
-> MT29F8G16ABACAH4
+> For gold, the common page size is defined as 0x1000 (4096) for non-NaCl
+> x86_64 targets:
 > 
-> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
-> ---
+> gold/x86_64.cc:
+> 1413:  0x1000, // common_pagesize (overridable by -z common-page-size)
+> 1442:  0x1000, // common_pagesize (overridable by -z common-page-size)
+> 
+> (ELF_COMMONPAGESIZE also defaults to ELF_MAXPAGESIZE when not set
+> explicitly for a target architecture in bfd/elfxx-target.h, but that's
+> not relevant for x86_64).
+> 
+> Because it's implied by the target architecture, it's of questionable
+> use to implement in LLD.  This patch resolves one of the issues towards
+> using LLD to link an x86_64 kernel.
 
-The driver look's good to me. However, Boris contributed new
-cleanups that I would like you to take into account before doing
-another 'deep' review. Please rebase on top of nand/next and have
-a look at the followingcommits. For the ->select_chip() hook, it
-should not be exposed anymore and switches should be handled
-locally by the driver (you have examples).
+LLD?
 
-7a08dbaedd36 mtd: rawnand: Move ->setup_data_interface() to nand_controller_ops
-f2abfeb2078b mtd: rawnand: Move the ->exec_op() method to nand_controller_ops
-7d6c37e90cf9 mtd: rawnand: Deprecate the ->select_chip() hook
-1770022ffa85 mtd: rawnand: ams-delta: Stop implementing ->select_chip()
-653c57c7da08 mtd: rawnand: vf610: Stop implementing ->select_chip()
-2ace451cae22 mtd: rawnand: tegra: Stop implementing ->select_chip()
-b25251414f6e mtd: rawnand: marvell: Stop implementing ->select_chip()
-550b9fc4e3af mtd: rawnand: fsmc: Stop implementing ->select_chip()
-02b4a52604a4 mtd: rawnand: Make ->select_chip() optional when ->exec_op() is implemented
-ae2294b10b0f mtd: rawnand: Pass the CS line to be selected in struct nand_operation
-1d0178593d14 mtd: rawnand: Add nand_[de]select_target() helpers
+I can only guess what this commit message is about and have to look at
+the patch itself and then look at the LD(1) man page and rhyme up what
+it is aiming to do.
 
-While at it, could you also address Linus W. comments.
+How about rewriting it for mere mortals?
 
-Thanks,
-Miquèl
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
