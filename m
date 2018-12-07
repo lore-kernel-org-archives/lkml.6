@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB88C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934E4C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7833020892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:13:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7833020892
+	by mail.kernel.org (Postfix) with ESMTP id 5CA7D20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 20:14:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CA7D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeLGUNm (ORCPT
+        id S1726203AbeLGUON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 15:13:42 -0500
-Received: from mail.windriver.com ([147.11.1.11]:61068 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbeLGUNf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:13:35 -0500
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wB7KDXTJ023164
+        Fri, 7 Dec 2018 15:14:13 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59166 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbeLGUOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 15:14:12 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wB7KDCp2031038
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 7 Dec 2018 12:13:33 -0800 (PST)
+        Fri, 7 Dec 2018 12:13:22 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Fri, 7 Dec 2018
- 12:13:33 -0800
+ 12:13:01 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Cory Maccarrone <darkstar6262@gmail.com>
-Subject: [PATCH 05/18] mfd: htc-i2cpld: Make it explicitly non-modular
-Date:   Fri, 7 Dec 2018 15:10:52 -0500
-Message-ID: <1544213465-16259-6-git-send-email-paul.gortmaker@windriver.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mattias Nilsson <mattias.i.nilsson@stericsson.com>
+Subject: [PATCH 04/18] mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
+Date:   Fri, 7 Dec 2018 15:10:51 -0500
+Message-ID: <1544213465-16259-5-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1544213465-16259-1-git-send-email-paul.gortmaker@windriver.com>
@@ -48,69 +48,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig for this option is currently:
+The Kconfig currently controlling compilation of this code is:
 
-config HTC_I2CPLD
-        bool "HTC I2C PLD chip support"
+drivers/mfd/Kconfig:config MFD_DB8500_PRCMU
+drivers/mfd/Kconfig:    bool "ST-Ericsson DB8500 Power Reset Control Management Unit"
 
 ...meaning that it currently is not being built as a module by anyone.
-Lets remove the modular code that is essentially orphaned, so that
+
+Lets remove the couple traces of modular infrastructure use, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init translates to device_initcall in the non-modular
-case, the init ordering remains unchanged with this commit.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
+We delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-Cc: Cory Maccarrone <darkstar6262@gmail.com>
+We replace module.h with init.h and export.h ; the latter since the
+file does export some symbols.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Lee Jones <lee.jones@linaro.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mattias Nilsson <mattias.i.nilsson@stericsson.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/htc-i2cpld.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+ drivers/mfd/db8500-prcmu.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
-index 01572b5e79e8..af3c66355270 100644
---- a/drivers/mfd/htc-i2cpld.c
-+++ b/drivers/mfd/htc-i2cpld.c
-@@ -27,7 +27,6 @@
- 
- #include <linux/kernel.h>
- #include <linux/init.h>
+diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
+index aec20e1c7d3d..65666b624ae8 100644
+--- a/drivers/mfd/db8500-prcmu.c
++++ b/drivers/mfd/db8500-prcmu.c
+@@ -1,4 +1,6 @@
+ /*
++ * DB8500 PRCM Unit driver
++ *
+  * Copyright (C) STMicroelectronics 2009
+  * Copyright (C) ST-Ericsson SA 2010
+  *
+@@ -10,7 +12,8 @@
+  * U8500 PRCM Unit interface driver
+  *
+  */
 -#include <linux/module.h>
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
-@@ -614,8 +613,6 @@ static const struct i2c_device_id htcpld_chip_id[] = {
- 	{ "htcpld-chip", 0 },
- 	{ }
- };
--MODULE_DEVICE_TABLE(i2c, htcpld_chip_id);
--
- 
- static struct i2c_driver htcpld_chip_driver = {
- 	.driver = {
-@@ -643,17 +640,4 @@ static int __init htcpld_core_init(void)
- 	/* Probe for our chips */
- 	return platform_driver_probe(&htcpld_core_driver, htcpld_core_probe);
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/kernel.h>
+ #include <linux/delay.h>
+ #include <linux/errno.h>
+@@ -3188,9 +3191,4 @@ static int __init db8500_prcmu_init(void)
+ {
+ 	return platform_driver_register(&db8500_prcmu_driver);
  }
 -
--static void __exit htcpld_core_exit(void)
--{
--	i2c_del_driver(&htcpld_chip_driver);
--	platform_driver_unregister(&htcpld_core_driver);
--}
+ core_initcall(db8500_prcmu_init);
 -
--module_init(htcpld_core_init);
--module_exit(htcpld_core_exit);
--
--MODULE_AUTHOR("Cory Maccarrone <darkstar6262@gmail.com>");
--MODULE_DESCRIPTION("I2C HTC PLD Driver");
--MODULE_LICENSE("GPL");
--
-+device_initcall(htcpld_core_init);
+-MODULE_AUTHOR("Mattias Nilsson <mattias.i.nilsson@stericsson.com>");
+-MODULE_DESCRIPTION("DB8500 PRCM Unit driver");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
