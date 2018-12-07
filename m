@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,T_MIXED_ES,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3801C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA400C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2B620838
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF69E20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 08:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VzNnOTWN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2B620838
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EgDeU9vZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF69E20838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbeLGIkN (ORCPT
+        id S1726091AbeLGIkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 03:40:13 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41002 "EHLO
+        Fri, 7 Dec 2018 03:40:17 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41006 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeLGIkM (ORCPT
+        with ESMTP id S1726010AbeLGIkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:40:12 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB78duA8078974;
-        Fri, 7 Dec 2018 02:39:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544171996;
-        bh=8gcA9mGmZPYkS50nEoW4IA+pNHeUAem7gHktHzLa/dQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=VzNnOTWNI04pY4nRFZ3y/A7bs3dKiYfzUJ2ZfVEDJaiidI5T5RJ5FAmFOaAZM/DaK
-         Y3+Q4IhmXFhwcNQ0CFVg52ZD5OKmyPY7JEUKGyYc6xBwJ9EFn+5M+pg6YppZ8/BKw0
-         v5cIJZr/27umWeh3Lco3QuXC6JXu6RpWpBNG1qoo=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB78duka122490
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Dec 2018 02:39:56 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 7
- Dec 2018 02:39:56 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 7 Dec 2018 02:39:56 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB78djGw012224;
+        Fri, 7 Dec 2018 03:40:13 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wB78drsS078967;
         Fri, 7 Dec 2018 02:39:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544171993;
+        bh=QZAdAI5rRRXeFLYxO45mCN74SAomheYIagGwI/4AuOM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=EgDeU9vZhUOFuNMG1y4MspbM91Q908jXtCQs/au2CzrtiqgcXS9VFTgKRCtzbF/Vg
+         gHoONwxFTbobxLdeS4TOsloi12Ctwu5Wi7kkh6miWL8T+1/dtM7jS8E+6CuWK6COKB
+         UI5sZwb1Jpfz/qDCHQbG2rLXcsVAn/zhTS1M96qM=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wB78dr1H045276
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 7 Dec 2018 02:39:53 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 7
+ Dec 2018 02:39:52 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 7 Dec 2018 02:39:52 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wB78djGv012224;
+        Fri, 7 Dec 2018 02:39:49 -0600
 From:   Faiz Abbas <faiz_abbas@ti.com>
 To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
@@ -58,9 +58,9 @@ CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
         <t-kristo@ti.com>, <kishon@ti.com>, <ulf.hansson@linaro.org>,
         <adrian.hunter@intel.com>, <michal.simek@xilinx.com>,
         <faiz_abbas@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD support
-Date:   Fri, 7 Dec 2018 14:12:33 +0530
-Message-ID: <20181207084233.13700-3-faiz_abbas@ti.com>
+Subject: [PATCH 1/2] arm64: dts: ti: k3-am654: Add Support for MMC/SD
+Date:   Fri, 7 Dec 2018 14:12:32 +0530
+Message-ID: <20181207084233.13700-2-faiz_abbas@ti.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181207084233.13700-1-faiz_abbas@ti.com>
 References: <20181207084233.13700-1-faiz_abbas@ti.com>
@@ -73,75 +73,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the am654x-evm, sdhci0 node is connected to an eMMC while sdhci1
-is connected to an SD card slot. Add nodes and pinmuxes for the same.
+There are two MMC host controller instances present on the TI's
+Am654 SOCs. Add device tree nodes for the same.
 
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- .../arm64/boot/dts/ti/k3-am654-base-board.dts | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 28 ++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index bd5a0069191d..5dcd16b787eb 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -60,6 +60,36 @@
- 			AM65X_IOPAD(0x0070, PIN_INPUT, 5) /* (R25) GPMC0_CSn2.I2C2_SDA */
- 		>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+index 916434839603..d07212f16a81 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -129,4 +129,32 @@
+ 		clocks = <&k3_clks 113 1>;
+ 		power-domains = <&k3_pds 113>;
  	};
 +
-+	main_mmc0_pins_default: main_mmc0_pins_default {
-+		pinctrl-single,pins = <
-+			AM65X_IOPAD(0x01a8, PIN_INPUT_PULLDOWN, 0) /* (B25) MMC0_CLK */
-+			AM65X_IOPAD(0x01ac, PIN_INPUT_PULLUP, 0) /* (B27) MMC0_CMD */
-+			AM65X_IOPAD(0x01a4, PIN_INPUT_PULLUP, 0) /* (A26) MMC0_DAT0 */
-+			AM65X_IOPAD(0x01a0, PIN_INPUT_PULLUP, 0) /* (E25) MMC0_DAT1 */
-+			AM65X_IOPAD(0x019c, PIN_INPUT_PULLUP, 0) /* (C26) MMC0_DAT2 */
-+			AM65X_IOPAD(0x0198, PIN_INPUT_PULLUP, 0) /* (A25) MMC0_DAT3 */
-+			AM65X_IOPAD(0x0194, PIN_INPUT_PULLUP, 0) /* (E24) MMC0_DAT4 */
-+			AM65X_IOPAD(0x0190, PIN_INPUT_PULLUP, 0) /* (A24) MMC0_DAT5 */
-+			AM65X_IOPAD(0x018c, PIN_INPUT_PULLUP, 0) /* (B26) MMC0_DAT6 */
-+			AM65X_IOPAD(0x0188, PIN_INPUT_PULLUP, 0) /* (D25) MMC0_DAT7 */
-+			AM65X_IOPAD(0x01b4, PIN_INPUT_PULLUP, 0) /* (A23) MMC0_SDCD */
-+			AM65X_IOPAD(0x01b0, PIN_INPUT, 0) /* (C25) MMC0_DS */
-+		>;
++	sdhci0: sdhci@4f80000 {
++		compatible = "ti,am654-sdhci-5.1";
++		reg = <0x0 0x4f80000 0x0 0x260>, <0x0 0x4f90000 0x0 0x134>;
++		power-domains = <&k3_pds 47>;
++		clocks = <&k3_clks 47 0>, <&k3_clks 47 1>;
++		clock-names = "clk_ahb", "clk_xin";
++		interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++		sdhci-caps-mask = <0x80000007 0x0>;
++		mmc-ddr-1_8v;
++		ti,otap-del-sel = <0x2>;
++		ti,trm-icp = <0x8>;
++		status = "disabled";
 +	};
 +
-+	main_mmc1_pins_default: main_mmc1_pins_default {
-+		pinctrl-single,pins = <
-+			AM65X_IOPAD(0x02d4, PIN_INPUT_PULLDOWN, 0) /* (C27) MMC1_CLK */
-+			AM65X_IOPAD(0x02d8, PIN_INPUT_PULLUP, 0) /* (C28) MMC1_CMD */
-+			AM65X_IOPAD(0x02d0, PIN_INPUT_PULLUP, 0) /* (D28) MMC1_DAT0 */
-+			AM65X_IOPAD(0x02cc, PIN_INPUT_PULLUP, 0) /* (E27) MMC1_DAT1 */
-+			AM65X_IOPAD(0x02c8, PIN_INPUT_PULLUP, 0) /* (D26) MMC1_DAT2 */
-+			AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP, 0) /* (D27) MMC1_DAT3 */
-+			AM65X_IOPAD(0x02dc, PIN_INPUT_PULLUP, 0) /* (B24) MMC1_SDCD */
-+			AM65X_IOPAD(0x02e0, PIN_INPUT, 0) /* (C24) MMC1_SDWP */
-+		>;
++	sdhci1: sdhci@4fa0000 {
++		compatible = "ti,am654-sdhci-5.1";
++		reg = <0x0 0x4fa0000 0x0 0x260>, <0x0 0x4fb0000 0x0 0x134>;
++		power-domains = <&k3_pds 48>;
++		clocks = <&k3_clks 48 0>, <&k3_clks 48 1>;
++		clock-names = "clk_ahb", "clk_xin";
++		interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
++		sdhci-caps-mask = <0x80000007 0x0>;
++		mmc-ddr-1_8v;
++		ti,otap-del-sel = <0x2>;
++		ti,trm-icp = <0x8>;
++		status = "disabled";
 +	};
  };
- 
- &main_pmx1 {
-@@ -125,3 +155,19 @@
- 	pinctrl-0 = <&main_i2c2_pins_default>;
- 	clock-frequency = <400000>;
- };
-+
-+&sdhci0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins_default>;
-+	bus-width = <8>;
-+	non-removable;
-+	ti,driver-strength-ohm = <50>;
-+};
-+
-+&sdhci1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc1_pins_default>;
-+	ti,driver-strength-ohm = <50>;
-+};
 -- 
 2.19.2
 
