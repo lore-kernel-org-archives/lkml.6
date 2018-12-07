@@ -2,101 +2,131 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E124EC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4B7C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D7D2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 639BE208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="omyyzYFA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D7D2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0vgPnLR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639BE208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726091AbeLGKVs (ORCPT
+        id S1726107AbeLGKV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:21:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50266 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeLGKVs (ORCPT
+        Fri, 7 Dec 2018 05:21:56 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36976 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeLGKV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:21:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Jlt6oPDlNUrSd4b7eI0gl4S4IYfP9Z3f9TP0ruoj2Wc=; b=omyyzYFA/WJQ76bsXvBMuTeQp
-        dkukelt7iyBkhTM/Wq+0puib8zHMjfA73rz5NHPDxAQ3iqaC6G7CxdJD3b9MVHmez8rGwWgOqALb9
-        35+c63NrjVlklfYrLITFfS33f7xCc4hxVRE4N3Ol5tU666LKUrYnF4R3DdNV44u+JNzN10nfdVAC3
-        kNMd4hcs6iAcAicU/FIxdYSNAqJ+LZndZuDwbTdM9iS6zKs/Y+UL3dao8G5SMVlhI43tv1jq9DWy6
-        r9g+YrMr1ocQ/f/dyx53GabbXlTjK+9szHZa233OYFGluzXRQA1KbBCsQRjKtioQQ/oGFPqFddpyi
-        mffLjEoBg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVDGT-00019J-6O; Fri, 07 Dec 2018 10:21:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 755A6207261F0; Fri,  7 Dec 2018 11:21:43 +0100 (CET)
-Date:   Fri, 7 Dec 2018 11:21:43 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH v3 16/24] locking/lockdep: Retain the class key and name
- while freeing a lock class
-Message-ID: <20181207102143.GH2237@hirez.programming.kicks-ass.net>
-References: <20181207011148.251812-1-bvanassche@acm.org>
- <20181207011148.251812-17-bvanassche@acm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207011148.251812-17-bvanassche@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 7 Dec 2018 05:21:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so1538936pge.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:21:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=aiu+6XztfPZTrAfY/hBXeeiKQGRSBMgrn4AYx0QFBW0=;
+        b=b0vgPnLRp4i7Ph5Ddi/B8M70GWwzQUbwvHy2kTgdsre98Ip/kU2mhzbXjj1yFlw/iZ
+         1/iZZ8kagoUyofZvqRW5O/SjVTjLZlP11RcMneYiJtqwJB39Y8qRICe1yLqR6FGK0ATK
+         hcuaS/YS6zUL1KxPS4mAmuwEHoeCnpCk83vxqm5XOxePrsMbPHh2PsR0RSj5qotxUqkz
+         Fz7VifxDLcEHFckQfjz06WhN3tOn9CuIAIh5eMopRnUosfJ+bfgIb2j3JvUwEycHu+h1
+         aX9HhZPj1+EP7yATsa54RrIPaGvP5LUivRpdn1CxJPHkVZAnHHK0TmeOAGsGqimTR76E
+         YaaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=aiu+6XztfPZTrAfY/hBXeeiKQGRSBMgrn4AYx0QFBW0=;
+        b=cZ1NS4ZtVxyccjLRQ/zb2q+s2+vHQC95mID6DEZW1f+1cKsnDo0/DBbQrnely8r7C4
+         UTORqYEXPcESjxjCTlGK7fRYykbwbOmUhJxYEIZAdBiGcxu75WV/cfnjgNfSsndPDLep
+         DEFlsMgNp1N2W9bVJfNFyLYxeHzPGh5w4WYkB6jCkxGtXk4Q7nPmxO/rs7w1EAoRrbSw
+         BldpZV0+Ttc14GcF1iSd+60l4yx0K/UHA66E3SbBVZD3cJf7yDYz1BcvxuMAdunIufpW
+         37gVR4NRutNF/fwy5cLfqAjB6UfRZ9ZB+Rlq9Lux2Z4yyY6TI/ms8yVfZ5t5/PZEB6Co
+         hsfw==
+X-Gm-Message-State: AA+aEWaMiDznTn6UkVUNMFS6ZAzKaVOuFNnFyf5y642cH3+fHXaYk+eK
+        zzYZ/LM8rpxRCTi3p+qE2lc=
+X-Google-Smtp-Source: AFSGD/VKarNQWfL+aMYaRQra1f60sz1spCe8QpabQorFD/MXyV6gW4bit+c2kkX2WRy3h7OXGvT+ig==
+X-Received: by 2002:a63:83c1:: with SMTP id h184mr1380609pge.437.1544178115457;
+        Fri, 07 Dec 2018 02:21:55 -0800 (PST)
+Received: from localhost.localdomain ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id a9sm2936408pgq.20.2018.12.07.02.21.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 02:21:55 -0800 (PST)
+From:   Bo YU <tsu.yubo@gmail.com>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org
+Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
+        joe@perches.com, yuzibode@126.com
+Subject: [PATCH v3 2/2] kobject: drop newline from msg string
+Date:   Fri,  7 Dec 2018 05:21:49 -0500
+Message-Id: <f03d23a34df36d55274c5cce7d4081d9017668c1.1544175417.git.tsu.yubo@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1544175417.git.tsu.yubo@gmail.com>
+References: <cover.1544175417.git.tsu.yubo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:11:40PM -0800, Bart Van Assche wrote:
-> The next patch in this series uses the class name in code that
-> detects calls to lock_acquire() while a class key is being freed. Hence
-> retain the class name for lock classes that are being freed.
+There is currently a missing terminating newline in non-switch case
+match, when msg == NULL.
 
-From readin the discussion with v2; you meant to say: 'uses the class
-name pointer', right? You're not actually ever going to dereference it,
-since that would be a UaF.
+Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+---
+Changes in v3:
+Improve the commit log,requested by rafael.
 
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  kernel/locking/lockdep.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index ecd92969674c..92bdb187987f 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -4147,10 +4147,8 @@ static void zap_class(struct lock_class *class)
->  	 * Unhash the class and remove it from the all_lock_classes list:
->  	 */
->  	hlist_del_rcu(&class->hash_entry);
-> +	class->hash_entry.pprev = NULL;
->  	list_del(&class->lock_entry);
-> -
-> -	RCU_INIT_POINTER(class->key, NULL);
-> -	RCU_INIT_POINTER(class->name, NULL);
->  }
->  
->  static inline int within(const void *addr, void *start, unsigned long size)
-> -- 
-> 2.20.0.rc2.403.gdbc3b29805-goog
-> 
+Changes in v2:
+According to Joe's suggestion,drop newline from msg
+
+ lib/kobject_uevent.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index b7c088c902a2..1837765ebf01 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -195,12 +195,12 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+ 	enum kobject_action action;
+ 	const char *action_args;
+ 	struct kobj_uevent_env *env;
+-	const char *msg = NULL, *devpath;
++	const char *msg = NULL;
+ 	int r;
+
+ 	r = kobject_action_type(buf, count, &action, &action_args);
+ 	if (r) {
+-		msg = "unknown uevent action string\n";
++		msg = "unknown uevent action string";
+ 		goto out;
+ 	}
+
+@@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+ 	r = kobject_action_args(action_args,
+ 				count - (action_args - buf), &env);
+ 	if (r == -EINVAL) {
+-		msg = "incorrect uevent action arguments\n";
++		msg = "incorrect uevent action arguments";
+ 		goto out;
+ 	}
+
+@@ -223,8 +223,9 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+ 	kfree(env);
+ out:
+ 	if (r) {
+-		devpath = kobject_get_path(kobj, GFP_KERNEL);
+-		pr_warn("synth uevent: %s: %s",
++		char *devpath = kobject_get_path(kobj, GFP_KERNEL);
++
++		pr_warn("synth uevent: %s: %s\n",
+ 		       devpath ?: "unknown device",
+ 		       msg ?: "failed to send uevent");
+ 		kfree(devpath);
+--
+2.11.0
+
