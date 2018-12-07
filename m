@@ -2,208 +2,316 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8EDC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82C0C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF3A20882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544197767;
-	bh=5lUVu2HtgNAccJB5cmQp1y8euTywzPWsqLr/XtUHmNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BFMP/uFPe1FaJK5YZKy12lbsKrXhIG9QarxINNiCm9ptO3X46SGtaZIVT8uZGsTeR
-	 txdpMQaJ/75Kgu12sL/V4CANpH4mBibKNC7FgSDgGVtSLibIALfJfGWY277pYJjU3j
-	 wkhxCjLxCCsfHjpo3vAd0dKyuQao6NtCibHXl9zA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF3A20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B8E820882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:50:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A+fyGXVk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8E820882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbeLGPtZ (ORCPT
+        id S1726143AbeLGPuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:49:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeLGPtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:49:25 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB63A20837;
-        Fri,  7 Dec 2018 15:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544197764;
-        bh=5lUVu2HtgNAccJB5cmQp1y8euTywzPWsqLr/XtUHmNU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BSziyQYACg4rd5Yu7Xe4V7mgm9IGDv3ieTOR9VvG8rls0zf7iSBWaQ5JCKLKyyBOe
-         t3Leb0JLqz6r5+ZL/zaKjsAuod53KjWRjB/TzGOkUtZ8pitlG2PULJDKKQjtU+6OwA
-         3C/Rm/QWoQ6/R00Heh2VeXKvrMrZNz9163lnMZ5w=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 386554042C; Fri,  7 Dec 2018 12:49:21 -0300 (-03)
-Date:   Fri, 7 Dec 2018 12:49:21 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>, ldv@altlinux.org,
-        esyr@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181207154921.GB28174@kernel.org>
-References: <20181205160509.1168-1-jolsa@kernel.org>
- <20181205160509.1168-2-jolsa@kernel.org>
- <20181206081028.GE4234@hirez.programming.kicks-ass.net>
- <20181206083400.GA13675@hirez.programming.kicks-ass.net>
- <20181206131946.2c47f556@vmware.local.home>
- <20181207085839.GC2237@hirez.programming.kicks-ass.net>
- <20181207072701.5bc564c7@vmware.local.home>
- <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+        Fri, 7 Dec 2018 10:50:37 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:36430 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeLGPug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 10:50:36 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB7FiIM8161795;
+        Fri, 7 Dec 2018 15:50:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=QV5AcxzyRjKMXhPGb/P7qMDdWw9xBqG9bVnM4r+T9Ws=;
+ b=A+fyGXVk70U5wecX53GlSG7clyKXNoMuU+eio4MeGrj1xd3+tkiW/9Wtw3EiEv92xPW7
+ PbZoeovNTbflRSXaGyftouG7QnL951fNQEuEU2Ty2vmg9tqgBi3aUar+qPUQqpnpVZOK
+ J8TWOLvqdDerGTSQUmZ2f/7ZqxoI2uRcU/8DeMBkZgpESezS2QDd/eY0yD2oL9sl9QSj
+ T6iyphrdnK4o3ITdfsAO2H48LPuKNKXeYP51mPUGjOs+sZ6Rlrk3K4HX5dGXV9qp7X7X
+ HcBPQJMoe1OTN8jkUJACko0tshuZ8zU/B1lgumQzZtkzi6f8RH8+gSabH06kEll9TV+D oA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2p3ftfjg4b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Dec 2018 15:50:29 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wB7FoSBr020914
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Dec 2018 15:50:28 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB7FoRCT031100;
+        Fri, 7 Dec 2018 15:50:27 GMT
+Received: from [192.168.2.8] (/1.202.67.146)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Dec 2018 07:50:26 -0800
+Subject: Re: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+To:     Paul Durrant <Paul.Durrant@citrix.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1544156284-7756-1-git-send-email-dongli.zhang@oracle.com>
+ <742d0e02a1aa4031ad68a9f81fe2bdc4@AMSPEX02CL03.citrite.net>
+ <f3fb198f-5a63-7fae-88da-9550019d7de7@oracle.com>
+ <4b5b3d4fb52c421d9be3f204b5695cc2@AMSPEX02CL03.citrite.net>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <91c15571-124d-60bd-af3f-8c1315422dd2@oracle.com>
+Date:   Fri, 7 Dec 2018 23:50:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207151105.GB5289@hirez.programming.kicks-ass.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4b5b3d4fb52c421d9be3f204b5695cc2@AMSPEX02CL03.citrite.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812070127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Dec 07, 2018 at 04:11:05PM +0100, Peter Zijlstra escreveu:
-> On Fri, Dec 07, 2018 at 08:41:18AM -0500, Steven Rostedt wrote:
-> > On Fri, 7 Dec 2018 09:58:39 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
 
-> > > These patches give no justification *what*so*ever* for why we're doing
-> > > ugly arse things like this. And why does this, whatever this is, need to
-> > > be done in perf?
 
-> > > IOW, what problem are we solving ?
+On 12/07/2018 11:15 PM, Paul Durrant wrote:
+>> -----Original Message-----
+>> From: Dongli Zhang [mailto:dongli.zhang@oracle.com]
+>> Sent: 07 December 2018 15:10
+>> To: Paul Durrant <Paul.Durrant@citrix.com>; linux-kernel@vger.kernel.org;
+>> xen-devel@lists.xenproject.org; linux-block@vger.kernel.org
+>> Cc: axboe@kernel.dk; Roger Pau Monne <roger.pau@citrix.com>;
+>> konrad.wilk@oracle.com
+>> Subject: Re: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+>> avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+>>
+>> Hi Paul,
+>>
+>> On 12/07/2018 05:39 PM, Paul Durrant wrote:
+>>>> -----Original Message-----
+>>>> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On
+>> Behalf
+>>>> Of Dongli Zhang
+>>>> Sent: 07 December 2018 04:18
+>>>> To: linux-kernel@vger.kernel.org; xen-devel@lists.xenproject.org;
+>> linux-
+>>>> block@vger.kernel.org
+>>>> Cc: axboe@kernel.dk; Roger Pau Monne <roger.pau@citrix.com>;
+>>>> konrad.wilk@oracle.com
+>>>> Subject: [Xen-devel] [PATCH 1/1] xen/blkback: rework connect_ring() to
+>>>> avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+>>>>
+>>>> The xenstore 'ring-page-order' is used globally for each blkback queue
+>> and
+>>>> therefore should be read from xenstore only once. However, it is
+>> obtained
+>>>> in read_per_ring_refs() which might be called multiple times during the
+>>>> initialization of each blkback queue.
+>>>
+>>> That is certainly sub-optimal.
+>>>
+>>>>
+>>>> If the blkfront is malicious and the 'ring-page-order' is set in
+>> different
+>>>> value by blkfront every time before blkback reads it, this may end up
+>> at
+>>>> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));"
+>> in
+>>>> xen_blkif_disconnect() when frontend is destroyed.
+>>>
+>>> I can't actually see what useful function blkif->nr_ring_pages actually
+>> performs any more. Perhaps you could actually get rid of it?
+>>
+>> How about we keep it? Other than reading from xenstore, it is the only
+>> place for
+>> us to know the value from 'ring-page-order'.
+>>
+>> This helps calculate the initialized number of elements on all
+>> xen_blkif_ring->pending_free lists. That's how "WARN_ON(i !=
+>> (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" is used to double
+>> check if
+>> there is no leak of elements reclaimed from all xen_blkif_ring-
+>>> pending_free.
+>>
+>> It helps vmcore analysis as well. Given blkif->nr_ring_pages, we would be
+>> able
+>> to double check if the number of ring buffer slots are correct.
+>>
+>> I could not see any drawback leaving blkif->nr_ring_pagesin the code.
+> 
+> No, there's no drawback apart from space, but apart from that cross-check and, as you say, core analysis it seems to have little value.
+> 
+>   Paul
 
-> > I guess the cover letter should have had a link (or copy) of this:
+I will not remove blkif->nr_ring_pages and leave the current patch waiting for
+review.
 
-> >  http://lkml.kernel.org/r/20181128134700.212ed035@gandalf.local.home
+Dongli Zhang
 
-> That doesn't even begin to explain. Who cares about strace and why? And
-> why is it such a bad thing to loose the occasional record etc..
 
-The following almost addresses all the details for doing such a perf
-based strace tool (modulo signals), was started by Thomas a long time
-ago [1] and is in the tree for a long time, with BPF attached to the
-raw_syscalls:sys_{enter,exit} (that -e augmented_raw_syscalls.c thing
-that lives in tools/perf/examples/bpf now but would be put in place
-transparently and pre-compiled as augmented_raw_syscalls.o) to collect
-pointer contents without using ptrace:
 
-[root@seventh bpf]# perf trace --no-inherit -e augmented_raw_syscalls.c sleep 1
-     0.019 ( 0.001 ms): brk(                                                                  ) = 0x559ca9dd7000
-     0.031 ( 0.004 ms): access(filename: , mode: R                                            ) = -1 ENOENT No such file or directory
-     0.039 ( 0.003 ms): openat(dfd: CWD, filename: /etc/ld.so.cache, flags: CLOEXEC           ) = 3
-     0.043 ( 0.002 ms): fstat(fd: 3, statbuf: 0x7ffdfa50e940                                  ) = 0
-     0.045 ( 0.003 ms): mmap(len: 103484, prot: READ, flags: PRIVATE, fd: 3                   ) = 0x7fa76b2ce000
-     0.049 ( 0.001 ms): close(fd: 3                                                           ) = 0
-     0.056 ( 0.003 ms): openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC           ) = 3
-     0.060 ( 0.002 ms): read(fd: 3, buf: 0x7ffdfa50eb08, count: 832                           ) = 832
-     0.063 ( 0.001 ms): fstat(fd: 3, statbuf: 0x7ffdfa50e9a0                                  ) = 0
-     0.065 ( 0.002 ms): mmap(len: 8192, prot: READ|WRITE, flags: PRIVATE|ANONYMOUS            ) = 0x7fa76b2cc000
-     0.070 ( 0.003 ms): mmap(len: 3889792, prot: EXEC|READ, flags: PRIVATE|DENYWRITE, fd: 3   ) = 0x7fa76ad0e000
-     0.075 ( 0.005 ms): mprotect(start: 0x7fa76aebb000, len: 2093056                          ) = 0
-     0.081 ( 0.005 ms): mmap(addr: 0x7fa76b0ba000, len: 24576, prot: READ|WRITE, flags: PRIVATE|FIXED|DENYWRITE, fd: 3, off: 1753088) = 0x7fa76b0ba000
-     0.089 ( 0.002 ms): mmap(addr: 0x7fa76b0c0000, len: 14976, prot: READ|WRITE, flags: PRIVATE|FIXED|ANONYMOUS) = 0x7fa76b0c0000
-     0.095 ( 0.001 ms): close(fd: 3                                                           ) = 0
-     0.105 ( 0.001 ms): arch_prctl(option: 4098, arg2: 140357034366208                        ) = 0
-     0.144 ( 0.004 ms): mprotect(start: 0x7fa76b0ba000, len: 16384, prot: READ                ) = 0
-     0.159 ( 0.002 ms): mprotect(start: 0x559ca81aa000, len: 4096, prot: READ                 ) = 0
-     0.163 ( 0.002 ms): mprotect(start: 0x7fa76b2e8000, len: 4096, prot: READ                 ) = 0
-     0.167 ( 0.008 ms): munmap(addr: 0x7fa76b2ce000, len: 103484                              ) = 0
-     0.218 ( 0.001 ms): brk(                                                                  ) = 0x559ca9dd7000
-     0.220 ( 0.002 ms): brk(brk: 0x559ca9df8000                                               ) = 0x559ca9df8000
-     0.224 ( 0.001 ms): brk(                                                                  ) = 0x559ca9df8000
-     0.228 ( 0.004 ms): open(filename: /usr/lib/locale/locale-archive, flags: CLOEXEC         ) = 3
-     0.233 ( 0.001 ms): fstat(fd: 3, statbuf: 0x7fa76b0bfaa0                                  ) = 0
-     0.235 ( 0.003 ms): mmap(len: 113045344, prot: READ, flags: PRIVATE, fd: 3                ) = 0x7fa76413f000
-     0.241 ( 0.001 ms): close(fd: 3                                                           ) = 0
-     0.264 (1000.163 ms): nanosleep(rqtp: 0x7ffdfa50f680                                        ) = 0
-  1000.440 ( 0.002 ms): close(fd: 1                                                           ) = 0
-  1000.443 ( 0.001 ms): close(fd: 2                                                           ) = 0
-  1000.449 (         ): exit_group(                                                           )
-[root@seventh bpf]#
-
-doing just:
-
-   # perf trace --filter-pids pid-of-your-local-xterm,gnome-shell-pid-for-your-term
-
-For system wide stracing elliminating the feedback loop of your GUI
-components will most of the time work with the default ring buffer size
-and when it doesn't, you'll get things like that "LOST events!" message,
-and for such extreme cases, just use '-m' to bump the rb size some more.
-
-# trace  --filter-pids 2279,1643
-<SNIP>
-  8793.387 ( 0.003 ms): cc1/19097 openat(dfd: CWD, filename: 0x3df9940, flags: NOCTTY                   ) = 21
-  8793.390 ( 0.001 ms): cc1/19097 fstat(fd: 21, statbuf: 0x3df9648                                      ) = 0
-  8793.394 ( 0.003 ms): cc1/19097 read(fd: 21, buf: 0x3d6e0f0, count: 5804                              ) = 5804
-  8793.398 ( 0.001 ms): cc1/19097 close(fd: 21                                                          ) = 0
-  8793.403 ( 0.002 ms): cc1/19097 openat(dfd: CWD, filename: 0x3dfca70, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  8793.406 ( 0.001 ms): cc1/19097 openat(dfd: CWD, filename: 0x3dfca70, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  8793.409 ( 0.002 ms): cc1/19097 openat(dfd: CWD, filename: 0x3dfca70, flags: NOCTTY                   ) = 21
-  8793.412 ( 0.001 ms): cc1/19097 fstat(fd: 21, statbuf: 0x3df9738                                      ) = 0
-  8793.414 ( 0.022 ms): cc1/19097 read(fd: 21, buf: 0x3eb6d90, count: 25315                             ) = 25315
-  8793.437 ( 0.001 ms): cc1/19097 close(fd: 21                                                          ) = 0
-  8793.605 ( 0.005 ms): cc1/19097 openat(dfd: CWD, filename: 0x3dfca70                                  ) = 21
-  8793.614 ( 0.001 ms): cc1/19097 close(fd: 5                                                           ) = 0
-  8793.618 ( 0.001 ms): cc1/19097 fstat(fd: 21, statbuf: 0x7ffd653ed380                                 ) = 0
-  8793.621 ( 0.002 ms): cc1/19097 read(fd: 21, buf: 0x3d41e30, count: 8192                              ) = 8192
-  8793.626 ( 0.002 ms): cc1/19097 read(fd: 21, buf: 0x3ebf090, count: 8192                              ) = 8192
-  8793.635 ( 0.003 ms): cc1/19097 read(fd: 21, buf: 0x3ed4730, count: 16384                             ) = 8931
-  8793.640 ( 0.001 ms): cc1/19097 read(fd: 21, buf: 0x3ed6a13, count: 4096                              ) = 0
-LOST 34956 events!
-  9497.921 ( 0.006 ms): gcc/19180 openat(dfd: CWD, filename: 0x3115e20, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.935 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3115e20, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.939 ( 0.003 ms): gcc/19180 openat(dfd: CWD, filename: 0x3115e20, flags: NOCTTY                   ) = 9
-  9497.943 ( 0.001 ms): gcc/19180 fstat(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, statbuf: 0x3153568) = 0
-  9497.945 ( 0.006 ms): gcc/19180 read(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, buf: 0x31c00a0, count: 40574) = 40574
-  9497.952 ( 0.001 ms): gcc/19180 close(fd: 9</home/acme/git/linux/include/linux/page_ref.h>            ) = 0
-  9497.959 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x31540a0, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.962 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x31540a0, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.965 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x31540a0, flags: NOCTTY                   ) = 9
-  9497.969 ( 0.001 ms): gcc/19180 fstat(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, statbuf: 0x30dcf38) = 0
-  9497.970 ( 0.003 ms): gcc/19180 read(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, buf: 0x31b8320, count: 23058) = 23058
-  9497.975 ( 0.001 ms): gcc/19180 close(fd: 9</home/acme/git/linux/include/linux/page_ref.h>            ) = 0
-  9497.979 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154020, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.982 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154020, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9497.986 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154020, flags: NOCTTY                   ) = 9
-  9497.989 ( 0.001 ms): gcc/19180 fstat(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, statbuf: 0x3116178) = 0
-  9497.990 ( 0.001 ms): gcc/19180 read(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, buf: 0x31509c0, count: 1948) = 1948
-  9497.993 ( 0.001 ms): gcc/19180 close(fd: 9</home/acme/git/linux/include/linux/page_ref.h>            ) = 0
-  9498.039 ( 0.003 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154060, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9498.043 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154060, flags: NOCTTY                   ) = -1 ENOENT No such file or directory
-  9498.046 ( 0.002 ms): gcc/19180 openat(dfd: CWD, filename: 0x3154060, flags: NOCTTY                   ) = 9
-  9498.049 ( 0.001 ms): gcc/19180 fstat(fd: 9</home/acme/git/linux/include/linux/page_ref.h>, statbuf: 0x3153a08) = 0
-
-'trace' is just 'perf trace', perf has logic to see if argv[0]  is
-'trace', then it goes and does a 'perf trace'. The above case does't use
-bpf at all, gets details from /proc.
-
-With bpf we get the 'filename' contents:
-
-[root@seventh bpf]# trace -e augmented_raw_syscalls.c  --filter-pids 2279,1643
-<SNIP>
- 19766.027 ( 0.003 ms): gcc/27524 openat(dfd: CWD, filename: /lib64/libz.so.1, flags: CLOEXEC           ) = 5
- 19766.035 ( 0.001 ms): gcc/27524 fstat(fd: 5, statbuf: 0x7ffe9323e2a0                                  ) = 0
- 19766.037 ( 0.003 ms): gcc/27524 mmap(len: 2187272, prot: EXEC|READ, flags: PRIVATE|DENYWRITE, fd: 5   ) = 0x7fa2df435000
- 19766.042 ( 0.003 ms): gcc/27524 mprotect(start: 0x7fa2df44b000, len: 2093056                          ) = 0
- 19766.046 ( 0.004 ms): gcc/27524 mmap(addr: 0x7fa2df64a000, len: 4096, prot: READ|WRITE, flags: PRIVATE|FIXED|DENYWRITE, fd: 5, off: 86016) = 0x7fa2df64a000
- 19766.051 ( 0.002 ms): gcc/27524 mmap(addr: 0x7fa2df64b000, len: 8, prot: READ|WRITE, flags: PRIVATE|FIXED|ANONYMOUS) = 0x7fa2df64b000
- 19766.057 ( 0.001 ms): gcc/27524 close(fd: 5                                                           ) = 0
- 19766.062 ( 0.003 ms): gcc/27524 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: CLOEXEC           ) = 5
-<SNIP>
-
-- Arnaldo
-
-[1] https://lwn.net/Articles/415728/
+> 
+>>
+>> Dongli Zhang
+>>
+>>>
+>>>>
+>>>> This patch reworks connect_ring() to read xenstore 'ring-page-order'
+>> only
+>>>> once.
+>>>
+>>> That is certainly a good thing :-)
+>>>
+>>>   Paul
+>>>
+>>>>
+>>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>>>> ---
+>>>>  drivers/block/xen-blkback/xenbus.c | 49 ++++++++++++++++++++++++------
+>> ---
+>>>> -----
+>>>>  1 file changed, 31 insertions(+), 18 deletions(-)
+>>>>
+>>>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-
+>>>> blkback/xenbus.c
+>>>> index a4bc74e..4a8ce20 100644
+>>>> --- a/drivers/block/xen-blkback/xenbus.c
+>>>> +++ b/drivers/block/xen-blkback/xenbus.c
+>>>> @@ -919,14 +919,15 @@ static void connect(struct backend_info *be)
+>>>>  /*
+>>>>   * Each ring may have multi pages, depends on "ring-page-order".
+>>>>   */
+>>>> -static int read_per_ring_refs(struct xen_blkif_ring *ring, const char
+>>>> *dir)
+>>>> +static int read_per_ring_refs(struct xen_blkif_ring *ring, const char
+>>>> *dir,
+>>>> +			      bool use_ring_page_order)
+>>>>  {
+>>>>  	unsigned int ring_ref[XENBUS_MAX_RING_GRANTS];
+>>>>  	struct pending_req *req, *n;
+>>>>  	int err, i, j;
+>>>>  	struct xen_blkif *blkif = ring->blkif;
+>>>>  	struct xenbus_device *dev = blkif->be->dev;
+>>>> -	unsigned int ring_page_order, nr_grefs, evtchn;
+>>>> +	unsigned int nr_grefs, evtchn;
+>>>>
+>>>>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+>>>>  			  &evtchn);
+>>>> @@ -936,28 +937,18 @@ static int read_per_ring_refs(struct
+>> xen_blkif_ring
+>>>> *ring, const char *dir)
+>>>>  		return err;
+>>>>  	}
+>>>>
+>>>> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+>>>> -			  &ring_page_order);
+>>>> -	if (err != 1) {
+>>>> +	nr_grefs = blkif->nr_ring_pages;
+>>>> +
+>>>> +	if (!use_ring_page_order) {
+>>>>  		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
+>>>> &ring_ref[0]);
+>>>>  		if (err != 1) {
+>>>>  			err = -EINVAL;
+>>>>  			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+>>>>  			return err;
+>>>>  		}
+>>>> -		nr_grefs = 1;
+>>>>  	} else {
+>>>>  		unsigned int i;
+>>>>
+>>>> -		if (ring_page_order > xen_blkif_max_ring_order) {
+>>>> -			err = -EINVAL;
+>>>> -			xenbus_dev_fatal(dev, err, "%s/request %d ring page
+>>>> order exceed max:%d",
+>>>> -					 dir, ring_page_order,
+>>>> -					 xen_blkif_max_ring_order);
+>>>> -			return err;
+>>>> -		}
+>>>> -
+>>>> -		nr_grefs = 1 << ring_page_order;
+>>>>  		for (i = 0; i < nr_grefs; i++) {
+>>>>  			char ring_ref_name[RINGREF_NAME_LEN];
+>>>>
+>>>> @@ -972,7 +963,6 @@ static int read_per_ring_refs(struct xen_blkif_ring
+>>>> *ring, const char *dir)
+>>>>  			}
+>>>>  		}
+>>>>  	}
+>>>> -	blkif->nr_ring_pages = nr_grefs;
+>>>>
+>>>>  	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
+>>>>  		req = kzalloc(sizeof(*req), GFP_KERNEL);
+>>>> @@ -1030,6 +1020,8 @@ static int connect_ring(struct backend_info *be)
+>>>>  	size_t xspathsize;
+>>>>  	const size_t xenstore_path_ext_size = 11; /* sufficient for "/queue-
+>>>> NNN" */
+>>>>  	unsigned int requested_num_queues = 0;
+>>>> +	bool use_ring_page_order = false;
+>>>> +	unsigned int ring_page_order;
+>>>>
+>>>>  	pr_debug("%s %s\n", __func__, dev->otherend);
+>>>>
+>>>> @@ -1075,8 +1067,28 @@ static int connect_ring(struct backend_info *be)
+>>>>  		 be->blkif->nr_rings, be->blkif->blk_protocol, protocol,
+>>>>  		 pers_grants ? "persistent grants" : "");
+>>>>
+>>>> +	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+>>>> +			   &ring_page_order);
+>>>> +
+>>>> +	if (err != 1) {
+>>>> +		be->blkif->nr_ring_pages = 1;
+>>>> +	} else {
+>>>> +		if (ring_page_order > xen_blkif_max_ring_order) {
+>>>> +			err = -EINVAL;
+>>>> +			xenbus_dev_fatal(dev, err,
+>>>> +					 "requested ring page order %d exceed
+>>>> max:%d",
+>>>> +					 ring_page_order,
+>>>> +					 xen_blkif_max_ring_order);
+>>>> +			return err;
+>>>> +		}
+>>>> +
+>>>> +		use_ring_page_order = true;
+>>>> +		be->blkif->nr_ring_pages = 1 << ring_page_order;
+>>>> +	}
+>>>> +
+>>>>  	if (be->blkif->nr_rings == 1)
+>>>> -		return read_per_ring_refs(&be->blkif->rings[0], dev-
+>>>>> otherend);
+>>>> +		return read_per_ring_refs(&be->blkif->rings[0], dev->otherend,
+>>>> +					  use_ring_page_order);
+>>>>  	else {
+>>>>  		xspathsize = strlen(dev->otherend) + xenstore_path_ext_size;
+>>>>  		xspath = kmalloc(xspathsize, GFP_KERNEL);
+>>>> @@ -1088,7 +1100,8 @@ static int connect_ring(struct backend_info *be)
+>>>>  		for (i = 0; i < be->blkif->nr_rings; i++) {
+>>>>  			memset(xspath, 0, xspathsize);
+>>>>  			snprintf(xspath, xspathsize, "%s/queue-%u", dev-
+>>>>> otherend, i);
+>>>> -			err = read_per_ring_refs(&be->blkif->rings[i], xspath);
+>>>> +			err = read_per_ring_refs(&be->blkif->rings[i], xspath,
+>>>> +						 use_ring_page_order);
+>>>>  			if (err) {
+>>>>  				kfree(xspath);
+>>>>  				return err;
+>>>> --
+>>>> 2.7.4
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> Xen-devel mailing list
+>>>> Xen-devel@lists.xenproject.org
+>>>> https://lists.xenproject.org/mailman/listinfo/xen-devel
