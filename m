@@ -2,72 +2,46 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	WEIRD_PORT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47350C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF01C65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FC120837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="dbSRsnv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FC120837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id B04EE20989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 23:31:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04EE20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbeLGXbZ (ORCPT
+        id S1726164AbeLGXbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:31:25 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:32908 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbeLGXbZ (ORCPT
+        Fri, 7 Dec 2018 18:31:40 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60878 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbeLGXbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:31:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1544225486; x=1575761486;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=gp8yzVzUL8W53fQqIVpzt3aNkutFWi/UJL35JdE9sP4=;
-  b=dbSRsnv5N6bhzOyRalTVD+TJGRov7HmMoi+Hk73eRUp8W3jdbl6N4U8y
-   u6XekUa5UVzu/bXYusITZsyFIpFMeENirqYeHTxtWE259wNyTRHTnb3jB
-   dPQw2lUhAAg1ClPOBt6/SFbaJxEKDCH6gXMmODO9jxgbftYB424k6nJiV
-   snzcM9ehqfEL133zJV8ZKD+uY+LEUJn/Y1BvpO4HmpixzqpG5CCV+o476
-   kkcmC5Tk4c+jUjAnhL8QYpEhleEGZ6BumL+hslslR9qswkSgRFYHsRdI7
-   L091Wmm2O1k4kXAu8Ps2vC3gRNNOXPHVEqRHcpi3xayNWKPylcurgQdGz
-   A==;
-X-IronPort-AV: E=Sophos;i="5.56,327,1539619200"; 
-   d="scan'208";a="97868972"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Dec 2018 07:31:25 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 07 Dec 2018 15:14:09 -0800
-Received: from gj0bt32.ad.shared (HELO [10.86.57.164]) ([10.86.57.164])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Dec 2018 15:31:24 -0800
-Subject: Re: [PATCH 4/4] RISC-V: Fix non-smp kernel boot on SMP systems
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-References: <mhng-4a071ea7-ddf5-4204-8343-790f9bbb3a09@palmer-si-x1c4>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <74dcf9b4-2343-0f56-1b56-80cc064728fb@wdc.com>
-Date:   Fri, 7 Dec 2018 15:31:23 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
+        Fri, 7 Dec 2018 18:31:39 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id A5FB4260639
+To:     Ben Skeggs <bskeggs@redhat.com>, Lyude Paul <lyude@redhat.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: next/master boot bisection: Oops in nouveau driver on jetson-tk1
+Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Mark Brown <broonie@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Message-ID: <89fa50d0-945f-d1ed-ae55-ee947187f209@collabora.com>
+Date:   Fri, 7 Dec 2018 23:31:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <mhng-4a071ea7-ddf5-4204-8343-790f9bbb3a09@palmer-si-x1c4>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,62 +49,350 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/18 9:00 AM, Palmer Dabbelt wrote:
-> On Mon, 03 Dec 2018 12:57:31 PST (-0800), atish.patra@wdc.com wrote:
->> Currently, clocksource registration happens for an invalid cpu
->> for non-smp kernels. This lead to kernel panic as cpu hotplug
->> registration will fail for those cpus.
->>
->> Do not proceed if hartid is invalid. Take this opprtunity to
->> print appropriate error strings for different failure cases.
->>
->> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->> ---
->>   drivers/clocksource/riscv_timer.c | 13 ++++++++++---
->>   1 file changed, 10 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
->> index 39de6e49..4af4af47 100644
->> --- a/drivers/clocksource/riscv_timer.c
->> +++ b/drivers/clocksource/riscv_timer.c
->> @@ -108,6 +108,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
->>   	int cpuid, hartid, error;
->>
->>   	hartid = riscv_of_processor_hartid(n);
->> +	if (hartid < 0)
->> +		return hartid;
-> 
-> This seems like it's just hiding a bug somewhere else.  We should at least put
-> out a WARN here, as I'm not sure the error will propagate anywhere useful.
-> 
-ok. I will add a warning here. That's what we are doing in plic as well.
+Please find below an automated bisection report for a kernel Oops
+seen during the initialisation of the nouveau GPU driver on
+jetson-tk1.
 
-Regards,
-Atish
->>   	cpuid = riscv_hartid_to_cpuid(hartid);
->>
->>   	if (cpuid != smp_processor_id())
->> @@ -115,14 +117,19 @@ static int __init riscv_timer_init_dt(struct device_node *n)
->>
->>   	/* This should be called only for boot cpu */
->>   	riscv_timebase = riscv_timebase_frequency(n);
->> -	clocksource_register_hz(&riscv_clocksource, riscv_timebase);
->> +	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
->>
->> +	if (error) {
->> +		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
->> +		       error, cpuid);
->> +		return error;
->> +	}
->>   	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
->>   			 "clockevents/riscv/timer:starting",
->>   			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
->>   	if (error)
->> -		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
->> -		       error, cpuid);
->> +		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
->> +		       error);
->>   	return error;
->>   }
-> 
 
+All the LAVA test jobs for this bisection can be found here:
+
+  http://lava.baylibre.com:10080/scheduler/alljobs?length=25&search=lava-bisect-staging-7366#table
+
+
+Here's the beginning of the Oops stack trace:
+
+[    7.485361] [00000064] *pgd=f9e7b835
+[    7.485372] Internal error: Oops: 17 [#1] SMP ARM
+[    7.485376] Modules linked in: snd_soc_tegra_rt5640(+) snd_soc_tegra_utils snd_soc_rt5640(+) snd_soc_rl6231 snd_soc_tegra30_ahub snd_hda_tegra snd_soc_core snd_hda_codec snd_hda_core ac97_bus snd_pcm_dmaengine snd_pcm xhci_tegra(+) snd_timer snd soundcore nouveau(+) ttm tegra_devfreq tegra_wdt
+[    7.542227] CPU: 1 PID: 128 Comm: udevd Not tainted 4.20.0-rc5-next-20181206 #44
+[    7.549603] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    7.555859] PC is at drm_plane_register_all+0x18/0x50
+[    7.560899] LR is at drm_modeset_register_all+0xc/0x6c
+
+
+Full log:
+
+  http://lava.baylibre.com:10080/scheduler/job/68628#L816
+
+
+The bisection was run from next-20181206 as this is where the
+issue was discovered on kernelci.org but the patch it found has
+already been merged in mainline.
+
+Hope this helps!
+
+Guillaume
+
+
+-----------8<------------------------8<-----------
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Bisection result for next/master (next-20181206) on jetson-tk1
+
+  Good:       84df9525b0c2 Linux 4.19
+  Bad:        4c92b7b3080d Add linux-next specific files for 20181206
+  Found:      cfea88a4d866 drm/nouveau: Start using new drm_dev initialization helpers
+
+Checks:
+  revert:     PASS
+  verify:     PASS
+
+Parameters:
+  Tree:       next
+  URL:        None
+  Branch:     master
+  Target:     jetson-tk1
+  Lab:        lab-baylibre
+  Config:     multi_v7_defconfig
+  Plan:       dmesg-nouveau
+
+Breaking commit found:
+
+-------------------------------------------------------------------------------
+commit cfea88a4d86632f28cf80be97079f131645b7869
+Author: Lyude Paul <lyude@redhat.com>
+Date:   Wed Aug 22 21:40:07 2018 -0400
+
+    drm/nouveau: Start using new drm_dev initialization helpers
+    
+    Per the documentation in drm_get_pci_dev(), this function is deprecated
+    and shouldn't be used anymore. As it turns out, we're going to need to
+    stop using drm_get_pci_dev() anyway in order to allow us to turn off the
+    card before full system shutdowns, otherwise we'll hit race conditions
+    with userspace while trying to tear down the card on shutdown.
+    
+    So, start using drm_dev_get() and drm_dev_put(), and just turn our
+    load/unload callbacks into open coded init/fini() functions.
+    
+    Signed-off-by: Lyude Paul <lyude@redhat.com>
+    Cc: Karol Herbst <kherbst@redhat.com>
+    Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 905956809d21..2b2baf6e0e0d 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -458,75 +458,8 @@ nouveau_accel_init(struct nouveau_drm *drm)
+ 	nouveau_bo_move_init(drm);
+ }
+ 
+-static int nouveau_drm_probe(struct pci_dev *pdev,
+-			     const struct pci_device_id *pent)
+-{
+-	struct nvkm_device *device;
+-	struct apertures_struct *aper;
+-	bool boot = false;
+-	int ret;
+-
+-	if (vga_switcheroo_client_probe_defer(pdev))
+-		return -EPROBE_DEFER;
+-
+-	/* We need to check that the chipset is supported before booting
+-	 * fbdev off the hardware, as there's no way to put it back.
+-	 */
+-	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0, &device);
+-	if (ret)
+-		return ret;
+-
+-	nvkm_device_del(&device);
+-
+-	/* Remove conflicting drivers (vesafb, efifb etc). */
+-	aper = alloc_apertures(3);
+-	if (!aper)
+-		return -ENOMEM;
+-
+-	aper->ranges[0].base = pci_resource_start(pdev, 1);
+-	aper->ranges[0].size = pci_resource_len(pdev, 1);
+-	aper->count = 1;
+-
+-	if (pci_resource_len(pdev, 2)) {
+-		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
+-		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
+-		aper->count++;
+-	}
+-
+-	if (pci_resource_len(pdev, 3)) {
+-		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
+-		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
+-		aper->count++;
+-	}
+-
+-#ifdef CONFIG_X86
+-	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
+-#endif
+-	if (nouveau_modeset != 2)
+-		drm_fb_helper_remove_conflicting_framebuffers(aper, "nouveaufb", boot);
+-	kfree(aper);
+-
+-	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
+-				  true, true, ~0ULL, &device);
+-	if (ret)
+-		return ret;
+-
+-	pci_set_master(pdev);
+-
+-	if (nouveau_atomic)
+-		driver_pci.driver_features |= DRIVER_ATOMIC;
+-
+-	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
+-	if (ret) {
+-		nvkm_device_del(&device);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+ static int
+-nouveau_drm_load(struct drm_device *dev, unsigned long flags)
++nouveau_drm_device_init(struct drm_device *dev)
+ {
+ 	struct nouveau_drm *drm;
+ 	int ret;
+@@ -613,7 +546,7 @@ nouveau_drm_load(struct drm_device *dev, unsigned long flags)
+ }
+ 
+ static void
+-nouveau_drm_unload(struct drm_device *dev)
++nouveau_drm_device_fini(struct drm_device *dev)
+ {
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 
+@@ -642,18 +575,116 @@ nouveau_drm_unload(struct drm_device *dev)
+ 	kfree(drm);
+ }
+ 
++static int nouveau_drm_probe(struct pci_dev *pdev,
++			     const struct pci_device_id *pent)
++{
++	struct nvkm_device *device;
++	struct drm_device *drm_dev;
++	struct apertures_struct *aper;
++	bool boot = false;
++	int ret;
++
++	if (vga_switcheroo_client_probe_defer(pdev))
++		return -EPROBE_DEFER;
++
++	/* We need to check that the chipset is supported before booting
++	 * fbdev off the hardware, as there's no way to put it back.
++	 */
++	ret = nvkm_device_pci_new(pdev, NULL, "error", true, false, 0, &device);
++	if (ret)
++		return ret;
++
++	nvkm_device_del(&device);
++
++	/* Remove conflicting drivers (vesafb, efifb etc). */
++	aper = alloc_apertures(3);
++	if (!aper)
++		return -ENOMEM;
++
++	aper->ranges[0].base = pci_resource_start(pdev, 1);
++	aper->ranges[0].size = pci_resource_len(pdev, 1);
++	aper->count = 1;
++
++	if (pci_resource_len(pdev, 2)) {
++		aper->ranges[aper->count].base = pci_resource_start(pdev, 2);
++		aper->ranges[aper->count].size = pci_resource_len(pdev, 2);
++		aper->count++;
++	}
++
++	if (pci_resource_len(pdev, 3)) {
++		aper->ranges[aper->count].base = pci_resource_start(pdev, 3);
++		aper->ranges[aper->count].size = pci_resource_len(pdev, 3);
++		aper->count++;
++	}
++
++#ifdef CONFIG_X86
++	boot = pdev->resource[PCI_ROM_RESOURCE].flags & IORESOURCE_ROM_SHADOW;
++#endif
++	if (nouveau_modeset != 2)
++		drm_fb_helper_remove_conflicting_framebuffers(aper, "nouveaufb", boot);
++	kfree(aper);
++
++	ret = nvkm_device_pci_new(pdev, nouveau_config, nouveau_debug,
++				  true, true, ~0ULL, &device);
++	if (ret)
++		return ret;
++
++	pci_set_master(pdev);
++
++	if (nouveau_atomic)
++		driver_pci.driver_features |= DRIVER_ATOMIC;
++
++	drm_dev = drm_dev_alloc(&driver_pci, &pdev->dev);
++	if (IS_ERR(drm_dev)) {
++		ret = PTR_ERR(drm_dev);
++		goto fail_nvkm;
++	}
++
++	ret = pci_enable_device(pdev);
++	if (ret)
++		goto fail_drm;
++
++	drm_dev->pdev = pdev;
++	pci_set_drvdata(pdev, drm_dev);
++
++	ret = nouveau_drm_device_init(drm_dev);
++	if (ret)
++		goto fail_pci;
++
++	ret = drm_dev_register(drm_dev, pent->driver_data);
++	if (ret)
++		goto fail_drm_dev_init;
++
++	return 0;
++
++fail_drm_dev_init:
++	nouveau_drm_device_fini(drm_dev);
++fail_pci:
++	pci_disable_device(pdev);
++fail_drm:
++	drm_dev_put(drm_dev);
++fail_nvkm:
++	nvkm_device_del(&device);
++	return ret;
++}
++
+ void
+ nouveau_drm_device_remove(struct drm_device *dev)
+ {
++	struct pci_dev *pdev = dev->pdev;
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nvkm_client *client;
+ 	struct nvkm_device *device;
+ 
++	drm_dev_unregister(dev);
++
+ 	dev->irq_enabled = false;
+ 	client = nvxx_client(&drm->client.base);
+ 	device = nvkm_device_find(client->device);
+-	drm_put_dev(dev);
+ 
++	nouveau_drm_device_fini(dev);
++	pci_disable_device(pdev);
++	drm_dev_put(dev);
+ 	nvkm_device_del(&device);
+ }
+ 
+@@ -1020,8 +1051,6 @@ driver_stub = {
+ 		DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_RENDER |
+ 		DRIVER_KMS_LEGACY_CONTEXT,
+ 
+-	.load = nouveau_drm_load,
+-	.unload = nouveau_drm_unload,
+ 	.open = nouveau_drm_open,
+ 	.postclose = nouveau_drm_postclose,
+ 	.lastclose = nouveau_vga_lastclose,
+-------------------------------------------------------------------------------
+
+
+Git bisection log:
+
+-------------------------------------------------------------------------------
+git bisect start
+# good: [84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d] Linux 4.19
+git bisect good 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d
+# bad: [4c92b7b3080d8281941ae81c51cd62bb49bdc3d4] Add linux-next specific files for 20181206
+git bisect bad 4c92b7b3080d8281941ae81c51cd62bb49bdc3d4
+# bad: [c38239b4be1ac7e4bcf5bbd971353bae51525b8f] Merge branch 'parisc-4.20-2' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+git bisect bad c38239b4be1ac7e4bcf5bbd971353bae51525b8f
+# good: [d49f8a52b15bf35db778035340d8a673149f9f93] Merge tag 'scsi-misc' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+git bisect good d49f8a52b15bf35db778035340d8a673149f9f93
+# good: [ac747c0715f29c2be3848b719a1b7e65b07f7b21] Merge tag 'kbuild-v4.20' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
+git bisect good ac747c0715f29c2be3848b719a1b7e65b07f7b21
+# bad: [46972c03ab667dc298cad0c9db517fb9b1521b5f] Merge tag 'drm-misc-next-fixes-2018-10-10' of git://anongit.freedesktop.org/drm/drm-misc into drm-next
+git bisect bad 46972c03ab667dc298cad0c9db517fb9b1521b5f
+# good: [6ac99a328ee16d3f8cc253f1df62623cee3e9ea5] drm/exynos: mixer: Make plane alpha configurable
+git bisect good 6ac99a328ee16d3f8cc253f1df62623cee3e9ea5
+# good: [0957dc7097a3f462f6cedb45cf9b9785cc29e5bb] drm/amdgpu: revert "stop using gart_start as offset for the GTT domain"
+git bisect good 0957dc7097a3f462f6cedb45cf9b9785cc29e5bb
+# good: [2de0b0a158bf423208c3898522c8fa1c1078df48] Merge tag 'drm/tegra/for-4.20-rc1' of git://anongit.freedesktop.org/tegra/linux into drm-next
+git bisect good 2de0b0a158bf423208c3898522c8fa1c1078df48
+# good: [04b96b63c5640a305e30611def7a9c5fcd7a72cf] drm/msm/dpu: Remove unneeded checks in dpu_crtc.c
+git bisect good 04b96b63c5640a305e30611def7a9c5fcd7a72cf
+# good: [6952e3a1dffcb931cf8625aa01642b9afac2af61] Merge branch 'for-upstream/mali-dp' of git://linux-arm.org/linux-ld into drm-next
+git bisect good 6952e3a1dffcb931cf8625aa01642b9afac2af61
+# good: [62e681f7dcab746412dce22d4b75b32c5ea38cdb] Merge tag 'drm-msm-fixes-2018-10-09' of git://people.freedesktop.org/~robclark/linux into drm-next
+git bisect good 62e681f7dcab746412dce22d4b75b32c5ea38cdb
+# bad: [7e6191d4360a2df6cf2a2613dcb79680cb943df8] Merge branch 'linux-4.20' of git://github.com/skeggsb/linux into drm-next
+git bisect bad 7e6191d4360a2df6cf2a2613dcb79680cb943df8
+# good: [c4cee69a4497d9c6ad8868d63568b30e50cac9e9] drm/nouveau: Fix potential memory leak in nouveau_drm_load()
+git bisect good c4cee69a4497d9c6ad8868d63568b30e50cac9e9
+# bad: [a971558c298755d2c07bc5508c65d689471763c8] drm/nouveau/disp: keep track of high-speed state, program into clock
+git bisect bad a971558c298755d2c07bc5508c65d689471763c8
+# bad: [4126b99e744b7a29746e201e2be6644d2edf3c56] drm/nouveau/disp: add a way to configure scrambling/tmds for hdmi 2.0
+git bisect bad 4126b99e744b7a29746e201e2be6644d2edf3c56
+# bad: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau: Start using new drm_dev initialization helpers
+git bisect bad cfea88a4d86632f28cf80be97079f131645b7869
+# first bad commit: [cfea88a4d86632f28cf80be97079f131645b7869] drm/nouveau: Start using new drm_dev initialization helpers
+-------------------------------------------------------------------------------
