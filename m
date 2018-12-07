@@ -2,99 +2,111 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01886C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 01:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6FEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 01:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF232214DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 01:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A627A20882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 01:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lw9vbzHO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF232214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="PxUbF+M0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A627A20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbeLGBZA (ORCPT
+        id S1725993AbeLGBbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 20:25:00 -0500
-Received: from ozlabs.org ([203.11.71.1]:55961 "EHLO ozlabs.org"
+        Thu, 6 Dec 2018 20:31:03 -0500
+Received: from onstation.org ([52.200.56.107]:55350 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLGBZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 20:25:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1725939AbeLGBbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 20:31:03 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 439vsP53tsz9s1c;
-        Fri,  7 Dec 2018 12:24:57 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544145897;
-        bh=5wq/qnznZFLSH0FaQE+Gnud7tbjxn119GUD8bg8Ijek=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lw9vbzHOtkUkdhmTZzpRBHYGwqZkejq/h5jcxl7I8yAGmE+7Xhm9ubAu/joj+KsWE
-         l1cNvzWPLrYQk/RknAqhjeDygU4UYMjAcpCiBvp/Wxrp9QyrCQd8wNcsi+VZ0xTPJe
-         3M49Gzl1ws3+jmXa46FMXliSPdcM9HcFDvBdDDVY+nsL8B8g360Nn+OVhsqcsgEKMx
-         c1evKJKM1CfWUItU0fdoe8CeBxYyE1Nf2r1TBme+94VWqTx5NRShUIR3CId0+82EX0
-         2pGjvu6c6b5e/k56Pr1tV8AJezs0+IJSHmXH3c5j+3Jgl/WGInPT5ZYfp30Nr0RYJY
-         FgLSBwsN7eeCw==
-Date:   Fri, 7 Dec 2018 12:24:56 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Zhang Rui <rui.zhang@intel.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: linux-next: build failure after merge of the thermal tree
-Message-ID: <20181207122456.754129f4@canb.auug.org.au>
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 6304E17F;
+        Fri,  7 Dec 2018 01:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1544146262;
+        bh=vcdrdX1szvmHjnsXgWmO1nkIo4SQ2uuX0m1iqzJuqy0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PxUbF+M0qSArWSRnmJKfPJqblnfWUO2TklHfZmV262Gzvuy2L0GUSJ+3IAdQaAxu/
+         YVrdGUyCXIXNrpqhLtITX26m1we81wfJGjbSOjHqtsfxBLwGii9Tm8P6A4sCb2Me0+
+         9L5XbXt6oc+VFBBD01eJbmls5cszQ7HAmCW5aDIM=
+Date:   Thu, 6 Dec 2018 20:31:01 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>, evgreen@chromium.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: core: Clean enabling always-on regulators +
+ their supplies
+Message-ID: <20181207013101.GA27539@basecamp>
+References: <20181206222318.240401-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181206222318.240401-1-dianders@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 06, 2018 at 02:23:18PM -0800, Douglas Anderson wrote:
+> At the end of regulator_resolve_supply() we have historically turned
+> on our supply in some cases.  This could be for one of two reasons:
+> 
+> 1. If resolving supplies was happening before the call to
+>    set_machine_constraints() we needed to predict if
+>    set_machine_constraints() was going to turn the regulator on and we
+>    needed to preemptively turn the supply on.
+> 2. Maybe set_machine_constraints() happened before we could resolve
+>    supplies (because we failed the first time to resolve) and thus we
+>    might need to propagate an enable that already happened up to our
+>    supply.
+> 
+> Historically regulator_resolve_supply() used _regulator_is_enabled()
+> to decide whether to turn on the supply.
+> 
+> Let's change things a little bit.  Specifically:
+> 
+> 1. Let's try to enable the supply and the regulator in the same place,
+>    both in set_machine_constraints().  This means that we have exactly
+>    the same logic for enabling the supply and the regulator.
+> 2. Let's properly set use_count when we enable always-on or boot-on
+>    regulators even for those that don't have supplies.  The previous
+>    commit 1fc12b05895e ("regulator: core: Avoid propagating to
+>    supplies when possible") only did this right for regulators with
+>    supplies.
+> 3. Let's make it clear that the only time we need to enable the supply
+>    in regulator_resolve_supply() is if the main regulator is currently
+>    in use.  By using use_count (like the rest of the code) to decide
+>    if we're going to enable our supply we keep everything consistent.
+> 
+> Overall the new scheme should be cleaner and easier to reason about.
+> In addition to fixing regulator_summary to be more correct (because of
+> the more correct use_count), this change also has the effect of no
+> longer using _regulator_is_enabled() in this code path.
+> _regulator_is_enabled() could return an error code for some regulators
+> at bootup (like RPMh) that can't read their initial state.  While one
+> can argue that the design of those regulators is sub-optimal, the new
+> logic sidesteps this brokenness.  This fix in particular fixes
+> observed problems on Qualcomm sdm845 boards which use the
+> above-mentioned RPMh regulator.  Those problems were made worse by
+> commit 1fc12b05895e ("regulator: core: Avoid propagating to supplies
+> when possible") because now we'd think at bootup that the SD
+> regulators were already enabled and we'd never try them again.
+> 
+> Fixes: 1fc12b05895e ("regulator: core: Avoid propagating to supplies when possible")
+> Reported-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Hi Zhang,
+Looks good on the Nexus 5 (qcom msm8974).
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/thermal/qcom/qcom-spmi-temp-alarm.c:26:10: fatal error: thermal_cor=
-e.h: No such file or directory
- #include "thermal_core.h"
-          ^~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  150a4fe8c335 ("drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom =
-subdir")
-
-I have used the thermal tree from next-20181206 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwJy+kACgkQAVBC80lX
-0GztcQf9EiqRHgGUILOxNzg2TOm00zRwcrmUh61igBlzOUbuk7Znf/Pljh1PCE3f
-M8/XHNDEJG11heNv+rMhS71hrWsOCys5kvE8bJh9xDLb4omn3S8YWZSpGlcHtiph
-o2HLPV+Jd1VxeCQH4p5mmZzCR6+PGk80o2I5eesBRvB2X7+2d3d1ysIsXYLo+ChG
-YE2p2uLoqoe+dpdjyRPy1l7nrNjuZ6RoLS1x91VaZh5H3sO1Ugfdd3NLSxZSUb1c
-mQEFUsmJ2gS47LJka56BG0RcaGyYJAbYdVlpG+UOq98ovh+dDGksG+rectcuBdMn
-Y5UahXD1fVO24PRBaw2cRfZPzUVrRg==
-=h+Wu
------END PGP SIGNATURE-----
-
---Sig_/ZtC3eBj3jrbJ8fnzS1zf3GZ--
+Tested-by: Brian Masney <masneyb@onstation.org>
