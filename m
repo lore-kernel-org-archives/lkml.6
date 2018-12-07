@@ -2,267 +2,245 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C762C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE45C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F0D20673
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:35:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knjiomJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F0D20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BFAD20868
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFAD20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbeLGTfq (ORCPT
+        id S1726152AbeLGThd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:35:46 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34379 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbeLGTfp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:35:45 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so2307363itd.1;
-        Fri, 07 Dec 2018 11:35:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=beCD05nZWbeYcBnFZ9Uyu0lGvx1BqGCDThwyEpjQx8U=;
-        b=knjiomJ4UMkK/3PkMMhE0rThQ0KFk7Get+MJaa9SNAav1DySr8p/NfohU5xq+0a86o
-         V/eMbIpwM/c+Kn0U5HBv559ZKcO+dSv9LpVz8NyyGWWn6wMaY2ICOuIkKqCpepFrS+ya
-         QFWJST1mR3IPQVswcZi2H7oS7iKIB/9UYj7ryXUGbghIcmxijO9VcZ7yCxVrEbcSVgB0
-         7n79/bAxUjgGuJDv3eQEox3yKShBahJk4xhGyjI/sI6+rl2yv/k4xtU2px/NpDW919YU
-         elELuSQWL0ppS5/9GAovO2YaOGdrTQrbGA7TfWHhWwSi+DAsAAsyHWR/mfRnrbdeg1KI
-         OClA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=beCD05nZWbeYcBnFZ9Uyu0lGvx1BqGCDThwyEpjQx8U=;
-        b=bMcG4+yLCsLSlwpEuz/QdjlVgfk/3LI3kve59LzrUPB3ehKAe1W6wRVN0UiG0ebtw6
-         PVTld/W7lKJ1WD4aTIQdLVdjd/COYlZ679ts46kh3HGEWNB6K9Ylspo2g4tfh5GGP5tq
-         HMRf6q/7NAet3F80zqEkXHhEU+rwscNs6taJBf2I2ukir6pGxxv+D8qe1D0SLvwvEDJi
-         Y0tWOic3YUHHaHBTmEYU9wJvpmPRBjOvW7qDt6JQvPgz5byjP1AkReH3z7veMR96raRD
-         UGtO3Q5+WHB4xRYgA2BsyPBS/3R5URVcksH27lJ8h6KkkAUIFuS/el98L6BdVPIFerrp
-         VSfw==
-X-Gm-Message-State: AA+aEWbKWNUYjLDmDmaNrH9QsOL+BlXdUkBvaKKlRjEGQJWOtLzAhIAY
-        YqKnRxFtdBPIqTKrVebFA8/2jocUViLAIYZ/rBI=
-X-Google-Smtp-Source: AFSGD/URPAkPenSJKLIphnjqmSWE3o2fwnXC6XSgdJGvbOf/8HQ1LdEUsdcK+h9H3jPWX+KxgZKmpwNHLhllSau0N4I=
-X-Received: by 2002:a02:3da:: with SMTP id e87mr2737637jae.78.1544211344235;
- Fri, 07 Dec 2018 11:35:44 -0800 (PST)
+        Fri, 7 Dec 2018 14:37:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbeLGThc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 14:37:32 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 94152C0586AB;
+        Fri,  7 Dec 2018 19:37:31 +0000 (UTC)
+Received: from redhat.com (ovpn-125-106.rdu2.redhat.com [10.10.125.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E407C103BAB7;
+        Fri,  7 Dec 2018 19:37:27 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 14:37:25 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haggai Eran <haggaie@mellanox.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Paul Blinzer <Paul.Blinzer@amd.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Vivek Kini <vkini@nvidia.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Ben Woodard <woodard@redhat.com>, linux-acpi@vger.kernel.org
+Subject: Re: [RFC PATCH 00/14] Heterogeneous Memory System (HMS) and hbind()
+Message-ID: <20181207193725.GE3293@redhat.com>
+References: <d6508932-377c-a4d1-d4d8-01d0f55b9190@intel.com>
+ <c583be1b-17db-1ed3-0f5a-bd119edc8bfe@deltatee.com>
+ <f7eb9939-d550-706a-946d-acbb7383172e@intel.com>
+ <20181206223935.GG3544@redhat.com>
+ <c1126d60-95c0-ed34-6314-fcec17ac1c29@intel.com>
+ <935fc14d-91f2-bc2a-f8b5-665e4145e148@deltatee.com>
+ <5e6c87d5-e4ef-12e7-32bf-c163f7ff58d7@intel.com>
+ <cd5cf2a6-7415-eae7-0305-004cc7db994b@deltatee.com>
+ <20181207002044.GI3544@redhat.com>
+ <20181207150636.00003dfa@huawei.com>
 MIME-Version: 1.0
-References: <20181207170656.13208-1-jcrouse@codeaurora.org> <20181207180712.GC20602@jcrouse-lnx.qualcomm.com>
-In-Reply-To: <20181207180712.GC20602@jcrouse-lnx.qualcomm.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Fri, 7 Dec 2018 14:35:32 -0500
-Message-ID: <CAF6AEGvRQ9h4b8329oddaJZQeK4+P3xZb-LXwAvKAHfSWBBoDQ@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH] drm/msm/a6xx: Add support for an interconnect path
-To:     freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181207150636.00003dfa@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 07 Dec 2018 19:37:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 1:07 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
->
-> On Fri, Dec 07, 2018 at 10:06:56AM -0700, Jordan Crouse wrote:
-> > Try to get the interconnect path for the GPU and vote for the maximum
-> > bandwidth to support all frequencies. This is needed for performance.
-> > Later we will want to scale the bandwidth based on the frequency to
-> > also optimize for power but that will require some device tree
-> > infrastructure that does not yet exist.
-> >
-> > v3: Use macros and change port string per Georgi Djakov
->
-> Rob had asked earlier if it would be appropriate and/or possible to merge this
-> with the generic interconnect patches and with his blessing I would like to
-> renew that request. This should merge cleanly against tip of tree and it would
-> be nice to get this support in at the same time that the base patches go in.
->
+On Fri, Dec 07, 2018 at 03:06:36PM +0000, Jonathan Cameron wrote:
+> On Thu, 6 Dec 2018 19:20:45 -0500
+> Jerome Glisse <jglisse@redhat.com> wrote:
+> 
+> > On Thu, Dec 06, 2018 at 04:48:57PM -0700, Logan Gunthorpe wrote:
+> > > 
+> > > 
+> > > On 2018-12-06 4:38 p.m., Dave Hansen wrote:  
+> > > > On 12/6/18 3:28 PM, Logan Gunthorpe wrote:  
+> > > >> I didn't think this was meant to describe actual real world performance
+> > > >> between all of the links. If that's the case all of this seems like a
+> > > >> pipe dream to me.  
+> > > > 
+> > > > The HMAT discussions (that I was a part of at least) settled on just
+> > > > trying to describe what we called "sticker speed".  Nobody had an
+> > > > expectation that you *really* had to measure everything.
+> > > > 
+> > > > The best we can do for any of these approaches is approximate things.  
+> > > 
+> > > Yes, though there's a lot of caveats in this assumption alone.
+> > > Specifically with PCI: the bus may run at however many GB/s but P2P
+> > > through a CPU's root complexes can slow down significantly (like down to
+> > > MB/s).
+> > > 
+> > > I've seen similar things across QPI: I can sometimes do P2P from
+> > > PCI->QPI->PCI but the performance doesn't even come close to the sticker
+> > > speed of any of those buses.
+> > > 
+> > > I'm not sure how anyone is going to deal with those issues, but it does
+> > > firmly place us in world view #2 instead of #1. But, yes, I agree
+> > > exposing information like in #2 full out to userspace, especially
+> > > through sysfs, seems like a nightmare and I don't see anything in HMS to
+> > > help with that. Providing an API to ask for memory (or another resource)
+> > > that's accessible by a set of initiators and with a set of requirements
+> > > for capabilities seems more manageable.  
+> > 
+> > Note that in #1 you have bridge that fully allow to express those path
+> > limitation. So what you just describe can be fully reported to userspace.
+> > 
+> > I explained and given examples on how program adapt their computation to
+> > the system topology it does exist today and people are even developing new
+> > programming langage with some of those idea baked in.
+> > 
+> > So they are people out there that already rely on such information they
+> > just do not get it from the kernel but from a mix of various device specific
+> > API and they have to stich everything themself and develop a database of
+> > quirk and gotcha. My proposal is to provide a coherent kernel API where
+> > we can sanitize that informations and report it to userspace in a single
+> > and coherent description.
+> > 
+> > Cheers,
+> > Jérôme
+> 
+> I know it doesn't work everywhere, but I think it's worth enumerating what
+> cases we can get some of these numbers for and where the complexity lies.
+> I.e. What can the really determined user space library do today?
 
-Acked-by: Rob Clark <robdclark@gmail.com>
+I gave an example in an email in this thread:
 
-for landing this via Georgi's tree.. that seems easier than having to
-do a 2nd late pull-req for drm to get the driver parts merged..
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1821872.html
 
-BR,
--R
+Is the kind of example you are looking for ? :)
+
+> 
+> So one open question is how close can we get in a userspace only prototype.
+> At the end of the day userspace can often read HMAT directly if it wants to
+> /sys/firmware/acpi/tables/HMAT.  Obviously that gets us only the end to
+> end view (world 2).  I dislike the limitations of that as much as the next
+> person. It is slowly improving with the word "Auditable" being
+> kicked around - btw anyone interested in ACPI who works for a UEFI
+> member, there are efforts going on and more viewpoints would be great.
+> Expect some baby steps shortly.
+> 
+> For devices on PCIe (and protocols on top of it e.g. CCIX), a lot of
+> this is discoverable to some degree. 
+> * Link speed,
+> * Number of Lanes,
+> * Full topology.
+
+Yes discoverable bus like PCIE and all its derivative (CCIX, OpenCAPI,
+...) userspace will have way to find the topology. The issue lies with
+orthogonal topology of extra bus that are not necessarily enumerated
+or with a device driver presently and especially how they inter-act
+with each other (can you cross them ? ...)
+
+> 
+> What isn't there (I think)
+> * In component latency / bandwidth limitations (some activity going
+>   on to improve that long term)
+> * Effect of credit allocations etc on effectively bandwidth - interconnect
+>   performance is a whole load of black magic.
+> 
+> Presumably there is some information available from NVLink etc?
+
+From my point of view we want to give the best case sticker value to
+userspace ie the bandwidth the engineer that designed the bus sworn
+their hardware deliver :)
+
+I believe it the is the best approximation we can deliver.
+
+> 
+> So whilst I really like the proposal in some ways, I wonder how much exploration
+> could be done of the usefulness of the data without touching the kernel at all.
+> 
+> The other aspect that is needed to actually make this 'dynamically' useful is
+> to be able to map whatever Performance Counters are available to the relevant
+> 'links', bridges etc.   Ticket numbers are not all that useful unfortunately
+> except for small amounts of data on lightly loaded buses.
+> 
+> The kernel ultimately only needs to have a model of this topology if:
+> 1) It's going to use it itself
+
+I don't think this should be a criteria, kernel is not using GPU or
+network adatper to browse the web for itself (at least i hope the
+linux kernel is not selfaware ;)). So this kind of topology is not
+of big use to the kernel. Kernel will only care about CPU and memory
+that abide to the memory model of the platform. It will also care
+about more irregular CPU inter-connected ie CPUs on the same mega
+substrate likely have a faster inter-connect between them then to
+the ones in a different physical socket. NUMA distance can model
+that. Dunno if more than that would be useful to the kernel.
+
+> 2) Its going to do something automatic with it.
+
+The information is intended for userspace for application that use
+that information. Today application get that information from non
+standard source and i would like to provide this in a standard
+common place in the kernel for few reasons:
+    - Common model with explicit definition of what is what and
+      what are the rules. No need to userspace to understand the
+      specificities of various kernel sub-system.
+    - Define unique identifiant for _every_ type of memory in the
+      system even device memory so that i can define syscall to
+      operate on those memory (can not do that in device driver)
+    - Integrate with core mm so that long term we can move more
+      of individual device memory management into core component.
+
+> 3) It needs to fix garbage info or supplement with things only the kernel knows.
+
+Yes kernel is expect to fix the informations it get and sanitize
+it so that userspace do not have to grow database of quirk and
+workaround. Moreover kernel can also benchmark inter-connect and
+adapt reported bandwidth and latency if this is ever something
+people would like to see.
 
 
-> Jordan
->
-> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > ---
-> >  drivers/gpu/drm/msm/Kconfig             |  1 +
-> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c   | 20 ++++++++++++++++++++
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  9 +++++++++
-> >  drivers/gpu/drm/msm/msm_gpu.h           |  3 +++
-> >  4 files changed, 33 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> > index 843a9d40c05e..990c4350f0c4 100644
-> > --- a/drivers/gpu/drm/msm/Kconfig
-> > +++ b/drivers/gpu/drm/msm/Kconfig
-> > @@ -5,6 +5,7 @@ config DRM_MSM
-> >       depends on ARCH_QCOM || (ARM && COMPILE_TEST)
-> >       depends on OF && COMMON_CLK
-> >       depends on MMU
-> > +     depends on INTERCONNECT || !INTERCONNECT
-> >       select QCOM_MDT_LOADER if ARCH_QCOM
-> >       select REGULATOR
-> >       select DRM_KMS_HELPER
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > index 546599a7ab05..f37a9bfe5c30 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > @@ -2,6 +2,7 @@
-> >  /* Copyright (c) 2017-2018 The Linux Foundation. All rights reserved. */
-> >
-> >  #include <linux/clk.h>
-> > +#include <linux/interconnect.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <soc/qcom/cmd-db.h>
-> >
-> > @@ -63,6 +64,9 @@ static bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu)
-> >
-> >  static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
-> >  {
-> > +     struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> > +     struct msm_gpu *gpu = &adreno_gpu->base;
-> >       int ret;
-> >
-> >       gmu_write(gmu, REG_A6XX_GMU_DCVS_ACK_OPTION, 0);
-> > @@ -85,6 +89,12 @@ static void __a6xx_gmu_set_freq(struct a6xx_gmu *gmu, int index)
-> >               dev_err(gmu->dev, "GMU set GPU frequency error: %d\n", ret);
-> >
-> >       gmu->freq = gmu->gpu_freqs[index];
-> > +
-> > +     /*
-> > +      * Eventually we will want to scale the path vote with the frequency but
-> > +      * for now leave it at max so that the performance is nominal.
-> > +      */
-> > +     icc_set(gpu->icc_path, 0, MBps_to_icc(7216));
-> >  }
-> >
-> >  void a6xx_gmu_set_freq(struct msm_gpu *gpu, unsigned long freq)
-> > @@ -680,6 +690,8 @@ int a6xx_gmu_reset(struct a6xx_gpu *a6xx_gpu)
-> >
-> >  int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
-> >  {
-> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> > +     struct msm_gpu *gpu = &adreno_gpu->base;
-> >       struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-> >       int status, ret;
-> >
-> > @@ -695,6 +707,9 @@ int a6xx_gmu_resume(struct a6xx_gpu *a6xx_gpu)
-> >       if (ret)
-> >               goto out;
-> >
-> > +     /* Set the bus quota to a reasonable value for boot */
-> > +     icc_set(gpu->icc_path, 0, MBps_to_icc(3072));
-> > +
-> >       a6xx_gmu_irq_enable(gmu);
-> >
-> >       /* Check to see if we are doing a cold or warm boot */
-> > @@ -735,6 +750,8 @@ bool a6xx_gmu_isidle(struct a6xx_gmu *gmu)
-> >
-> >  int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
-> >  {
-> > +     struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> > +     struct msm_gpu *gpu = &adreno_gpu->base;
-> >       struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-> >       u32 val;
-> >
-> > @@ -781,6 +798,9 @@ int a6xx_gmu_stop(struct a6xx_gpu *a6xx_gpu)
-> >       /* Tell RPMh to power off the GPU */
-> >       a6xx_rpmh_stop(gmu);
-> >
-> > +     /* Remove the bus vote */
-> > +     icc_set(gpu->icc_path, 0, 0);
-> > +
-> >       clk_bulk_disable_unprepare(gmu->nr_clocks, gmu->clocks);
-> >
-> >       pm_runtime_put_sync(gmu->dev);
-> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > index 93d70f4a2154..7403ade9aabc 100644
-> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > @@ -18,6 +18,7 @@
-> >   */
-> >
-> >  #include <linux/ascii85.h>
-> > +#include <linux/interconnect.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/slab.h>
-> > @@ -695,6 +696,11 @@ static int adreno_get_pwrlevels(struct device *dev,
-> >
-> >       DBG("fast_rate=%u, slow_rate=27000000", gpu->fast_rate);
-> >
-> > +     /* Check for an interconnect path for the bus */
-> > +     gpu->icc_path = of_icc_get(dev, "gfx-mem");
-> > +     if (IS_ERR(gpu->icc_path))
-> > +             gpu->icc_path = NULL;
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -733,10 +739,13 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
-> >
-> >  void adreno_gpu_cleanup(struct adreno_gpu *adreno_gpu)
-> >  {
-> > +     struct msm_gpu *gpu = &adreno_gpu->base;
-> >       unsigned int i;
-> >
-> >       for (i = 0; i < ARRAY_SIZE(adreno_gpu->info->fw); i++)
-> >               release_firmware(adreno_gpu->fw[i]);
-> >
-> > +     icc_put(gpu->icc_path);
-> > +
-> >       msm_gpu_cleanup(&adreno_gpu->base);
-> >  }
-> > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-> > index f82bac086666..12fc5b1cb39d 100644
-> > --- a/drivers/gpu/drm/msm/msm_gpu.h
-> > +++ b/drivers/gpu/drm/msm/msm_gpu.h
-> > @@ -19,6 +19,7 @@
-> >  #define __MSM_GPU_H__
-> >
-> >  #include <linux/clk.h>
-> > +#include <linux/interconnect.h>
-> >  #include <linux/regulator/consumer.h>
-> >
-> >  #include "msm_drv.h"
-> > @@ -119,6 +120,8 @@ struct msm_gpu {
-> >       struct clk *ebi1_clk, *core_clk, *rbbmtimer_clk;
-> >       uint32_t fast_rate;
-> >
-> > +     struct icc_path *icc_path;
-> > +
-> >       /* Hang and Inactivity Detection:
-> >        */
-> >  #define DRM_MSM_INACTIVE_PERIOD   66 /* in ms (roughly four frames) */
-> > --
-> > 2.18.0
-> >
-> > _______________________________________________
-> > Freedreno mailing list
-> > Freedreno@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/freedreno
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+I will post two v2 where i split the common helpers from the sysfs
+and syscall part. I need the common helpers today in the case of
+single device and have user for that code (nouveau and amdgpu for
+starter). I want to continue the sysfs and syscall discussion and
+i need to reformulate thing and give better explaination of why
+i think the way i am doing thing have more values than any other.
+
+Dunno if i will have time to finish rework-ing all this before the
+end of this year.
+
+Cheers,
+Jérôme
