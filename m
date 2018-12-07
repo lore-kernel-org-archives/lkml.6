@@ -2,196 +2,196 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D5CC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C68C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD03E20672
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:39:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="b5wItN3S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD03E20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 6314020672
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:40:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6314020672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeLGSjn (ORCPT
+        id S1726199AbeLGSkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:39:43 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45374 "EHLO mail.skyhub.de"
+        Fri, 7 Dec 2018 13:40:00 -0500
+Received: from foss.arm.com ([217.140.101.70]:51914 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbeLGSjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:39:43 -0500
-Received: from zn.tnic (p200300EC2BCEC900C13752FC2028AE4C.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:c900:c137:52fc:2028:ae4c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A20BD1EC0BF1;
-        Fri,  7 Dec 2018 19:39:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544207981;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=XUKpLqj7/xXg9jrI/lIGAqGvEsgVQSKGIb3E3fRsWzM=;
-        b=b5wItN3SwdasANuLmiz4/mUehomJUuovnbv3/wVQykDxDRROUyfxrQmt4PrEJWGl9M8o44
-        VFwCb17KwiL/D1Xkz/iOZBFHSCSG1I8/z/5mfI+xMa8k7iWYLoZtkoDmKar55jONfrS3r3
-        CLRZITscbBwkEVXEwOfi2SEKlR5Fg8c=
-Date:   Fri, 7 Dec 2018 19:39:34 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>
-Subject: Re: [PATCH] x86/TSC: Use RDTSCP
-Message-ID: <20181207183934.GF9385@zn.tnic>
-References: <20181119184556.11479-1-bp@alien8.de>
- <20181123200307.GA6223@roeck-us.net>
- <20181123204425.GN30697@zn.tnic>
- <901af2a0-e0d7-586d-5f04-2066cf1ac871@roeck-us.net>
- <20181123210739.GO30697@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181123210739.GO30697@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726087AbeLGSkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:40:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26E01EBD;
+        Fri,  7 Dec 2018 10:39:59 -0800 (PST)
+Received: from moonbear.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CC3C3F5AF;
+        Fri,  7 Dec 2018 10:39:55 -0800 (PST)
+From:   Kristina Martsenko <kristina.martsenko@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 00/13] ARMv8.3 pointer authentication userspace support
+Date:   Fri,  7 Dec 2018 18:39:18 +0000
+Message-Id: <20181207183931.4285-1-kristina.martsenko@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ok,
+Hi,
 
-I have something which looks like it works here, even with the pentium3
-qemu CPU. I'll be hammering on it in the coming days but if you wanna
-give it a try, here's a conglomerate patch:
+This series adds support for the ARMv8.3 pointer authentication extension,
+enabling userspace return address protection with GCC 7 and above.
 
----
-From 0c6adce02d2e7f3b5bbdc4cbe3eb3dae99448def Mon Sep 17 00:00:00 2001
-From: Borislav Petkov <bp@suse.de>
-Date: Fri, 7 Dec 2018 18:54:23 +0100
-Subject: [PATCH] WIP
+(The previous version also had in-kernel pointer authentication patches
+as RFC; these will be updated and sent at a later time.)
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/asm/alternative.h | 26 +++++++++++++++++++++++++-
- arch/x86/include/asm/msr.h         | 16 ++++++++++++++--
- arch/x86/kernel/alternative.c      |  4 ++--
- 3 files changed, 41 insertions(+), 5 deletions(-)
+Changes since v5 [1]:
+ - Exposed all 5 keys (not just APIAKey) [Will]
+ - New prctl for reinitializing keys [Will]
+ - New ptrace options for getting and setting keys [Will]
+ - Keys now per-thread instead of per-mm [Catalin]
+ - Fixed cpufeature detection for late CPUs [Suzuki]
+ - Added comments for ESR_ELx_EC_* definitions [Will]
+ - Rebased onto v4.20-rc5
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index ea9886651c39..db8ebe5dd5be 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -114,6 +114,16 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
- 	alt_end_marker ":\n"
- 
-+#define OLDINSTR_3(oldinsn, n1, n2, n3)								\
-+	"# ALT: oldinstr\n"										\
-+	"661:\n\t" oldinsn "\n662:\n"								\
-+	"# ALT: padding\n"										\
-+	".skip -((" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
-+		" - (" alt_slen ")) > 0) * "							\
-+		"(" alt_max_short(alt_max_short(alt_rlen(n1), alt_rlen(n2)), alt_rlen(n3))	\
-+		" - (" alt_slen ")), 0x90\n"							\
-+	alt_end_marker ":\n"
-+
- #define ALTINSTR_ENTRY(feature, num)					      \
- 	" .long 661b - .\n"				/* label           */ \
- 	" .long " b_replacement(num)"f - .\n"		/* new instruction */ \
-@@ -122,7 +132,8 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	" .byte " alt_rlen(num) "\n"			/* replacement len */ \
- 	" .byte " alt_pad_len "\n"			/* pad len */
- 
--#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */     \
-+#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */	\
-+	"# ALT: replacement " #num "\n"						\
- 	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n\t"
- 
- /* alternative assembly primitive: */
-@@ -146,6 +157,19 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	ALTINSTR_REPLACEMENT(newinstr2, feature2, 2)			\
- 	".popsection\n"
- 
-+#define ALTERNATIVE_3(oldinsn, newinsn1, feat1, newinsn2, feat2, newinsn3, feat3) \
-+	OLDINSTR_3(oldinsn, 1, 2, 3)						\
-+	".pushsection .altinstructions,\"a\"\n"					\
-+	ALTINSTR_ENTRY(feat1, 1)						\
-+	ALTINSTR_ENTRY(feat2, 2)						\
-+	ALTINSTR_ENTRY(feat3, 3)						\
-+	".popsection\n"								\
-+	".pushsection .altinstr_replacement, \"ax\"\n"				\
-+	ALTINSTR_REPLACEMENT(newinsn1, feat1, 1)				\
-+	ALTINSTR_REPLACEMENT(newinsn2, feat2, 2)				\
-+	ALTINSTR_REPLACEMENT(newinsn3, feat3, 3)				\
-+	".popsection\n"
-+
- /*
-  * Alternative instructions for different CPU types or capabilities.
-  *
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index 91e4cf189914..5cc3930cb465 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -217,6 +217,8 @@ static __always_inline unsigned long long rdtsc(void)
-  */
- static __always_inline unsigned long long rdtsc_ordered(void)
- {
-+	DECLARE_ARGS(val, low, high);
-+
- 	/*
- 	 * The RDTSC instruction is not ordered relative to memory
- 	 * access.  The Intel SDM and the AMD APM are both vague on this
-@@ -227,9 +229,19 @@ static __always_inline unsigned long long rdtsc_ordered(void)
- 	 * ordering guarantees as reading from a global memory location
- 	 * that some other imaginary CPU is updating continuously with a
- 	 * time stamp.
-+	 *
-+	 * Thus, use the preferred barrier on the respective CPU, aiming for
-+	 * RDTSCP as the default.
- 	 */
--	barrier_nospec();
--	return rdtsc();
-+	asm volatile(ALTERNATIVE_3("rdtsc",
-+				   "mfence; rdtsc", X86_FEATURE_MFENCE_RDTSC,
-+				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
-+				   "rdtscp", X86_FEATURE_RDTSCP)
-+			: EAX_EDX_RET(val, low, high)
-+			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
-+			:: "ecx");
-+
-+	return EAX_EDX_VAL(val, low, high);
- }
- 
- static inline unsigned long long native_read_pmc(int counter)
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ebeac487a20c..d458c7973c56 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -393,10 +393,10 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 			continue;
- 		}
- 
--		DPRINTK("feat: %d*32+%d, old: (%px len: %d), repl: (%px, len: %d), pad: %d",
-+		DPRINTK("feat: %d*32+%d, old: (%pS (%px) len: %d), repl: (%px, len: %d), pad: %d",
- 			a->cpuid >> 5,
- 			a->cpuid & 0x1f,
--			instr, a->instrlen,
-+			instr, instr, a->instrlen,
- 			replacement, a->replacementlen, a->padlen);
- 
- 		DUMP_BYTES(instr, a->instrlen, "%px: old_insn: ", instr);
+This series is based on v4.20-rc5. The aarch64 bootwrapper [2] does the
+necessary EL3 setup.
+
+The patches are also available at:
+  git://linux-arm.org/linux-km.git ptrauth-user
+
+
+Extension Overview
+==================
+
+The ARMv8.3 pointer authentication extension adds functionality to detect
+modification of pointer values, mitigating certain classes of attack such as
+stack smashing, and making return oriented programming attacks harder.
+
+The extension introduces the concept of a pointer authentication code (PAC),
+which is stored in some upper bits of pointers. Each PAC is derived from the
+original pointer, another 64-bit value (e.g. the stack pointer), and a secret
+128-bit key.
+
+New instructions are added which can be used to:
+
+* Insert a PAC into a pointer
+* Strip a PAC from a pointer
+* Authenticate strip a PAC from a pointer
+
+If authentication succeeds, the code is removed, yielding the original pointer.
+If authentication fails, bits are set in the pointer such that it is guaranteed
+to cause a fault if used.
+
+These instructions can make use of four keys:
+
+* APIAKey (A.K.A. Instruction A key)
+* APIBKey (A.K.A. Instruction B key)
+* APDAKey (A.K.A. Data A key)
+* APDBKey (A.K.A. Data B Key)
+
+A subset of these instruction encodings have been allocated from the HINT
+space, and will operate as NOPs on any ARMv8-A parts which do not feature the
+extension (or if purposefully disabled by the kernel). Software using only this
+subset of the instructions should function correctly on all ARMv8-A parts.
+
+Additionally, instructions are added to authenticate small blocks of memory in
+similar fashion, using APGAKey (A.K.A. Generic key).
+
+
+This series
+===========
+
+This series enables userspace to use any pointer authentication instructions,
+using any of the 5 keys. The keys are initialised and maintained per-process
+(shared by all threads).
+
+For the time being, this series hides pointer authentication functionality from
+KVM guests. Amit Kachhap is currently looking into supporting pointer
+authentication in guests.
+
+Setting uprobes on pointer authentication instructions is not yet supported, and
+may cause the application to behave in unexpected ways.
+
+Feedback and comments are welcome.
+
+Thanks,
+Kristina
+
+[1] https://lore.kernel.org/lkml/20181005084754.20950-1-kristina.martsenko@arm.com/
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/boot-wrapper-aarch64.git
+
+
+Kristina Martsenko (3):
+  arm64: add comments about EC exception levels
+  arm64: add prctl control for resetting ptrauth keys
+  arm64: add ptrace regsets for ptrauth key management
+
+Mark Rutland (10):
+  arm64: add pointer authentication register bits
+  arm64/kvm: consistently handle host HCR_EL2 flags
+  arm64/kvm: hide ptrauth from guests
+  arm64: Don't trap host pointer auth use to EL2
+  arm64/cpufeature: detect pointer authentication
+  arm64: add basic pointer authentication support
+  arm64: expose user PAC bit positions via ptrace
+  arm64: perf: strip PAC when unwinding userspace
+  arm64: enable pointer authentication
+  arm64: docs: document pointer authentication
+
+ Documentation/arm64/booting.txt                |   8 ++
+ Documentation/arm64/cpu-feature-registers.txt  |   8 ++
+ Documentation/arm64/elf_hwcaps.txt             |  12 +++
+ Documentation/arm64/pointer-authentication.txt |  93 +++++++++++++++++++++
+ arch/arm64/Kconfig                             |  23 ++++++
+ arch/arm64/include/asm/cpucaps.h               |   8 +-
+ arch/arm64/include/asm/cpufeature.h            |  12 +++
+ arch/arm64/include/asm/esr.h                   |  17 ++--
+ arch/arm64/include/asm/kvm_arm.h               |   3 +
+ arch/arm64/include/asm/pointer_auth.h          |  93 +++++++++++++++++++++
+ arch/arm64/include/asm/processor.h             |   4 +
+ arch/arm64/include/asm/sysreg.h                |  30 +++++++
+ arch/arm64/include/asm/thread_info.h           |   4 +
+ arch/arm64/include/uapi/asm/hwcap.h            |   2 +
+ arch/arm64/include/uapi/asm/ptrace.h           |  25 ++++++
+ arch/arm64/kernel/Makefile                     |   1 +
+ arch/arm64/kernel/cpufeature.c                 | 103 +++++++++++++++++++++++
+ arch/arm64/kernel/cpuinfo.c                    |   2 +
+ arch/arm64/kernel/head.S                       |   5 +-
+ arch/arm64/kernel/perf_callchain.c             |   6 +-
+ arch/arm64/kernel/pointer_auth.c               |  47 +++++++++++
+ arch/arm64/kernel/process.c                    |   4 +
+ arch/arm64/kernel/ptrace.c                     | 110 +++++++++++++++++++++++++
+ arch/arm64/kvm/handle_exit.c                   |  18 ++++
+ arch/arm64/kvm/hyp/switch.c                    |   2 +-
+ arch/arm64/kvm/sys_regs.c                      |   8 ++
+ include/uapi/linux/elf.h                       |   3 +
+ include/uapi/linux/prctl.h                     |   8 ++
+ kernel/sys.c                                   |   8 ++
+ 29 files changed, 653 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/arm64/pointer-authentication.txt
+ create mode 100644 arch/arm64/include/asm/pointer_auth.h
+ create mode 100644 arch/arm64/kernel/pointer_auth.c
+
 -- 
-2.19.1
+2.11.0
 
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
