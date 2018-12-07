@@ -2,135 +2,74 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCB6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F55C65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618B02083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618B02083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4902A20989
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4902A20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbeLGRdM (ORCPT
+        id S1726156AbeLGRfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:33:12 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:63023 "EHLO pegase1.c-s.fr"
+        Fri, 7 Dec 2018 12:35:09 -0500
+Received: from foss.arm.com ([217.140.101.70]:50236 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbeLGRdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:33:12 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43BKLX3RTtzB09bM;
-        Fri,  7 Dec 2018 18:33:08 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 6aGgL4PlpPYa; Fri,  7 Dec 2018 18:33:08 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43BKLX2jQ3zB09bL;
-        Fri,  7 Dec 2018 18:33:08 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0B01A8B90D;
-        Fri,  7 Dec 2018 18:33:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id K0i5pyzanwUD; Fri,  7 Dec 2018 18:33:09 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BF7238B8F6;
-        Fri,  7 Dec 2018 18:33:09 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 82A0E6D165; Fri,  7 Dec 2018 17:33:09 +0000 (UTC)
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] crypto/testmgr: fix skcipher test with CONFIG_VMAP_STACK
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <20181207173309.82A0E6D165@po14163vm.idsi0.si.c-s.fr>
-Date:   Fri,  7 Dec 2018 17:33:09 +0000 (UTC)
+        id S1726115AbeLGRfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:35:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FC1EEBD;
+        Fri,  7 Dec 2018 09:35:08 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A67F3F5AF;
+        Fri,  7 Dec 2018 09:35:05 -0800 (PST)
+Subject: Re: [PATCH 0/2] Refactor dummy DMA ops
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org, m.szyprowski@samsung.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net,
+        lenb@kernel.org, gregkh@linuxfoundation.org, bhelgaas@google.com,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1544199754.git.robin.murphy@arm.com>
+ <20181207170519.GA26857@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <84be56f9-d195-78c3-df4d-7e0c1f71e4d9@arm.com>
+Date:   Fri, 7 Dec 2018 17:35:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181207170519.GA26857@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
-[    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
-[    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
-[    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
-[    2.406669]
-[    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
-[    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
-[    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
-[    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
-[    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
-[    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
-[    2.451762] Call Trace:
-[    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
-[    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
-[    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
-[    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
-[    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
-[    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
-[    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
-[    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
-[    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
-[    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
-[    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    2.515532] Instruction dump:
-[    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
-[    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
-[    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
-[    2.539123] talitos ff020000.crypto: master data transfer error
-[    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
-[    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
+On 07/12/2018 17:05, Christoph Hellwig wrote:
+> So I'd really prefer if we had a separate dummy.c file, like in
+> my take on your previous patch here:
+> 
+> http://git.infradead.org/users/hch/misc.git/commitdiff/e01adddc1733fa414dc16cd22e8f58be9b64a025
+> 
+> http://git.infradead.org/users/hch/misc.git/commitdiff/596bde76e5944a3f4beb8c2769067ca88dda127a
+> 
+> Otherwise this looks fine.  If you don't minde I'll take your patches,
+> apply the move to a separate file and merge it into the above tree.
 
-IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
-cannot be DMA mapped anymore.
+Sure - TBH I did consider creating a separate file, but then didn't for 
+mysterious reasons that don't stand up to scrutiny. If you're happy to 
+do the fixup on top that's fine by me (if culling .map_resource was 
+intentional, please scrub the last bit of the commit message to match).
 
-This patch allocates it with kmalloc()
+I'll make the equivalent change locally anyway just in case there's any 
+other cause to resend.
 
-Fixes: da7f033ddc9f ("crypto: cryptomgr - Add test infrastructure")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- crypto/testmgr.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index b1f79c6bf409..eea498f9030d 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1112,12 +1112,16 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
- 	struct crypto_wait wait;
- 	const char *input, *result;
- 	void *data;
--	char iv[MAX_IVLEN];
-+	char *iv;
- 	char *xbuf[XBUFSIZE];
- 	char *xoutbuf[XBUFSIZE];
- 	int ret = -ENOMEM;
- 	unsigned int ivsize = crypto_skcipher_ivsize(tfm);
- 
-+	iv = kmalloc(MAX_IVLEN, GFP_KERNEL | GFP_DMA);
-+	if (!iv)
-+		goto out_noiv;
-+
- 	if (testmgr_alloc_buf(xbuf))
- 		goto out_nobuf;
- 
-@@ -1339,6 +1343,8 @@ static int __test_skcipher(struct crypto_skcipher *tfm, int enc,
- out_nooutbuf:
- 	testmgr_free_buf(xbuf);
- out_nobuf:
-+	kfree(iv);
-+out_noiv:
- 	return ret;
- }
- 
--- 
-2.13.3
-
+Robin.
