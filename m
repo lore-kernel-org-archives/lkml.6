@@ -2,97 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D60C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E124EC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D03F208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D7D2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZEK/WcR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D03F208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="omyyzYFA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D7D2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLGKVh (ORCPT
+        id S1726091AbeLGKVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:21:37 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44384 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeLGKVg (ORCPT
+        Fri, 7 Dec 2018 05:21:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50266 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeLGKVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:21:36 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t13so1525591pgr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:21:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9CEoDCK9uvYi1mDJnsc77baMLzVJKXRnuN8Z4r2UU20=;
-        b=BZEK/WcR3D+eC3AmJjwfYTzfIp3I6pG9Xy/xFo1Tda5XP/k34o+h4qmDHGX7RDgirb
-         IHp2vcPlFLFB3G/7qfZbprj52OoqjMZ3mh33N7tZcMNu5bXUlHUGJuMc6Xn05C3esSoz
-         CS3Hgq1rUSA30PXqEG5DqkXqBoJKUz9cGbwU7pBIIkOTBdaL/RZ/IcvVItldvTTK2tBg
-         NwPJCGG3gTRT0DYH/hPpdRFATOR3lt1ETss44WUONdTEiLFWaZ5/g/kKTrg8IkMfI4OJ
-         6C9H6b9O8AtZTivaczAOmVAZ4z9BhrGvARSdNbi06TuIFtUIVPYaFkB/YiG0++t0IjO4
-         O0qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9CEoDCK9uvYi1mDJnsc77baMLzVJKXRnuN8Z4r2UU20=;
-        b=c6fo3t/32MuT7EcxapWW3QO/cmgN1L4/exuR0zzETDCzWRRMl6i0lNZxe6dZiUVfJ0
-         d+Y7xPH11NTI9YRKYJHptu6I9IqvtVH5OYVw7HE+ycs4BuuGVCkjK6s9YhJQGuKOX/Sr
-         mZbPsBhR5tXs5TVnxseV0ABAjrZ5pJXfzmUMOnJ1m5TWifXxPskuUVZCYPfJg4scGQ7W
-         YgEGBoUduy0gTAKIF20MNgn2BwuqgeEh3HvpZEaCOzypdU8QUx/4PpqJFou1Twnjljg/
-         7N7tp4SW5x4aIznTIXEWYffQRmjl5PGl/qn8MYjd8ljaahz/wpaqd7oJ7O8GY7MPn9Rj
-         No8g==
-X-Gm-Message-State: AA+aEWaMyBI/Roj+vrrq5RIvKTlCcyFRr15Nx22byDjrq7TvWC1D3s/9
-        Lfr/qXOtPBE/QroBYJBJfdY=
-X-Google-Smtp-Source: AFSGD/VmHkM3+GU8jAlXfPr6SEEHMNaWG+TrglcK8xgl89ZV3YOc865YXa7mR91jauyv7sfjoo7IVA==
-X-Received: by 2002:a63:6cc8:: with SMTP id h191mr1368093pgc.366.1544178096295;
-        Fri, 07 Dec 2018 02:21:36 -0800 (PST)
-Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id w88sm7363186pfk.11.2018.12.07.02.21.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 02:21:35 -0800 (PST)
-From:   Bo YU <tsu.yubo@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org
-Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
-        joe@perches.com, yuzibode@126.com
-Subject: [PATCH v3 1/2] kobject: use pr_warn to replace printk
-Date:   Fri,  7 Dec 2018 05:21:28 -0500
-Message-Id: <662efd36ef9a3394f0c4ea64d3bb3715b7390458.1544175417.git.tsu.yubo@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1544175417.git.tsu.yubo@gmail.com>
-References: <cover.1544175417.git.tsu.yubo@gmail.com>
+        Fri, 7 Dec 2018 05:21:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Jlt6oPDlNUrSd4b7eI0gl4S4IYfP9Z3f9TP0ruoj2Wc=; b=omyyzYFA/WJQ76bsXvBMuTeQp
+        dkukelt7iyBkhTM/Wq+0puib8zHMjfA73rz5NHPDxAQ3iqaC6G7CxdJD3b9MVHmez8rGwWgOqALb9
+        35+c63NrjVlklfYrLITFfS33f7xCc4hxVRE4N3Ol5tU666LKUrYnF4R3DdNV44u+JNzN10nfdVAC3
+        kNMd4hcs6iAcAicU/FIxdYSNAqJ+LZndZuDwbTdM9iS6zKs/Y+UL3dao8G5SMVlhI43tv1jq9DWy6
+        r9g+YrMr1ocQ/f/dyx53GabbXlTjK+9szHZa233OYFGluzXRQA1KbBCsQRjKtioQQ/oGFPqFddpyi
+        mffLjEoBg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gVDGT-00019J-6O; Fri, 07 Dec 2018 10:21:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 755A6207261F0; Fri,  7 Dec 2018 11:21:43 +0100 (CET)
+Date:   Fri, 7 Dec 2018 11:21:43 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
+        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH v3 16/24] locking/lockdep: Retain the class key and name
+ while freeing a lock class
+Message-ID: <20181207102143.GH2237@hirez.programming.kicks-ass.net>
+References: <20181207011148.251812-1-bvanassche@acm.org>
+ <20181207011148.251812-17-bvanassche@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181207011148.251812-17-bvanassche@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a fix to replace printk with pr_warn
+On Thu, Dec 06, 2018 at 05:11:40PM -0800, Bart Van Assche wrote:
+> The next patch in this series uses the class name in code that
+> detects calls to lock_acquire() while a class key is being freed. Hence
+> retain the class name for lock classes that are being freed.
 
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
----
- lib/kobject_uevent.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From readin the discussion with v2; you meant to say: 'uses the class
+name pointer', right? You're not actually ever going to dereference it,
+since that would be a UaF.
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 63d0816ab23b..b7c088c902a2 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- out:
- 	if (r) {
- 		devpath = kobject_get_path(kobj, GFP_KERNEL);
--		printk(KERN_WARNING "synth uevent: %s: %s",
-+		pr_warn("synth uevent: %s: %s",
- 		       devpath ?: "unknown device",
- 		       msg ?: "failed to send uevent");
- 		kfree(devpath);
--- 
-2.11.0
-
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  kernel/locking/lockdep.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index ecd92969674c..92bdb187987f 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -4147,10 +4147,8 @@ static void zap_class(struct lock_class *class)
+>  	 * Unhash the class and remove it from the all_lock_classes list:
+>  	 */
+>  	hlist_del_rcu(&class->hash_entry);
+> +	class->hash_entry.pprev = NULL;
+>  	list_del(&class->lock_entry);
+> -
+> -	RCU_INIT_POINTER(class->key, NULL);
+> -	RCU_INIT_POINTER(class->name, NULL);
+>  }
+>  
+>  static inline int within(const void *addr, void *start, unsigned long size)
+> -- 
+> 2.20.0.rc2.403.gdbc3b29805-goog
+> 
