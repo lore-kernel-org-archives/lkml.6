@@ -3,85 +3,183 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7B6C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897EBC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC40E2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:48:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC40E2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 512492081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:49:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 512492081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeLGQso (ORCPT
+        id S1726142AbeLGQtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:48:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34960 "EHLO mx1.redhat.com"
+        Fri, 7 Dec 2018 11:49:32 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:40506 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726034AbeLGQsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:48:43 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CF71430DDBD1;
-        Fri,  7 Dec 2018 16:48:43 +0000 (UTC)
-Received: from localhost (ovpn-116-57.gru2.redhat.com [10.97.116.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 699EF7D962;
-        Fri,  7 Dec 2018 16:48:39 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 14:48:37 -0200
-From:   Eduardo Habkost <ehabkost@redhat.com>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
-Message-ID: <20181207164837.GE7395@habkost.net>
-References: <20181205191956.31480-1-ehabkost@redhat.com>
- <20181205220206.GA16013@char.us.oracle.com>
+        id S1726018AbeLGQtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 11:49:31 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 296CBDE8; Fri,  7 Dec 2018 10:49:28 -0600 (CST)
+Date:   Fri, 7 Dec 2018 10:49:28 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Daniel Colascione <dancol@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Florian Weimer <fweimer@redhat.com>, tglx@linutronix.de,
+        x86@kernel.org
+Subject: Re: [PATCH v4] signal: add taskfd_send_signal() syscall
+Message-ID: <20181207164928.GB972@mail.hallyn.com>
+References: <871s6u9z6u.fsf@xmission.com>
+ <20181206213152.gvci7ijr3dokew7w@brauner.io>
+ <87o99y72gi.fsf@xmission.com>
+ <20181206223948.gyfdtkgbhtozmpsp@brauner.io>
+ <20181206231742.xxi4ghn24z4h2qki@brauner.io>
+ <20181207003124.GA11160@mail.hallyn.com>
+ <CAKOZuevgF7ObKcVvu-iuNK3xLMX2Ze_S+adBEGNZCdfXRibh1A@mail.gmail.com>
+ <20181207005917.GA11302@mail.hallyn.com>
+ <CAKOZuesqmPvYoibx3MvVj86EMWRRW4My=7n6iiiBJa+MXo-GJA@mail.gmail.com>
+ <20181207015423.4miorx43l3qhppfz@brauner.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205220206.GA16013@char.us.oracle.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 07 Dec 2018 16:48:43 +0000 (UTC)
+In-Reply-To: <20181207015423.4miorx43l3qhppfz@brauner.io>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 05:02:06PM -0500, Konrad Rzeszutek Wilk wrote:
-> On Wed, Dec 05, 2018 at 05:19:56PM -0200, Eduardo Habkost wrote:
-> > Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
-> > to the guest, which makes STIBP available to guests.  This was implemented
-> > by commits d28b387fb74d ("KVM/VMX: Allow direct access to
-> > MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
-> > MSR_IA32_SPEC_CTRL").
+On Fri, Dec 07, 2018 at 02:54:25AM +0100, Christian Brauner wrote:
+> On Thu, Dec 06, 2018 at 05:39:18PM -0800, Daniel Colascione wrote:
+> > On Thu, Dec 6, 2018 at 4:59 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> > >
+> > > On Thu, Dec 06, 2018 at 04:34:54PM -0800, Daniel Colascione wrote:
+> > > > On Thu, Dec 6, 2018 at 4:31 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> > > > >
+> > > > > On Fri, Dec 07, 2018 at 12:17:45AM +0100, Christian Brauner wrote:
+> > > > > > On Thu, Dec 06, 2018 at 11:39:48PM +0100, Christian Brauner wrote:
+> > > > > > > On Thu, Dec 06, 2018 at 03:46:53PM -0600, Eric W. Biederman wrote:
+> > > > > > > > Christian Brauner <christian@brauner.io> writes:
+> > > > > > > >
+> > > > > > > > >> Your intention is to add the thread case to support pthreads once the
+> > > > > > > > >> process case is sorted out.  So this is something that needs to be made
+> > > > > > > > >> clear.  Did I miss how you plan to handle threads?
+> > > > > > > > >
+> > > > > > > > > Yeah, maybe you missed it in the commit message [2] which is based on a
+> > > > > > > > > discussion with Andy [3] and Arnd [4]:
+> > > > > > > >
+> > > > > > > > Looking at your references I haven't missed it.  You are not deciding
+> > > > > > > > anything as of yet to keep it simple.  Except you are returning
+> > > > > > > > EOPNOTSUPP.  You are very much intending to do something.
+> > > > > > >
+> > > > > > > That was clear all along and was pointed at every occassion in the
+> > > > > > > threads. I even went through the hazzle to give you all of the
+> > > > > > > references when there's lore.kernel.org.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > Decide.  Do you use the flags parameter or is the width of the
+> > > > > > > > target depending on the flags.
+> > > > > >
+> > > > > > Ok, let's try to be constructive. I understand the general concern for
+> > > > > > the future so let's put a contract into the commit message stating that
+> > > > > > the width of the target aka *what is signaled* will be based on a flag
+> > > > > > parameter if we ever extend it:
+> > > > > >
+> > > > > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PGID);
+> > > > > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_TID);
+> > > > > >
+> > > > > > with the current default being
+> > > > > >
+> > > > > > taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PID);
+> > > > > >
+> > > > > > This seems to me the cleanest solution as we only use one type of file
+> > > > > > descriptor. Can everyone be on board with this? If so I'm going to send
+> > > > > > out a new version of the patch.
+> > > > > >
+> > > > > > Christian
+> > > > >
+> > > > > I'm on board with this, but I think you need to also clarify what exactly
+> > > > > the fd stands for.  I think that (a) userspace should not have to care
+> > > > > about the struct pid implementation, and so (b) the procfd should stand
+> > > > > for all the pids.  So when taskfd_send_signal(fd, SIGSTOP, NULL, TASKFD_PGID)
+> > > > > becomes implemented, then open(/proc/5) will pin all three pids, as will
+> > > > > open(/proc/5/task/6).
+> > > >
+> > > > This change doesn't "pin" any PID, and it makes no sense to make a
+> > > > process FD stand for all its threads. What does that even mean?
+> > >
+> > > Currently the patch relies on the procfd inode saving a copy to the PIDTYPE_PID
+> > > pid.
 > > 
-> > However, we never updated GET_SUPPORTED_CPUID to let userspace know that
-> > STIBP can be enabled in CPUID.  Fix that by updating
+> > struct pid doesn't have a type field. The interpretation depends on
+> > the caller's use of the struct pid, and in the current path, that's
+> > PIDTYPE_PID. What, specifically, is wrong with the current approach?
+> > 
+> > > I'm not sure offhand, can it go to the PIDTYPE_PGID from that after the
+> > > task has died, or not?   I didn't think so.  If it can then great.
+> > 
+> > You're arguing that something that does, in fact, work, is somehow
+> > broken in some unspecified way. The kill_pid_info lookup works fine.
+> > What, specifically, is wrong with the semantics as implemented?
+> > 
+> > > The point is (a) these are details which should not have to bother userspace,
+> > 
+> > These details *don't* bother userspace.
+> > 
+> > You're raising concerns that are either imaginary or long-since
+> > addressed. Does the patch cause some kind of maintenance burden? No,
+> > it doesn't, not moreso than any other piece of code. Does the
+> > interface have unclear semantics? No, it clearly sends a signal to a
+> > process, just like kill. Does the patch expose kernel implementation
+> > details? No, it doesn't, because the interface is simply not defined
+> > in terms of these details. Do we need to change how signal delivery
+> > works? No, because if it's fine for kill, it's fine for this facility,
+> > and if some future signal cleanup separates the cases more, that
+> > cleanup can change this code as well.
+> > 
+> > The change is well-documented, simple, extensible, and addresses an
+> > actual problem. Every legitimate technical criticism has now been
+> > addressed. I don't understand where this opposition is coming from,
+> > since the objections refer to nothing that's actually in the patch or
+> > exposed to the user.
+> > 
+> > > and (b) how to decide who we're sending the signal to (tid/pid/pgid) should
+> > > be specified in precisely one way.  So either a flag, or comign from the type
+> > > of fd that was opened.
+> > 
+> > You can't send signals to a thread with the current patch. There's no
+> > ambiguity in providing zero ways to do something.
 > 
-> Ooops!
-> > kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
+> So Serge's point is not about changing the current patch. What he's
+
+Right, I'm an ack on the patch.  As is no changes are needed.
+
+> basically saying is: If we are expected to state how we were to extend
+> this syscall in the future which Serge and I figured is currently Eric's
+> only remaining objection then:
+> - flags are a good way to go (I agree)
+> - there's a concrete way how to do this by stashing the relevent struct
+>   pids for PIDTYPE_PID, PIDTYPE_TGID, PIDTYPE_PGID in file->private_data
+>   which can then be retrieved in taskfd_send_signal()
+> There is not intent nor requirement to do this right now. What we have
+> right now is fine for a start, I agree! But here's how we go forward if
+> we ever need to! :)
 > 
-> Shouldn't there also be a patch in QEMU to use it? (aka, +stibp).
-
-I will submit the QEMU patch soon.
-
-A patch exists on some downstream QEMU distributions, already,
-but it was never merged upstream because GET_SUPPORTED_CPUID
-never supported STIBP in the upstream kernel.  (And because in
-the end it was not used for mitigating Spectre)
-
-> 
-> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-
-Thanks!
-
--- 
-Eduardo
+> Christian
