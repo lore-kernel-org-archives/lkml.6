@@ -2,132 +2,193 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F63C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C01BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BB220989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47AF32082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="WKa0Rrlm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6BB220989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXtZYRkZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AF32082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726161AbeLGRAO (ORCPT
+        id S1726183AbeLGRAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:00:14 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36445 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbeLGRAM (ORCPT
+        Fri, 7 Dec 2018 12:00:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54986 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeLGRAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:00:12 -0500
-Received: by mail-pg1-f196.google.com with SMTP id n2so1979776pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:00:12 -0800 (PST)
+        Fri, 7 Dec 2018 12:00:30 -0500
+Received: by mail-wm1-f67.google.com with SMTP id z18so5049296wmc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:00:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oANJ8NTgVfhgBlhgezfxcRi6A0Prx2iNsZ6jeemAImA=;
-        b=WKa0RrlmuDD7lG3nKa9hyk5NK0fRzXszOl00nnVvnmiDHB3/wgXlc3utLohtSutJvq
-         Njq3QmkB2B0HW8e6kumWBeby22hg6xlfkTcc5nLyY7hZJkLYb7bGnyjOj4RXGvjn/YtB
-         3OjPz1JujpZVuFuZJxpUM1a4f1cLhhWkfJwz0keZ3yNY1H+dwkeKghTz3efFL0lSWOK4
-         2MBoi6Wp3HkWGTuvPYqUK56aXJELiVfOSuLXhkCmc99fIQbatyugLWrgCK3J3XhZBmgP
-         RIFvefo0HfvEA4kS5GMTaU2Dg+utxiFp6UZQtDWQNA5baaUhTiUrwWRJvyuHkURIk5Qd
-         hk0A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sWR/CKRAPHnbW5Y7mQVehmQMx4mGMyMA0zPhmnP+ReM=;
+        b=BXtZYRkZjWyqJi+M9/Za/SBLLemkf3VXlFl4vCV+58gZiFtfCijEWJm5znCShtPyie
+         mhGsYOkOYOFTbaR+H2yIgaAv5bEPMvZ/M2owgUDEY3yEapsA594u62cB0NvrkGTbfJFB
+         LMJAPRsTGQyJQIKR+g2b9QlnAdB0u6XdSAhf6WbZZJai86UYppL+vsD93KVFCxxIg1j/
+         ABQRnra5dbm9RSMWw6QeAkl4q9bV4GY2yvTXjbGxukCjMeaujUsKA+gtu4J2tgp00thW
+         Ex5kUBOucsGYAWdhjP0Q3YxK+c+2z6hhuh60otxMvR4DtwXs+bqtlrRCb68CbrBO2TML
+         f4KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=oANJ8NTgVfhgBlhgezfxcRi6A0Prx2iNsZ6jeemAImA=;
-        b=goVpsln0BLaxYbLki9gd/Wh8oNDAoSZXeWaoWZZHXsQfrjJhn+NPJjPIygyvmfxVGs
-         Hz8Bw1cmwHoPUrp15unhS0+vjSfB1CQaa4w9GRKa4K0WNNo7Ny/hVISuu7DdboTzM19n
-         yKdoA006HpL3/AFHdj5Dq8LjcW0TvYs8al6XSkflxwpHo2N7KRGc2zS2zjhFr46UTgvl
-         JunVNnG7eQ5i5UtTG7DCypEWd9J111f/oPHNeT6qcenooGJ/fgYLui+DevzFLD+mprSb
-         RXlmC9h2qxnAhc2Fi3XSdcyLcqJUxkvQWCAMP4G17xSKTTOA9uIr7an4tipshbNk3Dw5
-         niTg==
-X-Gm-Message-State: AA+aEWaUnL+WTU7pfauogbAo1EvZB3EB30pwyfpoFMpxc3LkSg5oawus
-        qo64b+j+Wwq1U16GwnG8VEQGqcqiLbc=
-X-Google-Smtp-Source: AFSGD/WzvQKc79ImRu1XX5C2cwE2umJQ+JvexswvZTpBQxY3W0YrbtEtF3dLar4MRku0gF6dcpeuaw==
-X-Received: by 2002:a65:64c8:: with SMTP id t8mr2603360pgv.31.1544202011254;
-        Fri, 07 Dec 2018 09:00:11 -0800 (PST)
-Received: from localhost ([216.3.10.7])
-        by smtp.gmail.com with ESMTPSA id l3sm9396202pga.92.2018.12.07.09.00.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 09:00:10 -0800 (PST)
-Date:   Fri, 07 Dec 2018 09:00:10 -0800 (PST)
-X-Google-Original-Date: Fri, 07 Dec 2018 08:59:36 PST (-0800)
-Subject:     Re: [PATCH 4/4] RISC-V: Fix non-smp kernel boot on SMP systems
-In-Reply-To: <1543870651-16669-5-git-send-email-atish.patra@wdc.com>
-CC:     linux-kernel@vger.kernel.org, atish.patra@wdc.com,
-        aou@eecs.berkeley.edu, daniel.lezcano@linaro.org,
-        devicetree@vger.kernel.org, dmitriy@oss-tech.org,
-        linux-riscv@lists.infradead.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, tglx@linutronix.de, anup@brainfault.org,
-        Damien.LeMoal@wdc.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     atish.patra@wdc.com
-Message-ID: <mhng-4a071ea7-ddf5-4204-8343-790f9bbb3a09@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sWR/CKRAPHnbW5Y7mQVehmQMx4mGMyMA0zPhmnP+ReM=;
+        b=mk1qi73jqVJdbamJ6D96IKtWoN7tl2d8RN0ZIBf8Uwx2bXq1i+UM7XntfxBkA3CZeI
+         ckBcE/woM+o3uA1qnquOCdoU0uGX5zuUgoIOHJCB2fplZZvLeJTyhdfZR9yimtV+0567
+         mtqUyQqSyialHO+gxkhxVSjrY+1/mWVxCPdnwGk9OON8VX16Aw/ntCwQwn9dWuiXe5pk
+         oQxUIL3blE78xJ4puhVd4YOPFSW1zLjUcDvdsozn4i1NiNfjYK42oueqSgXKnOnZ6QcM
+         fGB9srIQKZLAXk36DKfrsUYREkCQw8pNwlyzKfEJKXep6iIZwsf3zjWRFvj5aVMYeuCq
+         UTbQ==
+X-Gm-Message-State: AA+aEWaemGODX2rCJauAcE3Zg9u7o51xCdKQnztY+mIoPjR0dN8RDGbs
+        3YYrqg7+TeM1ehEvuDd/kFwfm5XjIA==
+X-Google-Smtp-Source: AFSGD/XJLn1CvYLTdRFM67ZrqgIU74Yr3HfHgrC6JgGpMtQIbHH6sOxqX3xnhATxpvA3MCipYXPRnw==
+X-Received: by 2002:a1c:6e01:: with SMTP id j1mr2871044wmc.103.1544202027689;
+        Fri, 07 Dec 2018 09:00:27 -0800 (PST)
+Received: from localhost (host34-126-dynamic.27-79-r.retail.telecomitalia.it. [79.27.126.34])
+        by smtp.gmail.com with ESMTPSA id h12sm9755756wma.48.2018.12.07.09.00.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 09:00:27 -0800 (PST)
+Date:   Fri, 7 Dec 2018 18:00:26 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: x86_64: blacklist non-attachable interrupt
+ functions
+Message-ID: <20181207170026.GA1379@Dell>
+References: <20181206095648.GA8249@Dell>
+ <20181207234731.f52a8c1eff6c0e72c073ad40@kernel.org>
+ <20181208010120.c3eda9042912068aecc68317@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181208010120.c3eda9042912068aecc68317@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Dec 2018 12:57:31 PST (-0800), atish.patra@wdc.com wrote:
-> Currently, clocksource registration happens for an invalid cpu
-> for non-smp kernels. This lead to kernel panic as cpu hotplug
-> registration will fail for those cpus.
->
-> Do not proceed if hartid is invalid. Take this opprtunity to
-> print appropriate error strings for different failure cases.
->
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+On Sat, Dec 08, 2018 at 01:01:20AM +0900, Masami Hiramatsu wrote:
+> Hi Andrea and Ingo,
+> 
+> Here is the patch what I meant. I just ran it on qemu-x86, and seemed working.
+> After introducing this patch, I will start adding arch_populate_kprobe_blacklist()
+> to some arches.
+> 
+> Thank you,
+> 
+> [RFC] kprobes: x86/kprobes: Blacklist symbols in arch-defined prohibited area
+> 
+> From: Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> Blacklist symbols in arch-defined probe-prohibited areas.
+> With this change, user can see all symbols which are prohibited
+> to probe in debugfs.
+> 
+> All archtectures which have custom prohibit areas should define
+> its own arch_populate_kprobe_blacklist() function, but unless that,
+> all symbols marked __kprobes are blacklisted.
+> 
+> Reported-by: Andrea Righi <righi.andrea@gmail.com>
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > ---
->  drivers/clocksource/riscv_timer.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
-> index 39de6e49..4af4af47 100644
-> --- a/drivers/clocksource/riscv_timer.c
-> +++ b/drivers/clocksource/riscv_timer.c
-> @@ -108,6 +108,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
->  	int cpuid, hartid, error;
->
->  	hartid = riscv_of_processor_hartid(n);
-> +	if (hartid < 0)
-> +		return hartid;
 
-This seems like it's just hiding a bug somewhere else.  We should at least put 
-out a WARN here, as I'm not sure the error will propagate anywhere useful.
+[snip]
 
->  	cpuid = riscv_hartid_to_cpuid(hartid);
->
->  	if (cpuid != smp_processor_id())
-> @@ -115,14 +117,19 @@ static int __init riscv_timer_init_dt(struct device_node *n)
->
->  	/* This should be called only for boot cpu */
->  	riscv_timebase = riscv_timebase_frequency(n);
-> -	clocksource_register_hz(&riscv_clocksource, riscv_timebase);
-> +	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
->
-> +	if (error) {
-> +		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
-> +		       error, cpuid);
-> +		return error;
+> +int kprobe_add_ksym_blacklist(unsigned long entry)
+> +{
+> +	struct kprobe_blacklist_entry *ent;
+> +	unsigned long offset = 0, size = 0;
+> +
+> +	if (!kernel_text_address(entry) ||
+> +	    !kallsyms_lookup_size_offset(entry, &size, &offset))
+> +		return -EINVAL;
+> +
+> +	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+> +	if (!ent)
+> +		return -ENOMEM;
+> +	ent->start_addr = entry - offset;
+> +	ent->end_addr = entry - offset + size;
+
+Do we need to take offset into account? The code before wasn't using it.
+
+> +	INIT_LIST_HEAD(&ent->list);
+> +	list_add_tail(&ent->list, &kprobe_blacklist);
+> +
+> +	return (int)size;
+> +}
+> +
+> +/* Add functions in arch defined probe-prohibited area */
+> +int __weak arch_populate_kprobe_blacklist(void)
+> +{
+> +	unsigned long entry;
+> +	int ret = 0;
+> +
+> +	for (entry = (unsigned long)__kprobes_text_start;
+> +	     entry < (unsigned long)__kprobes_text_end;
+> +	     entry += ret) {
+> +		ret = kprobe_add_ksym_blacklist(entry);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret == 0)	/* In case of alias symbol */
+> +			ret = 1;
 > +	}
->  	error = cpuhp_setup_state(CPUHP_AP_RISCV_TIMER_STARTING,
->  			 "clockevents/riscv/timer:starting",
->  			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
->  	if (error)
-> -		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
-> -		       error, cpuid);
-> +		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
-> +		       error);
->  	return error;
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Lookup and populate the kprobe_blacklist.
+>   *
+> @@ -2104,26 +2142,20 @@ NOKPROBE_SYMBOL(dump_kprobe);
+>  static int __init populate_kprobe_blacklist(unsigned long *start,
+>  					     unsigned long *end)
+>  {
+> +	unsigned long entry;
+>  	unsigned long *iter;
+> -	struct kprobe_blacklist_entry *ent;
+> -	unsigned long entry, offset = 0, size = 0;
+> +	int ret;
+>  
+>  	for (iter = start; iter < end; iter++) {
+>  		entry = arch_deref_entry_point((void *)*iter);
+> -
+> -		if (!kernel_text_address(entry) ||
+> -		    !kallsyms_lookup_size_offset(entry, &size, &offset))
+> +		ret = kprobe_add_ksym_blacklist(entry);
+> +		if (ret == -EINVAL)
+>  			continue;
+> -
+> -		ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+> -		if (!ent)
+> -			return -ENOMEM;
+> -		ent->start_addr = entry;
+> -		ent->end_addr = entry + size;
+> -		INIT_LIST_HEAD(&ent->list);
+> -		list_add_tail(&ent->list, &kprobe_blacklist);
+> +		if (ret < 0)
+> +			return ret;
+>  	}
+> -	return 0;
+> +
+> +	return arch_populate_kprobe_blacklist();
 >  }
+>  
+>  /* Module notifier call back, checking kprobes on the module */
