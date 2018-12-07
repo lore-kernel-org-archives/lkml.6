@@ -2,102 +2,157 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A929C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FD5C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 417C420892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:38:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8EC0214DE
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 13:40:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="htMCSjLW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 417C420892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/t9Px1j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EC0214DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbeLGNic (ORCPT
+        id S1726080AbeLGNkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:38:32 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37578 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeLGNib (ORCPT
+        Fri, 7 Dec 2018 08:40:08 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:56138 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeLGNkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:38:31 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wB7DYm6h089654;
-        Fri, 7 Dec 2018 13:38:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=o44A/jXZYYsSAdlA/3ByTqOK8dNi1c36umRkV1RCagE=;
- b=htMCSjLWT5ImpjaKenFIXdsSf0v6m3SKCzM3909cOxCRq26r+7eBFDcHp5VrszVKg3yg
- zdOsp05zY3+r2F/HobEYfHV8snJ/h7H1vYf3ysZtiTx51x1JjAkNMum7SsslrXJfjOhq
- AJxWbcLfXmOr/dbW/1+0O2Ap7SqNfhQe4eoF7uqFgfhgtm95iqxAgpE5B+O9cc+vvYyP
- qiyQZnzGM7rKsEPBn2cbFHJ1d4+5UOYfFuyYm4lFa965SR2lFGLa0eXRFkXwpReWO0UA
- qSS8zGr11/6s0p+XFuI9pCyjjF2+dy0vlgd2qA74UQ0fmCs/19AeZ2dqQK1/MXrmPFj0 Xg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2p3hqudxg5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 07 Dec 2018 13:38:06 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wB7Dc5sj001014
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 7 Dec 2018 13:38:05 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wB7Dc4f3018851;
-        Fri, 7 Dec 2018 13:38:04 GMT
-Received: from [10.39.214.172] (/10.39.214.172)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 07 Dec 2018 05:38:04 -0800
-Subject: Re: [PATCH v4 09/10] sched/fair: disable stealing if too many NUMA
- nodes
-To:     Valentin Schneider <valentin.schneider@arm.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com,
-        linux-kernel@vger.kernel.org
-References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
- <1544131696-2888-10-git-send-email-steven.sistare@oracle.com>
- <7593e565-3048-d92d-21be-660b3aecc6d9@arm.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <a566715b-7122-f21d-a920-2764ef4087ba@oracle.com>
-Date:   Fri, 7 Dec 2018 08:37:54 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Fri, 7 Dec 2018 08:40:08 -0500
+Received: by mail-it1-f195.google.com with SMTP id o19so6846761itg.5;
+        Fri, 07 Dec 2018 05:40:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QZXOxCmXChwQnEIdXhUUmnLs50L3mvTVM/iVgJWrrCM=;
+        b=G/t9Px1j0jXrR3MzTgIZSl56sw48OTkb7wwT4NJK1HgP9mMfek2XH8LyteYPPDm9nG
+         i+kDA/BD7XgeAB5qBc2Uj6vR1uBOZVhfcdzJwSri8/byDDx1t4SXqetF0vAxBzMnbKme
+         ry5Mya85zw1isLLie2MmFI+QPpGYZVepvMFVQpHD0zezwZFCPuN4kZFYWZpLd6TxTnLE
+         +a2N2iy5SmEIhP/oG478K4vcYuvAO/xrpga2QLx0a8gWobxvoTn05LMHaCLojLIy1iiQ
+         28jtPKT6d2GKGFeXSEV72WA9lZZQJ2ZE41n1bBb0oaDz4PCP5LJ9XG/UoFOwy9WB+Pg+
+         3ZJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QZXOxCmXChwQnEIdXhUUmnLs50L3mvTVM/iVgJWrrCM=;
+        b=DHTUHNDrGVQ4c4LCceTKpyc5msVkkUvHTGHbXOkrGeCLBXYCzd4UKUqWZNKKfWWZNy
+         tNR8x17QCTeKYmtjRTHYtLjl2DrT5qI9SBaeuls3MgAROpUegSSQRB58Ps/3CDE33uqJ
+         fPZwmUU8q+3UWDM7tykkOKF5zN1E/rMtzZ0DprkLjtoa21Hj5q24JLPw5tZ4O2V6U5Cr
+         EiTOulZfspHNQUjf/xB+/4862sagatnVtRvES7tPOaO8QcU0BiZ3jwLqvCl4J0b/8Z5J
+         LE34rZQP3pBTRiLG0kalWBCwv9TPovzDXYaKanKCwl1ocqE5hf1NtgX7xCsBu8oE7EJn
+         74PA==
+X-Gm-Message-State: AA+aEWaAAO31g2Dm0v9J6ZrJYxqTWm6QnLedACiTXsaPqDlXeeXL8OuX
+        rtfTMq/XPEelBytZ+uP64mGTJglxsoCIDzIfwDI=
+X-Google-Smtp-Source: AFSGD/XbOHW/zXOhA4bdEgg20HUHD0DtMFmBjzHois75dVpzcZAIuER3IN3Ri1068cAo7NanWHWDGr+Q3FjjtCIyzBA=
+X-Received: by 2002:a02:3f0b:: with SMTP id d11mr1899652jaa.26.1544190005869;
+ Fri, 07 Dec 2018 05:40:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7593e565-3048-d92d-21be-660b3aecc6d9@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9099 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=962
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812070108
+References: <20181130192737.15053-1-jarkko.sakkinen@linux.intel.com>
+ <CAGXu5j+jBNBsD3pvUSfEh6Lc5T1YMpbM0HeG1c6BHiJe+cKVOQ@mail.gmail.com>
+ <20181130195652.7syqys76646kpaph@linux-r8p5> <20181130205521.GA21006@linux.intel.com>
+ <1543611662.3031.20.camel@HansenPartnership.com> <20181130214405.GG23772@linux.intel.com>
+ <1543615069.3031.27.camel@HansenPartnership.com> <20181130221219.GA25537@linux.intel.com>
+ <20181130151459.3ca2f5c8@lwn.net> <CAMuHMdUkpLWm5NZmYj=uMgVncw6ZOb7j9KxFoDGhrnr7vzpx_w@mail.gmail.com>
+In-Reply-To: <CAMuHMdUkpLWm5NZmYj=uMgVncw6ZOb7j9KxFoDGhrnr7vzpx_w@mail.gmail.com>
+From:   Eric Curtin <ericcurtin17@gmail.com>
+Date:   Fri, 7 Dec 2018 13:39:54 +0000
+Message-ID: <CANpvso4ZjJkUA7+saYRR4qssvreZcm-74EPo3nrGSohFZF9akA@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/15] Zero ****s, hugload of hugs <3
+To:     geert@linux-m68k.org
+Cc:     corbet@lwn.net, jarkko.sakkinen@linux.intel.com,
+        James.Bottomley@hansenpartnership.com, dave@stgolabs.net,
+        keescook@chromium.org,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        amir73il@gmail.com, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, dja@axtens.net,
+        davem@davemloft.net, linux@dominikbrodowski.net,
+        dri-devel@lists.freedesktop.org, edumazet@google.com,
+        federico.vaga@vaga.pv.it, geert+renesas@glider.be, deller@gmx.de,
+        kumba@gentoo.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-media@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-mtd@lists.infradead.org,
+        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, matthias.bgg@gmail.com,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        pabeni@redhat.com, paul.burton@mips.com, pmladek@suse.com,
+        robh@kernel.org, sean.wang@mediatek.com,
+        sergey.senozhatsky@gmail.com, shannon.nelson@oracle.com,
+        sbrivio@redhat.com, rostedt@goodmis.org, me@tobin.cc,
+        makita.toshiaki@lab.ntt.co.jp, willemb@google.com, yhs@fb.com,
+        yanjun.zhu@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/7/2018 6:43 AM, Valentin Schneider wrote:
-> Hi Steve,
-> 
-> On 06/12/2018 21:28, Steve Sistare wrote:
-> [...]
-> 
-> FYI git gets lost when it comes to applying this one on tip/sched/core 
-> (v4.20-rc5 based), but first applying it on rc1 then rebasing the stack
-> on rc5 works fine.
-> 
-> [...]
+Hi Guys,
 
-Thanks Valentin.  I will regenerate the series for rc-latest if/when it
-is approved.
+I initially thought these patches were a joke. But I guess they are
+not. I suppose 2018 is the year everything became offensive.
 
-- Steve
+Could we avoid the s/fuck/hug/g though? I have nothing against
+re-wording this stuff to remove the curse word, but it should at least
+make sense.
+
+What's going to happen is someone is a newbie is going to see a comment
+like "We found an mark in the idr at the right wd, but it's not the
+mark we were told to remove. eparis seriously hugged up somewhere",
+probably google the term as they are unfamiliar with it, find out it's
+an alias for "fucked" and if they are sensitive get offended anyway.
+
+On Sat, 1 Dec 2018 at 08:20, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Jon,
+>
+> On Fri, Nov 30, 2018 at 11:15 PM Jonathan Corbet <corbet@lwn.net> wrote:
+> > On Fri, 30 Nov 2018 14:12:19 -0800
+> > Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > > As a maintainer myself (and based on somewhat disturbed feedback from
+> > > other maintainers) I can only make the conclusion that nobody knows what
+> > > the responsibility part here means.
+> > >
+> > > I would interpret, if I read it like at lawyer at least, that even for
+> > > existing code you would need to do the changes postmorterm.
+> > >
+> > > Is this wrong interpretation?  Should I conclude that I made a mistake
+> > > by reading the CoC and trying to understand what it *actually* says?
+> > > After this discussion, I can say that I understand it less than before.
+> >
+> > Have you read Documentation/process/code-of-conduct-interpretation.rst?
+> > As has been pointed out, it contains a clear answer to how things should
+> > be interpreted here.
+>
+> Indeed:
+>
+> | Contributions submitted for the kernel should use appropriate language.
+> | Content that already exists predating the Code of Conduct will not be
+> | addressed now as a violation.
+>
+> However:
+>
+> | Inappropriate language can be seen as a
+> | bug, though; such bugs will be fixed more quickly if any interested
+> | parties submit patches to that effect.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
