@@ -2,359 +2,155 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765E1C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E81C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3013D2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3013D2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EC76F2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 16:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC76F2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbeLGQFi (ORCPT
+        id S1726295AbeLGQGG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 11:05:38 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16088 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726257AbeLGQFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 11:05:35 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0304AF9776DFA;
-        Sat,  8 Dec 2018 00:05:32 +0800 (CST)
-Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sat, 8 Dec 2018
- 00:05:23 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 7/7] staging: erofs: simplify `z_erofs_vle_submit_all'
-Date:   Sat, 8 Dec 2018 00:19:18 +0800
-Message-ID: <20181207161918.20747-8-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181207161918.20747-1-gaoxiang25@huawei.com>
-References: <20181207161918.20747-1-gaoxiang25@huawei.com>
+        Fri, 7 Dec 2018 11:06:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726067AbeLGQGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 11:06:06 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4834C308A959;
+        Fri,  7 Dec 2018 16:06:05 +0000 (UTC)
+Received: from localhost (ovpn-200-34.brq.redhat.com [10.40.200.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AFD9081641;
+        Fri,  7 Dec 2018 16:05:59 +0000 (UTC)
+Date:   Fri, 7 Dec 2018 17:05:58 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        iommu@lists.linux-foundation.org, tariqt@mellanox.com,
+        ilias.apalodimas@linaro.org, toke@toke.dk,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        brouer@redhat.com
+Subject: Re: [RFC] avoid indirect calls for DMA direct mappings
+Message-ID: <20181207170558.5679beae@redhat.com>
+In-Reply-To: <20181207164435.18f8ffed@redhat.com>
+References: <20181206153720.10702-1-hch@lst.de>
+        <CAHk-=wgz6PFCm+XMWN31dRHzA3JcNP0x0Y-z5NMMw3dHhrDXAw@mail.gmail.com>
+        <20181206184330.GB30039@lst.de>
+        <173bfba7-033d-93c4-6ef1-48c9e39c9efc@arm.com>
+        <20181206200006.GA31548@lst.de>
+        <e3e4c17e-ba6d-d743-04e5-7f240211b9bc@arm.com>
+        <20181207012141.GA4256@lst.de>
+        <20181207164435.18f8ffed@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 07 Dec 2018 16:06:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, there are too many hacked stuffs such as `__FSIO_1',
-`lstgrp_noio', `lstgrp_io' out there in `z_erofs_vle_submit_all'.
+On Fri, 7 Dec 2018 16:44:35 +0100
+Jesper Dangaard Brouer <brouer@redhat.com> wrote:
 
-Revisit the whole process by properly introducing jobqueue to
-represent each type of queued workgroups, furthermore hide all of
-crazyness behind independent separated functions.
+> On Fri, 7 Dec 2018 02:21:42 +0100
+> Christoph Hellwig <hch@lst.de> wrote:
+> 
+> > On Thu, Dec 06, 2018 at 08:24:38PM +0000, Robin Murphy wrote:  
+> > > On 06/12/2018 20:00, Christoph Hellwig wrote:    
+> > >> On Thu, Dec 06, 2018 at 06:54:17PM +0000, Robin Murphy wrote:    
+> > >>> I'm pretty sure we used to assign dummy_dma_ops explicitly to devices at
+> > >>> the point we detected the ACPI properties are wrong - that shouldn't be too
+> > >>> much of a headache to go back to.    
+> > >>
+> > >> Ok.  I've cooked up a patch to use NULL as the go direct marker.
+> > >> This cleans up a few things nicely, but also means we now need to
+> > >> do the bypass scheme for all ops, not just the fast path.  But we
+> > >> probably should just move the slow path ops out of line anyway,
+> > >> so I'm not worried about it.  This has survived some very basic
+> > >> testing on x86, and really needs to be cleaned up and split into
+> > >> multiple patches..    
+> > >
+> > > I've also just finished hacking something up to keep the arm64 status quo - 
+> > > I'll need to actually test it tomorrow, but the overall diff looks like the 
+> > > below.    
+> > 
+> > Nice.  I created a branch that picked up your bits and also the ideas
+> > from Linus, and the result looks reall nice.  I'll still need a signoff
+> > for your bits, though.
+> > 
+> > Jesper, can you give this a spin if it changes the number even further?
+> > 
+> >   git://git.infradead.org/users/hch/misc.git dma-direct-calls.2
+> > 
+> >   http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-direct-calls.2  
+> 
+> I'll test it soon...
+> 
+> I looked at my perf stat recording on my existing tests[1] and there
+> seems to be significantly more I-cache usage.
 
-After this patch, 2 independent jobqueues exist if managed cache
-is enabled, or 1 jobqueue if disabled.
+The I-cache pressure seems to be lower with the new branch, and
+performance improved with 4.5 nanosec.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/unzip_vle.c | 195 ++++++++++++++++++++++----------------
- 1 file changed, 113 insertions(+), 82 deletions(-)
+ 
+> Copy-paste from my summary[1]:
+> [1] https://github.com/xdp-project/xdp-project/blob/master/areas/dma/dma01_test_hellwig_direct_dma.org#summary-of-results
 
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index a8cf324f0b9c..500046f271cb 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1229,33 +1229,28 @@ pickup_page_for_submission(struct z_erofs_vle_workgroup *grp,
- 	return page;
- }
- 
--static inline struct z_erofs_vle_unzip_io *
--prepare_io_handler(struct super_block *sb,
--		   struct z_erofs_vle_unzip_io *io,
--		   bool background)
-+static struct z_erofs_vle_unzip_io *
-+jobqueue_init(struct super_block *sb,
-+	      struct z_erofs_vle_unzip_io *io,
-+	      bool foreground)
- {
- 	struct z_erofs_vle_unzip_io_sb *iosb;
- 
--	if (!background) {
-+	if (foreground) {
- 		/* waitqueue available for foreground io */
--		BUG_ON(!io);
-+		DBG_BUGON(!io);
- 
- 		init_waitqueue_head(&io->u.wait);
- 		atomic_set(&io->pending_bios, 0);
- 		goto out;
- 	}
- 
--	if (io)
--		BUG();
--	else {
--		/* allocate extra io descriptor for background io */
--		iosb = kvzalloc(sizeof(struct z_erofs_vle_unzip_io_sb),
-+	iosb = kvzalloc(sizeof(struct z_erofs_vle_unzip_io_sb),
- 			GFP_KERNEL | __GFP_NOFAIL);
--		BUG_ON(!iosb);
--
--		io = &iosb->io;
--	}
-+	DBG_BUGON(!iosb);
- 
-+	/* initialize fields in the allocated descriptor */
-+	io = &iosb->io;
- 	iosb->sb = sb;
- 	INIT_WORK(&io->u.work, z_erofs_vle_unzip_wq);
- out:
-@@ -1263,27 +1258,105 @@ prepare_io_handler(struct super_block *sb,
- 	return io;
- }
- 
-+/* define workgroup jobqueue types */
-+enum {
- #ifdef EROFS_FS_HAS_MANAGED_CACHE
--#define __FSIO_1 1
-+	JQ_BYPASS,
-+#endif
-+	JQ_SUBMIT,
-+	NR_JOBQUEUES,
-+};
-+
-+static void *jobqueueset_init(struct super_block *sb,
-+			      z_erofs_vle_owned_workgrp_t qtail[],
-+			      struct z_erofs_vle_unzip_io *q[],
-+			      struct z_erofs_vle_unzip_io *fgq,
-+			      bool forcefg)
-+{
-+#ifdef EROFS_FS_HAS_MANAGED_CACHE
-+	/*
-+	 * if managed cache is enabled, bypass jobqueue is needed,
-+	 * no need to read from device for all workgroups in this queue.
-+	 */
-+	q[JQ_BYPASS] = jobqueue_init(sb, fgq + JQ_BYPASS, true);
-+	qtail[JQ_BYPASS] = &q[JQ_BYPASS]->head;
-+#endif
-+
-+	q[JQ_SUBMIT] = jobqueue_init(sb, fgq + JQ_SUBMIT, forcefg);
-+	qtail[JQ_SUBMIT] = &q[JQ_SUBMIT]->head;
-+
-+	return tagptr_cast_ptr(tagptr_fold(tagptr1_t, q[JQ_SUBMIT], !forcefg));
-+}
-+
-+#ifdef EROFS_FS_HAS_MANAGED_CACHE
-+static void move_to_bypass_jobqueue(struct z_erofs_vle_workgroup *grp,
-+				    z_erofs_vle_owned_workgrp_t qtail[],
-+				    z_erofs_vle_owned_workgrp_t owned_head)
-+{
-+	z_erofs_vle_owned_workgrp_t *const submit_qtail = qtail[JQ_SUBMIT];
-+	z_erofs_vle_owned_workgrp_t *const bypass_qtail = qtail[JQ_BYPASS];
-+
-+	DBG_BUGON(owned_head == Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
-+	if (owned_head == Z_EROFS_VLE_WORKGRP_TAIL)
-+		owned_head = Z_EROFS_VLE_WORKGRP_TAIL_CLOSED;
-+
-+	WRITE_ONCE(grp->next, Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
-+
-+	WRITE_ONCE(*submit_qtail, owned_head);
-+	WRITE_ONCE(*bypass_qtail, &grp->next);
-+
-+	qtail[JQ_BYPASS] = &grp->next;
-+}
-+
-+static bool postsubmit_is_all_bypassed(struct z_erofs_vle_unzip_io *q[],
-+				       unsigned int nr_bios,
-+				       bool force_fg)
-+{
-+	/*
-+	 * although background is preferred, no one is pending for submission.
-+	 * don't issue workqueue for decompression but drop it directly instead.
-+	 */
-+	if (force_fg || nr_bios)
-+		return false;
-+
-+	kvfree(container_of(q[JQ_SUBMIT],
-+			    struct z_erofs_vle_unzip_io_sb,
-+			    io));
-+	return true;
-+}
- #else
--#define __FSIO_1 0
-+static void move_to_bypass_jobqueue(struct z_erofs_vle_workgroup *grp,
-+				    z_erofs_vle_owned_workgrp_t qtail[],
-+				    z_erofs_vle_owned_workgrp_t owned_head)
-+{
-+	/* impossible to bypass submission for managed cache disabled */
-+	DBG_BUGON(1);
-+}
-+
-+static bool postsubmit_is_all_bypassed(struct z_erofs_vle_unzip_io *q[],
-+				       unsigned int nr_bios,
-+				       bool force_fg)
-+{
-+	/* bios should be >0 if managed cache is disabled */
-+	DBG_BUGON(!nr_bios);
-+	return false;
-+}
- #endif
- 
- static bool z_erofs_vle_submit_all(struct super_block *sb,
- 				   z_erofs_vle_owned_workgrp_t owned_head,
- 				   struct list_head *pagepool,
--				   struct z_erofs_vle_unzip_io *fg_io,
-+				   struct z_erofs_vle_unzip_io *fgq,
- 				   bool force_fg)
- {
- 	struct erofs_sb_info *const sbi = EROFS_SB(sb);
- 	const unsigned int clusterpages = erofs_clusterpages(sbi);
- 	const gfp_t gfp = GFP_NOFS;
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--	struct z_erofs_vle_workgroup *lstgrp_noio = NULL, *lstgrp_io = NULL;
--#endif
--	struct z_erofs_vle_unzip_io *ios[1 + __FSIO_1];
-+
-+	z_erofs_vle_owned_workgrp_t qtail[NR_JOBQUEUES];
-+	struct z_erofs_vle_unzip_io *q[NR_JOBQUEUES];
- 	struct bio *bio;
--	tagptr1_t bi_private;
-+	void *bi_private;
- 	/* since bio will be NULL, no need to initialize last_index */
- 	pgoff_t uninitialized_var(last_index);
- 	bool force_submit = false;
-@@ -1292,28 +1365,13 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
- 	if (unlikely(owned_head == Z_EROFS_VLE_WORKGRP_TAIL))
- 		return false;
- 
--	/*
--	 * force_fg == 1, (io, fg_io[0]) no io, (io, fg_io[1]) need submit io
--	 * force_fg == 0, (io, fg_io[0]) no io; (io[1], bg_io) need submit io
--	 */
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--	ios[0] = prepare_io_handler(sb, fg_io + 0, false);
--#endif
--
--	if (force_fg) {
--		ios[__FSIO_1] = prepare_io_handler(sb, fg_io + __FSIO_1, false);
--		bi_private = tagptr_fold(tagptr1_t, ios[__FSIO_1], 0);
--	} else {
--		ios[__FSIO_1] = prepare_io_handler(sb, NULL, true);
--		bi_private = tagptr_fold(tagptr1_t, ios[__FSIO_1], 1);
--	}
--
--	nr_bios = 0;
- 	force_submit = false;
- 	bio = NULL;
-+	nr_bios = 0;
-+	bi_private = jobqueueset_init(sb, qtail, q, fgq, force_fg);
- 
- 	/* by default, all need io submission */
--	ios[__FSIO_1]->head = owned_head;
-+	q[JQ_SUBMIT]->head = owned_head;
- 
- 	do {
- 		struct z_erofs_vle_workgroup *grp;
-@@ -1353,8 +1411,9 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
- 
- 		if (!bio) {
- 			bio = erofs_grab_bio(sb, first_index + i,
--				BIO_MAX_PAGES, z_erofs_vle_read_endio, true);
--			bio->bi_private = tagptr_cast_ptr(bi_private);
-+					     BIO_MAX_PAGES,
-+					     z_erofs_vle_read_endio, true);
-+			bio->bi_private = bi_private;
- 
- 			++nr_bios;
- 		}
-@@ -1369,47 +1428,19 @@ static bool z_erofs_vle_submit_all(struct super_block *sb,
- 		if (++i < clusterpages)
- 			goto repeat;
- 
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--		if (bypass < clusterpages) {
--			lstgrp_io = grp;
--		} else {
--			z_erofs_vle_owned_workgrp_t iogrp_next =
--				owned_head == Z_EROFS_VLE_WORKGRP_TAIL ?
--				Z_EROFS_VLE_WORKGRP_TAIL_CLOSED :
--				owned_head;
--
--			if (!lstgrp_io)
--				ios[1]->head = iogrp_next;
--			else
--				WRITE_ONCE(lstgrp_io->next, iogrp_next);
--
--			if (!lstgrp_noio)
--				ios[0]->head = &grp->next;
--			else
--				WRITE_ONCE(lstgrp_noio->next, grp);
--
--			lstgrp_noio = grp;
--		}
--#endif
-+		if (bypass < clusterpages)
-+			qtail[JQ_SUBMIT] = &grp->next;
-+		else
-+			move_to_bypass_jobqueue(grp, qtail, owned_head);
- 	} while (owned_head != Z_EROFS_VLE_WORKGRP_TAIL);
- 
- 	if (bio)
- 		__submit_bio(bio, REQ_OP_READ, 0);
- 
--#ifndef EROFS_FS_HAS_MANAGED_CACHE
--	BUG_ON(!nr_bios);
--#else
--	if (lstgrp_noio)
--		WRITE_ONCE(lstgrp_noio->next, Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
--
--	if (!force_fg && !nr_bios) {
--		kvfree(container_of(ios[1],
--			struct z_erofs_vle_unzip_io_sb, io));
-+	if (postsubmit_is_all_bypassed(q, nr_bios, force_fg))
- 		return true;
--	}
--#endif
- 
--	z_erofs_vle_unzip_kickoff(tagptr_cast_ptr(bi_private), nr_bios);
-+	z_erofs_vle_unzip_kickoff(bi_private, nr_bios);
- 	return true;
- }
- 
-@@ -1418,23 +1449,23 @@ static void z_erofs_submit_and_unzip(struct z_erofs_vle_frontend *f,
- 				     bool force_fg)
- {
- 	struct super_block *sb = f->inode->i_sb;
--	struct z_erofs_vle_unzip_io io[1 + __FSIO_1];
-+	struct z_erofs_vle_unzip_io io[NR_JOBQUEUES];
- 
- 	if (!z_erofs_vle_submit_all(sb, f->owned_head, pagepool, io, force_fg))
- 		return;
- 
- #ifdef EROFS_FS_HAS_MANAGED_CACHE
--	z_erofs_vle_unzip_all(sb, &io[0], pagepool);
-+	z_erofs_vle_unzip_all(sb, &io[JQ_BYPASS], pagepool);
- #endif
- 	if (!force_fg)
- 		return;
- 
- 	/* wait until all bios are completed */
--	wait_event(io[__FSIO_1].u.wait,
--		!atomic_read(&io[__FSIO_1].pending_bios));
-+	wait_event(io[JQ_SUBMIT].u.wait,
-+		   !atomic_read(&io[JQ_SUBMIT].pending_bios));
- 
- 	/* let's synchronous decompression */
--	z_erofs_vle_unzip_all(sb, &io[__FSIO_1], pagepool);
-+	z_erofs_vle_unzip_all(sb, &io[JQ_SUBMIT], pagepool);
- }
- 
- static int z_erofs_vle_normalaccess_readpage(struct file *file,
+Updated:
+
+* Summary of results
+
+Using XDP_REDIRECT between drivers RX ixgbe(10G) redirect TX i40e(40G),
+via BPF devmap (used samples/bpf/xdp_redirect_map) . (Note choose
+higher TX link-speed to assure that we don't to have a TX bottleneck).
+The baseline-kernel is at commit [[https://git.kernel.org/torvalds/c/ef78e5ec9214][ef78e5ec9214]], which is commit just
+before Hellwigs changes in this tree.
+
+Performance numbers in packets/sec (XDP_REDIRECT ixgbe -> i40e):
+ - 11913154 (11,913,154) pps - baseline compiled without retpoline
+ -  7438283  (7,438,283) pps - regression due to CONFIG_RETPOLINE
+ -  9610088  (9,610,088) pps - mitigation via Hellwig dma-direct-calls
+ - 10049223 (10,049,223) pps - Hellwig branch dma-direct-calls.2
+
+Do notice at these extreme speeds the pps number increase rabbit with
+small changes, e.g. difference to new branch is:
+ - (1/9610088-1/10049223)*10^9 = 4.54 nanosec faster
+
+From the inst per cycle, it is clear that retpolines are stalling the CPU
+pipeline:
+
+| pps        | insn per cycle |
+|------------+----------------|
+| 11,913,154 |           2.39 |
+| 7,438,283  |           1.54 |
+| 9,610,088  |           2.04 |
+| 10,049,223 |           1.99 |
+|            |                |
+
+
+Strangely the Instruction-Cache is also under heavier pressure:
+
+| pps        | l2_rqsts.all_code_rd | l2_rqsts.code_rd_hit | l2_rqsts.code_rd_miss |
+|------------+----------------------+----------------------+-----------------------|
+| 11,913,154 | 874,547              | 742,335              | 132,198               |
+| 7,438,283  | 649,513              | 547,581              | 101,945               |
+| 9,610,088  | 2,568,064            | 2,001,369            | 566,683               |
+| 10,049,223 | 1,232,818            | 1,152,514            | 80,299                |
+|            |                      |                      |                       |
+
 -- 
-2.14.4
-
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
