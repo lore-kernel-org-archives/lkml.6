@@ -2,88 +2,106 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAA0C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42379C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EEE62083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544180159;
-	bh=+7AiQI9MXw+gQCsOSsPjm4BnKL6wTB43lxpzDDwUw9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tJL1DAYNAG8smPB42B6V7IL0OCRMbZriPDxE+pa/EvKbxUaBMLWYT4dgTkUHG22It
-	 j90OQwWdm/ys99fNwDl0fDTwgAeKqUE8NdZwXTk4jVmOXJEes5P/XPDhqErzRAKf5U
-	 C/WlcG1hExnvswUDk9xxSkxpU/aFsNZDGgGWrK14=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EEE62083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0EE162083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE162083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726039AbeLGKz6 (ORCPT
+        id S1726059AbeLGK5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:55:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38856 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725987AbeLGKz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:55:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BE1A1AF0E;
-        Fri,  7 Dec 2018 10:55:55 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 11:55:54 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     linux-api@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH 0/3] THP eligibility reporting via proc
-Message-ID: <20181207105554.GX1286@dhcp22.suse.cz>
-References: <20181120103515.25280-1-mhocko@kernel.org>
+        Fri, 7 Dec 2018 05:57:37 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53954 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726013AbeLGK5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:57:37 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wB7Ar6WW004706;
+        Fri, 7 Dec 2018 11:56:38 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2p53mbh5gg-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 07 Dec 2018 11:56:38 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B91A23F;
+        Fri,  7 Dec 2018 10:56:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 70A932AED;
+        Fri,  7 Dec 2018 10:56:37 +0000 (GMT)
+Received: from [10.201.23.29] (10.75.127.45) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 7 Dec
+ 2018 11:56:38 +0100
+Subject: Re: [ v3 3/3] mtd: rawnand: stm32_fmc2: add manual mode
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Mark Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1543509663-26128-1-git-send-email-christophe.kerello@st.com>
+ <1543509663-26128-4-git-send-email-christophe.kerello@st.com>
+ <CACRpkdZuR-Qud1E6sm-qWx1knWx+1_J1rxT+COh76z7BxYjz-Q@mail.gmail.com>
+From:   Christophe Kerello <christophe.kerello@st.com>
+Message-ID: <ed956235-d439-411e-a959-edb356d9fb9f@st.com>
+Date:   Fri, 7 Dec 2018 11:56:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120103515.25280-1-mhocko@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdZuR-Qud1E6sm-qWx1knWx+1_J1rxT+COh76z7BxYjz-Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-11-18 11:35:12, Michal Hocko wrote:
-> Hi,
-> this series of three patches aims at making THP eligibility reporting
-> much more robust and long term sustainable. The trigger for the change
-> is a regression report [1] and the long follow up discussion. In short
-> the specific application didn't have good API to query whether a particular
-> mapping can be backed by THP so it has used VMA flags to workaround that.
-> These flags represent a deep internal state of VMAs and as such they should
-> be used by userspace with a great deal of caution.
-> 
-> A similar has happened for [2] when users complained that VM_MIXEDMAP is
-> no longer set on DAX mappings. Again a lack of a proper API led to an
-> abuse.
-> 
-> The first patch in the series tries to emphasise that that the semantic
-> of flags might change and any application consuming those should be really
-> careful.
-> 
-> The remaining two patches provide a more suitable interface to address [1]
-> and provide a consistent API to query the THP status both for each VMA
-> and process wide as well.
+Hi Linus,
 
-Are there any other comments on these? I haven't heard any pushback so
-far so I will re-send with RFC dropped early next week.
+It is correct.
+I will replace "manual mode" by "polling mode" in next patchset.
 
-> 
-> [1] http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-> [2] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-> 
+Regards,
+Christophe Kerello.
 
--- 
-Michal Hocko
-SUSE Labs
+On 12/7/18 10:16 AM, Linus Walleij wrote:
+> On Thu, Nov 29, 2018 at 5:42 PM Christophe Kerello
+> <christophe.kerello@st.com> wrote:
+> 
+>> This patch adds the manual mode, a basic mode that do not need
+>> any DMA channels. This mode is also useful for debug purpose.
+>>
+>> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
+> 
+> This is a bit of drive-by comment, but "manual mode" usually
+> means there is a person "a man" pulling levers and pushing
+> buttons. There is nothing manual inside a computer system.
+> 
+> I think the more appropriate term is "polling mode" which is
+> what we call code that read registers directly waiting for status
+> flags rather than relying on IRQs or DMA flows.
+> 
+> Yours,
+> Linus Walleij
+> 
