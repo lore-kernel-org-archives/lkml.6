@@ -2,133 +2,166 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A208C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F3C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6882083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544197905;
-	bh=2boblIvjeHxBdZCsdgqOTzjT29oh1JE1uisinCqT2F4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MPDmmgW63EylyS2zjRk7YStOE320yQDzTqO6BJl3ZS09vAIX+lhMhLUaj+rs8v5BG
-	 D2cOjTwsJkViIot10fm9528jpNOJqWcOl8MwD38Z/DS0YQray3Qcsn4alX+GUR9qbI
-	 0UIW/Rqq/ZAZYvUtWvdO0Mtoc8D9mtvU2bue98Hw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6882083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A22620837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:54:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="fgFs7Zvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A22620837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLGPvo (ORCPT
+        id S1726087AbeLGPyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:51:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeLGPvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:51:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD09020837;
-        Fri,  7 Dec 2018 15:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544197903;
-        bh=2boblIvjeHxBdZCsdgqOTzjT29oh1JE1uisinCqT2F4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1cygykoFev2wOvwfkvNXTtgTvR5P3t02d4mySPedxDBJkyqlIRphBiU5bvOrcP8rr
-         nHG1ez1qgY/4sZAYHeELUGTNuy2QOc40OtFTFbIYJ6gzxSdN8BtxzYqGX2Tm5Zi8oK
-         1fJUX2XiupRi2+wq8BThz6PJ+5nXLkVZy8HTXkvo=
-Date:   Fri, 7 Dec 2018 16:51:41 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        mike.kravetz@oracle.com, open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Eric Munson <emunson@mgebm.net>
-Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
-Message-ID: <20181207155141.GA30688@kroah.com>
-References: <20181206143011.174892052@linuxfoundation.org>
- <CA+G9fYtzxd9a=OVr=Uwcouqikpe2EB_WJyuBhO7BX96mYWJ1NQ@mail.gmail.com>
- <20181207144157.GB20201@kroah.com>
- <1544196864.2867.70.camel@codethink.co.uk>
+        Fri, 7 Dec 2018 10:54:14 -0500
+Received: from mail-eopbgr10077.outbound.protection.outlook.com ([40.107.1.77]:41616
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726010AbeLGPyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 10:54:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y4jdwgWZVDhZC5HbX1t7LX5xdvvac05idCXpUNrfpTE=;
+ b=fgFs7ZvlYSZKOLZhxd4kige9htXmY45UYUjnMUdBYsa0BSrzrmYbnIYosaTpF+E6KPa6TGSuBTFnZt0Bai/P0uWnZ9l6KgwrvL+cgJuVb0sES7NIDQqwf1NfqjA8kcepWvG8s97bt4/JIHAmy2zyUF3bsibzNkytuWL1UepCqAY=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2176.eurprd08.prod.outlook.com (10.172.12.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Fri, 7 Dec 2018 15:54:07 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%11]) with mapi id 15.20.1404.021; Fri, 7 Dec 2018
+ 15:54:07 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     "Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "sonnyrao@google.com" <sonnyrao@google.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        nd <nd@arm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v4 0/7] lib/lzo: performance improvements
+Thread-Topic: [PATCH v4 0/7] lib/lzo: performance improvements
+Thread-Index: AQHUiLiqITo/LLyl1EWjCUTAJp49+6Vx5IUAgAGUMoA=
+Date:   Fri, 7 Dec 2018 15:54:07 +0000
+Message-ID: <fba24452-ae3a-0caa-11b4-aea69abf2fff@arm.com>
+References: <20181130142600.13782-1-dave.rodgman@arm.com>
+ <5C09448C.8010506@oberhumer.com>
+In-Reply-To: <5C09448C.8010506@oberhumer.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: LO2P265CA0069.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::33) To VI1PR0802MB2528.eurprd08.prod.outlook.com
+ (2603:10a6:800:b0::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dave.rodgman@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2176;6:cn0EsE9j1C1kcfvdAArozLqCYU4GzaFCrpQun48sZGdQ76TsJ7LUM+ZIo+xwd0GIBk3AaRIFuY01QMG2gdpDKVT+aOGKuBIgwS49STx/00TNNkVgFYlMRjUKxvP6TWKeUDyy1CcGIrIEwF9Kaq49CDuh+6aLWkd9wt9mvVUCoaagl9O1+EyYZ0v6BETk8+dYAoh0SSOCJMqA06BPnOYdpeOKqga89S6O8K2n6Wfn1LJh0DBYOD7GuuytiPnCVZCsXQGiRaxG/1ijU1drLUGjhzwkBmvg+deCzhOwg22/bnf8SWeGKViuwSRuCwIsIOgrSrGBnuUsObyuzVK1aTQAK8pfNGcd7huOoYgE6Al0xaJrFY4g97GWY6DmSeYhwKVOYpFGKlu4aEK85lxZru7EQ9HFbK1L/w8XZ3soUz97wWEPYioZWNArIJxLBdlH5KnjQ0CXXZe2cKkeI+043b9OxQ==;5:x9UyPYZRy9IqHY1YhYwCgJuVURW9KfTGqhgt8ymB1vx/TyrvDxTuNF1lHPPuKYdgrouQpSZfjip1P4KCZ3osbHf4tWM7mHyjPttz+63/UDTniJazUOfZWAuT091rf6vDygzQOakEnR9FN1p3dlDznUUG1iPb3KR4el5IzRedY1g=;7:lW5CbnXzk0r8UCXlAHVaVNdLA7u1+XQU5WMPrISow3X0h95fnL2W2lzdF6aeY+E3AoXGagX6Fbe10xXesoIkjfuK4G1bumN4hwuChh0Az6FmGIF1EHVvTUM77s72y74+xw4ZhqGpq9P9HhMdAo0RHA==
+x-ms-office365-filtering-correlation-id: c5d1aec3-f2d1-46a9-94da-08d65c5c3874
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2176;
+x-ms-traffictypediagnostic: VI1PR0802MB2176:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR0802MB217687D23576FC3C0DB5A0918FAA0@VI1PR0802MB2176.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2176;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2176;
+x-forefront-prvs: 0879599414
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39860400002)(376002)(346002)(189003)(199004)(105586002)(5660300001)(81156014)(25786009)(8676002)(4326008)(6116002)(2201001)(102836004)(3846002)(6436002)(66066001)(36756003)(14454004)(14444005)(6506007)(256004)(11346002)(86362001)(186003)(68736007)(305945005)(2616005)(44832011)(26005)(7736002)(31696002)(81166006)(2906002)(478600001)(386003)(476003)(8936002)(486006)(71190400001)(71200400001)(54906003)(31686004)(53936002)(446003)(110136005)(6512007)(7416002)(316002)(76176011)(229853002)(97736004)(2501003)(6246003)(99286004)(52116002)(6486002)(39060400002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2176;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wq39JdLG0pfa7we7YGi0GkoBkZa5kK+LYuIDXNkwBAfjtr4Z4QR7xZTUr0wXFiSvXjwT22p6gn/zSKZBVCp0DOwDjDVcUcRP9jh8IQGkU6y3rUDTbW2m/FkrVt2zg4skjThaslj7hF6phyQkr7FD9eeak3s7+9ooSUlzVGbNYvzvdfsE5JhvP0EOVCu8HRC4WYJYkrpDqhPW5cUeXOmIZayQUDwWg40Qt64WAb9GBiuwh6OMU092pu80VPOn6EfpPMTZjilauK2ZuGwEFucRKCrLX9t39uOD+d0FDRpK0Kb+UaD7fAvi+J4UWHypGeFWH5hCnrRj8mKgpkdmqSSsER+qGIS+dTDBDW6ocvkvThs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <1FBFEF6377719E42BBDC3EC64059424D@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544196864.2867.70.camel@codethink.co.uk>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5d1aec3-f2d1-46a9-94da-08d65c5c3874
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 15:54:07.5726
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 03:34:24PM +0000, Ben Hutchings wrote:
-> On Fri, 2018-12-07 at 15:41 +0100, Greg Kroah-Hartman wrote:
-> > On Fri, Dec 07, 2018 at 02:40:26PM +0530, Naresh Kamboju wrote:
-> > > On Thu, 6 Dec 2018 at 20:15, Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > > 
-> > > > This is the start of the stable review cycle for the 4.9.144 release.
-> > > > There are 101 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.144-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > > > and the diffstat can be found below.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > > 
-> > > > Mike Kravetz <mike.kravetz@oracle.com>
-> > > >     hugetlbfs: check for pgoff value overflow
-> > > > 
-> > > > Mike Kravetz <mike.kravetz@oracle.com>
-> > > >     hugetlbfs: fix offset overflow in hugetlbfs mmap
-> > > > 
-> > > > Mike Kravetz <mike.kravetz@oracle.com>
-> > > >     mm/hugetlb.c: don't call region_abort if region_chg fails
-> > > 
-> > > Results from Linaro’s test farm.
-> > > Regressions detected on arm32 and i386.
-> > > 
-> > > truncate_above_4GB (2M: 32): FAIL mmap() offset 4GB: Invalid argument
-> > 
-> > Can this be tracked down to a commit in this tree that caused this
-> > regression?
-> 
-> The test failure is part of a hugetlb test group, so one of the above
-> is responsible.
-> 
-> Ah, I missed this fix (it's already in 4.14-stable:
-> 
-> commit 5df63c2a149ae65a9ec239e7c2af44efa6f79beb
-> Author: Mike Kravetz <mike.kravetz@oracle.com>
-> Date:   Thu Apr 5 16:18:21 2018 -0700
-> 
->     hugetlbfs: fix bug in pgoff overflow checking
-> 
-> Ben.
+Hi Markus,
 
-Thanks for this, I've queued this up and pushed out a -rc2.
+On 06/12/2018 3:47 pm, Markus F.X.J. Oberhumer wrote:> Request 3 - add lzo-=
+rle; *NOT* acked by me
+ >
+ >     [PATCH 6/8] lib/lzo: implement run-length encoding
+ >     [PATCH 7/8] lib/lzo: separate lzo-rle from lzo
+ >     [PATCH 8/8] zram: default to lzo-rle instead of lzo
+ >
+ > It (1) silently changes the compressed data format
 
-Naresh, can you see if this fixes the issue for you or not?
+I'm not sure this is relevant: as a separate algorithm, there's no reason
+to retain the same format (although backwards compatibility can help with
+migration). If you know of a way to improve the compatibility aspect
+though, that would be great!
 
-thanks,
+ > (2) crashes on MIPS,
 
-greg k-h
+Please could you provide more detail? I tested on x86-32, x86-64, arm,
+arm64 and big-endian MIPS64, but if there is an issue I missed I'd like to
+address it.
+
+ > and (3) makes compression and decompression on typical data 10% slower o=
+n
+ > X86_64 with our internal benchmarks,
+
+It is of course data-dependent. In my testing, as I mentioned previously, R=
+LE
+without the other patches does regress slightly on high-entropy data, but
+offers a win on low-entropy data. For the right applications (e.g., zram),
+this makes it overall beneficial.
+
+ > and (4) has to be carefully checked for buffer overflows.
+
+This has been reviewed prior to sharing on LKML, and of course tested,
+but further review is of course welcome.
+
+ > As a final comment, I question the quality your benchmarks - combining
+ > arch-related ARM64 improvements and algorithmic changes into one
+ > benchmark comparision is just unprofessional marketing.
+
+I felt it was helpful to show overall performance with the complete patchse=
+t:
+this is what end-users experience. However, as you can see below, I also
+previously shared a summary of the two main components of the patchset to
+try and address this sort of concern:
+
+ >> As a quick summary of the impact of these patches on bigger chunks of
+ >> data, I've compared the performance of four different variants of lzo
+ >> on two large (~40 MB) files. The numbers show round-trip throughput
+ >> in MB/s:
+ >>
+ >> Variant         | Low-entropy | High-entropy
+ >> Current lzo     |  242        | 157
+ >> Arm opts        |  290        | 159
+ >> RLE             |  876        | 151
+ >> Arm opts + RLE  | 1150        | 181
+
+cheers
+
+Dave
