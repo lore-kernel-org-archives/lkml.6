@@ -2,131 +2,163 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4B7C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D0C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639BE208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCCDF2083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:22:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0vgPnLR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639BE208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="RHVRUbiF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCDF2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeLGKV4 (ORCPT
+        id S1726112AbeLGKWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:21:56 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36976 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeLGKV4 (ORCPT
+        Fri, 7 Dec 2018 05:22:13 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:17062 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeLGKWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:21:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 80so1538936pge.4
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 02:21:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aiu+6XztfPZTrAfY/hBXeeiKQGRSBMgrn4AYx0QFBW0=;
-        b=b0vgPnLRp4i7Ph5Ddi/B8M70GWwzQUbwvHy2kTgdsre98Ip/kU2mhzbXjj1yFlw/iZ
-         1/iZZ8kagoUyofZvqRW5O/SjVTjLZlP11RcMneYiJtqwJB39Y8qRICe1yLqR6FGK0ATK
-         hcuaS/YS6zUL1KxPS4mAmuwEHoeCnpCk83vxqm5XOxePrsMbPHh2PsR0RSj5qotxUqkz
-         Fz7VifxDLcEHFckQfjz06WhN3tOn9CuIAIh5eMopRnUosfJ+bfgIb2j3JvUwEycHu+h1
-         aX9HhZPj1+EP7yATsa54RrIPaGvP5LUivRpdn1CxJPHkVZAnHHK0TmeOAGsGqimTR76E
-         YaaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aiu+6XztfPZTrAfY/hBXeeiKQGRSBMgrn4AYx0QFBW0=;
-        b=cZ1NS4ZtVxyccjLRQ/zb2q+s2+vHQC95mID6DEZW1f+1cKsnDo0/DBbQrnely8r7C4
-         UTORqYEXPcESjxjCTlGK7fRYykbwbOmUhJxYEIZAdBiGcxu75WV/cfnjgNfSsndPDLep
-         DEFlsMgNp1N2W9bVJfNFyLYxeHzPGh5w4WYkB6jCkxGtXk4Q7nPmxO/rs7w1EAoRrbSw
-         BldpZV0+Ttc14GcF1iSd+60l4yx0K/UHA66E3SbBVZD3cJf7yDYz1BcvxuMAdunIufpW
-         37gVR4NRutNF/fwy5cLfqAjB6UfRZ9ZB+Rlq9Lux2Z4yyY6TI/ms8yVfZ5t5/PZEB6Co
-         hsfw==
-X-Gm-Message-State: AA+aEWaMiDznTn6UkVUNMFS6ZAzKaVOuFNnFyf5y642cH3+fHXaYk+eK
-        zzYZ/LM8rpxRCTi3p+qE2lc=
-X-Google-Smtp-Source: AFSGD/VKarNQWfL+aMYaRQra1f60sz1spCe8QpabQorFD/MXyV6gW4bit+c2kkX2WRy3h7OXGvT+ig==
-X-Received: by 2002:a63:83c1:: with SMTP id h184mr1380609pge.437.1544178115457;
-        Fri, 07 Dec 2018 02:21:55 -0800 (PST)
-Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id a9sm2936408pgq.20.2018.12.07.02.21.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 02:21:55 -0800 (PST)
-From:   Bo YU <tsu.yubo@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org
-Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
-        joe@perches.com, yuzibode@126.com
-Subject: [PATCH v3 2/2] kobject: drop newline from msg string
-Date:   Fri,  7 Dec 2018 05:21:49 -0500
-Message-Id: <f03d23a34df36d55274c5cce7d4081d9017668c1.1544175417.git.tsu.yubo@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1544175417.git.tsu.yubo@gmail.com>
-References: <cover.1544175417.git.tsu.yubo@gmail.com>
+        Fri, 7 Dec 2018 05:22:13 -0500
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wB7AM8fp027207;
+        Fri, 7 Dec 2018 19:22:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wB7AM8fp027207
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544178129;
+        bh=Yf6AxDu4U7+8MLpvY0iO13bqhI+uAvo7nNS0cd6bD0U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RHVRUbiFgFn5gStlm+jBVupTU3D6qRDTREjc4KRmKt+hLa7/TZgLiACUzFAAeOiQp
+         KHeJ0ctjoidumzw1Z1hZY2uWb5EYmK11G3pcX3MoqzD7rQ2PnB2Kx7xgfbbD7pvmXn
+         C3uiifsyHrNKSAAby2XAscm+kKeP5TN7oNSGcOrzD2xZWcHBTxA7hc/Ro3yD5AvT25
+         OI7qOMP9wqP7zzGIhzkVgGpl6XMSWMRoNPQFwH7Oa9FDTeJwJTbO2omsyulQ4HVZyQ
+         YTKhnh8WuOd0Gtnzo/yx01UELyRy7hOcdG8IzSX0Zn3zClzqx91AJcSqHC2MWVmaCY
+         3+oPKO1Nq0KPg==
+X-Nifty-SrcIP: [209.85.222.42]
+Received: by mail-ua1-f42.google.com with SMTP id j3so1221762uap.3;
+        Fri, 07 Dec 2018 02:22:08 -0800 (PST)
+X-Gm-Message-State: AA+aEWa9ilb60J9S3sRXHtPaOXdWT8d6HnCShXGjFmLIut4bWAjrvyF0
+        17DQ2ntk6FRoHp08Z1X3VNfLJ82pVbIl0WQIVAk=
+X-Google-Smtp-Source: AFSGD/Xyv3As9wDc3LB8RvuCVPPmJyXXIjcGuGhZIRjF/hlpaI/od94qpdU0WpYrURNiEjXhLgJCeHeZyC8Rbej5l0M=
+X-Received: by 2002:ab0:6705:: with SMTP id q5mr677500uam.89.1544178127626;
+ Fri, 07 Dec 2018 02:22:07 -0800 (PST)
+MIME-Version: 1.0
+References: <1543823457-32478-1-git-send-email-yamada.masahiro@socionext.com>
+ <1543823457-32478-3-git-send-email-yamada.masahiro@socionext.com>
+ <80bf0f6e-8f1f-314e-b22d-6e786cf15e45@monstr.eu> <CAK7LNAQBFfaJbFXf5h9LX689RUwA4kSeqPrimVOWDWq0XAVJ_Q@mail.gmail.com>
+ <c8283f39-2d68-f7f7-82ee-c0da75755e5b@monstr.eu>
+In-Reply-To: <c8283f39-2d68-f7f7-82ee-c0da75755e5b@monstr.eu>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 7 Dec 2018 19:21:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAROT8u5P1c4cXnDZwxZ-9RDGX_n2Xrbfu0TaPG68-EGzQ@mail.gmail.com>
+Message-ID: <CAK7LNAROT8u5P1c4cXnDZwxZ-9RDGX_n2Xrbfu0TaPG68-EGzQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] microblaze: adjust the help to the real behavior
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is currently a missing terminating newline in non-switch case
-match, when msg == NULL.
+On Thu, Dec 6, 2018 at 9:54 PM Michal Simek <monstr@monstr.eu> wrote:
+>
+> On 06. 12. 18 6:27, Masahiro Yamada wrote:
+> > Hi Michal,
+> >
+> > On Thu, Dec 6, 2018 at 12:41 AM Michal Simek <monstr@monstr.eu> wrote:
+> >>
+> >> On 03. 12. 18 8:50, Masahiro Yamada wrote:
+> >>> "make ARCH=microblaze help" mentions simpleImage.<dt>.unstrip,
+> >>> but it never works because Makefile assumes "system.unstrip" is
+> >>> the name of DT.
+> >>>
+> >>> $ make ARCH=microblaze CROSS_COMPILE=microblaze-linux- simpleImage.system.unstrip
+> >>>   [ snip ]
+> >>> make[1]: *** No rule to make target 'arch/microblaze/boot/dts/system.unstrip.dtb', needed by 'arch/microblaze/boot/dts/system.dtb'.  Stop.
+> >>> make: *** [Makefile;1060: arch/microblaze/boot/dts] Error 2
+> >>> make: *** Waiting for unfinished jobs....
+> >>>
+> >>> Rip off the never-working target.
+> >>>
+> >>> In my understanding, simpleImage.<dt> works like a phony target that
+> >>> generates multiple images. Reflect the behavior to the help message.
+> >>>
+> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >>> ---
+> >>>
+> >>>  arch/microblaze/Makefile | 4 +---
+> >>>  1 file changed, 1 insertion(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/arch/microblaze/Makefile b/arch/microblaze/Makefile
+> >>> index 0823d29..97e1384 100644
+> >>> --- a/arch/microblaze/Makefile
+> >>> +++ b/arch/microblaze/Makefile
+> >>> @@ -89,9 +89,7 @@ define archhelp
+> >>>    echo '* linux.bin    - Create raw binary'
+> >>>    echo '  linux.bin.gz - Create compressed raw binary'
+> >>>    echo '  linux.bin.ub - Create U-Boot wrapped raw binary'
+> >>> -  echo '  simpleImage.<dt> - ELF image with $(arch)/boot/dts/<dt>.dts linked in'
+> >>> -  echo '                   - stripped elf with fdt blob'
+> >>> -  echo '  simpleImage.<dt>.unstrip - full ELF image with fdt blob'
+> >>> +  echo '  simpleImage.<dt> - Create images with $(arch)/boot/dts/<dt>.dts linked in'
+> >>>    echo '  *_defconfig      - Select default config from arch/microblaze/configs'
+> >>>    echo ''
+> >>>    echo '  Targets with <dt> embed a device tree blob inside the image'
+> >>>
+> >>
+> >> I understand what you are trying to say but I would still like to keep
+> >> information about unstrip file.
+> >> It is correct that it is not build target. It is just generated file and
+> >> message above was used for description what it is.
+> >> Definitely agree that this should be the part of targets but it should
+> >> be in description.
+> >> The same is for missing description for simpleImage.<dt>.strip and
+> >> simpleImage.<dt>.ub files.
+> >>
+> >> Thanks,
+> >> Michal
+> >>
+> >
+> > If we want to be precise to the current behavior,
+> > we could describe more.
+> > (Is it too much?)
+> >
+> >
+> > Architecture specific targets (microblaze):
+> > * linux.bin    - Create raw binary
+> >   linux.bin.gz - Create compressed raw binary
+> >   linux.bin.ub - Create U-Boot wrapped raw binary
+> >   simpleImage.<dt> - Create the following images with
+> > arch/macroblaze/boot/dts/<dt>.dts linked in
+>
+> type - microblaze
+> maybe <dtb> here.
 
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
----
-Changes in v3:
-Improve the commit log,requested by rafael.
 
-Changes in v2:
-According to Joe's suggestion,drop newline from msg
+I will keep <dt> as is.
 
- lib/kobject_uevent.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+I see more <dt> references a few lines below:
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index b7c088c902a2..1837765ebf01 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -195,12 +195,12 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- 	enum kobject_action action;
- 	const char *action_args;
- 	struct kobj_uevent_env *env;
--	const char *msg = NULL, *devpath;
-+	const char *msg = NULL;
- 	int r;
 
- 	r = kobject_action_type(buf, count, &action, &action_args);
- 	if (r) {
--		msg = "unknown uevent action string\n";
-+		msg = "unknown uevent action string";
- 		goto out;
- 	}
+  echo '  Targets with <dt> embed a device tree blob inside the image'
+  echo '  These targets support board with firmware that does not'
+  echo '  support passing a device tree directly. Replace <dt> with the'
+  echo '  name of a dts file from the arch/microblaze/boot/dts/ directory'
+  echo '  (minus the .dts extension).'
 
-@@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- 	r = kobject_action_args(action_args,
- 				count - (action_args - buf), &env);
- 	if (r == -EINVAL) {
--		msg = "incorrect uevent action arguments\n";
-+		msg = "incorrect uevent action arguments";
- 		goto out;
- 	}
 
-@@ -223,8 +223,9 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- 	kfree(env);
- out:
- 	if (r) {
--		devpath = kobject_get_path(kobj, GFP_KERNEL);
--		pr_warn("synth uevent: %s: %s",
-+		char *devpath = kobject_get_path(kobj, GFP_KERNEL);
-+
-+		pr_warn("synth uevent: %s: %s\n",
- 		       devpath ?: "unknown device",
- 		       msg ?: "failed to send uevent");
- 		kfree(devpath);
---
-2.11.0
 
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
