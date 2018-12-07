@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 071ECC64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBB0C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68F8208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68F8208E7
+	by mail.kernel.org (Postfix) with ESMTP id 2E58A20838
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 05:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E58A20838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeLGFmW (ORCPT
+        id S1726293AbeLGFmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 00:42:22 -0500
+        Fri, 7 Dec 2018 00:42:24 -0500
 Received: from mga01.intel.com ([192.55.52.88]:55177 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726250AbeLGFmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 00:42:15 -0500
+        id S1726277AbeLGFmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 00:42:22 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 21:42:15 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 21:42:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
-   d="scan'208";a="105567329"
+   d="scan'208";a="105567346"
 Received: from yhuang-mobile.sh.intel.com ([10.239.196.133])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 21:42:12 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 21:42:18 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V8 17/21] swap: Support PMD swap mapping for MADV_WILLNEED
-Date:   Fri,  7 Dec 2018 13:41:17 +0800
-Message-Id: <20181207054122.27822-18-ying.huang@intel.com>
+Subject: [PATCH -V8 19/21] swap: Support PMD swap mapping in common path
+Date:   Fri,  7 Dec 2018 13:41:19 +0800
+Message-Id: <20181207054122.27822-20-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181207054122.27822-1-ying.huang@intel.com>
 References: <20181207054122.27822-1-ying.huang@intel.com>
@@ -57,10 +57,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During MADV_WILLNEED, for a PMD swap mapping, if THP swapin is enabled
-for the VMA, the whole swap cluster will be swapin.  Otherwise, the
-huge swap cluster and the PMD swap mapping will be split and fallback
-to PTE swap mapping.
+Original code is only for PMD migration entry, it is revised to
+support PMD swap mapping.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -76,52 +74,157 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/madvise.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ fs/proc/task_mmu.c | 12 +++++-------
+ mm/gup.c           | 36 ++++++++++++++++++++++++------------
+ mm/huge_memory.c   |  7 ++++---
+ mm/mempolicy.c     |  2 +-
+ 4 files changed, 34 insertions(+), 23 deletions(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 0c1f96c605f8..52d27e04a204 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -196,14 +196,36 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
- 	pte_t *orig_pte;
- 	struct vm_area_struct *vma = walk->private;
- 	unsigned long index;
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 39e96a21366e..0e65233f2cc2 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -986,7 +986,7 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+ 		pmd = pmd_clear_soft_dirty(pmd);
+ 
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
+-	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
++	} else if (is_swap_pmd(pmd)) {
+ 		pmd = pmd_swp_clear_soft_dirty(pmd);
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
+ 	}
+@@ -1316,9 +1316,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			if (pm->show_pfn)
+ 				frame = pmd_pfn(pmd) +
+ 					((addr & ~PMD_MASK) >> PAGE_SHIFT);
+-		}
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+-		else if (is_swap_pmd(pmd)) {
++		} else if (IS_ENABLED(CONFIG_HAVE_PMD_SWAP_ENTRY) &&
++			   is_swap_pmd(pmd)) {
+ 			swp_entry_t entry = pmd_to_swp_entry(pmd);
+ 			unsigned long offset;
+ 
+@@ -1331,10 +1330,9 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			flags |= PM_SWAP;
+ 			if (pmd_swp_soft_dirty(pmd))
+ 				flags |= PM_SOFT_DIRTY;
+-			VM_BUG_ON(!is_pmd_migration_entry(pmd));
+-			page = migration_entry_to_page(entry);
++			if (is_pmd_migration_entry(pmd))
++				page = migration_entry_to_page(entry);
+ 		}
+-#endif
+ 
+ 		if (page && page_mapcount(page) == 1)
+ 			flags |= PM_MMAP_EXCLUSIVE;
+diff --git a/mm/gup.c b/mm/gup.c
+index 6dd33e16a806..460565825ef0 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -215,6 +215,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	spinlock_t *ptl;
+ 	struct page *page;
+ 	struct mm_struct *mm = vma->vm_mm;
 +	swp_entry_t entry;
-+	struct page *page;
-+	pmd_t pmdval;
-+
-+	pmdval = *pmd;
-+	if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(pmdval) &&
-+	    !is_pmd_migration_entry(pmdval)) {
+ 
+ 	pmd = pmd_offset(pudp, address);
+ 	/*
+@@ -242,18 +243,22 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	if (!pmd_present(pmdval)) {
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(pmdval));
+-		if (is_pmd_migration_entry(pmdval))
 +		entry = pmd_to_swp_entry(pmdval);
-+		if (!transparent_hugepage_swapin_enabled(vma)) {
-+			if (!split_swap_cluster(entry, 0))
-+				split_huge_swap_pmd(vma, pmd, start, pmdval);
-+		} else {
-+			page = read_swap_cache_async(entry,
-+						     GFP_HIGHUSER_MOVABLE,
-+						     vma, start, false);
-+			if (page) {
-+				/* The swap cluster has been split under us */
-+				if (!PageTransHuge(page))
-+					split_huge_swap_pmd(vma, pmd, start,
-+							    pmdval);
-+				put_page(page);
-+			}
++		if (thp_migration_supported() && is_migration_entry(entry)) {
+ 			pmd_migration_entry_wait(mm, pmd);
+-		pmdval = READ_ONCE(*pmd);
+-		/*
+-		 * MADV_DONTNEED may convert the pmd to null because
+-		 * mmap_sem is held in read mode
+-		 */
+-		if (pmd_none(pmdval))
++			pmdval = READ_ONCE(*pmd);
++			/*
++			 * MADV_DONTNEED may convert the pmd to null because
++			 * mmap_sem is held in read mode
++			 */
++			if (pmd_none(pmdval))
++				return no_page_table(vma, flags);
++			goto retry;
 +		}
-+	}
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
+ 			return no_page_table(vma, flags);
+-		goto retry;
++		WARN_ON(1);
++		return no_page_table(vma, flags);
+ 	}
+ 	if (pmd_devmap(pmdval)) {
+ 		ptl = pmd_lock(mm, pmd);
+@@ -275,11 +280,18 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_present(*pmd))) {
++		entry = pmd_to_swp_entry(*pmd);
+ 		spin_unlock(ptl);
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		pmd_migration_entry_wait(mm, pmd);
+-		goto retry_locked;
++		if (thp_migration_supported() && is_migration_entry(entry)) {
++			pmd_migration_entry_wait(mm, pmd);
++			goto retry_locked;
++		}
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
++			return no_page_table(vma, flags);
++		WARN_ON(1);
++		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_trans_huge(*pmd))) {
+ 		spin_unlock(ptl);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 5b2eb7871cd7..b75af88c505a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2138,7 +2138,7 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+ static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+ {
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-	if (unlikely(is_pmd_migration_entry(pmd)))
++	if (unlikely(is_swap_pmd(pmd)))
+ 		pmd = pmd_swp_mksoft_dirty(pmd);
+ 	else if (pmd_present(pmd))
+ 		pmd = pmd_mksoft_dirty(pmd);
+@@ -2222,11 +2222,12 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 	preserve_write = prot_numa && pmd_write(*pmd);
+ 	ret = 1;
  
- 	if (pmd_none_or_trans_huge_or_clear_bad(pmd))
- 		return 0;
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
+ 	if (is_swap_pmd(*pmd)) {
+ 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
  
- 	for (index = start; index != end; index += PAGE_SIZE) {
- 		pte_t pte;
--		swp_entry_t entry;
--		struct page *page;
- 		spinlock_t *ptl;
+-		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
++		VM_BUG_ON(!IS_ENABLED(CONFIG_THP_SWAP) &&
++			  !is_migration_entry(entry));
+ 		if (is_write_migration_entry(entry)) {
+ 			pmd_t newpmd;
+ 			/*
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index e4f8248822c1..39335bf99169 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -436,7 +436,7 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
+ 	struct queue_pages *qp = walk->private;
+ 	unsigned long flags;
  
- 		orig_pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
+-	if (unlikely(is_pmd_migration_entry(*pmd))) {
++	if (unlikely(is_swap_pmd(*pmd))) {
+ 		ret = 1;
+ 		goto unlock;
+ 	}
 -- 
 2.18.1
 
