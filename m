@@ -2,129 +2,171 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3549C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E313C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 939C520882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:09:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 939C520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id C486C20850
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 09:10:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="giRLzh+N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C486C20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbeLGJJi (ORCPT
+        id S1726038AbeLGJKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 04:09:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46455 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbeLGJJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:09:38 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5831E20717; Fri,  7 Dec 2018 10:09:35 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2AF3720510;
-        Fri,  7 Dec 2018 10:09:35 +0100 (CET)
-Date:   Fri, 7 Dec 2018 10:09:35 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v2 0/9] phy: Add configuration interface for MIPI D-PHY
- devices
-Message-ID: <20181207090935.xw5oonoe7od7hmkq@flea>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <f149ff50-b158-ef35-bf86-26d6b38c8068@ti.com>
+        Fri, 7 Dec 2018 04:10:40 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43703 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLGJKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 04:10:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 83-v6so2889715ljf.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 01:10:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+DxaORDqREPrIrufQKDgo4sQK5jkAJjTwVWk+yg6px8=;
+        b=giRLzh+N5VWYVr52a+/8qmD7q/nMeSkXxPHKJj0WXPwP6c0ak9am9RaAC1brLdcFAh
+         zU3d9S2lLoEEvdxKpUoy9AIy+h6YHuynEGMAS6xij8mUKnKEi2SdYB+dpc8thImjSIku
+         3ZS/E+9lY0xqljs814Hd1S3tTFSgZ6ZLivIvs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+DxaORDqREPrIrufQKDgo4sQK5jkAJjTwVWk+yg6px8=;
+        b=Smc/lLmxfc+OirbamALDZX5PmCbgDAS+NfjP/tXByOMbfT4LU+/FnmsAvTuV1laJ1c
+         KrWdTcsOlqzsCDt6K2idw1oD4+klUjlaHSDdNQ3rV8UTt+leYNfuRLre1P8gyeBBDCbq
+         IjMtztqUVL9tfv5gB4AnFXBUuz+vtv98gDDLd4eXEJjv5VykM3KTKPgbthGDIoThJR9L
+         DmJwwKTDyAFQDCooFDQsvWOqKkiB6c7HaYkyG+eEJHYDMlT95eUudaN3a8pir9bsjqJ6
+         MfVfv3kl4A+cqK6SQIfA8rLJrdVfpNSbQdlPpyVas0gHMKWqQ/gDOZZ2EcjvM8d4c1b8
+         cRYg==
+X-Gm-Message-State: AA+aEWZXfNLlW8uJ/gpb9B6mI6Sl/bqNnA9h10+X4x/ukEauGvqYDG81
+        AJxM/E70mRkdxoaNcovuCQ0+kyZTVnRhU3x5UiNFQQ==
+X-Google-Smtp-Source: AFSGD/XxnC4kXr0YpxUSk/hJVRNt7P4anqULl8R4SSpR/nK/vQEk+cInFHHNWOZqnPQc4FU4B83MLteZLouB6yhCohQ=
+X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr831688ljh.63.1544173838196;
+ Fri, 07 Dec 2018 01:10:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="troqpcfqchs4wkuw"
-Content-Disposition: inline
-In-Reply-To: <f149ff50-b158-ef35-bf86-26d6b38c8068@ti.com>
-User-Agent: NeoMutt/20180716
+References: <20181206143011.174892052@linuxfoundation.org>
+In-Reply-To: <20181206143011.174892052@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 7 Dec 2018 14:40:26 +0530
+Message-ID: <CA+G9fYtzxd9a=OVr=Uwcouqikpe2EB_WJyuBhO7BX96mYWJ1NQ@mail.gmail.com>
+Subject: Re: [PATCH 4.9 000/101] 4.9.144-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mike.kravetz@oracle.com
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Eric Munson <emunson@mgebm.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 6 Dec 2018 at 20:15, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.144 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Dec  8 14:29:43 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.144-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> Mike Kravetz <mike.kravetz@oracle.com>
+>     hugetlbfs: check for pgoff value overflow
+>
+> Mike Kravetz <mike.kravetz@oracle.com>
+>     hugetlbfs: fix offset overflow in hugetlbfs mmap
+>
+> Mike Kravetz <mike.kravetz@oracle.com>
+>     mm/hugetlb.c: don't call region_abort if region_chg fails
 
---troqpcfqchs4wkuw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Results from Linaro=E2=80=99s test farm.
+Regressions detected on arm32 and i386.
 
-On Fri, Dec 07, 2018 at 10:30:55AM +0530, Kishon Vijay Abraham I wrote:
-> Maxime,
->=20
-> On 06/11/18 8:24 PM, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > Here is a set of patches to allow the phy framework consumers to test a=
-nd
-> > apply runtime configurations.
-> >=20
-> > This is needed to support more phy classes that require tuning based on
-> > parameters depending on the current use case of the device, in addition=
- to
-> > the power state management already provided by the current functions.
-> >=20
-> > A first test bed for that API are the MIPI D-PHY devices. There's a num=
-ber
-> > of solutions that have been used so far to support these phy, most of t=
-he
-> > time being an ad-hoc driver in the consumer.
-> >=20
-> > That approach has a big shortcoming though, which is that this is quite
-> > difficult to deal with consumers integrated with multiple variants of p=
-hy,
-> > of multiple consumers integrated with the same phy.
-> >=20
-> > The latter case can be found in the Cadence DSI bridge, and the CSI
-> > transceiver and receivers. All of them are integrated with the same phy=
-, or
-> > can be integrated with different phy, depending on the implementation.
-> >=20
-> > I've looked at all the MIPI DSI drivers I could find, and gathered all =
-the
-> > parameters I could find. The interface should be complete, and most of =
-the
-> > drivers can be converted in the future. The current set converts two of
-> > them: the above mentionned Cadence DSI driver so that the v4l2 drivers =
-can
-> > use them, and the Allwinner MIPI-DSI driver.
->=20
-> Are you planning to send one more revision of this series after fixing the
-> comments?
+truncate_above_4GB (2M: 32): FAIL mmap() offset 4GB: Invalid argument
 
-I'll send a new version today.
+test case link:
+https://github.com/libhugetlbfs/libhugetlbfs/blob/master/tests/truncate_abo=
+ve_4GB.c
 
-Thanks!
-Maxime
+Full test log links,
+https://lkft.validation.linaro.org/scheduler/job/537897#L1373
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.144-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: cf137e4b43737b5c238350d3e22f031c616dd9f9
+git describe: v4.9.143-102-gcf137e4b4373
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.143-102-gcf137e4b4373
+
+Regressions (compared to build v4.9.143)
+------------------------------------------------------------------------
+
+qemu_arm:
+  libhugetlbfs:
+    * truncate_above_4GB-2M-32
+
+qemu_i386:
+  libhugetlbfs:
+    * truncate_above_4GB-4M-32
+
+x15 - arm:
+  libhugetlbfs:
+    * truncate_above_4GB-2M-32
+
+Test description:
+----------------------
+https://github.com/libhugetlbfs/libhugetlbfs/blob/master/tests/truncate_abo=
+ve_4GB.c
+
+/*
+* Test rationale:
+*
+* At one stage, a misconversion of hugetlb_vmtruncate_list to a
+* prio_tree meant that on 32-bit machines, truncates at or above 4GB
+* could truncate lower pages, resulting in BUG_ON()s.
+*
+* WARNING: The offsets and addresses used within are specifically
+* calculated to trigger the bug as it existed. Don't mess with them
+* unless you *really* know what you're doing.
+*
+* The kernel bug in question was fixed with commit
+* 856fc29505556cf263f3dcda2533cf3766c14ab6.
+*/
 
 --=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---troqpcfqchs4wkuw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAo4zwAKCRDj7w1vZxhR
-xbdOAQCILMy+JAxd6RYgHspolG6rz2rl0icJwBXZiKs8fE/kMwD/ch79eAPk78lF
-sYujEN+9EIEfzYtOZi8/7VZdxA9JKwU=
-=vt2O
------END PGP SIGNATURE-----
-
---troqpcfqchs4wkuw--
+Linaro LKFT
+https://lkft.linaro.org
