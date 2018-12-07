@@ -2,113 +2,129 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0C5C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA8BC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824862082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:08:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i5R9DnAU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824862082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A8C92082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8C92082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbeLGRIs (ORCPT
+        id S1726142AbeLGRJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:08:48 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44398 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbeLGRIr (ORCPT
+        Fri, 7 Dec 2018 12:09:34 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:59446 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726045AbeLGRJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:08:47 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k8so2089988pls.11
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:08:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=qqHkIbAJvmnMCQD5AWZrvyunFcXgF8YfmLbiuK32AMI=;
-        b=i5R9DnAUu5BjtxmY5/aXmEFxTc3TA/RCh9F2SOMllr8SNW+Lsm2MpHbsNiVWLGxgjt
-         VURXpLzWh3ZSKf0YuYJr6EZfiM0UVnwk6pDapECnV94Hg8Bhma1GKbLysTK5WfRwU4yF
-         Ygx2mSxJxSNV97jJ6bFqfmiXKA1VArbC07enE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=qqHkIbAJvmnMCQD5AWZrvyunFcXgF8YfmLbiuK32AMI=;
-        b=gtr2PdfqxZt7IjW3pMG+WZwIcHlkps/T8vIdRYKlbsm68gmn2UrgZ7RKCgoq8CfR/3
-         nRtEvuK3mgxpFYuhDkkQ6/9KNrVx0Em/i2b4GAGSlNhwg1qfVyNtBccJn8plj+KiGcOx
-         2hPYC9pVu5bnQOh2Do/aesq752rXpUayQAXabjZ/2bmd5slGlOS5kdqV3KHDAyGrc7qs
-         Pjo3sA1m6/i38eS1FddWwCLMXwZY3y+nviHo3WluLWaXk+LC6nz+fOsoJNxMaLpE2SJd
-         atWCkoXktjF3owAIq7X0hqdhj2XpfI9jWGcZ8/SuERUDRULrkYqeyYYawTPn7zeVzkp0
-         t+fA==
-X-Gm-Message-State: AA+aEWZlv+TGXDB81Yk3BzjAoFpECP3vg3SAroYs0BKYAv5PYMo+x3vN
-        pEmNY1g/pYT18GTgccBlhbk8zA==
-X-Google-Smtp-Source: AFSGD/VdcNgvuuvYA1W438M8dWMI99/c+Ne8KdqBndbPuAcifE4ZPgRNTu9QpxL7DDMexhbex0QyGQ==
-X-Received: by 2002:a17:902:b112:: with SMTP id q18mr2858302plr.255.1544202527260;
-        Fri, 07 Dec 2018 09:08:47 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id e65sm7664220pfc.74.2018.12.07.09.08.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 09:08:46 -0800 (PST)
-Date:   Fri, 7 Dec 2018 09:08:45 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [GIT PULL] gcc-plugin updates for v4.20-rc6
-Message-ID: <20181207170845.GA24251@beast>
+        Fri, 7 Dec 2018 12:09:33 -0500
+Received: (qmail 2366 invoked by uid 2102); 7 Dec 2018 12:09:32 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 7 Dec 2018 12:09:32 -0500
+Date:   Fri, 7 Dec 2018 12:09:32 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Felipe Balbi <balbi@kernel.org>
+cc:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shuah Khan <shuah@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Roger Quadros <rogerq@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
+Subject: RE: [PATCH v7 01/10] usb: gadget: udc: Add timer support for usb
+ requests
+In-Reply-To: <877eglx45o.fsf@linux.intel.com>
+Message-ID: <Pine.LNX.4.44L0.1812071158570.1560-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 7 Dec 2018, Felipe Balbi wrote:
 
-Please pull these gcc-plugin fixes for v4.20-rc6.
+> 
+> hi,
+> 
+> Anurag Kumar Vulisha <anuragku@xilinx.com> writes:
+> >>Does the data book suggest a value for the timeout?
+> >>
+> >
+> > No, the databook doesn't mention about the timeout value
+> >
+> >>> >At this point, it seems that the generic approach will be messier than having every
+> >>> >controller driver implement its own fix.  At least, that's how it appears to me.
+> 
+> Why, if the UDC implementation will, anyway, be a timer?
 
-Thanks!
+It's mostly a question of what happens when the timer expires.  (After
+all, starting a timer is just as easy to do in a UDC driver as it is in
+the core.)  When the timer expires, what can the core do?
 
--Kees
+Don't say it can cancel the offending request and resubmit it.  That
+leads to the sort of trouble we discussed earlier in this thread.  In
+particular, we don't want the class driver's completion routine to be
+called when the cancel occurs.  Furthermore, this leads to a race:  
+Suppose the class driver decides to cancel the request at the same time
+as the core does a cancel and resubmit.  Then the class driver's cancel
+could get lost and the request would remain on the UDC's queue.
 
-The following changes since commit ef1a8409348966f0b25ff97a170d6d0367710ea9:
+What you really want to do is issue the appropriate stop and restart
+commands to the hardware, while leaving the request logically active
+the entire time.  The UDC core can't do this, but a UDC driver can.
 
-  stackleak: Disable function tracing and kprobes for stackleak_erase() (2018-11-30 09:05:07 -0800)
+> >>(Especially if dwc3 is the only driver affected.)
+> >
+> > As discussed above, the issue may happen with other gadgets too. As I got divide opinions
+> > on this implementation and both the implementations looks fine to me, I am little confused
+> > on which should be implemented.
+> >
+> > @Felipe: Do you agree with Alan's implementation? Please let us know your suggestion
+> > on this.
+> 
+> I still think a generic timer is a better solution since it has other uses.
 
-are available in the Git repository at:
+Putting a struct timer into struct usb_request is okay with me, but I 
+wouldn't go any farther than that.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/gcc-plugins-v4.20-rc6
+> >>Since the purpose of the timeout is to detect a deadlock caused by a
+> >>hardware bug, I suggest a fixed and relatively short timeout value such
+> >>as one second.  Cancelling and requeuing a few requests at 1-second
+> >>intervals shouldn't add very much overhead.
+> 
+> I wouldn't call this a HW bug though. This is just how the UDC
+> behaves. There are N streams and host can move data in any stream at any
+> time. This means that host & gadget _can_ disagree on what stream to
+> start next.
 
-for you to fetch changes up to 8fb2dfb228df785bbeb4d055a74402ef4b07fc25:
+But the USB 3 spec says what should happen when the host and gadget 
+disagree in this way, doesn't it?  And it doesn't say that they should 
+deadlock.  :-)  Or have I misread the spec?
 
-  stackleak: Register the 'stackleak_cleanup' pass before the '*free_cfg' pass (2018-12-06 09:10:23 -0800)
+> One way to avoid this would be to never pre-start any streams and always
+> rely on XferNotReady, but that would mean greatly reduced throughput for
+> streams.
 
-----------------------------------------------------------------
-Fixes for stackleak
+It would be good if there was some way to actively detect the problem 
+instead of passively waiting for a timer to expire.
 
-- Remove tracing for inserted stack depth marking function (Anders Roxell)
-- Move gcc-plugin pass location to avoid objtool warnings (Alexander Popov)
+Alan Stern
 
-----------------------------------------------------------------
-Alexander Popov (1):
-      stackleak: Register the 'stackleak_cleanup' pass before the '*free_cfg' pass
-
-Anders Roxell (1):
-      stackleak: Mark stackleak_track_stack() as notrace
-
- kernel/stackleak.c                     | 2 +-
- scripts/gcc-plugins/stackleak_plugin.c | 8 +++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
--- 
-Kees Cook
