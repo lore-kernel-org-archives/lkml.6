@@ -2,224 +2,305 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F50BC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFC7C65BAF
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B256A20868
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A162083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:21:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="Cznl4FW9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B256A20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSbcxYmF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A162083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbeLGSTK (ORCPT
+        id S1726231AbeLGSVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:19:10 -0500
-Received: from mail-eopbgr800108.outbound.protection.outlook.com ([40.107.80.108]:35280
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726177AbeLGSTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:19:08 -0500
+        Fri, 7 Dec 2018 13:21:53 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44282 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbeLGSVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:21:52 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so4628720otl.11;
+        Fri, 07 Dec 2018 10:21:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j+4SyXJ2veD7ilRkQxjDHJJjYnPN1a5N2Zvh7aQw9P4=;
- b=Cznl4FW9hHoRN8nNI4JqQRYFzlu86wtoqdiUi+/sCNzBn0dQ0P5b+iHvJNpaqVgnZmsbRtuKnNzv2rqhY+dIqQ8seH01pmsFpqQgUUyHEkURPE3MLDaKuq7skR2dR81/ZEFqTK20nCeTqTIsoxsYnSGFscKAtvgJZz9weDTdCMA=
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB3279.namprd11.prod.outlook.com (52.135.109.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Fri, 7 Dec 2018 18:19:03 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::916c:7b87:64a8:d58c]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::916c:7b87:64a8:d58c%3]) with mapi id 15.20.1382.024; Fri, 7 Dec 2018
- 18:19:03 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Thread-Topic: [RFC PATCH v2 4/4] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Thread-Index: AQHUjllVdIrv8QEhmk6icaec8mjmDQ==
-Date:   Fri, 7 Dec 2018 18:19:03 +0000
-Message-ID: <f036e41f-8b93-cab3-07fd-641354e60b35@fortanix.com>
-References: <20181206221922.31012-1-sean.j.christopherson@intel.com>
- <20181206221922.31012-5-sean.j.christopherson@intel.com>
- <20181207163127.GA23494@wind.enjellic.com>
-In-Reply-To: <20181207163127.GA23494@wind.enjellic.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MA1PR0101CA0051.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:20::13) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [171.48.9.28]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB3279;6:Abn43FvuXOVNpGZKWnvzD6dyLAtrODW07IgpElOvVV0ia1229UCeD6SLhy1rF75ZEgQy2VJdMbmKMM87X80gwqVpcQS+DV+T3cKtPs3aF8mji/m/gxMOqwIZujLhS24NytViOP9cn8DRV6X6/Zj9ABZwPT9j+USYA64dP10J8Jo5FBa3uSAI4pPQ8Irc2A7jxCynoq2Bo4NvXMf/oJQ0Qj1dWngq436h2i5Va+UOEiHy5j4BBv22PmYN0lNc/0Ilwkw2w0Eaz/3aL1jdrQLrmsAn/kaRyPZTihCQ1sv9ANVfLYjO2oEq1OhudpcUmLSowXK1lgH4YcPICY0+zqGrNCXsfJc3VkP48nB6s1P96VlklQA2NLyLhDPkWP80Lfn2hGaL686+LpnJadLWodubnS0W800UoXfe5pwPlaMErOPnsYaW5PWp5+p2Oj63AOfiEukiTWI3j4L2CIOQglqlQw==;5:GZsI9QTs+cO5eRbJBkwd6ddePMjs0R90ELbAn2oA+oRPoa7RlocMkIHKCYeJDaCugk1CclOx/T0jrofuhtRhXSRRrVFp5LlPr5MKL7hH4lJTcFi7XnPO7NqynT0FHyLVVEpkbFGjFD4GB/0a/LRnobEoSpsUpFvI5jnjZVKTkDA=;7:f+/bk98tMVw4mBa1o1n++BOpznN6tMcv1vy8pPsAN+p7hxyYF0X7r9WZ7CBCZJxqoTG32PHLDK/G5RHiDNGD5iFMpZ530p62aNgm4dxFEOMqG7RL9Z/iE9wwuxTjqrT49PrzCUm+XXz6NLl53UUC9A==
-x-ms-office365-filtering-correlation-id: 017e6b92-fd4d-47a8-efa5-08d65c707760
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB3279;
-x-ms-traffictypediagnostic: SN6PR11MB3279:
-x-microsoft-antispam-prvs: <SN6PR11MB3279F66FB3D3DC856CF7D7E7AAAA0@SN6PR11MB3279.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501520)(4983020)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB3279;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB3279;
-x-forefront-prvs: 0879599414
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39830400003)(396003)(136003)(376002)(189003)(199004)(99286004)(76176011)(78486014)(26005)(31686004)(2616005)(2906002)(11346002)(508600001)(486006)(476003)(71200400001)(229853002)(71190400001)(186003)(316002)(217873002)(102836004)(386003)(110136005)(6506007)(53546011)(52116002)(14454004)(81156014)(81166006)(54906003)(8676002)(8936002)(5660300001)(36756003)(31696002)(4326008)(97736004)(86362001)(7736002)(305945005)(6512007)(256004)(6246003)(106356001)(7416002)(53936002)(6486002)(25786009)(99936001)(6436002)(68736007)(446003)(66066001)(6116002)(3846002)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB3279;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: YgtxTOqrfqxjOPhYCJgxa+rDSZnvM9JaZ77vw/RUHNustBseSu8mkbGzUvr6c6s9ZCIdro4H5nkbzRkP93G9QNf+NV79hVY4zf/Qo8slKMYmNVcLrn00DT1sm8zMMt8/Y2udC/pszEQPbTEXvHCkMXehfo6nJn2UfoVsnjRlt5XYW+/V0qWHi1w70Ke1RpNuoyFDaMMlSQCPZtYdEw0gus+nySiLUp3JVZ1TdDl1NmlaaKey4njyW1Y/RVGprMtKRBQKleAwwycojdQGZAOTwtAyFJKEknLMfx+XOo55QqB/O8x9PfvnwgQN6VDR1JiyhXhM/QICxCyq9JfTqdeaEM6tg5iJ3FZx4jTQYQckRRE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050001030904030700010801"
-MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 017e6b92-fd4d-47a8-efa5-08d65c707760
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Dec 2018 18:19:03.1620
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3279
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1Y2yo8OsiWnbY72nFqwYgUkTxSavntzX+ongNwc3v8A=;
+        b=RSbcxYmFItEgVw388atFXxpObE5BfVcAHi2W655GIKuRaDAIhndbyirEjg5e0EeMYG
+         gWD8i/CbkdOUcFNpDeu22RkqrbB8yQVJdih1pqVwIZlkwzRhKEOEx6V7pbGIzjvOG8/A
+         rfsbvPbIUKi/gWGe5Q9cUvTsLs0EzG7hXQizD2QtmBWg21Qgq/16b+a72fxICkGxjgY0
+         RD9inU1LyoivUNot86YCCSxR0M5dyos+3DyfRiVCaeS5V0v4bvz9yJztYlPbgPMTiIuR
+         qxmIqQmBc6VTUxLxKemdVQnCGm9qOz4WK3lG5dTvZkBulRrsYE7Y1Cw8q7zqgAkWE6H8
+         dfag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1Y2yo8OsiWnbY72nFqwYgUkTxSavntzX+ongNwc3v8A=;
+        b=I1ewV/Zipc+YGgDcKrtSTcuEQxQyMgzKltTH7N4FoihBIGCXOaWHeLRaS36jGqnIb4
+         iz2Nct6YRXmxCc/trB/VNRnSEcxzBdOKAKFsAl09FVz2PEK5oZQRgReT8TnfAB7QG0et
+         hFIgOThS8XPSeFLNfnLIdR+XnEGN9tATu58um0e5FSHqWvagPB2UHUVRcxTp3gYbttvm
+         LnF641nkpRyrsmOqUvnX6bDOpAvSVIGHmzKEVnb7ng/Izh+BElzq/cDwkTrjq0Rna+m1
+         tL2LIaHtqnTgXkyxzuCZhKGdtQWchmuVbPhGWaasjRByPY7RzY3qmJ5wCL6uUK0+3ERT
+         MjIA==
+X-Gm-Message-State: AA+aEWafcW3CzliXDqZmKNbItzcZwioikoCNhfRpTX1DvftFm7AXsPAC
+        8iT0YZnQZUD8DI4PyJAAKws=
+X-Google-Smtp-Source: AFSGD/XrDvam8AiPx3M0rT6wq2oPa5vQoxjxDzsEakKG6nwrxiXpEn8H5W0AxMWptPHRB2zL/gMTmA==
+X-Received: by 2002:a9d:628:: with SMTP id 37mr2233414otn.58.1544206911121;
+        Fri, 07 Dec 2018 10:21:51 -0800 (PST)
+Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id k207sm2348427oih.58.2018.12.07.10.21.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 10:21:50 -0800 (PST)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     helgaas@kernel.org
+Cc:     alex_gagniuc@dellteam.com, Austin.Bolen@dell.com,
+        Shyam.Iyer@dell.com, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v2] PCI: pciehp: Report degraded links via link bandwidth notification
+Date:   Fri,  7 Dec 2018 12:20:00 -0600
+Message-Id: <20181207182021.16344-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181129230454.GF178809@google.com>
+References: <20181129230454.GF178809@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------ms050001030904030700010801
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+A warning is generated when a PCIe device is probed with a degraded
+link, but there was no similar mechanism to warn when the link becomes
+degraded after probing. The Link Bandwidth Notification provides this
+mechanism.
 
-On 2018-12-07 22:01, Dr. Greg wrote:
-> Baidu and Fortanix are working on Trusted RunTime Systems (TRTS) based
-> on RUST, I believe, so this will affect them to the extent that they
-> are implementing their own low level enclave runtime support or they
-> may be simply building on top of the low level Intel TRTS.  Perhaps
-> Jethro would comment on these issues if he could.
+Use the link bandwidth notification interrupt to detect bandwidth
+changes, and rescan the bandwidth, looking for the weakest point. This
+is the same logic used in probe().
 
-As far as I know, Baidu merely provides Rust bindings to the Intel SDK.=20
-As far as our requirements, I've sent those in my previous email.
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+Changes since v1:
+ * Layer on top of the pcie port service drivers, instead of hotplug service.
 
-> I'm assuming that in the proposed model the URTS would interrogate the
-> VDSO to determine the availability of entry and exception handling
-> support and then setup the appropriate infrastructure and exit
-> handler?  VDSO's are typically the domain of the system library.
-> Given the nature of SGX I couldn't even conceive of Glibc offering
-> support and, if it was acceptable to provide support, the potential
-> timeframe that would be involved in seeing deployment in the field.
->=20
-> As a result, do you anticipate the need for a 'flag day' with respect
-> to URTS/PSW/SDK support for all of this?
+This patch needs to be applied on top of:
+	PCI: Add missing include to drivers/pci.h
 
-It is my understanding that the use of the vDSO enclave entry will be=20
-optional. i.e., if your application/library/enclave combination installs =
+Anticipated FAQ:
 
-a signal handler and calls ENCLU directly, that would still work. Of=20
-course, using the vDSO will be very strongly recommended.
+Q: Why is this unconditionally compiled in?
+A: The symmetrical check in pci probe() is also always compiled in.
 
---
-Jethro Beekman | Fortanix
+Q: Why call module_init() instead of adding a call in pcie_init_services() ?
+A: A call in pcie_init_services() also requires a prototype in portdrv.h, a
+non-static implementation in bw_notification.c. Using module_init() is
+functionally equivalent, and takes less code.
+
+Q: Why print only on degraded links and not when a link is back to full speed?
+For symmetry with PCI probe(). Although I see a benefit in conveying that a
+link is back to full speed, I expect this to be extremely rare. Secondary bus
+reset is usually needed to retrain at full bandwidth.
 
 
---------------ms050001030904030700010801
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+ drivers/pci/pcie/Makefile          |   1 +
+ drivers/pci/pcie/bw_notification.c | 107 +++++++++++++++++++++++++++++
+ drivers/pci/pcie/portdrv.h         |   4 +-
+ drivers/pci/pcie/portdrv_core.c    |  14 ++--
+ 4 files changed, 121 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/pci/pcie/bw_notification.c
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
-CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
-bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
-MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
-Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
-LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
-lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
-O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
-ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
-lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
-BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
-MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
-AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
-hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
-bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
-dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
-bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
-v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
-shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
-rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
-eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
-qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
-apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
-BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
-T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
-GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
-ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
-NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
-NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
-qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
-jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
-ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
-jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
-Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
-BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
-VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
-hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
-QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
-7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
-+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
-E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
-gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
-SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
-m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
-UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
-rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
-TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
-x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTIwNzE4MTg0OVowLwYJKoZIhvcNAQkEMSIEIGqmSq8L
-kzAHpywIRdgFG7oJkKHJF1n6YTVK2TT8kfijMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
-Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
-Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
-XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
-R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
-Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
-YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQAjVfpi5AlmZpy5csAEvxy9WaqfDsBeMPqdAMf5pCHm9A0D9++OFAKdh7XJLwyNSAQKyRFx
-UdLzO6tFShDQ3BqZ9l0kGrP5zj4edv9uXh/+W//J+mKW69mbcJPSau6tLauZ/8aQBL7W1sbq
-oHUWEpH7F52mMWdzYRhcBPina5gflRbJ+V+jg3WMTByhwGHB3WOzMl75fqdK7R7/YRBH5wJM
-Hb03UKHFoOIqBSzSbDjQMrPgM1SwWJQBPQUHsHXXQKGBu5KE3tKLJqNzxDTEc/A5qXoQ6UEh
-enIIBOPXaOL4xehzu17sWA7b0a2Zr9jq2iXZRvtqc8dgAeEqt/X+GqyKAAAAAAAA
+diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+index ab514083d5d4..f1d7bc1e5efa 100644
+--- a/drivers/pci/pcie/Makefile
++++ b/drivers/pci/pcie/Makefile
+@@ -3,6 +3,7 @@
+ # Makefile for PCI Express features and port driver
+ 
+ pcieportdrv-y			:= portdrv_core.o portdrv_pci.o err.o
++pcieportdrv-y			+= bw_notification.o
+ 
+ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
+ 
+diff --git a/drivers/pci/pcie/bw_notification.c b/drivers/pci/pcie/bw_notification.c
+new file mode 100644
+index 000000000000..64391ea9a172
+--- /dev/null
++++ b/drivers/pci/pcie/bw_notification.c
+@@ -0,0 +1,107 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * PCI Express Bandwidth notification services driver
++ * Author: Alexandru Gagniuc <mr.nuke.me@gmail.com>
++ *
++ * Copyright (C) 2018, Dell Inc
++ *
++ * The PCIe bandwidth notification provides a way to notify the operating system
++ * when the link width or data rate changes. This capability is required for all
++ * root ports and downstream ports supporting links wider than x1 and/or
++ * multiple link speeds.
++ *
++ * This service port driver hooks into the bandwidth notification interrupt and
++ * warns when links become degraded in operation.
++ */
++
++#include <linux/module.h>
++
++#include "../pci.h"
++#include "portdrv.h"
++
++static bool pcie_link_bandwidth_notification_supported(struct pci_dev *dev)
++{
++	int ret;
++	u32 lnk_cap;
++
++	ret = pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnk_cap);
++	return (ret == PCIBIOS_SUCCESSFUL) && (lnk_cap & PCI_EXP_LNKCAP_LBNC);
++}
++
++static void pcie_enable_link_bandwidth_notification(struct pci_dev *dev)
++{
++	u16 lnk_ctl;
++
++	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
++	lnk_ctl |= PCI_EXP_LNKCTL_LBMIE;
++	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
++}
++
++static void pcie_disable_link_bandwidth_notification(struct pci_dev *dev)
++{
++	u16 lnk_ctl;
++
++	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
++	lnk_ctl &= ~PCI_EXP_LNKCTL_LBMIE;
++	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
++}
++
++static irqreturn_t pcie_bw_notification_irq(int irq, void *context)
++{
++	struct pcie_device *srv = context;
++	struct pci_dev *port = srv->port;
++	struct pci_dev *dev;
++	u16 link_status, events;
++	int ret;
++
++	ret = pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
++	events = link_status & PCI_EXP_LNKSTA_LBMS;
++
++	if (!events || ret != PCIBIOS_SUCCESSFUL)
++		return IRQ_NONE;
++
++	/* Print status from upstream link partner, not this downstream port. */
++	list_for_each_entry(dev, &port->subordinate->devices, bus_list)
++		__pcie_print_link_status(dev, false);
++
++	pcie_capability_write_word(port, PCI_EXP_LNKSTA, events);
++	return IRQ_HANDLED;
++}
++
++static int pcie_bandwidth_notification_probe(struct pcie_device *srv)
++{
++	int ret;
++
++	/* Single-width or single-speed ports do not have to support this. */
++	if (!pcie_link_bandwidth_notification_supported(srv->port))
++		return -ENODEV;
++
++	ret = devm_request_irq(&srv->device, srv->irq, pcie_bw_notification_irq,
++			       IRQF_SHARED, "PCIe BW notif", srv);
++	if (ret)
++		return ret;
++
++	pcie_enable_link_bandwidth_notification(srv->port);
++
++	return 0;
++}
++
++static void pcie_bandwidth_notification_remove(struct pcie_device *srv)
++{
++	pcie_disable_link_bandwidth_notification(srv->port);
++}
++
++static struct pcie_port_service_driver pcie_bandwidth_notification_driver = {
++	.name		= "pcie_bw_notification",
++	.port_type	= PCI_EXP_TYPE_DOWNSTREAM,
++	.service	= PCIE_PORT_SERVICE_BwNOTIF,
++	.probe		= pcie_bandwidth_notification_probe,
++	.remove		= pcie_bandwidth_notification_remove,
++};
++
++static int __init pcie_bandwidth_notification_service_init(void)
++{
++	return pcie_port_service_register(&pcie_bandwidth_notification_driver);
++}
++
++module_init(pcie_bandwidth_notification_service_init);
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index e495f04394d0..46652469ffaa 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -20,8 +20,10 @@
+ #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
+ #define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
+ #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
++#define PCIE_PORT_SERVICE_BWNOTIF_SHIFT	4	/* Bandwidth notification */
++#define PCIE_PORT_SERVICE_BwNOTIF	(1 << PCIE_PORT_SERVICE_BWNOTIF_SHIFT)
+ 
+-#define PCIE_PORT_DEVICE_MAXSERVICES   4
++#define PCIE_PORT_DEVICE_MAXSERVICES   5
+ 
+ #ifdef CONFIG_PCIEAER
+ int pcie_aer_init(void);
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index f458ac9cb70c..86455ff7ced9 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -99,7 +99,7 @@ static int pcie_message_numbers(struct pci_dev *dev, int mask,
+  */
+ static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
+ {
+-	int nr_entries, nvec;
++	int nr_entries, nvec, pcie_irq;
+ 	u32 pme = 0, aer = 0, dpc = 0;
+ 
+ 	/* Allocate the maximum possible number of MSI/MSI-X vectors */
+@@ -136,9 +136,12 @@ static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
+ 	}
+ 
+ 	/* PME and hotplug share an MSI/MSI-X vector */
+-	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP)) {
+-		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pci_irq_vector(dev, pme);
+-		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pci_irq_vector(dev, pme);
++	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP |
++		    PCIE_PORT_SERVICE_BwNOTIF)) {
++		pcie_irq = pci_irq_vector(dev, pme);
++		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pcie_irq;
++		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pcie_irq;
++		irqs[PCIE_PORT_SERVICE_BWNOTIF_SHIFT] = pcie_irq;
+ 	}
+ 
+ 	if (mask & PCIE_PORT_SERVICE_AER)
+@@ -250,6 +253,9 @@ static int get_port_device_capability(struct pci_dev *dev)
+ 	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
+ 		services |= PCIE_PORT_SERVICE_DPC;
+ 
++	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM)
++		services |= PCIE_PORT_SERVICE_BwNOTIF;
++
+ 	return services;
+ }
+ 
+-- 
+2.17.1
 
---------------ms050001030904030700010801--
