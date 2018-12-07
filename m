@@ -2,164 +2,97 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E101AC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897B9C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44D92082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44D92082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 48DB02082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 18:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mxXiZnLi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DB02082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbeLGSoc (ORCPT
+        id S1726258AbeLGSpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 13:44:32 -0500
-Received: from mga18.intel.com ([134.134.136.126]:4013 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726041AbeLGSob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 13:44:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 10:44:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="107838178"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2018 10:44:30 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] x86/fault: Decode and print #PF oops in human readable form
-Date:   Fri,  7 Dec 2018 10:44:23 -0800
-Message-Id: <20181207184423.1962-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
-References: <CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com>
-MIME-Version: 1.0
+        Fri, 7 Dec 2018 13:45:13 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38613 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeLGSpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 13:45:12 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so2212338plb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 10:45:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NNDKygG0WX9igZsqFZ4iPyF5LpJxmo5sA54/xkrjpjI=;
+        b=mxXiZnLitdrHnq22Nq8YRSCL++2I+yp2I1Wp+rhZAC2Ll/kMbtW3xGbqrbwv3rmxRx
+         bp8qlisSxMY0S+lMrHpl2XZ7eCj+vUXoABRIcvVbFULRxPUX5m3sV8hTfeGE/JhYJozc
+         /yV2VXYQT4kO/lTvWz5eYyzx2boKoO9jo4KKoUukpTzcbNng1cD5qPMd0MnM+LTJD7kL
+         dmumrdrYTOEf/KHoCXuRvqIkURR/1xxZ0kqUKSd3jQorfVB+0kiCAfcEZXBDXtZv0s2m
+         0Gr3CRmQ1azvjYXTninXQTbih0ghtLT4w3VvE3sGvaidFNLYEdCuiDbFfJfHGPoSM1cX
+         Xz6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=NNDKygG0WX9igZsqFZ4iPyF5LpJxmo5sA54/xkrjpjI=;
+        b=UpUUU0pS21ewF+UhHKF5pEJjRoAaDhvun9/wrplJqmZ7OUcvAWL7Pawnm7jBlhV1QK
+         qaBiD8QMJk+lT9WMbNWN4TgcTmw6MWVCs0XO2BlWTGl4YpHUNYiEZi52eaeGg1RVCI2s
+         5SA/YIVSt8888O2FxPt9iKPJOP4SdPtNzmbcQWHjqyH3rT4/Po1idEv3t1/cjAdt+9Fp
+         Zt+CuaSH1N0RP2E6CmZAU3dBGMyT5BOhLObxAX8kg/5LSMmuffNdVvkwBWJKi4EJTn6a
+         /C1vqazC2cPn86xjoCEOAoM5si1BFtSHA4WULyFT6NDa3sa7/EvFSr0xNpb1QHtdVysX
+         oEDA==
+X-Gm-Message-State: AA+aEWZ08DLXHS5gv/LELNLmU3K9rB0omJ9uEkLLLXjoqYbCdtr4p53h
+        M+ZI0m95W+WoqqjC9SYfiOeKiQ==
+X-Google-Smtp-Source: AFSGD/WCcCsZa5P1415ERxz/08fdE7JNfiI8/LYm5k/Mg2iZ/ywuZ2XvHuADtSp9XAy7PaCZ2is06Q==
+X-Received: by 2002:a17:902:720c:: with SMTP id ba12mr3193243plb.79.1544208311926;
+        Fri, 07 Dec 2018 10:45:11 -0800 (PST)
+Received: from localhost ([216.3.10.7])
+        by smtp.gmail.com with ESMTPSA id 125sm8970983pfd.124.2018.12.07.10.45.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 10:45:11 -0800 (PST)
+Date:   Fri, 07 Dec 2018 10:45:11 -0800 (PST)
+X-Google-Original-Date: Fri, 07 Dec 2018 10:42:13 PST (-0800)
+Subject:     Re: [PATCH 1/3] tty/serial: Add RISC-V SBI earlycon support
+In-Reply-To: <20181205095846.GA9847@kroah.com>
+CC:     anup@brainfault.org, jslaby@suse.com, aou@eecs.berkeley.edu,
+        atish.patra@wdc.com, Christoph Hellwig <hch@infradead.org>,
+        robh@kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Message-ID: <mhng-114b47e6-1722-4cae-9132-5998c74eef66@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus pointed out[1] that deciphering the raw #PF error code and
-printing a more human readable message are two different things,
-e.g. not-executable, not-writable, protection keys and even SGX faults
-are all some form of permission violation faults, and a #PF with the
-USER bit cleared in the error code does not indicate that the fault
-originated in kernel code.
+On Wed, 05 Dec 2018 01:58:46 PST (-0800), Greg KH wrote:
+> On Tue, Dec 04, 2018 at 07:25:05PM +0530, Anup Patel wrote:
+>> In RISC-V, the M-mode runtime firmware provide SBI calls for
+>> debug prints. This patch adds earlycon support using RISC-V
+>> SBI console calls. To enable it, just pass "earlycon=sbi" in
+>> kernel parameters.
+>>
+>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>
+> This makes more sense to take through the riscv tree, so feel free to
+> add:
+>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> to it and take it that way.
 
-Remove the per-bit decoding of the error code and instead print the raw
-error code followed by a brief description of what caused the fault, the
-effective privilege level of the faulting access, and whether the fault
-originated in user code or kernel code.
+It should be in my for-next now.
 
-This provides the user with the information needed to do basic triage
-on 99.9% oopses without polluting the message with information that is
-useless the vast majority of the time, e.g. an oops on a protection keys
-violation is beyond rare, stating that an oops *wasn't* due to a keys
-violation is pointless noise.
-
-[1] https://lkml.kernel.org/r/CAHk-=whk_fsnxVMvF1T2fFCaP2WrvSybABrLQCWLJyCvHw6NKA@mail.gmail.com
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/mm/fault.c | 41 ++++++++++-------------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..85de05d41f58 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -603,24 +603,9 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
- 		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
- }
- 
--/*
-- * This helper function transforms the #PF error_code bits into
-- * "[PROT] [USER]" type of descriptive, almost human-readable error strings:
-- */
--static void err_str_append(unsigned long error_code, char *buf, unsigned long mask, const char *txt)
--{
--	if (error_code & mask) {
--		if (buf[0])
--			strcat(buf, " ");
--		strcat(buf, txt);
--	}
--}
--
- static void
- show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long address)
- {
--	char err_txt[64];
--
- 	if (!oops_may_print())
- 		return;
- 
-@@ -648,27 +633,21 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
- 		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
- 		 (void *)address);
- 
--	err_txt[0] = 0;
--
--	/*
--	 * Note: length of these appended strings including the separation space and the
--	 * zero delimiter must fit into err_txt[].
--	 */
--	err_str_append(error_code, err_txt, X86_PF_PROT,  "[PROT]" );
--	err_str_append(error_code, err_txt, X86_PF_WRITE, "[WRITE]");
--	err_str_append(error_code, err_txt, X86_PF_USER,  "[USER]" );
--	err_str_append(error_code, err_txt, X86_PF_RSVD,  "[RSVD]" );
--	err_str_append(error_code, err_txt, X86_PF_INSTR, "[INSTR]");
--	err_str_append(error_code, err_txt, X86_PF_PK,    "[PK]"   );
--
--	pr_alert("#PF error: %s\n", error_code ? err_txt : "[normal kernel read fault]");
-+	pr_alert("#PF: error_code(0x%04lx) - %s\n", error_code,
-+		!(error_code & X86_PF_PROT) ? "not-present page" :
-+		(error_code & X86_PF_RSVD)  ? "reserved bit violation" :
-+					      "permissions violation");
-+	pr_alert("#PF: %s-privileged %s from %s code\n",
-+		(error_code & X86_PF_USER)  ? "user" : "supervisor",
-+		(error_code & X86_PF_INSTR) ? "instruction fetch" :
-+		(error_code & X86_PF_WRITE) ? "write access" :
-+					      "read access",
-+			    user_mode(regs) ? "user" : "kernel");
- 
- 	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
- 		struct desc_ptr idt, gdt;
- 		u16 ldtr, tr;
- 
--		pr_alert("This was a system access from user code\n");
--
- 		/*
- 		 * This can happen for quite a few reasons.  The more obvious
- 		 * ones are faults accessing the GDT, or LDT.  Perhaps
--- 
-2.19.2
-
+Thanks!
