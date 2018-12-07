@@ -2,131 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A70C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CB9C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6C7208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544194144;
-	bh=K12MMPcMWeYbG7HVT5IgafZhSJGPYUd03VAfkWhEFmY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=lgfs+ResVC9KRf9P3SwYl69RUhaqPIC2f9vmV17QuVZvzq0UDT0EzDQ1VUQA6u84y
-	 wP21P6/fqE73u/3DoL1bFX4VZtMmn3lu3RVl5r6CtxhWYdT2JI4F6/3/fYCLZqAnlm
-	 71H9rnlDzC95qYPXvczqwGYekdmnQumzK/Ve2NdU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6C7208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DDED920882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDED920882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbeLGOtD (ORCPT
+        id S1726095AbeLGOtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:49:03 -0500
-Received: from casper.infradead.org ([85.118.1.10]:36596 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeLGOtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:49:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AkB0bsiH0OvOq6MNya7nH1YWvCNDfiGzj5SyoEeldGQ=; b=tIeIdANyloOtPQhMGwbkZjnk4o
-        yiwuxXqJljA5vEXK9Ao4obGg3E8W4tKWnpRTW6F5dHsR0LgJRVJ/ntAT1bvSshkvHvOZF11l8mTFo
-        Pjw0WyyPc51uayUcbxLZiUDXyEW6ATkYEkc5tiHo3lRiwlojBxCQtIcR7ePMNzxxv6i2ieTSwUdeP
-        1I+7uw3uw6msN98Vx2d5aoMu2JIdecaIhlKTWsDhMgQz37oeSpHOAW1ugqcV0fh3qly57zUcjj1qa
-        MRg2QzypqZz/mxnolaJCWKCIcjzID+2nT35B5dQfouNmvSmL2i0QaBSWT5ELbqaQsd0U54Lvev+ic
-        sqY0W4Cg==;
-Received: from [179.95.33.236] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gVHR2-0005dK-Oj; Fri, 07 Dec 2018 14:48:57 +0000
-Date:   Fri, 7 Dec 2018 12:48:51 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        pawel@osciak.com, m.szyprowski@samsung.com,
-        kyungmin.park@samsung.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
- vm_insert_range
-Message-ID: <20181207124851.3eef28a0@coco.lan>
-In-Reply-To: <20181206184438.GA31370@jordon-HP-15-Notebook-PC>
-References: <20181206184438.GA31370@jordon-HP-15-Notebook-PC>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 7 Dec 2018 09:49:33 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46528 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725998AbeLGOtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 09:49:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFE2315AB;
+        Fri,  7 Dec 2018 06:49:31 -0800 (PST)
+Received: from [10.1.196.55] (e112269-lin.cambridge.arm.com [10.1.196.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF0AB3F575;
+        Fri,  7 Dec 2018 06:49:30 -0800 (PST)
+Subject: Re: [PATCH] kvm/arm: return 0 when the number of objects is not less
+ than min
+To:     Andrew Jones <drjones@redhat.com>, Peng Hao <peng.hao2@zte.com.cn>
+Cc:     marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+References: <1543972551-60951-1-git-send-email-peng.hao2@zte.com.cn>
+ <20181205083236.5tzhnxfhi4h4nknn@kamzik.brq.redhat.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <4c32963e-0dc7-1867-aa76-7314334315c4@arm.com>
+Date:   Fri, 7 Dec 2018 14:49:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181205083236.5tzhnxfhi4h4nknn@kamzik.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 7 Dec 2018 00:14:38 +0530
-Souptick Joarder <jrdr.linux@gmail.com> escreveu:
-
-> Convert to use vm_insert_range to map range of kernel memory
-> to user vma.
+On 05/12/2018 08:32, Andrew Jones wrote:
+> On Wed, Dec 05, 2018 at 09:15:51AM +0800, Peng Hao wrote:
+>> Return 0 when there is enough kvm_mmu_memory_cache object.
+>>
+>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>> ---
+>>  virt/kvm/arm/mmu.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index ed162a6..fcda0ce 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -127,7 +127,7 @@ static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
+>>  	while (cache->nobjs < max) {
+>>  		page = (void *)__get_free_page(PGALLOC_GFP);
+>>  		if (!page)
+>> -			return -ENOMEM;
+>> +			return cache->nobjs >= min ? 0 : -ENOMEM;
 > 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> This condition will never be true here, as the exact same condition is
+> already checked above, and if it had been true, then we wouldn't be here.
 
-It probably makes sense to apply it via mm tree, together with
-patch 1. So:
+The condition can be true if the loop is executed at least once. This
+change would appear to allow the call to succeed in the case where the
+cache can be topped up to at least "min", but not as far as "max".
 
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+It would be good to know in what situation this has actually been hit
+though (and indeed whether this has actually been seen) - the system
+must be very short on memory to need this, and I'd be surprised if
+further failures didn't happen later on.
 
-> ---
->  drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 +++++++----------------
->  1 file changed, 7 insertions(+), 16 deletions(-)
+> What problem are you attempting to solve?
 > 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> index 015e737..898adef 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-> @@ -328,28 +328,19 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
->  static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
->  {
->  	struct vb2_dma_sg_buf *buf = buf_priv;
-> -	unsigned long uaddr = vma->vm_start;
-> -	unsigned long usize = vma->vm_end - vma->vm_start;
-> -	int i = 0;
-> +	unsigned long page_count = vma_pages(vma);
-> +	int err;
->  
->  	if (!buf) {
->  		printk(KERN_ERR "No memory to map\n");
->  		return -EINVAL;
->  	}
->  
-> -	do {
-> -		int ret;
-> -
-> -		ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
-> -		if (ret) {
-> -			printk(KERN_ERR "Remapping memory, error: %d\n", ret);
-> -			return ret;
-> -		}
-> -
-> -		uaddr += PAGE_SIZE;
-> -		usize -= PAGE_SIZE;
-> -	} while (usize > 0);
-> -
-> +	err = vm_insert_range(vma, vma->vm_start, buf->pages, page_count);
-> +	if (err) {
-> +		printk(KERN_ERR "Remapping memory, error: %d\n", err);
-> +		return err;
-> +	}
->  
->  	/*
->  	 * Use common vm_area operations to track buffer refcount.
+>>  		cache->objects[cache->nobjs++] = page;
+>>  	}
+>>  	return 0;
+>> -- 
+>> 1.8.3.1
+>>
+>> _______________________________________________
+>> kvmarm mailing list
+>> kvmarm@lists.cs.columbia.edu
+>> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> 
 
-
-
-Thanks,
-Mauro
