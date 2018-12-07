@@ -6,98 +6,74 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A106C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3236C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBFB2083D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F9D92083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 10:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="JNS0B13O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBFB2083D
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ioJXVhA9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F9D92083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726084AbeLGKSZ (ORCPT
+        id S1726051AbeLGKTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:18:25 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:47304 "EHLO mail.skyhub.de"
+        Fri, 7 Dec 2018 05:19:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47546 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbeLGKSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:18:23 -0500
+        id S1725976AbeLGKTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 05:19:45 -0500
 Received: from zn.tnic (p200300EC2BCEC90030FF5A381F5D9977.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:c900:30ff:5a38:1f5d:9977])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1B5FF1EC0B1A;
-        Fri,  7 Dec 2018 11:18:22 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D4ED21EC0B1A;
+        Fri,  7 Dec 2018 11:19:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544177902;
+        t=1544177984;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=QafImu+or5tPA0Me+BXmiWDEE7v3OvjesYfrEGPW9pc=;
-        b=JNS0B13OvagkV7qve1yZ19cO5edMomvctD15a2Ry/r1d9negOXQQ47DWEkUISmd0c2Z92w
-        Gvaw3BlL+XM+xobWHiO4JYmGJZIfh2DyMJBwBR9GYWFuhLi9lFTqhe6CA6OtaHRg4sXGiH
-        JtDW6nUTn6+YGrEhrVEVAWxIzvntZKY=
-Date:   Fri, 7 Dec 2018 11:18:14 +0100
+        bh=URcuonAnXujwK7HvMXjuglmsr5UUDLHLmr0FLz0UaGQ=;
+        b=ioJXVhA9OhvyqPdl5zjS5NIFsntVk1pFh9RoVTgukMiijcN/BX3HCcNIG2DSnD7iQXRKV3
+        D5GByH5yySt9xc1DKhtEdpU7uYNEkbIfQLZVZ7u4Jz5ORxcZh4KaynjwtE1S+0OvQtdFkt
+        e5h6fweFOW9hRcuKCLkGX1hoLjIwsKI=
+Date:   Fri, 7 Dec 2018 11:19:41 +0100
 From:   Borislav Petkov <bp@alien8.de>
-To:     ndesaulniers@google.com
-Cc:     luto@kernel.org, Fangrui Song <maskray@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Dmitry Golovin <dima@golovin.in>,
-        Bill Wendling <morbo@google.com>, Rui Ueyama <ruiu@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/vdso: drop implicit common-page-size linker flag
-Message-ID: <20181207101814.GA9385@zn.tnic>
-References: <20181206191231.192355-1-ndesaulniers@google.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 08/29] x86/fpu: Remove fpu->initialized usage in
+ __fpu__restore_sig()
+Message-ID: <20181207101941.GB9385@zn.tnic>
+References: <20181128222035.2996-1-bigeasy@linutronix.de>
+ <20181128222035.2996-9-bigeasy@linutronix.de>
+ <20181206200722.GF3986@zn.tnic>
+ <20181207081712.dys7zeh546e2r3wn@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181206191231.192355-1-ndesaulniers@google.com>
+In-Reply-To: <20181207081712.dys7zeh546e2r3wn@linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 11:12:31AM -0800, ndesaulniers@google.com wrote:
-> These are implied by the target architecture and for x86_64 match the
-> max-page-size. The default for non-NaCl x86_64 is 0x1000 (4096).
-> 
-> In bfd the common page size is defined as 0x1000 (4096) for non-NaCl
+On Fri, Dec 07, 2018 at 09:17:13AM +0100, Sebastian Andrzej Siewior wrote:
+> You mean:
+>   		struct user_i387_ia32_struct env;
+>  +		union fpregs_state *state;
+>  +		void *tmp;
+>   		int err = 0;
+> ?
 
-Sodium Chloride?
-
-> x86_64 targets:
-> 
-> bfd/elf64-x86-64.c:
-> 4998:#define ELF_COMMONPAGESIZE             0x1000
-> 
-> For gold, the common page size is defined as 0x1000 (4096) for non-NaCl
-> x86_64 targets:
-> 
-> gold/x86_64.cc:
-> 1413:  0x1000, // common_pagesize (overridable by -z common-page-size)
-> 1442:  0x1000, // common_pagesize (overridable by -z common-page-size)
-> 
-> (ELF_COMMONPAGESIZE also defaults to ELF_MAXPAGESIZE when not set
-> explicitly for a target architecture in bfd/elfxx-target.h, but that's
-> not relevant for x86_64).
-> 
-> Because it's implied by the target architecture, it's of questionable
-> use to implement in LLD.  This patch resolves one of the issues towards
-> using LLD to link an x86_64 kernel.
-
-LLD?
-
-I can only guess what this commit message is about and have to look at
-the patch itself and then look at the LD(1) man page and rhyme up what
-it is aiming to do.
-
-How about rewriting it for mere mortals?
+Yap.
 
 Thx.
 
