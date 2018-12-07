@@ -2,74 +2,109 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F55C65BAF
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD3DC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4902A20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:35:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4902A20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D9B22083D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 17:36:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ub1GweDr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9B22083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeLGRfJ (ORCPT
+        id S1726170AbeLGRgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 12:35:09 -0500
-Received: from foss.arm.com ([217.140.101.70]:50236 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbeLGRfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 12:35:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FC1EEBD;
-        Fri,  7 Dec 2018 09:35:08 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A67F3F5AF;
-        Fri,  7 Dec 2018 09:35:05 -0800 (PST)
-Subject: Re: [PATCH 0/2] Refactor dummy DMA ops
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org, m.szyprowski@samsung.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net,
-        lenb@kernel.org, gregkh@linuxfoundation.org, bhelgaas@google.com,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1544199754.git.robin.murphy@arm.com>
- <20181207170519.GA26857@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <84be56f9-d195-78c3-df4d-7e0c1f71e4d9@arm.com>
-Date:   Fri, 7 Dec 2018 17:35:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 7 Dec 2018 12:36:17 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40053 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbeLGRgQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 12:36:16 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so2015652pgp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=InQ3Z4HbCnPz3pvoWdA9mJyPnl/wWHBDkosKcL+xHjA=;
+        b=Ub1GweDrbck0HEDikd6VmDp3NZUnXJfgE7yLlUV93wtPtSFfnTLkSQnyW6mI5Bl+wz
+         aHBALh5gTRD0kKbyM07Xfs0jE46LZL95LkGluLXcWx9IbKatZtU5GrZkNrfwJ4DMKYK2
+         wZY3fHSIxwWFcC8xUqdEDhZs46fwcoxszNNtk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=InQ3Z4HbCnPz3pvoWdA9mJyPnl/wWHBDkosKcL+xHjA=;
+        b=muiCvABuW+KAZ/Y+z2WVfdYkQ5wEIRz7z8LL3UOuUFyl+mJ6/3JD3l07MJRyHbXtHz
+         uIH1moaOT/EDB8ZLsjPa2kSFUvGu5HLSwvDsaAYQ6LfnCw0RxAV5Yxz/6sNuIkhMvypR
+         TcDUOLjbnFt9+8MCiZrCN81/8IGu0AqP2E7X3grkUynwASToqa5wn2cmY/fg3IyOqqc5
+         nvZE/yLSWV+0po7sJWKi3YN9mpabVXKLZKcMe/V77CpgRS/F7ulrWjU1fld5zgqHYDP+
+         BagoutCwJEYmLI0xHbcsw9Mt9j+Ii4MZ/uDEVlI25AdgAPB2/EXtagbKTT806+0R99Vf
+         7MkA==
+X-Gm-Message-State: AA+aEWZiKGndmoMBIOC+I6x4SqXmgG3M3eR4LECdd99UDif+KKAzOncC
+        Ywo05KalrH5tJH1G6POL87nG9A==
+X-Google-Smtp-Source: AFSGD/X+/VAWh2v+fQZtH8PGpkgwuQ3tR7+x5gfUjCvsB9wqNUHo9eBf/d7r/2NDadmzD9hiJmkLqA==
+X-Received: by 2002:a62:824c:: with SMTP id w73mr3116811pfd.150.1544204175926;
+        Fri, 07 Dec 2018 09:36:15 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id e86sm6012638pfb.6.2018.12.07.09.36.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 07 Dec 2018 09:36:15 -0800 (PST)
+Date:   Fri, 7 Dec 2018 10:36:13 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] coresight: Use of_node_name_eq for node name comparisons
+Message-ID: <20181207173613.GA27493@xps15>
+References: <20181205195050.4759-34-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181207170519.GA26857@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205195050.4759-34-robh@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 17:05, Christoph Hellwig wrote:
-> So I'd really prefer if we had a separate dummy.c file, like in
-> my take on your previous patch here:
+On Wed, Dec 05, 2018 at 01:50:50PM -0600, Rob Herring wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
 > 
-> http://git.infradead.org/users/hch/misc.git/commitdiff/e01adddc1733fa414dc16cd22e8f58be9b64a025
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/hwtracing/coresight/of_coresight.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> http://git.infradead.org/users/hch/misc.git/commitdiff/596bde76e5944a3f4beb8c2769067ca88dda127a
+> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+> index 89092f83567e..7045930fc958 100644
+> --- a/drivers/hwtracing/coresight/of_coresight.c
+> +++ b/drivers/hwtracing/coresight/of_coresight.c
+> @@ -80,8 +80,8 @@ static struct device_node *of_coresight_get_port_parent(struct device_node *ep)
+>  	 * Skip one-level up to the real device node, if we
+>  	 * are using the new bindings.
+>  	 */
+> -	if (!of_node_cmp(parent->name, "in-ports") ||
+> -	    !of_node_cmp(parent->name, "out-ports"))
+> +	if (of_node_name_eq(parent, "in-ports") ||
+> +	    of_node_name_eq(parent, "out-ports"))
+>  		parent = of_get_next_parent(parent);
+
+Applied - thanks.
+
+>  
+>  	return parent;
+> -- 
+> 2.19.1
 > 
-> Otherwise this looks fine.  If you don't minde I'll take your patches,
-> apply the move to a separate file and merge it into the above tree.
-
-Sure - TBH I did consider creating a separate file, but then didn't for 
-mysterious reasons that don't stand up to scrutiny. If you're happy to 
-do the fixup on top that's fine by me (if culling .map_resource was 
-intentional, please scrub the last bit of the commit message to match).
-
-I'll make the equivalent change locally anyway just in case there's any 
-other cause to resend.
-
-Robin.
