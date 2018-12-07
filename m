@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14790C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B711C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE9820837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4027820837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 19:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTL2MKoP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE9820837
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HX+e4XDB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4027820837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeLGTL4 (ORCPT
+        id S1726230AbeLGTL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 14:11:56 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42975 "EHLO
+        Fri, 7 Dec 2018 14:11:58 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45582 "EHLO
         mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeLGTLx (ORCPT
+        with ESMTP id S1726018AbeLGTLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 14:11:53 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so4448072lja.9;
-        Fri, 07 Dec 2018 11:11:51 -0800 (PST)
+        Fri, 7 Dec 2018 14:11:55 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so4429353ljd.12;
+        Fri, 07 Dec 2018 11:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9lZ1jc9eu+qngoQSAA5KNgJbshVX5vnWxLkDtgSyMDI=;
-        b=DTL2MKoPhuwQPtRKrUkKDelyhdY0lUC3nLAMbQyPWQLlC7mGxuY/CZY4GMsZqQwp0t
-         Xu13lS2mvRDFmTWR+WsWDufyPomAn7GXFezlHdZ7DKYBgNKitStQ0bC+axqBzWhR+17w
-         dL0jlpgfIZjczX+6NFsihD7beFxAg2gDIJvkH9YAvSyJUDKSJV4Z5g+2DmDwXR89nox2
-         HgOs53kUfkVdhQWDbYHCwneGMkiXRmqDu7opknV1OTHQz+d5DX/bdOn7dRchfriJv4fI
-         LUY/u9F8HHy4OMsLpM09hHUV7zx8+VV4IBr7soB0jQfAKetVkRFfeUbWFoj00PLKNOMr
-         NLrw==
+        bh=KLoK8dxaYhkkvoDpPS82xpkVnSH4qU0dp8vtgaAdqTE=;
+        b=HX+e4XDBM1RO5xTwGc74azJX8XJQFVhsu+8lpf5ZELaCCb6j5G4/71XpkPiqJ3RCgP
+         VNeCZidzoU5ILeX6Mmu/xtwJI1BpV8DWuBCp8nOWBFqKwhFBf3VlNxuL75pOHXcFjHxQ
+         NOokIor5Z3jkj8GVU0j6I7NRMqmIRluV5qK2+to0ZziF3F/ra8fxXBF0UPEOgqRd1+op
+         pO4NFF/pC+Teyr0vm5X5aTHPdzlqC5klzFsLKg7i0anVnSR35tHUzRM0eQBppLL3yy57
+         xfs+SGEUsclZjamACSiZ34EtdMIwn47pR8dsBsR+RQ+sUwzAg+5oPuXxgXfrjOdJKwLO
+         VWlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9lZ1jc9eu+qngoQSAA5KNgJbshVX5vnWxLkDtgSyMDI=;
-        b=I4kwnGleL6FMovpwywXTtI4ShxqlYajBiudxNlscM8shvgG4OMquE/T24Bg7SKfGfU
-         07+tNViw8zz++c3GTQESIrisWXeU54pJ6NMNMSOP9+quj+QYmmfrecoqoqBpk+VwQzlp
-         bFhs48Cs3EgfP4mI1uF79Jemhe9INB8/5O9mYedofFn8uyZ1NZg6A5S5PNKC5FG4R1Md
-         BpFj+zMZHL8HOY5vRD032xOjaPgPm7LuqgxPsKPw11j9ea5lYfIJgQvAh02Vwpv8LZkR
-         +CmFA1AbZ8F3v82laz5qU+OAkjEaZa367MXTu59eCpoYlVQsLTXoN95IZAis18c9X3p9
-         ZjVw==
-X-Gm-Message-State: AA+aEWbBQRpwvRM8sswyawtwSFUZg7lyCrAM0OtmI8GVRIn3s9vE+4mv
-        3/2TM3OAwNhAjoMFDDMI1I4=
-X-Google-Smtp-Source: AFSGD/XLtd860YcbUUErKxHr82lc8x+SxGhOFNQbMdvXXFtQCqeBCCCTlBgHl0KRWlpBUEotjGf0nA==
-X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr2030639lja.46.1544209910517;
-        Fri, 07 Dec 2018 11:11:50 -0800 (PST)
+        bh=KLoK8dxaYhkkvoDpPS82xpkVnSH4qU0dp8vtgaAdqTE=;
+        b=fFeUOVOQFG+K0PIQAaFS1Aq0O0bdF+pQpL0JpdfOC+npISD8p0SvxIN7lfnGclsSmw
+         4f4AOXwb9IP5PfxvepSsZpN60r1ABuHt6Fe3feQ39nwsb+9+iI1BUCCc1XRAXC9lmu/i
+         ucKtJ3QHeNiEsVsxb7p+TpHSQXQK44gWiq4OuZe90D8Ilz/vuDs3NCEz2eGoYsH5iiRe
+         Dm5q1aFwVqOfAqgldDFmBlu2T4pSPNQFJuaKyV4VVbv9EMOHDUh+9nyEvYHiWR3KOoyl
+         oY0SVGt21GsM6HU3a2e9z8FiJBhluiqOnpAEYcs7Pl59IVNuI3biOAwgxSoywexhD9ca
+         Yf6A==
+X-Gm-Message-State: AA+aEWbY+wJN46hNw62nl48Nj8t4hhomGCM8Sr0JkvYwpIYqxbqkAtuk
+        ZKeJ7pf/cBSXiypx2hGjFD0=
+X-Google-Smtp-Source: AFSGD/XBeZQPwmkFSo16rt1CctJcoLbztk0UDADFMQLOMWmRwsLXkobD2L6mwE+fwip1oTMMl8RmAA==
+X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr2043984ljh.63.1544209912365;
+        Fri, 07 Dec 2018 11:11:52 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:45d9:69e8:d41f:b616])
-        by smtp.googlemail.com with ESMTPSA id 12-v6sm727915ljs.29.2018.12.07.11.11.48
+        by smtp.googlemail.com with ESMTPSA id 12-v6sm727915ljs.29.2018.12.07.11.11.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Dec 2018 11:11:49 -0800 (PST)
+        Fri, 07 Dec 2018 11:11:51 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     jic23@kernel.org
 Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
@@ -73,9 +73,9 @@ Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
         devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] iio: adc: exynos-adc: Add S5PV210 variant
-Date:   Fri,  7 Dec 2018 20:11:34 +0100
-Message-Id: <20181207191136.5464-2-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 2/3] iio: adc: Allow selection of Exynos ADC on S5PV210
+Date:   Fri,  7 Dec 2018 20:11:35 +0100
+Message-Id: <20181207191136.5464-3-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
@@ -89,54 +89,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-S5PV210's ADC variant is almost the same as v1 except that it has 10
-channels and doesn't require the pmu register
+Make it possible to use Exynos ADC driver on S5PV210 based devices.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/iio/adc/exynos_adc.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/iio/adc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index f10443f92e4c..fa2d2b5767f3 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -115,6 +115,7 @@
- #define MAX_ADC_V2_CHANNELS		10
- #define MAX_ADC_V1_CHANNELS		8
- #define MAX_EXYNOS3250_ADC_CHANNELS	2
-+#define MAX_S5PV210_ADC_CHANNELS	10
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a52fea8749a9..20e126ff030e 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -274,7 +274,7 @@ config EP93XX_ADC
  
- /* Bit definitions common for ADC_V1 and ADC_V2 */
- #define ADC_CON_EN_START	(1u << 0)
-@@ -282,6 +283,16 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
- 	.start_conv	= exynos_adc_v1_start_conv,
- };
- 
-+static const struct exynos_adc_data exynos_adc_s5pv210_data = {
-+	.num_channels	= MAX_S5PV210_ADC_CHANNELS,
-+	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-+
-+	.init_hw	= exynos_adc_v1_init_hw,
-+	.exit_hw	= exynos_adc_v1_exit_hw,
-+	.clear_irq	= exynos_adc_v1_clear_irq,
-+	.start_conv	= exynos_adc_v1_start_conv,
-+};
-+
- static void exynos_adc_s3c2416_start_conv(struct exynos_adc *info,
- 					  unsigned long addr)
- {
-@@ -478,6 +489,9 @@ static const struct of_device_id exynos_adc_match[] = {
- 	}, {
- 		.compatible = "samsung,s3c6410-adc",
- 		.data = &exynos_adc_s3c64xx_data,
-+	}, {
-+		.compatible = "samsung,s5pv210-adc",
-+		.data = &exynos_adc_s5pv210_data,
- 	}, {
- 		.compatible = "samsung,exynos-adc-v1",
- 		.data = &exynos_adc_v1_data,
+ config EXYNOS_ADC
+ 	tristate "Exynos ADC driver support"
+-	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF && COMPILE_TEST)
++	depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || (OF && COMPILE_TEST)
+ 	depends on HAS_IOMEM
+ 	help
+ 	  Core support for the ADC block found in the Samsung EXYNOS series
 -- 
 2.17.1
 
