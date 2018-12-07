@@ -2,74 +2,69 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAB1C64EB1
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B3FC07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F0120837
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F0120837
+	by mail.kernel.org (Postfix) with ESMTP id 33DC620837
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 06:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33DC620837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbeLGGS0 (ORCPT
+        id S1726083AbeLGGSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 01:18:26 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:48990 "EHLO
+        Fri, 7 Dec 2018 01:18:35 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:48994 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbeLGGS0 (ORCPT
+        with ESMTP id S1725972AbeLGGSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 01:18:26 -0500
+        Fri, 7 Dec 2018 01:18:35 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gV9Su-0004lx-52; Fri, 07 Dec 2018 14:18:20 +0800
+        id 1gV9T7-0004mW-HM; Fri, 07 Dec 2018 14:18:33 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gV9Sq-00005H-HE; Fri, 07 Dec 2018 14:18:16 +0800
-Date:   Fri, 7 Dec 2018 14:18:16 +0800
+        id 1gV9T3-00005x-CS; Fri, 07 Dec 2018 14:18:29 +0800
+Date:   Fri, 7 Dec 2018 14:18:29 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yael Chemla <yael.chemla@foss.arm.com>,
-        Ofir Drang <Ofir.Drang@arm.com>, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] new HW version and co-maintainer
-Message-ID: <20181207061816.a27rmuk5uzki7bjd@gondor.apana.org.au>
-References: <1542102039-22256-1-git-send-email-gilad@benyossef.com>
+To:     Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Breno Leitao <leitao@debian.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] MAINTAINERS: change NX/VMX maintainers
+Message-ID: <20181207061829.faoyjnwqrfudosfi@gondor.apana.org.au>
+References: <20181127172739.24621-1-pfsmorigo@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542102039-22256-1-git-send-email-gilad@benyossef.com>
+In-Reply-To: <20181127172739.24621-1-pfsmorigo@linux.vnet.ibm.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 09:40:34AM +0000, Gilad Ben-Yossef wrote:
-> Add support for CryptoCell 703 HW revision and a new co-maintainer.
+On Tue, Nov 27, 2018 at 03:27:21PM -0200, Paulo Flabiano Smorigo wrote:
+> Add Breno and Nayna as NX/VMX crypto driver maintainers. Also change my
+> email address to my personal account and remove Leonidas since he's not
+> working with the driver anymore.
 > 
-> Gilad Ben-Yossef (3):
->   crypto: ccree: add support for CryptoCell 703
->   dt-bindings: crypto: ccree: add dt bindings for ccree 703
->   MAINTAINERS: ccree: add co-maintainer
-> 
->  .../devicetree/bindings/crypto/arm-cryptocell.txt  |  1 +
->  MAINTAINERS                                        |  1 +
->  drivers/crypto/Kconfig                             |  2 +-
->  drivers/crypto/ccree/cc_aead.c                     | 16 ++++++++-
->  drivers/crypto/ccree/cc_cipher.c                   | 38 +++++++++++++++++++++-
->  drivers/crypto/ccree/cc_driver.c                   | 19 ++++++++---
->  drivers/crypto/ccree/cc_driver.h                   |  8 +++++
->  drivers/crypto/ccree/cc_hash.c                     | 16 +++++++--
->  8 files changed, 92 insertions(+), 9 deletions(-)
+> Signed-off-by: Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
+> ---
+>  MAINTAINERS | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-All applied.  Thanks.
+Patch applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
