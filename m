@@ -2,179 +2,162 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C84C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCD6C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94CDD20882
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B03220882
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 07:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GVNfEsNM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94CDD20882
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFUE0hw5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B03220882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbeLGH2I (ORCPT
+        id S1726058AbeLGHbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 02:28:08 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:47097 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeLGH2I (ORCPT
+        Fri, 7 Dec 2018 02:31:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33102 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLGHbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 02:28:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so2760747wrt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 23:28:07 -0800 (PST)
+        Fri, 7 Dec 2018 02:31:37 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so676624wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 23:31:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=srjPKbSPKggzrsNGf9ISRFoRZ63KrUzTnpJqPuUhlKU=;
-        b=GVNfEsNMI0Q2Erb9Vbq9CVc3UkJyg3mKunhaxSonrrjFqk76xUxQCuxGow/ONdBdn/
-         ASCmAhCf5mZJyG6XWFR0WUdM+fB7a3oDnN5BaDi7sEeUdyPiggT7a/JclicWVZunvXYK
-         zTEDIHKd1o9p+G/isyjGEvjero0VNiQDkH2fo=
+        bh=on5DWjAF9LpvkIPYgqixEFyxPhgmFwB2pHo8jQcHZvs=;
+        b=EFUE0hw5rCdn+X1uMNNperYk+AfbN3qb0hNN8qIa2lYu/OU4DAIhrqK+8XT0uq16qo
+         pEVXQUm5Zvl1o/Pb25udY6fbXs1Vp7ZSavQRXe8Ac1Y2JHC1ON+D3PBco9hXo4PIoqKu
+         +8P0qBnErkaRJqvAC4EQWMFX8wuq0CBXmAFkc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=srjPKbSPKggzrsNGf9ISRFoRZ63KrUzTnpJqPuUhlKU=;
-        b=MgkRtcqFx11mwhJakAo6sSrRs8dSHj1wYjRIkYIUaoFlcKVXipC/+jdXKfKT7pc9BJ
-         TEuM+yAPktnmhBqId34O37jV2LFAw6rRw+Ubxf7bfnOANXEkOzfMAiDz6mYXxNLxRY1L
-         Onftf3FbBNzhM4AVfnG7JscmMryg6+kXh1FABfIne0BsJIZV6+QMzlSExQOKW54Of77i
-         jjVBCPo4f6VRL9OGXId3cY9ilJK8iql0xhRFze5Pxqgmn7yZnyIT6gaeUDJIMRE8bHml
-         kQlXUtmR7nuIBbp+XMBkjh/OyZOD68uAxNI+750rA1xjjkjV+4v/fEiCwiJxMx1hoqvx
-         nQQg==
-X-Gm-Message-State: AA+aEWYfMgRki5wE7mYwUTTLSg6dsYYk19qDpWL/NswtVIoNgXMzl29q
-        A5xm4od5UqyaHsrSOzunNyZIbA==
-X-Google-Smtp-Source: AFSGD/Vpp+3ayca6Et7r/FU71XkZexIumBc0GYA2adaeDSlFQaf4ChXH0NXIXXp/dGfPejFTKmkhPQ==
-X-Received: by 2002:adf:83a7:: with SMTP id 36mr853777wre.13.1544167686296;
-        Thu, 06 Dec 2018 23:28:06 -0800 (PST)
+        bh=on5DWjAF9LpvkIPYgqixEFyxPhgmFwB2pHo8jQcHZvs=;
+        b=a3LFOKPyhSfyP58txnfG9JneNk0bbnOAUcMbsvC1RM5pd5oOWp6M/7CMywi0Be2age
+         pfSouV6vURTkOSV4tJT5S7p0lCUYHW/cNVMP5oxdmA9l0TDsdcifeYktJ9hJ899b7TNx
+         mHSw09t6hs4H07ihPYMBxX0BBdsGUn+wYSvv+B2fBz+0ZBDE6xhCb+P2qZ3yb8B6L9ht
+         58gNL05T+1qPSH/aywP1KZ42XXjl01+RtQrk/UNLMFRxbpNlxsskycB+bZC3NW4SeqRk
+         MHJCARMxqV+/dzE7p2tbH1G+yZvwdJ992qG9jF/VO9KbnFatWVKrC+fDTLweHDcb/lSo
+         dl3Q==
+X-Gm-Message-State: AA+aEWbH1wmtur78TDW1rrlAJU0io9cUGrTg8B2NrbSJJ4s6OSGIQmE7
+        fGnfwZLQdd+OyrNkWkN+xz4xIQ==
+X-Google-Smtp-Source: AFSGD/UabOKaU4UlD7KcdBOXR4qSmYDPsRNZIkjH6brYWCs9+XJjQlmZn7g+BPK0fh3GRaLw149M5A==
+X-Received: by 2002:a7b:c397:: with SMTP id s23mr1153721wmj.127.1544167895133;
+        Thu, 06 Dec 2018 23:31:35 -0800 (PST)
 Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id e19sm5545816wrc.25.2018.12.06.23.28.05
+        by smtp.gmail.com with ESMTPSA id p74sm3713506wmd.29.2018.12.06.23.31.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 23:28:05 -0800 (PST)
-Date:   Fri, 7 Dec 2018 07:28:03 +0000
+        Thu, 06 Dec 2018 23:31:34 -0800 (PST)
+Date:   Fri, 7 Dec 2018 07:31:32 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, oskari@lemmela.net,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 0/8] AXP8x3 AC and battery power supply support
-Message-ID: <20181207072803.GG26661@dell>
-References: <20181120175211.3913-1-oskari@lemmela.net>
- <CAGb2v65Bwve25jwdGHHK9j03RxQ3tKwme51762DjyQK2femG6g@mail.gmail.com>
- <20181205180042.fr5npvtwuvt2c6q3@earth.universe>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+Subject: Re: [PATCH v7 0/7] Introduce STPMIC1 PMIC Driver
+Message-ID: <20181207073132.GH26661@dell>
+References: <1543571742-17995-1-git-send-email-p.paillet@st.com>
+ <20181203071145.GA26661@dell>
+ <5C069C47.6080305@st.com>
+ <20181205093604.GZ26661@dell>
+ <5C07F08B.2010701@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205180042.fr5npvtwuvt2c6q3@earth.universe>
+In-Reply-To: <5C07F08B.2010701@st.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Dec 2018, Sebastian Reichel wrote:
+On Wed, 05 Dec 2018, Pascal PAILLET-LME wrote:
 
-> Hi,
 > 
-> On Fri, Nov 30, 2018 at 04:31:28PM +0800, Chen-Yu Tsai wrote:
-> > On Wed, Nov 21, 2018 at 1:52 AM Oskari Lemmela <oskari@lemmela.net> wrote:
-> > >
-> > > AXP813 AC power supply support with input current and
-> > > voltage limiting support.
-> > >
-> > > AXP803 AC and battery power supply support.
-> > >
-> > > Changes in v6:
-> > > * Collected tags
-> > > * Rebase to master
-> > > * Dropped AXP803 compatible patches
-> > >
-> > > Changes in v5:
-> > > * Return correct input current limit for values 0x6 and 0x7
-> > > * Add specific compatibles for AXP803
-> > > * Change commit messages
-> > > * Add Vasily Khoruzhick Pinebook DTS patch
-> > >
-> > > Changes in v4:
-> > > * Change order of axp20x-gpio in axp20x.c
-> > > * Fix indentation and spaces to tabs in axp20x.c
-> > >
-> > > Changes in v3:
-> > > * Reorder ac_power_supply DT node
-> > > * Rename axp20x_ac_power_set_property function
-> > > * Split mfd commit
-> > >
-> > > Changes in v2:
-> > > * Reuse axp813 compatibles for axp803
-> > > * Refactor axp20x_ac_power.c
-> > >
-> > >
-> > > Oskari Lemmela (7):
-> > >   dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
-> > >   ARM: dts: axp81x: add AC power supply subnode
-> > >   arm64: dts: allwinner: axp803: add AC and battery power supplies
-> > >   arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
-> > >   power: supply: add AC power supply driver for AXP813
-> > >   mfd: axp20x: Add AC power supply cell for AXP813
-> > >   mfd: axp20x: Add supported cells for AXP803
-> > >
-> > > Vasily Khoruzhick (1):
-> > >   arm64: dts: allwinner: a64: pinebook: enable power supplies
-> > 
-> > Since this series has been fully reviewed, and the devices it
-> > adds/enables aren't critical, i.e. won't cause the system to fail
-> > if the drivers are missing, I've merged the dts patches for 4.21.
-> > 
-> > Hopefully Sebastian and Lee will get around to merging the driver
-> > patches.
+> pascal paillet (p.paillet@st.com) Le Mans / France
+> Microcontrollers and Digital ICs Group | Application Development
+> TEL: +33.(0)2.44.02.74.69 | TINA: 166 7469
 > 
-> I queued the power-supply driver changes and prepared a signed
-> immutable tag for Lee:
+> Le 12/05/2018 10:36 AM, Lee Jones a écrit :
+> > On Tue, 04 Dec 2018, Pascal PAILLET-LME wrote:
+> >> Le 12/03/2018 08:11 AM, Lee Jones a écrit :
+> >>> On Fri, 30 Nov 2018, Pascal PAILLET-LME wrote:
+> >>>
+> >>>> The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from
+> >>>> STMicroelectronics.
+> >>>> The STPMIC1 regulators supply power to an application processor as well as
+> >>>> to external system peripherals such as DDR, Flash memories and system
+> >>>> devices. It also features onkey button input and an hardware watchdog.
+> >>>> The STPMIC1 is controlled via I2C.
+> >>>>
+> >>>> Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
+> >>>> irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
+> >>>> as parent.
+> >>>>
+> >>>> STPMIC1 MFD and regulator drivers maybe mandatory at boot time.
+> >>>>
+> >>>> Pascal Paillet (7):
+> >>>> changes in v7:
+> >>>> * rebase on regul/for-next
+> >>>>
+> >>>>     dt-bindings: mfd: document stpmic1
+> >>>>     mfd: stpmic1: add stpmic1 driver
+> >>>>     dt-bindings: input: document stpmic1 pmic onkey
+> >>>>     input: stpmic1: add stpmic1 onkey driver
+> >>>>     dt-bindings: watchdog: document stpmic1 pmic watchdog
+> >>>>     watchdog: stpmic1: add stpmic1 watchdog driver
+> >>>>     regulator: stpmic1: fix regulator_lock usage
+> >>>>
+> >>>>    .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +++
+> >>>>    .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ++++++
+> >>>>    .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 ++
+> >>>>    drivers/input/misc/Kconfig                         |  11 ++
+> >>>>    drivers/input/misc/Makefile                        |   2 +
+> >>>>    drivers/input/misc/stpmic1_onkey.c                 | 198 +++++++++++++++++++
+> >>>>    drivers/mfd/Kconfig                                |  16 ++
+> >>>>    drivers/mfd/Makefile                               |   1 +
+> >>>>    drivers/mfd/stpmic1.c                              | 213 +++++++++++++++++++++
+> >>>>    drivers/regulator/stpmic1_regulator.c              |   2 +-
+> >>> Is it just Mark you're waiting on now?
+> >> It is ok now, Mark has applied the patch.
+> >> Evrey thing has been acked now. What is the nex step ?
+> > Mark has applied patch 7?
+> >
+> > Why don't I see that?  Should you have removed it from this set?
+> Hi Lee, I have received an email from Mark telliing that the regulator 
+> patch is applied on
 > 
-> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git  
 > 
->   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-> 
-> are available in the Git repository at:
-> 
->   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/psy-mfd-axp813-immutable-for-v4.21-signed
-> 
-> for you to fetch changes up to 7693b5643fd2d682de90733b67fc8032b9646911:
-> 
->   power: supply: add AC power supply driver for AXP813 (2018-12-05 18:49:32 +0100)
-> 
-> ----------------------------------------------------------------
-> Immutable branch between mfd and power-supply for driver
-> changes related to axp813.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> 
-> ----------------------------------------------------------------
-> Oskari Lemmela (2):
->       dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
->       power: supply: add AC power supply driver for AXP813
-> 
->  .../bindings/power/supply/axp20x_ac_power.txt      |  3 +
->  drivers/power/supply/axp20x_ac_power.c             | 94 ++++++++++++++++++++++
->  include/linux/mfd/axp20x.h                         |  1 +
->  3 files changed, 98 insertions(+)
+> I can see it on the branch regul/for-next.
 
-What patches are left now?  Just 7 and 8?
+Mark,
+
+Does your patch tracker only reply to the author?
+
+Any reason why I don't see it?
 
 -- 
 Lee Jones [李琼斯]
