@@ -2,117 +2,160 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D209C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FB3C64EB1
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC9E2082D
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC9E2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A6232082D
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 03:34:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="x0J3U+zj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6232082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbeLGDeP (ORCPT
+        id S1726084AbeLGDek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 6 Dec 2018 22:34:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLGDeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Dec 2018 22:34:14 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DCF130014CC;
-        Fri,  7 Dec 2018 03:34:14 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-222.pek2.redhat.com [10.72.12.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E6AD05D96E;
-        Fri,  7 Dec 2018 03:34:09 +0000 (UTC)
-Date:   Fri, 7 Dec 2018 11:34:07 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: thp: fix soft dirty for migration when split
-Message-ID: <20181207033407.GB10726@xz-x1>
-References: <20181206084604.17167-1-peterx@redhat.com>
+        Thu, 6 Dec 2018 22:34:40 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38089 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeLGDek (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Dec 2018 22:34:40 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so1164537plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Dec 2018 19:34:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wYYVI1ZQvqHTNSyFIOkP+j90ajmQeZj7B5YbyYFFvhM=;
+        b=x0J3U+zjEMawL0idEB7cFaja3XK2XoF2zzC/KP1vwVUpkMVwW2wYKtBEmYcgzzsGpQ
+         5+zjX/Ss1oljMDkmzqq3vloVVYNJ+9rHDKwJ0miw8lXdFjB9n4cx+rwleVbjkAnqQHb/
+         HrwHyMW+/Ku9qpYrLA43vjkOZNo3l5Wz3VxQygMe0CfNt9epRbHc9BCfQcQHxKgdEvQQ
+         N/S5qFwA+2iogITUoa00zzqnuyPMX2kZF2ZOGL6jrbhu9UXHfNP/FVbp3QuTeTkwfjdM
+         nfzzaOMAblyD007lq4PhaZOBXiYEW4Oc4gH/Q+5PBpe5h6/pxAxEOHTrFS+hVD8YYwES
+         fjOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wYYVI1ZQvqHTNSyFIOkP+j90ajmQeZj7B5YbyYFFvhM=;
+        b=U5r998xyIcAUDcRp6RCEBsUPiwFUKvBXFaJFJUIvaQfV5tQUKqFjnCQTmmfMO0TcJe
+         suj5xHoKRvnGreN7hr5JcN9K53Uzzl1Sf2y8sYYO6N1549NOvQBZZ+2XKJsHHBq2T/ie
+         M1q6kJwQrwQmFkJ2FXbCUx0OvBoI2waQN1rPLnls5kpLLEypIdm0wwhcgQEuXP2LyMnH
+         jNbCsYxzSz0j1S8RUCsqoOuuSveDC4OnLCl0fpRmMjltgZ/dc3t8AH1DI56xQBT55PJy
+         t/ORYH18kDKutEicy8UF5SXge8qZSKW+lroxDAnYFB4mztuYLwlC+iqP3JVXlGkB4HMv
+         du1A==
+X-Gm-Message-State: AA+aEWaNkxn9WCWHKhvzwc7CWTsJGOdYkOzpcwu1Cvj/TgGE04Fiwa0V
+        rTSq9ba4YGP4zQAoypU/lO3kPSIL5xM=
+X-Google-Smtp-Source: AFSGD/XlZ25pIYCgTUW0+pWL77cq782G/X2/H4chWFbnSHZSdfEHVSVk6LXwR0+JYqiL/Hb76iQOxg==
+X-Received: by 2002:a17:902:3064:: with SMTP id u91mr583616plb.325.1544153678007;
+        Thu, 06 Dec 2018 19:34:38 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id w11sm1792963pgk.16.2018.12.06.19.34.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Dec 2018 19:34:37 -0800 (PST)
+Subject: Re: [PATCH V11 0/4] blk-mq: refactor code of issue directly
+From:   Jens Axboe <axboe@kernel.dk>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544152185-32667-1-git-send-email-jianchao.w.wang@oracle.com>
+ <b2bcbb76-af6f-7660-2bc3-9796338cccff@kernel.dk>
+ <0adf3419-bcce-93d8-51fb-aee7cbb5ae17@oracle.com>
+ <16205e68-aa5e-c59d-364e-4164a0e51dc7@kernel.dk>
+Message-ID: <f052c016-e521-9f12-f4e5-d65f3814643a@kernel.dk>
+Date:   Thu, 6 Dec 2018 20:34:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <16205e68-aa5e-c59d-364e-4164a0e51dc7@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181206084604.17167-1-peterx@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 07 Dec 2018 03:34:14 +0000 (UTC)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:46:04PM +0800, Peter Xu wrote:
-> When splitting a huge migrating PMD, we'll transfer the soft dirty bit
-> from the huge page to the small pages.  However we're possibly using a
-> wrong data since when fetching the bit we're using pmd_soft_dirty()
-> upon a migration entry.  Fix it up.
+On 12/6/18 8:32 PM, Jens Axboe wrote:
+> On 12/6/18 8:26 PM, jianchao.wang wrote:
+>>
+>>
+>> On 12/7/18 11:16 AM, Jens Axboe wrote:
+>>> On 12/6/18 8:09 PM, Jianchao Wang wrote:
+>>>> Hi Jens
+>>>>
+>>>> Please consider this patchset for 4.21.
+>>>>
+>>>> It refactors the code of issue request directly to unify the interface
+>>>> and make the code clearer and more readable.
+>>>>
+>>>> This patch set is rebased on the recent for-4.21/block and add the 1st
+>>>> patch which inserts the non-read-write request to hctx dispatch
+>>>> list to avoid to involve merge and io scheduler when bypass_insert
+>>>> is true, otherwise, inserting is ignored, BLK_STS_RESOURCE is returned
+>>>> and the caller will fail forever.
+>>>>
+>>>> The 2nd patch refactors the code of issue request directly to unify the
+>>>> helper interface which could handle all the cases.
+>>>>
+>>>> The 3rd patch make blk_mq_sched_insert_requests issue requests directly
+>>>> with 'bypass' false, then it needn't to handle the non-issued requests
+>>>> any more.
+>>>>
+>>>> The 4th patch replace and kill the blk_mq_request_issue_directly.
+>>>
+>>> Sorry to keep iterating on this, but let's default to inserting to
+>>> the dispatch list if we ever see busy from a direct dispatch. I'm fine
+>>> with doing that for 4.21, as suggested by Ming, I just didn't want to
+>>> fiddle with it for 4.20. This will prevent any merging on the request
+>>> going forward, which I think is a much safer default.
+>>>
+>>> You do this already for some cases. Let's do it unconditionally for
+>>> a request that was ever subjected to ->queue_rq() and we didn't either
+>>> error or finish after the fact.
+>>>
+>> I have done it in this version if I get your point correctly.
+>> Please refer to the following fragment in the 2nd patch.
+>>
+>> +	/*
+>> +	 * If the request is issued unsuccessfully with
+>> +	 * BLK_STS_DEV_RESOURCE or BLK_STS_RESOURCE, insert
+>> +	 * the request to hctx dispatch list due to attached
+>> +	 * lldd resource.
+>> +	 */
+>> +	force = true;
+>> +	ret = __blk_mq_issue_directly(hctx, rq, cookie, last);
+>> +out_unlock:
+>> +	hctx_unlock(hctx, srcu_idx);
+>> +out:
+>> +	switch (ret) {
+>> +	case BLK_STS_OK:
+>> +		break;
+>> +	case BLK_STS_DEV_RESOURCE:
+>> +	case BLK_STS_RESOURCE:
+>> +		if (force) {
+>> +			blk_mq_request_bypass_insert(rq, run_queue);
+>> +			ret = bypass ? BLK_STS_OK : ret;
+>> +		} else if (!bypass) {
+>> +			blk_mq_sched_insert_request(rq, false,
+>> +						    run_queue, false);
+>> +		}
+>> +		break;
+>> +	default:
+> 
+> You are right, I missed that you set force = true before doing the
+> issue. So this looks good to me!
 
-Note that if my understanding is correct about the problem then if
-without the patch there is chance to lose some of the dirty bits in
-the migrating pmd pages (on x86_64 we're fetching bit 11 which is part
-of swap offset instead of bit 2) and it could potentially corrupt the
-memory of an userspace program which depends on the dirty bit.
-
-> 
-> CC: Andrea Arcangeli <aarcange@redhat.com>
-> CC: Andrew Morton <akpm@linux-foundation.org>
-> CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> CC: Matthew Wilcox <willy@infradead.org>
-> CC: Michal Hocko <mhocko@suse.com>
-> CC: Dave Jiang <dave.jiang@intel.com>
-> CC: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> CC: Souptick Joarder <jrdr.linux@gmail.com>
-> CC: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> CC: linux-mm@kvack.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
-> 
-> I noticed this during code reading.  Only compile tested.  I'm sending
-> a patch directly for review comments since it's relatively
-> straightforward and not easy to test.  Please have a look, thanks.
-> ---
->  mm/huge_memory.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f2d19e4fe854..fb0787c3dd3b 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2161,7 +2161,10 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->  		SetPageDirty(page);
->  	write = pmd_write(old_pmd);
->  	young = pmd_young(old_pmd);
-> -	soft_dirty = pmd_soft_dirty(old_pmd);
-> +	if (unlikely(pmd_migration))
-> +		soft_dirty = pmd_swp_soft_dirty(old_pmd);
-> +	else
-> +		soft_dirty = pmd_soft_dirty(old_pmd);
->  
->  	/*
->  	 * Withdraw the table only after we mark the pmd entry invalid.
-> -- 
-> 2.17.1
-> 
-
-Regards,
+I applied your series. With this, we should be good to remove the
+REQ_NOMERGE logic that was added for the corruption case, and the
+blk_rq_can_direct_dispatch() as well?
 
 -- 
-Peter Xu
+Jens Axboe
+
