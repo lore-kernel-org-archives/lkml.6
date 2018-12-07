@@ -2,114 +2,101 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792A3C07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5582C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4913D208E7
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:04:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4913D208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B249208E7
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 15:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="QcMnNVhy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B249208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbeLGPEk (ORCPT
+        id S1726120AbeLGPFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 10:04:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47046 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbeLGPEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 10:04:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6F7B15AB;
-        Fri,  7 Dec 2018 07:04:38 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4143C3F575;
-        Fri,  7 Dec 2018 07:04:35 -0800 (PST)
-Date:   Fri, 7 Dec 2018 15:04:32 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFT PATCH v1 0/4] Unify CPU topology across ARM64 & RISC-V
-Message-ID: <20181207150432.GB4100@e107155-lin>
-References: <1543534100-3654-1-git-send-email-atish.patra@wdc.com>
- <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207134509.GA5913@e105550-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 7 Dec 2018 10:05:00 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:27862 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbeLGPFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Dec 2018 10:05:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544195097;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=B89yBndVyqnBFRB3ChSJvKEiBIpiN0+3fBMJx4Olq5g=;
+        b=QcMnNVhyxoKRX/ei24ihURkLufEdMIH06+KCU46zJnu65B6Aab+R24uJHoIRvBG1BO
+        soW7cOrGUnAnsJKw3pezJ8QY+yUT+mwQ+hqedAb1C0BrOB1mH6vSOxICc6yf63/Z2Ldn
+        aCS+l+IkC4PkxYYN+XHnPRywzFw6uEmxwZmaDzKN+jW2vY1zAW+AnqErQmCP3tdZkg+g
+        mfuSf1mrLkZv544CK2fpMbCtV4QzpbKEmmdZK95Q8vD4CFto/53PPXjwZsE7P1D1zcIU
+        TRNIW1KtDX7OmoPu+UQSyjpGLnQqPU/Y6VZJGInv+Rt7Y8EBl9+F4Ri2D/a/FRoc4w+u
+        wv2A==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr44+gKiZpmhkMNrXaTDU="
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.178.26]
+        by smtp.strato.de (RZmta 44.6 DYNA|AUTH)
+        with ESMTPSA id 404b20uB7F4HtiQ
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 7 Dec 2018 16:04:17 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 01/34] powerpc: use mm zones more sensibly
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <20181207140910.GA23609@lst.de>
+Date:   Fri, 7 Dec 2018 16:04:16 +0100
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <037E87F4-38C7-4E5F-A132-B7BB30E3D69D@xenosoft.de>
+References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-2-hch@lst.de> <20181206140948.GB29741@infradead.org> <87sgz9jzsl.fsf@concordia.ellerman.id.au> <20181207140910.GA23609@lst.de>
+To:     Christoph Hellwig <hch@lst.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 01:45:21PM +0000, Morten Rasmussen wrote:
-> Hi,
->
-> On Thu, Nov 29, 2018 at 03:28:16PM -0800, Atish Patra wrote:
-> > The cpu-map DT entry in ARM64 can describe the CPU topology in
-> > much better way compared to other existing approaches. RISC-V can
-> > easily adopt this binding to represent it's own CPU topology.
-> > Thus, both cpu-map DT binding and topology parsing code can be
-> > moved to a common location so that RISC-V or any other
-> > architecture can leverage that.
-> >
-> > The relevant discussion regarding unifying cpu topology can be
-> > found in [1].
-> >
-> > arch_topology seems to be a perfect place to move the common
-> > code. I have not introduced any functional changes in the moved
-> > code. The only downside in this approach is that the capacity
-> > code will be executed for RISC-V as well. But, it will exit
-> > immediately after not able to find the appropriate DT node. If
-> > the overhead is considered too much, we can always compile out
-> > capacity related functions under a different config for the
-> > architectures that do not support them.
-> >
-> > The patches have been tested for RISC-V and compile tested for
-> > ARM64 & x86.
->
-> The cpu-map bindings are used for arch/arm too, and so is
-> arch_topology.c. In fact, it was introduced to allow code-sharing
-> between arm and arm64. Applying patch three breaks arm.
->
+I will work at the weekend to figure out where the problematic commit is.
 
-Ah right. Though I remember the whole point of moving these to arch_topology
-was to share between ARM and ARM64, I completely forgot to check the
-impact of this for ARM platforms.
+=E2=80=94 Christian
 
-> Moving the DT parsing to arch_topology.c we have to unify all three
-> architectures. Be aware that arm and arm64 have some differences in how
-> they detect cpu capacities. I think we might have to look at the split
-> of code between arch/* and arch_topology.c again :-/
->
+Sent from my iPhone
 
-Thanks for pointing this out. I completely agree and apologies for
-forgetting about arm32.
+> On 7. Dec 2018, at 15:09, Christoph Hellwig <hch@lst.de> wrote:
+>=20
+>> On Fri, Dec 07, 2018 at 11:18:18PM +1100, Michael Ellerman wrote:
+>> Christoph Hellwig <hch@infradead.org> writes:
+>>=20
+>>> Ben / Michael,
+>>>=20
+>>> can we get this one queued up for 4.21 to prepare for the DMA work later=
 
-Regards,
-Sudeep
+>>> on?
+>>=20
+>> I was hoping the PASEMI / NXP regressions could be solved before
+>> merging.
+>>=20
+>> My p5020ds is booting fine with this series, so I'm not sure why it's
+>> causing problems on Christian's machine.
+>>=20
+>> The last time I turned on my PASEMI board it tripped some breakers, so I
+>> need to investigate that before I can help test that.
+>>=20
+>> I'll see how things look on Monday and either merge the commits you
+>> identified or the whole series depending on if there's any more info
+>> from Christian.
+>=20
+> Christian just confirmed everything up to at least
+> "powerpc/dma: stop overriding dma_get_required_mask" works for his
+> setups.
