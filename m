@@ -2,402 +2,365 @@ Return-Path: <SRS0=szhz=OQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDDC07E85
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 757F1C07E85
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 608A520892
-	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:11:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 608A520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D8FD20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  7 Dec 2018 14:13:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="fg4ZnXgy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8FD20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbeLGOLm (ORCPT
+        id S1726107AbeLGONY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:11:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725997AbeLGOLl (ORCPT
+        Fri, 7 Dec 2018 09:13:24 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:35150 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeLGONY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:11:41 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB7E98n4093912
-        for <linux-kernel@vger.kernel.org>; Fri, 7 Dec 2018 09:11:38 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p7sanbe1p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Dec 2018 09:11:38 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 7 Dec 2018 14:11:36 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 7 Dec 2018 14:11:33 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB7EBW0f18612328
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 7 Dec 2018 14:11:32 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 466BDB2064;
-        Fri,  7 Dec 2018 14:11:32 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 058E7B2066;
-        Fri,  7 Dec 2018 14:11:31 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.217.118])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  7 Dec 2018 14:11:31 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id F0E2B16C5F88; Fri,  7 Dec 2018 06:11:31 -0800 (PST)
-Date:   Fri, 7 Dec 2018 06:11:31 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Fri, 7 Dec 2018 09:13:24 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6851624E13C0;
+        Fri,  7 Dec 2018 06:13:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544192003; bh=JSoVBMWnMdQaWxmnKUhcX3ITWtV7lfhqXb2Q9ItMQXI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=fg4ZnXgyY1T+22cS6nj/LZCeIAyf0zdKZs+cGntmKXStVnOSs7VX/ebMo3vQRYfRO
+         ahowO3f1GkrJjIyyUXW9umCT7x5kmzARFumMkY+LhMF/AwVaDan6z/sf+UJstQtaUz
+         8/Da9fDMb1f9CuKk+gMDWORajZ7PdPtVNF8y8wD+Hs73qx5AWGwh1Yo7MvZL1pIud6
+         9bg4jdIHeIuOI7rcNWzXdiN6ah9KhVPWhtbSOMUpqypf2l23mC7JdwHY/wTwzmNGHz
+         YUd0EOH72Q/YSUYbX52CGxgnvMkpf0fTRQSBSh7R2YBkH6kiYF5qy04nvh2fj/9UAs
+         tqRmxTKq8PlZQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DFE793BC3;
+        Fri,  7 Dec 2018 06:13:22 -0800 (PST)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 7 Dec 2018 06:13:22 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
+ 7 Dec 2018 18:13:19 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maynard CABIENTE <maynard.cabiente@raritan.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
-        "Bai, Jie A" <jie.a.bai@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <20181130164920.GR4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A14B74@SHSMSX104.ccr.corp.intel.com>
- <20181203135638.GG4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A1509A@SHSMSX104.ccr.corp.intel.com>
- <20181204194936.GD4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A16605@SHSMSX104.ccr.corp.intel.com>
- <20181205174435.GU4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A16C46@SHSMSX104.ccr.corp.intel.com>
- <20181206173808.GI4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] usb: dwc2: Revert "usb: dwc2: Disable all EP's on
+ disconnect"
+Thread-Topic: [PATCH] usb: dwc2: Revert "usb: dwc2: Disable all EP's on
+ disconnect"
+Thread-Index: AQHUgbE8ouTBXi+nzkarEEkfP9zP5Q==
+Date:   Fri, 7 Dec 2018 14:13:18 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7B4E2E@am04wembxa.internal.synopsys.com>
+References: <CGME20181121154518eucas1p2cc7ffd4d071ff420c747e1d0c387ee5d@eucas1p2.samsung.com>
+ <20181121154504.13052-1-m.szyprowski@samsung.com>
+ <410670D7E743164D87FA6160E7907A56013A7AA1EE@am04wembxa.internal.synopsys.com>
+ <20181123144307.GC2970@unbuntlaptop>
+ <410670D7E743164D87FA6160E7907A56013A7B19C2@am04wembxa.internal.synopsys.com>
+ <20181204132913.GH3073@unbuntlaptop>
+ <410670D7E743164D87FA6160E7907A56013A7B2847@am04wembxa.internal.synopsys.com>
+ <20181207101532.GR3073@unbuntlaptop>
+ <410670D7E743164D87FA6160E7907A56013A7B4AAF@am04wembxa.internal.synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.132]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18120714-0068-0000-0000-0000036E147C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010188; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01128313; UDB=6.00586133; IPR=6.00908445;
- MB=3.00024564; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-07 14:11:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120714-0069-0000-0000-000046AFA90D
-Message-Id: <20181207141131.GP4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-07_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812070113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 08:25:09AM +0000, He, Bo wrote:
-> Bad news,  the issue is still reproduced after 61 Hours monkey test on 1/6 boards with the CONFIG_RCU_BOOST=y, and the issue is not seen on kernel 4.14, the CONFIG_RCU_BOOST is also not enabled in our kernel 4.14 config.
-> Here enclosed is the logs.
-> 
-> > So the question becomes "Why is the grace-period kthread being awakened so many times, but not actually waking up?"  
-> maybe it's not schedule issue, I have two suspects:
-> we can see tons of grace_period with 117392312: 
->  [219346.919405, 0] showmap-31232 [000] d..1 219346.136035: rcu_future_grace_period: rcu_preempt 117392312 117392316 0 0 3 Startleaf
->  [219346.919417, 0] showmap-31232 [000] d..1 219346.136036: rcu_future_grace_period: rcu_preempt 117392312 117392316 0 0 3 Prestarted
->  [219346.919429, 0] showmap-31232 [000] d..1 219346.136036: rcu_grace_period: rcu_preempt 117392312 AccWaitCB
-> 
-> "Startleaf" means start the grace period, "Prestarted" means the grace period is already started or other conditions blocked, RCU_GP_FLAG_INIT should follow the "Startedroot", then the kthread can be wakeup.
-
-Yes, when "Startleaf" is followed by "Prestarted", that means that we
-reached an rcu_node structure that is already aware that the requested
-grace period is needed.  Breaking down the relevant "if" statement in
-rcu_start_this_gp():
-
-		if (ULONG_CMP_GE(rnp->gp_seq_needed, gp_seq_req) ||
-			// A.  GP already requested at this rcu_node
-		    rcu_seq_started(&rnp->gp_seq, gp_seq_req) ||
-			// B.  The requested grace period already started
-		    (rnp != rnp_start &&
-		     rcu_seq_state(rcu_seq_current(&rnp->gp_seq)))) {
-			// C.  Leaf rcu_node recorded request, and
-			//     some grace period is in progress
-
-A:	In this case, the "Startedroot" should be taken care of by some
-	other thread, or one of B or C held earlier.
-
-B:	This cannot be the case, because your earlier trace showed that
-	the requested grace period had not started.
-
-C:	This cannot be the case because both traces above are on the
-	leaf rcu_node structure.  If it were the case, the currently
-	running grace period would notice the need for the requested
-	grace period when it ended, and would start the grace period
-	at that time.
-
-So you are saying that your trace goes back far enough to capture the
-very first "Startleaf" for this new grace period, and you don't ever see a
-"Startedroot"?  This would be OK if the later "Startedleaf" showed up at
-that point.  If you do have such a trace, could you please send it to me
-(or post it somewhere and send me the URL)?
-
-In any case, this code has bee reworked recently, so I will take a closer
-look, which will take some time.  Please feel free to continue to do so
-as well, of course!
-
-> I do experiment to dump the backtrace, the rcu_quiescent_state_report is called in softirq context:
->         <idle>-0     [000] dNs2 24471.669280: rcu_quiescent_state_report: rcu_preempt 3562401 1>0 0 0 3 0
->           <idle>-0     [000] dNs2 24471.669293: <stack trace>
->  => rcu_report_qs_rnp+0x1e2/0x2a0
->  => rcu_process_callbacks+0x2f1/0x3c0
->  => __do_softirq+0x12a/0x386
->  => irq_exit+0xb1/0xc0
->  => smp_apic_timer_interrupt+0xd4/0x1e0
->  => apic_timer_interrupt+0xf/0x20
->  => cpuidle_enter_state+0xb1/0x340
->  => cpuidle_enter+0x17/0x20
->  => call_cpuidle+0x23/0x40
->  => do_idle+0x1ed/0x250
->  => cpu_startup_entry+0x73/0x80
->  => rest_init+0xf3/0x100
->  => start_kernel+0x46f/0x490
->  => x86_64_start_reservations+0x2a/0x2c
->  => x86_64_start_kernel+0x72/0x75
->  => secondary_startup_64+0xa4/0xb0
-> rcu_report_qs_rnp=>rcu_report_qs_rdp
-> 
-> and in the rcu_report_qs_rdp(), rcu_report_qs_rnp is follow the rcu_accelerate_cbs, we can see AccWaitCB log, but can't see rcu_quiescent_state_report, mostly it's due to condition rnp->qsmask & mask blocked.
-> 
-> static void
-> rcu_report_qs_rdp(int cpu, struct rcu_state *rsp, struct rcu_data *rdp)
-> {
-> ...
-> if ((rnp->qsmask & mask) == 0) {
->                 raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->         } else {
->                 rdp->core_needs_qs = false;
->                 needwake = rcu_accelerate_cbs(rsp, rnp, rdp); 
->                 rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);	                                                                                               
-> 
->                 if (needwake)
->                         rcu_gp_kthread_wake(rsp);
->         }
-> }
-
-This is a completely different code path.  The rcu_start_this_gp()
-function is trying to start a new grace period.  In contrast, this
-rcu_report_qs_rdp() function reports a quiescent state for a currently
-running grace period.  In your earlier trace, there was no currently
-running grace period, so rcu_report_qs_rdp() exiting early is expected
-behavior.
-
-							Thanx, Paul
-
-> -----Original Message-----
-> From: Paul E. McKenney <paulmck@linux.ibm.com> 
-> Sent: Friday, December 7, 2018 1:38 AM
-> To: He, Bo <bo.he@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
-> Subject: Re: rcu_preempt caused oom
-> 
-> On Thu, Dec 06, 2018 at 01:23:01PM +0000, He, Bo wrote:
-> > 1. The test is positive after set the kthread priority to SCHED_FIFO without CONFIG_RCU_BOOST,  the issue is not reproduced until now.
-> > 2. Here is previous log enable the ftrace_dump, and we can get 4 seconds ftrace. The panic log was triggered with the enclosed debug patch, replaced the wait_for_completion(&rs_array[i].completion) with wait_for_completion_timeout(&rs_array[i].completion, 3*HZ) in __wait_rcu_gp(). The logs enabled the lockdep to dump the locks, and dump all tasks backtrace.
-> 
-> Thank you for collecting this information!
-> 
-> (By the way, the usual downside of the priority increase is increased context-switch rate and thus CPU overhead.)
-> 
-> And all three grace-period kthreads are blocked apparently in their top-level loops (though inlining and all that).  There are quite a few preemptions ("72738.702815: rcu_preempt_task: rcu_preempt"), but they are all blocking the next grace period (29041008), not the current one (29041004).  And the "rcu_unlock_preempted_task" trace records flag the current grace-period sequence number as 29041004, which means that there is no grace period in progress, that is, RCU is idle.
-> 
-> Which explains why there is no RCU CPU stall warning -- after all, if there is no grace period in flight, it is not possible to stall that non-existent grace period.
-> 
-> That also could explain why increasing the priority of the grace-period kthreads gets things going again.  There have been a great number of requests for a new grace period (for example, "rcu_future_grace_period:
-> rcu_preempt 29041004 29041008 0 0 3 Startleaf"), so as soon as the grace-period kthread wakes up, a new grace period will start.
-> 
-> Except that the rcu_preempt task says "I" rather than "R", as you noted in an earlier email.
-> 
-> And there should have been multiple attempts to wake up the grace-period kthread, because there are lots of callbacks queued as in 136,045 of them ("rcu_callback: rcu_preempt rhp=0000000066f735c9 func=file_free_rcu 2811/136045").  Which is of course why you are seeing the OOM.
-> 
-> So the question becomes "Why is the grace-period kthread being awakened so many times, but not actually waking up?"  In the past, there was a scheduler bug that could cause that, but that was -way- before the v4.19 that you are running.  More recently, there have been timer-related problems, but those only happened while a grace period was active, and where also long before v4.19.
-> 
-> Hmmm...  One possibility is that you have somehow managed to invoke
-> call_rcu() with interrupts disabled, which would in turn disable the extra wakeups that RCU sends when it sees excessive numbers of callbacks.
-> Except that in that case, boosting the priority wouldn't help.  Besides, the scheduling-clock interrupt should also check for this, and should push things forward if need be.
-> 
-> If RCU managed to put all of its callbacks into the RCU_NEXT_READY_TAIL bucket on all CPUs, that would defeat the wakeup-if-no-grace-period checks (RCU is supposed to have started the relevant grace period before putting callbacks into that bucket).  But that cannot be the case here, because new callbacks are being enqueued throughout, and these would then trigger RCU's start-a-new-grace-period checks.
-> 
-> But it would be good to confirm that this is actually working like I would expect it to.  Could you please add scheduler wakeup to your tracing, if possible, only displaying those sent to the rcu_preempt task?
-> 
-> 							Thanx, Paul
-> 
-> > -----Original Message-----
-> > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Sent: Thursday, December 6, 2018 1:45 AM
-> > To: He, Bo <bo.he@intel.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
-> > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
-> > <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
-> > Subject: Re: rcu_preempt caused oom
-> > 
-> > On Wed, Dec 05, 2018 at 08:42:54AM +0000, He, Bo wrote:
-> > > I double checked the .config, we don't enable CONFIG_NO_HZ_FULL .
-> > > Our previous logs can dump all the task backtrace, and kthread (the rcu_preempt, rcu_sched, and rcu_bh tasks) are all in "I" state not in "R" state, my understandings are if it's the side-effect of causing RCU's kthreads to be run at SCHED_FIFO priority 1, the kthreads should be in R state.
-> > 
-> > Hmmm...  Well, the tasks could in theory be waiting on a blocking mutex.
-> > But in practice the grace-period kthreads wait on events, so that makes no sense.
-> > 
-> > Is it possible for you to dump out the grace-period kthread's stack, 
-> > for example, with sysreq-t?  (Steve might know a better way to do 
-> > this.)
-> > 
-> > > I will do more experiments and keep you update once we have more findings:
-> > > 1. set the kthread priority to SCHED_FIFO without CONFIG_RCU_BOOST and see if the issue can reproduce.
-> > 
-> > That sounds like a most excellent experiment!
-> > 
-> > > 2. check more ftrace to double confirm why there is no trace_rcu_quiescent_state_report and most of the trace_rcu_grace_period are in "AccWaitCB".
-> > 
-> > As noted earlier, to see something interesting, you will need to start the ftrace before the grace period starts.  This would probably mean having ftrace running before starting the test.  Starting the ftrace after the hang commences is unlikely to produce useful information.
-> > 
-> > 							Thanx, Paul
-> > 
-> > > -----Original Message-----
-> > > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > Sent: Wednesday, December 5, 2018 3:50 AM
-> > > To: He, Bo <bo.he@intel.com>
-> > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
-> > > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
-> > > <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
-> > > Subject: Re: rcu_preempt caused oom
-> > > 
-> > > On Tue, Dec 04, 2018 at 07:50:04AM +0000, He, Bo wrote:
-> > > > Hi, Paul:
-> > > > the enclosed is the log trigger the 120s hung_task_panic without other debug patches, the hung task is blocked at __wait_rcu_gp, it means the rcu_cpu_stall can't detect the scenario:
-> > > > echo 1 > /proc/sys/kernel/panic_on_rcu_stall
-> > > > echo 7 > /sys/module/rcupdate/parameters/rcu_cpu_stall_timeout
-> > > 
-> > > Not necessarily.  If there is an RCU CPU stall warning, blocking 
-> > > within
-> > > __wait_rcu_gp() is expected behavior.  It is possible that the problem is that although the grace period is completing as required, the callbacks are not being invoked in a timely fashion.  And that could happen if you had CONFIG_NO_HZ_FULL and a bunch of nohz_full CPUs, or, alternatively, callback offloading enabled.  But I don't see these in your previous emails.  Another possible cause is that the grace-period kthread is being delayed, so that the grace period never starts.  This seems unlikely, but it is the only thing thus far that matches the symptoms.
-> > > 
-> > > CONFIG_RCU_BOOST=y has the side-effect of causing RCU's kthreads to be run at SCHED_FIFO priority 1, and that would help in the case where RCU's grace-period kthread (the rcu_preempt, rcu_sched, and rcu_bh tasks, all of which execute in the rcu_gp_kthread() function) was being starved of CPU time.
-> > > 
-> > > Does that sound likely?
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > > -----Original Message-----
-> > > > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > Sent: Monday, December 3, 2018 9:57 PM
-> > > > To: He, Bo <bo.he@intel.com>
-> > > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
-> > > > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, 
-> > > > Yanmin <yanmin.zhang@intel.com>
-> > > > Subject: Re: rcu_preempt caused oom
-> > > > 
-> > > > On Mon, Dec 03, 2018 at 07:44:03AM +0000, He, Bo wrote:
-> > > > > Thanks, we have run the test for the whole weekend and not reproduce the issue,  so we confirm the CONFIG_RCU_BOOST can fix the issue.
-> > > > 
-> > > > Very good, that is encouraging.  Perhaps I should think about making CONFIG_RCU_BOOST=y the default for CONFIG_PREEMPT in mainline, at least for architectures for which rt_mutexes are implemented.
-> > > > 
-> > > > > We have enabled the rcupdate.rcu_cpu_stall_timeout=7 and also set panic on rcu stall and will see if we can see the panic, will keep you posed with the test results.
-> > > > > echo 1 > /proc/sys/kernel/panic_on_rcu_stall
-> > > > 
-> > > > Looking forward to seeing what is going on!  Of course, to reproduce, you will need to again build with CONFIG_RCU_BOOST=n.
-> > > > 
-> > > > 							Thanx, Paul
-> > > > 
-> > > > > -----Original Message-----
-> > > > > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > Sent: Saturday, December 1, 2018 12:49 AM
-> > > > > To: He, Bo <bo.he@intel.com>
-> > > > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, 
-> > > > > Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; 
-> > > > > Zhang, Yanmin <yanmin.zhang@intel.com>
-> > > > > Subject: Re: rcu_preempt caused oom
-> > > > > 
-> > > > > On Fri, Nov 30, 2018 at 03:18:58PM +0000, He, Bo wrote:
-> > > > > > Here is the kernel cmdline:
-> > > > > 
-> > > > > Thank you!
-> > > > > 
-> > > > > > Kernel command line: androidboot.acpio_idx=0
-> > > > > > androidboot.bootloader=efiwrapper-02_03-userdebug_kernelflinge
-> > > > > > r-
-> > > > > > 06
-> > > > > > _0
-> > > > > > 3- userdebug androidboot.diskbus=00.0 
-> > > > > > androidboot.verifiedbootstate=green
-> > > > > > androidboot.bootreason=power-on 
-> > > > > > androidboot.serialno=R1J56L6006a7bb
-> > > > > > g_ffs.iSerialNumber=R1J56L6006a7bb no_timer_check noxsaves 
-> > > > > > reboot_panic=p,w i915.hpd_sense_invert=0x7 mem=2G nokaslr 
-> > > > > > nopti ftrace_dump_on_oops trace_buf_size=1024K intel_iommu=off 
-> > > > > > gpt
-> > > > > > loglevel=4 androidboot.hardware=gordon_peak 
-> > > > > > firmware_class.path=/vendor/firmware relative_sleep_states=1
-> > > > > > enforcing=0 androidboot.selinux=permissive cpu_init_udelay=10
-> > > > > > androidboot.android_dt_dir=/sys/bus/platform/devices/ANDR0001:
-> > > > > > 00 /p ro pe rties/android/ pstore.backend=ramoops
-> > > > > > memmap=0x1400000$0x50000000
-> > > > > > ramoops.mem_address=0x50000000 ramoops.mem_size=0x1400000
-> > > > > > ramoops.record_size=0x4000 ramoops.console_size=0x1000000
-> > > > > > ramoops.ftrace_size=0x10000 ramoops.dump_oops=1 vga=current
-> > > > > > i915.modeset=1 drm.atomic=1 i915.nuclear_pageflip=1 
-> > > > > > drm.vblankoffdelay=
-> > > > > 
-> > > > > And no sign of any suppression of RCU CPU stall warnings.  Hmmm...
-> > > > > It does take more than 21 seconds to OOM?  Or do things happen faster than that?  If they do happen faster than that, then on approach would be to add something like this to the kernel command line:
-> > > > > 
-> > > > > 	rcupdate.rcu_cpu_stall_timeout=7
-> > > > > 
-> > > > > This would set the stall timeout to seven seconds.  Note that timeouts less than three seconds are silently interpreted as three seconds.
-> > > > > 
-> > > > > 							Thanx, Paul
-> > > > > 
-> > > > > > -----Original Message-----
-> > > > > > From: Steven Rostedt <rostedt@goodmis.org>
-> > > > > > Sent: Friday, November 30, 2018 11:17 PM
-> > > > > > To: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > > Cc: He, Bo <bo.he@intel.com>; linux-kernel@vger.kernel.org; 
-> > > > > > josh@joshtriplett.org; mathieu.desnoyers@efficios.com; 
-> > > > > > jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; 
-> > > > > > Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
-> > > > > > <yanmin.zhang@intel.com>
-> > > > > > Subject: Re: rcu_preempt caused oom
-> > > > > > 
-> > > > > > On Fri, 30 Nov 2018 06:43:17 -0800 "Paul E. McKenney" 
-> > > > > > <paulmck@linux.ibm.com> wrote:
-> > > > > > 
-> > > > > > > Could you please send me your list of kernel boot parameters?  
-> > > > > > > They usually appear near the start of your console output.
-> > > > > > 
-> > > > > > Or just: cat /proc/cmdline
-> > > > > > 
-> > > > > > -- Steve
-> > > > > > 
-> > > > > 
-> > > > 
-> > > 
-> > > 
-> > 
-> 
-> 
-
-
+Hi Dan,=0A=
+=0A=
+On 12/7/2018 3:20 PM, Minas Harutyunyan wrote:=0A=
+> Hi Dan,=0A=
+> =0A=
+> On 12/7/2018 2:16 PM, Dan Carpenter wrote:=0A=
+>> On Wed, Dec 05, 2018 at 12:52:22PM +0000, Minas Harutyunyan wrote:=0A=
+>>> Hi,=0A=
+>>>=0A=
+>>> On 12/4/2018 5:29 PM, Dan Carpenter wrote:=0A=
+>>>> On Tue, Dec 04, 2018 at 12:34:08PM +0000, Minas Harutyunyan wrote:=0A=
+>>>>> @@ -3185,12 +3183,13 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg =
+*hsotg)=0A=
+>>>>>             hsotg->connected =3D 0;=0A=
+>>>>>             hsotg->test_mode =3D 0;=0A=
+>>>>>=0A=
+>>>>> -       /* all endpoints should be shutdown */=0A=
+>>>>>             for (ep =3D 0; ep < hsotg->num_of_eps; ep++) {=0A=
+>>>>>                     if (hsotg->eps_in[ep])=0A=
+>>>>> -                       dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep)=
+;=0A=
+>>>>> +                       kill_all_requests(hsotg, hsotg->eps_in[ep],=
+=0A=
+>>>>> +                                                         -ESHUTDOWN)=
+;=0A=
+>>>>>                     if (hsotg->eps_out[ep])=0A=
+>>>>> -                       dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep=
+);=0A=
+>>>>> +                       kill_all_requests(hsotg, hsotg->eps_out[ep],=
+=0A=
+>>>>> +                                                         -ESHUTDOWN)=
+;=0A=
+>>>>=0A=
+>>>>=0A=
+>>>> Should this part be in a separate patch?=0A=
+>>>>=0A=
+>>>> I'm not trying to be rhetorical at all.  I literally don't know the=0A=
+>>>> code very well.  Hopefully the full commit message will explain it.=0A=
+>>>>=0A=
+>>>=0A=
+>>> Actually, this fragment of patch revert changes from V2 and keep=0A=
+>>> untouched dwc2_hsotg_disconnect() function.=0A=
+>>>=0A=
+>>=0A=
+>> To me it feels like there are two issues.  The first is this change, and=
+=0A=
+>> the second is fixing the lockdep warning.=0A=
+>>=0A=
+>>=0A=
+>>>>>             }=0A=
+>>>>>=0A=
+>>>>>             call_gadget(hsotg, disconnect);=0A=
+>>>>> @@ -3234,6 +3233,8 @@ static void dwc2_hsotg_irq_fifoempty(struct=0A=
+>>>>> dwc2_hsotg *hsotg, bool periodic)=0A=
+>>>>>                             GINTSTS_PTXFEMP |  \=0A=
+>>>>>                             GINTSTS_RXFLVL)=0A=
+>>>>>=0A=
+>>>>> +static int dwc2_hsotg_ep_disable(struct usb_ep *ep);=0A=
+>>>>> +=0A=
+>>>>>      /**=0A=
+>>>>>       * dwc2_hsotg_core_init - issue softreset to the core=0A=
+>>>>>       * @hsotg: The device state=0A=
+>>>>> @@ -3258,12 +3259,14 @@ void dwc2_hsotg_core_init_disconnected(struct=
+=0A=
+>>>>> dwc2_hsotg *hsotg,=0A=
+>>>>>                             return;=0A=
+>>>>>             } else {=0A=
+>>>>>                     /* all endpoints should be shutdown */=0A=
+>>>>> +               spin_unlock(&hsotg->lock);=0A=
+>>>>>                     for (ep =3D 1; ep < hsotg->num_of_eps; ep++) {=0A=
+>>>>>                             if (hsotg->eps_in[ep])=0A=
+>>>>>     =0A=
+>>>>> dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=0A=
+>>>>>                             if (hsotg->eps_out[ep])=0A=
+>>>>>     =0A=
+>>>>> dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=0A=
+>>>>>                     }=0A=
+>>>>> +               spin_lock(&hsotg->lock);=0A=
+>>>>>             }=0A=
+>>>>>=0A=
+>>>>>             /*=0A=
+>>>>=0A=
+>>>> The idea here is that this is the only caller which is holding the=0A=
+>>>> lock and we drop it here and take it again inside dwc2_hsotg_ep_disabl=
+e().=0A=
+>>>> I don't know the code very well and can't totally swear that this=0A=
+>>>> doesn't introduce a small race condition...=0A=
+>>>>=0A=
+>>> Above fragment of patch allow to keep untouched dwc2_hsotg_ep_disble()=
+=0A=
+>>> function also, without changing spin_lock/_unlock stuff inside function=
+.=0A=
+>>>=0A=
+>>> My approach here minimally update code to add any races. Just in=0A=
+>>> dwc2_hsotg_core_init_disconnected() function on USB reset interrupt=0A=
+>>> perform disabling all EP's. Because on USB reset interrupt, called from=
+ interrupt=0A=
+>>> handler with acquired lock and dwc2_hsotg_ep_disble() function (without=
+=0A=
+>>> changes) acquire lock, just need to unlock lock to avoid any troubles.=
+=0A=
+>>>=0A=
+>>=0A=
+>> Yes.  I understand that.  I just don't like it.=0A=
+>>=0A=
+>> Although your patch is more "minimal" in that it touches fewer lines of=
+=0A=
+>> code it's actually more complicated because we have to verify that it's=
+=0A=
+>> safe to drop the lock.=0A=
+>>=0A=
+>>=0A=
+>>>> Another option would be to introduce a new function which takes the lo=
+ck=0A=
+>>>> and change all the other callers instead.  To me that would be easier =
+to=0A=
+>>>> review...  See below for how it might look:=0A=
+>>>>=0A=
+>>>> regards,=0A=
+>>>> dan carpenter=0A=
+>>>>=0A=
+>>>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c=0A=
+>>>> index 94f3ba995580..b17a5dbefd5f 100644=0A=
+>>>> --- a/drivers/usb/dwc2/gadget.c=0A=
+>>>> +++ b/drivers/usb/dwc2/gadget.c=0A=
+>>>> @@ -3166,6 +3166,7 @@ static void kill_all_requests(struct dwc2_hsotg =
+*hsotg,=0A=
+>>>>     }=0A=
+>>>>     =0A=
+>>>>     static int dwc2_hsotg_ep_disable(struct usb_ep *ep);=0A=
+>>>> +static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep);=0A=
+>>>>     =0A=
+>>>>     /**=0A=
+>>>>      * dwc2_hsotg_disconnect - disconnect service=0A=
+>>>> @@ -3188,9 +3189,9 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hs=
+otg)=0A=
+>>>>     	/* all endpoints should be shutdown */=0A=
+>>>>     	for (ep =3D 0; ep < hsotg->num_of_eps; ep++) {=0A=
+>>>>     		if (hsotg->eps_in[ep])=0A=
+>>>> -			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=0A=
+>>>> +			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);=0A=
+>>>>     		if (hsotg->eps_out[ep])=0A=
+>>>> -			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=0A=
+>>>> +			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);=0A=
+>>>>     	}=0A=
+>>>>     =0A=
+>>>>     	call_gadget(hsotg, disconnect);=0A=
+>>>> @@ -4069,10 +4070,8 @@ static int dwc2_hsotg_ep_disable(struct usb_ep =
+*ep)=0A=
+>>>>     	struct dwc2_hsotg *hsotg =3D hs_ep->parent;=0A=
+>>>>     	int dir_in =3D hs_ep->dir_in;=0A=
+>>>>     	int index =3D hs_ep->index;=0A=
+>>>> -	unsigned long flags;=0A=
+>>>>     	u32 epctrl_reg;=0A=
+>>>>     	u32 ctrl;=0A=
+>>>> -	int locked;=0A=
+>>>>     =0A=
+>>>>     	dev_dbg(hsotg->dev, "%s(ep %p)\n", __func__, ep);=0A=
+>>>>     =0A=
+>>>> @@ -4088,10 +4087,6 @@ static int dwc2_hsotg_ep_disable(struct usb_ep =
+*ep)=0A=
+>>>>     =0A=
+>>>>     	epctrl_reg =3D dir_in ? DIEPCTL(index) : DOEPCTL(index);=0A=
+>>>>     =0A=
+>>>> -	locked =3D spin_is_locked(&hsotg->lock);=0A=
+>>>> -	if (!locked)=0A=
+>>>> -		spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>>>> -=0A=
+>>>>     	ctrl =3D dwc2_readl(hsotg, epctrl_reg);=0A=
+>>>>     =0A=
+>>>>     	if (ctrl & DXEPCTL_EPENA)=0A=
+>>>> @@ -4114,12 +4109,23 @@ static int dwc2_hsotg_ep_disable(struct usb_ep=
+ *ep)=0A=
+>>>>     	hs_ep->fifo_index =3D 0;=0A=
+>>>>     	hs_ep->fifo_size =3D 0;=0A=
+>>>>     =0A=
+>>>> -	if (!locked)=0A=
+>>>> -		spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+>>>> -=0A=
+>>>>     	return 0;=0A=
+>>>>     }=0A=
+>>>>     =0A=
+>>>> +static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep)=0A=
+>>>> +{=0A=
+>>>> +	struct dwc2_hsotg_ep *hs_ep =3D our_ep(ep);=0A=
+>>>> +	struct dwc2_hsotg *hsotg =3D hs_ep->parent;=0A=
+>>>> +	unsigned long flags;=0A=
+>>>> +	int ret;=0A=
+>>>> +=0A=
+>>>> +	spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>>>> +	ret =3D dwc2_hsotg_ep_disable(ep);=0A=
+>>>> +	spin_unlock_irqrestore(&hsotg->lock, flags);=0A=
+>>>> +=0A=
+>>>> +	return ret;=0A=
+>>>> +}=0A=
+>>>> +=0A=
+>>>>     /**=0A=
+>>>>      * on_list - check request is on the given endpoint=0A=
+>>>>      * @ep: The endpoint to check.=0A=
+>>>> @@ -4267,7 +4273,7 @@ static int dwc2_hsotg_ep_sethalt_lock(struct usb=
+_ep *ep, int value)=0A=
+>>>>     =0A=
+>>>>     static const struct usb_ep_ops dwc2_hsotg_ep_ops =3D {=0A=
+>>>>     	.enable		=3D dwc2_hsotg_ep_enable,=0A=
+>>>> -	.disable	=3D dwc2_hsotg_ep_disable,=0A=
+>>>> +	.disable	=3D dwc2_hsotg_ep_disable_lock,=0A=
+>>>>     	.alloc_request	=3D dwc2_hsotg_ep_alloc_request,=0A=
+>>>>     	.free_request	=3D dwc2_hsotg_ep_free_request,=0A=
+>>>>     	.queue		=3D dwc2_hsotg_ep_queue_lock,=0A=
+>>>> @@ -4407,9 +4413,9 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget=
+ *gadget)=0A=
+>>>>     	/* all endpoints should be shutdown */=0A=
+>>>>     	for (ep =3D 1; ep < hsotg->num_of_eps; ep++) {=0A=
+>>>>     		if (hsotg->eps_in[ep])=0A=
+>>>> -			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=0A=
+>>>> +			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);=0A=
+>>>>     		if (hsotg->eps_out[ep])=0A=
+>>>> -			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=0A=
+>>>> +			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);=0A=
+>>>>     	}=0A=
+>>>>     =0A=
+>>>>     	spin_lock_irqsave(&hsotg->lock, flags);=0A=
+>>>> @@ -4857,9 +4863,9 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)=
+=0A=
+>>>>     =0A=
+>>>>     		for (ep =3D 0; ep < hsotg->num_of_eps; ep++) {=0A=
+>>>>     			if (hsotg->eps_in[ep])=0A=
+>>>> -				dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);=0A=
+>>>> +				dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);=0A=
+>>>>     			if (hsotg->eps_out[ep])=0A=
+>>>> -				dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);=0A=
+>>>> +				dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);=0A=
+>>>>     		}=0A=
+>>>>     	}=0A=
+>>>>     =0A=
+>>>>=0A=
+>>>=0A=
+>>> Your code doesn't take care about fifo_map warnings from=0A=
+>>> dwc2_hsotg_init_fifo() function. Before calling dwc2_hsotg_init_fifo()=
+=0A=
+>>> from dwc2_hsotg_core_init_disconnected() function all Ep's should=0A=
+>>> disabled and fifo bitmap should be cleared.=0A=
+>>>=0A=
+>>=0A=
+>> Correct.  I am only trying to fix the locking.  I hope you can fix the=
+=0A=
+>> rest in a separate patch.=0A=
+>>=0A=
+> Yeah. I'll try deeper investigate driver locking flow and fix it later.=
+=0A=
+> Actually, I like your idea with introducing dwc2_hsotg_ep_disable_lock()=
+=0A=
+> function. Maybe you yourself will submit new patch for safe locking=0A=
+> fixes? But please just after my patch will applied :-)=0A=
+> Currently there are 2-3 high priority issues reported by community and I=
+=0A=
+> should find solutions/fixes.=0A=
+> Thank you very much for your time and useful feedback.=0A=
+> =0A=
+> Thanks,=0A=
+> Minas=0A=
+> =0A=
+> =0A=
+>> regards,=0A=
+>> dan carpenter=0A=
+>>=0A=
+>>=0A=
+> =0A=
+> =0A=
+=0A=
+My patch doesn't pass sparse checking: "warning: context imbalance in =0A=
+'dwc2_hsotg_core_init_disconnected' - unexpected unlock". Sparse persist!=
+=0A=
+So, I need to re-work patch. Can I use your idea with =0A=
+dwc2_hsotg_ep_disable_lock() function to prepare new one?=0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
